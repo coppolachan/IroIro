@@ -1,0 +1,16 @@
+Test README file
+
+Use this line to compile on Hitachi SR16000 machine
+
+./configure --enable-mpi-hitachi CXX=mpCC -host=rs6000-ibm-aix
+
+
+Use this line to compile on MPI general machine
+
+./configure --enable-mpi CXX=mpicxx.openmpi
+
+Run with mpirun -np #nodes #executable
+
+Testing and debugging
+
+valgrind --leak-check=yes --log-file=valgrind.log ./hmc

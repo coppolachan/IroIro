@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+
+  </Geometry>
+  <!-- Input configuration -->
+  <!-- Input configuration -->
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  
+  <TestOptimalDomainWall>
+    <DomainWall name="DiracOptimalDomainWall5d">
+      <c>0.0</c>
+      <mass>0.0</mass>
+      <omega>1.0 1.0 1.0 1.0 1.0 1.0</omega>
+      <Kernel name="DiracWilson">
+	<mass>-1.8</mass>
+      </Kernel>
+    </DomainWall> 
+
+    <QuarkPropagator name="QpropDWF">
+      <Kernel4d name="DiracOptimalDomainWall4d">
+	<Kernel5d name="DiracOptimalDomainWall5d">
+	  <c>0.0</c>
+	  <mass>0.0</mass>
+	  <omega>1.0 1.0 1.0 1.0 1.0 1.0</omega>
+	  <Kernel name="DiracWilson">
+	    <mass>-1.8</mass>
+	  </Kernel>
+	</Kernel5d> 
+	<SolverDWF type="Solver_BiCGStab">
+	  <MaxIter>1000</MaxIter>
+	  <Precision>1e-20</Precision>
+	</SolverDWF>
+      </Kernel4d> 
+    </QuarkPropagator>
+  </TestOptimalDomainWall>
+</Parameters>
+

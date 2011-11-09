@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+    <!-- other params here -->
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  <!-- definition of HMC trajectory -->
+  <HMC>
+    <Nsweeps>2</Nsweeps>
+    <thermalization>2</thermalization>
+    <save_interval>5</save_interval>
+
+    <RandomNumberGen name="Mersenne Twister">
+      <init>0x123 0x234 0x345 0x456</init>
+    </RandomNumberGen>
+
+    <Integrator name="leapfrog_multistep">
+      <MDsteps>3</MDsteps>
+      <step_size>0.1</step_size>
+      <exp_approx>8</exp_approx>
+    
+      <step><!-- just for multistep -->
+	<multiplier>1</multiplier><!-- with respect to the upper step -->
+	<Action type="Fermion" name="TwoFlavorsRatio">
+	  <Numerator name="DiracWilson">
+	    <mass>1.0</mass>
+	  </Numerator>
+	  <Denominator name="DiracWilson">
+	    <mass>0.16666666666666666</mass>
+	  </Denominator>
+	  <SolverNumerator type="Solver_CG">
+	    <MaxIter>1000</MaxIter>
+	    <Precision>10e-12</Precision>
+	  </SolverNumerator>
+	  <SolverDenominator type="Solver_CG">
+	    <MaxIter>1000</MaxIter>
+	    <Precision>10e-12</Precision>
+	  </SolverDenominator>
+
+	</Action>
+	<step>
+	  <multiplier>2</multiplier><!-- with respect to the upper step -->
+	  <Action type="Fermion" name="TwoFlavors"><!-- another action -->
+	    <Kernel name="DiracWilson">
+	      <mass>0.16666666666666666</mass>
+	    </Kernel>
+	    <Solver type="Solver_CG">
+	      <MaxIter>1000</MaxIter>
+	      <Precision>10e-12</Precision>
+	    </Solver>
+	  </Action>
+
+	  <step><!-- inner step -->
+	    <multiplier>2</multiplier><!-- with respect to the upper step -->
+	    <Action type="Gauge" name="Wilson">
+	      <beta>6.0</beta>
+	    </Action>
+	  </step>
+	</step>
+      </step>
+
+      
+    </Integrator>
+  </HMC>
+
+</Parameters>
+
