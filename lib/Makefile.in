@@ -37,7 +37,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@HITACHI_TRUE@@USE_MPI_TRUE@am__append_1 = -q64 -O0 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 -DHITACHISR16K
+@HITACHI_TRUE@@USE_MPI_TRUE@am__append_1 = -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 -DHITACHISR16K
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_2 = -q64
 @HITACHI_FALSE@@USE_MPI_TRUE@am__append_3 = 
 @HITACHI_FALSE@@USE_MPI_TRUE@am__append_4 = 

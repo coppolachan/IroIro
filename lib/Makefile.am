@@ -3,7 +3,7 @@ SUBDIRS = . Test
 if USE_MPI
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 if HITACHI	
-CXXFLAGS += -q64 -O0 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 -DHITACHISR16K
+CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 -DHITACHISR16K
 LDFLAGS += -q64
 else
 CXXFLAGS += 

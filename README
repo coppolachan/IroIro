@@ -1,16 +1,34 @@
 Test README file
 
-Use this line to compile on Hitachi SR16000 machine
+Simple compilation
+==================
 
-./configure --enable-mpi-hitachi CXX=mpCC -host=rs6000-ibm-aix
+For a single core run just compile with
 
+./configure
+make 
+
+
+Compilation on AIX Hitachi SR16000 machine
+===================================================
+
+Use the following lines
+ 
+./configure --enable-mpi-hitachi CXX=mpCC -host=rs6000-ibm-aix CXXFLAGS="-I/srhome/scqcd/cossu/gsl/include -qlanglvl=stdc99" LDFLAGS="-L/srhome/scqcd/cossu/gsl/lib"
+gmake
+
+In order to override the default optimization level just add the 
+
+"-qoptimize=#" 
+
+option inside the CXXFLAGS (where # in between 1 - 5)
 
 Use this line to compile on MPI general machine
-
+===============================================
 ./configure --enable-mpi CXX=mpicxx.openmpi
 
 Run with mpirun -np #nodes #executable
 
 Testing and debugging
-
+=====================
 valgrind --leak-check=yes --log-file=valgrind.log ./hmc
