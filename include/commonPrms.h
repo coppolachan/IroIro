@@ -63,7 +63,6 @@ public:
   static int Nc(){return Nc_;}
   static int Nd(){return Nd_;}
   static int Ndim(){return Ndim_;}
-
 };
 
 #endif

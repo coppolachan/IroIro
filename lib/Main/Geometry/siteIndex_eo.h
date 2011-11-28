@@ -55,6 +55,7 @@ public:
   // projection to the boundary space within the half field.
   const std::vector<int> ebdup(int d);
   const std::vector<int> ebdlw(int d);
+
   const std::vector<int> obdup(int d);
   const std::vector<int> obdlw(int d);
   
@@ -64,12 +65,17 @@ public:
   int obid_up(int hs,int d);
   int obid_lw(int hs,int d);
 
+  int Ve_dir(int d)const{return ebdup_[d].size();}  
+  int Vo_dir(int d)const{return obdup_[d].size();}  
+
   // component in the given direction d.
   int e_cmp(int hs,int d);
   int o_cmp(int hs,int d);
 
   int Bdir(int d){return idx_->Bdir(d);}
 
+  const std::vector<int>& esec(){return esec_;}
+  const std::vector<int>& osec(){return osec_;}
   static int esec(int site){return esec_[site];}
   static int osec(int site){return osec_[site];}
 };

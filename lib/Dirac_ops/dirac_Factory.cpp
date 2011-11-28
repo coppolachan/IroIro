@@ -13,6 +13,9 @@ namespace DiracOperators {
       if (!strcmp(Dirac_name, "DiracWilson")) { 
 	return new DiracWilsonCreator(node);
       }
+      if (!strcmp(Dirac_name, "DiracWilson_EvenOdd")) { 
+	return new DiracWilsonEvenOddCreator(node);
+      }
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d")) { 
 	return new DiracDWF4dCreator(node);
       }
@@ -21,15 +24,13 @@ namespace DiracOperators {
       }
       
       std::cerr << "No Dirac Operator available with name ["
-		 << Dirac_name << "]" << std::endl;
+		<< Dirac_name << "]" << std::endl;
       abort();
       
     } else {
       std::cout << "Mandatory node is missing in input file (Dirac Object)"
-		 << std::endl;
+		<< std::endl;
       abort();
     }
-        
-  };
-  
-};
+  }
+}

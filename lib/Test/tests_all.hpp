@@ -9,5 +9,6 @@
 #include "Test/test_EigenModes_IRL.h"
 #include "Test/test_MultiShiftSolver.h"
 #include "Test/test_wilson.hpp"
+#include "Test/test_wilson_EvenOdd.hpp"
 #include "Test/test_overlap.hpp"
 #include "Test/test_optimalDomainWall.hpp"

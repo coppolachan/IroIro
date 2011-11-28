@@ -67,7 +67,7 @@ private:
   const Dirac* D_;
 public:
   Fopr_DdagD(const Dirac* D):D_(D){}
-
+  
   const Field mult(const Field& f) const{return D_->mult_dag(D_->mult(f));}
   size_t fsize()const {return D_->fsize();}
 };

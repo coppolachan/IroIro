@@ -80,11 +80,13 @@ LIBRARIES = $(lib_LIBRARIES)
 AR = ar
 libcommcode_a_AR = $(AR) $(ARFLAGS)
 libcommcode_a_LIBADD =
-am__libcommcode_a_SOURCES_DIST = Action/action_gauge.cpp \
+am__libcommcode_a_SOURCES_DIST = Communicator/communicator_dummy.cpp \
+	Communicator/communicator_mpi.cpp Action/action_gauge.cpp \
 	Action/action_Nf2.cpp Action/action_Nf2_ratio.cpp \
 	Action/action_gaugetype_factory.cpp \
 	Action/action_fermiontype_factory.cpp Communicator/comm_io.cpp \
 	Communicator/fields_io.cpp Dirac_ops/dirac_wilson.cpp \
+	Dirac_ops/dirac_wilson_EvenOdd.cpp \
 	Dirac_ops/fopr_signH_Zolotarev.cpp \
 	Dirac_ops/dirac_overlap_Zolotarev.cpp \
 	Dirac_ops/dirac_Factory.cpp \
@@ -99,6 +101,7 @@ am__libcommcode_a_SOURCES_DIST = Action/action_gauge.cpp \
 	HMC/mdExec_Factory.cpp Measurements/GaugeM/staples.cpp \
 	Measurements/FermionicM/qprop_MultiShift.cpp \
 	Measurements/FermionicM/qprop.cpp \
+	Measurements/FermionicM/qprop_EvenOdd.cpp \
 	Measurements/FermionicM/qprop_optimalDomainWall.cpp \
 	Measurements/FermionicM/fermion_meas_factory.cpp \
 	Main/commonPrms.cpp Main/Geometry/siteIndex.cpp \
@@ -107,16 +110,16 @@ am__libcommcode_a_SOURCES_DIST = Action/action_gauge.cpp \
 	Tools/randNum_MT19937.cpp Tools/randNum_Factory.cpp \
 	Tools/sunMat.cpp Test/test_Gauge.cpp \
 	Test/test_EigenModes_IRL.cpp Test/test_MultiShiftSolver.cpp \
-	Test/test_overlap.cpp Test/test_optimalDomainWall.cpp \
-	Communicator/communicator_dummy.cpp \
-	Communicator/communicator_mpi.cpp
+	Test/test_overlap.cpp Test/test_wilson_EvenOdd.cpp \
+	Test/test_optimalDomainWall.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
-am_libcommcode_a_OBJECTS = action_gauge.$(OBJEXT) action_Nf2.$(OBJEXT) \
-	action_Nf2_ratio.$(OBJEXT) action_gaugetype_factory.$(OBJEXT) \
+am_libcommcode_a_OBJECTS = $(am__objects_1) action_gauge.$(OBJEXT) \
+	action_Nf2.$(OBJEXT) action_Nf2_ratio.$(OBJEXT) \
+	action_gaugetype_factory.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	fields_io.$(OBJEXT) dirac_wilson.$(OBJEXT) \
-	fopr_signH_Zolotarev.$(OBJEXT) \
+	dirac_wilson_EvenOdd.$(OBJEXT) fopr_signH_Zolotarev.$(OBJEXT) \
 	dirac_overlap_Zolotarev.$(OBJEXT) dirac_Factory.$(OBJEXT) \
 	dirac_optimalDomainWall.$(OBJEXT) \
 	dirac_optimalDomainWall_4D.$(OBJEXT) eigenModes_IRL.$(OBJEXT) \
@@ -127,15 +130,15 @@ am_libcommcode_a_OBJECTS = action_gauge.$(OBJEXT) action_Nf2.$(OBJEXT) \
 	hmcPrms.$(OBJEXT) mdExec_leapfrog.$(OBJEXT) \
 	mdExec_Factory.$(OBJEXT) staples.$(OBJEXT) \
 	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
-	qprop_optimalDomainWall.$(OBJEXT) \
+	qprop_EvenOdd.$(OBJEXT) qprop_optimalDomainWall.$(OBJEXT) \
 	fermion_meas_factory.$(OBJEXT) commonPrms.$(OBJEXT) \
 	siteIndex.$(OBJEXT) siteIndex_eo.$(OBJEXT) gaugeConf.$(OBJEXT) \
 	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
 	randNum_MT19937.$(OBJEXT) randNum_Factory.$(OBJEXT) \
 	sunMat.$(OBJEXT) test_Gauge.$(OBJEXT) \
 	test_EigenModes_IRL.$(OBJEXT) test_MultiShiftSolver.$(OBJEXT) \
-	test_overlap.$(OBJEXT) test_optimalDomainWall.$(OBJEXT) \
-	$(am__objects_1)
+	test_overlap.$(OBJEXT) test_wilson_EvenOdd.$(OBJEXT) \
+	test_optimalDomainWall.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_mainprog_OBJECTS = main.$(OBJEXT)
@@ -311,12 +314,11 @@ AM_CFLAGS = -I$(top_srcdir)
 AM_LDFLAGS = 
 lib_LIBRARIES = libcommcode.a
 EXTRA_DIST = Example.xml			\
-		Dirac_ops/dirac_wilson_eo.cpp	\
-		Dirac_ops/dirac_wilson_eo.h	\
 		HMC/mdExec_leapfrog_eigen.cpp	\
 		Test/test_HMC_noFactories.cpp
 
-libcommcode_a_SOURCES = Action/action_gauge.cpp 		\
+libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
+	 	Action/action_gauge.cpp 		\
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\
 		Action/action_gaugetype_factory.cpp	\
@@ -324,6 +326,7 @@ libcommcode_a_SOURCES = Action/action_gauge.cpp 		\
 		Communicator/comm_io.cpp		\
 		Communicator/fields_io.cpp		\
 		Dirac_ops/dirac_wilson.cpp		\
+		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
 		Dirac_ops/dirac_Factory.cpp		\
@@ -345,6 +348,7 @@ libcommcode_a_SOURCES = Action/action_gauge.cpp 		\
 		Measurements/GaugeM/staples.cpp		\
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
+		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_optimalDomainWall.cpp	\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
 		Main/commonPrms.cpp			\
@@ -360,8 +364,8 @@ libcommcode_a_SOURCES = Action/action_gauge.cpp 		\
 		Test/test_EigenModes_IRL.cpp		\
 		Test/test_MultiShiftSolver.cpp		\
 		Test/test_overlap.cpp			\
-		Test/test_optimalDomainWall.cpp		\
-		$(COMMUNICATOR_SRCS)
+		Test/test_wilson_EvenOdd.cpp		\
+		Test/test_optimalDomainWall.cpp		
 
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD = libcommcode.a
@@ -399,6 +403,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h	\
 			Measurements/FermionicM/source.h			\
 			Measurements/FermionicM/qprop_MultiShift.hpp 		\
 			Measurements/FermionicM/qprop.h				\
+			Measurements/FermionicM/qprop_EvenOdd.h			\
 			Measurements/FermionicM/mesonCorrel.h			\
 			Measurements/FermionicM/qprop_optimalDomainWall.hpp 	\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
@@ -414,6 +419,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h	\
 			Dirac_ops/dirac_Factory.hpp		\
 			Dirac_ops/dirac_overlap_Zolotarev.h	\
 			Dirac_ops/dirac_wilson.h		\
+			Dirac_ops/dirac_wilson_EvenOdd.h	\
 			Dirac_ops/dirac.h			\
 			Dirac_ops/dirac_optimalDomainWall.hpp   \
 			Dirac_ops/dirac_optimalDomainWall_4D.hpp\
@@ -439,6 +445,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h	\
 			Test/test_EigenModes_IRL.h		\
 			Test/test_MultiShiftSolver.h		\
 			Test/test_overlap.hpp			\
+			Test/test_wilson_EvenOdd.hpp		\
 			Test/test_Gauge.hpp			\
 			Test/tests.hpp
 
@@ -573,6 +580,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_optimalDomainWall_4D.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_overlap_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModes_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenProc_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fermion_meas_factory.Po@am__quote@
@@ -589,6 +597,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pugi_interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pugixml.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_MultiShift.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_optimalDomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_Factory.Po@am__quote@
@@ -606,6 +615,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_optimalDomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_overlap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -620,6 +630,34 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+communicator_dummy.o: Communicator/communicator_dummy.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT communicator_dummy.o -MD -MP -MF $(DEPDIR)/communicator_dummy.Tpo -c -o communicator_dummy.o `test -f 'Communicator/communicator_dummy.cpp' || echo '$(srcdir)/'`Communicator/communicator_dummy.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/communicator_dummy.Tpo $(DEPDIR)/communicator_dummy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_dummy.cpp' object='communicator_dummy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_dummy.o `test -f 'Communicator/communicator_dummy.cpp' || echo '$(srcdir)/'`Communicator/communicator_dummy.cpp
+
+communicator_dummy.obj: Communicator/communicator_dummy.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT communicator_dummy.obj -MD -MP -MF $(DEPDIR)/communicator_dummy.Tpo -c -o communicator_dummy.obj `if test -f 'Communicator/communicator_dummy.cpp'; then $(CYGPATH_W) 'Communicator/communicator_dummy.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_dummy.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/communicator_dummy.Tpo $(DEPDIR)/communicator_dummy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_dummy.cpp' object='communicator_dummy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_dummy.obj `if test -f 'Communicator/communicator_dummy.cpp'; then $(CYGPATH_W) 'Communicator/communicator_dummy.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_dummy.cpp'; fi`
+
+communicator_mpi.o: Communicator/communicator_mpi.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT communicator_mpi.o -MD -MP -MF $(DEPDIR)/communicator_mpi.Tpo -c -o communicator_mpi.o `test -f 'Communicator/communicator_mpi.cpp' || echo '$(srcdir)/'`Communicator/communicator_mpi.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/communicator_mpi.Tpo $(DEPDIR)/communicator_mpi.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_mpi.cpp' object='communicator_mpi.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_mpi.o `test -f 'Communicator/communicator_mpi.cpp' || echo '$(srcdir)/'`Communicator/communicator_mpi.cpp
+
+communicator_mpi.obj: Communicator/communicator_mpi.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT communicator_mpi.obj -MD -MP -MF $(DEPDIR)/communicator_mpi.Tpo -c -o communicator_mpi.obj `if test -f 'Communicator/communicator_mpi.cpp'; then $(CYGPATH_W) 'Communicator/communicator_mpi.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_mpi.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/communicator_mpi.Tpo $(DEPDIR)/communicator_mpi.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_mpi.cpp' object='communicator_mpi.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_mpi.obj `if test -f 'Communicator/communicator_mpi.cpp'; then $(CYGPATH_W) 'Communicator/communicator_mpi.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_mpi.cpp'; fi`
 
 action_gauge.o: Action/action_gauge.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge.o -MD -MP -MF $(DEPDIR)/action_gauge.Tpo -c -o action_gauge.o `test -f 'Action/action_gauge.cpp' || echo '$(srcdir)/'`Action/action_gauge.cpp
@@ -732,6 +770,20 @@ dirac_wilson.obj: Dirac_ops/dirac_wilson.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_wilson.cpp' object='dirac_wilson.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson.obj `if test -f 'Dirac_ops/dirac_wilson.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson.cpp'; fi`
+
+dirac_wilson_EvenOdd.o: Dirac_ops/dirac_wilson_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_wilson_EvenOdd.Tpo -c -o dirac_wilson_EvenOdd.o `test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_wilson_EvenOdd.Tpo $(DEPDIR)/dirac_wilson_EvenOdd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_wilson_EvenOdd.cpp' object='dirac_wilson_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_EvenOdd.o `test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_EvenOdd.cpp
+
+dirac_wilson_EvenOdd.obj: Dirac_ops/dirac_wilson_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_EvenOdd.obj -MD -MP -MF $(DEPDIR)/dirac_wilson_EvenOdd.Tpo -c -o dirac_wilson_EvenOdd.obj `if test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_EvenOdd.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_wilson_EvenOdd.Tpo $(DEPDIR)/dirac_wilson_EvenOdd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_wilson_EvenOdd.cpp' object='dirac_wilson_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_EvenOdd.obj `if test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_EvenOdd.cpp'; fi`
 
 fopr_signH_Zolotarev.o: Dirac_ops/fopr_signH_Zolotarev.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fopr_signH_Zolotarev.o -MD -MP -MF $(DEPDIR)/fopr_signH_Zolotarev.Tpo -c -o fopr_signH_Zolotarev.o `test -f 'Dirac_ops/fopr_signH_Zolotarev.cpp' || echo '$(srcdir)/'`Dirac_ops/fopr_signH_Zolotarev.cpp
@@ -1013,6 +1065,20 @@ qprop.obj: Measurements/FermionicM/qprop.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop.obj `if test -f 'Measurements/FermionicM/qprop.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop.cpp'; fi`
 
+qprop_EvenOdd.o: Measurements/FermionicM/qprop_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_EvenOdd.o -MD -MP -MF $(DEPDIR)/qprop_EvenOdd.Tpo -c -o qprop_EvenOdd.o `test -f 'Measurements/FermionicM/qprop_EvenOdd.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qprop_EvenOdd.Tpo $(DEPDIR)/qprop_EvenOdd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop_EvenOdd.cpp' object='qprop_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_EvenOdd.o `test -f 'Measurements/FermionicM/qprop_EvenOdd.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_EvenOdd.cpp
+
+qprop_EvenOdd.obj: Measurements/FermionicM/qprop_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_EvenOdd.obj -MD -MP -MF $(DEPDIR)/qprop_EvenOdd.Tpo -c -o qprop_EvenOdd.obj `if test -f 'Measurements/FermionicM/qprop_EvenOdd.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_EvenOdd.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qprop_EvenOdd.Tpo $(DEPDIR)/qprop_EvenOdd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop_EvenOdd.cpp' object='qprop_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_EvenOdd.obj `if test -f 'Measurements/FermionicM/qprop_EvenOdd.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_EvenOdd.cpp'; fi`
+
 qprop_optimalDomainWall.o: Measurements/FermionicM/qprop_optimalDomainWall.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_optimalDomainWall.o -MD -MP -MF $(DEPDIR)/qprop_optimalDomainWall.Tpo -c -o qprop_optimalDomainWall.o `test -f 'Measurements/FermionicM/qprop_optimalDomainWall.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_optimalDomainWall.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qprop_optimalDomainWall.Tpo $(DEPDIR)/qprop_optimalDomainWall.Po
@@ -1223,6 +1289,20 @@ test_overlap.obj: Test/test_overlap.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_overlap.obj `if test -f 'Test/test_overlap.cpp'; then $(CYGPATH_W) 'Test/test_overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_overlap.cpp'; fi`
 
+test_wilson_EvenOdd.o: Test/test_wilson_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_wilson_EvenOdd.o -MD -MP -MF $(DEPDIR)/test_wilson_EvenOdd.Tpo -c -o test_wilson_EvenOdd.o `test -f 'Test/test_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`Test/test_wilson_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_wilson_EvenOdd.Tpo $(DEPDIR)/test_wilson_EvenOdd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_wilson_EvenOdd.cpp' object='test_wilson_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_wilson_EvenOdd.o `test -f 'Test/test_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`Test/test_wilson_EvenOdd.cpp
+
+test_wilson_EvenOdd.obj: Test/test_wilson_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_wilson_EvenOdd.obj -MD -MP -MF $(DEPDIR)/test_wilson_EvenOdd.Tpo -c -o test_wilson_EvenOdd.obj `if test -f 'Test/test_wilson_EvenOdd.cpp'; then $(CYGPATH_W) 'Test/test_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_wilson_EvenOdd.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_wilson_EvenOdd.Tpo $(DEPDIR)/test_wilson_EvenOdd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_wilson_EvenOdd.cpp' object='test_wilson_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_wilson_EvenOdd.obj `if test -f 'Test/test_wilson_EvenOdd.cpp'; then $(CYGPATH_W) 'Test/test_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_wilson_EvenOdd.cpp'; fi`
+
 test_optimalDomainWall.o: Test/test_optimalDomainWall.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_optimalDomainWall.o -MD -MP -MF $(DEPDIR)/test_optimalDomainWall.Tpo -c -o test_optimalDomainWall.o `test -f 'Test/test_optimalDomainWall.cpp' || echo '$(srcdir)/'`Test/test_optimalDomainWall.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_optimalDomainWall.Tpo $(DEPDIR)/test_optimalDomainWall.Po
@@ -1236,34 +1316,6 @@ test_optimalDomainWall.obj: Test/test_optimalDomainWall.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_optimalDomainWall.cpp' object='test_optimalDomainWall.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_optimalDomainWall.obj `if test -f 'Test/test_optimalDomainWall.cpp'; then $(CYGPATH_W) 'Test/test_optimalDomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_optimalDomainWall.cpp'; fi`
-
-communicator_dummy.o: Communicator/communicator_dummy.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT communicator_dummy.o -MD -MP -MF $(DEPDIR)/communicator_dummy.Tpo -c -o communicator_dummy.o `test -f 'Communicator/communicator_dummy.cpp' || echo '$(srcdir)/'`Communicator/communicator_dummy.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/communicator_dummy.Tpo $(DEPDIR)/communicator_dummy.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_dummy.cpp' object='communicator_dummy.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_dummy.o `test -f 'Communicator/communicator_dummy.cpp' || echo '$(srcdir)/'`Communicator/communicator_dummy.cpp
-
-communicator_dummy.obj: Communicator/communicator_dummy.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT communicator_dummy.obj -MD -MP -MF $(DEPDIR)/communicator_dummy.Tpo -c -o communicator_dummy.obj `if test -f 'Communicator/communicator_dummy.cpp'; then $(CYGPATH_W) 'Communicator/communicator_dummy.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_dummy.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/communicator_dummy.Tpo $(DEPDIR)/communicator_dummy.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_dummy.cpp' object='communicator_dummy.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_dummy.obj `if test -f 'Communicator/communicator_dummy.cpp'; then $(CYGPATH_W) 'Communicator/communicator_dummy.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_dummy.cpp'; fi`
-
-communicator_mpi.o: Communicator/communicator_mpi.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT communicator_mpi.o -MD -MP -MF $(DEPDIR)/communicator_mpi.Tpo -c -o communicator_mpi.o `test -f 'Communicator/communicator_mpi.cpp' || echo '$(srcdir)/'`Communicator/communicator_mpi.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/communicator_mpi.Tpo $(DEPDIR)/communicator_mpi.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_mpi.cpp' object='communicator_mpi.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_mpi.o `test -f 'Communicator/communicator_mpi.cpp' || echo '$(srcdir)/'`Communicator/communicator_mpi.cpp
-
-communicator_mpi.obj: Communicator/communicator_mpi.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT communicator_mpi.obj -MD -MP -MF $(DEPDIR)/communicator_mpi.Tpo -c -o communicator_mpi.obj `if test -f 'Communicator/communicator_mpi.cpp'; then $(CYGPATH_W) 'Communicator/communicator_mpi.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_mpi.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/communicator_mpi.Tpo $(DEPDIR)/communicator_mpi.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_mpi.cpp' object='communicator_mpi.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_mpi.obj `if test -f 'Communicator/communicator_mpi.cpp'; then $(CYGPATH_W) 'Communicator/communicator_mpi.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_mpi.cpp'; fi`
 
 main.o: Main/main.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main.o -MD -MP -MF $(DEPDIR)/main.Tpo -c -o main.o `test -f 'Main/main.cpp' || echo '$(srcdir)/'`Main/main.cpp

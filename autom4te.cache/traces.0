@@ -719,720 +719,112 @@ m4trace:configure.ac:7: -2- _AM_MANGLE_OPTION([no-dependencies])
 m4trace:configure.ac:7: -1- _AM_IF_OPTION([silent-rules], [AC_REQUIRE([AM_SILENT_RULES])])
 m4trace:configure.ac:7: -2- _AM_MANGLE_OPTION([silent-rules])
 m4trace:configure.ac:9: -1- m4_pattern_allow([^RANLIB$])
-m4trace:configure.ac:11: -1- m4_include([m4/m4_ax_prog_doxygen.m4])
-m4trace:m4/m4_ax_prog_doxygen.m4:264: -1- AC_DEFUN([DX_FEATURE_doc], [ON])
-m4trace:m4/m4_ax_prog_doxygen.m4:265: -1- AC_DEFUN([DX_FEATURE_dot], [OFF])
-m4trace:m4/m4_ax_prog_doxygen.m4:266: -1- AC_DEFUN([DX_FEATURE_man], [OFF])
-m4trace:m4/m4_ax_prog_doxygen.m4:267: -1- AC_DEFUN([DX_FEATURE_html], [ON])
-m4trace:m4/m4_ax_prog_doxygen.m4:268: -1- AC_DEFUN([DX_FEATURE_chm], [OFF])
-m4trace:m4/m4_ax_prog_doxygen.m4:269: -1- AC_DEFUN([DX_FEATURE_chi], [OFF])
-m4trace:m4/m4_ax_prog_doxygen.m4:270: -1- AC_DEFUN([DX_FEATURE_rtf], [OFF])
-m4trace:m4/m4_ax_prog_doxygen.m4:271: -1- AC_DEFUN([DX_FEATURE_xml], [OFF])
-m4trace:m4/m4_ax_prog_doxygen.m4:272: -1- AC_DEFUN([DX_FEATURE_pdf], [ON])
-m4trace:m4/m4_ax_prog_doxygen.m4:273: -1- AC_DEFUN([DX_FEATURE_ps], [ON])
-m4trace:m4/m4_ax_prog_doxygen.m4:282: -1- AC_DEFUN([DX_ENV_APPEND], [AC_SUBST([DX_ENV], ["$DX_ENV $1='$2'"])])
-m4trace:m4/m4_ax_prog_doxygen.m4:287: -1- AC_DEFUN([DX_DIRNAME_EXPR], [[expr ".$1" : '\(\.\)[^/]*$' \| "x$1" : 'x\(.*\)/[^/]*$']])
-m4trace:m4/m4_ax_prog_doxygen.m4:293: -1- AC_DEFUN([DX_IF_FEATURE], [ifelse(DX_FEATURE_$1, ON, [$2], [$3])])
-m4trace:m4/m4_ax_prog_doxygen.m4:298: -1- AC_DEFUN([DX_REQUIRE_PROG], [
-AC_PATH_TOOL([$1], [$2])
-if test "$DX_FLAG_[]DX_CURRENT_FEATURE$$1" = 1; then
-    AC_MSG_WARN([$2 not found - will not DX_CURRENT_DESCRIPTION])
-    AC_SUBST(DX_FLAG_[]DX_CURRENT_FEATURE, 0)
-fi
-])
-m4trace:m4/m4_ax_prog_doxygen.m4:309: -1- AC_DEFUN([DX_TEST_FEATURE], [test "$DX_FLAG_$1" = 1])
-m4trace:m4/m4_ax_prog_doxygen.m4:315: -1- AC_DEFUN([DX_CHECK_DEPEND], [
-test "$DX_FLAG_$1" = "$2" \
-|| AC_MSG_ERROR([doxygen-DX_CURRENT_FEATURE ifelse([$2], 1,
-                            requires, contradicts) doxygen-DX_CURRENT_FEATURE])
-])
-m4trace:m4/m4_ax_prog_doxygen.m4:324: -1- AC_DEFUN([DX_CLEAR_DEPEND], [
-test "$DX_FLAG_$1" = "$2" || AC_SUBST(DX_FLAG_[]DX_CURRENT_FEATURE, 0)
-])
-m4trace:m4/m4_ax_prog_doxygen.m4:338: -1- AC_DEFUN([DX_ARG_ABLE], [
-    AC_DEFUN([DX_CURRENT_FEATURE], [$1])
-    AC_DEFUN([DX_CURRENT_DESCRIPTION], [$2])
-    AC_ARG_ENABLE(doxygen-$1,
-                  [AS_HELP_STRING(DX_IF_FEATURE([$1], [--disable-doxygen-$1],
-                                                      [--enable-doxygen-$1]),
-                                  DX_IF_FEATURE([$1], [don't $2], [$2]))],
-                  [
-case "$enableval" in
-#(
-y|Y|yes|Yes|YES)
-    AC_SUBST([DX_FLAG_$1], 1)
-    $3
-;; #(
-n|N|no|No|NO)
-    AC_SUBST([DX_FLAG_$1], 0)
-;; #(
-*)
-    AC_MSG_ERROR([invalid value '$enableval' given to doxygen-$1])
-;;
-esac
-], [
-AC_SUBST([DX_FLAG_$1], [DX_IF_FEATURE([$1], 1, 0)])
-$4
-])
-if DX_TEST_FEATURE([$1]); then
-    $5
-    :
-fi
-AM_CONDITIONAL(DX_COND_$1, DX_TEST_FEATURE([$1]))
-if DX_TEST_FEATURE([$1]); then
-    $6
-    :
-else
-    $7
-    :
-fi
-])
-m4trace:m4/m4_ax_prog_doxygen.m4:383: -1- AC_DEFUN([DX_DOXYGEN_FEATURE], [AC_DEFUN([DX_FEATURE_doc],  [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:384: -1- AC_DEFUN([DX_DOT_FEATURE], [AC_DEFUN([DX_FEATURE_dot], [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:385: -1- AC_DEFUN([DX_MAN_FEATURE], [AC_DEFUN([DX_FEATURE_man],  [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:386: -1- AC_DEFUN([DX_HTML_FEATURE], [AC_DEFUN([DX_FEATURE_html], [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:387: -1- AC_DEFUN([DX_CHM_FEATURE], [AC_DEFUN([DX_FEATURE_chm],  [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:388: -1- AC_DEFUN([DX_CHI_FEATURE], [AC_DEFUN([DX_FEATURE_chi],  [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:389: -1- AC_DEFUN([DX_RTF_FEATURE], [AC_DEFUN([DX_FEATURE_rtf],  [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:390: -1- AC_DEFUN([DX_XML_FEATURE], [AC_DEFUN([DX_FEATURE_xml],  [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:391: -1- AC_DEFUN([DX_XML_FEATURE], [AC_DEFUN([DX_FEATURE_xml],  [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:392: -1- AC_DEFUN([DX_PDF_FEATURE], [AC_DEFUN([DX_FEATURE_pdf],  [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:393: -1- AC_DEFUN([DX_PS_FEATURE], [AC_DEFUN([DX_FEATURE_ps],   [$1])])
-m4trace:m4/m4_ax_prog_doxygen.m4:399: -1- AC_DEFUN([DX_INIT_DOXYGEN], [
-
-# Files:
-AC_SUBST([DX_PROJECT], [$1])
-AC_SUBST([DX_CONFIG], [ifelse([$2], [], Doxyfile, [$2])])
-AC_SUBST([DX_DOCDIR], [ifelse([$3], [], doxygen-doc, [$3])])
-
-# Environment variables used inside doxygen.cfg:
-DX_ENV_APPEND(SRCDIR, $srcdir)
-DX_ENV_APPEND(PROJECT, $DX_PROJECT)
-DX_ENV_APPEND(DOCDIR, $DX_DOCDIR)
-DX_ENV_APPEND(VERSION, $PACKAGE_VERSION)
-
-# Doxygen itself:
-DX_ARG_ABLE(doc, [generate any doxygen documentation],
-            [],
-            [],
-            [DX_REQUIRE_PROG([DX_DOXYGEN], doxygen)
-             DX_REQUIRE_PROG([DX_PERL], perl)],
-            [DX_ENV_APPEND(PERL_PATH, $DX_PERL)])
-
-# Dot for graphics:
-DX_ARG_ABLE(dot, [generate graphics for doxygen documentation],
-            [DX_CHECK_DEPEND(doc, 1)],
-            [DX_CLEAR_DEPEND(doc, 1)],
-            [DX_REQUIRE_PROG([DX_DOT], dot)],
-            [DX_ENV_APPEND(HAVE_DOT, YES)
-             DX_ENV_APPEND(DOT_PATH, [`DX_DIRNAME_EXPR($DX_DOT)`])],
-            [DX_ENV_APPEND(HAVE_DOT, NO)])
-
-# Man pages generation:
-DX_ARG_ABLE(man, [generate doxygen manual pages],
-            [DX_CHECK_DEPEND(doc, 1)],
-            [DX_CLEAR_DEPEND(doc, 1)],
-            [],
-            [DX_ENV_APPEND(GENERATE_MAN, YES)],
-            [DX_ENV_APPEND(GENERATE_MAN, NO)])
-
-# RTF file generation:
-DX_ARG_ABLE(rtf, [generate doxygen RTF documentation],
-            [DX_CHECK_DEPEND(doc, 1)],
-            [DX_CLEAR_DEPEND(doc, 1)],
-            [],
-            [DX_ENV_APPEND(GENERATE_RTF, YES)],
-            [DX_ENV_APPEND(GENERATE_RTF, NO)])
-
-# XML file generation:
-DX_ARG_ABLE(xml, [generate doxygen XML documentation],
-            [DX_CHECK_DEPEND(doc, 1)],
-            [DX_CLEAR_DEPEND(doc, 1)],
-            [],
-            [DX_ENV_APPEND(GENERATE_XML, YES)],
-            [DX_ENV_APPEND(GENERATE_XML, NO)])
-
-# (Compressed) HTML help generation:
-DX_ARG_ABLE(chm, [generate doxygen compressed HTML help documentation],
-            [DX_CHECK_DEPEND(doc, 1)],
-            [DX_CLEAR_DEPEND(doc, 1)],
-            [DX_REQUIRE_PROG([DX_HHC], hhc)],
-            [DX_ENV_APPEND(HHC_PATH, $DX_HHC)
-             DX_ENV_APPEND(GENERATE_HTML, YES)
-             DX_ENV_APPEND(GENERATE_HTMLHELP, YES)],
-            [DX_ENV_APPEND(GENERATE_HTMLHELP, NO)])
-
-# Seperate CHI file generation.
-DX_ARG_ABLE(chi, [generate doxygen seperate compressed HTML help index file],
-            [DX_CHECK_DEPEND(chm, 1)],
-            [DX_CLEAR_DEPEND(chm, 1)],
-            [],
-            [DX_ENV_APPEND(GENERATE_CHI, YES)],
-            [DX_ENV_APPEND(GENERATE_CHI, NO)])
-
-# Plain HTML pages generation:
-DX_ARG_ABLE(html, [generate doxygen plain HTML documentation],
-            [DX_CHECK_DEPEND(doc, 1) DX_CHECK_DEPEND(chm, 0)],
-            [DX_CLEAR_DEPEND(doc, 1) DX_CLEAR_DEPEND(chm, 0)],
-            [],
-            [DX_ENV_APPEND(GENERATE_HTML, YES)],
-            [DX_TEST_FEATURE(chm) || DX_ENV_APPEND(GENERATE_HTML, NO)])
-
-# PostScript file generation:
-DX_ARG_ABLE(ps, [generate doxygen PostScript documentation],
-            [DX_CHECK_DEPEND(doc, 1)],
-            [DX_CLEAR_DEPEND(doc, 1)],
-            [DX_REQUIRE_PROG([DX_LATEX], latex)
-             DX_REQUIRE_PROG([DX_MAKEINDEX], makeindex)
-             DX_REQUIRE_PROG([DX_DVIPS], dvips)
-             DX_REQUIRE_PROG([DX_EGREP], egrep)])
-
-# PDF file generation:
-DX_ARG_ABLE(pdf, [generate doxygen PDF documentation],
-            [DX_CHECK_DEPEND(doc, 1)],
-            [DX_CLEAR_DEPEND(doc, 1)],
-            [DX_REQUIRE_PROG([DX_PDFLATEX], pdflatex)
-             DX_REQUIRE_PROG([DX_MAKEINDEX], makeindex)
-             DX_REQUIRE_PROG([DX_EGREP], egrep)])
-
-# LaTeX generation for PS and/or PDF:
-AM_CONDITIONAL(DX_COND_latex, DX_TEST_FEATURE(ps) || DX_TEST_FEATURE(pdf))
-if DX_TEST_FEATURE(ps) || DX_TEST_FEATURE(pdf); then
-    DX_ENV_APPEND(GENERATE_LATEX, YES)
-else
-    DX_ENV_APPEND(GENERATE_LATEX, NO)
-fi
-
-# Paper size for PS and/or PDF:
-AC_ARG_VAR(DOXYGEN_PAPER_SIZE,
-           [a4wide (default), a4, letter, legal or executive])
-case "$DOXYGEN_PAPER_SIZE" in
-#(
-"")
-    AC_SUBST(DOXYGEN_PAPER_SIZE, "")
-;; #(
-a4wide|a4|letter|legal|executive)
-    DX_ENV_APPEND(PAPER_SIZE, $DOXYGEN_PAPER_SIZE)
-;; #(
-*)
-    AC_MSG_ERROR([unknown DOXYGEN_PAPER_SIZE='$DOXYGEN_PAPER_SIZE'])
-;;
-esac
-
-#For debugging:
-#echo DX_FLAG_doc=$DX_FLAG_doc
-#echo DX_FLAG_dot=$DX_FLAG_dot
-#echo DX_FLAG_man=$DX_FLAG_man
-#echo DX_FLAG_html=$DX_FLAG_html
-#echo DX_FLAG_chm=$DX_FLAG_chm
-#echo DX_FLAG_chi=$DX_FLAG_chi
-#echo DX_FLAG_rtf=$DX_FLAG_rtf
-#echo DX_FLAG_xml=$DX_FLAG_xml
-#echo DX_FLAG_pdf=$DX_FLAG_pdf
-#echo DX_FLAG_ps=$DX_FLAG_ps
-#echo DX_ENV=$DX_ENV
-])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^CXX$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^CXXFLAGS$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^LDFLAGS$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^LIBS$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^CPPFLAGS$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^CXX$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^ac_ct_CXX$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^EXEEXT$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^OBJEXT$])
-m4trace:configure.ac:14: -1- _AM_DEPENDENCIES([CXX])
-m4trace:configure.ac:14: -1- AM_SET_DEPDIR
-m4trace:configure.ac:14: -1- m4_pattern_allow([^DEPDIR$])
-m4trace:configure.ac:14: -1- AM_OUTPUT_DEPENDENCY_COMMANDS
-m4trace:configure.ac:14: -1- AM_MAKE_INCLUDE
-m4trace:configure.ac:14: -1- m4_pattern_allow([^am__include$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^am__quote$])
-m4trace:configure.ac:14: -1- AM_DEP_TRACK
-m4trace:configure.ac:14: -1- AM_CONDITIONAL([AMDEP], [test "x$enable_dependency_tracking" != xno])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^AMDEP_TRUE$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^AMDEP_FALSE$])
-m4trace:configure.ac:14: -1- _AM_SUBST_NOTMAKE([AMDEP_TRUE])
-m4trace:configure.ac:14: -1- _AM_SUBST_NOTMAKE([AMDEP_FALSE])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^AMDEPBACKSLASH$])
-m4trace:configure.ac:14: -1- _AM_SUBST_NOTMAKE([AMDEPBACKSLASH])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^CXXDEPMODE$])
-m4trace:configure.ac:14: -1- AM_CONDITIONAL([am__fastdepCXX], [
+m4trace:configure.ac:13: -1- m4_pattern_allow([^CXX$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^CXXFLAGS$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^LDFLAGS$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^LIBS$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^CPPFLAGS$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^CXX$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^ac_ct_CXX$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^EXEEXT$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^OBJEXT$])
+m4trace:configure.ac:13: -1- _AM_DEPENDENCIES([CXX])
+m4trace:configure.ac:13: -1- AM_SET_DEPDIR
+m4trace:configure.ac:13: -1- m4_pattern_allow([^DEPDIR$])
+m4trace:configure.ac:13: -1- AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:13: -1- AM_MAKE_INCLUDE
+m4trace:configure.ac:13: -1- m4_pattern_allow([^am__include$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^am__quote$])
+m4trace:configure.ac:13: -1- AM_DEP_TRACK
+m4trace:configure.ac:13: -1- AM_CONDITIONAL([AMDEP], [test "x$enable_dependency_tracking" != xno])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^AMDEP_TRUE$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^AMDEP_FALSE$])
+m4trace:configure.ac:13: -1- _AM_SUBST_NOTMAKE([AMDEP_TRUE])
+m4trace:configure.ac:13: -1- _AM_SUBST_NOTMAKE([AMDEP_FALSE])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^AMDEPBACKSLASH$])
+m4trace:configure.ac:13: -1- _AM_SUBST_NOTMAKE([AMDEPBACKSLASH])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^CXXDEPMODE$])
+m4trace:configure.ac:13: -1- AM_CONDITIONAL([am__fastdepCXX], [
   test "x$enable_dependency_tracking" != xno \
   && test "$am_cv_CXX_dependencies_compiler_type" = gcc3])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^am__fastdepCXX_TRUE$])
-m4trace:configure.ac:14: -1- m4_pattern_allow([^am__fastdepCXX_FALSE$])
-m4trace:configure.ac:14: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_TRUE])
-m4trace:configure.ac:14: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_FALSE])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CFLAGS$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^LDFLAGS$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^LIBS$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CPPFLAGS$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CC$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^ac_ct_CC$])
-m4trace:configure.ac:15: -1- _AM_DEPENDENCIES([CC])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^CCDEPMODE$])
-m4trace:configure.ac:15: -1- AM_CONDITIONAL([am__fastdepCC], [
+m4trace:configure.ac:13: -1- m4_pattern_allow([^am__fastdepCXX_TRUE$])
+m4trace:configure.ac:13: -1- m4_pattern_allow([^am__fastdepCXX_FALSE$])
+m4trace:configure.ac:13: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_TRUE])
+m4trace:configure.ac:13: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_FALSE])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^CXX$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^CXXFLAGS$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^LDFLAGS$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^LIBS$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^CPPFLAGS$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^CXX$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^ac_ct_CXX$])
+m4trace:configure.ac:16: -1- _AM_DEPENDENCIES([CXX])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^CXXDEPMODE$])
+m4trace:configure.ac:16: -1- AM_CONDITIONAL([am__fastdepCXX], [
+  test "x$enable_dependency_tracking" != xno \
+  && test "$am_cv_CXX_dependencies_compiler_type" = gcc3])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^am__fastdepCXX_TRUE$])
+m4trace:configure.ac:16: -1- m4_pattern_allow([^am__fastdepCXX_FALSE$])
+m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_TRUE])
+m4trace:configure.ac:16: -1- _AM_SUBST_NOTMAKE([am__fastdepCXX_FALSE])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^CFLAGS$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^LDFLAGS$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^LIBS$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^CPPFLAGS$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^CC$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^ac_ct_CC$])
+m4trace:configure.ac:19: -1- _AM_DEPENDENCIES([CC])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^CCDEPMODE$])
+m4trace:configure.ac:19: -1- AM_CONDITIONAL([am__fastdepCC], [
   test "x$enable_dependency_tracking" != xno \
   && test "$am_cv_CC_dependencies_compiler_type" = gcc3])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^am__fastdepCC_TRUE$])
-m4trace:configure.ac:15: -1- m4_pattern_allow([^am__fastdepCC_FALSE$])
-m4trace:configure.ac:15: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_TRUE])
-m4trace:configure.ac:15: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_FALSE])
-m4trace:configure.ac:19: -1- m4_pattern_allow([^HAVE_LIBM$])
-m4trace:configure.ac:22: -1- m4_pattern_allow([^CPP$])
-m4trace:configure.ac:22: -1- m4_pattern_allow([^CPPFLAGS$])
-m4trace:configure.ac:22: -1- m4_pattern_allow([^CPP$])
-m4trace:configure.ac:22: -1- m4_pattern_allow([^GREP$])
-m4trace:configure.ac:22: -1- m4_pattern_allow([^EGREP$])
-m4trace:configure.ac:22: -1- m4_pattern_allow([^STDC_HEADERS$])
-m4trace:configure.ac:22: -1- m4_pattern_allow([^HAVE_STDLIB_H$])
-m4trace:configure.ac:25: -1- m4_pattern_allow([^HAVE__BOOL$])
-m4trace:configure.ac:25: -1- m4_pattern_allow([^HAVE_STDBOOL_H$])
-m4trace:configure.ac:27: -1- m4_pattern_allow([^size_t$])
-m4trace:configure.ac:30: -1- m4_pattern_allow([^HAVE_STDLIB_H$])
-m4trace:configure.ac:30: -1- m4_pattern_allow([^HAVE_MALLOC$])
-m4trace:configure.ac:30: -1- m4_pattern_allow([^HAVE_MALLOC$])
-m4trace:configure.ac:30: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:30: -1- m4_pattern_allow([^malloc$])
-m4trace:configure.ac:31: -1- m4_pattern_allow([^HAVE_SQRT$])
-m4trace:configure.ac:50: -1- AM_CONDITIONAL([USE_MPI], [(test x$mpihitachi = xtrue)||(test x$mpi = xtrue)])
-m4trace:configure.ac:50: -1- m4_pattern_allow([^USE_MPI_TRUE$])
-m4trace:configure.ac:50: -1- m4_pattern_allow([^USE_MPI_FALSE$])
-m4trace:configure.ac:50: -1- _AM_SUBST_NOTMAKE([USE_MPI_TRUE])
-m4trace:configure.ac:50: -1- _AM_SUBST_NOTMAKE([USE_MPI_FALSE])
-m4trace:configure.ac:51: -1- AM_CONDITIONAL([HITACHI], [test x$mpihitachi = xtrue])
-m4trace:configure.ac:51: -1- m4_pattern_allow([^HITACHI_TRUE$])
-m4trace:configure.ac:51: -1- m4_pattern_allow([^HITACHI_FALSE$])
-m4trace:configure.ac:51: -1- _AM_SUBST_NOTMAKE([HITACHI_TRUE])
-m4trace:configure.ac:51: -1- _AM_SUBST_NOTMAKE([HITACHI_FALSE])
-m4trace:configure.ac:56: -1- m4_pattern_allow([^HAVE__USR_INCLUDE_MPICH2_MPI_H$])
-m4trace:configure.ac:57: -1- m4_pattern_allow([^HAVE_MPI$])
-m4trace:configure.ac:64: -1- DX_DOXYGEN_FEATURE([ON|OFF])
-m4trace:configure.ac:64: -1- AC_DEFUN([DX_FEATURE_doc], [ON|OFF])
-m4trace:configure.ac:65: -1- DX_INIT_DOXYGEN([CommonCode], [docs/doxy.cfg], [docs/Doxy-En])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_PROJECT$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_CONFIG$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_DOCDIR$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([SRCDIR], [$srcdir])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([PROJECT], [$DX_PROJECT])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([DOCDIR], [$DX_DOCDIR])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([VERSION], [$PACKAGE_VERSION])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([doc], [generate any doxygen documentation], [], [], [DX_REQUIRE_PROG([DX_DOXYGEN], doxygen)
-             DX_REQUIRE_PROG([DX_PERL], perl)], [DX_ENV_APPEND(PERL_PATH, $DX_PERL)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [doc])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate any doxygen documentation])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([doc], [--disable-doxygen-doc], [--enable-doxygen-doc])
-m4trace:configure.ac:65: -3- DX_FEATURE_doc
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([doc], [don't generate any doxygen documentation], [generate any doxygen documentation])
-m4trace:configure.ac:65: -3- DX_FEATURE_doc
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_doc$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_doc$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_doc$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([doc], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_doc
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([doc])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_DOXYGEN], [doxygen])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_DOXYGEN$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_doc$])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_PERL], [perl])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_PERL$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_doc$])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([doc])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_doc], [test "$DX_FLAG_doc" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_doc_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_doc_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_doc_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_doc_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([doc])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([PERL_PATH], [$DX_PERL])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([dot], [generate graphics for doxygen documentation], [DX_CHECK_DEPEND(doc, 1)], [DX_CLEAR_DEPEND(doc, 1)], [DX_REQUIRE_PROG([DX_DOT], dot)], [DX_ENV_APPEND(HAVE_DOT, YES)
-             DX_ENV_APPEND(DOT_PATH, [`DX_DIRNAME_EXPR($DX_DOT)`])], [DX_ENV_APPEND(HAVE_DOT, NO)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [dot])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate graphics for doxygen documentation])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([dot], [--disable-doxygen-dot], [--enable-doxygen-dot])
-m4trace:configure.ac:65: -3- DX_FEATURE_dot
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([dot], [don't generate graphics for doxygen documentation], [generate graphics for doxygen documentation])
-m4trace:configure.ac:65: -3- DX_FEATURE_dot
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_dot$])
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([doc], [1])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_dot$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_dot$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([dot], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_dot
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([doc], [1])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_dot$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([dot])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_DOT], [dot])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_DOT$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_dot$])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([dot])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_dot], [test "$DX_FLAG_dot" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_dot_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_dot_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_dot_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_dot_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([dot])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([HAVE_DOT], [YES])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([DOT_PATH], [`DX_DIRNAME_EXPR($DX_DOT)`])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_DIRNAME_EXPR([$DX_DOT])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([HAVE_DOT], [NO])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([man], [generate doxygen manual pages], [DX_CHECK_DEPEND(doc, 1)], [DX_CLEAR_DEPEND(doc, 1)], [], [DX_ENV_APPEND(GENERATE_MAN, YES)], [DX_ENV_APPEND(GENERATE_MAN, NO)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [man])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate doxygen manual pages])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([man], [--disable-doxygen-man], [--enable-doxygen-man])
-m4trace:configure.ac:65: -3- DX_FEATURE_man
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([man], [don't generate doxygen manual pages], [generate doxygen manual pages])
-m4trace:configure.ac:65: -3- DX_FEATURE_man
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_man$])
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([doc], [1])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_man$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_man$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([man], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_man
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([doc], [1])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_man$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([man])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([man])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_man], [test "$DX_FLAG_man" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_man_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_man_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_man_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_man_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([man])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_MAN], [YES])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_MAN], [NO])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([rtf], [generate doxygen RTF documentation], [DX_CHECK_DEPEND(doc, 1)], [DX_CLEAR_DEPEND(doc, 1)], [], [DX_ENV_APPEND(GENERATE_RTF, YES)], [DX_ENV_APPEND(GENERATE_RTF, NO)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [rtf])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate doxygen RTF documentation])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([rtf], [--disable-doxygen-rtf], [--enable-doxygen-rtf])
-m4trace:configure.ac:65: -3- DX_FEATURE_rtf
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([rtf], [don't generate doxygen RTF documentation], [generate doxygen RTF documentation])
-m4trace:configure.ac:65: -3- DX_FEATURE_rtf
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_rtf$])
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([doc], [1])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_rtf$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_rtf$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([rtf], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_rtf
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([doc], [1])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_rtf$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([rtf])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([rtf])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_rtf], [test "$DX_FLAG_rtf" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_rtf_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_rtf_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_rtf_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_rtf_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([rtf])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_RTF], [YES])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_RTF], [NO])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([xml], [generate doxygen XML documentation], [DX_CHECK_DEPEND(doc, 1)], [DX_CLEAR_DEPEND(doc, 1)], [], [DX_ENV_APPEND(GENERATE_XML, YES)], [DX_ENV_APPEND(GENERATE_XML, NO)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [xml])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate doxygen XML documentation])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([xml], [--disable-doxygen-xml], [--enable-doxygen-xml])
-m4trace:configure.ac:65: -3- DX_FEATURE_xml
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([xml], [don't generate doxygen XML documentation], [generate doxygen XML documentation])
-m4trace:configure.ac:65: -3- DX_FEATURE_xml
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_xml$])
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([doc], [1])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_xml$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_xml$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([xml], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_xml
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([doc], [1])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_xml$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([xml])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([xml])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_xml], [test "$DX_FLAG_xml" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_xml_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_xml_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_xml_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_xml_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([xml])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_XML], [YES])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_XML], [NO])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([chm], [generate doxygen compressed HTML help documentation], [DX_CHECK_DEPEND(doc, 1)], [DX_CLEAR_DEPEND(doc, 1)], [DX_REQUIRE_PROG([DX_HHC], hhc)], [DX_ENV_APPEND(HHC_PATH, $DX_HHC)
-             DX_ENV_APPEND(GENERATE_HTML, YES)
-             DX_ENV_APPEND(GENERATE_HTMLHELP, YES)], [DX_ENV_APPEND(GENERATE_HTMLHELP, NO)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [chm])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate doxygen compressed HTML help documentation])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([chm], [--disable-doxygen-chm], [--enable-doxygen-chm])
-m4trace:configure.ac:65: -3- DX_FEATURE_chm
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([chm], [don't generate doxygen compressed HTML help documentation], [generate doxygen compressed HTML help documentation])
-m4trace:configure.ac:65: -3- DX_FEATURE_chm
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_chm$])
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([doc], [1])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_chm$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_chm$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([chm], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_chm
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([doc], [1])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_chm$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([chm])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_HHC], [hhc])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_HHC$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_chm$])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([chm])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_chm], [test "$DX_FLAG_chm" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_chm_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_chm_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_chm_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_chm_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([chm])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([HHC_PATH], [$DX_HHC])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_HTML], [YES])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_HTMLHELP], [YES])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_HTMLHELP], [NO])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([chi], [generate doxygen seperate compressed HTML help index file], [DX_CHECK_DEPEND(chm, 1)], [DX_CLEAR_DEPEND(chm, 1)], [], [DX_ENV_APPEND(GENERATE_CHI, YES)], [DX_ENV_APPEND(GENERATE_CHI, NO)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [chi])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate doxygen seperate compressed HTML help index file])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([chi], [--disable-doxygen-chi], [--enable-doxygen-chi])
-m4trace:configure.ac:65: -3- DX_FEATURE_chi
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([chi], [don't generate doxygen seperate compressed HTML help index file], [generate doxygen seperate compressed HTML help index file])
-m4trace:configure.ac:65: -3- DX_FEATURE_chi
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_chi$])
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([chm], [1])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_chi$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_chi$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([chi], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_chi
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([chm], [1])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_chi$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([chi])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([chi])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_chi], [test "$DX_FLAG_chi" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_chi_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_chi_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_chi_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_chi_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([chi])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_CHI], [YES])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_CHI], [NO])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([html], [generate doxygen plain HTML documentation], [DX_CHECK_DEPEND(doc, 1) DX_CHECK_DEPEND(chm, 0)], [DX_CLEAR_DEPEND(doc, 1) DX_CLEAR_DEPEND(chm, 0)], [], [DX_ENV_APPEND(GENERATE_HTML, YES)], [DX_TEST_FEATURE(chm) || DX_ENV_APPEND(GENERATE_HTML, NO)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [html])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate doxygen plain HTML documentation])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([html], [--disable-doxygen-html], [--enable-doxygen-html])
-m4trace:configure.ac:65: -3- DX_FEATURE_html
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([html], [don't generate doxygen plain HTML documentation], [generate doxygen plain HTML documentation])
-m4trace:configure.ac:65: -3- DX_FEATURE_html
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_html$])
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([doc], [1])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([chm], [0])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_html$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_html$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([html], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_html
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([doc], [1])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_html$])
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([chm], [0])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_html$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([html])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([html])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_html], [test "$DX_FLAG_html" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_html_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_html_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_html_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_html_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([html])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_HTML], [YES])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([chm])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_HTML], [NO])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([ps], [generate doxygen PostScript documentation], [DX_CHECK_DEPEND(doc, 1)], [DX_CLEAR_DEPEND(doc, 1)], [DX_REQUIRE_PROG([DX_LATEX], latex)
-             DX_REQUIRE_PROG([DX_MAKEINDEX], makeindex)
-             DX_REQUIRE_PROG([DX_DVIPS], dvips)
-             DX_REQUIRE_PROG([DX_EGREP], egrep)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [ps])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate doxygen PostScript documentation])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([ps], [--disable-doxygen-ps], [--enable-doxygen-ps])
-m4trace:configure.ac:65: -3- DX_FEATURE_ps
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([ps], [don't generate doxygen PostScript documentation], [generate doxygen PostScript documentation])
-m4trace:configure.ac:65: -3- DX_FEATURE_ps
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_ps$])
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([doc], [1])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_ps$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_ps$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([ps], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_ps
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([doc], [1])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_ps$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([ps])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_LATEX], [latex])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_LATEX$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_ps$])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_MAKEINDEX], [makeindex])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_MAKEINDEX$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_ps$])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_DVIPS], [dvips])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_DVIPS$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_ps$])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_EGREP], [egrep])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_EGREP$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_ps$])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([ps])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_ps], [test "$DX_FLAG_ps" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_ps_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_ps_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_ps_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_ps_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([ps])
-m4trace:configure.ac:65: -1- DX_ARG_ABLE([pdf], [generate doxygen PDF documentation], [DX_CHECK_DEPEND(doc, 1)], [DX_CLEAR_DEPEND(doc, 1)], [DX_REQUIRE_PROG([DX_PDFLATEX], pdflatex)
-             DX_REQUIRE_PROG([DX_MAKEINDEX], makeindex)
-             DX_REQUIRE_PROG([DX_EGREP], egrep)])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_FEATURE], [pdf])
-m4trace:configure.ac:65: -1- AC_DEFUN([DX_CURRENT_DESCRIPTION], [generate doxygen PDF documentation])
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([pdf], [--disable-doxygen-pdf], [--enable-doxygen-pdf])
-m4trace:configure.ac:65: -3- DX_FEATURE_pdf
-m4trace:configure.ac:65: -2- DX_IF_FEATURE([pdf], [don't generate doxygen PDF documentation], [generate doxygen PDF documentation])
-m4trace:configure.ac:65: -3- DX_FEATURE_pdf
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_pdf$])
-m4trace:configure.ac:65: -1- DX_CHECK_DEPEND([doc], [1])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_pdf$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_pdf$])
-m4trace:configure.ac:65: -1- DX_IF_FEATURE([pdf], [1], [0])
-m4trace:configure.ac:65: -2- DX_FEATURE_pdf
-m4trace:configure.ac:65: -1- DX_CLEAR_DEPEND([doc], [1])
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_pdf$])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([pdf])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_PDFLATEX], [pdflatex])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_PDFLATEX$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_pdf$])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_MAKEINDEX], [makeindex])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_MAKEINDEX$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_pdf$])
-m4trace:configure.ac:65: -1- DX_REQUIRE_PROG([DX_EGREP], [egrep])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_EGREP$])
-m4trace:configure.ac:65: -1- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -1- DX_CURRENT_DESCRIPTION
-m4trace:configure.ac:65: -2- DX_CURRENT_FEATURE
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_FLAG_pdf$])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([pdf])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_pdf], [test "$DX_FLAG_pdf" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_pdf_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_pdf_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_pdf_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_pdf_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([pdf])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([ps])
-m4trace:configure.ac:65: -2- DX_TEST_FEATURE([pdf])
-m4trace:configure.ac:65: -1- AM_CONDITIONAL([DX_COND_latex], [test "$DX_FLAG_ps" = 1 || test "$DX_FLAG_pdf" = 1])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_latex_TRUE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_COND_latex_FALSE$])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_latex_TRUE])
-m4trace:configure.ac:65: -1- _AM_SUBST_NOTMAKE([DX_COND_latex_FALSE])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([ps])
-m4trace:configure.ac:65: -1- DX_TEST_FEATURE([pdf])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_LATEX], [YES])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([GENERATE_LATEX], [NO])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DOXYGEN_PAPER_SIZE$])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DOXYGEN_PAPER_SIZE$])
-m4trace:configure.ac:65: -1- DX_ENV_APPEND([PAPER_SIZE], [$DOXYGEN_PAPER_SIZE])
-m4trace:configure.ac:65: -1- m4_pattern_allow([^DX_ENV$])
-m4trace:configure.ac:67: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:67: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:67: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:67: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:67: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:67: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:67: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:67: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
-m4trace:configure.ac:67: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:19: -1- m4_pattern_allow([^am__fastdepCC_TRUE$])
+m4trace:configure.ac:19: -1- m4_pattern_allow([^am__fastdepCC_FALSE$])
+m4trace:configure.ac:19: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_TRUE])
+m4trace:configure.ac:19: -1- _AM_SUBST_NOTMAKE([am__fastdepCC_FALSE])
+m4trace:configure.ac:23: -1- m4_pattern_allow([^HAVE_LIBM$])
+m4trace:configure.ac:24: -1- m4_pattern_allow([^HAVE_LIBGSLCBLAS$])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^HAVE_LIBGSL$])
+m4trace:configure.ac:28: -1- m4_pattern_allow([^CXXCPP$])
+m4trace:configure.ac:28: -1- m4_pattern_allow([^CPPFLAGS$])
+m4trace:configure.ac:28: -1- m4_pattern_allow([^CXXCPP$])
+m4trace:configure.ac:28: -1- m4_pattern_allow([^GREP$])
+m4trace:configure.ac:28: -1- m4_pattern_allow([^EGREP$])
+m4trace:configure.ac:28: -1- m4_pattern_allow([^STDC_HEADERS$])
+m4trace:configure.ac:28: -1- m4_pattern_allow([^HAVE_STDLIB_H$])
+m4trace:configure.ac:31: -1- m4_pattern_allow([^HAVE__BOOL$])
+m4trace:configure.ac:31: -1- m4_pattern_allow([^HAVE_STDBOOL_H$])
+m4trace:configure.ac:33: -1- m4_pattern_allow([^size_t$])
+m4trace:configure.ac:36: -1- m4_pattern_allow([^HAVE_STDLIB_H$])
+m4trace:configure.ac:36: -1- m4_pattern_allow([^HAVE_MALLOC$])
+m4trace:configure.ac:36: -1- m4_pattern_allow([^HAVE_MALLOC$])
+m4trace:configure.ac:36: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:36: -1- m4_pattern_allow([^malloc$])
+m4trace:configure.ac:37: -1- m4_pattern_allow([^HAVE_SQRT$])
+m4trace:configure.ac:56: -1- AM_CONDITIONAL([USE_MPI], [(test x$mpihitachi = xtrue)||(test x$mpi = xtrue)])
+m4trace:configure.ac:56: -1- m4_pattern_allow([^USE_MPI_TRUE$])
+m4trace:configure.ac:56: -1- m4_pattern_allow([^USE_MPI_FALSE$])
+m4trace:configure.ac:56: -1- _AM_SUBST_NOTMAKE([USE_MPI_TRUE])
+m4trace:configure.ac:56: -1- _AM_SUBST_NOTMAKE([USE_MPI_FALSE])
+m4trace:configure.ac:57: -1- AM_CONDITIONAL([HITACHI], [test x$mpihitachi = xtrue])
+m4trace:configure.ac:57: -1- m4_pattern_allow([^HITACHI_TRUE$])
+m4trace:configure.ac:57: -1- m4_pattern_allow([^HITACHI_FALSE$])
+m4trace:configure.ac:57: -1- _AM_SUBST_NOTMAKE([HITACHI_TRUE])
+m4trace:configure.ac:57: -1- _AM_SUBST_NOTMAKE([HITACHI_FALSE])
+m4trace:configure.ac:62: -1- m4_pattern_allow([^HAVE__USR_INCLUDE_MPICH2_MPI_H$])
+m4trace:configure.ac:63: -1- m4_pattern_allow([^HAVE_MPI$])
+m4trace:configure.ac:67: -1- m4_pattern_allow([^DOXYGEN$])
+m4trace:configure.ac:79: -1- m4_pattern_allow([^ARFLAGS$])
+m4trace:configure.ac:89: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:89: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:89: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:89: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:89: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:89: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:89: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:89: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
+m4trace:configure.ac:89: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS

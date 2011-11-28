@@ -48,13 +48,11 @@ int Test_ResMass::run(XML::node node) {
 
   Dirac_Wilson* Kernel = new Dirac_Wilson(mzero, &(conf_.U));
  
-  Dirac_optimalDomainWall Ddwf_5d(c, mq, 
-				  DomainWallFermions::getOmega(N5d, 0.01, 0.1), 
-				  Kernel);
+  Dirac_optimalDomainWall Ddwf_5d(c, mq, omega, Kernel);
   
   // quark propagator
   double stop_cond = 1.0e-24;
-  int    Niter= 2000;
+  int    Niter= 1000;
 
   //It follows a standard construction (factories will use a similar one)
   Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
@@ -72,10 +70,9 @@ int Test_ResMass::run(XML::node node) {
   CCIO::cout << "Calculating propagator\n";
   QuarkPropagator.calc(sq,src);
   //save the quark propagator somewhere
-  //CCIO::cout << "Saving propagator\n";
-  //CCIO::SaveOnDisk(sq, "./test_propagator.prop");
+  CCIO::cout << "Saving propagator\n";
+  CCIO::SaveOnDisk(sq, "./test_propagator.prop");
 
- 
   // Cycle among Dirac and color indexes and contract
   // D^-1 * Delta * D^-1
   double mres_numerator = 0;

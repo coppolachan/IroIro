@@ -24,8 +24,13 @@
 #include "Tools/sunVec.h"
 #endif
 
+#ifndef DIRAC_INCLUDED
 #include "dirac.h"
+#endif
+
+#ifndef PUGI_INTERFACE_INCLUDED
 #include "include/pugi_interface.h"
+#endif
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
@@ -38,35 +43,27 @@ typedef ShiftField_even_dn<ffmt_t> shift_edn;
 typedef ShiftField_odd_up<ffmt_t>  shift_oup;
 typedef ShiftField_odd_dn<ffmt_t>  shift_odn;
 
-struct Dirac_WilsonParams{
-  double kappa;
-  
-  Dirac_WilsonParams(const XML::node node){
-    double mass;
-    XML::read(node, "mass", mass);
-    kappa = 0.5/(4.0+mass);
-  }
-  Dirac_WilsonParams(const double mass){
-    kappa = 0.5/(4.0+mass);
-  } 
+namespace Dw{
+  struct EOtag{};    
+  struct OEtag{};    
 
+  double read_mass(const XML::node& node);
+}
 
-};
-
-
-
-class Dirac_Wilson : public DiracWilsonLike {
+class Dirac_Wilson: public DiracWilsonLike{
 protected:
   const Field* const u_;
-  const Dirac_WilsonParams Params;
+  double kpp_;
   int Nvol_;
   int Ndim_;
+  //int boundary[Ndim];
+  // this is temporary setting.
 
   mutable ffmt_t* ff_;
   mutable gfmt_t* gf_;
-  ShiftField* sf_up_; 
-  ShiftField* sf_dn_; 
 
+  std::vector<ShiftField*> sf_up_; 
+  std::vector<ShiftField*> sf_dn_; 
 
   const size_t fsize_;
   size_t gsize_;
@@ -84,13 +81,16 @@ protected:
   SUNvec v_Ix(const ShiftField* sf,int spin,int site) const{
     return SUNvec(sf->cv(spin,site)).xI();
   }
-  
-  virtual SUNmat u(int site,int dir) const{
+
+  SUNmat u(int site,int dir) const{
     return SUNmat((*u_)[gf_->cslice(0,site,dir)]);
   }
-  virtual SUNmat u_dag(int site,int dir) const{
+  SUNmat u_dag(int site,int dir) const{
     return SUNmat((*u_)[gf_->cslice(0,site,dir)]).dag();
   }
+
+  virtual int gauge_site_p(int site)const { return site;}
+  virtual int gauge_site_m(int site)const { return site;}
 
   void mult_xp(Field&,ShiftField*)const;
   void mult_yp(Field&,ShiftField*)const;
@@ -101,56 +101,94 @@ protected:
   void mult_ym(std::valarray<double>&,const Field&)const;
   void mult_zm(std::valarray<double>&,const Field&)const;
   void mult_tm(std::valarray<double>&,const Field&)const;
+  void mult_core(Field&,Field&)const;
 
   static void(Dirac_Wilson::*mult_p[])(Field&,ShiftField*)const;
   static void(Dirac_Wilson::*mult_m[])(std::valarray<double>&,
 				       const Field&)const;
-  
-  void mult_core(Field&, const Field&)const;
+
+  Dirac_Wilson(double mass,const Field* u,Dw::EOtag)
+    :kpp_(0.5/(4.0+mass)),u_(u),
+     Nvol_(CommonPrms::instance()->Nvol()/2),
+     Ndim_(CommonPrms::instance()->Ndim()),
+     ff_(new ffmt_t(Nvol_)),
+     gf_(new gfmt_t(2*Nvol_)),
+     fsize_(ff_->size()),
+     gsize_(gf_->size()){
+    //
+    for(int d=0;d<Ndim_;++d){
+      sf_up_.push_back(new shift_oup(ff_,d));
+      sf_dn_.push_back(new shift_odn(ff_,d));
+    }
+  }
+
+  Dirac_Wilson(double mass,const Field* u,Dw::OEtag)
+    :kpp_(0.5/(4.0+mass)),u_(u),
+     Nvol_(CommonPrms::instance()->Nvol()/2),
+     Ndim_(CommonPrms::instance()->Ndim()),
+     ff_(new ffmt_t(Nvol_)),
+     gf_(new gfmt_t(2*Nvol_)),
+     fsize_(ff_->size()),
+     gsize_(gf_->size()){
+    //
+    for(int d=0;d<Ndim_;++d){
+      sf_up_.push_back(new shift_eup(ff_,d));
+      sf_dn_.push_back(new shift_edn(ff_,d));
+    }
+  }
 
 public:
-  Dirac_Wilson(const double mass,const Field* u)
-    :Params(Dirac_WilsonParams(mass)),u_(u),
+  Dirac_Wilson(double mass,const Field* u)
+    :kpp_(0.5/(4.0+mass)),u_(u),
      Nvol_(CommonPrms::instance()->Nvol()),
      Ndim_(CommonPrms::instance()->Ndim()),
-     ff_(new ffmt_t(Nvol_)), 
+     ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
-     sf_up_( new shift_up(ff_)),
-     sf_dn_( new shift_dn(ff_)),
      fsize_(ff_->size()),
-     gsize_(gf_->size()){}  
+     gsize_(gf_->size()){
+    //
+    for(int d=0;d<Ndim_;++d){
+      sf_up_.push_back(new shift_up(ff_,d));
+      sf_dn_.push_back(new shift_dn(ff_,d));
+    }
+  }
 
-  Dirac_Wilson(const XML::node node,const Field* u)
-    :Params(Dirac_WilsonParams(node)),u_(u),
+  Dirac_Wilson(const XML::node& node,const Field* u)
+    :u_(u),
      Nvol_(CommonPrms::instance()->Nvol()),
      Ndim_(CommonPrms::instance()->Ndim()),
-     ff_(new ffmt_t(Nvol_)), 
+     ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
-     sf_up_( new shift_up(ff_)),
-     sf_dn_( new shift_dn(ff_)),
      fsize_(ff_->size()),
-     gsize_(gf_->size()){}  
+     gsize_(gf_->size()){
+    //
+    double mass;
+    XML::read(node, "mass", mass);
+    kpp_= 0.5/(4.0+mass);
+    
+    for(int d=0;d<Ndim_;++d){
+      sf_up_.push_back(new shift_up(ff_,d));
+      sf_dn_.push_back(new shift_dn(ff_,d));
+    }
+  }
 
-
-  ~Dirac_Wilson(){
+  virtual ~Dirac_Wilson(){
     delete ff_;
     delete gf_;
-    delete sf_up_;
-    delete sf_dn_;
-   }
+    for(int d=0;d<sf_up_.size();++d) delete sf_up_[d];
+    for(int d=0;d<sf_dn_.size();++d) delete sf_dn_[d];
+  }
   
   size_t fsize() const{return fsize_;}
   size_t gsize() const{return gsize_;}
 
-  const Field operator()(int OpType, const Field&)const{}; 
+  const Field operator()(int OpType, const Field&)const{};
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
   const Field gamma5(const Field&) const;
   const Field md_force(const Field& eta,const Field& zeta)const;
-
-  const double getKappa() const {return Params.kappa;}
-
+  const double getKappa() const {return kpp_;}  
 };
 
 #endif

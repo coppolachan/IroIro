@@ -39,7 +39,7 @@ double Staples::plaquette(const Field& g)const{
   return (plaq_s(g) +plaq_t(g))/2;
 }
 double Staples::plaquette(const ShiftField& gs)const{
-  Field g = gs.field();
+  Field g(gs.getva());
   return (plaq_s(g) +plaq_t(g))/2;
 }
 
@@ -51,7 +51,7 @@ double Staples::plaq_s(const Field& g) const{
     int j = (i+1)%(Ndim_-1);
     
     stpl = lower(g,i,j);
-    //cout<<"["<<j<<"]  stpl(0)="<<stpl[0]<<" stpl(1)="<<stpl[1]<<endl;
+    //cout<<" stpl(0)="<<stpl[0]<<" stpl(1)="<<stpl[1]<<endl;
 
     for(int site=0; site<Nvol_; ++site)
       plaq += ReTr(u(g,site,i)*u_dag(stpl,site));  // P_ij
@@ -61,7 +61,7 @@ double Staples::plaq_s(const Field& g) const{
 }
 
 double Staples::plaq_s(const ShiftField& gs) const{
-  Field g = gs.field();
+  Field g(gs.getva());
   plaq_s(g);
 }
 
@@ -79,7 +79,7 @@ double Staples::plaq_t(const Field& g)const{
 }
 
 double Staples::plaq_t(const ShiftField& gs)const{
-  Field g = gs.field();
+  Field g(gs.getva());
   plaq_t(g);
 }
 
@@ -94,7 +94,7 @@ void Staples::staple(Field& W, const Field& g, int mu) const{
 }
 
 void Staples::staple(Field& W, const ShiftField& gs, int mu)const {
-  Field g = gs.field();
+  Field g(gs.getva());
   staple(W,g,mu);
 }
 
@@ -142,7 +142,7 @@ Field Staples::upper(const Field& g, int mu, int nu) const{
 }
 		 
 Field Staples::upper(const ShiftField& gs, int mu,int nu) const{
-  Field g = gs.field();
+  Field g(gs.getva());
   return upper(g,mu,nu);
 }
 
@@ -169,7 +169,7 @@ Field Staples::lower(const Field& g, int mu, int nu) const{
 }
 
 Field Staples::lower(const ShiftField& gs, int mu,int nu) const{
-  Field g = gs.field();
+  Field g(gs.getva());
   return lower(g,mu,nu);
 }
 

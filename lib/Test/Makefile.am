@@ -14,8 +14,6 @@ test_PROGRAMS = test_HMC \
 test_HMC_SOURCES = 	test_HMC.cpp \
 		  	testerHMC.cpp
 
-
-
 test_RNG_SOURCES = test_RNG.cpp
 
 test_Wilson_SOURCES =	test_wilson.cpp \
@@ -31,9 +29,3 @@ include_HEADERS =	test_HMC.hpp \
 			test_wilson.hpp \
 			test_optimalDomainWall.hpp \
 			test_ResidualMass.hpp
-
-EXTRA_DIST = 	test_HMC.xml 		\
-		test_ODWF.xml 		\
-		test_ResMass.xml	\
-		test_RNG.xml    	\
-		test_Wilson.xml

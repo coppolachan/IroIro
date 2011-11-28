@@ -5,7 +5,7 @@
 #define SITEINDEX_INCLUDED
 
 #ifndef COMMONPRMS_INCLUDED
-#include "include/commonPrms.h"
+#include "commonPrms.h"
 #endif
 
 #include<iostream>
@@ -16,8 +16,10 @@ private:
   enum{Ndim_max_ = 4};
   int Nx_,Ny_,Nz_,Nt_;
   int NxNy_,NxNyNz_;
+  int Nvol_;
   std::vector<int> Bdir_;
   std::vector<int> Ndir_;
+  std::vector<int> Vdir_;
   static std::vector<std::vector<int> > bdup_;
   static std::vector<std::vector<int> > bdlw_;
 
@@ -44,14 +46,17 @@ private:
 	      Ny_(CommonPrms::instance()->Ny()),
 	      Nz_(CommonPrms::instance()->Nz()),
 	      Nt_(CommonPrms::instance()->Nt()),
+	      Nvol_(CommonPrms::instance()->Nvol()),
 	      NxNy_(Nx_*Ny_),NxNyNz_(Nx_*Ny_*Nz_){
 
     int Bdir[Ndim_max_]= {Nx_-1,Ny_-1,Nz_-1,Nt_-1,};
     int Ndir[Ndim_max_]= {Nx_,Ny_,Nz_,Nt_,};
+    int Vdir[Ndim_max_]= {Nvol_/Nx_,Nvol_/Ny_,Nvol_/Nz_,Nvol_/Nt_,};
 
     for(int i=0; i< Ndim_max_;++i){
       Bdir_.push_back(Bdir[i]);
       Ndir_.push_back(Ndir[i]);
+      Vdir_.push_back(Vdir[i]);
     }
     setup_bdry();
   }
@@ -81,18 +86,19 @@ public:
 
   //// interfaces to handle the site index
   // component in each direction
-  int cmp(int site,int dir){return (this->*SiteIndex::cmps[dir])(site);}
+  int cmp(int site,int dir)const{return (this->*SiteIndex::cmps[dir])(site);}
 
   // indices for one-step forward/backward in each direction
-  int x_p(int site,int dir){return (this->*SiteIndex::xps[dir])(site);}
-  int x_m(int site,int dir){return (this->*SiteIndex::xms[dir])(site);}
+  int x_p(int site,int dir)const{return (this->*SiteIndex::xps[dir])(site);}
+  int x_m(int site,int dir)const{return (this->*SiteIndex::xms[dir])(site);}
 
   // map from site to index on the boundary
-  int x_b(int site,int dir){return (this->*SiteIndex::xbds[dir])(site);}
+  int x_b(int site,int dir)const{return (this->*SiteIndex::xbds[dir])(site);}
 
-  int Bdir(int d){return Bdir_[d];}
-  const std::vector<int> bdup(int d){return bdup_[d];}
-  const std::vector<int> bdlw(int d){return bdlw_[d];}
+  int Bdir(int d)const{return Bdir_[d];}
+  int Vdir(int d)const{return Vdir_[d];}
+  const std::vector<int> bdup(int d)const{return bdup_[d];}
+  const std::vector<int> bdlw(int d)const{return bdlw_[d];}
 };
 
 #endif

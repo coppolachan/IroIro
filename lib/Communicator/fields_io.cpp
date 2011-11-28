@@ -10,33 +10,25 @@
 
 namespace CCIO
 {
-  BinaryFileReader::BinaryFileReader(const std::string& filename){
-    //Initialize variables
-    NumProcesses_ = Communicator::instance()->size();
-    NodeID_       = Communicator::instance()->nodeid();
-    isPrimary_    = Communicator::instance()->primaryNode();
-    local_lattice_.resize(CommonPrms::instance()->Ndim());
-    global_lattice_.resize(CommonPrms::instance()->Ndim());
-
-
-  }
-
-
-
-
-  int SaveOnDisk(std::vector<Field>& f, const char* filename) {
+  int SaveOnDisk(const std::vector<Field>& f, const char* filename) {
     std::fstream Outputfile;
 
     if(Communicator::instance()->primaryNode()) {
-      Outputfile.open(filename, std::ios::out | std::ios::binary);
+      Outputfile.open(filename, std::fstream::out | std::fstream::binary);
       
-      if (Outputfile.is_open()) {
-	Outputfile.write(reinterpret_cast<char* >(&f[0]), sizeof(double)*f[0].size()*f.size());
+      if (Outputfile.good()) {
+	
+	for (int i = 0; i < f.size(); i++) {
+	  for (int idx = 0; idx < f[i].getva().size(); idx++){
+	    Outputfile << f[i].getva()[idx];
+	    
+	  }
+	}
+	
 	Outputfile.close();
       }
 
     }
     return 0;
   }
-
 }

@@ -239,12 +239,6 @@ include_HEADERS = test_HMC.hpp \
 			test_optimalDomainWall.hpp \
 			test_ResidualMass.hpp
 
-EXTRA_DIST = test_HMC.xml 		\
-		test_ODWF.xml 		\
-		test_ResMass.xml	\
-		test_RNG.xml    	\
-		test_Wilson.xml
-
 all: all-am
 
 .SUFFIXES:

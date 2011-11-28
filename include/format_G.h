@@ -10,13 +10,13 @@
 
 #include <valarray>
 
-namespace Format
-{
+namespace Format{
+
   class Format_G{
+  private:
     int Nvol_;
     int Nc_,Ndim_;
     int Nin_,Nex_;
-  
   public:
     Format_G(int Nvol, int Nex=0):Nvol_(Nvol),
 				  Nc_(CommonPrms::instance()->Nc()),
@@ -25,23 +25,11 @@ namespace Format
 				  Nin_(2*Nc_*Nc_){
       if(Nex) Nex_= Nex;
     }
-    
-    Format_G(){};
-    
     int Nin() const {return Nin_;}
     int Nvol() const {return Nvol_;}
     int Nex() const {return Nex_;}
     int size() const {return Nin_*Nvol_*Nex_;}
-    
-    void setup(int Nvol, int Nex)  {
-      Nvol_ = Nvol;
-      Nc_   = CommonPrms::instance()->Nc();
-      Ndim_ =  CommonPrms::instance()->Ndim();
-      Nex_  = Ndim_;
-      Nin_  = 2*Nc_*Nc_;
-      if(Nex) Nex_= Nex;
-    }
-    
+
     // get indices 
     int index(int cc, int site, int dir=0) const {
       return cc +Nin_*(site +Nvol_*dir);
@@ -74,19 +62,14 @@ namespace Format
       return std::gslice(index_r(c1,c2,site,0),vsz_,vstr_);
     }
 
-    std::valarray<size_t> site_slice(const std::vector<int>& sv)const{
-
-      int vsize = sv.size();
-      std::valarray<size_t> ss(Nin_*vsize*Nex_);
-      
-      int j=0;
+    const std::vector<int> get_sub(const std::vector<int>& sv)const{
+      std::vector<int> sub;
       for(int e=0;e<Nex_;++e)
-	for(int v=0;v<vsize;++v)
-	  for(int i=0;i<Nin_;++i)
-	    ss[j++] = i+Nin_*(sv[v] +vsize*e);
-      return ss;
+        for(int v=0;v<sv.size();++v)
+          for(int i=0;i<Nin_;++i)
+            sub.push_back(i+Nin_*(sv[v] +sv.size()*e));
+      return sub;
     }
-
   };
 }
 

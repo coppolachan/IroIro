@@ -20,7 +20,6 @@ struct Dirac_overlap_ZolotarevParams{
   Dirac_overlap_ZolotarevParams(const double M0_, 
 				const double mq_):
     M0(M0_),mq(mq_){};
-  
 };
 
 class Dirac_overlap_Zolotarev : public DiracWilsonLike {
@@ -33,7 +32,7 @@ public:
   Dirac_overlap_Zolotarev(const XML::node node,
 			  const Fopr_signH_Zolotarev* Fopr_signH_)
     :Params(Dirac_overlap_ZolotarevParams(node)),
-    Fopr_signH(Fopr_signH_){}
+     Fopr_signH(Fopr_signH_){}
 
  Dirac_overlap_Zolotarev(const double M0, const double mass,
 			  const Fopr_signH_Zolotarev* Fopr_signH_)

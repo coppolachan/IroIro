@@ -1,0 +1,292 @@
+test_HMC.o: ../../lib/Test/tests.hpp
+test_HMC.o: ../../include/config.h
+test_HMC.o: test_HMC.hpp
+test_HMC.o: ../../lib/HMC/mdExec.h
+test_HMC.o: ../../lib/Action/action_Nf2_ratio.h
+test_HMC.o: ../../lib/Solver/solver_CG.h
+test_HMC.o: ../../lib/Solver/solver_Factory.hpp
+test_HMC.o: ../../lib/Solver/solver_BiCGStab.h
+test_HMC.o: ../../lib/Dirac_ops/dirac_optimalDomainWall.hpp
+test_HMC.o: ../../lib/Dirac_ops/dirac_optimalDomainWall_4D.hpp
+test_HMC.o: ../../lib/Dirac_ops/dirac_wilson_EvenOdd.h
+test_HMC.o: ../../lib/Tools/sunVec.h
+test_HMC.o: ../../lib/Main/Geometry/siteIndex_eo.h
+test_HMC.o: ../../lib/Main/Geometry/shiftField_eo.h
+test_HMC.o: ../../include/format_F.h
+test_HMC.o: ../../lib/Dirac_ops/dirac_wilson.h
+test_HMC.o: ../../lib/Dirac_ops/dirac_Factory.hpp
+test_HMC.o: ../../lib/Solver/solver.h
+test_HMC.o: ../../lib/Dirac_ops/dirac.h
+test_HMC.o: /usr/vacpp/include/assert.h
+test_HMC.o: ../../lib/Tools/randNum_MP.h
+test_HMC.o: ../../lib/Action/action_Nf2.h
+test_HMC.o: ../../lib/Action/action_fermiontype_factory.hpp
+test_HMC.o: ../../lib/Main/Geometry/shiftField.h
+test_HMC.o: ../../lib/Measurements/GaugeM/staples.h
+test_HMC.o: ../../lib/Communicator/comm_io.hpp
+test_HMC.o: ../../include/common_code.hpp
+test_HMC.o: ../../include/geometry.h
+test_HMC.o: /usr/vacpp/include/fstream.t
+test_HMC.o: /usr/vacpp/include/fstream
+test_HMC.o: ../../lib/Main/gaugeConf.hpp
+test_HMC.o: ../../include/common_fields.hpp
+test_HMC.o: ../../lib/Action/action_gauge.h
+test_HMC.o: ../../lib/Main/Geometry/siteIndex.h
+test_HMC.o: ../../include/format_G.h
+test_HMC.o: ../../lib/Action/action.h
+test_HMC.o: ../../lib/Action/action_Factory.h
+test_HMC.o: ../../lib/Tools/RAIIFactory.hpp
+test_HMC.o: /usr/vacpp/include/xtree.t
+test_HMC.o: /usr/vacpp/include/functional
+test_HMC.o: /usr/vacpp/include/xtree
+test_HMC.o: /usr/vacpp/include/map
+test_HMC.o: ../../lib/HMC/mdExec_Factory.h
+test_HMC.o: ../../lib/PugiXML/pugiconfig.hpp
+test_HMC.o: ../../lib/PugiXML/pugixml.hpp
+test_HMC.o: ../../include/pugi_interface.h
+test_HMC.o: ../../include/singleton.h
+test_HMC.o: /usr/vacpp/include/string.t
+test_HMC.o: /usr/vacpp/include/string
+test_HMC.o: /usr/vacpp/include/ostream.t
+test_HMC.o: /usr/vacpp/include/xlocinfo.t
+test_HMC.o: /usr/include/ctype.h
+test_HMC.o: /usr/vacpp/include/xlocinfo.h
+test_HMC.o: /usr/vacpp/include/xlocinfo
+test_HMC.o: /usr/vacpp/include/istream.t
+test_HMC.o: /usr/vacpp/include/typeinfo
+test_HMC.o: /usr/vacpp/include/xlocale
+test_HMC.o: /usr/vacpp/include/streambuf
+test_HMC.o: /usr/vacpp/include/climits
+test_HMC.o: /usr/vacpp/include/cerrno
+test_HMC.o: /usr/vacpp/include/xlocnum
+test_HMC.o: ../../include/field.h
+test_HMC.o: /usr/vacpp/include/ios
+test_HMC.o: /usr/vacpp/include/ostream
+test_HMC.o: /usr/vacpp/include/istream
+test_HMC.o: /usr/vacpp/include/cassert
+test_HMC.o: /usr/vacpp/include/iostream
+test_HMC.o: ../../lib/Tools/randNum_MT19937.h
+test_HMC.o: ../../lib/Tools/randNum.h
+test_HMC.o: ../../lib/Tools/randNum_Factory.h
+test_HMC.o: /usr/include/stdarg.h
+test_HMC.o: /usr/vacpp/include/stdarg.h
+test_HMC.o: /usr/vacpp/include/cstdarg
+test_HMC.o: /usr/vacpp/include/valarray.t
+test_HMC.o: /usr/vacpp/include/fmath.h
+test_HMC.o: /usr/include/math.h
+test_HMC.o: /usr/vacpp/include/math.h
+test_HMC.o: /usr/vacpp/include/valarray
+test_HMC.o: /usr/vacpp/include/vector.t
+test_HMC.o: /usr/vacpp/include/xstring.t
+test_HMC.o: /usr/include/errno.h
+test_HMC.o: /usr/vacpp/include/xstring
+test_HMC.o: /usr/vacpp/include/stdexcept
+test_HMC.o: /usr/vacpp/include/memory.t
+test_HMC.o: /usr/vacpp/include/new
+test_HMC.o: /usr/include/sys/localedef31.h
+test_HMC.o: /usr/include/locale.h
+test_HMC.o: /usr/include/sys/lc_core.h
+test_HMC.o: /usr/include/sys/localedef.h
+test_HMC.o: /usr/include/sys/m_signal.h
+test_HMC.o: /usr/include/sys/mstsave.h
+test_HMC.o: /usr/include/sys/m_param.h
+test_HMC.o: /usr/include/sys/context.h
+test_HMC.o: /usr/include/sys/signal.h
+test_HMC.o: /usr/vacpp/include/xiosbase
+test_HMC.o: /usr/include/sys/time.h
+test_HMC.o: /usr/include/sys/resource.h
+test_HMC.o: /usr/include/sys/wait.h
+test_HMC.o: /usr/include/stdlib.h
+test_HMC.o: /usr/vacpp/include/stdlib.h
+test_HMC.o: ../../include/fopr.h
+test_HMC.o: /usr/vacpp/include/cstdlib
+test_HMC.o: /usr/vacpp/include/xmemory
+test_HMC.o: /usr/vacpp/include/xutility.t
+test_HMC.o: /usr/vacpp/include/cstddef
+test_HMC.o: /usr/vacpp/include/xstddef
+test_HMC.o: /usr/include/wchar.h
+test_HMC.o: /usr/vacpp/include/cwchar
+test_HMC.o: /usr/include/string.h
+test_HMC.o: /usr/vacpp/include/cstring
+test_HMC.o: /usr/vacpp/include/string.h
+test_HMC.o: /usr/vacpp/include/yvals.h
+test_HMC.o: /usr/vacpp/include/cmath
+test_HMC.o: /usr/vacpp/include/cstdio
+test_HMC.o: /usr/vacpp/include/iosfwd
+test_HMC.o: /usr/vacpp/include/utility
+test_HMC.o: /usr/vacpp/include/sys/time.h
+test_HMC.o: /usr/vacpp/include/xutility
+test_HMC.o: /usr/vacpp/include/iterator
+test_HMC.o: ../../lib/Action/action_gaugetype_factory.h
+test_HMC.o: /usr/vacpp/include/memory
+test_HMC.o: /usr/vacpp/include/vector
+test_HMC.o: ../../include/commonPrms.h
+test_HMC.o: ../../lib/Communicator/communicator.h
+test_HMC.o: ../../lib/HMC/hmcGeneral.h
+test_HMC.o: /usr/include/stddef.h
+test_HMC.o: ../../lib/Tools/sunMat.h
+test_HMC.o: /usr/include/time.h
+test_HMC.o: ../../lib/HMC/mdExec_leapfrog.h
+test_HMC.o: /usr/include/float.h
+test_HMC.o: /usr/include/limits.h
+test_HMC.o: /usr/include/sys/limits.h
+test_HMC.o: /usr/include/sys/vm_types.h
+test_HMC.o: /usr/include/sys/m_types.h
+test_HMC.o: /usr/include/end_strict_stdtypes.h
+test_HMC.o: /usr/include/stdint.h
+test_HMC.o: /usr/include/sys/inttypes.h
+test_HMC.o: /usr/include/strict_stdtypes.h
+test_HMC.o: /usr/include/sys/types.h
+test_HMC.o: /usr/vacpp/include/exception
+test_HMC.o: /usr/vacpp/include/sys/types.h
+test_HMC.o: /usr/include/va_list.h
+test_HMC.o: /usr/include/standards.h
+test_HMC.o: /usr/include/stdio.h
+test_HMC.o: /usr/vacpp/include/stdio.h
+test_HMC.o: test_HMC.cpp
+../../lib/Test/tests.hpp:
+../../include/config.h:
+test_HMC.hpp:
+../../lib/HMC/mdExec.h:
+../../lib/Action/action_Nf2_ratio.h:
+../../lib/Solver/solver_CG.h:
+../../lib/Solver/solver_Factory.hpp:
+../../lib/Solver/solver_BiCGStab.h:
+../../lib/Dirac_ops/dirac_optimalDomainWall.hpp:
+../../lib/Dirac_ops/dirac_optimalDomainWall_4D.hpp:
+../../lib/Dirac_ops/dirac_wilson_EvenOdd.h:
+../../lib/Tools/sunVec.h:
+../../lib/Main/Geometry/siteIndex_eo.h:
+../../lib/Main/Geometry/shiftField_eo.h:
+../../include/format_F.h:
+../../lib/Dirac_ops/dirac_wilson.h:
+../../lib/Dirac_ops/dirac_Factory.hpp:
+../../lib/Solver/solver.h:
+../../lib/Dirac_ops/dirac.h:
+/usr/vacpp/include/assert.h:
+../../lib/Tools/randNum_MP.h:
+../../lib/Action/action_Nf2.h:
+../../lib/Action/action_fermiontype_factory.hpp:
+../../lib/Main/Geometry/shiftField.h:
+../../lib/Measurements/GaugeM/staples.h:
+../../lib/Communicator/comm_io.hpp:
+../../include/common_code.hpp:
+../../include/geometry.h:
+/usr/vacpp/include/fstream.t:
+/usr/vacpp/include/fstream:
+../../lib/Main/gaugeConf.hpp:
+../../include/common_fields.hpp:
+../../lib/Action/action_gauge.h:
+../../lib/Main/Geometry/siteIndex.h:
+../../include/format_G.h:
+../../lib/Action/action.h:
+../../lib/Action/action_Factory.h:
+../../lib/Tools/RAIIFactory.hpp:
+/usr/vacpp/include/xtree.t:
+/usr/vacpp/include/functional:
+/usr/vacpp/include/xtree:
+/usr/vacpp/include/map:
+../../lib/HMC/mdExec_Factory.h:
+../../lib/PugiXML/pugiconfig.hpp:
+../../lib/PugiXML/pugixml.hpp:
+../../include/pugi_interface.h:
+../../include/singleton.h:
+/usr/vacpp/include/string.t:
+/usr/vacpp/include/string:
+/usr/vacpp/include/ostream.t:
+/usr/vacpp/include/xlocinfo.t:
+/usr/include/ctype.h:
+/usr/vacpp/include/xlocinfo.h:
+/usr/vacpp/include/xlocinfo:
+/usr/vacpp/include/istream.t:
+/usr/vacpp/include/typeinfo:
+/usr/vacpp/include/xlocale:
+/usr/vacpp/include/streambuf:
+/usr/vacpp/include/climits:
+/usr/vacpp/include/cerrno:
+/usr/vacpp/include/xlocnum:
+../../include/field.h:
+/usr/vacpp/include/ios:
+/usr/vacpp/include/ostream:
+/usr/vacpp/include/istream:
+/usr/vacpp/include/cassert:
+/usr/vacpp/include/iostream:
+../../lib/Tools/randNum_MT19937.h:
+../../lib/Tools/randNum.h:
+../../lib/Tools/randNum_Factory.h:
+/usr/include/stdarg.h:
+/usr/vacpp/include/stdarg.h:
+/usr/vacpp/include/cstdarg:
+/usr/vacpp/include/valarray.t:
+/usr/vacpp/include/fmath.h:
+/usr/include/math.h:
+/usr/vacpp/include/math.h:
+/usr/vacpp/include/valarray:
+/usr/vacpp/include/vector.t:
+/usr/vacpp/include/xstring.t:
+/usr/include/errno.h:
+/usr/vacpp/include/xstring:
+/usr/vacpp/include/stdexcept:
+/usr/vacpp/include/memory.t:
+/usr/vacpp/include/new:
+/usr/include/sys/localedef31.h:
+/usr/include/locale.h:
+/usr/include/sys/lc_core.h:
+/usr/include/sys/localedef.h:
+/usr/include/sys/m_signal.h:
+/usr/include/sys/mstsave.h:
+/usr/include/sys/m_param.h:
+/usr/include/sys/context.h:
+/usr/include/sys/signal.h:
+/usr/vacpp/include/xiosbase:
+/usr/include/sys/time.h:
+/usr/include/sys/resource.h:
+/usr/include/sys/wait.h:
+/usr/include/stdlib.h:
+/usr/vacpp/include/stdlib.h:
+../../include/fopr.h:
+/usr/vacpp/include/cstdlib:
+/usr/vacpp/include/xmemory:
+/usr/vacpp/include/xutility.t:
+/usr/vacpp/include/cstddef:
+/usr/vacpp/include/xstddef:
+/usr/include/wchar.h:
+/usr/vacpp/include/cwchar:
+/usr/include/string.h:
+/usr/vacpp/include/cstring:
+/usr/vacpp/include/string.h:
+/usr/vacpp/include/yvals.h:
+/usr/vacpp/include/cmath:
+/usr/vacpp/include/cstdio:
+/usr/vacpp/include/iosfwd:
+/usr/vacpp/include/utility:
+/usr/vacpp/include/sys/time.h:
+/usr/vacpp/include/xutility:
+/usr/vacpp/include/iterator:
+../../lib/Action/action_gaugetype_factory.h:
+/usr/vacpp/include/memory:
+/usr/vacpp/include/vector:
+../../include/commonPrms.h:
+../../lib/Communicator/communicator.h:
+../../lib/HMC/hmcGeneral.h:
+/usr/include/stddef.h:
+../../lib/Tools/sunMat.h:
+/usr/include/time.h:
+../../lib/HMC/mdExec_leapfrog.h:
+/usr/include/float.h:
+/usr/include/limits.h:
+/usr/include/sys/limits.h:
+/usr/include/sys/vm_types.h:
+/usr/include/sys/m_types.h:
+/usr/include/end_strict_stdtypes.h:
+/usr/include/stdint.h:
+/usr/include/sys/inttypes.h:
+/usr/include/strict_stdtypes.h:
+/usr/include/sys/types.h:
+/usr/vacpp/include/exception:
+/usr/vacpp/include/sys/types.h:
+/usr/include/va_list.h:
+/usr/include/standards.h:
+/usr/include/stdio.h:
+/usr/vacpp/include/stdio.h:
+test_HMC.cpp:

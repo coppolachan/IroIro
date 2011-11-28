@@ -19,6 +19,9 @@ namespace QuarkPropagators {
       if (!strcmp(QuarkProp_name, "Qprop")) { 
         return new QPropCreator(node);
       }
+      if (!strcmp(QuarkProp_name, "Qprop_EvenOdd")) { 
+        return new QPropCreator_EvenOdd(node);
+      }
       if (!strcmp(QuarkProp_name, "QpropDWF")) { 
         return new QPropDWFCreator(node);
       }
@@ -33,10 +36,5 @@ namespace QuarkPropagators {
 		 << "Request by " << node.parent().name() << std::endl;
       abort();
     }
-
-    
-    
-    
-  };
-  
+  }  
 };

@@ -3,15 +3,11 @@
 //-----------------------------------------------------------------
 #include "communicator.h"
 #include "mpi.h"
-#include "include/commonPrms.h"
-#include "include/field.h"
 #include "comm_io.hpp"
 #include <stdio.h>
 #include <iostream>
 #include <cstdarg>
 using namespace std;
-
-
 
 int Communicator::my_rank_;
 int Communicator::Nproc_;
@@ -56,35 +52,32 @@ void Communicator::setup(){
   nd_dn_[2] = px +py*NPEx +((pz-1+NPEz)%NPEz)*NPEx*NPEy +pt*NPEx*NPEy*NPEz;
   nd_dn_[3] = px +py*NPEx +pz*NPEx*NPEy +((pt-1+NPEt)%NPEt)*NPEx*NPEy*NPEz;
 
-
   CCIO::cout.init(&std::cout);
   CCIO::cerr.init(&std::cerr);
+  if(my_rank_==0) cout << "Communicator using MPI with "
+		       << Nproc_ << " processes.\n";
 
-  if(my_rank_==0) cout << "Communicator using MPI with "<< Nproc_ << " processes.\n";
 }
-//----------------------------------------------------------
-Communicator::~Communicator(){
-  MPI_Finalize();
-}
+
+Communicator::~Communicator(){  MPI_Finalize();}
 
 bool Communicator::primaryNode(){
-  if (my_rank_==0) 
-    return true;
-  else
-    return false;
+  if (my_rank_==0) return true;
+  return false;
 }
 
-//----------------------------------------------------------
-int Communicator::nodeid(int x, int y, int z, int t){
+//bool Communicator::primaryNode(){ return (my_rank_? true : false);}
+
+int Communicator::nodeid(int x, int y, int z, int t)const{
   int NPEx = CommonPrms::instance()->NPEx();
   int NPEy = CommonPrms::instance()->NPEy();
   int NPEz = CommonPrms::instance()->NPEz();
   int NPEt = CommonPrms::instance()->NPEt();
   return x +NPEx*(y +NPEy*(z +NPEz*t));
 }
-  
-//----------------------------------------------------------
-void Communicator::transfer_fw(double *bin, double *data,int size,int dir){
+
+void Communicator::
+transfer_fw(double *bin,double *data,int size,int dir){
   MPI_Status  status;
   int p_send = nd_dn_[dir];
   int p_recv = nd_up_[dir];
@@ -92,12 +85,40 @@ void Communicator::transfer_fw(double *bin, double *data,int size,int dir){
   int tag1 = dir*Nproc_+my_rank_;
   int tag2 = dir*Nproc_+p_recv;
 
-  MPI_Sendrecv( data, size, MPI_DOUBLE, p_send, tag1,
-		bin,  size, MPI_DOUBLE, p_recv, tag2,
-		MPI_COMM_WORLD, &status );
+  MPI_Sendrecv(data, size, MPI_DOUBLE, p_send, tag1,
+	       bin,  size, MPI_DOUBLE, p_recv, tag2,
+	       MPI_COMM_WORLD, &status );
 }
-//----------------------------------------------------------
-void Communicator::transfer_bk(double *bin,double *data,int size,int dir){
+
+void Communicator::
+transfer_fw(valarray<double>& bin,const valarray<double>& data,
+	    int size, int dir){
+  transfer_fw(&bin[0],&(const_cast<valarray<double>& >(data))[0],size,dir);
+}
+
+void Communicator::
+transfer_fw(valarray<double>& bin,const valarray<double>& data,
+	    const vector<int>& index, int dir){
+  MPI_Status  status;
+  MPI_Datatype subarray;
+  MPI_Type_create_indexed_block(index.size(),1,
+				&(const_cast<vector<int>& >(index))[0],
+				MPI_DOUBLE,&subarray); 
+  MPI_Type_commit(&subarray);
+
+  int p_send = nd_dn_[dir];
+  int p_recv = nd_up_[dir];
+  int tag1 = dir*Nproc_+my_rank_;
+  int tag2 = dir*Nproc_+p_recv;
+
+  MPI_Sendrecv(&(const_cast<valarray<double>& >(data))[0],
+	       1,subarray,p_send,tag1,
+	       &bin[0], index.size(),MPI_DOUBLE,p_recv,tag2,
+	       MPI_COMM_WORLD,&status);
+}
+
+void Communicator::
+transfer_bk(double *bin,double *data,int size,int dir){
   MPI_Status  status;
   int p_send = nd_up_[dir];
   int p_recv = nd_dn_[dir];
@@ -105,47 +126,39 @@ void Communicator::transfer_bk(double *bin,double *data,int size,int dir){
   int tag1 = (Ndim +dir)*Nproc_+my_rank_;
   int tag2 = (Ndim +dir)*Nproc_+p_recv;
 
-  MPI_Sendrecv( data, size, MPI_DOUBLE, p_send, tag1,
-		bin,  size, MPI_DOUBLE, p_recv, tag2,
-		MPI_COMM_WORLD, &status );
+  MPI_Sendrecv(data, size, MPI_DOUBLE, p_send, tag1,
+	       bin,  size, MPI_DOUBLE, p_recv, tag2,
+	       MPI_COMM_WORLD, &status );
 }
-//----------------------------------------------------------
-void Communicator::transfer_fw(Field& bin,const Field& data,int size,int dir){
-  double abin[size];
-  double adata[size];
-  for(int i=0; i<size; ++i) adata[i] = data[i];
-  transfer_fw(abin,adata,size,dir);
-  for(int i=0; i<size; ++i) bin.set(i, abin[i]);
+
+void Communicator::
+transfer_bk(valarray<double>& bin,const valarray<double>& data,
+	    int size,int dir){
+  transfer_bk(&(bin[0]),&(const_cast<valarray<double>& >(data))[0],size,dir);
 }
-//----------------------------------------------------------
-void Communicator::transfer_bk(Field& bin,const Field& data,int size,int dir){
-  double abin[size];
-  double adata[size];
-  for(int i=0; i<size; ++i) adata[i] = data[i];
-  transfer_bk(abin,adata,size,dir);
-  for(int i=0; i<size; ++i) bin.set(i, abin[i]);
+
+void Communicator::
+transfer_bk(valarray<double>& bin,const valarray<double>& data,
+	    const vector<int>& index, int dir){
+  MPI_Status  status;
+  MPI_Datatype subarray;
+  MPI_Type_create_indexed_block(index.size(),1,
+				&(const_cast<vector<int>& >(index))[0],
+				MPI_DOUBLE,&subarray); 
+  MPI_Type_commit(&subarray);
+
+  int p_send = nd_up_[dir];
+  int p_recv = nd_dn_[dir];
+  int Ndim = CommonPrms::instance()->Ndim();
+  int tag1 = (Ndim +dir)*Nproc_+my_rank_;
+  int tag2 = (Ndim +dir)*Nproc_+p_recv;
+
+  MPI_Sendrecv(&(const_cast<valarray<double>& >(data))[0],
+	       1,subarray,p_send,tag1,
+	       &bin[0], index.size(),MPI_DOUBLE,p_recv,tag2,
+	       MPI_COMM_WORLD,&status);
 }
-//----------------------------------------------------------
-void Communicator::transfer_fw(valarray<double>& bin, 
-			       const valarray<double>& data, 
-			       int size, int dir){
-  double abin[size];
-  double adata[size];
-  for(int i=0; i<size; ++i) adata[i] = data[i];
-  transfer_fw(abin,adata,size,dir);
-  for(int i=0; i<size; ++i) bin[i] = abin[i];
-}
-//----------------------------------------------------------
-void Communicator::transfer_bk(valarray<double>& bin, 
-			       const valarray<double>& data,
-			       int size,int dir){
-  double abin[size];
-  double adata[size];
-  for(int i=0; i<size; ++i) adata[i] = data[i];
-  transfer_bk(abin,adata,size,dir);
-  for(int i=0; i<size; ++i) bin[i] = abin[i];
-}
-//----------------------------------------------------------
+
 void Communicator::send_1to1(double *bin,double *data,int size,
 			     int p_to,int p_from,int tag){
   MPI_Status status;
@@ -159,53 +172,32 @@ void Communicator::send_1to1(double *bin,double *data,int size,
   }
   MPI_Barrier(MPI_COMM_WORLD);
 }
-//----------------------------------------------------------
-void Communicator::send_1to1(valarray<double>& bin, 
-			     const valarray<double>& data, int size,
-			     int p_to, int p_from, int tag){
-  if(p_to == p_from){
-    bin = data;
-  }else{
-    double abin[size], adata[size];
-    if(my_rank_==p_from) for(int i=0; i<size; ++i) adata[i] = data[i];
-    send_1to1(abin,adata,size,p_to,p_from,tag);
-    if(my_rank_==p_to)  for(int i=0; i<size; ++i) bin[i] = abin[i];
-  }
+
+void Communicator::send_1to1(valarray<double>& bin,
+			     const valarray<double>& data, 
+			     int size,int p_to,int p_from,int tag){
+  if(p_to == p_from)    bin = data;
+  else send_1to1(&(bin[0]),&(const_cast<valarray<double>& >(data))[0],
+		 size,p_to,p_from,tag);
   MPI_Barrier(MPI_COMM_WORLD);
 }
-//----------------------------------------------------------
-void Communicator::send_1to1(Field& bin, const Field& data, int size,
-			     int p_to, int p_from, int tag){
-  if(p_to == p_from){
-    bin = data;
-  }else{
-    double abin[size], adata[size];
-    if(my_rank_==p_from) for(int i=0; i<size; ++i) adata[i] = data[i];
-    send_1to1(abin,adata,size,p_to,p_from,tag);
-    if(my_rank_==p_to)  for(int i=0; i<size; ++i) bin.set(i, abin[i]);
-  }
-  MPI_Barrier(MPI_COMM_WORLD);
-}
-//----------------------------------------------------------
-double Communicator::reduce_sum(double& a){
+
+double Communicator::reduce_sum(double a){
  double a_sum = 0.0;
  MPI_Allreduce(&a, &a_sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
  return a_sum;
 }
 
-//----------------------------------------------------------
 void Communicator::sync(){ MPI_Barrier(MPI_COMM_WORLD);}
 
-//----------------------------------------------------------
 void Communicator::broadcast(int size, int &data, int sender){
  MPI_Bcast( &data, size, MPI_INT, sender, MPI_COMM_WORLD );
 }
 
-//----------------------------------------------------------
 void Communicator::broadcast(int size, double &data, int sender){
   MPI_Bcast( &data, size, MPI_DOUBLE, sender, MPI_COMM_WORLD );
 }
-//----------------------------------------------------------
+
 int Communicator::pprintf(const char* format ...){
   va_list ap;
   int ret = 0;
@@ -217,5 +209,5 @@ int Communicator::pprintf(const char* format ...){
 
   return ret;
 }
-//**************************************************END*****
+
 

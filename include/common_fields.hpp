@@ -39,8 +39,7 @@ public:
    */
   GaugeField(Geometry geom): 
     Format(GaugeFieldFormat( geom.parameters->Nvol() )),
-    U(Field(Format.size()))    {};
-  
+    U(Field(Format.size())){}
   
   /*!
    * Initializes the gauge field with an \n
@@ -67,9 +66,7 @@ public:
     } catch(...) {
       std::cout << "Error in initialization of gauge field "<< std::endl;
     }
-    
   }
-
 
  /*!
    * Initializes the gauge field with \n
@@ -78,10 +75,8 @@ public:
   void initializeUnit(){
     GaugeConf_unit gconf(Format);
     gconf.init_conf(U);
-  };
+  }
 
 };
-
-
 
 #endif //COMMON_FIELDS_H_
