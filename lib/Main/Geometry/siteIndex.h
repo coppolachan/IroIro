@@ -4,9 +4,7 @@
 #ifndef SITEINDEX_INCLUDED
 #define SITEINDEX_INCLUDED
 
-#ifndef COMMONPRMS_INCLUDED
-#include "commonPrms.h"
-#endif
+#include "include/commonPrms.h"
 
 #include<iostream>
 #include<vector>
