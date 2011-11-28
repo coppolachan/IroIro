@@ -69,7 +69,6 @@ public:
 	     double& diff, int& Nconv) const;
 
   bool check_DdagD() const  {
-    return true;
     return  (typeid(*opr_) == typeid(Fopr_DdagD));
   }
 

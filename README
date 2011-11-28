@@ -14,7 +14,7 @@ Compilation on AIX Hitachi SR16000 machine
 
 Use the following lines
  
-./configure --enable-mpi-hitachi CXX=mpCC -host=rs6000-ibm-aix CXXFLAGS="-I/srhome/scqcd/cossu/gsl/include -qlanglvl=stdc99" LDFLAGS="-L/srhome/scqcd/cossu/gsl/lib"
+./configure --enable-mpi-hitachi CXX=mpCC -host=rs6000-ibm-aix CXXFLAGS="-I/srhome/scqcd/cossu/gsl/include -qlanglvl=stdc99 -qrtti=type" LDFLAGS="-L/srhome/scqcd/cossu/gsl/lib"
 gmake
 
 In order to override the default optimization level just add the 
