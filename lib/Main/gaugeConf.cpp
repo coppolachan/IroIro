@@ -10,18 +10,7 @@
 using namespace std;
 
 int GaugeConf::getid(int x,int y,int z,int t){
-// #ifdef USE_MPI
-//   int coord[Ndim_];
-//   coord[0] = x/Nx_;
-//   coord[1] = y/Ny_;
-//   coord[2] = z/Nz_;
-//   coord[3] = t/Nt_;
-
-//   return Communicator::instance()->nodeid(Ndim_,cood);
-// #endif
-// #ifndef USE_MPI
   return Communicator::instance()->nodeid(x/Nx_,y/Ny_,z/Nz_,t/Nt_);
-  //#endif
 }
 
 void GaugeConf_txt::init_conf(Field& u){

@@ -20,11 +20,6 @@ using namespace std;
 using namespace Format;
 
 int Test_Wilson::run(){
-  run_lex();
-}
-
-
-int Test_Wilson::run_lex(){
   prop_t sq;// propagator
   // Use factories to construct the propagator
   QuarkPropagator* QP;
@@ -34,41 +29,38 @@ int Test_Wilson::run_lex(){
     QuarkPropagators::createQuarkPropagatorFactory(Wilson_node_);
   //////////////////////////////////////
 
-
-  /*
   unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
   int length=4;
   RandNum_MT19937 rand(init, length);
-  */
+
   // source ????
-  vector<int> spos(4,0); 
+  //vector<int> spos(4,0); 
   //vector<int> spos(4,1); 
 
-  Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
-  //Source_wnoise<Format_F> src(rand,CommonPrms::instance()->Nvol());
+  //Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
+  Source_wnoise<Format_F> src(rand,CommonPrms::instance()->Nvol());
   //Source_wall<Format_F> src(0,CommonPrms::instance()->Nvol());
   //wall source not working
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  //Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
+  //  Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
 
-  // // Solver definition
-  //int    Niter= 1000;
-  //double stop_cond = 1.0e-24;
+  // Solver definition
+  //  int    Niter= 1000;
+  //  double stop_cond = 1.0e-24;
   //Solver* SolverBiCGstab = new Solver_BiCGStab(stop_cond,
-  // 					       Niter,
-  //  					       new Fopr_DdagD(Kernel));
+  //   					       Niter,
+  //   					       new Fopr_DdagD(Kernel));
 
-  // Solver_CG* SolverCG = new Solver_CG(stop_cond,
-  // 				   Niter,
-  // 				   new Fopr_DdagD(Kernel));
+  //Solver_CG* SolverCG = new Solver_CG(stop_cond,
+  //				       Niter,
+  //				       new Fopr_DdagD(Kernel));
   
-
-  // // quark propagator
-  // // we force a type check on the Kernel (must be DdagD type).
-  //Qprop QuarkPropagator(Kernel,SolverBiCGstab);
-  //QuarkPropagator.calc(sq,src);
+   // quark propagator
+   // we force a type check on the Kernel (must be DdagD type).
+   // Qprop QuarkPropagator(Kernel,SolverBiCGstab);
+   //   QuarkPropagator.calc(sq,src);
   //---------------------------------------------------------------------------
 
   QP = QPCreator->getQuarkProp(conf_);

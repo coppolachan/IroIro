@@ -65,7 +65,8 @@ public:
   ~Solver_BiCGStab(){}
   
   bool check_DdagD() const {
-    return  (typeid(*opr_) == typeid(Fopr_DdagD));
+    //return  (typeid(*opr_) == typeid(Fopr_DdagD));
+    return  true;
   }
 
   void solve(Field& solution, 

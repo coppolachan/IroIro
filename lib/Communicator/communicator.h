@@ -8,11 +8,10 @@
 #include "include/commonPrms.h"
 #endif
 
+#include <vector>
 #include <valarray>
 #include <stdio.h>
 #include <cstdarg>
-
-class Field;
 
 class Communicator{
 private:
@@ -38,40 +37,43 @@ public:
   static int size(){return Nproc_;}
   static int id(){return my_rank_;}
   static int nodeid(){return my_rank_;}
-  static int nodeid(int x, int y, int z, int t);
   static int ipe(int dir){ return ipe_[dir];}
-  static double reduce_sum(double&);
-  static void sync();
-  static void broadcast(int size, int &data, int sender);
-  static void broadcast(int size, double &data, int sender);
 
-  static void transfer_fw(double *bin, double *data,int size,int dir);
-  static void transfer_bk(double *bin, double *data,int size,int dir);
+  int nodeid(int x,int y,int z,int t) const;
+  
+  double reduce_sum(double);
+  void sync();
+  void broadcast(int size, int &data, int sender);
+  void broadcast(int size, double &data, int sender);
+  
+  void transfer_fw(double *bin,double *data,int size,int dir);
 
-  static void transfer_fw(std::valarray<double>& bin, 
-			  const std::valarray<double>& data,int size,int dir);
-  static void transfer_bk(std::valarray<double>& bin, 
-			  const std::valarray<double>& data,int size,int dir);
+  void transfer_fw(std::valarray<double>& bin,
+		   const std::valarray<double>& data,int size,int dir);
 
-  static void transfer_fw(Field& bin, const Field& data,int size,int dir);
-  static void transfer_bk(Field& bin, const Field& data,int size,int dir);
+  void transfer_fw(std::valarray<double>& bin,
+		   const std::valarray<double>& data,
+		   const std::vector<int>& index,int dir);
 
-  static void send_1to1(double *bin, double *data,int size,
-			int p_to, int p_from, int tag);
+  void transfer_bk(double *bin,double *data,int size,int dir);
 
-  static void send_1to1(std::valarray<double>& bin, 
-			const std::valarray<double>& data,int size,
-			int p_to, int p_from, int tag);
+  void transfer_bk(std::valarray<double>& bin,
+		   const std::valarray<double>& data, int size,int dir);
 
-  static void send_1to1(Field& bin, const Field& data,int size,
-			int p_to, int p_from, int tag);
+  void transfer_bk(std::valarray<double>& bin,
+		   const std::valarray<double>& data,
+		   const std::vector<int>& index,int dir);
 
-  static double get_time(){return 0.0;};
+  void send_1to1(double *bin,double *data,int size,
+		 int p_to, int p_from, int tag);
+  void send_1to1(std::valarray<double>& bin, const std::valarray<double>& data,
+		 int size, int p_to, int p_from, int tag);
 
-  static int pprintf(const char* ...);
+  double get_time(){return 0.0;};
+
+  int pprintf(const char* ...);
 
   static bool primaryNode();
-
 };
 
 namespace CommunicatorItems{

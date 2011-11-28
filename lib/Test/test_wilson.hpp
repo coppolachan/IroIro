@@ -14,7 +14,6 @@ class Test_Wilson : public TestGeneral{
 private:
   XML::node Wilson_node_;
   GaugeField& conf_;
-  int run_lex();
 public:
   Test_Wilson(const XML::node node, GaugeField& conf)
     :Wilson_node_(node),
@@ -23,8 +22,6 @@ public:
   ~Test_Wilson(){}
   
   int run();
- 
-  //  int run_eo();
 };
 
 #endif

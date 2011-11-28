@@ -29,7 +29,8 @@ int main(){
 
   //Initialize GaugeField using XML input
   GaugeField GaugeF(geom);
-  GaugeF.initialize(top_node);
+  //  GaugeF.initialize(top_node);
+  GaugeF.initializeTxt("conf_04040408.txt");
 
   /////////////
   
@@ -51,16 +52,23 @@ int main(){
   MShift_SolverTest.run();
   */ 
 
-  
+  /*
   Test_Overlap Overlap_Tests(GaugeF);
   Overlap_Tests.run();
-    
+  */
 
   /*
   Test_optimalDomainWall test_odwf(GaugeF);
   test_odwf.run();
   */
 
+  Test_Wilson_EvenOdd test_Wilson_eo(GaugeF);
+  test_Wilson_eo.run();
+
+  /*
+  Test_Wilson test_Wilson(GaugeF);
+  test_Wilson.run();
+  */
   return 0;
 }
 

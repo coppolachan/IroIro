@@ -22,13 +22,12 @@ bin_PROGRAMS = mainprog
 lib_LIBRARIES = libcommcode.a
 
 EXTRA_DIST =    Example.xml			\
-		Dirac_ops/dirac_wilson_eo.cpp	\
-		Dirac_ops/dirac_wilson_eo.h	\
 		HMC/mdExec_leapfrog_eigen.cpp	\
 		Test/test_HMC_noFactories.cpp
 
 
-libcommcode_a_SOURCES =  	Action/action_gauge.cpp 		\
+libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
+	 	Action/action_gauge.cpp 		\
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\
 		Action/action_gaugetype_factory.cpp	\
@@ -36,6 +35,7 @@ libcommcode_a_SOURCES =  	Action/action_gauge.cpp 		\
 		Communicator/comm_io.cpp		\
 		Communicator/fields_io.cpp		\
 		Dirac_ops/dirac_wilson.cpp		\
+		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
 		Dirac_ops/dirac_Factory.cpp		\
@@ -57,6 +57,7 @@ libcommcode_a_SOURCES =  	Action/action_gauge.cpp 		\
 		Measurements/GaugeM/staples.cpp		\
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
+		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_optimalDomainWall.cpp	\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
 		Main/commonPrms.cpp			\
@@ -72,16 +73,11 @@ libcommcode_a_SOURCES =  	Action/action_gauge.cpp 		\
 		Test/test_EigenModes_IRL.cpp		\
 		Test/test_MultiShiftSolver.cpp		\
 		Test/test_overlap.cpp			\
-		Test/test_optimalDomainWall.cpp		\
-		$(COMMUNICATOR_SRCS)
-
-
+		Test/test_wilson_EvenOdd.cpp		\
+		Test/test_optimalDomainWall.cpp		
 
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD   = libcommcode.a
-
-
-
 
 include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			$(top_srcdir)/include/common_code.hpp	\
@@ -117,6 +113,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			Measurements/FermionicM/source.h			\
 			Measurements/FermionicM/qprop_MultiShift.hpp 		\
 			Measurements/FermionicM/qprop.h				\
+			Measurements/FermionicM/qprop_EvenOdd.h			\
 			Measurements/FermionicM/mesonCorrel.h			\
 			Measurements/FermionicM/qprop_optimalDomainWall.hpp 	\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
@@ -132,6 +129,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			Dirac_ops/dirac_Factory.hpp		\
 			Dirac_ops/dirac_overlap_Zolotarev.h	\
 			Dirac_ops/dirac_wilson.h		\
+			Dirac_ops/dirac_wilson_EvenOdd.h	\
 			Dirac_ops/dirac.h			\
 			Dirac_ops/dirac_optimalDomainWall.hpp   \
 			Dirac_ops/dirac_optimalDomainWall_4D.hpp\
@@ -157,6 +155,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			Test/test_EigenModes_IRL.h		\
 			Test/test_MultiShiftSolver.h		\
 			Test/test_overlap.hpp			\
+			Test/test_wilson_EvenOdd.hpp		\
 			Test/test_Gauge.hpp			\
 			Test/tests.hpp
 

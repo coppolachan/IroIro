@@ -10,6 +10,7 @@
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
 #include "dirac_wilson.h"
+#include "dirac_wilson_EvenOdd.h"
 #include "dirac_optimalDomainWall_4D.hpp"
 #include "dirac_optimalDomainWall.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -33,15 +34,26 @@ class DiracWilsonCreator : public DiracOperatorCreator {
   const XML::node Dirac_node;
 
 public:
-  DiracWilsonCreator(const XML::node node):
-    Dirac_node(node){};
+  DiracWilsonCreator(const XML::node node):Dirac_node(node){}
 
   Dirac_Wilson* getDiracOperator(Field* const GaugeField){
     return new Dirac_Wilson(Dirac_node,GaugeField);
-  };
+  }
+};
 
+/*!
+ * @brief Concrete class for creating Dirac Wilson operators
+ *
+ */
+class DiracWilsonEvenOddCreator : public DiracOperatorCreator {
+  const XML::node Dirac_node;
 
+public:
+  DiracWilsonEvenOddCreator(const XML::node node):Dirac_node(node){}
 
+  Dirac_Wilson_EvenOdd* getDiracOperator(Field* const GaugeField){
+    return new Dirac_Wilson_EvenOdd(Dirac_node,GaugeField);
+  }
 };
 
 /*!
@@ -55,21 +67,16 @@ class DiracDWF5dCreator : public DiracOperatorCreator {
   const XML::node Dirac_node;
 
 public:
-  DiracDWF5dCreator(XML::node node):
-    Dirac_node(node){
+  DiracDWF5dCreator(XML::node node):Dirac_node(node){
     XML::descend(node, "Kernel");
     DiracObj.save(new DiracWilsonCreator(node)); 
-    
-  };
+  }
 
   Dirac_optimalDomainWall* getDiracOperator(Field* const GaugeField){
     Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
-
-    return new Dirac_optimalDomainWall(Dirac_node,
-				       Kernel.get());
-  };
-
-  ~DiracDWF5dCreator(){};
+    return new Dirac_optimalDomainWall(Dirac_node,Kernel.get());
+  }
+  ~DiracDWF5dCreator(){}
 };
 
 
@@ -96,7 +103,7 @@ public:
     DiracObj.save(new DiracDWF5dCreator(node));
     XML::next_sibling(node, "SolverDWF");
     SolverDWF_Obj.save(SolverOperators::createSolverOperatorFactory(node));
-  };
+  }
 
   Dirac_optimalDomainWall_4D* getDiracOperator(Field* const GaugeField){
     DWF5D_Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
@@ -109,7 +116,7 @@ public:
     return new Dirac_optimalDomainWall_4D(*DWF5D_Kernel.get(),
 					  SolverODWF.get(),
 					  SolverPV.get());
-  };
+  }
 
   ~DiracDWF4dCreator(){};
 };

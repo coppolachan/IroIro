@@ -5,12 +5,3 @@ EXTRA_DIST = README 		\
 	docs/doxy.cfg.jp	\
 	docs/keklogo-c.jpg 	\
 	docs/Makefile.am
-
-
-if HAVE_DOXYGEN
-directory = $(top_srcdir)/docs/
-
-doxyfile:
-	(cd $(directory) && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; 
-
-endif 

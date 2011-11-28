@@ -34,15 +34,14 @@ void SiteIndex::setup_bdry(){
 
   bdup_.resize(Ndim);
   bdlw_.resize(Ndim);
-  for(int d=0;d<bdup_.size();++d){
-    bdup_[d].resize(Nvol/(Bdir(d%Ndim)+1));
-    bdlw_[d].resize(Nvol/(Bdir(d%Ndim)+1));
-  }
 
   for(int d=0;d<Ndim;++d){
+    bdup_[d].resize(Nvol/Ndir_[d]);
+    bdlw_[d].resize(Nvol/Ndir_[d]);
+
     for(int site=0;site<Nvol;++site){
-      if(cmp(site,d)==0)       (bdlw_[d])[x_b(site,d)]= site;
-      if(cmp(site,d)==Bdir(d)) (bdup_[d])[x_b(site,d)]= site;
+      if(cmp(site,d)==0)        bdlw_[d][x_b(site,d)]= site;
+      if(cmp(site,d)==Bdir_[d]) bdup_[d][x_b(site,d)]= site;
     }
   }
 }  
@@ -64,8 +63,9 @@ int SiteIndex::gsite(int site) const{
   int ny = commu->ipe(1);
   int nz = commu->ipe(2);
   int nt = commu->ipe(3);
-  
-  return (x(site)+Nx*nx) +Lx*((y(site)+Ny*ny) 
-				+Ly*((z(site)+Nz*nz) 
-				     +Lz*(t(site)+Nt*nt)));
+
+  return x(site)+Nx*nx +Lx*((y(site)+Ny*ny)
+			    +Ly*((z(site)+Nz*nz)
+				 +Lz*(t(site)+Nt*nt)));
 }
+

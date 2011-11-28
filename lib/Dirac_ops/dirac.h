@@ -34,14 +34,32 @@ public:
 
 /*
  * @class DiracWilsonLike
- *
  * @brief Declaration of abstract base class for Dirac operators of Wilson type
  */
 class DiracWilsonLike : public Dirac {
 public:
   virtual ~DiracWilsonLike(){};
   virtual const Field gamma5(const Field&) const = 0;
+};
 
+/*
+ * @class DiracWilsonLike_EvenOdd
+ * @brief Declaration of abstract base class for Dirac operators of Wilson type
+ */
+class DiracWilsonLike_EvenOdd : public Dirac {
+public:
+  virtual ~DiracWilsonLike_EvenOdd(){};
+  virtual const Field gamma5(const Field&) const = 0;
+
+  virtual const Field mult_eo(const Field&) const =0;
+  virtual const Field mult_oe(const Field&) const =0;
+  virtual const Field mult_eo_dag(const Field&) const =0;
+  virtual const Field mult_oe_dag(const Field&) const =0;
+
+  virtual const Field mult_ee(const Field&) const =0;
+  virtual const Field mult_oo(const Field&) const =0;
+  virtual const Field mult_ee_inv(const Field&) const =0;
+  virtual const Field mult_oo_inv(const Field&) const =0;
 };
 
 
