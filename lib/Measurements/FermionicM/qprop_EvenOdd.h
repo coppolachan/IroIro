@@ -61,6 +61,7 @@ public:
    * is defined in quark_propagators.hpp
    */
   void calc(prop_t& xq,Source& src) const;
+  void calc(prop_t& xq,Source& src, int, int) const;
   void calc(prop_t& xq,const prop_t& prp) const;
 };
 #endif

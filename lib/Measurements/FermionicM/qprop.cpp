@@ -32,6 +32,29 @@ void Qprop::calc(prop_t& xq,Source& src) const{
   }
 }
 
+void Qprop::calc(prop_t& xq,Source& src, int Nd, int Nc) const{
+
+  xq.clear();
+  int Nconv;
+  double diff;
+  Field sol(fsize_);
+  
+  int s = Nd;
+  int c = Nc;
+  
+  if(Communicator::instance()->nodeid()==0) 
+    std::cout<<" Dirac index ="<<s<<" Color ="<<c<<std::endl;
+  
+  slv_->solve(sol,D_->mult_dag(src.mksrc(s,c)),diff,Nconv);
+  
+  if(Communicator::instance()->nodeid()==0) 
+    std::cout<<"s="<<s<<" c="<<c
+	     <<" Nconv= "<<Nconv 
+	     <<" diff= "<<diff<<std::endl;     
+  xq.push_back(sol);
+  
+}
+
 void Qprop::calc(prop_t& xq,const prop_t& prp)const{
 
   xq.clear();

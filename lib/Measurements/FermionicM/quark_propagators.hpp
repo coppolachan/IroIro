@@ -30,6 +30,7 @@ public:
   
   /*! @brief Calculates the propagator */
   virtual void calc(prop_t& xq,Source& src) const = 0;
+  virtual void calc(prop_t& xq,Source& src, int ,int ) const = 0;
   virtual void calc(prop_t& xq,const prop_t& prp) const = 0;
 
 };

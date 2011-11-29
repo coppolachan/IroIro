@@ -34,11 +34,11 @@ int Test_Wilson::run(){
   RandNum_MT19937 rand(init, length);
 
   // source ????
-  //vector<int> spos(4,0); 
+  vector<int> spos(4,0); 
   //vector<int> spos(4,1); 
 
-  //Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
-  Source_wnoise<Format_F> src(rand,CommonPrms::instance()->Nvol());
+  Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
+  //Source_wnoise<Format_F> src(rand,CommonPrms::instance()->Nvol());
   //Source_wall<Format_F> src(0,CommonPrms::instance()->Nvol());
   //wall source not working
 
@@ -69,11 +69,13 @@ int Test_Wilson::run(){
   CCIO::cout<<"quark propagator obtained"<<std::endl;
   
   // meson correlators
+  
   MesonCorrel<Format_F> meson;
   vector<double> mcorr = meson.pp(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
   while(it!=mcorr.end()) pprintf ("%d %.8e\n",t++, *it++);
+  
   return 0;
 }
 

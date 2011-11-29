@@ -115,6 +115,8 @@ transfer_fw(valarray<double>& bin,const valarray<double>& data,
 	       1,subarray,p_send,tag1,
 	       &bin[0], index.size(),MPI_DOUBLE,p_recv,tag2,
 	       MPI_COMM_WORLD,&status);
+
+  MPI_Type_free (&subarray);
 }
 
 void Communicator::
@@ -142,9 +144,11 @@ transfer_bk(valarray<double>& bin,const valarray<double>& data,
 	    const vector<int>& index, int dir){
   MPI_Status  status;
   MPI_Datatype subarray;
-  MPI_Type_create_indexed_block(index.size(),1,
-				&(const_cast<vector<int>& >(index))[0],
-				MPI_DOUBLE,&subarray); 
+  int MPIErr;
+  MPIErr = MPI_Type_create_indexed_block(index.size(),1,
+     				&(const_cast<vector<int>& >(index))[0],
+     				MPI_DOUBLE,&subarray); 
+
   MPI_Type_commit(&subarray);
 
   int p_send = nd_up_[dir];
@@ -157,6 +161,10 @@ transfer_bk(valarray<double>& bin,const valarray<double>& data,
 	       1,subarray,p_send,tag1,
 	       &bin[0], index.size(),MPI_DOUBLE,p_recv,tag2,
 	       MPI_COMM_WORLD,&status);
+
+  MPI_Type_free (&subarray);
+
+
 }
 
 void Communicator::send_1to1(double *bin,double *data,int size,
