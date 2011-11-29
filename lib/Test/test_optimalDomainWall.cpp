@@ -71,7 +71,8 @@ int Test_optimalDomainWall::run(XML::node node){
   // operator
   int N5d = 6;
   double mzero = -1.8;
-  double c = 0.0;
+  double c = 1.0;
+  double b = 1.0;
   double mq = 0.0;
   vector<double> omega(N5d,1.0);
 
@@ -80,7 +81,7 @@ int Test_optimalDomainWall::run(XML::node node){
   
   Dirac_Wilson* Kernel = new Dirac_Wilson(mzero, &(conf_.U));
  
-  Dirac_optimalDomainWall Ddwf_5d(c, mq, omega, Kernel);
+  Dirac_optimalDomainWall Ddwf_5d(b, c, mq, omega, Kernel);
   
   DiracODWF = DWFCreator->getDiracOperator(&(conf_.U));
   
@@ -146,10 +147,10 @@ int Test_optimalDomainWall::run(XML::node node){
   Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
 
   prop_t sq;
-  QuarkPropagator.calc(sq,src,0,0);
+  QuarkPropagator.calc(sq,src);
 
-  conf_.U.set(0,1.0);//change configuration - test
-  QuarkPropagator.calc(sq,src,0,0);
+  // conf_.U.set(0,1.0);//change configuration - test
+  // QuarkPropagator.calc(sq,src,0,0);
 
   return 0;
 }

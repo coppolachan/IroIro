@@ -21,84 +21,45 @@ enum {Standard, PauliVillars};
  *
  */
 struct Dirac_optimalDomainWall_params{
-  double b_, c_;
+  double c_;/*!< @brief With omega_ selects the type of domain wall fermion
+	     *
+	     * For \f$c = 0, \omega_s = 1\f$ conventional 
+	     * domain-wall fermion is chosen
+	     */
   double mq_;/*!< @brief Bare quark mass \f$m_q\f$ */
   std::vector<double> omega_;/*!< @brief Diagonal matrix
 			      * \f$\omega = \{\omega_s\}\f$
 			      */
-  std::vector<double> bs_, cs_;
-  std::vector<double> dp_, dm_;
 
   Dirac_optimalDomainWall_params(XML::node DWF_node){
-    XML::read(DWF_node, "b", b_);
+     
     XML::read(DWF_node, "c", c_);
     XML::read(DWF_node, "mass", mq_);
     XML::read_array(DWF_node, "omega", omega_);
+    std::cout << "reading..... " << c_ << " " << omega_.size() <<std::endl;
     //fill the vector omega_ with omega_diag
-    bs_.resize(omega_.size());
-    cs_.resize(omega_.size());
-    dp_.resize(omega_.size());
-    dm_.resize(omega_.size());
-
-    // this line must be replaced
-    double M0_=-1.6;  
-    //
-    for (int s = 0; s < omega_.size(); ++s) {
-      bs_[s] = (b_*omega_[s]+c_)/2.0;
-      cs_[s] = (b_*omega_[s]-c_)/2.0;
-      dp_[s] = bs_[s]*(4.0+M0_)+1.0;
-      dm_[s] = 1.0-cs_[s]*(4.0+M0_);
-      //      std::cout << s << " " << dp_[s] << " " << dm_[s] << std::endl;
-    }
   }
 
-  Dirac_optimalDomainWall_params(const double b,
-				 const double c,
+  Dirac_optimalDomainWall_params(const double c,
 				 const double mass,
 				 const std::vector<double> omega){
-    b_ = b;
     c_ = c;
     mq_ = mass;
     omega_ = omega;
-    bs_.resize(omega.size());
-    cs_.resize(omega.size());
-    dp_.resize(omega.size());
-    dm_.resize(omega.size());
-
-    // this line must be replaced
-    double M0_=-1.6;  
-    //
-    for (int s = 0; s < omega.size(); ++s) {
-      bs_[s] = (b*omega[s]+c)/2.0;
-      cs_[s] = (b*omega[s]-c)/2.0;
-      dp_[s] = bs_[s]*(4.0+M0_)+1.0;
-      dm_[s] = 1.0-cs_[s]*(4.0+M0_);
-      //      std::cout << s << " " << dp_[s] << " " << dm_[s] << std::endl;
-    }
   }
 
   Dirac_optimalDomainWall_params(const Dirac_optimalDomainWall_params& Par,
 				 int Type = 0){
     switch (Type){
     case Standard:
-      b_ = Par.b_;
       c_ = Par.c_;
       mq_ = Par.mq_;
       omega_ = Par.omega_;
-      bs_ = Par.bs_;
-      cs_ = Par.cs_;
-      dp_ = Par.dp_;
-      dm_ = Par.dm_;
       break;
     case PauliVillars:
-      b_ = Par.b_;
       c_ = Par.c_;
       mq_ = 1.0;
       omega_ = Par.omega_;
-      bs_ = Par.bs_;
-      cs_ = Par.cs_;
-      dp_ = Par.dp_;
-      dm_ = Par.dm_;
       break;
     default:
       abort();
@@ -123,10 +84,10 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
   const Dirac_Wilson* Dw_; /*!< Dirac Kernel - Wilson operator */ 
   const Dirac_optimalDomainWall_params Params;
 
-  size_t N5_;/*!< Length of 5th dimension */
-  size_t f4size_;
-  size_t fsize_;
-  size_t gsize_;
+  const int f4size_;
+  const int gsize_;
+  const int N5_;/*!< Length of 5th dimension */
+  const int fsize_;
   const double M0_;
 
   const Field get4d(const Field& f5,int s) const{
@@ -162,17 +123,16 @@ public:
      M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){} 
 
  
-  Dirac_optimalDomainWall(const double b,
-			  const double c,
+  Dirac_optimalDomainWall(const double c,
 			  const double mq,
 			  const std::vector<double>& omega,
 			  const Dirac_Wilson* Kernel)
-    :Params(b,c,mq,omega),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
+    :Dw_(Kernel),
+     Params(c,mq,omega),
      f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
      gsize_(Dw_->gsize()),
+     N5_(Params.omega_.size()),
+     fsize_(f4size_*N5_),
      M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){}
 
 
@@ -207,29 +167,21 @@ public:
    * @brief Calculates the \f$L_+(m)\f$
    */
   const Field proj_p(const Field& f4) const{
-    Field w4 = Dw_->proj_p(f4);
+    Field w4=f4;
+    w4 += Dw_->gamma5(f4);
+    w4 *=0.5;
     return w4;
   }
-  //  const Field proj_p(const Field& f4) const{
-  //    Field w4=f4;
-  //    w4 += Dw_->gamma5(f4);
-  //    w4 *=0.5;
-  //    return w4;
-  //  }
     
   /*!
    * @brief Calculates the \f$L_-(m)\f$
    */
   const Field proj_m(const Field& f4) const{
-    Field w4 = Dw_->proj_m(f4);
+    Field w4=f4;
+    w4 -= Dw_->gamma5(f4);
+    w4 *=0.5;
     return w4;
   }
-  //  const Field proj_m(const Field& f4) const{
-  //    Field w4=f4;
-  //    w4 -= Dw_->gamma5(f4);
-  //    w4 *=0.5;
-  //    return w4;
-  //  }
 
   const Field Bproj(const Field& v5d) const;
   const Field Bproj_dag(const Field& v4d) const;

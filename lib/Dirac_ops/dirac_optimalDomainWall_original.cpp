@@ -23,43 +23,24 @@ const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
   assert(f5.size()==fsize_);
   Field w5(fsize_);
 
-  for(int s=0; s<N5_; ++s) {
-    Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
-    if(s == 0)     lpf *= -Params.mq_;
-    Field lmf = proj_m(get4d(f5,(s+1)%N5_));
-    if(s == N5_-1) lmf *= -Params.mq_;
+  for(int s=0; s<N5_; ++s)
+    {
+      Field lpf = proj_p(get4d(f5,(s+1)%N5_));
+      if(s == N5_-1) lpf *= -Params.mq_;
+      Field lmf = proj_m(get4d(f5,(s+N5_-1)%N5_));
+      if(s == 0)     lmf *= -Params.mq_;
       
-    Field w = get4d(f5,s);
-    w -= lpf;
-    w -= lmf;
+      Field w = get4d(f5,s);
+      w -= lpf;
+      w -= lmf;
       
-    Field v = get4d(f5,s);
-    v += (Params.cs_[s]/Params.bs_[s])*lpf;
-    v += (Params.cs_[s]/Params.bs_[s])*lmf;
-
-    w += (4.0+M0_)*Params.bs_[s]*(Dw_->mult(v));      
-    set5d(w5,w,s);
+      Field v = get4d(f5,s);
+      v += Params.c_*lpf;
+      v += Params.c_*lmf;
+      
+      w += (4.0+M0_)*Params.omega_[s]*(Dw_->mult(v));
+      set5d(w5,w,s);
     }
-
-  // precond.LU: (LU)^-1 = U^-1 L^-1
-  for (int s=1; s<N5_; ++s) {
-    Field lpf = proj_p(get4d(w5,s-1));
-    lpf *= (Params.dm_[s]/Params.dp_[s-1]);
-    add5d(w5,lpf,s);
-  };
-  Field v = get4d(w5,N5_-1);
-  v *= 1.0/Params.dp_[N5_-1];
-  set5d(w5,v,N5_-1);
-  for (int s=N5_-2; s>=0; --s) {
-    Field lmf = proj_m(get4d(w5,s+1));
-    lmf *= Params.dm_[s];
-    add5d(w5,lmf,s);
-    v = get4d(w5,s);
-    v *= 1.0/Params.dp_[s];
-    set5d(w5,v,s);
-  }
-  // end precond LU
-
   return w5;
 }
 
@@ -68,48 +49,26 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
 
   assert(f5.size()==fsize_);
   Field v5(fsize_);
-  Field w5(fsize_);
-
-  Field t5(fsize_);
-  t5 = f5;
-
-  // precond LU: ((LU)^T)^-1 = (U^T L^T)^-1 = (L^T)^-1 (U^T)^-1
-  Field v = get4d(t5,0);
-  v *= 1.0/Params.dp_[0];
-  set5d(t5,v,0);
-  for (int s=1; s<N5_; ++s) {
-    Field lmf = proj_m(get4d(t5,s-1));
-    lmf *= Params.dm_[s-1];
-    add5d(t5,lmf,s);
-    v = get4d(t5,s);
-    v *= 1.0/Params.dp_[s];
-    set5d(t5,v,s);
-  }
-  for (int s=N5_-2; s>=0; --s) {
-    Field lpf = proj_p(get4d(t5,s+1));
-    lpf *= (Params.dm_[s+1]/Params.dp_[s]);
-    add5d(t5,lpf,s);
-  }
-  // end precond LU
 
   for(int s=0; s<N5_; ++s){
-    Field dv = Dw_->mult_dag(get4d(t5,s));
-    dv *= (4.0+M0_)*Params.bs_[s];
-    set5d(w5,dv,s);
-    dv *= (Params.cs_[s]/Params.bs_[s]);
+    Field dv = Dw_->mult_dag(get4d(f5,s));
+    dv *= (4.0+M0_)*Params.omega_[s];
     set5d(v5,dv,s);
   }
-  w5 += t5;
-  v5 -= t5;
+  Field w5 = v5; 
+  w5 += f5;
+
+  v5 *= Params.c_;
+  v5 -= f5;
 
   for(int s = 0; s < N5_; ++s){
-    Field lpf = proj_p(get4d(v5,(s+1)%N5_));
-    if(s == N5_-1) lpf *= -Params.mq_;
-    Field lmf = proj_m(get4d(v5,(s+N5_-1)%N5_));
-    if(s == 0)     lmf *= -Params.mq_;
+    Field lpf = proj_p(get4d(v5,(s+N5_-1)%N5_));
+    if(s == 0)     lpf *= -Params.mq_;
+    Field lmf = proj_m(get4d(v5,(s+1)%N5_));
+    if(s == N5_-1) lmf *= -Params.mq_;
+
     add5d(w5,lpf,s);
     add5d(w5,lmf,s);
-
   }
   return w5;
 }
@@ -158,19 +117,15 @@ const Field Dirac_optimalDomainWall::R5g5(const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::Bproj( const Field& f5) const{ 
-  Field f4 = proj_p(get4d(f5,N5_-1));
-  f4 += proj_m(get4d(f5,0));
-  //  Field f4 = proj_p(get4d(f5,0));
-  //  f4 += proj_m(get4d(f5,N5_-1));
+  Field f4 = proj_p(get4d(f5,0));
+  f4 += proj_m(get4d(f5,N5_-1));
   return f4;
 }
 
 const Field Dirac_optimalDomainWall::Bproj_dag(const Field& f4) const{
   Field f5(fsize_);
-  set5d(f5,proj_p(f4),N5_-1);
-  set5d(f5,proj_m(f4),0);
-  //  set5d(f5,proj_p(f4),0);
-  //  set5d(f5,proj_m(f4),N5_-1);
+  set5d(f5,proj_p(f4),0);
+  set5d(f5,proj_m(f4),N5_-1);
   return f5;
 }
 
@@ -197,19 +152,16 @@ namespace DomainWallFermions {
 			  (lambda_min/lambda_max));
     
     vector<double> omegas(Ns);
-
-    //    for( int ii = 0 ; ii < Ns / 2 ; ii ++ )
-    for( int ii = 0 ; ii < Ns ; ii ++ )
+    for( int ii = 0 ; ii < Ns / 2 ; ii ++ )
       {
 	int is = 2 * ii + 1;
 	m = kprime * kprime;
-	double vs = set_vs( is , Ns*2 , kprime );
-	//	double vs = set_vs( is , Ns , kprime );
+	double vs = set_vs( is , Ns , kprime );
 	gsl_sf_elljac_e( vs , m , &sn , &cn , &dn );
 	double sn2 = sn * sn;
 	double kappaprime2 = kprime * kprime;
 	omegas[ii] = ( 1.0 / lambda_min ) * sqrt( 1.0 - kappaprime2 * sn2 );
-	//	omegas[Ns-1-ii]=omegas[ii];
+	omegas[Ns-1-ii]=omegas[ii];
       }
     
     #ifdef VERBOSE2
