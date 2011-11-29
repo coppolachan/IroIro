@@ -2,7 +2,9 @@
 // communicator_dummy.cpp
 //-----------------------------------------------------------------------
 #include "communicator.h"
-//#include <cassert>
+#include "comm_io.hpp"
+#include <iostream>
+
 using namespace std;
 
 int Communicator::my_rank_;
@@ -12,14 +14,24 @@ int Communicator::nd_up_[Ndim_max_];
 int Communicator::nd_dn_[Ndim_max_];
 
 Communicator* Communicator::instance(){
-  static Communicator* instance_;
-  return instance_;
+  static Communicator instance_;
+  return &instance_;
 }
 
 void Communicator::setup(){
+  CCIO::cout.init(&std::cout);
+  CCIO::cerr.init(&std::cout);
   my_rank_=0;
   Nproc_=1;
+
+  cout << "Communicator using single node mode\n";
 }
+
+//----------------------------------------------------------
+Communicator::~Communicator(){}
+//----------------------------------------------------------
+
+
 int Communicator::nodeid(int,int,int,int)const{ return my_rank_;}
 
 bool Communicator::primaryNode(){return true;}

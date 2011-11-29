@@ -5,6 +5,12 @@ AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
 
+EXTRA_DIST = 	test_HMC.xml	 \
+		test_RNG.xml	 \
+		test_Wilson.xml	 \
+		test_ODWF.xml 	\
+		test_ResMass.xml
+
 test_PROGRAMS = test_HMC \
 		test_RNG \
 		test_Wilson \
