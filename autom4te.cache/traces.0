@@ -13,6 +13,19 @@ AC_PREREQ([2.50])dnl
 # expand $ac_aux_dir to an absolute path
 am_aux_dir=`cd $ac_aux_dir && pwd`
 ])
+m4trace:/usr/share/aclocal-1.11/cond-if.m4:26: -1- AC_DEFUN([AM_COND_IF], [m4_ifndef([_AM_COND_VALUE_$1],
+	   [m4_fatal([$0: no such condition "$1"])])dnl
+_AM_COND_IF([$1])dnl
+if _AM_COND_VALUE_$1; then
+  m4_default([$2], [:])
+m4_ifval([$3],
+[_AM_COND_ELSE([$1])dnl
+else
+  $3
+])dnl
+_AM_COND_ENDIF([$1])dnl
+fi[]dnl
+])
 m4trace:/usr/share/aclocal-1.11/cond.m4:15: -1- AC_DEFUN([AM_CONDITIONAL], [AC_PREREQ(2.52)dnl
  ifelse([$1], [TRUE],  [AC_FATAL([$0: invalid condition: $1])],
 	[$1], [FALSE], [AC_FATAL([$0: invalid condition: $1])])dnl
@@ -626,7 +639,7 @@ m4trace:configure.ac:5: -1- m4_pattern_allow([^build_alias$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^host_alias$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^target_alias$])
 m4trace:configure.ac:6: -1- _m4_warn([obsolete], [The macro `AC_CANONICAL_SYSTEM' is obsolete.
-You should run autoupdate.], [../../lib/autoconf/general.m4:1858: AC_CANONICAL_SYSTEM is expanded from...
+You should run autoupdate.], [../../lib/autoconf/general.m4:1843: AC_CANONICAL_SYSTEM is expanded from...
 configure.ac:6: the top level])
 m4trace:configure.ac:6: -1- m4_pattern_allow([^build$])
 m4trace:configure.ac:6: -1- m4_pattern_allow([^build_cpu$])
@@ -644,7 +657,7 @@ m4trace:configure.ac:7: -1- AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4trace:configure.ac:7: -1- m4_pattern_allow([^AM_[A-Z]+FLAGS$])
 m4trace:configure.ac:7: -1- AM_SET_CURRENT_AUTOMAKE_VERSION
 m4trace:configure.ac:7: -1- AM_AUTOMAKE_VERSION([1.11.1])
-m4trace:configure.ac:7: -1- _AM_AUTOCONF_VERSION([2.68])
+m4trace:configure.ac:7: -1- _AM_AUTOCONF_VERSION([2.65])
 m4trace:configure.ac:7: -1- m4_pattern_allow([^INSTALL_PROGRAM$])
 m4trace:configure.ac:7: -1- m4_pattern_allow([^INSTALL_SCRIPT$])
 m4trace:configure.ac:7: -1- m4_pattern_allow([^INSTALL_DATA$])
@@ -818,13 +831,19 @@ m4trace:configure.ac:57: -1- _AM_SUBST_NOTMAKE([HITACHI_FALSE])
 m4trace:configure.ac:62: -1- m4_pattern_allow([^HAVE__USR_INCLUDE_MPICH2_MPI_H$])
 m4trace:configure.ac:63: -1- m4_pattern_allow([^HAVE_MPI$])
 m4trace:configure.ac:67: -1- m4_pattern_allow([^DOXYGEN$])
-m4trace:configure.ac:79: -1- m4_pattern_allow([^ARFLAGS$])
-m4trace:configure.ac:89: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:89: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:89: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:89: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:89: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:89: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:89: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:89: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
-m4trace:configure.ac:89: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:72: -1- AM_CONDITIONAL([HAVE_DOXYGEN], [test -n "$DOXYGEN"])
+m4trace:configure.ac:72: -1- m4_pattern_allow([^HAVE_DOXYGEN_TRUE$])
+m4trace:configure.ac:72: -1- m4_pattern_allow([^HAVE_DOXYGEN_FALSE$])
+m4trace:configure.ac:72: -1- _AM_SUBST_NOTMAKE([HAVE_DOXYGEN_TRUE])
+m4trace:configure.ac:72: -1- _AM_SUBST_NOTMAKE([HAVE_DOXYGEN_FALSE])
+m4trace:configure.ac:73: -1- AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/doxy.cfg])])
+m4trace:configure.ac:82: -1- m4_pattern_allow([^ARFLAGS$])
+m4trace:configure.ac:90: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:90: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:90: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:90: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:90: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:90: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:90: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:90: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
+m4trace:configure.ac:90: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS

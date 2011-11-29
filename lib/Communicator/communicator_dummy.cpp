@@ -37,7 +37,7 @@ int Communicator::nodeid(int,int,int,int)const{ return my_rank_;}
 bool Communicator::primaryNode(){return true;}
 
 void Communicator::transfer_fw(double *bin,double *data,int size,int){
-  for(int i=0; i<size; i++) bin[i] = data[i];
+  for(int i=0; i<size; ++i) bin[i] = data[i];
 }
 void Communicator::transfer_fw(valarray<double>& bin, 
 			       const valarray<double>& data,
@@ -46,12 +46,12 @@ void Communicator::transfer_fw(valarray<double>& bin,
 }
 void Communicator::transfer_fw(valarray<double>& bin, 
 			       const valarray<double>& data,
-			       const vector<int>&,int){
-  bin = data;
+			       const vector<int>& index,int){
+  for(int i=0; i<index.size(); ++i) bin[i] = data[index[i]];
 }
 
 void Communicator::transfer_bk(double *bin,double *data,int size,int){
-  for(int i=0; i<size; i++) bin[i] = data[i];
+  for(int i=0; i<size; ++i) bin[i] = data[i];
 }
 void Communicator::transfer_bk(valarray<double>& bin, 
 			       const valarray<double>& data,
@@ -60,8 +60,8 @@ void Communicator::transfer_bk(valarray<double>& bin,
 }
 void Communicator::transfer_bk(valarray<double>& bin, 
 			       const valarray<double>& data,
-			       const vector<int>&,int){
-  bin = data;
+			       const vector<int>& index,int){
+  for(int i=0; i<index.size(); ++i) bin[i] = data[index[i]];
 }
 
 void Communicator::send_1to1(double *bin,
