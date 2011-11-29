@@ -32,10 +32,11 @@ struct Dirac_optimalDomainWall_params{
 			      */
 
   Dirac_optimalDomainWall_params(XML::node DWF_node){
-    double omega_diag;
+     
     XML::read(DWF_node, "c", c_);
     XML::read(DWF_node, "mass", mq_);
-    XML::read(DWF_node, "omega", omega_diag);
+    XML::read_array(DWF_node, "omega", omega_);
+    std::cout << "reading..... " << c_ << " " << omega_.size() <<std::endl;
     //fill the vector omega_ with omega_diag
   }
 
@@ -83,10 +84,10 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
   const Dirac_Wilson* Dw_; /*!< Dirac Kernel - Wilson operator */ 
   const Dirac_optimalDomainWall_params Params;
 
-  size_t N5_;/*!< Length of 5th dimension */
-  size_t f4size_;
-  size_t fsize_;
-  size_t gsize_;
+  const int f4size_;
+  const int gsize_;
+  const int N5_;/*!< Length of 5th dimension */
+  const int fsize_;
   const double M0_;
 
   const Field get4d(const Field& f5,int s) const{
@@ -126,12 +127,12 @@ public:
 			  const double mq,
 			  const std::vector<double>& omega,
 			  const Dirac_Wilson* Kernel)
-    :Params(c,mq,omega),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
+    :Dw_(Kernel),
+     Params(c,mq,omega),
      f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
      gsize_(Dw_->gsize()),
+     N5_(Params.omega_.size()),
+     fsize_(f4size_*N5_),
      M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){}
 
 

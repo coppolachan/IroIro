@@ -92,12 +92,15 @@ namespace XML
     copy(istream_iterator<string>(iss),
 	 istream_iterator<string>(),
 	 back_inserter<vector<string> >(tokens));
-    
-    if (array.size()!=tokens.size()) {
-      cerr << "Check [" << name << "] number of parameters. Expected : " 
-	   << array.size() << " found : " <<tokens.size() <<  endl;
-      abort();}
 
+   if (array.size()){// only if array size was set before        
+     if (array.size()!=tokens.size()) {
+       cerr << "Check [" << name << "] number of parameters. Expected : " 
+	    << array.size() << " found : " <<tokens.size() <<  endl;
+       abort();}
+   } else {
+     array.resize(tokens.size());
+   }
     for (it = 0; it<tokens.size(); it++) {
       array[it] = atoi(tokens[it].c_str());
 
@@ -121,17 +124,21 @@ namespace XML
     copy(istream_iterator<string>(iss),
 	 istream_iterator<string>(),
 	 back_inserter<vector<string> >(tokens));
-    
+
+   if (array.size()){// only if array size was set before    
     if (array.size()!=tokens.size()) {
       cerr << "Check [" << name << "] number of parameters. Expected : " 
 	   << array.size() << " found : " <<tokens.size() <<  endl;
       abort();}
+   }else {
+     array.resize(tokens.size());
+   }
 
     for (it = 0; it<tokens.size(); it++) {
       array[it] = strtol(tokens[it].c_str(),&end,0);
 
     }
-
+   
 
   }
 
@@ -152,17 +159,20 @@ namespace XML
 	 istream_iterator<string>(),
 	 back_inserter<vector<string> >(tokens));
   
-    if (array.size()!=tokens.size()) {
-      cerr << "Check [" << name << "] number of parameters. Expected : " 
-	   << array.size() << " found : " <<tokens.size() <<  endl;
-      abort();}
-
- 
-    for (it = 0; it<tokens.size(); it++) {
-      array[it] = atof(tokens[it].c_str());
+    if (array.size()){// only if array size was set before
+      if (array.size()!=tokens.size()) {
+	cerr << "Check [" << name << "] number of parameters. Expected : " 
+	     << array.size() << " found : " <<tokens.size() <<  endl;
+	abort();}
+    } else {
+     array.resize(tokens.size());
+   }
       
-    }
-
+      for (it = 0; it<tokens.size(); it++) {
+	array[it] = atof(tokens[it].c_str());
+	
+      }
+    
 
   }
 
