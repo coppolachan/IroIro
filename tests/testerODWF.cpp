@@ -1,13 +1,13 @@
 //------------------------------------------------------------------------
 /*!
  * @file testerODWF.cpp 
- * @brief Main source code for testing the Optimal DomainWall classes
+ * @brief Main source code for testing the DomainWall classes
  *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
 
-#include "test_optimalDomainWall.hpp"
+#include "test_DomainWall.hpp"
 
 using namespace XML;
 

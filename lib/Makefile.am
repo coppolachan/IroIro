@@ -21,8 +21,7 @@ bin_PROGRAMS = mainprog
 
 lib_LIBRARIES = libcommcode.a
 
-EXTRA_DIST =    Example.xml			\
-		HMC/mdExec_leapfrog_eigen.cpp	\
+EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		../tests/test_HMC_noFactories.cpp
 
 
@@ -39,8 +38,8 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
-		Dirac_ops/dirac_optimalDomainWall.cpp   \
-		Dirac_ops/dirac_optimalDomainWall_4D.cpp\
+		Dirac_ops/dirac_DomainWall.cpp   \
+		Dirac_ops/dirac_DomainWall_4D.cpp\
 		EigenModes/eigenModes_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/sortEigen.cpp		\
@@ -57,7 +56,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
-		Measurements/FermionicM/qprop_optimalDomainWall.cpp	\
+		Measurements/FermionicM/qprop_DomainWall.cpp	\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
 		Main/commonPrms.cpp			\
 		Main/Geometry/siteIndex.cpp		\
@@ -73,7 +72,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		../tests/test_MultiShiftSolver.cpp		\
 		../tests/test_overlap.cpp			\
 		../tests/test_wilson_EvenOdd.cpp		\
-		../tests/test_optimalDomainWall.cpp		
+		../tests/test_DomainWall.cpp		
 
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD   = libcommcode.a
@@ -114,7 +113,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/qprop.h				\
 			Measurements/FermionicM/qprop_EvenOdd.h			\
 			Measurements/FermionicM/mesonCorrel.h			\
-			Measurements/FermionicM/qprop_optimalDomainWall.hpp 	\
+			Measurements/FermionicM/qprop_DomainWall.hpp 	\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp		\
 			Communicator/communicator.h		\
@@ -130,8 +129,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_wilson.h		\
 			Dirac_ops/dirac_wilson_EvenOdd.h	\
 			Dirac_ops/dirac.h			\
-			Dirac_ops/dirac_optimalDomainWall.hpp   \
-			Dirac_ops/dirac_optimalDomainWall_4D.hpp\
+			Dirac_ops/dirac_DomainWall.hpp   \
+			Dirac_ops/dirac_DomainWall_4D.hpp\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.h		\
 			Solver/solver.h				\

@@ -14,7 +14,7 @@
 #include "quark_propagators.hpp"
 #include "qprop.h"
 #include "qprop_EvenOdd.h"
-#include "qprop_optimalDomainWall.hpp"
+#include "qprop_DomainWall.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
 

@@ -1,4 +1,5 @@
 #include "include/pugi_interface.h"
+#include "Communicator/comm_io.hpp"
 #include <string.h>
 #include <iostream>
 #include <stdlib.h>
@@ -56,12 +57,20 @@ namespace XML
   }
 
 
-  void read(pugi::xml_node node, const char *name, int& value) {
+  void read(pugi::xml_node node, const char *name, int& value, bool type) {
+    if (node.child(name)!=NULL){
     value = atoi(node.child_value(name));
-
+    } else {
+      if (type == MANDATORY) {
+	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
+	abort();
+      } else {
+	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+      }
+    }
   }
 
-  void read(pugi::xml_node node, const char *name, unsigned long& value) {
+  void read(pugi::xml_node node, const char *name, unsigned long& value, bool type) {
     char *end;
     value = strtol(node.child_value(name),&end, 0);
 

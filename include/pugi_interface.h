@@ -5,6 +5,8 @@
 #include "include/singleton.h"
 #include <vector>
 
+#define MANDATORY true
+
 /*!
  * @brief The namespace for the %XML interface functions
  *
@@ -33,9 +35,9 @@ namespace XML
 			 const char* attrname, 
 			 const char* string);
 
-  void read(pugi::xml_node node, const char *name, int& value);
+  void read(pugi::xml_node node, const char *name, int& value, bool type = false);
 
-  void read(pugi::xml_node node, const char *name, unsigned long& value);
+  void read(pugi::xml_node node, const char *name, unsigned long& value, bool type = false);
 
   void read(pugi::xml_node node, const char *name, double& value);
 

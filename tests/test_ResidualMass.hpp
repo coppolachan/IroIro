@@ -8,7 +8,7 @@
 #define TEST_RESMASS_INCLUDED
 
 #include "include/common_code.hpp"
-#include "Dirac_ops/dirac_optimalDomainWall_4D.hpp"
+#include "Dirac_ops/dirac_DomainWall_4D.hpp"
 #include "tests/tests.hpp"
 
 

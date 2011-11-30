@@ -11,7 +11,7 @@
   <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   
   <TestResMass>
-    <DiracOperator name="DiracOptimalDomainWall5d">
+    <DiracOperator name="DiracDomainWall5d">
       <N5d>8</N5d> <!-- Number of 5d steps -->
       <b>1.0</b>
       <c>1.0</c>

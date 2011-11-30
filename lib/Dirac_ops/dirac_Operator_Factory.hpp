@@ -11,8 +11,8 @@
 #include "Tools/RAIIFactory.hpp"
 #include "dirac_wilson.h"
 #include "dirac_wilson_EvenOdd.h"
-#include "dirac_optimalDomainWall_4D.hpp"
-#include "dirac_optimalDomainWall.hpp"
+#include "dirac_DomainWall_4D.hpp"
+#include "dirac_DomainWall.hpp"
 #include "Solver/solver_Factory.hpp"
 
 /*!

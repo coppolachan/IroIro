@@ -7,11 +7,11 @@
 #include "test_ResidualMass.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Communicator/fields_io.hpp"
-
+#include "include/pugi_interface.h"
 #include "Tools/randNum_MT19937.h"
 #include "Solver/solver_CG.h"
 //#include "Solver/solver_BiCGStab.h"
-#include "Measurements/FermionicM/qprop_optimalDomainWall.hpp"
+#include "Measurements/FermionicM/qprop_DomainWall.hpp"
 #include "Measurements/FermionicM/mesonCorrel.h"
 #include "Measurements/FermionicM/source.h"
 
@@ -40,7 +40,7 @@ int Test_ResMass::run(XML::node node) {
 
   XML::descend(node, "DiracOperator");
   // operator
-  double mzero;
+  double mzero; // Kernel Mass 
   int N5d;    // the length in the 5th direction (must be even)
   double b;   // scale factor (b!=1 for scaled Shamir H_T)
   double c;   // the kernel (H_W (c=0) or H_T (c=1))
@@ -53,6 +53,8 @@ int Test_ResMass::run(XML::node node) {
   input_file >> c;
   input_file >> approx;
   input_file >> mq;
+
+  XML::read(node,"N5dbla",N5d, MANDATORY);
 
   CCIO::cout << "Residual mass testing with" << endl;
   CCIO::cout << " mzero  = " << mzero << endl;

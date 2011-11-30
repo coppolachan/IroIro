@@ -25,7 +25,7 @@ test_RNG_SOURCES = test_RNG.cpp
 test_Wilson_SOURCES =	test_wilson.cpp \
 			testerWilson.cpp
 
-test_ODWF_SOURCES = test_optimalDomainWall.cpp \
+test_ODWF_SOURCES = test_DomainWall.cpp \
 			testerODWF.cpp
 
 test_ResMass_SOURCES = test_ResidualMass.cpp \
@@ -33,5 +33,5 @@ test_ResMass_SOURCES = test_ResidualMass.cpp \
 
 include_HEADERS =	test_HMC.hpp \
 			test_wilson.hpp \
-			test_optimalDomainWall.hpp \
+			test_DomainWall.hpp \
 			test_ResidualMass.hpp

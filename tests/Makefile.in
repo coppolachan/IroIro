@@ -55,8 +55,7 @@ am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
 test_HMC_DEPENDENCIES =
-am_test_ODWF_OBJECTS = test_optimalDomainWall.$(OBJEXT) \
-	testerODWF.$(OBJEXT)
+am_test_ODWF_OBJECTS = test_DomainWall.$(OBJEXT) testerODWF.$(OBJEXT)
 test_ODWF_OBJECTS = $(am_test_ODWF_OBJECTS)
 test_ODWF_LDADD = $(LDADD)
 test_ODWF_DEPENDENCIES =
@@ -234,7 +233,7 @@ test_RNG_SOURCES = test_RNG.cpp
 test_Wilson_SOURCES = test_wilson.cpp \
 			testerWilson.cpp
 
-test_ODWF_SOURCES = test_optimalDomainWall.cpp \
+test_ODWF_SOURCES = test_DomainWall.cpp \
 			testerODWF.cpp
 
 test_ResMass_SOURCES = test_ResidualMass.cpp \
@@ -242,7 +241,7 @@ test_ResMass_SOURCES = test_ResidualMass.cpp \
 
 include_HEADERS = test_HMC.hpp \
 			test_wilson.hpp \
-			test_optimalDomainWall.hpp \
+			test_DomainWall.hpp \
 			test_ResidualMass.hpp
 
 all: all-am
@@ -338,10 +337,10 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RNG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ResidualMass.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_optimalDomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerODWF.Po@am__quote@
