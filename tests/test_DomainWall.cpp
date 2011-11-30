@@ -121,7 +121,7 @@ int Test_optimalDomainWall::run(XML::node node){
   CCIO::cout << ".::: Test Dirac_optimalDomainWall gamma5 hermiticity " 
        << " vdiff = ( G5 D G5 - D.hc ) psi \n";
   start = clock();
-  mult5d_gamma5_test(*DiracODWF,psi,100);
+  mult5d_gamma5_test(*DiracODWF,phi,100);
   CCIO::cout<< "Time for 100 calls : " 
       << ( ( clock() - start ) / (double)CLOCKS_PER_SEC ) <<'\n';
   

@@ -54,7 +54,7 @@ int Test_ResMass::run(XML::node node) {
   input_file >> approx;
   input_file >> mq;
 
-  XML::read(node,"N5dbla",N5d, MANDATORY);
+  XML::read(node,"N5d",N5d, MANDATORY);
 
   CCIO::cout << "Residual mass testing with" << endl;
   CCIO::cout << " mzero  = " << mzero << endl;

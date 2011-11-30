@@ -39,22 +39,22 @@ namespace XML
 
   void read(pugi::xml_node node, const char *name, unsigned long& value, bool type = false);
 
-  void read(pugi::xml_node node, const char *name, double& value);
+  void read(pugi::xml_node node, const char *name, double& value,  bool type = false);
 
-  void read(pugi::xml_node node, const char *name, bool& value);
-
-  void read_array(pugi::xml_node node, 
-		  const char* name, 
-		  std::vector<int>& array);
+  void read(pugi::xml_node node, const char *name, bool& value, bool type = false);
 
   void read_array(pugi::xml_node node, 
 		  const char* name, 
-		  std::vector<unsigned long>& array);
+		  std::vector<int>& array, bool type = false);
+
+  void read_array(pugi::xml_node node, 
+		  const char* name, 
+		  std::vector<unsigned long>& array, bool type = false);
 
 
   void read_array(pugi::xml_node node, 
 		  const char* name, 
-		  std::vector<double>& array);
+		  std::vector<double>& array, bool type = false);
 
 
 
