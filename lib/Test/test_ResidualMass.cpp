@@ -38,6 +38,7 @@ int Test_ResMass::run(XML::node node) {
   std::ifstream input_file;
   input_file.open("param.dat");
 
+  XML::descend(node, "DiracOperator");
   // operator
   double mzero;
   int N5d;    // the length in the 5th direction (must be even)
