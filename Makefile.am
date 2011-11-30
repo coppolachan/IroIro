@@ -1,4 +1,4 @@
-SUBDIRS = lib docs
+SUBDIRS = lib tests docs
 
 EXTRA_DIST = README 		\
 	docs/doxy.cfg.in 	\

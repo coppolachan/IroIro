@@ -108,10 +108,11 @@ am__libcommcode_a_SOURCES_DIST = Communicator/communicator_dummy.cpp \
 	Main/Geometry/siteIndex_eo.cpp Main/gaugeConf.cpp \
 	PugiXML/pugixml.cpp PugiXML/pugi_interface.cpp \
 	Tools/randNum_MT19937.cpp Tools/randNum_Factory.cpp \
-	Tools/sunMat.cpp Test/test_Gauge.cpp \
-	Test/test_EigenModes_IRL.cpp Test/test_MultiShiftSolver.cpp \
-	Test/test_overlap.cpp Test/test_wilson_EvenOdd.cpp \
-	Test/test_optimalDomainWall.cpp
+	Tools/sunMat.cpp ../tests/test_Gauge.cpp \
+	../tests/test_EigenModes_IRL.cpp \
+	../tests/test_MultiShiftSolver.cpp ../tests/test_overlap.cpp \
+	../tests/test_wilson_EvenOdd.cpp \
+	../tests/test_optimalDomainWall.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 am_libcommcode_a_OBJECTS = $(am__objects_1) action_gauge.$(OBJEXT) \
@@ -302,7 +303,7 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-SUBDIRS = . Test
+SUBDIRS = . 
 @USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 @USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 AM_CPPFLAGS = -I$(top_srcdir)
@@ -311,7 +312,7 @@ AM_LDFLAGS =
 lib_LIBRARIES = libcommcode.a
 EXTRA_DIST = Example.xml			\
 		HMC/mdExec_leapfrog_eigen.cpp	\
-		Test/test_HMC_noFactories.cpp
+		../tests/test_HMC_noFactories.cpp
 
 libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 	 	Action/action_gauge.cpp 		\
@@ -355,12 +356,12 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/sunMat.cpp			\
-		Test/test_Gauge.cpp			\
-		Test/test_EigenModes_IRL.cpp		\
-		Test/test_MultiShiftSolver.cpp		\
-		Test/test_overlap.cpp			\
-		Test/test_wilson_EvenOdd.cpp		\
-		Test/test_optimalDomainWall.cpp		
+		../tests/test_Gauge.cpp			\
+		../tests/test_EigenModes_IRL.cpp		\
+		../tests/test_MultiShiftSolver.cpp		\
+		../tests/test_overlap.cpp			\
+		../tests/test_wilson_EvenOdd.cpp		\
+		../tests/test_optimalDomainWall.cpp		
 
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD = libcommcode.a
@@ -437,13 +438,13 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h	\
 			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
 			Tools/RAIIFactory.hpp			\
-			Test/tests_all.hpp			\
-			Test/test_EigenModes_IRL.h		\
-			Test/test_MultiShiftSolver.h		\
-			Test/test_overlap.hpp			\
-			Test/test_wilson_EvenOdd.hpp		\
-			Test/test_Gauge.hpp			\
-			Test/tests.hpp
+			../tests/tests_all.hpp			\
+			../tests/test_EigenModes_IRL.h		\
+			../tests/test_MultiShiftSolver.h		\
+			../tests/test_overlap.hpp			\
+			../tests/test_wilson_EvenOdd.hpp		\
+			../tests/test_Gauge.hpp			\
+			../tests/tests.hpp
 
 all: all-recursive
 
@@ -1229,89 +1230,89 @@ sunMat.obj: Tools/sunMat.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sunMat.obj `if test -f 'Tools/sunMat.cpp'; then $(CYGPATH_W) 'Tools/sunMat.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/sunMat.cpp'; fi`
 
-test_Gauge.o: Test/test_Gauge.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_Gauge.o -MD -MP -MF $(DEPDIR)/test_Gauge.Tpo -c -o test_Gauge.o `test -f 'Test/test_Gauge.cpp' || echo '$(srcdir)/'`Test/test_Gauge.cpp
+test_Gauge.o: ../tests/test_Gauge.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_Gauge.o -MD -MP -MF $(DEPDIR)/test_Gauge.Tpo -c -o test_Gauge.o `test -f '../tests/test_Gauge.cpp' || echo '$(srcdir)/'`../tests/test_Gauge.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_Gauge.Tpo $(DEPDIR)/test_Gauge.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_Gauge.cpp' object='test_Gauge.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_Gauge.cpp' object='test_Gauge.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_Gauge.o `test -f 'Test/test_Gauge.cpp' || echo '$(srcdir)/'`Test/test_Gauge.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_Gauge.o `test -f '../tests/test_Gauge.cpp' || echo '$(srcdir)/'`../tests/test_Gauge.cpp
 
-test_Gauge.obj: Test/test_Gauge.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_Gauge.obj -MD -MP -MF $(DEPDIR)/test_Gauge.Tpo -c -o test_Gauge.obj `if test -f 'Test/test_Gauge.cpp'; then $(CYGPATH_W) 'Test/test_Gauge.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_Gauge.cpp'; fi`
+test_Gauge.obj: ../tests/test_Gauge.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_Gauge.obj -MD -MP -MF $(DEPDIR)/test_Gauge.Tpo -c -o test_Gauge.obj `if test -f '../tests/test_Gauge.cpp'; then $(CYGPATH_W) '../tests/test_Gauge.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_Gauge.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_Gauge.Tpo $(DEPDIR)/test_Gauge.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_Gauge.cpp' object='test_Gauge.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_Gauge.cpp' object='test_Gauge.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_Gauge.obj `if test -f 'Test/test_Gauge.cpp'; then $(CYGPATH_W) 'Test/test_Gauge.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_Gauge.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_Gauge.obj `if test -f '../tests/test_Gauge.cpp'; then $(CYGPATH_W) '../tests/test_Gauge.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_Gauge.cpp'; fi`
 
-test_EigenModes_IRL.o: Test/test_EigenModes_IRL.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_EigenModes_IRL.o -MD -MP -MF $(DEPDIR)/test_EigenModes_IRL.Tpo -c -o test_EigenModes_IRL.o `test -f 'Test/test_EigenModes_IRL.cpp' || echo '$(srcdir)/'`Test/test_EigenModes_IRL.cpp
+test_EigenModes_IRL.o: ../tests/test_EigenModes_IRL.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_EigenModes_IRL.o -MD -MP -MF $(DEPDIR)/test_EigenModes_IRL.Tpo -c -o test_EigenModes_IRL.o `test -f '../tests/test_EigenModes_IRL.cpp' || echo '$(srcdir)/'`../tests/test_EigenModes_IRL.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_EigenModes_IRL.Tpo $(DEPDIR)/test_EigenModes_IRL.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_EigenModes_IRL.cpp' object='test_EigenModes_IRL.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_EigenModes_IRL.cpp' object='test_EigenModes_IRL.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_EigenModes_IRL.o `test -f 'Test/test_EigenModes_IRL.cpp' || echo '$(srcdir)/'`Test/test_EigenModes_IRL.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_EigenModes_IRL.o `test -f '../tests/test_EigenModes_IRL.cpp' || echo '$(srcdir)/'`../tests/test_EigenModes_IRL.cpp
 
-test_EigenModes_IRL.obj: Test/test_EigenModes_IRL.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_EigenModes_IRL.obj -MD -MP -MF $(DEPDIR)/test_EigenModes_IRL.Tpo -c -o test_EigenModes_IRL.obj `if test -f 'Test/test_EigenModes_IRL.cpp'; then $(CYGPATH_W) 'Test/test_EigenModes_IRL.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_EigenModes_IRL.cpp'; fi`
+test_EigenModes_IRL.obj: ../tests/test_EigenModes_IRL.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_EigenModes_IRL.obj -MD -MP -MF $(DEPDIR)/test_EigenModes_IRL.Tpo -c -o test_EigenModes_IRL.obj `if test -f '../tests/test_EigenModes_IRL.cpp'; then $(CYGPATH_W) '../tests/test_EigenModes_IRL.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_EigenModes_IRL.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_EigenModes_IRL.Tpo $(DEPDIR)/test_EigenModes_IRL.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_EigenModes_IRL.cpp' object='test_EigenModes_IRL.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_EigenModes_IRL.cpp' object='test_EigenModes_IRL.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_EigenModes_IRL.obj `if test -f 'Test/test_EigenModes_IRL.cpp'; then $(CYGPATH_W) 'Test/test_EigenModes_IRL.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_EigenModes_IRL.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_EigenModes_IRL.obj `if test -f '../tests/test_EigenModes_IRL.cpp'; then $(CYGPATH_W) '../tests/test_EigenModes_IRL.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_EigenModes_IRL.cpp'; fi`
 
-test_MultiShiftSolver.o: Test/test_MultiShiftSolver.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_MultiShiftSolver.o -MD -MP -MF $(DEPDIR)/test_MultiShiftSolver.Tpo -c -o test_MultiShiftSolver.o `test -f 'Test/test_MultiShiftSolver.cpp' || echo '$(srcdir)/'`Test/test_MultiShiftSolver.cpp
+test_MultiShiftSolver.o: ../tests/test_MultiShiftSolver.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_MultiShiftSolver.o -MD -MP -MF $(DEPDIR)/test_MultiShiftSolver.Tpo -c -o test_MultiShiftSolver.o `test -f '../tests/test_MultiShiftSolver.cpp' || echo '$(srcdir)/'`../tests/test_MultiShiftSolver.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_MultiShiftSolver.Tpo $(DEPDIR)/test_MultiShiftSolver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_MultiShiftSolver.cpp' object='test_MultiShiftSolver.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_MultiShiftSolver.cpp' object='test_MultiShiftSolver.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_MultiShiftSolver.o `test -f 'Test/test_MultiShiftSolver.cpp' || echo '$(srcdir)/'`Test/test_MultiShiftSolver.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_MultiShiftSolver.o `test -f '../tests/test_MultiShiftSolver.cpp' || echo '$(srcdir)/'`../tests/test_MultiShiftSolver.cpp
 
-test_MultiShiftSolver.obj: Test/test_MultiShiftSolver.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_MultiShiftSolver.obj -MD -MP -MF $(DEPDIR)/test_MultiShiftSolver.Tpo -c -o test_MultiShiftSolver.obj `if test -f 'Test/test_MultiShiftSolver.cpp'; then $(CYGPATH_W) 'Test/test_MultiShiftSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_MultiShiftSolver.cpp'; fi`
+test_MultiShiftSolver.obj: ../tests/test_MultiShiftSolver.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_MultiShiftSolver.obj -MD -MP -MF $(DEPDIR)/test_MultiShiftSolver.Tpo -c -o test_MultiShiftSolver.obj `if test -f '../tests/test_MultiShiftSolver.cpp'; then $(CYGPATH_W) '../tests/test_MultiShiftSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_MultiShiftSolver.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_MultiShiftSolver.Tpo $(DEPDIR)/test_MultiShiftSolver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_MultiShiftSolver.cpp' object='test_MultiShiftSolver.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_MultiShiftSolver.cpp' object='test_MultiShiftSolver.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_MultiShiftSolver.obj `if test -f 'Test/test_MultiShiftSolver.cpp'; then $(CYGPATH_W) 'Test/test_MultiShiftSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_MultiShiftSolver.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_MultiShiftSolver.obj `if test -f '../tests/test_MultiShiftSolver.cpp'; then $(CYGPATH_W) '../tests/test_MultiShiftSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_MultiShiftSolver.cpp'; fi`
 
-test_overlap.o: Test/test_overlap.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_overlap.o -MD -MP -MF $(DEPDIR)/test_overlap.Tpo -c -o test_overlap.o `test -f 'Test/test_overlap.cpp' || echo '$(srcdir)/'`Test/test_overlap.cpp
+test_overlap.o: ../tests/test_overlap.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_overlap.o -MD -MP -MF $(DEPDIR)/test_overlap.Tpo -c -o test_overlap.o `test -f '../tests/test_overlap.cpp' || echo '$(srcdir)/'`../tests/test_overlap.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_overlap.Tpo $(DEPDIR)/test_overlap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_overlap.cpp' object='test_overlap.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_overlap.cpp' object='test_overlap.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_overlap.o `test -f 'Test/test_overlap.cpp' || echo '$(srcdir)/'`Test/test_overlap.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_overlap.o `test -f '../tests/test_overlap.cpp' || echo '$(srcdir)/'`../tests/test_overlap.cpp
 
-test_overlap.obj: Test/test_overlap.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_overlap.obj -MD -MP -MF $(DEPDIR)/test_overlap.Tpo -c -o test_overlap.obj `if test -f 'Test/test_overlap.cpp'; then $(CYGPATH_W) 'Test/test_overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_overlap.cpp'; fi`
+test_overlap.obj: ../tests/test_overlap.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_overlap.obj -MD -MP -MF $(DEPDIR)/test_overlap.Tpo -c -o test_overlap.obj `if test -f '../tests/test_overlap.cpp'; then $(CYGPATH_W) '../tests/test_overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_overlap.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_overlap.Tpo $(DEPDIR)/test_overlap.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_overlap.cpp' object='test_overlap.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_overlap.cpp' object='test_overlap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_overlap.obj `if test -f 'Test/test_overlap.cpp'; then $(CYGPATH_W) 'Test/test_overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_overlap.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_overlap.obj `if test -f '../tests/test_overlap.cpp'; then $(CYGPATH_W) '../tests/test_overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_overlap.cpp'; fi`
 
-test_wilson_EvenOdd.o: Test/test_wilson_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_wilson_EvenOdd.o -MD -MP -MF $(DEPDIR)/test_wilson_EvenOdd.Tpo -c -o test_wilson_EvenOdd.o `test -f 'Test/test_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`Test/test_wilson_EvenOdd.cpp
+test_wilson_EvenOdd.o: ../tests/test_wilson_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_wilson_EvenOdd.o -MD -MP -MF $(DEPDIR)/test_wilson_EvenOdd.Tpo -c -o test_wilson_EvenOdd.o `test -f '../tests/test_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`../tests/test_wilson_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_wilson_EvenOdd.Tpo $(DEPDIR)/test_wilson_EvenOdd.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_wilson_EvenOdd.cpp' object='test_wilson_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_wilson_EvenOdd.cpp' object='test_wilson_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_wilson_EvenOdd.o `test -f 'Test/test_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`Test/test_wilson_EvenOdd.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_wilson_EvenOdd.o `test -f '../tests/test_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`../tests/test_wilson_EvenOdd.cpp
 
-test_wilson_EvenOdd.obj: Test/test_wilson_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_wilson_EvenOdd.obj -MD -MP -MF $(DEPDIR)/test_wilson_EvenOdd.Tpo -c -o test_wilson_EvenOdd.obj `if test -f 'Test/test_wilson_EvenOdd.cpp'; then $(CYGPATH_W) 'Test/test_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_wilson_EvenOdd.cpp'; fi`
+test_wilson_EvenOdd.obj: ../tests/test_wilson_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_wilson_EvenOdd.obj -MD -MP -MF $(DEPDIR)/test_wilson_EvenOdd.Tpo -c -o test_wilson_EvenOdd.obj `if test -f '../tests/test_wilson_EvenOdd.cpp'; then $(CYGPATH_W) '../tests/test_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_wilson_EvenOdd.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_wilson_EvenOdd.Tpo $(DEPDIR)/test_wilson_EvenOdd.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_wilson_EvenOdd.cpp' object='test_wilson_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_wilson_EvenOdd.cpp' object='test_wilson_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_wilson_EvenOdd.obj `if test -f 'Test/test_wilson_EvenOdd.cpp'; then $(CYGPATH_W) 'Test/test_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_wilson_EvenOdd.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_wilson_EvenOdd.obj `if test -f '../tests/test_wilson_EvenOdd.cpp'; then $(CYGPATH_W) '../tests/test_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_wilson_EvenOdd.cpp'; fi`
 
-test_optimalDomainWall.o: Test/test_optimalDomainWall.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_optimalDomainWall.o -MD -MP -MF $(DEPDIR)/test_optimalDomainWall.Tpo -c -o test_optimalDomainWall.o `test -f 'Test/test_optimalDomainWall.cpp' || echo '$(srcdir)/'`Test/test_optimalDomainWall.cpp
+test_optimalDomainWall.o: ../tests/test_optimalDomainWall.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_optimalDomainWall.o -MD -MP -MF $(DEPDIR)/test_optimalDomainWall.Tpo -c -o test_optimalDomainWall.o `test -f '../tests/test_optimalDomainWall.cpp' || echo '$(srcdir)/'`../tests/test_optimalDomainWall.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_optimalDomainWall.Tpo $(DEPDIR)/test_optimalDomainWall.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_optimalDomainWall.cpp' object='test_optimalDomainWall.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_optimalDomainWall.cpp' object='test_optimalDomainWall.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_optimalDomainWall.o `test -f 'Test/test_optimalDomainWall.cpp' || echo '$(srcdir)/'`Test/test_optimalDomainWall.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_optimalDomainWall.o `test -f '../tests/test_optimalDomainWall.cpp' || echo '$(srcdir)/'`../tests/test_optimalDomainWall.cpp
 
-test_optimalDomainWall.obj: Test/test_optimalDomainWall.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_optimalDomainWall.obj -MD -MP -MF $(DEPDIR)/test_optimalDomainWall.Tpo -c -o test_optimalDomainWall.obj `if test -f 'Test/test_optimalDomainWall.cpp'; then $(CYGPATH_W) 'Test/test_optimalDomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_optimalDomainWall.cpp'; fi`
+test_optimalDomainWall.obj: ../tests/test_optimalDomainWall.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_optimalDomainWall.obj -MD -MP -MF $(DEPDIR)/test_optimalDomainWall.Tpo -c -o test_optimalDomainWall.obj `if test -f '../tests/test_optimalDomainWall.cpp'; then $(CYGPATH_W) '../tests/test_optimalDomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_optimalDomainWall.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_optimalDomainWall.Tpo $(DEPDIR)/test_optimalDomainWall.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Test/test_optimalDomainWall.cpp' object='test_optimalDomainWall.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_optimalDomainWall.cpp' object='test_optimalDomainWall.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_optimalDomainWall.obj `if test -f 'Test/test_optimalDomainWall.cpp'; then $(CYGPATH_W) 'Test/test_optimalDomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/Test/test_optimalDomainWall.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_optimalDomainWall.obj `if test -f '../tests/test_optimalDomainWall.cpp'; then $(CYGPATH_W) '../tests/test_optimalDomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_optimalDomainWall.cpp'; fi`
 
 main.o: Main/main.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main.o -MD -MP -MF $(DEPDIR)/main.Tpo -c -o main.o `test -f 'Main/main.cpp' || echo '$(srcdir)/'`Main/main.cpp

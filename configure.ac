@@ -83,7 +83,7 @@ AC_SUBST(ARFLAGS)
 
 AC_CONFIG_FILES([Makefile
  		lib/Makefile
-		lib/Test/Makefile
+		tests/Makefile
 		docs/Makefile])
 
 		 

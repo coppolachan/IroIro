@@ -1,4 +1,4 @@
-SUBDIRS = . Test
+SUBDIRS = . 
 
 if USE_MPI
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
@@ -23,7 +23,7 @@ lib_LIBRARIES = libcommcode.a
 
 EXTRA_DIST =    Example.xml			\
 		HMC/mdExec_leapfrog_eigen.cpp	\
-		Test/test_HMC_noFactories.cpp
+		../tests/test_HMC_noFactories.cpp
 
 
 libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
@@ -68,12 +68,12 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/sunMat.cpp			\
-		Test/test_Gauge.cpp			\
-		Test/test_EigenModes_IRL.cpp		\
-		Test/test_MultiShiftSolver.cpp		\
-		Test/test_overlap.cpp			\
-		Test/test_wilson_EvenOdd.cpp		\
-		Test/test_optimalDomainWall.cpp		
+		../tests/test_Gauge.cpp			\
+		../tests/test_EigenModes_IRL.cpp		\
+		../tests/test_MultiShiftSolver.cpp		\
+		../tests/test_overlap.cpp			\
+		../tests/test_wilson_EvenOdd.cpp		\
+		../tests/test_optimalDomainWall.cpp		
 
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD   = libcommcode.a
@@ -151,12 +151,12 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
 			Tools/RAIIFactory.hpp			\
-			Test/tests_all.hpp			\
-			Test/test_EigenModes_IRL.h		\
-			Test/test_MultiShiftSolver.h		\
-			Test/test_overlap.hpp			\
-			Test/test_wilson_EvenOdd.hpp		\
-			Test/test_Gauge.hpp			\
-			Test/tests.hpp
+			../tests/tests_all.hpp			\
+			../tests/test_EigenModes_IRL.h		\
+			../tests/test_MultiShiftSolver.h		\
+			../tests/test_overlap.hpp			\
+			../tests/test_wilson_EvenOdd.hpp		\
+			../tests/test_Gauge.hpp			\
+			../tests/tests.hpp
 
 

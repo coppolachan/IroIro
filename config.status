@@ -405,7 +405,7 @@ on `(hostname || uname -n) 2>/dev/null | sed 1q`
 "
 
 # Files that config.status was made for.
-config_files=" docs/doxy.cfg Makefile lib/Makefile lib/Test/Makefile docs/Makefile"
+config_files=" docs/doxy.cfg Makefile lib/Makefile tests/Makefile docs/Makefile"
 config_headers=" include/config.h"
 config_commands=" depfiles"
 
@@ -563,7 +563,7 @@ do
     "docs/doxy.cfg") CONFIG_FILES="$CONFIG_FILES docs/doxy.cfg" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "lib/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Makefile" ;;
-    "lib/Test/Makefile") CONFIG_FILES="$CONFIG_FILES lib/Test/Makefile" ;;
+    "tests/Makefile") CONFIG_FILES="$CONFIG_FILES tests/Makefile" ;;
     "docs/Makefile") CONFIG_FILES="$CONFIG_FILES docs/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;

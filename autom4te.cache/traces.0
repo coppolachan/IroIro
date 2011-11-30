@@ -560,7 +560,7 @@ m4trace:configure.ac:82: -1- AC_SUBST_TRACE([ARFLAGS])
 m4trace:configure.ac:82: -1- m4_pattern_allow([^ARFLAGS$])
 m4trace:configure.ac:84: -1- AC_CONFIG_FILES([Makefile
  		lib/Makefile
-		lib/Test/Makefile
+		tests/Makefile
 		docs/Makefile])
 m4trace:configure.ac:90: -1- AC_SUBST([LIB@&t@OBJS], [$ac_libobjs])
 m4trace:configure.ac:90: -1- AC_SUBST_TRACE([LIB@&t@OBJS])
