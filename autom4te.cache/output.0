@@ -4807,6 +4807,10 @@ _ACEOF
 
   LIBS="-lgslcblas $LIBS"
 
+else
+  as_fn_error $? "GNU Scientific Library BLAS not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gnu.org/s/gsl/" "$LINENO" 5
 fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl_blas_dgemm in -lgsl" >&5
@@ -4852,6 +4856,10 @@ _ACEOF
 
   LIBS="-lgsl $LIBS"
 
+else
+  as_fn_error $? "GNU Scientific Library not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gnu.org/s/gsl/" "$LINENO" 5
 fi
 
 

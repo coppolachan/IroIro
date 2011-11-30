@@ -21,8 +21,15 @@ AC_LANG(C++)
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [pow])
-AC_CHECK_LIB([gslcblas],[cblas_dgemm])
-AC_CHECK_LIB([gsl],[gsl_blas_dgemm])
+AC_CHECK_LIB([gslcblas],
+	[cblas_dgemm],,
+	[AC_MSG_ERROR(GNU Scientific Library BLAS not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gnu.org/s/gsl/)])
+AC_CHECK_LIB([gsl],[gsl_blas_dgemm],,
+	[AC_MSG_ERROR(GNU Scientific Library not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gnu.org/s/gsl/)])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h])
