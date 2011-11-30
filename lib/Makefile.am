@@ -49,7 +49,6 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Solver/solver_CG.cpp			\
 		Solver/solver_Factory.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
-		Solver/multiShiftSolver.h		\
 		HMC/hmcGeneral.cpp			\
 		HMC/hmcPrms.cpp				\
 		HMC/mdExec_leapfrog.cpp			\
@@ -101,7 +100,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			PugiXML/pugiconfig.hpp			\
 			Action/action_gauge.h			\
 			Action/action.h				\
-			Action/action_gaugetype_factory.h	\
+			Action/action_gaugetype_factory.hpp	\
 			Action/action_fermiontype_factory.hpp	\
 			Action/action_Factory.h			\
 			Action/action_Nf2.h			\
@@ -138,12 +137,13 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			Solver/solver.h				\
 			Solver/solver_CG.h			\
 			Solver/multiShiftSolver_CG.hpp		\
+			Solver/multiShiftSolver.hpp		\
 			HMC/hmcGeneral.h			\
 			HMC/hmcPrms.h				\
 			HMC/mdExec.h				\
 			HMC/mdExec_leapfrog.h			\
 			HMC/mdExec_leapfrog_eigen.h		\
-			HMC/mdExec_Factory.h			\
+			HMC/mdExec_Factory.hpp			\
 			Tools/sunMat.h				\
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\

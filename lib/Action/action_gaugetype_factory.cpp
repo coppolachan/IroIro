@@ -1,9 +1,9 @@
-#include "action_gaugetype_factory.h"
+#include "action_gaugetype_factory.hpp"
 
 #include <string.h>
 
 namespace GaugeAction {
-  GaugeActionCreator* createGaugeActionFactory(XML::node node)
+  GaugeActionFactory* createGaugeActionFactory(XML::node node)
   {
     //XML::descend(node, "Action");
 
@@ -12,7 +12,7 @@ namespace GaugeAction {
       const char* Action_name = node.attribute("name").value();
       
       if (!strcmp(Action_name, "Wilson")) { 
-	return new WilsonGaugeActionCreator(node);
+	return new WilsonGaugeActionFactory(node);
       } 
 
     } 

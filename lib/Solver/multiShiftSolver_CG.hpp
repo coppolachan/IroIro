@@ -10,7 +10,7 @@
 
 #include "include/pugi_interface.h"
 #include "include/fopr.h"
-#include "multiShiftSolver.h"
+#include "multiShiftSolver.hpp"
 
 typedef std::vector<Field> prop_t;
 

@@ -3,17 +3,17 @@
 #include <string.h>
 
 namespace SolverOperators {
-SolverOperatorCreator* createSolverOperatorFactory(const XML::node node)
+SolverOperatorFactory* createSolverOperatorFactory(const XML::node node)
   {
     if (node !=NULL) {
       
       const char* Solver_name = node.attribute("type").value();
       
       if (!strcmp(Solver_name, "Solver_CG")) { 
-	return new SolverCGCreator(node);
+	return new SolverCGFactory(node);
       }
       if (!strcmp(Solver_name, "Solver_BiCGStab")) { 
-	return new SolverBiCGStabCreator(node);
+	return new SolverBiCGStabFactory(node);
       }
       std::cerr << "No Solver available with type ["
                 << Solver_name << "]\n" 

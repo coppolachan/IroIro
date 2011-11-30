@@ -5,12 +5,12 @@
 #include "include/format_G.h"
 
 /*!
- *@class ActionCreator
+ *@class ActionFactory
  *
  *@brief Abstract Factory class for General actions
  *
  */
-class ActionCreator {
+class ActionFactory {
 public:
   /*!
     Virtual function returning the %Action

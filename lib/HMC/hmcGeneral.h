@@ -11,7 +11,7 @@
 #include "Communicator/communicator.h"
 #endif
 #include "Tools/randNum_Factory.h"
-#include "HMC/mdExec_Factory.h"
+#include "HMC/mdExec_Factory.hpp"
 #include <vector>
 
 #ifndef PUGI_INTERFACE_H_

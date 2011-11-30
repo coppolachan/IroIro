@@ -2,4 +2,9 @@
 stamp-h1
 docs/doxy-en
 *.o
+*.a
+*.log
+Makefile
+commoncode-*
+.*
 #*#
