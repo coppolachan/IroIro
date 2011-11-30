@@ -89,7 +89,7 @@ am__libcommcode_a_SOURCES_DIST = Communicator/communicator_dummy.cpp \
 	Dirac_ops/dirac_wilson_EvenOdd.cpp \
 	Dirac_ops/fopr_signH_Zolotarev.cpp \
 	Dirac_ops/dirac_overlap_Zolotarev.cpp \
-	Dirac_ops/dirac_Factory.cpp \
+	Dirac_ops/dirac_Operator_Factory.cpp \
 	Dirac_ops/dirac_optimalDomainWall.cpp \
 	Dirac_ops/dirac_optimalDomainWall_4D.cpp \
 	EigenModes/eigenModes_IRL.cpp \
@@ -121,7 +121,8 @@ am_libcommcode_a_OBJECTS = $(am__objects_1) action_gauge.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	fields_io.$(OBJEXT) dirac_wilson.$(OBJEXT) \
 	dirac_wilson_EvenOdd.$(OBJEXT) fopr_signH_Zolotarev.$(OBJEXT) \
-	dirac_overlap_Zolotarev.$(OBJEXT) dirac_Factory.$(OBJEXT) \
+	dirac_overlap_Zolotarev.$(OBJEXT) \
+	dirac_Operator_Factory.$(OBJEXT) \
 	dirac_optimalDomainWall.$(OBJEXT) \
 	dirac_optimalDomainWall_4D.$(OBJEXT) eigenModes_IRL.$(OBJEXT) \
 	eigenProc_Zolotarev.$(OBJEXT) sortEigen.$(OBJEXT) \
@@ -326,7 +327,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
-		Dirac_ops/dirac_Factory.cpp		\
+		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac_optimalDomainWall.cpp   \
 		Dirac_ops/dirac_optimalDomainWall_4D.cpp\
 		EigenModes/eigenModes_IRL.cpp		\
@@ -365,36 +366,36 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD = libcommcode.a
-include_HEADERS = $(top_srcdir)/include/commonPrms.h	\
-			$(top_srcdir)/include/common_code.hpp	\
-			$(top_srcdir)/include/common_fields.hpp	\
-			$(top_srcdir)/include/config.h		\
-			$(top_srcdir)/include/geometry.h	\
-			$(top_srcdir)/include/field.h		\
+include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
+			$(top_srcdir)/include/common_code.hpp		\
+			$(top_srcdir)/include/common_fields.hpp		\
+			$(top_srcdir)/include/config.h			\
+			$(top_srcdir)/include/geometry.h		\
+			$(top_srcdir)/include/field.h			\
 			$(top_srcdir)/include/fopr_chebyshev_DdagD.h	\
-			$(top_srcdir)/include/fopr_Dhat.h	\
-			$(top_srcdir)/include/fopr_eo.h		\
-			$(top_srcdir)/include/fopr_eo_wilson.h	\
-			$(top_srcdir)/include/fopr.h		\
+			$(top_srcdir)/include/fopr_Dhat.h		\
+			$(top_srcdir)/include/fopr_eo.h			\
+			$(top_srcdir)/include/fopr_eo_wilson.h		\
+			$(top_srcdir)/include/fopr.h			\
 			$(top_srcdir)/include/fopr_signH_Zolotarev.h	\
-			$(top_srcdir)/include/format_A.h	\
-			$(top_srcdir)/include/format_F.h	\
-			$(top_srcdir)/include/format_G.h	\
-			$(top_srcdir)/include/typeDefs.h	\
-			$(top_srcdir)/include/pugi_interface.h	\
-			$(top_srcdir)/include/singleton.h	\
-			PugiXML/pugixml.hpp			\
-			PugiXML/pugiconfig.hpp			\
-			Action/action_gauge.h			\
-			Action/action.h				\
-			Action/action_gaugetype_factory.hpp	\
-			Action/action_fermiontype_factory.hpp	\
-			Action/action_Factory.h			\
-			Action/action_Nf2.h			\
-			Action/action_Nf2_ratio.h		\
-			EigenModes/eigenModes_IRL.h		\
-			EigenModes/sortEigen.h			\
-			EigenModes/eigenProc_Zolotarev.h	\
+			$(top_srcdir)/include/format_A.h		\
+			$(top_srcdir)/include/format_F.h		\
+			$(top_srcdir)/include/format_G.h		\
+			$(top_srcdir)/include/typeDefs.h		\
+			$(top_srcdir)/include/pugi_interface.h		\
+			$(top_srcdir)/include/singleton.h		\
+			PugiXML/pugixml.hpp				\
+			PugiXML/pugiconfig.hpp				\
+			Action/action_gauge.hpp				\
+			Action/action.h					\
+			Action/action_gaugetype_factory.hpp		\
+			Action/action_fermiontype_factory.hpp		\
+			Action/action_Factory.hpp			\
+			Action/action_Nf2.h				\
+			Action/action_Nf2_ratio.h			\
+			EigenModes/eigenModes_IRL.h			\
+			EigenModes/sortEigen.h				\
+			EigenModes/eigenProc_Zolotarev.h		\
 			Measurements/GaugeM/staples.h				\
 			Measurements/FermionicM/source.h			\
 			Measurements/FermionicM/qprop_MultiShift.hpp 		\
@@ -412,7 +413,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h	\
 			Main/Geometry/shiftField_eo.h		\
 			Main/Geometry/siteIndex_eo.h		\
 			Main/gaugeConf.hpp			\
-			Dirac_ops/dirac_Factory.hpp		\
+			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_overlap_Zolotarev.h	\
 			Dirac_ops/dirac_wilson.h		\
 			Dirac_ops/dirac_wilson_EvenOdd.h	\
@@ -572,7 +573,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commonPrms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_mpi.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Factory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Operator_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_optimalDomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_optimalDomainWall_4D.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_overlap_Zolotarev.Po@am__quote@
@@ -810,19 +811,19 @@ dirac_overlap_Zolotarev.obj: Dirac_ops/dirac_overlap_Zolotarev.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_overlap_Zolotarev.obj `if test -f 'Dirac_ops/dirac_overlap_Zolotarev.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_overlap_Zolotarev.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_overlap_Zolotarev.cpp'; fi`
 
-dirac_Factory.o: Dirac_ops/dirac_Factory.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_Factory.o -MD -MP -MF $(DEPDIR)/dirac_Factory.Tpo -c -o dirac_Factory.o `test -f 'Dirac_ops/dirac_Factory.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_Factory.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_Factory.Tpo $(DEPDIR)/dirac_Factory.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_Factory.cpp' object='dirac_Factory.o' libtool=no @AMDEPBACKSLASH@
+dirac_Operator_Factory.o: Dirac_ops/dirac_Operator_Factory.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_Operator_Factory.o -MD -MP -MF $(DEPDIR)/dirac_Operator_Factory.Tpo -c -o dirac_Operator_Factory.o `test -f 'Dirac_ops/dirac_Operator_Factory.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_Operator_Factory.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_Operator_Factory.Tpo $(DEPDIR)/dirac_Operator_Factory.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_Operator_Factory.cpp' object='dirac_Operator_Factory.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_Factory.o `test -f 'Dirac_ops/dirac_Factory.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_Factory.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_Operator_Factory.o `test -f 'Dirac_ops/dirac_Operator_Factory.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_Operator_Factory.cpp
 
-dirac_Factory.obj: Dirac_ops/dirac_Factory.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_Factory.obj -MD -MP -MF $(DEPDIR)/dirac_Factory.Tpo -c -o dirac_Factory.obj `if test -f 'Dirac_ops/dirac_Factory.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_Factory.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_Factory.Tpo $(DEPDIR)/dirac_Factory.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_Factory.cpp' object='dirac_Factory.obj' libtool=no @AMDEPBACKSLASH@
+dirac_Operator_Factory.obj: Dirac_ops/dirac_Operator_Factory.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_Operator_Factory.obj -MD -MP -MF $(DEPDIR)/dirac_Operator_Factory.Tpo -c -o dirac_Operator_Factory.obj `if test -f 'Dirac_ops/dirac_Operator_Factory.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_Operator_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_Operator_Factory.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_Operator_Factory.Tpo $(DEPDIR)/dirac_Operator_Factory.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_Operator_Factory.cpp' object='dirac_Operator_Factory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_Factory.obj `if test -f 'Dirac_ops/dirac_Factory.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_Factory.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_Operator_Factory.obj `if test -f 'Dirac_ops/dirac_Operator_Factory.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_Operator_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_Operator_Factory.cpp'; fi`
 
 dirac_optimalDomainWall.o: Dirac_ops/dirac_optimalDomainWall.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_optimalDomainWall.o -MD -MP -MF $(DEPDIR)/dirac_optimalDomainWall.Tpo -c -o dirac_optimalDomainWall.o `test -f 'Dirac_ops/dirac_optimalDomainWall.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_optimalDomainWall.cpp

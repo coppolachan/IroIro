@@ -38,7 +38,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
-		Dirac_ops/dirac_Factory.cpp		\
+		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac_optimalDomainWall.cpp   \
 		Dirac_ops/dirac_optimalDomainWall_4D.cpp\
 		EigenModes/eigenModes_IRL.cpp		\
@@ -78,36 +78,36 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD   = libcommcode.a
 
-include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
-			$(top_srcdir)/include/common_code.hpp	\
-			$(top_srcdir)/include/common_fields.hpp	\
-			$(top_srcdir)/include/config.h		\
-			$(top_srcdir)/include/geometry.h	\
-			$(top_srcdir)/include/field.h		\
+include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
+			$(top_srcdir)/include/common_code.hpp		\
+			$(top_srcdir)/include/common_fields.hpp		\
+			$(top_srcdir)/include/config.h			\
+			$(top_srcdir)/include/geometry.h		\
+			$(top_srcdir)/include/field.h			\
 			$(top_srcdir)/include/fopr_chebyshev_DdagD.h	\
-			$(top_srcdir)/include/fopr_Dhat.h	\
-			$(top_srcdir)/include/fopr_eo.h		\
-			$(top_srcdir)/include/fopr_eo_wilson.h	\
-			$(top_srcdir)/include/fopr.h		\
+			$(top_srcdir)/include/fopr_Dhat.h		\
+			$(top_srcdir)/include/fopr_eo.h			\
+			$(top_srcdir)/include/fopr_eo_wilson.h		\
+			$(top_srcdir)/include/fopr.h			\
 			$(top_srcdir)/include/fopr_signH_Zolotarev.h	\
-			$(top_srcdir)/include/format_A.h	\
-			$(top_srcdir)/include/format_F.h	\
-			$(top_srcdir)/include/format_G.h	\
-			$(top_srcdir)/include/typeDefs.h	\
-			$(top_srcdir)/include/pugi_interface.h	\
-			$(top_srcdir)/include/singleton.h	\
-			PugiXML/pugixml.hpp			\
-			PugiXML/pugiconfig.hpp			\
-			Action/action_gauge.h			\
-			Action/action.h				\
-			Action/action_gaugetype_factory.hpp	\
-			Action/action_fermiontype_factory.hpp	\
-			Action/action_Factory.h			\
-			Action/action_Nf2.h			\
-			Action/action_Nf2_ratio.h		\
-			EigenModes/eigenModes_IRL.h		\
-			EigenModes/sortEigen.h			\
-			EigenModes/eigenProc_Zolotarev.h	\
+			$(top_srcdir)/include/format_A.h		\
+			$(top_srcdir)/include/format_F.h		\
+			$(top_srcdir)/include/format_G.h		\
+			$(top_srcdir)/include/typeDefs.h		\
+			$(top_srcdir)/include/pugi_interface.h		\
+			$(top_srcdir)/include/singleton.h		\
+			PugiXML/pugixml.hpp				\
+			PugiXML/pugiconfig.hpp				\
+			Action/action_gauge.hpp				\
+			Action/action.h					\
+			Action/action_gaugetype_factory.hpp		\
+			Action/action_fermiontype_factory.hpp		\
+			Action/action_Factory.hpp			\
+			Action/action_Nf2.h				\
+			Action/action_Nf2_ratio.h			\
+			EigenModes/eigenModes_IRL.h			\
+			EigenModes/sortEigen.h				\
+			EigenModes/eigenProc_Zolotarev.h		\
 			Measurements/GaugeM/staples.h				\
 			Measurements/FermionicM/source.h			\
 			Measurements/FermionicM/qprop_MultiShift.hpp 		\
@@ -125,7 +125,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			Main/Geometry/shiftField_eo.h		\
 			Main/Geometry/siteIndex_eo.h		\
 			Main/gaugeConf.hpp			\
-			Dirac_ops/dirac_Factory.hpp		\
+			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_overlap_Zolotarev.h	\
 			Dirac_ops/dirac_wilson.h		\
 			Dirac_ops/dirac_wilson_EvenOdd.h	\

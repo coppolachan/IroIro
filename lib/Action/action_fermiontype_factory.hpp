@@ -10,11 +10,11 @@
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
 
-#include "action_Factory.h"
+#include "action_Factory.hpp"
 #include "Action/action_Nf2.h"
 #include "Action/action_Nf2_ratio.h"
 #include "Solver/solver_CG.h"
-#include "Dirac_ops/dirac_Factory.hpp"
+#include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
 
 class FermionActionFactory : public ActionFactory {

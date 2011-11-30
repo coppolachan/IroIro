@@ -16,7 +16,7 @@
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
 
-#include "Action/action_Factory.h"
+#include "Action/action_Factory.hpp"
 #include "Action/action_gaugetype_factory.hpp"
 #include "Action/action_fermiontype_factory.hpp"
 #include "Communicator/comm_io.hpp"

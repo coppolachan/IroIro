@@ -11,7 +11,7 @@
 #include "Action/action.h"
 #include "include/fopr.h"
 #include "include/format_G.h"
-#include "Dirac_ops/dirac_Factory.hpp"
+#include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
 
 

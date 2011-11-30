@@ -2,8 +2,8 @@
 #define ACTION_GAUGE_FACT_
 
 #include "include/pugi_interface.h"
-#include "Action/action_gauge.h"
-#include "action_Factory.h"
+#include "Action/action_gauge.hpp"
+#include "action_Factory.hpp"
 
 
 class GaugeActionFactory : public ActionFactory {
