@@ -54,8 +54,8 @@ int Test_Wilson_EvenOdd::run(){
   vector<int> osec= ieo->osec();
 
   Format_F fmt(CommonPrms::instance()->Nvol());
-  vector<int> ie = fmt.get_sub(esec);
-  vector<int> io = fmt.get_sub(osec);
+  valarray<size_t> ie = fmt.get_sub(esec);
+  valarray<size_t> io = fmt.get_sub(osec);
 
   // source generation
   Field ff= src.mksrc(1,1);

@@ -40,8 +40,7 @@ void Communicator::transfer_fw(double *bin,double *data,int size,int){
   for(int i=0; i<size; ++i) bin[i] = data[i];
 }
 void Communicator::transfer_fw(valarray<double>& bin, 
-			       const valarray<double>& data,
-			       int,int){
+			       const valarray<double>& data,int){
   bin = data;
 }
 void Communicator::transfer_fw(valarray<double>& bin, 
@@ -54,8 +53,7 @@ void Communicator::transfer_bk(double *bin,double *data,int size,int){
   for(int i=0; i<size; ++i) bin[i] = data[i];
 }
 void Communicator::transfer_bk(valarray<double>& bin, 
-			       const valarray<double>& data,
-			       int,int){
+			       const valarray<double>& data,int){
   bin = data;
 }
 void Communicator::transfer_bk(valarray<double>& bin, 

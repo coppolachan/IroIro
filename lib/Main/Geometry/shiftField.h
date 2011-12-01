@@ -15,6 +15,7 @@
 #ifndef FIELD_INCLUDED
 #include "include/field.h"
 #endif
+#include "Communicator/comm_io.hpp"
 
 class ShiftField{
 public:
@@ -44,7 +45,7 @@ private:
 
   const FMT* bdfmt_;
   const std::valarray<double>* field_;
-  const std::vector<int> bd_;
+  const std::valarray<size_t> bd_;
   std::valarray<double> bdry_;
 
 public:
@@ -62,7 +63,9 @@ public:
      idx_(SiteIndex::instance()),
      bdfmt_(new FMT(idx_->Vdir(dir),fmt_->Nex())),
      bd_(fmt_->get_sub(idx_->bdlw(dir))),
-     bdry_(bdfmt_->size()){ com_->transfer_fw(bdry_,*field_,bd_,dir);}
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_fw(bdry_,(*field_)[bd_],dir);
+  }
 
   ShiftField_up(const std::valarray<double>& field,const FMT* fmt,int dir)
     :field_(&field),dir_(dir),fmt_(fmt),
@@ -70,18 +73,20 @@ public:
      idx_(SiteIndex::instance()),
      bdfmt_(new FMT(idx_->Vdir(dir),fmt_->Nex())),
      bd_(fmt_->get_sub(idx_->bdlw(dir))),
-     bdry_(bdfmt_->size()){ com_->transfer_fw(bdry_,field,bd_,dir);}
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_fw(bdry_,field[bd_],dir);
+  }
 
   ~ShiftField_up(){delete bdfmt_;}
 
   void setf(const Field& field){ 
     field_= &(field.getva());
-    com_->transfer_fw(bdry_,*field_,bd_,dir_);
+    com_->transfer_fw(bdry_,(*field_)[bd_],dir_);
   }
 
   void setf(const std::valarray<double>& field){
     field_= &field;
-    com_->transfer_fw(bdry_,field,bd_,dir_);
+    com_->transfer_fw(bdry_,field[bd_],dir_);
   }
 
   const std::valarray<double> cv(int in,int site,int ex=0) const;
@@ -174,7 +179,7 @@ private:
 
   const FMT* bdfmt_;
   const std::valarray<double>* field_;
-  const std::vector<int> bd_;
+  const std::valarray<size_t> bd_;
   std::valarray<double> bdry_;
 
 public:
@@ -192,7 +197,9 @@ public:
      idx_(SiteIndex::instance()),
      bdfmt_(new FMT(idx_->Vdir(dir),fmt_->Nex())),
      bd_(fmt_->get_sub(idx_->bdup(dir))),
-     bdry_(bdfmt_->size()){ com_->transfer_bk(bdry_,*field_,bd_,dir);}
+     bdry_(bdfmt_->size()){
+    com_->transfer_bk(bdry_,(*field_)[bd_],dir);
+  }
 
   ShiftField_dn(const std::valarray<double>& field,const FMT* fmt,int dir)
     :field_(&field),dir_(dir),fmt_(fmt),
@@ -200,18 +207,20 @@ public:
      idx_(SiteIndex::instance()),
      bdfmt_(new FMT(idx_->Vdir(dir),fmt_->Nex())),
      bd_(fmt_->get_sub(idx_->bdup(dir))),
-     bdry_(bdfmt_->size()){ com_->transfer_bk(bdry_,field,bd_,dir);}
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_bk(bdry_,field[bd_],dir);
+  }
 
   ~ShiftField_dn(){delete bdfmt_;}
 
   void setf(const Field& field){ 
     field_= &(field.getva());
-    com_->transfer_bk(bdry_,*field_,bd_,dir_);
+    com_->transfer_bk(bdry_,(*field_)[bd_],dir_);
   }
 
   void setf(const std::valarray<double>& field){
     field_= &field;
-    com_->transfer_bk(bdry_,field,bd_,dir_);
+    com_->transfer_bk(bdry_,field[bd_],dir_);
   }
   
   const std::valarray<double> cv(int in,int site,int ex=0) const;

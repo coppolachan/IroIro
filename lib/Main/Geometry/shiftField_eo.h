@@ -27,7 +27,7 @@ private:
 
   const FMT* bdfmt_;
   const std::valarray<double>* field_;
-  const std::vector<int> bd_;
+  const std::valarray<size_t> bd_;
   std::valarray<double> bdry_;
 
 public:
@@ -45,26 +45,31 @@ public:
      idx_(SiteIndex_eo::instance()),
      bd_(fmt_->get_sub(idx_->ebdlw(dir))),
      bdfmt_(new FMT(idx_->Ve_dir(dir),fmt_->Nex())),
-     bdry_(bdfmt_->size()){ com_->transfer_fw(bdry_,*field_,bd_,dir);}
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_fw(bdry_,(*field_)[bd_],dir);
+  }
 
-  ShiftField_even_up(const std::valarray<double>& field,const FMT* fmt,int dir)
+  ShiftField_even_up(const std::valarray<double>& field,
+		     const FMT* fmt,int dir)
     :field_(&field),dir_(dir),fmt_(fmt),
      com_(Communicator::instance()),
      idx_(SiteIndex_eo::instance()),
      bd_(fmt_->get_sub(idx_->ebdlw(dir))),
      bdfmt_(new FMT(idx_->Ve_dir(dir),fmt_->Nex())),
-     bdry_(bdfmt_->size()){ com_->transfer_fw(bdry_,field,bd_,dir);}
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_fw(bdry_,field[bd_],dir);
+  }
 
   ~ShiftField_even_up(){ delete bdfmt_;}
   
   void setf(const Field& field){
     field_= &(field.getva());
-    com_->transfer_fw(bdry_,*field_,bd_,dir_);
+    com_->transfer_fw(bdry_,(*field_)[bd_],dir_);
   }
 
   void setf(const std::valarray<double>& field){
     field_= &field;
-    com_->transfer_fw(bdry_,field,bd_,dir_);
+    com_->transfer_fw(bdry_,field[bd_],dir_);
   }
 
   const std::valarray<double> cv(int in,int hs,int ex=0) const;
@@ -156,7 +161,7 @@ private:
 
   const FMT* bdfmt_;
   const std::valarray<double>* field_;
-  const std::vector<int> bd_;
+  const std::valarray<size_t> bd_;
   std::valarray<double> bdry_;
 
 public:
@@ -174,7 +179,9 @@ public:
      idx_(SiteIndex_eo::instance()),
      bd_(fmt_->get_sub(idx_->ebdup(dir))),
           bdfmt_(new FMT(idx_->Ve_dir(dir),fmt_->Nex())),    
-     bdry_(bdfmt_->size()){ com_->transfer_bk(bdry_,*field_,bd_,dir);}
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_bk(bdry_,(*field_)[bd_],dir);
+  }
 
   ShiftField_even_dn(const std::valarray<double>& field,const FMT* fmt,int dir)
     :field_(&field),dir_(dir),fmt_(fmt),
@@ -182,18 +189,20 @@ public:
      idx_(SiteIndex_eo::instance()),
      bd_(fmt_->get_sub(idx_->ebdup(dir))),
      bdfmt_(new FMT(idx_->Ve_dir(dir),fmt_->Nex())),    
-     bdry_(bdfmt_->size()){ com_->transfer_bk(bdry_,field,bd_,dir);}
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_bk(bdry_,field[bd_],dir);
+  }
 
   ~ShiftField_even_dn(){ delete bdfmt_;}
 
   void setf(const Field& field){
     field_= &(field.getva());
-    com_->transfer_bk(bdry_,*field_,bd_,dir_);
+    com_->transfer_bk(bdry_,(*field_)[bd_],dir_);
   }
 
   void setf(const std::valarray<double>& field){
     field_= &field;
-    com_->transfer_bk(bdry_,field,bd_,dir_);
+    com_->transfer_bk(bdry_,field[bd_],dir_);
   }
 
   const std::valarray<double> cv(int in,int hs,int ex=0) const;
@@ -285,7 +294,8 @@ private:
 
   const FMT* bdfmt_;
   const std::valarray<double>* field_;
-  const std::vector<int> bd_;
+  //  const std::vector<int> bd_;
+  const std::valarray<size_t> bd_;
   std::valarray<double> bdry_;
 
 public:
@@ -304,27 +314,30 @@ public:
      bd_(fmt_->get_sub(idx_->obdlw(dir))),
      bdfmt_(new FMT(idx_->Vo_dir(dir),fmt_->Nex())),    
      bdry_(bdfmt_->size()){ 
-    com_->transfer_fw(bdry_,*field_,bd_,dir);
+    com_->transfer_fw(bdry_,(*field_)[bd_],dir);
   }
 
-  ShiftField_odd_up(const std::valarray<double>& field,const FMT* fmt,int dir)
+  ShiftField_odd_up(const std::valarray<double>& field,
+		    const FMT* fmt,int dir)
     :field_(&field),dir_(dir),fmt_(fmt),
      com_(Communicator::instance()),
      idx_(SiteIndex_eo::instance()),
      bd_(fmt_->get_sub(idx_->obdlw(dir))),
      bdfmt_(new FMT(idx_->Vo_dir(dir),fmt_->Nex())),    
-     bdry_(bdfmt_->size()){ com_->transfer_fw(bdry_,field,bd_,dir);}
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_fw(bdry_,field[bd_],dir);
+  }
 
   ~ShiftField_odd_up(){ delete bdfmt_;}
 
   void setf(const Field& field){
     field_= &(field.getva());
-    com_->transfer_fw(bdry_,*field_,bd_,dir_);
+    com_->transfer_fw(bdry_,(*field_)[bd_],dir_);
   }
 
   void setf(const std::valarray<double>& field){
     field_= &field;
-    com_->transfer_fw(bdry_,field,bd_,dir_);
+    com_->transfer_fw(bdry_,field[bd_],dir_);
   }
 
   const std::valarray<double> cv(int in,int hs,int ex=0) const;
@@ -416,7 +429,7 @@ private:
 
   const FMT* bdfmt_;
   const std::valarray<double>* field_;
-  const std::vector<int> bd_;
+  const std::valarray<size_t> bd_;
   std::valarray<double> bdry_;
 
 public:
@@ -434,7 +447,9 @@ public:
      idx_(SiteIndex_eo::instance()),
      bd_(fmt_->get_sub(idx_->obdup(dir))),
      bdfmt_(new FMT(idx_->Vo_dir(dir),fmt_->Nex())),    
-     bdry_(bdfmt_->size()){com_->transfer_bk(bdry_,*field_,bd_,dir); }
+     bdry_(bdfmt_->size()){
+    com_->transfer_bk(bdry_,(*field_)[bd_],dir);
+  }
 
   ShiftField_odd_dn(const std::valarray<double>& field,const FMT* fmt,int dir)
     :field_(&field),dir_(dir),fmt_(fmt),
@@ -442,18 +457,20 @@ public:
      idx_(SiteIndex_eo::instance()),
      bd_(fmt_->get_sub(idx_->obdup(dir))),
      bdfmt_(new FMT(idx_->Vo_dir(dir),fmt_->Nex())),    
-     bdry_(bdfmt_->size()){ com_->transfer_bk(bdry_,field,bd_,dir);}
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_bk(bdry_,field[bd_],dir);
+  }
 
   ~ShiftField_odd_dn(){ delete bdfmt_;}
 
   void setf(const Field& field){
     field_= &(field.getva());
-    com_->transfer_bk(bdry_,*field_,bd_,dir_);
+    com_->transfer_bk(bdry_,(*field_)[bd_],dir_);
   }
 
   void setf(const std::valarray<double>& field){
     field_= &field;
-    com_->transfer_bk(bdry_,field,bd_,dir_);
+    com_->transfer_bk(bdry_,field[bd_],dir_);
   }
 
   const std::valarray<double> cv(int in,int hs,int ex=0) const;

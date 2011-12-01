@@ -54,8 +54,8 @@ int Test_Wilson_EvenOdd::run(){
   vector<int> osec= ieo->osec();
 
   Format_F fmt(CommonPrms::instance()->Nvol());
-  vector<int> ie = fmt.get_sub(esec);
-  vector<int> io = fmt.get_sub(osec);
+  valarray<size_t> ie = fmt.get_sub(esec);
+  valarray<size_t> io = fmt.get_sub(osec);
 
   // source generation
   Field ff= src.mksrc(1,1);
@@ -120,10 +120,10 @@ int Test_Wilson_EvenOdd::run(){
   QuarkPropagator* QP;
   XML::descend(Wilson_EO_node_, "QuarkPropagator");
 
-  QuarkPropagatorFactory* QP_Factory = 
+  QuarkPropagatorCreator* QPCreator = 
     QuarkPropagators::createQuarkPropagatorFactory(Wilson_EO_node_);
 
-  QP = QP_Factory->getQuarkProp(conf_);
+  QP = QPCreator->getQuarkProp(conf_);
   QP->calc(sq,src);
   */
   //------------------------------------------------------------------------

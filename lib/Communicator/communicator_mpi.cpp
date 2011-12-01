@@ -91,9 +91,9 @@ transfer_fw(double *bin,double *data,int size,int dir){
 }
 
 void Communicator::
-transfer_fw(valarray<double>& bin,const valarray<double>& data,
-	    int size, int dir){
-  transfer_fw(&bin[0],&(const_cast<valarray<double>& >(data))[0],size,dir);
+transfer_fw(valarray<double>& bin,const valarray<double>& data,int dir){
+  transfer_fw(&bin[0],&(const_cast<valarray<double>& >(data))[0],
+	      bin.size(),dir);
 }
 
 void Communicator::
@@ -134,9 +134,9 @@ transfer_bk(double *bin,double *data,int size,int dir){
 }
 
 void Communicator::
-transfer_bk(valarray<double>& bin,const valarray<double>& data,
-	    int size,int dir){
-  transfer_bk(&(bin[0]),&(const_cast<valarray<double>& >(data))[0],size,dir);
+transfer_bk(valarray<double>& bin,const valarray<double>& data,int dir){
+  transfer_bk(&(bin[0]),&(const_cast<valarray<double>& >(data))[0],
+	      bin.size(),dir);
 }
 
 void Communicator::

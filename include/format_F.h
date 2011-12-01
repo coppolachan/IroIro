@@ -9,6 +9,7 @@
 #endif
 
 #include <valarray>
+#include "Communicator/comm_io.hpp"
 
 namespace Format{
 
@@ -68,14 +69,17 @@ namespace Format{
       return std::gslice(index_r(c,s,0), vsz_, vstr_);
     }
 
-    const std::vector<int> get_sub(const std::vector<int>& sv)const{
-      std::vector<int> sub;
+    const std::valarray<size_t> get_sub(const std::vector<int>& sv)const{
+      std::valarray<size_t> sub(Nin_*sv.size()*Nex_);
+      int j=0;
       for(int e=0;e<Nex_;++e)
 	for(int v=0;v<sv.size();++v)
 	  for(int i=0;i<Nin_;++i)
-	    sub.push_back(i+Nin_*(sv[v] +sv.size()*e));
+	    sub[j++] = i+Nin_*(sv[v] +sv.size()*e);
+
       return sub;
     }
   };  
-}  
+}
+  
 #endif

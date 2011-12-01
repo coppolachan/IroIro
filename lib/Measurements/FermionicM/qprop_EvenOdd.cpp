@@ -64,19 +64,26 @@ void Qprop_EvenOdd::calc(prop_t& xq,const prop_t& prp)const{
 
   Format_F ff(2*fsize_);
   Format_F hf(fsize_);
-
+  /*
   vector<int> esub = hf.get_sub(idx_eo_->esec());
   vector<int> osub = hf.get_sub(idx_eo_->osec());
+  */
+  valarray<size_t> esub = hf.get_sub(idx_eo_->esec());
+  valarray<size_t> osub = hf.get_sub(idx_eo_->osec());
 
   for(int s=0; s<Nd_;++s){
     for(int c=0; c<Nc_;++c){
-      
+
+      /*      
       Field be(fsize_);
       Field bo(fsize_);
       for(int i=0;i<fsize_;++i){
 	be.set(i, prp[Nc_*s+c][esub[i]]);
 	bo.set(i, prp[Nc_*s+c][osub[i]]);
       }
+      */
+      Field be(prp[Nc_*s+c][esub]);
+      Field bo(prp[Nc_*s+c][osub]);
 
       be -= D_->mult_eo(D_->mult_oo_inv(bo));
 

@@ -75,11 +75,8 @@ const Field Source_local<FMT>::mksrc(int s,int c){
 
 template<typename FMT> 
 const Field Source_local<FMT>::mksrc(const std::vector<int>& lv,int s,int c){
-  std::vector<int> sub = ff_->get_sub(lv);
   Field fsrc = mksrc(s,c);
-  Field ssrc(sub.size());
-  for(int i=0;i<sub.size();++i) ssrc.set(i,fsrc[sub[i]]);
-  return ssrc;
+  return Field(fsrc[ff_->get_sub(lv)]);
 }
 
 ////// Source_exp   -----------------------------------------------------
@@ -136,11 +133,8 @@ const Field Source_exp<FMT>::mksrc(int s, int c){
 
 template<typename FMT> 
 const Field Source_exp<FMT>::mksrc(const std::vector<int>& lv,int s, int c){
-  std::vector<int> sub = ff_->get_sub(lv);
   Field fsrc = mksrc(s,c);
-  Field ssrc(sub.size());
-  for(int i=0;i<sub.size();++i) ssrc.set(i,fsrc[sub[i]]);
-  return ssrc;
+  return Field(fsrc[ff_->get_sub(lv)]);
 }
 
 ////// Source_Gauss ----------------------------------------------------
@@ -194,11 +188,8 @@ const Field Source_Gauss<FMT>::mksrc(int s, int c){
 }
 template<typename FMT> 
 const Field Source_Gauss<FMT>::mksrc(const std::vector<int>& lv,int s,int c){
-  std::vector<int> sub = ff_->get_sub(lv);
   Field fsrc = mksrc(s,c);
-  Field ssrc(sub.size());
-  for(int i=0;i<sub.size();++i) ssrc.set(i,fsrc[sub[i]]);
-  return ssrc;
+  return Field(fsrc[ff_->get_sub(lv)]);
 }
 
 ////// Source_wall ----------------------------------------------------
@@ -245,11 +236,8 @@ const Field Source_wall<FMT>::mksrc(int s, int c){
 
 template<typename FMT> 
 const Field Source_wall<FMT>::mksrc(const std::vector<int>& lv,int s,int c){
-  std::vector<int> sub = ff_->get_sub(lv);
   Field fsrc = mksrc(s,c);
-  Field ssrc(sub.size());
-  for(int i=0;i<sub.size();++i) ssrc.set(i,fsrc[sub[i]]);
-  return ssrc;
+  return Field(fsrc[ff_->get_sub(lv)]);
 }
 
 ////// Source_wnoise----------------------------------------------------
@@ -281,13 +269,8 @@ const Field Source_wnoise<FMT>::mksrc(int s, int c){
 template<typename FMT> 
 const Field Source_wnoise<FMT>::
 mksrc(const std::vector<int>& lv,int s,int c){
-  std::vector<int> sub = ff_->get_sub(lv);
-
   Field scs = mksrc(s,c);
-  Field ssrc(sub.size());
-
-  for(int i=0;i<sub.size();++i)  ssrc.set(i,scs[sub[i]]);
-  return ssrc;
+  return Field(scs[ff_->get_sub(lv)]);
 }
 
 #endif

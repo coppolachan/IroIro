@@ -49,7 +49,7 @@ public:
   void transfer_fw(double *bin,double *data,int size,int dir);
 
   void transfer_fw(std::valarray<double>& bin,
-		   const std::valarray<double>& data,int size,int dir);
+		   const std::valarray<double>& data,int dir);
 
   void transfer_fw(std::valarray<double>& bin,
 		   const std::valarray<double>& data,
@@ -58,7 +58,7 @@ public:
   void transfer_bk(double *bin,double *data,int size,int dir);
 
   void transfer_bk(std::valarray<double>& bin,
-		   const std::valarray<double>& data, int size,int dir);
+		   const std::valarray<double>& data,int dir);
 
   void transfer_bk(std::valarray<double>& bin,
 		   const std::valarray<double>& data,

@@ -11,7 +11,7 @@
 #include "quark_propagators.hpp"
 #include "Dirac_ops/dirac.h"
 #include "Solver/solver.h"
-#include "Dirac_ops/dirac_Operator_Factory.hpp"
+#include "Dirac_ops/dirac_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
 #include "Main/Geometry/siteIndex_eo.h"
 
