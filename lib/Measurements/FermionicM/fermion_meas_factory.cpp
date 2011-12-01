@@ -9,7 +9,7 @@
 #include <string.h>
 
 namespace QuarkPropagators {
-  QuarkPropagatorCreator* createQuarkPropagatorFactory(XML::node node)
+  QuarkPropagatorFactory* createQuarkPropagatorFactory(XML::node node)
   {
     
     if (node !=NULL) {
@@ -17,13 +17,13 @@ namespace QuarkPropagators {
       const char* QuarkProp_name = node.attribute("name").value();
       
       if (!strcmp(QuarkProp_name, "Qprop")) { 
-        return new QPropCreator(node);
+        return new QPropFactory(node);
       }
       if (!strcmp(QuarkProp_name, "Qprop_EvenOdd")) { 
-        return new QPropCreator_EvenOdd(node);
+        return new QPropFactory_EvenOdd(node);
       }
       if (!strcmp(QuarkProp_name, "QpropDWF")) { 
-        return new QPropDWFCreator(node);
+        return new QPropDWFFactory(node);
       }
 
     std::cerr << "No Quark Propagator available with name ["

@@ -120,10 +120,10 @@ int Test_Wilson_EvenOdd::run(){
   QuarkPropagator* QP;
   XML::descend(Wilson_EO_node_, "QuarkPropagator");
 
-  QuarkPropagatorCreator* QPCreator = 
+  QuarkPropagatorFactory* QP_Factory = 
     QuarkPropagators::createQuarkPropagatorFactory(Wilson_EO_node_);
 
-  QP = QPCreator->getQuarkProp(conf_);
+  QP = QP_Factory->getQuarkProp(conf_);
   QP->calc(sq,src);
   */
   //------------------------------------------------------------------------

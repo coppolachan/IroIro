@@ -17,7 +17,7 @@
  * @brief Abstract base class for creating Solver operators
  *
  */
-class SolverOperatorCreator {
+class SolverOperatorFactory {
 public:
   virtual Solver* getSolver(const Fopr*) = 0;
   virtual Solver* getSolver(const Fopr_Herm*) = 0;//for CG like inverters
@@ -29,11 +29,11 @@ public:
  operator
  
  */
-class SolverCGCreator : public SolverOperatorCreator {
+class SolverCGFactory : public SolverOperatorFactory {
   const XML::node Solver_node;
 
 public:
-  SolverCGCreator(const XML::node node):
+  SolverCGFactory(const XML::node node):
     Solver_node(node){};
 
   Solver_CG* getSolver(const Fopr_Herm* HermitianOperator){
@@ -53,11 +53,11 @@ public:
  operator
  
  */
-class SolverBiCGStabCreator : public SolverOperatorCreator {
+class SolverBiCGStabFactory : public SolverOperatorFactory {
   const XML::node Solver_node;
 
 public:
-  SolverBiCGStabCreator(const XML::node node):
+  SolverBiCGStabFactory(const XML::node node):
     Solver_node(node){};
 
   Solver_BiCGStab* getSolver(const Fopr_Herm* HermitianOperator){
@@ -73,7 +73,7 @@ public:
 ///////////////////////////////////////////////////
 
 namespace SolverOperators{
-  SolverOperatorCreator* createSolverOperatorFactory(const XML::node);
+  SolverOperatorFactory* createSolverOperatorFactory(const XML::node);
 }
 
 

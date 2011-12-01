@@ -10,14 +10,14 @@
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
 
-#include "action_Factory.h"
+#include "action_Factory.hpp"
 #include "Action/action_Nf2.h"
 #include "Action/action_Nf2_ratio.h"
 #include "Solver/solver_CG.h"
-#include "Dirac_ops/dirac_Factory.hpp"
+#include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
 
-class FermionActionCreator : public ActionCreator {
+class FermionActionFactory : public ActionFactory {
   virtual Action* getFermionAction(const Format::Format_G&,
 				   Field* const) = 0;
 public:
@@ -31,9 +31,9 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 
-class TwoFlavorActionCreator : public FermionActionCreator {
-  RaiiFactoryObj<DiracOperatorCreator> DiracObj;
-  RaiiFactoryObj<SolverOperatorCreator> SolverObj;
+class TwoFlavorActionFactory : public FermionActionFactory {
+  RaiiFactoryObj<DiracOperatorFactory> DiracObj;
+  RaiiFactoryObj<SolverOperatorFactory> SolverObj;
 
   RaiiFactoryObj<Dirac> Kernel;
   RaiiFactoryObj<Fopr_DdagD> HermitianOp;
@@ -42,7 +42,7 @@ class TwoFlavorActionCreator : public FermionActionCreator {
   const XML::node Action_node;
 
 public:
-  TwoFlavorActionCreator(XML::node node):
+  TwoFlavorActionFactory(XML::node node):
     Action_node(node)
     {
       XML::descend(node,"Kernel");
@@ -51,7 +51,7 @@ public:
       SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
     };
 
-  ~TwoFlavorActionCreator(){}
+  ~TwoFlavorActionFactory(){}
 private:
 
   Action_Nf2* getFermionAction(const Format::Format_G& Form,
@@ -65,11 +65,11 @@ private:
   
 };
 
-class TwoFlavorRatioActionCreator : public FermionActionCreator {
-  RaiiFactoryObj<DiracOperatorCreator> DiracNumObj;
-  RaiiFactoryObj<DiracOperatorCreator> DiracDenomObj;
-  RaiiFactoryObj<SolverOperatorCreator> SolverNumObj;
-  RaiiFactoryObj<SolverOperatorCreator> SolverDenomObj;
+class TwoFlavorRatioActionFactory : public FermionActionFactory {
+  RaiiFactoryObj<DiracOperatorFactory> DiracNumObj;
+  RaiiFactoryObj<DiracOperatorFactory> DiracDenomObj;
+  RaiiFactoryObj<SolverOperatorFactory> SolverNumObj;
+  RaiiFactoryObj<SolverOperatorFactory> SolverDenomObj;
 
   RaiiFactoryObj<Dirac> DiracNumerator;
   RaiiFactoryObj<Dirac> DiracDenominator;
@@ -79,9 +79,9 @@ class TwoFlavorRatioActionCreator : public FermionActionCreator {
   const XML::node Action_node;
 
 public:
-  ~TwoFlavorRatioActionCreator(){}
+  ~TwoFlavorRatioActionFactory(){}
 
-  TwoFlavorRatioActionCreator(XML::node node):
+  TwoFlavorRatioActionFactory(XML::node node):
     Action_node(node){
     XML::descend(node,"Numerator");
     DiracNumObj.save(DiracOperators::createDiracOperatorFactory(node)); 
@@ -121,7 +121,7 @@ private:
 
 ////////////////////////////////////////////////////
 namespace FermionAction {
-  FermionActionCreator* createFermionActionFactory(XML::node);
+  FermionActionFactory* createFermionActionFactory(XML::node);
 
 }
 

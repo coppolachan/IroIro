@@ -13,8 +13,8 @@
   
   <TestOptimalDomainWall>
     <DomainWall name="DiracOptimalDomainWall5d">
-      <b>1.0</b>
-      <c>1.0</c>
+      <b>2.0</b>
+      <c>0.0</c>
       <mass>0.0</mass>
       <omega>1.0 1.0 1.0 1.0 1.0 1.0</omega>
       <Kernel name="DiracWilson">

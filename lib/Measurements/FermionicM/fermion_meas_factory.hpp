@@ -14,34 +14,34 @@
 #include "quark_propagators.hpp"
 #include "qprop.h"
 #include "qprop_EvenOdd.h"
-#include "qprop_optimalDomainWall.hpp"
-#include "Dirac_ops/dirac_Factory.hpp"
+#include "qprop_DomainWall.hpp"
+#include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
 
 /*!
  * @brief Abstract base class for creating QuarkPropagators
  *
  */
-class QuarkPropagatorCreator {
+class QuarkPropagatorFactory {
 public:
   virtual QuarkPropagator* getQuarkProp(GaugeField& Field) = 0;
-  virtual ~QuarkPropagatorCreator(){}
+  virtual ~QuarkPropagatorFactory(){}
 };
 
 /////////////////////////////////////////////////
 /*!
  @brief Concrete class for creating Quark Propagator Qprop operator
 */
-class QPropCreator : public QuarkPropagatorCreator {
-  RaiiFactoryObj<DiracOperatorCreator> DiracObj;
-  RaiiFactoryObj<SolverOperatorCreator> SolverObj;
+class QPropFactory : public QuarkPropagatorFactory {
+  RaiiFactoryObj<DiracOperatorFactory> DiracObj;
+  RaiiFactoryObj<SolverOperatorFactory> SolverObj;
 
   RaiiFactoryObj<Dirac> Kernel;
   RaiiFactoryObj<Solver> Solv;
   const XML::node Qprop_node;
 
 public:
-  QPropCreator(XML::node node):Qprop_node(node){
+  QPropFactory(XML::node node):Qprop_node(node){
     //some leaking expected - check!
     XML::descend(node,"Kernel");
     DiracObj.save(DiracOperators::createDiracOperatorFactory(node));
@@ -60,16 +60,16 @@ public:
 /*!
  @brief Concrete class for creating Quark Propagator Qprop_EvenOdd operator
 */
-class QPropCreator_EvenOdd : public QuarkPropagatorCreator {
-  RaiiFactoryObj<DiracOperatorCreator> DiracObj;
-  RaiiFactoryObj<SolverOperatorCreator> SolverObj;
+class QPropFactory_EvenOdd : public QuarkPropagatorFactory {
+  RaiiFactoryObj<DiracOperatorFactory> DiracObj;
+  RaiiFactoryObj<SolverOperatorFactory> SolverObj;
 
   RaiiFactoryObj<Dirac> Kernel;
   RaiiFactoryObj<Solver> Solv;
   const XML::node Qprop_node;
 
 public:
-  QPropCreator_EvenOdd(XML::node node):Qprop_node(node){
+  QPropFactory_EvenOdd(XML::node node):Qprop_node(node){
     //some leaking expected - check!
     XML::descend(node,"Kernel");
     DiracObj.save(DiracOperators::createDiracOperatorFactory(node));
@@ -94,16 +94,16 @@ public:
 /*!
  @brief Concrete class for creating Quark Propagator QpropDWF operator
 */
-class QPropDWFCreator : public QuarkPropagatorCreator {
-  RaiiFactoryObj<DiracDWF4dCreator> DiracObj; //very specific
+class QPropDWFFactory : public QuarkPropagatorFactory {
+  RaiiFactoryObj<DiracDWF4dFactory> DiracObj; //very specific
   
   RaiiFactoryObj<Dirac_optimalDomainWall_4D> Kernel_DWF4D;
   const XML::node Qprop_node;
 
 public:
-  QPropDWFCreator(XML::node node):Qprop_node(node){
+  QPropDWFFactory(XML::node node):Qprop_node(node){
     XML::descend(node,"Kernel4d");
-    DiracObj.save(new DiracDWF4dCreator(node));
+    DiracObj.save(new DiracDWF4dFactory(node));
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
@@ -116,7 +116,7 @@ public:
 ///////////////////////////////////////////////////
 
 namespace QuarkPropagators{
-  QuarkPropagatorCreator* createQuarkPropagatorFactory(const XML::node);
+  QuarkPropagatorFactory* createQuarkPropagatorFactory(const XML::node);
 }
 
 

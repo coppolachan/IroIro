@@ -4,23 +4,23 @@
 #include "Communicator/comm_io.hpp"
 
 namespace DiracOperators {
-  DiracOperatorCreator* createDiracOperatorFactory(const XML::node node)
+  DiracOperatorFactory* createDiracOperatorFactory(const XML::node node)
   {
     if (node !=NULL) {
       
       const char* Dirac_name = node.attribute("name").value();
       
       if (!strcmp(Dirac_name, "DiracWilson")) { 
-	return new DiracWilsonCreator(node);
+	return new DiracWilsonFactory(node);
       }
       if (!strcmp(Dirac_name, "DiracWilson_EvenOdd")) { 
-	return new DiracWilsonEvenOddCreator(node);
+	return new DiracWilsonEvenOddFactory(node);
       }
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d")) { 
-	return new DiracDWF4dCreator(node);
+	return new DiracDWF4dFactory(node);
       }
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall5d")) { 
-	return new DiracDWF5dCreator(node);
+	return new DiracDWF5dFactory(node);
       }
       
       std::cerr << "No Dirac Operator available with name ["

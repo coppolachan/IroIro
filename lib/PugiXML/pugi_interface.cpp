@@ -1,4 +1,5 @@
 #include "include/pugi_interface.h"
+#include "Communicator/comm_io.hpp"
 #include <string.h>
 #include <iostream>
 #include <stdlib.h>
@@ -56,62 +57,98 @@ namespace XML
   }
 
 
-  void read(pugi::xml_node node, const char *name, int& value) {
+  void read(pugi::xml_node node, const char *name, int& value, bool type) {
+    if (node.child(name)!=NULL){
     value = atoi(node.child_value(name));
-
+    } else {
+      if (type == MANDATORY) {
+	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
+	abort();
+      } else {
+	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+      }
+    }
   }
 
-  void read(pugi::xml_node node, const char *name, unsigned long& value) {
+  void read(pugi::xml_node node, const char *name, unsigned long& value, bool type) {
     char *end;
-    value = strtol(node.child_value(name),&end, 0);
-
+    if (node.child(name)!=NULL){
+      value = strtol(node.child_value(name),&end, 0);
+    } else {
+      if (type == MANDATORY) {
+	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
+	abort();
+      } else {
+	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+      }
+    }
+    
   }
 
 
-  void read(pugi::xml_node node, const char *name, double& value) {
+  void read(pugi::xml_node node, const char *name, double& value, bool type) {
+    if (node.child(name)!=NULL){
     value = atof(node.child_value(name));
+    } else {
+      if (type == MANDATORY) {
+	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
+	abort();
+      } else {
+	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+      }
+    }
+
   }
 
-  void read(pugi::xml_node node, const char *name, bool& value) {
- 
+  void read(pugi::xml_node node, const char *name, bool& value, bool type) {
+    // to be filled
   }
 
 
   void read_array(pugi::xml_node node, 
 		  const char* name, 
-		  std::vector<int>& array) {
+		  std::vector<int>& array,
+		  bool type) {
     //array is assumed to be of the correct size
     using namespace std;
     vector<string> tokens;
     int it;
     string read_res;
     
-    
-    read_res = node.child_value(name); 
-    istringstream iss(read_res);
-    copy(istream_iterator<string>(iss),
-	 istream_iterator<string>(),
-	 back_inserter<vector<string> >(tokens));
-
-   if (array.size()){// only if array size was set before        
-     if (array.size()!=tokens.size()) {
-       cerr << "Check [" << name << "] number of parameters. Expected : " 
-	    << array.size() << " found : " <<tokens.size() <<  endl;
-       abort();}
-   } else {
-     array.resize(tokens.size());
-   }
-    for (it = 0; it<tokens.size(); it++) {
-      array[it] = atoi(tokens[it].c_str());
-
+    if (node.child(name)!=NULL){   
+      read_res = node.child_value(name); 
+      istringstream iss(read_res);
+      copy(istream_iterator<string>(iss),
+	   istream_iterator<string>(),
+	   back_inserter<vector<string> >(tokens));
+      
+      if (array.size()){// only if array size was set before        
+	if (array.size()!=tokens.size()) {
+	  cerr << "Check [" << name << "] number of parameters. Expected : " 
+	       << array.size() << " found : " <<tokens.size() <<  endl;
+	  abort();}
+      } else {
+	array.resize(tokens.size());
+      }
+      for (it = 0; it<tokens.size(); it++) {
+	array[it] = atoi(tokens[it].c_str());
+      }
+    } else {//end of -- if (node.child(name)!=NULL)
+      if (type == MANDATORY) {
+	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
+	abort();
+      } else {
+	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+      }
     }
-
-
+    
+    
   }
 
   void read_array(pugi::xml_node node, 
 		  const char* name, 
-		  std::vector<unsigned long>& array) {
+		  std::vector<unsigned long>& array,
+		  bool type) {
     //array is assumed to be of the correct size
     using namespace std;
     vector<string> tokens;
@@ -119,40 +156,51 @@ namespace XML
     string read_res;
     char *end;
     
-    read_res = node.child_value(name); 
-    istringstream iss(read_res);
-    copy(istream_iterator<string>(iss),
-	 istream_iterator<string>(),
-	 back_inserter<vector<string> >(tokens));
-
-   if (array.size()){// only if array size was set before    
-    if (array.size()!=tokens.size()) {
-      cerr << "Check [" << name << "] number of parameters. Expected : " 
-	   << array.size() << " found : " <<tokens.size() <<  endl;
-      abort();}
-   }else {
-     array.resize(tokens.size());
-   }
-
-    for (it = 0; it<tokens.size(); it++) {
-      array[it] = strtol(tokens[it].c_str(),&end,0);
-
+    
+    if (node.child(name)!=NULL){ 
+      read_res = node.child_value(name); 
+      istringstream iss(read_res);
+      copy(istream_iterator<string>(iss),
+	   istream_iterator<string>(),
+	   back_inserter<vector<string> >(tokens));
+      
+      if (array.size()){// only if array size was set before    
+	if (array.size()!=tokens.size()) {
+	  cerr << "Check [" << name << "] number of parameters. Expected : " 
+	       << array.size() << " found : " <<tokens.size() <<  endl;
+	  abort();}
+      }else {
+	array.resize(tokens.size());
+      }
+      
+      for (it = 0; it<tokens.size(); it++) {
+	array[it] = strtol(tokens[it].c_str(),&end,0);
+      }
+    } else {//end of -- if (node.child(name)!=NULL)
+      if (type == MANDATORY) {
+	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
+	abort();
+      } else {
+	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+      }
     }
-   
+    
+
 
   }
 
 
   void read_array(pugi::xml_node node, 
 		  const char* name, 
-		  std::vector<double>& array) {
+		  std::vector<double>& array,
+		  bool type) {
     //array is assumed to be of the correct size
     using namespace std;
     vector<string> tokens;
     int it;
     string read_res;
     
-    
+    if (node.child(name)!=NULL){ 
     read_res = node.child_value(name); 
     istringstream iss(read_res);
     copy(istream_iterator<string>(iss),
@@ -165,13 +213,20 @@ namespace XML
 	     << array.size() << " found : " <<tokens.size() <<  endl;
 	abort();}
     } else {
-     array.resize(tokens.size());
-   }
-      
-      for (it = 0; it<tokens.size(); it++) {
-	array[it] = atof(tokens[it].c_str());
-	
+      array.resize(tokens.size());
+    }
+    
+    for (it = 0; it<tokens.size(); it++) {
+      array[it] = atof(tokens[it].c_str());
+    }
+    } else {//end of -- if (node.child(name)!=NULL)
+      if (type == MANDATORY) {
+	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
+	abort();
+      } else {
+	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
       }
+    } 
     
 
   }

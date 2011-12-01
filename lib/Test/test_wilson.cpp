@@ -25,7 +25,7 @@ int Test_Wilson::run(){
   QuarkPropagator* QP;
   XML::descend(Wilson_node_, "QuarkPropagator");
 
-  QuarkPropagatorCreator* QPCreator = 
+  QuarkPropagatorFactory* QP_Factory = 
     QuarkPropagators::createQuarkPropagatorFactory(Wilson_node_);
   //////////////////////////////////////
 
@@ -63,7 +63,7 @@ int Test_Wilson::run(){
    //   QuarkPropagator.calc(sq,src);
   //---------------------------------------------------------------------------
 
-  QP = QPCreator->getQuarkProp(conf_);
+  QP = QP_Factory->getQuarkProp(conf_);
   QP->calc(sq,src);
 
   CCIO::cout<<"quark propagator obtained"<<std::endl;

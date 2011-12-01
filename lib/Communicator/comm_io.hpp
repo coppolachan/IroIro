@@ -168,6 +168,7 @@ namespace CCIO
   extern StandardInputStream  cin;
   extern StandardOutputStream cout;
   extern StandardOutputStream cerr;
+
 };
 
 #endif //COMM_IO_H_

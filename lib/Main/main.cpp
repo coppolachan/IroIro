@@ -14,7 +14,7 @@
 
 #include "include/common_code.hpp"
 
-#include "Test/tests_all.hpp"
+#include "tests/tests_all.hpp"
 
 using namespace XML;
 

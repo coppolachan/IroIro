@@ -68,23 +68,23 @@ int Test_optimalDomainWall::mult5d_gamma5_test(Dirac_optimalDomainWall& DWF5d,
 
 int Test_optimalDomainWall::run(XML::node node){
   Dirac_optimalDomainWall* DiracODWF;
-  // operator
+
+  // operator without factories
   int N5d = 6;
   double mzero = -1.8;
-  double c = 1.0;
-  double b = 1.0;
+  double c = 0.0;
+  double b = 2.0;
   double mq = 0.0;
   vector<double> omega(N5d,1.0);
-
-  XML::descend(node, "DomainWall");
-  DiracDWF5dCreator* DWFCreator = new DiracDWF5dCreator(node);
-  
   Dirac_Wilson* Kernel = new Dirac_Wilson(mzero, &(conf_.U));
- 
   Dirac_optimalDomainWall Ddwf_5d(b, c, mq, omega, Kernel);
-  
-  DiracODWF = DWFCreator->getDiracOperator(&(conf_.U));
-  
+  /////////////////////////////
+
+  // operator using factories
+  XML::descend(node, "DomainWall");
+  DiracDWF5dFactory* DWF_Factory = new DiracDWF5dFactory(node);
+  DiracODWF = DWF_Factory->getDiracOperator(&(conf_.U));
+  ///////////////////////////////////////
 
   // prepare pf field
   unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
@@ -113,7 +113,7 @@ int Test_optimalDomainWall::run(XML::node node){
 
   CCIO::cout << ".::: Test Dirac_optimalDomainWall.mult_dag(f)\n";
   start = clock();
-  mult5d_dag_test(Ddwf_5d,phi,100);
+  mult5d_dag_test(*DiracODWF,phi,100);
   CCIO::cout<< "Time for 100 calls : " 
       << ( ( clock() - start ) / (double)CLOCKS_PER_SEC ) <<'\n';
 
@@ -121,7 +121,7 @@ int Test_optimalDomainWall::run(XML::node node){
   CCIO::cout << ".::: Test Dirac_optimalDomainWall gamma5 hermiticity " 
        << " vdiff = ( G5 D G5 - D.hc ) psi \n";
   start = clock();
-  mult5d_gamma5_test(Ddwf_5d,psi,100);
+  mult5d_gamma5_test(*DiracODWF,psi,100);
   CCIO::cout<< "Time for 100 calls : " 
       << ( ( clock() - start ) / (double)CLOCKS_PER_SEC ) <<'\n';
   

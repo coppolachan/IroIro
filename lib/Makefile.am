@@ -1,4 +1,4 @@
-SUBDIRS = . Test
+SUBDIRS = . 
 
 if USE_MPI
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
@@ -21,9 +21,8 @@ bin_PROGRAMS = mainprog
 
 lib_LIBRARIES = libcommcode.a
 
-EXTRA_DIST =    Example.xml			\
-		HMC/mdExec_leapfrog_eigen.cpp	\
-		Test/test_HMC_noFactories.cpp
+EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
+		../tests/test_HMC_noFactories.cpp
 
 
 libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
@@ -38,9 +37,9 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
-		Dirac_ops/dirac_Factory.cpp		\
-		Dirac_ops/dirac_optimalDomainWall.cpp   \
-		Dirac_ops/dirac_optimalDomainWall_4D.cpp\
+		Dirac_ops/dirac_Operator_Factory.cpp	\
+		Dirac_ops/dirac_DomainWall.cpp   \
+		Dirac_ops/dirac_DomainWall_4D.cpp\
 		EigenModes/eigenModes_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/sortEigen.cpp		\
@@ -49,7 +48,6 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Solver/solver_CG.cpp			\
 		Solver/solver_Factory.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
-		Solver/multiShiftSolver.h		\
 		HMC/hmcGeneral.cpp			\
 		HMC/hmcPrms.cpp				\
 		HMC/mdExec_leapfrog.cpp			\
@@ -58,7 +56,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
-		Measurements/FermionicM/qprop_optimalDomainWall.cpp	\
+		Measurements/FermionicM/qprop_DomainWall.cpp	\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
 		Main/commonPrms.cpp			\
 		Main/Geometry/siteIndex.cpp		\
@@ -69,53 +67,53 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/sunMat.cpp			\
-		Test/test_Gauge.cpp			\
-		Test/test_EigenModes_IRL.cpp		\
-		Test/test_MultiShiftSolver.cpp		\
-		Test/test_overlap.cpp			\
-		Test/test_wilson_EvenOdd.cpp		\
-		Test/test_optimalDomainWall.cpp		
+		../tests/test_Gauge.cpp			\
+		../tests/test_EigenModes_IRL.cpp		\
+		../tests/test_MultiShiftSolver.cpp		\
+		../tests/test_overlap.cpp			\
+		../tests/test_wilson_EvenOdd.cpp		\
+		../tests/test_DomainWall.cpp		
 
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD   = libcommcode.a
 
-include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
-			$(top_srcdir)/include/common_code.hpp	\
-			$(top_srcdir)/include/common_fields.hpp	\
-			$(top_srcdir)/include/config.h		\
-			$(top_srcdir)/include/geometry.h	\
-			$(top_srcdir)/include/field.h		\
+include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
+			$(top_srcdir)/include/common_code.hpp		\
+			$(top_srcdir)/include/common_fields.hpp		\
+			$(top_srcdir)/include/config.h			\
+			$(top_srcdir)/include/geometry.h		\
+			$(top_srcdir)/include/field.h			\
 			$(top_srcdir)/include/fopr_chebyshev_DdagD.h	\
-			$(top_srcdir)/include/fopr_Dhat.h	\
-			$(top_srcdir)/include/fopr_eo.h		\
-			$(top_srcdir)/include/fopr_eo_wilson.h	\
-			$(top_srcdir)/include/fopr.h		\
+			$(top_srcdir)/include/fopr_Dhat.h		\
+			$(top_srcdir)/include/fopr_eo.h			\
+			$(top_srcdir)/include/fopr_eo_wilson.h		\
+			$(top_srcdir)/include/fopr.h			\
 			$(top_srcdir)/include/fopr_signH_Zolotarev.h	\
-			$(top_srcdir)/include/format_A.h	\
-			$(top_srcdir)/include/format_F.h	\
-			$(top_srcdir)/include/format_G.h	\
-			$(top_srcdir)/include/typeDefs.h	\
-			$(top_srcdir)/include/pugi_interface.h	\
-			$(top_srcdir)/include/singleton.h	\
-			PugiXML/pugixml.hpp			\
-			PugiXML/pugiconfig.hpp			\
-			Action/action_gauge.h			\
-			Action/action.h				\
-			Action/action_gaugetype_factory.h	\
-			Action/action_fermiontype_factory.hpp	\
-			Action/action_Factory.h			\
-			Action/action_Nf2.h			\
-			Action/action_Nf2_ratio.h		\
-			EigenModes/eigenModes_IRL.h		\
-			EigenModes/sortEigen.h			\
-			EigenModes/eigenProc_Zolotarev.h	\
+			$(top_srcdir)/include/format_A.h		\
+			$(top_srcdir)/include/format_F.h		\
+			$(top_srcdir)/include/format_G.h		\
+			$(top_srcdir)/include/typeDefs.h		\
+			$(top_srcdir)/include/pugi_interface.h		\
+			$(top_srcdir)/include/singleton.h		\
+			PugiXML/pugixml.hpp				\
+			PugiXML/pugiconfig.hpp				\
+			Action/action_gauge.hpp				\
+			Action/action.h					\
+			Action/action_gaugetype_factory.hpp		\
+			Action/action_fermiontype_factory.hpp		\
+			Action/action_Factory.hpp			\
+			Action/action_Nf2.h				\
+			Action/action_Nf2_ratio.h			\
+			EigenModes/eigenModes_IRL.h			\
+			EigenModes/sortEigen.h				\
+			EigenModes/eigenProc_Zolotarev.h		\
 			Measurements/GaugeM/staples.h				\
 			Measurements/FermionicM/source.h			\
 			Measurements/FermionicM/qprop_MultiShift.hpp 		\
 			Measurements/FermionicM/qprop.h				\
 			Measurements/FermionicM/qprop_EvenOdd.h			\
 			Measurements/FermionicM/mesonCorrel.h			\
-			Measurements/FermionicM/qprop_optimalDomainWall.hpp 	\
+			Measurements/FermionicM/qprop_DomainWall.hpp 	\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp		\
 			Communicator/communicator.h		\
@@ -126,24 +124,25 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			Main/Geometry/shiftField_eo.h		\
 			Main/Geometry/siteIndex_eo.h		\
 			Main/gaugeConf.hpp			\
-			Dirac_ops/dirac_Factory.hpp		\
+			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_overlap_Zolotarev.h	\
 			Dirac_ops/dirac_wilson.h		\
 			Dirac_ops/dirac_wilson_EvenOdd.h	\
 			Dirac_ops/dirac.h			\
-			Dirac_ops/dirac_optimalDomainWall.hpp   \
-			Dirac_ops/dirac_optimalDomainWall_4D.hpp\
+			Dirac_ops/dirac_DomainWall.hpp   \
+			Dirac_ops/dirac_DomainWall_4D.hpp\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.h		\
 			Solver/solver.h				\
 			Solver/solver_CG.h			\
 			Solver/multiShiftSolver_CG.hpp		\
+			Solver/multiShiftSolver.hpp		\
 			HMC/hmcGeneral.h			\
 			HMC/hmcPrms.h				\
 			HMC/mdExec.h				\
 			HMC/mdExec_leapfrog.h			\
 			HMC/mdExec_leapfrog_eigen.h		\
-			HMC/mdExec_Factory.h			\
+			HMC/mdExec_Factory.hpp			\
 			Tools/sunMat.h				\
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
@@ -151,12 +150,12 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h	\
 			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
 			Tools/RAIIFactory.hpp			\
-			Test/tests_all.hpp			\
-			Test/test_EigenModes_IRL.h		\
-			Test/test_MultiShiftSolver.h		\
-			Test/test_overlap.hpp			\
-			Test/test_wilson_EvenOdd.hpp		\
-			Test/test_Gauge.hpp			\
-			Test/tests.hpp
+			../tests/tests_all.hpp			\
+			../tests/test_EigenModes_IRL.h		\
+			../tests/test_MultiShiftSolver.h		\
+			../tests/test_overlap.hpp			\
+			../tests/test_wilson_EvenOdd.hpp		\
+			../tests/test_Gauge.hpp			\
+			../tests/tests.hpp
 
 

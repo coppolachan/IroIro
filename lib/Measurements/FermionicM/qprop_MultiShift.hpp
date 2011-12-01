@@ -11,7 +11,7 @@
 #include "include/commonPrms.h"
 #include "include/pugi_interface.h"
 #include "Measurements/FermionicM/source.h"
-#include "Solver/multiShiftSolver.h"
+#include "Solver/multiShiftSolver.hpp"
 #include "Dirac_ops/dirac.h"
 #include <vector>
 

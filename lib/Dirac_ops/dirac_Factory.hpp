@@ -19,7 +19,7 @@
  * @brief Abstract base class for creating Dirac operators
  *
  */
-class DiracOperatorCreator {
+class DiracOperatorFactory {
 public:
   virtual Dirac* getDiracOperator(Field* const) = 0;
 };
@@ -30,11 +30,11 @@ public:
  * @brief Concrete class for creating Dirac Wilson operators
  *
  */
-class DiracWilsonCreator : public DiracOperatorCreator {
+class DiracWilsonFactory : public DiracOperatorFactory {
   const XML::node Dirac_node;
 
 public:
-  DiracWilsonCreator(const XML::node node):Dirac_node(node){}
+  DiracWilsonFactory(const XML::node node):Dirac_node(node){}
 
   Dirac_Wilson* getDiracOperator(Field* const GaugeField){
     return new Dirac_Wilson(Dirac_node,GaugeField);
@@ -45,11 +45,11 @@ public:
  * @brief Concrete class for creating Dirac Wilson operators
  *
  */
-class DiracWilsonEvenOddCreator : public DiracOperatorCreator {
+class DiracWilsonEvenOddFactory : public DiracOperatorFactory {
   const XML::node Dirac_node;
 
 public:
-  DiracWilsonEvenOddCreator(const XML::node node):Dirac_node(node){}
+  DiracWilsonEvenOddFactory(const XML::node node):Dirac_node(node){}
 
   Dirac_Wilson_EvenOdd* getDiracOperator(Field* const GaugeField){
     return new Dirac_Wilson_EvenOdd(Dirac_node,GaugeField);
@@ -60,23 +60,23 @@ public:
  * @brief Concrete class for creating Dirac Optimal DWF-5d operators
  *
  */
-class DiracDWF5dCreator : public DiracOperatorCreator {
-  RaiiFactoryObj<DiracWilsonCreator> DiracObj;
+class DiracDWF5dFactory : public DiracOperatorFactory {
+  RaiiFactoryObj<DiracWilsonFactory> DiracObj;
   RaiiFactoryObj<Dirac_Wilson> Kernel;
 
   const XML::node Dirac_node;
 
 public:
-  DiracDWF5dCreator(XML::node node):Dirac_node(node){
+  DiracDWF5dFactory(XML::node node):Dirac_node(node){
     XML::descend(node, "Kernel");
-    DiracObj.save(new DiracWilsonCreator(node)); 
+    DiracObj.save(new DiracWilsonFactory(node)); 
   }
 
   Dirac_optimalDomainWall* getDiracOperator(Field* const GaugeField){
     Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
     return new Dirac_optimalDomainWall(Dirac_node,Kernel.get());
   }
-  ~DiracDWF5dCreator(){}
+  ~DiracDWF5dFactory(){}
 };
 
 
@@ -84,9 +84,9 @@ public:
  * @brief Concrete class for creating Dirac Optimal DWF-4d operators
  *
  */
-class DiracDWF4dCreator : public DiracOperatorCreator {
-  RaiiFactoryObj<DiracDWF5dCreator> DiracObj;
-  RaiiFactoryObj<SolverOperatorCreator> SolverDWF_Obj;
+class DiracDWF4dFactory : public DiracOperatorFactory {
+  RaiiFactoryObj<DiracDWF5dFactory> DiracObj;
+  RaiiFactoryObj<SolverOperatorFactory> SolverDWF_Obj;
 
   RaiiFactoryObj<Dirac_optimalDomainWall> DWF5D_Kernel;
   RaiiFactoryObj<Fopr_DdagD> OprODWF;
@@ -97,10 +97,10 @@ class DiracDWF4dCreator : public DiracOperatorCreator {
   const XML::node Dirac_node;
 
 public:
-  DiracDWF4dCreator(XML::node node):
+  DiracDWF4dFactory(XML::node node):
     Dirac_node(node){
     XML::descend(node,"Kernel5d");
-    DiracObj.save(new DiracDWF5dCreator(node));
+    DiracObj.save(new DiracDWF5dFactory(node));
     XML::next_sibling(node, "SolverDWF");
     SolverDWF_Obj.save(SolverOperators::createSolverOperatorFactory(node));
   }
@@ -118,7 +118,7 @@ public:
 					  SolverPV.get());
   }
 
-  ~DiracDWF4dCreator(){};
+  ~DiracDWF4dFactory(){};
 };
 
 
@@ -129,7 +129,7 @@ public:
 
 //////////////////////////////////////////////////////////////
 namespace DiracOperators {
-  DiracOperatorCreator* createDiracOperatorFactory(const XML::node);
+  DiracOperatorFactory* createDiracOperatorFactory(const XML::node);
 
 }
 

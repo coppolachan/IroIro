@@ -4,7 +4,8 @@
   @brief Implementation of the Action_gauge class
 */
 
-#include "action_gauge.h"
+
+#include "action_gauge.hpp"
 #include "Tools/randNum_MP.h"
 #include "include/format_A.h"
 #include "Communicator/comm_io.hpp"
