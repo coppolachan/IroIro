@@ -28,7 +28,7 @@ const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
     Field lpf = DWF_->proj_p(DWF_->get4d(w5,s-1));
     lpf *= (DWF_->Params.dm_[s]/DWF_->Params.dp_[s-1]);
     DWF_->add5d(w5,lpf,s);
-  };
+  }
   Field v = DWF_->get4d(w5,DWF_->N5_-1);
   v *= 1.0/DWF_->Params.dp_[DWF_->N5_-1];
   DWF_->set5d(w5,v,DWF_->N5_-1);
@@ -67,11 +67,9 @@ const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
 
     w += (4.0+M0_)*Params.bs_[s]*(Dw_->mult(v));      
     set5d(w5,w,s);
-    }
-  
+  }
   return w5;
 }
-
 
 const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
   //  using namespace FieldExpression;
@@ -224,7 +222,4 @@ namespace DomainWallFermions {
     #endif
     return omegas;
   }
-  
-
-  
 }

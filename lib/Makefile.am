@@ -72,7 +72,8 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		../tests/test_MultiShiftSolver.cpp		\
 		../tests/test_overlap.cpp			\
 		../tests/test_wilson_EvenOdd.cpp		\
-		../tests/test_DomainWall.cpp		
+		../tests/test_DomainWall.cpp		\
+                ../tests/test_HMC_DomainWall.cpp
 
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD   = libcommcode.a
@@ -104,6 +105,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Action/action_Factory.hpp			\
 			Action/action_Nf2.h				\
 			Action/action_Nf2_ratio.h			\
+			Action/action_Nf2_DomainWall.h			\
 			EigenModes/eigenModes_IRL.h			\
 			EigenModes/sortEigen.h				\
 			EigenModes/eigenProc_Zolotarev.h		\
@@ -152,10 +154,12 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/RAIIFactory.hpp			\
 			../tests/tests_all.hpp			\
 			../tests/test_EigenModes_IRL.h		\
-			../tests/test_MultiShiftSolver.h		\
-			../tests/test_overlap.hpp			\
-			../tests/test_wilson_EvenOdd.hpp		\
+			../tests/test_MultiShiftSolver.h	\
+			../tests/test_overlap.hpp		\
+			../tests/test_wilson_EvenOdd.hpp	\
 			../tests/test_Gauge.hpp			\
-			../tests/tests.hpp
+                        ../tests/test_HMC_DomainWall.hpp        \
+			../tests/tests.hpp                      
+
 
 

@@ -14,10 +14,11 @@
 
 namespace DomainWallFermions {
 
+  struct PauliVillars{};
+
   std::vector<double> getOmega(int Ns, 
 			       double lambda_min,
 			       double lambda_max);
-
 }
 
 enum {Standard, PauliVillars};
@@ -123,11 +124,7 @@ struct Dirac_optimalDomainWall_params{
     }
   }
 
-
-
 };
-
-
 
 /*!
  * @brief Defines the 5d Optimal Domain Wall operator
@@ -157,8 +154,6 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
     const Field mult(const Field&) const;  
   };
-
-
 
   size_t N5_;/*!< Length of 5th dimension */
   size_t f4size_;
@@ -239,6 +234,17 @@ public:
      gsize_(Dcopy.gsize_),
      M0_(Dcopy.M0_){}
 
+  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dcopy, 
+			  const DomainWallFermions::PauliVillars&)
+    :Params(Dcopy.Params, PauliVillars),
+     Dw_(Dcopy.Dw_),
+     Precond_(Dcopy.Precond_),
+     N5_(Dcopy.N5_),
+     f4size_(Dcopy.f4size_),
+     fsize_(Dcopy.fsize_),
+     gsize_(Dcopy.gsize_),
+     M0_(Dcopy.M0_){}
+
   ~Dirac_optimalDomainWall(){}
   
   size_t f4size() const{ return f4size_;}
@@ -289,9 +295,6 @@ public:
   const Field R5g5(const Field&) const;
 
   const Field md_force( const Field& eta,const Field& zeta) const;
-
-
-
 
 };
 

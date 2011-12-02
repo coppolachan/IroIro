@@ -33,9 +33,6 @@ int main(){
   GaugeF.initializeTxt("conf_04040408.txt");
 
   /////////////
-  
-  node HMC_node = top_node;
-  descend(HMC_node, "HMC");
 
   /*
   Test_Gauge GaugeTest(GaugeF);
@@ -61,14 +58,21 @@ int main(){
   Test_optimalDomainWall test_odwf(GaugeF);
   test_odwf.run();
   */
-
+  /*
   Test_Wilson_EvenOdd test_Wilson_eo(GaugeF);
   test_Wilson_eo.run();
-
+  */
   /*
   Test_Wilson test_Wilson(GaugeF);
   test_Wilson.run();
   */
+
+  node HMC_node = top_node;
+  descend(HMC_node, "HMC");
+
+  Test_HMC_DomainWall test_HMC_DomainWall(GaugeF);
+  test_HMC_DomainWall.run(HMC_node);
+
   return 0;
 }
 
