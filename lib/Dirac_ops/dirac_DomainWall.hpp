@@ -9,7 +9,8 @@
 #include <string.h>
 #include "include/field.h"
 #include "include/pugi_interface.h"
-#include "Dirac_ops/dirac_wilson.h"
+#include "dirac_wilson.h"
+#include "dirac_Preconditioners.hpp"
 
 namespace DomainWallFermions {
 
@@ -32,6 +33,7 @@ struct Dirac_optimalDomainWall_params{
   double N5dim_;
   double b_, c_;
   double mq_;/*!< @brief Bare quark mass \f$m_q\f$ */
+  bool Preconditioned_;
   std::vector<double> omega_;/*!< @brief Diagonal matrix
 			      * \f$\omega = \{\omega_s\}\f$
 			      */
@@ -39,6 +41,7 @@ struct Dirac_optimalDomainWall_params{
   std::vector<double> dp_, dm_;
 
   Dirac_optimalDomainWall_params(XML::node DWF_node){
+    XML::read(DWF_node, "Preconditioned", Preconditioned_, MANDATORY);
     XML::read(DWF_node, "N5d", N5dim_, MANDATORY);
     XML::read(DWF_node, "b", b_, MANDATORY);
     XML::read(DWF_node, "c", c_, MANDATORY);
@@ -125,6 +128,7 @@ struct Dirac_optimalDomainWall_params{
 };
 
 
+
 /*!
  * @brief Defines the 5d Optimal Domain Wall operator
  *
@@ -137,6 +141,23 @@ struct Dirac_optimalDomainWall_params{
 class Dirac_optimalDomainWall : public DiracWilsonLike {
   const Dirac_Wilson* Dw_; /*!< Dirac Kernel - Wilson operator */ 
   Dirac_optimalDomainWall_params Params;
+  
+  Preconditioner* Precond_;
+
+  //declaration of concrete preconditioners
+  class NoPrecond : public Preconditioner {
+  public: 
+    NoPrecond(){};
+    const Field mult(const Field&) const;  
+  };
+
+  class LUPrecond : public Preconditioner {
+  public: 
+    LUPrecond(){};
+    const Field mult(const Field&) const;  
+  };
+
+
 
   size_t N5_;/*!< Length of 5th dimension */
   size_t f4size_;
@@ -171,6 +192,7 @@ public:
       Params.dp_[s] = Params.bs_[s]*(4.0+M0_)+1.0;
       Params.dm_[s] = 1.0-Params.cs_[s]*(4.0+M0_);
       //      std::cout << s << " " << dp_[s] << " " << dm_[s] << std::endl;
+      Precond_ = new NoPrecond();
     }
     
   }
@@ -183,7 +205,9 @@ public:
      f4size_(Dw_->fsize()),
      fsize_(f4size_*N5_),
      gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){} 
+     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){
+    Precond_ = new NoPrecond();
+  } 
 
  
   Dirac_optimalDomainWall(const double b,
@@ -197,7 +221,9 @@ public:
      f4size_(Dw_->fsize()),
      fsize_(f4size_*N5_),
      gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){}
+     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){
+    Precond_ = new NoPrecond();
+  }
 
 
   /*! @brief Copy constructor to build the Pauli-Villars operator */
@@ -205,6 +231,7 @@ public:
 			  int Type = 0)
     :Params(Dcopy.Params, Type),
      Dw_(Dcopy.Dw_),
+     Precond_(Dcopy.Precond_),
      N5_(Dcopy.N5_),
      f4size_(Dcopy.f4size_),
      fsize_(Dcopy.fsize_),
@@ -261,6 +288,10 @@ public:
   const Field R5g5(const Field&) const;
 
   const Field md_force( const Field& eta,const Field& zeta) const;
+
+
+
+
 };
 
 

@@ -15,6 +15,11 @@
 
 using namespace std;
 
+const Field Dirac_optimalDomainWall::NoPrecond::mult(const Field& f5) const{
+  return Dirac_optimalDomainWall::mult(f5);
+}
+
+
 const Field Dirac_optimalDomainWall::mult(const Field& f5) const{ 
   using namespace FieldExpression;
 
@@ -38,28 +43,30 @@ const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
     w += (4.0+M0_)*Params.bs_[s]*(Dw_->mult(v));      
     set5d(w5,w,s);
     }
-
-  // precond.LU: (LU)^-1 = U^-1 L^-1
-  for (int s=1; s<N5_; ++s) {
-    Field lpf = proj_p(get4d(w5,s-1));
-    lpf *= (Params.dm_[s]/Params.dp_[s-1]);
-    add5d(w5,lpf,s);
-  };
-  Field v = get4d(w5,N5_-1);
-  v *= 1.0/Params.dp_[N5_-1];
-  set5d(w5,v,N5_-1);
-  for (int s=N5_-2; s>=0; --s) {
-    Field lmf = proj_m(get4d(w5,s+1));
-    lmf *= Params.dm_[s];
-    add5d(w5,lmf,s);
-    v = get4d(w5,s);
-    v *= 1.0/Params.dp_[s];
-    set5d(w5,v,s);
+  
+  if (Params.Preconditioned_) {
+    // precond.LU: (LU)^-1 = U^-1 L^-1
+    for (int s=1; s<N5_; ++s) {
+      Field lpf = proj_p(get4d(w5,s-1));
+      lpf *= (Params.dm_[s]/Params.dp_[s-1]);
+      add5d(w5,lpf,s);
+    };
+    Field v = get4d(w5,N5_-1);
+    v *= 1.0/Params.dp_[N5_-1];
+    set5d(w5,v,N5_-1);
+    for (int s=N5_-2; s>=0; --s) {
+      Field lmf = proj_m(get4d(w5,s+1));
+      lmf *= Params.dm_[s];
+      add5d(w5,lmf,s);
+      v = get4d(w5,s);
+      v *= 1.0/Params.dp_[s];
+      set5d(w5,v,s);
+    }
+    // end precond LU
   }
-  // end precond LU
-
   return w5;
 }
+
 
 const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
   //  using namespace FieldExpression;
@@ -70,25 +77,27 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
 
   Field t5(fsize_);
   t5 = f5;
-
-  // precond LU: ((LU)^T)^-1 = (U^T L^T)^-1 = (L^T)^-1 (U^T)^-1
-  Field v = get4d(t5,0);
-  v *= 1.0/Params.dp_[0];
-  set5d(t5,v,0);
-  for (int s=1; s<N5_; ++s) {
-    Field lmf = proj_m(get4d(t5,s-1));
-    lmf *= Params.dm_[s-1];
-    add5d(t5,lmf,s);
-    v = get4d(t5,s);
-    v *= 1.0/Params.dp_[s];
-    set5d(t5,v,s);
+  
+  if (Params.Preconditioned_) {
+    // precond LU: ((LU)^T)^-1 = (U^T L^T)^-1 = (L^T)^-1 (U^T)^-1
+    Field v = get4d(t5,0);
+    v *= 1.0/Params.dp_[0];
+    set5d(t5,v,0);
+    for (int s=1; s<N5_; ++s) {
+      Field lmf = proj_m(get4d(t5,s-1));
+      lmf *= Params.dm_[s-1];
+      add5d(t5,lmf,s);
+      v = get4d(t5,s);
+      v *= 1.0/Params.dp_[s];
+      set5d(t5,v,s);
+    }
+    for (int s=N5_-2; s>=0; --s) {
+      Field lpf = proj_p(get4d(t5,s+1));
+      lpf *= (Params.dm_[s+1]/Params.dp_[s]);
+      add5d(t5,lpf,s);
+    }
+    // end precond LU
   }
-  for (int s=N5_-2; s>=0; --s) {
-    Field lpf = proj_p(get4d(t5,s+1));
-    lpf *= (Params.dm_[s+1]/Params.dp_[s]);
-    add5d(t5,lpf,s);
-  }
-  // end precond LU
 
   for(int s=0; s<N5_; ++s){
     Field dv = Dw_->mult_dag(get4d(t5,s));

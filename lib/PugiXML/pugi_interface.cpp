@@ -101,7 +101,20 @@ namespace XML
   }
 
   void read(pugi::xml_node node, const char *name, bool& value, bool type) {
-    // to be filled
+    char *string;
+    if (node.child(name)!=NULL){
+      if (!strcmp(node.child_value(name),"true")){
+	value = true;
+      } else { value = false; }
+    } else {
+      if (type == MANDATORY) {
+	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
+	abort();
+      } else {
+	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+      }
+    }
+   
   }
 
 
