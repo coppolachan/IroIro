@@ -141,19 +141,20 @@ struct Dirac_optimalDomainWall_params{
 class Dirac_optimalDomainWall : public DiracWilsonLike {
   const Dirac_Wilson* Dw_; /*!< Dirac Kernel - Wilson operator */ 
   Dirac_optimalDomainWall_params Params;
-  
   Preconditioner* Precond_;
 
   //declaration of concrete preconditioners
   class NoPrecond : public Preconditioner {
+    Dirac_optimalDomainWall* DWF_;
   public: 
-    NoPrecond(){};
+    NoPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
     const Field mult(const Field&) const;  
   };
-
+  
   class LUPrecond : public Preconditioner {
+    Dirac_optimalDomainWall* DWF_;
   public: 
-    LUPrecond(){};
+    LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
     const Field mult(const Field&) const;  
   };
 
@@ -185,14 +186,14 @@ public:
      fsize_(f4size_*N5_),
      gsize_(Dw_->gsize()),
      M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){
-    
+     
     for (int s = 0; s < N5_; ++s) {
       Params.bs_[s] = (Params.b_*Params.omega_[s]+Params.c_)/2.0;
       Params.cs_[s] = (Params.b_*Params.omega_[s]-Params.c_)/2.0;
       Params.dp_[s] = Params.bs_[s]*(4.0+M0_)+1.0;
       Params.dm_[s] = 1.0-Params.cs_[s]*(4.0+M0_);
       //      std::cout << s << " " << dp_[s] << " " << dm_[s] << std::endl;
-      Precond_ = new NoPrecond();
+      Precond_ = new NoPrecond(this);
     }
     
   }
@@ -206,7 +207,7 @@ public:
      fsize_(f4size_*N5_),
      gsize_(Dw_->gsize()),
      M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){
-    Precond_ = new NoPrecond();
+    Precond_ = new NoPrecond(this);
   } 
 
  
@@ -222,7 +223,7 @@ public:
      fsize_(f4size_*N5_),
      gsize_(Dw_->gsize()),
      M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){
-    Precond_ = new NoPrecond();
+    Precond_ = new NoPrecond(this);
   }
 
 
