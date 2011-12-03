@@ -6,7 +6,9 @@
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_INCLUDED
 
+#include <string>
 #include <string.h>
+#include "Tools/EnumToString.hpp"
 #include "include/field.h"
 #include "include/pugi_interface.h"
 #include "dirac_wilson.h"
@@ -21,6 +23,12 @@ namespace DomainWallFermions {
 }
 
 enum {Standard, PauliVillars};
+enum Preconditioners {NoPreconditioner, LUPreconditioner};
+Begin_Enum_String( Preconditioners ) {
+  Enum_String( NoPreconditioner );
+  Enum_String( LUPreconditioner );
+} 
+End_Enum_String;
 
 /*!
  * @brief Container for parameter of the 5d Optimal Domain Wall operator
@@ -33,7 +41,7 @@ struct Dirac_optimalDomainWall_params{
   double N5dim_;
   double b_, c_;
   double mq_;/*!< @brief Bare quark mass \f$m_q\f$ */
-  bool Preconditioned_;
+  Preconditioners Preconditioning_;
   std::vector<double> omega_;/*!< @brief Diagonal matrix
 			      * \f$\omega = \{\omega_s\}\f$
 			      */
@@ -41,7 +49,8 @@ struct Dirac_optimalDomainWall_params{
   std::vector<double> dp_, dm_;
 
   Dirac_optimalDomainWall_params(XML::node DWF_node){
-    XML::read(DWF_node, "Preconditioned", Preconditioned_, MANDATORY);
+    std::string Precond_string;
+    XML::read(DWF_node, "Preconditioning", Precond_string, MANDATORY);
     XML::read(DWF_node, "N5d", N5dim_, MANDATORY);
     XML::read(DWF_node, "b", b_, MANDATORY);
     XML::read(DWF_node, "c", c_, MANDATORY);
@@ -68,6 +77,9 @@ struct Dirac_optimalDomainWall_params{
     dp_.resize(N5dim_);
     dm_.resize(N5dim_);
 
+    const bool bResult = 
+      EnumString<Preconditioners>::To( Preconditioning_, Precond_string );
+    assert( bResult == true );
   }
 
   Dirac_optimalDomainWall_params(const double b,
@@ -127,10 +139,8 @@ struct Dirac_optimalDomainWall_params{
 
 };
 
-
-
 /*!
- * @brief Defines the 5d Optimal Domain Wall operator
+ * @brief Defines the 5d Domain Wall operator
  *
  * Defines \f[D_{\rm dwf}(m_q) = \omega D_W(-m_0)(1+cL(m_q))+(1-L(m_q))\f]
  * with:
@@ -143,12 +153,19 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
   Dirac_optimalDomainWall_params Params;
   Preconditioner* Precond_;
 
+  size_t N5_;/*!< Length of 5th dimension */
+  size_t f4size_;
+  size_t fsize_;
+  size_t gsize_;
+  const double M0_;
+
   //declaration of concrete preconditioners
-  class NoPrecond : public Preconditioner {
+  class NoPrecond: public Preconditioner {
     Dirac_optimalDomainWall* DWF_;
   public: 
     NoPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
     const Field mult(const Field&) const;  
+    const Field mult_dag(const Field&) const;  
   };
   
   class LUPrecond : public Preconditioner {
@@ -156,15 +173,11 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
   public: 
     LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
     const Field mult(const Field&) const;  
+    const Field mult_dag(const Field&) const;  
   };
 
-
-
-  size_t N5_;/*!< Length of 5th dimension */
-  size_t f4size_;
-  size_t fsize_;
-  size_t gsize_;
-  const double M0_;
+  int choose_Preconditioner(int PrecondID);
+  
 
   const Field get4d(const Field& f5,int s) const{
     return Field(f5[std::slice(s*f4size_,f4size_,1)]);
@@ -176,56 +189,19 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     f5.add(std::slice(s*f4size_,f4size_,1),f4.getva());
   }
 
+
 public:
   Dirac_optimalDomainWall(XML::node DWF_node,
-			  const Dirac_Wilson* Kernel)
-    :Params(Dirac_optimalDomainWall_params(DWF_node)),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
-     f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
-     gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){
-     
-    for (int s = 0; s < N5_; ++s) {
-      Params.bs_[s] = (Params.b_*Params.omega_[s]+Params.c_)/2.0;
-      Params.cs_[s] = (Params.b_*Params.omega_[s]-Params.c_)/2.0;
-      Params.dp_[s] = Params.bs_[s]*(4.0+M0_)+1.0;
-      Params.dm_[s] = 1.0-Params.cs_[s]*(4.0+M0_);
-      //      std::cout << s << " " << dp_[s] << " " << dm_[s] << std::endl;
-      Precond_ = new NoPrecond(this);
-    }
-    
-  }
+			  const Dirac_Wilson* Kernel);
   
   Dirac_optimalDomainWall(Dirac_optimalDomainWall_params Prm,
-			  const Dirac_Wilson* Kernel)
-    :Params(Prm),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
-     f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
-     gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){
-    Precond_ = new NoPrecond(this);
-  } 
-
+			  const Dirac_Wilson* Kernel);
  
   Dirac_optimalDomainWall(const double b,
 			  const double c,
 			  const double mq,
 			  const std::vector<double>& omega,
-			  const Dirac_Wilson* Kernel)
-    :Params(b,c,mq,omega),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
-     f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
-     gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){
-    Precond_ = new NoPrecond(this);
-  }
-
+			  const Dirac_Wilson* Kernel);
 
   /*! @brief Copy constructor to build the Pauli-Villars operator */
   Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dcopy, 
@@ -239,7 +215,9 @@ public:
      gsize_(Dcopy.gsize_),
      M0_(Dcopy.M0_){}
 
-  ~Dirac_optimalDomainWall(){}
+  ~Dirac_optimalDomainWall(){
+    delete Precond_;
+    }
   
   size_t f4size() const{ return f4size_;}
   size_t fsize()  const{ return fsize_; }
@@ -258,30 +236,12 @@ public:
   /*!
    * @brief Calculates the \f$L_+(m)\f$
    */
-  const Field proj_p(const Field& f4) const{
-    Field w4 = Dw_->proj_p(f4);
-    return w4;
-  }
-  //  const Field proj_p(const Field& f4) const{
-  //    Field w4=f4;
-  //    w4 += Dw_->gamma5(f4);
-  //    w4 *=0.5;
-  //    return w4;
-  //  }
+  const Field proj_p(const Field& f4) const;
     
   /*!
    * @brief Calculates the \f$L_-(m)\f$
    */
-  const Field proj_m(const Field& f4) const{
-    Field w4 = Dw_->proj_m(f4);
-    return w4;
-  }
-  //  const Field proj_m(const Field& f4) const{
-  //    Field w4=f4;
-  //    w4 -= Dw_->gamma5(f4);
-  //    w4 *=0.5;
-  //    return w4;
-  //  }
+  const Field proj_m(const Field& f4) const;
 
   const Field Bproj(const Field& v5d) const;
   const Field Bproj_dag(const Field& v4d) const;
@@ -289,10 +249,6 @@ public:
   const Field R5g5(const Field&) const;
 
   const Field md_force( const Field& eta,const Field& zeta) const;
-
-
-
-
 };
 
 

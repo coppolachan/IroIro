@@ -27,7 +27,7 @@ int Test_optimalDomainWall::mult5d_test(Dirac_optimalDomainWall& DWF5d,
 					Field& InputField,
 					int iterations){
   Field dphi;
-  for (int i = 0; i < iterations; i++)
+  for (int i = 0; i < iterations; ++i)
     dphi = DWF5d.mult(InputField);
   double dphi_norm = dphi.norm();    // dphi= Ddwf*phi
   CCIO::cout << "dphi.norm: " << dphi_norm << endl;   
@@ -37,7 +37,7 @@ int Test_optimalDomainWall::mult5d_dag_test(Dirac_optimalDomainWall& DWF5d,
 					    Field& InputField,
 					    int iterations){
   Field dphi;
-  for (int i = 0; i < iterations; i++)
+  for (int i = 0; i < iterations; ++i)
     dphi = DWF5d.mult_dag(InputField);
   double dphi_norm = dphi.norm();    // dphi= Ddwf*phi
   CCIO::cout << "dphi.norm: " << dphi_norm << endl;   
@@ -48,7 +48,7 @@ int Test_optimalDomainWall::mult5d_gamma5_test(Dirac_optimalDomainWall& DWF5d,
 					       int iterations){
   Field dphi;
   Field g5psi,dg5psi,g5dg5psi;
-  for (int i = 0; i < iterations; i++){
+  for (int i = 0; i < iterations; ++i){
     g5psi = DWF5d.R5g5(InputField);         
     dg5psi = DWF5d.mult(g5psi);
     g5dg5psi = DWF5d.R5g5(dg5psi);
@@ -72,8 +72,8 @@ int Test_optimalDomainWall::run(XML::node node){
   // operator without factories
   int N5d = 6;
   double mzero = -1.8;
-  double c = 0.0;
-  double b = 2.0;
+  double c = 1.0;
+  double b = 1.0;
   double mq = 0.0;
   vector<double> omega(N5d,1.0);
   Dirac_Wilson* Kernel = new Dirac_Wilson(mzero, &(conf_.U));

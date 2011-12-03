@@ -415,8 +415,9 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_wilson.h		\
 			Dirac_ops/dirac_wilson_EvenOdd.h	\
 			Dirac_ops/dirac.h			\
-			Dirac_ops/dirac_DomainWall.hpp   \
-			Dirac_ops/dirac_DomainWall_4D.hpp\
+			Dirac_ops/dirac_DomainWall.hpp   	\
+			Dirac_ops/dirac_DomainWall_4D.hpp	\
+			Dirac_ops/dirac_Preconditioners.hpp	\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.h		\
 			Solver/solver.h				\
@@ -436,6 +437,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
 			Tools/RAIIFactory.hpp			\
+			Tools/EnumToString.hpp			\
 			../tests/tests_all.hpp			\
 			../tests/test_EigenModes_IRL.h		\
 			../tests/test_MultiShiftSolver.h		\
