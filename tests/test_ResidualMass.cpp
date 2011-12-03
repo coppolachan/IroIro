@@ -7,6 +7,7 @@
 #include "test_ResidualMass.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Communicator/fields_io.hpp"
+#include "Measurements/FermionicM/fermion_meas_factory.hpp"
 #include "include/pugi_interface.h"
 #include "Tools/randNum_MT19937.h"
 #include "Solver/solver_CG.h"
@@ -79,8 +80,11 @@ int Test_ResMass::run(XML::node node) {
   }
 
   CCIO::cout << "Creating the DWF operator" << endl;
-  Dirac_optimalDomainWall Ddwf_5d(b,c,mq,omega,Kernel);
-  
+  Dirac_optimalDomainWall Ddwf_5d(b,c,mq,omega,NoPreconditioner, Kernel);
+
+  //Using factories
+  DiracDWF5dFactory* DWF_Factory = new DiracDWF5dFactory(node);
+  Dirac_optimalDomainWall* DiracDWF = DWF_Factory->getDiracOperator(&(conf_.U));  
   // quark propagator
   double stop_cond = 1.0e-10;
   int Niter= 20000;
@@ -89,14 +93,20 @@ int Test_ResMass::run(XML::node node) {
 
   // standard construction (factories will use a similar one)
   Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
-  Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
-  Solver* SolvPV  = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_PV));
+  Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(&Ddwf_5d));
+  Solver* SolvPV  = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(&Ddwf_PV));
+
+  //Using factory product
+  Dirac_optimalDomainWall Ddwf_PV_Fact(*DiracDWF, PauliVillars);
+  Solver* SolvDWF_F = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(DiracDWF));
+  Solver* SolvPV_F  = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(&Ddwf_PV_Fact));
   //  Solver* SolvDWF 
   //   = new Solver_BiCGStab(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
   //  Solver* SolvPV  
   //   = new Solver_BiCGStab(stop_cond,Niter,new Fopr_DdagD(&Ddwf_PV));
   Dirac_optimalDomainWall_4D DiracDWF_4d(Ddwf_5d,SolvDWF,SolvPV);
-  QpropDWF QuarkPropagator(DiracDWF_4d);
+  Dirac_optimalDomainWall_4D DiracDWF_4d_F(*DiracDWF,SolvDWF_F,SolvPV_F);
+  QpropDWF QuarkPropagator(DiracDWF_4d_F);
 
   vector<int> spos(4,0); 
   //Source generator

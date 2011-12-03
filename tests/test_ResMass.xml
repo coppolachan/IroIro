@@ -11,17 +11,19 @@
   <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   
   <TestResMass>
-    <DiracOperator name="DiracDomainWall5d">
-      <N5d>8</N5d> <!-- Number of 5d steps -->
+    <DiracOperator name="DiracOptimalDomainWall5d">
+      <Preconditioning>LUPreconditioner</Preconditioning>
+      <N5d>8</N5d>
       <b>1.0</b>
       <c>1.0</c>
-      <Kernel name="DiracWilson">
-	<mass>-1.6</mass>
-      </Kernel>
+      <mass>0.02</mass>
       <approximation name="Zolotarev">
-	<lambda_min></lambda_min>
-	<lambda_max></lambda_max>
+        <lambda_min>0.2</lambda_min>
+        <lambda_max>1.5</lambda_max>
       </approximation>
+      <Kernel name="DiracWilson">
+        <mass>-1.6</mass>
+      </Kernel>
     </DiracOperator>
   </TestResMass>
 </Parameters>

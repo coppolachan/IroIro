@@ -13,7 +13,7 @@
   
   <TestOptimalDomainWall>
     <DomainWall name="DiracOptimalDomainWall5d">
-      <Preconditioned>false</Preconditioned>
+      <Preconditioning>LUPreconditioner</Preconditioning>
       <N5d>6</N5d>
       <b>1.0</b>
       <c>1.0</c>

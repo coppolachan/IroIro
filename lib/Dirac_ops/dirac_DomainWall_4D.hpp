@@ -39,9 +39,9 @@ public:
 			     const double stp_cnd_pv, 
 			     const int Niter)
     :Dodw_(D),
-     slv_odw_(new Solver_BiCGStab(stp_cnd_odw,Niter,new Fopr_DdagD(&Dodw_))),
+     slv_odw_(new Solver_BiCGStab(stp_cnd_odw,Niter,new Fopr_DdagD_Precondition(&Dodw_))),
      Dpv_(Dirac_optimalDomainWall(Dodw_,PauliVillars)),
-     slv_pv_(new Solver_BiCGStab(stp_cnd_pv,Niter,new Fopr_DdagD(&Dpv_))){}
+     slv_pv_(new Solver_BiCGStab(stp_cnd_pv,Niter,new Fopr_DdagD_Precondition(&Dpv_))){}
 
    /*!
    * @brief Constructor using external solvers (mostly used by factories)
@@ -66,6 +66,10 @@ public:
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
+  //Preconditioned versions
+  const Field mult_prec(const Field&)const{};//empty now
+  const Field mult_dag_prec(const Field&)const{};//empty now
+
 
   const Field mult_inv(const Field&)const;
   const Field mult_dag_inv(const Field&)const;

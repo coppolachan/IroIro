@@ -23,6 +23,8 @@ namespace Dw{
 
     const Field mult(const Field&) const;
     const Field mult_dag(const Field&) const;
+    const Field mult_prec(const Field&)const {}//empty now preconditioned 
+    const Field mult_dag_prec(const Field&)const{}//empty now preconditioned
 
     const Field gamma5(const Field& f) const{return Dirac_Wilson::gamma5(f);}
     const Field md_force(const Field& eta,const Field& zeta) const{
@@ -43,6 +45,8 @@ namespace Dw{
 
     const Field mult(const Field&) const;
     const Field mult_dag(const Field&) const;
+    const Field mult_prec(const Field&)const {}//empty now preconditioned 
+    const Field mult_dag_prec(const Field&)const{}//empty now preconditioned
 
     const Field gamma5(const Field& f) const{return Dirac_Wilson::gamma5(f);}
     const Field md_force(const Field& eta,const Field& zeta) const{
@@ -72,6 +76,9 @@ public:
 
   const Field mult(const Field&) const;
   const Field mult_dag(const Field&) const;
+  const Field mult_prec(const Field&)const {}//empty now
+  const Field mult_dag_prec(const Field&)const{}//empty now
+
   const Field md_force(const Field&,const Field&) const;
 
   const Field mult_eo(const Field& f) const {return Deo_.mult(f);}

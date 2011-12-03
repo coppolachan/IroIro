@@ -77,7 +77,7 @@ int Test_optimalDomainWall::run(XML::node node){
   double mq = 0.0;
   vector<double> omega(N5d,1.0);
   Dirac_Wilson* Kernel = new Dirac_Wilson(mzero, &(conf_.U));
-  Dirac_optimalDomainWall Ddwf_5d(b, c, mq, omega, Kernel);
+  Dirac_optimalDomainWall Ddwf_5d(b, c, mq, omega, LUPreconditioner, Kernel);
   /////////////////////////////
 
   // operator using factories

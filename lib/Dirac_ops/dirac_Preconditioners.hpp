@@ -11,5 +11,6 @@ class Preconditioner {
 
 public: 
   virtual const Field mult(const Field&) const = 0;// pure virtual function
+  virtual const Field mult_dag(const Field&) const = 0;// pure virtual function
 
 };

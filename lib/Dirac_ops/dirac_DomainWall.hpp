@@ -38,49 +38,16 @@ End_Enum_String;
  *
  */
 struct Dirac_optimalDomainWall_params{
-  double N5dim_;
-  double b_, c_;
-  double mq_;/*!< @brief Bare quark mass \f$m_q\f$ */
-  Preconditioners Preconditioning_;
-  std::vector<double> omega_;/*!< @brief Diagonal matrix
-			      * \f$\omega = \{\omega_s\}\f$
-			      */
+  double N5dim_;/*!< @brief the length in the 5th direction (must be even) */
+  double b_;    /*!< @brief scale factor (b!=1 for scaled Shamir H_T) */
+  double c_;    /*!< @brief the kernel (H_W (c=0) or H_T (c=1)) */
+  double mq_;   /*!< @brief Bare quark mass \f$m_q\f$ */
+  Preconditioners Preconditioning_; /*!< @brief Name of the preconditioner */
+  std::vector<double> omega_;/*!< @brief Weights defining the approximation */
   std::vector<double> bs_, cs_;
   std::vector<double> dp_, dm_;
 
-  Dirac_optimalDomainWall_params(XML::node DWF_node){
-    std::string Precond_string;
-    XML::read(DWF_node, "Preconditioning", Precond_string, MANDATORY);
-    XML::read(DWF_node, "N5d", N5dim_, MANDATORY);
-    XML::read(DWF_node, "b", b_, MANDATORY);
-    XML::read(DWF_node, "c", c_, MANDATORY);
-    XML::read(DWF_node, "mass", mq_, MANDATORY);
-    omega_.resize(N5dim_);
-    XML::node ApproxNode = DWF_node.child("approximation");
-    if (ApproxNode !=NULL) {
-      const char* Approx_name = ApproxNode.attribute("name").value();
-      if (!strcmp(Approx_name, "Zolotarev")){
-	double lambda_min, lambda_max;
-	XML::read(ApproxNode, "lambda_min", lambda_min); 
-	XML::read(ApproxNode, "lambda_max", lambda_max); 
-	omega_ = DomainWallFermions::getOmega(N5dim_,lambda_min,lambda_max);
-      }
-      if (!strcmp(Approx_name, "Tanh")){
-	for (int s = 0; s < N5dim_; ++s) omega_[s] = 1.0;
-      }
-    } else {
-      abort();
-    }
-
-    bs_.resize(N5dim_);
-    cs_.resize(N5dim_);
-    dp_.resize(N5dim_);
-    dm_.resize(N5dim_);
-
-    const bool bResult = 
-      EnumString<Preconditioners>::To( Preconditioning_, Precond_string );
-    assert( bResult == true );
-  }
+  Dirac_optimalDomainWall_params(XML::node DWF_node);
 
   Dirac_optimalDomainWall_params(const double b,
 				 const double c,
@@ -147,6 +114,9 @@ struct Dirac_optimalDomainWall_params{
  * \f[L(m) = P_+ L_+(m) + P_- L_-(m)\f]
  * using proj_p() e proj_m() methods
  *
+ * Kernel is given by
+ * \f[H = \frac{\gamma_5 b D_W}{ 2 + c D_W } \f]
+ *
  */
 class Dirac_optimalDomainWall : public DiracWilsonLike {
   const Dirac_Wilson* Dw_; /*!< Dirac Kernel - Wilson operator */ 
@@ -201,6 +171,7 @@ public:
 			  const double c,
 			  const double mq,
 			  const std::vector<double>& omega,
+			  Preconditioners Precond,
 			  const Dirac_Wilson* Kernel);
 
   /*! @brief Copy constructor to build the Pauli-Villars operator */
@@ -227,10 +198,13 @@ public:
 
   const double getMass() const{return Params.mq_;}
 
-  const Field gamma5_4d(const Field& f4) const{return Dw_->gamma5(f4);}
+  const Field gamma5_4d(const Field& f4d) const{return Dw_->gamma5(f4d);}
   
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
+  const Field mult_prec(const Field& in) const {return Precond_->mult(in);};
+  const Field mult_dag_prec(const Field& in) const {return Precond_->mult_dag(in);}
+
   const Field gamma5(const Field&) const;
 
   /*!

@@ -186,6 +186,10 @@ public:
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
+  //Preconditioned versions
+  const Field mult_prec(const Field&)const {};//empty now
+  const Field mult_dag_prec(const Field&)const{};//empty now
+
   const Field gamma5(const Field&) const;
   const Field proj_p(const Field&) const;
   const Field proj_m(const Field&) const;
