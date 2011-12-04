@@ -31,8 +31,7 @@ class Dirac_optimalDomainWall_4D : public DiracWilsonLike
 public:
   /*!
    * @brief Default constructor using Solver_BiCGStab class as Solver
-   * 
-   * new Solver_BiCGStab is safe because of auto_ptr
+   *  
    */
   Dirac_optimalDomainWall_4D(const Dirac_optimalDomainWall& D,
 			     const double stp_cnd_odw, 
@@ -63,6 +62,7 @@ public:
   const Field operator()(int, const Field&) const{};
 
   const Field gamma5(const Field& f) const{ return Dodw_.gamma5_4d(f);}
+  const double getMass() {return Dodw_.getMass();}
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;

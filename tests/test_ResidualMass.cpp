@@ -41,11 +41,12 @@ int Test_ResMass::run(XML::node node) {
 
   XML::descend(node, "DiracOperator");
   // operator
+  /*
   double mzero; // Kernel Mass 
   int N5d;    // the length in the 5th direction (must be even)
   double b;   // scale factor (b!=1 for scaled Shamir H_T)
   double c;   // the kernel (H_W (c=0) or H_T (c=1))
-  /* Kernel is given by H=gamma_5 b D_W /( 2 + c D_W ) */
+  // Kernel is given by H=gamma_5 b D_W /( 2 + c D_W ) 
   int approx; // the approx (tanh (approx=0) or Zolo (approx=1))
   double mq;
   input_file >> mzero;
@@ -81,32 +82,37 @@ int Test_ResMass::run(XML::node node) {
 
   CCIO::cout << "Creating the DWF operator" << endl;
   Dirac_optimalDomainWall Ddwf_5d(b,c,mq,omega,NoPreconditioner, Kernel);
+  
 
   //Using factories
-  DiracDWF5dFactory* DWF_Factory = new DiracDWF5dFactory(node);
-  Dirac_optimalDomainWall* DiracDWF = DWF_Factory->getDiracOperator(&(conf_.U));  
+  //DiracDWF5dFactory* DWF_Factory = new DiracDWF5dFactory(node);
+  //Dirac_optimalDomainWall* DiracDWF = DWF_Factory->getDiracOperator(&(conf_.U));  
   // quark propagator
   double stop_cond = 1.0e-10;
   int Niter= 20000;
   CCIO::cout << " stop_cond = " << stop_cond << endl;
   CCIO::cout << " Niter     = " << Niter << endl;
-
+  */
+  /*
   // standard construction (factories will use a similar one)
   Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
   Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(&Ddwf_5d));
   Solver* SolvPV  = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(&Ddwf_PV));
+  */
 
   //Using factory product
-  Dirac_optimalDomainWall Ddwf_PV_Fact(*DiracDWF, PauliVillars);
-  Solver* SolvDWF_F = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(DiracDWF));
-  Solver* SolvPV_F  = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(&Ddwf_PV_Fact));
+  //Dirac_optimalDomainWall Ddwf_PV_Fact(*DiracDWF, PauliVillars);
+  //Solver* SolvDWF_F = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(DiracDWF));
+  //Solver* SolvPV_F  = new Solver_CG(stop_cond,Niter,new Fopr_DdagD_Precondition(&Ddwf_PV_Fact));
   //  Solver* SolvDWF 
   //   = new Solver_BiCGStab(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
   //  Solver* SolvPV  
   //   = new Solver_BiCGStab(stop_cond,Niter,new Fopr_DdagD(&Ddwf_PV));
-  Dirac_optimalDomainWall_4D DiracDWF_4d(Ddwf_5d,SolvDWF,SolvPV);
-  Dirac_optimalDomainWall_4D DiracDWF_4d_F(*DiracDWF,SolvDWF_F,SolvPV_F);
-  QpropDWF QuarkPropagator(DiracDWF_4d_F);
+  //Dirac_optimalDomainWall_4D DiracDWF_4d(Ddwf_5d,SolvDWF,SolvPV);
+  //Dirac_optimalDomainWall_4D DiracDWF_4d_F(*DiracDWF,SolvDWF_F,SolvPV_F);
+  DiracDWF4dFactory* DWF_4d_Factory = new DiracDWF4dFactory(node);
+  Dirac_optimalDomainWall_4D* DiracDWF_4d_F = DWF_4d_Factory->getDiracOperator(&(conf_.U));
+  QpropDWF QuarkPropagator(*DiracDWF_4d_F);
 
   vector<int> spos(4,0); 
   //Source generator
@@ -125,7 +131,7 @@ int Test_ResMass::run(XML::node node) {
 
   for (int s = 0; s < 4; s++) {
     for (int c = 0; c < 3; c++) {
-      Delta = delta(DiracDWF_4d,sq[c+3*s]); // (Delta * D^-1)*source
+      Delta = delta(*DiracDWF_4d_F,sq[c+3*s]); // (Delta * D^-1)*source
       //Contracts
       mres_numerator += sq[c+3*s]*Delta;          // Re(sq[],Delta)    sq[]=D^-1*source
       im_check       += sq[c+3*s].im_prod(Delta); //should be always zero (just a check)
@@ -134,7 +140,7 @@ int Test_ResMass::run(XML::node node) {
       //Denominator
       Denom = sq[c+3*s];
       Denom -= src.mksrc(s,c); // (D^-1 - 1)*src
-      Denom /= (1.0 - mq);
+      Denom /= (1.0 - DiracDWF_4d_F->getMass());
       mres_denominator += Denom*Denom;
       CCIO::cout << "Denominator = " << mres_denominator << endl;
       CCIO::cout << "Residual mass = " << mres_numerator/mres_denominator << endl;

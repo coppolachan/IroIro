@@ -11,7 +11,8 @@
   <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   
   <TestResMass>
-    <DiracOperator name="DiracOptimalDomainWall5d">
+    <DiracOperator name="DiracOptimalDomainWall4d">
+      <Kernel5d>
       <Preconditioning>LUPreconditioner</Preconditioning>
       <N5d>8</N5d>
       <b>1.0</b>
@@ -24,6 +25,11 @@
       <Kernel name="DiracWilson">
         <mass>-1.6</mass>
       </Kernel>
+      </Kernel5d>
+      <SolverDWF type="Solver_CG">
+	<MaxIter>10000</MaxIter>
+	<Precision>1e-10</Precision>
+      </SolverDWF>
     </DiracOperator>
   </TestResMass>
 </Parameters>

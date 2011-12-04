@@ -52,7 +52,7 @@ Dirac_optimalDomainWall_params::Dirac_optimalDomainWall_params(XML::node DWF_nod
       abort();
     } else {
       CCIO::cout << "Choosing preconditioner type: "<< 
-	Precond_string << " "<< Preconditioning_ << std::endl;
+	Precond_string << " Code: "<< Preconditioning_ << std::endl;
     }
 
   }
@@ -109,7 +109,12 @@ Dirac_optimalDomainWall::Dirac_optimalDomainWall(const double b,
 int Dirac_optimalDomainWall::choose_Preconditioner(int PrecondID) {
   switch (PrecondID) {
   case NoPreconditioner:
+    try {
     Precond_ = new NoPrecond(this);
+    }
+    catch (std::bad_alloc) {
+      CCIO::cout<< "Exception raised ";
+    }
     return 0;
     break;
   case LUPreconditioner:
@@ -118,7 +123,7 @@ int Dirac_optimalDomainWall::choose_Preconditioner(int PrecondID) {
     break;
   default:
     Precond_ = new NoPrecond(this);
-    return 0;
+    return 1;
     break;
   }
 }

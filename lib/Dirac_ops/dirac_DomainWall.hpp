@@ -8,6 +8,7 @@
 
 #include <string>
 #include <string.h>
+#include <iostream> //debug
 #include "Tools/EnumToString.hpp"
 #include "include/field.h"
 #include "include/pugi_interface.h"
@@ -135,7 +136,7 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
   public: 
     NoPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
     const Field mult(const Field&) const;  
-    const Field mult_dag(const Field&) const;  
+    const Field mult_dag(const Field&) const;
   };
   
   class LUPrecond : public Preconditioner {
