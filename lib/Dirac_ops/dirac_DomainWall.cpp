@@ -16,7 +16,8 @@
 
 using namespace std;
 
-//Constructors
+// Constructors
+//-------------------------------------------------------------------------------------
 Dirac_optimalDomainWall_params::Dirac_optimalDomainWall_params(XML::node DWF_node){
     std::string Precond_string;
     XML::read(DWF_node, "Preconditioning", Precond_string, MANDATORY);
@@ -57,6 +58,44 @@ Dirac_optimalDomainWall_params::Dirac_optimalDomainWall_params(XML::node DWF_nod
 
   }
 
+Dirac_optimalDomainWall_params::Dirac_optimalDomainWall_params(const double b,
+							       const double c,
+							       const double mass,
+							       const std::vector<double> omega){
+  b_ = b;
+  c_ = c;
+  mq_ = mass;
+  omega_ = omega;
+  bs_.resize(omega.size());
+  cs_.resize(omega.size());
+  dp_.resize(omega.size());
+  dm_.resize(omega.size());
+}
+
+Dirac_optimalDomainWall_params::Dirac_optimalDomainWall_params(const Dirac_optimalDomainWall_params& Par,
+							       DWFType Type){
+  b_ = Par.b_;
+  c_ = Par.c_;
+  omega_ = Par.omega_;
+  Preconditioning_ = Par.Preconditioning_;
+  bs_ = Par.bs_;
+  cs_ = Par.cs_;
+  dp_ = Par.dp_;
+  dm_ = Par.dm_;
+  
+  switch (Type){
+  case Standard:
+    mq_ = Par.mq_;
+    break;
+  case PauliVillars:
+    mq_ = 1.0;
+    break;
+    default:
+      abort();
+  }
+}
+
+//--------------------------------------------------------------------------------------
 
 Dirac_optimalDomainWall::Dirac_optimalDomainWall(XML::node DWF_node,
 						 const Dirac_Wilson* Kernel)
@@ -103,18 +142,22 @@ Dirac_optimalDomainWall::Dirac_optimalDomainWall(const double b,
    fsize_(f4size_*N5_),
    gsize_(Dw_->gsize()),
    M0_(1.0/(2.0*(Dw_->getKappa()))-4.0){
+
+    for (int s = 0; s < omega.size(); ++s) {
+      Params.bs_[s] = (b*omega[s]+c)/2.0;
+      Params.cs_[s] = (b*omega[s]-c)/2.0;
+      Params.dp_[s] = Params.bs_[s]*(4.0+M0_)+1.0;
+      Params.dm_[s] = 1.0-Params.cs_[s]*(4.0+M0_);
+    }
+
   choose_Preconditioner(Precond);
 }
+
 
 int Dirac_optimalDomainWall::choose_Preconditioner(int PrecondID) {
   switch (PrecondID) {
   case NoPreconditioner:
-    try {
     Precond_ = new NoPrecond(this);
-    }
-    catch (std::bad_alloc) {
-      CCIO::cout<< "Exception raised ";
-    }
     return 0;
     break;
   case LUPreconditioner:
@@ -157,7 +200,6 @@ const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
     v = DWF_->get4d(w5,s);
     v *= 1.0/DWF_->Params.dp_[s];
     DWF_->set5d(w5,v,s);
-    
   }
   return w5;
 }

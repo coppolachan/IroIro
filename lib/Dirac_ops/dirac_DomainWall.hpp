@@ -8,22 +8,22 @@
 
 #include <string>
 #include <string.h>
-#include <iostream> //debug
-#include "Tools/EnumToString.hpp"
 #include "include/field.h"
 #include "include/pugi_interface.h"
+#include "Tools/EnumToString.hpp"
+
 #include "dirac_wilson.h"
 #include "dirac_Preconditioners.hpp"
 
 namespace DomainWallFermions {
-
+  
   std::vector<double> getOmega(int Ns, 
 			       double lambda_min,
 			       double lambda_max);
-
+  
 }
 
-enum {Standard, PauliVillars};
+enum DWFType {Standard, PauliVillars};
 enum Preconditioners {NoPreconditioner, LUPreconditioner};
 Begin_Enum_String( Preconditioners ) {
   Enum_String( NoPreconditioner );
@@ -53,58 +53,10 @@ struct Dirac_optimalDomainWall_params{
   Dirac_optimalDomainWall_params(const double b,
 				 const double c,
 				 const double mass,
-				 const std::vector<double> omega){
-    b_ = b;
-    c_ = c;
-    mq_ = mass;
-    omega_ = omega;
-    bs_.resize(omega.size());
-    cs_.resize(omega.size());
-    dp_.resize(omega.size());
-    dm_.resize(omega.size());
-
-    // this line must be replaced
-    double M0_=-1.6;  
-    //
-    for (int s = 0; s < omega.size(); ++s) {
-      bs_[s] = (b*omega[s]+c)/2.0;
-      cs_[s] = (b*omega[s]-c)/2.0;
-      dp_[s] = bs_[s]*(4.0+M0_)+1.0;
-      dm_[s] = 1.0-cs_[s]*(4.0+M0_);
-      //      std::cout << s << " " << dp_[s] << " " << dm_[s] << std::endl;
-    }
-  }
+				 const std::vector<double> omega);
 
   Dirac_optimalDomainWall_params(const Dirac_optimalDomainWall_params& Par,
-				 int Type = 0){
-    switch (Type){
-    case Standard:
-      b_ = Par.b_;
-      c_ = Par.c_;
-      mq_ = Par.mq_;
-      omega_ = Par.omega_;
-      bs_ = Par.bs_;
-      cs_ = Par.cs_;
-      dp_ = Par.dp_;
-      dm_ = Par.dm_;
-      break;
-    case PauliVillars:
-      b_ = Par.b_;
-      c_ = Par.c_;
-      mq_ = 1.0;
-      omega_ = Par.omega_;
-      bs_ = Par.bs_;
-      cs_ = Par.cs_;
-      dp_ = Par.dp_;
-      dm_ = Par.dm_;
-      break;
-    default:
-      abort();
-    }
-  }
-
-
-
+				 DWFType Type = Standard);
 };
 
 /*!
@@ -120,11 +72,11 @@ struct Dirac_optimalDomainWall_params{
  *
  */
 class Dirac_optimalDomainWall : public DiracWilsonLike {
-  const Dirac_Wilson* Dw_; /*!< Dirac Kernel - Wilson operator */ 
+  const Dirac_Wilson* Dw_; /*!< @brief Dirac Kernel - Wilson operator */ 
   Dirac_optimalDomainWall_params Params;
   Preconditioner* Precond_;
 
-  size_t N5_;/*!< Length of 5th dimension */
+  size_t N5_;/*!< @brief Length of 5th dimension */
   size_t f4size_;
   size_t fsize_;
   size_t gsize_;
@@ -177,7 +129,7 @@ public:
 
   /*! @brief Copy constructor to build the Pauli-Villars operator */
   Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dcopy, 
-			  int Type = 0)
+			  DWFType Type = Standard)
     :Params(Dcopy.Params, Type),
      Dw_(Dcopy.Dw_),
      Precond_(Dcopy.Precond_),
