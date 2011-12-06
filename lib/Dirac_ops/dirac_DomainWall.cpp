@@ -47,8 +47,8 @@ const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
 
 const Field Dirac_optimalDomainWall::mult(const Field& f5) const{ 
   using namespace FieldExpression;
-
   assert(f5.size()==fsize_);
+  
   Field w5(fsize_);
 
   for(int s=0; s<N5_; ++s) {
@@ -73,7 +73,6 @@ const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
 
 const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
   //  using namespace FieldExpression;
-
   assert(f5.size()==fsize_);
   Field v5(fsize_);
   Field w5(fsize_);
