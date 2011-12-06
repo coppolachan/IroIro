@@ -23,18 +23,12 @@ public:
    */
   virtual void init(Field&,const RandNum&, const void* x=0)= 0;
 
-  // this is just for testing purposes
-  virtual void init(Field&,const RandNum&,const Field&, const void* x=0)= 0;
-
-
-
   /*!
     Calculates action contribution
    */
   virtual double calc_H()= 0;
 
   virtual Field md_force(const void* x=0)= 0;
-  virtual Field md_force(const Field&, const void* x=0)= 0;
 
   virtual ~Action(){};
 };

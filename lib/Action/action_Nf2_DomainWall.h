@@ -26,12 +26,10 @@ private:
   Field* const u_;    /*!< The gauge field       */
   const Dirac* D_;    /*!< Dirac Kernel operator */ 
   const Solver* slv_; /*!< Linear solver operator*/
-
   Action_Nf2_ratio action_;
   Dirac_optimalDomainWall Dpv_;
-
-  Field phi_;
   size_t fsize_;
+  Field phi_;
   
   Field DdagD_inv(const Field& src);
   
@@ -45,7 +43,7 @@ public:
     :u_(GField),
      Dpv_(*D,DomainWallFermions::PauliVillars()),
      action_(GField,D,&Dpv_,Solv,Solv),
-     fsize_(D->fsize()){}
+     fsize_(D->fsize()),phi_(fsize_){}
   
   ~Action_Nf2_DomainWall(){}
 
@@ -53,15 +51,8 @@ public:
     action_.init(F,rand,vp);
   }
 
-  void init(Field& P,const RandNum& rand,const Field& U,const void* vp= 0){
-    action_.init(P,rand,U,vp);
-  }
-
   double calc_H(){return action_.calc_H();}
 
   Field md_force(const void* vp = 0){ return action_.md_force(vp);}
-  Field md_force(const Field& U, const void* vp = 0){ 
-    return action_.md_force(U,vp);
-  }
 };
 #endif

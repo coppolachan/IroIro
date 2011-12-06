@@ -21,49 +21,54 @@
 
 using namespace std;
 using namespace Format;
+#include <typeinfo> 
 
+int Test_optimalDomainWall::
+mult5d_test(const Dirac_optimalDomainWall& DWF5d,
+	    const Field& phi,int times){
 
-int Test_optimalDomainWall::mult5d_test(Dirac_optimalDomainWall& DWF5d,
-					Field& InputField,
-					int iterations){
-  Field dphi;
-  for (int i = 0; i < iterations; i++)
-    dphi = DWF5d.mult(InputField);
-  double dphi_norm = dphi.norm();    // dphi= Ddwf*phi
-  CCIO::cout << "dphi.norm: " << dphi_norm << endl;   
+  Field Dphi(phi.size());
+  for(int i=0; i<times; ++i) Dphi = DWF5d.mult(phi);
+
+  double Dphi_norm = Dphi.norm();    // Dphi= Ddwf*phi
+  CCIO::cout << "Dphi.norm: " << Dphi_norm << endl;   
 }
 
-int Test_optimalDomainWall::mult5d_dag_test(Dirac_optimalDomainWall& DWF5d,
-					    Field& InputField,
-					    int iterations){
-  Field dphi;
-  for (int i = 0; i < iterations; i++)
-    dphi = DWF5d.mult_dag(InputField);
-  double dphi_norm = dphi.norm();    // dphi= Ddwf*phi
-  CCIO::cout << "dphi.norm: " << dphi_norm << endl;   
+int Test_optimalDomainWall::
+mult5d_dag_test(const Dirac_optimalDomainWall& DWF5d,
+		const Field& phi,int times){
+  
+  Field Dphi(phi.size());
+  for(int i=0; i<times; ++i) Dphi = DWF5d.mult_dag(phi);
+
+  double Dphi_norm = Dphi.norm();    // Dphi= Ddwf*phi
+  CCIO::cout << "Dphi.norm: " << Dphi_norm << endl;   
 }
 
-int Test_optimalDomainWall::mult5d_gamma5_test(Dirac_optimalDomainWall& DWF5d,
-					       Field& InputField,
-					       int iterations){
-  Field dphi;
-  Field g5psi,dg5psi,g5dg5psi;
-  for (int i = 0; i < iterations; i++){
-    g5psi = DWF5d.R5g5(InputField);         
-    dg5psi = DWF5d.mult(g5psi);
-    g5dg5psi = DWF5d.R5g5(dg5psi);
+int Test_optimalDomainWall::
+mult5d_gamma5_test(const Dirac_optimalDomainWall& DWF5d,
+		   const Field& phi,int times){
+
+  Field g5psi(phi.size());
+  Field Dg5psi(phi.size());
+  Field g5Dg5psi(phi.size());
+
+  for(int i=0; i<times; ++i){
+    g5psi = DWF5d.R5g5(phi);         
+    Dg5psi = DWF5d.mult(g5psi);
+    g5Dg5psi = DWF5d.R5g5(Dg5psi);
   }
 
-  double g5dg5psi_norm = g5dg5psi.norm();
+  double g5Dg5psi_norm = g5Dg5psi.norm();
 
-  Field vdiff = g5dg5psi;
-  Field ddagphi = DWF5d.mult_dag(InputField);
-  vdiff -= ddagphi;
+  Field vdiff = g5Dg5psi;
+  Field Ddagphi = DWF5d.mult_dag(phi);
+  vdiff -= Ddagphi;
   double vdiff_norm = vdiff.norm();
 
-  CCIO::cout << "(g5 d g5 v) norm: " << g5dg5psi_norm << endl;
-  CCIO::cout << "dhc v  norm: " << ddagphi.norm() << endl;
-  CCIO::cout << "Difference norm: " << vdiff_norm << endl;
+  CCIO::cout << "||g5*D*g5*v||: " << g5Dg5psi_norm << std::endl;
+  CCIO::cout << "||Ddag*v||: "    << Ddagphi.norm() << std::endl;
+  CCIO::cout << "||Difference||: "<< vdiff_norm << std::endl;
 }
 
 int Test_optimalDomainWall::run(XML::node node){
@@ -76,14 +81,14 @@ int Test_optimalDomainWall::run(XML::node node){
   double b = 2.0;
   double mq = 0.0;
   vector<double> omega(N5d,1.0);
-  Dirac_Wilson* Kernel = new Dirac_Wilson(mzero, &(conf_.U));
-  Dirac_optimalDomainWall Ddwf_5d(b, c, mq, omega, Kernel);
+  Dirac_Wilson Kernel(mzero, &(conf_.U));
+  Dirac_optimalDomainWall Ddwf_5d(b, c, mq, omega, &Kernel);
   /////////////////////////////
 
   // operator using factories
   XML::descend(node, "DomainWall");
-  DiracDWF5dFactory* DWF_Factory = new DiracDWF5dFactory(node);
-  DiracODWF = DWF_Factory->getDiracOperator(&(conf_.U));
+  DiracDWF5dFactory DWF_Factory(node);
+  DiracODWF = DWF_Factory.getDiracOperator(&(conf_.U));
   ///////////////////////////////////////
 
   // prepare pf field
@@ -96,6 +101,31 @@ int Test_optimalDomainWall::run(XML::node node){
   Field phi(vphi);    // phi: generated from random numbers
   double phi_norm = phi.norm();
   CCIO::cout << "phi,size,norm: " << phi.size() << " " << phi_norm << endl;
+
+  ////////// test of Action_Nf2_ratio::DdagD2_inv  
+  double mq1 = 0.05;
+  double mq2 = 0.10;
+  
+  Dirac_optimalDomainWall Ddwf1(b,c,mq1,omega,&Kernel);
+  Dirac_optimalDomainWall Ddwf2(b,c,mq2,omega,&Kernel);
+
+  Fopr_DdagD DdagD2(&Ddwf2);
+
+  Solver_CG SolvR2(10e-12,1000,&DdagD2);
+  Field  D1phi =Ddwf1.mult_dag(phi);
+  double phisum= D1phi.norm();
+  double phinorm= Communicator::instance()->reduce_sum(phisum);
+
+  CCIO::cout<<"phi_.norm="<<sqrt(phinorm)<<std::endl;
+  CCIO::cout<<"typeid(D1_)="<<typeid(Ddwf1).name()<<std::endl;
+
+  int Nconv;
+  double diff;
+  Field sol(Ddwf1.fsize());
+  SolvR2.solve(sol,D1phi,diff,Nconv);
+
+  ///////////////
+
   
   valarray<double> vpsi(Ddwf_5d.fsize());
   rand.get(vpsi);
@@ -131,26 +161,29 @@ int Test_optimalDomainWall::run(XML::node node){
 
   /* It follows a standard construction (factories will use a similar one)
   Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
-  Solver* SolvDWF = new Solver_BiCGStab(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
-  Solver* SolvPV = new Solver_BiCGStab(stop_cond,Niter,
-				       new Fopr_DdagD(&Ddwf_PV));
+  Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
+  Solver* SolvPV = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_PV));
   Dirac_optimalDomainWall_4D DiracDWF_4d(Ddwf_5d,*SolvDWF, *SolvPV);
   QpropDWF QuarkPropagator(DiracDWF_4d);
-  //////////////////////////////////// */
+  //////////////////////////////////// 
+  */
 
+  CCIO::cout << ".::: Test Dirac_optimalDomainWall meson correlator" 
+	     <<std::endl;
   // Here uses the default constructor with default solver
-  QpropDWF QuarkPropagator(Ddwf_5d,
-   			   stop_cond,
-   			   Niter);
+  QpropDWF QuarkPropagator(Ddwf_5d,stop_cond,Niter);
   
   vector<int> spos(4,0); 
   Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
-
+  
   prop_t sq;
   QuarkPropagator.calc(sq,src);
 
-  // conf_.U.set(0,1.0);//change configuration - test
-  // QuarkPropagator.calc(sq,src,0,0);
+  MesonCorrel<Format_F> meson;
+  vector<double> mcorr = meson.pp(sq,sq);
+  vector<double>::const_iterator it=mcorr.begin();
+  int t=0;
+  while(it!=mcorr.end()) pprintf ("%d %.8e\n",t++, *it++);
 
   return 0;
 }

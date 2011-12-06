@@ -57,11 +57,9 @@ private:
   SUNmat u_dag(const Field&, int site);
 
 public:
-  void  init(Field&,const RandNum&,const Field& U,const void* = 0);//for tests
   void  init(Field&,const RandNum&,const void* = 0);
   double calc_H();
   Field  md_force(const void* = 0);
-  Field  md_force(const Field&, const void* = 0);
 
   ActionGaugeWilson(const double beta, const Format::Format_G& gf)
     :u_(new Field(gf.size())),

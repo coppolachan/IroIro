@@ -26,9 +26,8 @@ private:
   Field* const u_; /*!< The gauge field */
   const Dirac* D_; /*!< Dirac Kernel operator */ 
   const Solver* slv_;  /*!< Linear solver operator */
-
-  Field phi_;
   size_t fsize_;
+  Field phi_;
   
   Field DdagD_inv(const Field& src);
   
@@ -39,22 +38,13 @@ public:
   Action_Nf2(Field* const GField,
 	     const Dirac* D, 
 	     const Solver* Solv)
-    :u_(    GField),
-     D_(D),
-     slv_(Solv),
-     fsize_(D_->fsize()){}
+    :u_(GField),D_(D),slv_(Solv),
+     fsize_(D_->fsize()),phi_(fsize_){}
 
   ~Action_Nf2(){}
-  
 
   void init(Field&,const RandNum& rand,const void* = 0);
-  
-  void init(Field& P,const RandNum& rand,const Field& U, const void* = 0);
-
-  double calc_H();
-
   Field md_force(const void* = 0);
-
-  Field md_force(const Field& U, const void* = 0);
+  double calc_H();
 };
 #endif

@@ -39,6 +39,18 @@ namespace Format{
     std::slice dir_slice(int dir) const {
       return std::slice(index(0,0,dir),Nin_*Nvol_,1);
     }
+
+    const std::valarray<size_t> get_sub(const std::vector<int>& sv)const{
+      std::valarray<size_t> sub(Nin_*sv.size()*Nex_);
+      int j=0;
+      for(int e=0;e<Nex_;++e)
+	for(int v=0;v<sv.size();++v)
+	  for(int i=0;i<Nin_;++i)
+	    sub[j++] = i+Nin_*(sv[v] +sv.size()*e);
+
+      return sub;
+    }
+
   };
 }
 

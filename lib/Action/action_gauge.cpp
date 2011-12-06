@@ -66,21 +66,10 @@ Field ActionGaugeWilson::md_force(const void*){
   return force;
 }
 
-Field ActionGaugeWilson::md_force(const Field& U, const void*){
-  *u_ = U;
-  md_force();
-}
-
 void ActionGaugeWilson::
 init(Field& P,const RandNum& rand,const void*){
   CCIO::cout<<"ActionGaugeWilson::init"<<endl;
   md_mom(P,rand);
-}
-
-void ActionGaugeWilson::
-init(Field& P,const RandNum& rand,const Field& U,const void*){
-  *u_= U;
-  ActionGaugeWilson::init(P, rand);
 }
 
 void ActionGaugeWilson::md_mom(Field& P,const RandNum& rand){
