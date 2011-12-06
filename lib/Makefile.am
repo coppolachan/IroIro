@@ -108,7 +108,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			EigenModes/sortEigen.h				\
 			EigenModes/eigenProc_Zolotarev.h		\
 			Measurements/GaugeM/staples.h				\
-			Measurements/FermionicM/source.h			\
+			Measurements/FermionicM/source.hpp			\
 			Measurements/FermionicM/qprop_MultiShift.hpp 		\
 			Measurements/FermionicM/qprop.h				\
 			Measurements/FermionicM/qprop_EvenOdd.h			\

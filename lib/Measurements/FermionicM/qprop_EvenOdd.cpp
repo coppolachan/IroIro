@@ -8,7 +8,7 @@
  */
 //-------------------------------------------------------------------------
 #include "qprop_EvenOdd.h"
-#include "Measurements/FermionicM/source.h"
+#include "Measurements/FermionicM/source.hpp"
 #include "include/format_F.h"
 #include "Communicator/comm_io.hpp"
 

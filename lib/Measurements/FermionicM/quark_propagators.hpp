@@ -10,7 +10,7 @@
 #define QUARK_PROP_H_
 
 #include <vector>
-#include "source.h"
+#include "source.hpp"
 #include "include/field.h"
 
 typedef std::vector<Field> prop_t;

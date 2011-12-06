@@ -9,7 +9,7 @@
 
 #include "quark_propagators.hpp"
 #include "Dirac_ops/dirac_DomainWall_4D.hpp"
-#include "source.h"
+#include "source.hpp"
 
 typedef std::vector<Field> prop_t;
 

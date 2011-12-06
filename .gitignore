@@ -1,6 +1,7 @@
 *~
 stamp-h1
 docs/doxy-en
+docs/doxy.cfg
 *.o
 *.a
 *.log
