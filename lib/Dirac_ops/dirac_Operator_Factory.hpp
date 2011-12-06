@@ -89,8 +89,9 @@ class DiracDWF4dFactory : public DiracOperatorFactory {
   RaiiFactoryObj<SolverOperatorFactory> SolverDWF_Obj;
 
   RaiiFactoryObj<Dirac_optimalDomainWall> DWF5D_Kernel;
-  RaiiFactoryObj<Fopr_DdagD> OprODWF;
-  RaiiFactoryObj<Fopr_DdagD> OprPV;
+  RaiiFactoryObj<Dirac_optimalDomainWall> DPV;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> OprODWF;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> OprPV;
   RaiiFactoryObj<Solver> SolverODWF;
   RaiiFactoryObj<Solver> SolverPV;
   
@@ -107,10 +108,10 @@ public:
 
   Dirac_optimalDomainWall_4D* getDiracOperator(Field* const GaugeField){
     DWF5D_Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
-    OprODWF.save(new Fopr_DdagD(DWF5D_Kernel.get()));
+    OprODWF.save(new Fopr_DdagD_Precondition(DWF5D_Kernel.get()));
     SolverODWF.save(SolverDWF_Obj.get()->getSolver(OprODWF.get()));
-    Dirac_optimalDomainWall DPV(*DWF5D_Kernel.get(), PauliVillars);
-    OprPV.save(new Fopr_DdagD(&DPV));
+    DPV.save(new Dirac_optimalDomainWall(*DWF5D_Kernel.get(), PauliVillars));
+    OprPV.save(new Fopr_DdagD_Precondition(DPV.get()));
     SolverPV.save(SolverDWF_Obj.get()->getSolver(OprPV.get()));
 
     return new Dirac_optimalDomainWall_4D(*DWF5D_Kernel.get(),

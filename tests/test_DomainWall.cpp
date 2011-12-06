@@ -77,10 +77,11 @@ int Test_optimalDomainWall::run(XML::node node){
   // operator without factories
   int N5d = 6;
   double mzero = -1.8;
-  double c = 0.0;
-  double b = 2.0;
+  double c = 1.0;
+  double b = 1.0;
   double mq = 0.0;
   vector<double> omega(N5d,1.0);
+
   Dirac_Wilson Kernel(mzero, &(conf_.U));
   Dirac_optimalDomainWall Ddwf_5d(b, c, mq, omega, &Kernel);
   /////////////////////////////

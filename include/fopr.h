@@ -30,6 +30,17 @@ public:
   size_t fsize()const {return D_->fsize();}
 };
 
+class Fopr_D_Precondition:public Fopr{
+private:
+  const Dirac* D_;
+public:
+  Fopr_D_Precondition(const Dirac* D):D_(D){}
+
+  const Field mult(    const Field& f)const{return D_->mult_prec(f);}
+  const Field mult_dag(const Field& f)const{return D_->mult_dag_prec(f);}
+  size_t fsize()const {return D_->fsize();}
+};
+
 class Fopr_Ddag:public Fopr{
 private:
   const Dirac* D_;
@@ -38,6 +49,17 @@ public:
 
   const Field mult(const Field& f) const {return D_->mult_dag(f);}
   const Field mult_dag(const Field& f) const {return D_->mult(f);}
+  size_t fsize()const {return D_->fsize();}
+};
+
+class Fopr_Ddag_Precondition:public Fopr{
+private:
+  const Dirac* D_;
+public:
+  Fopr_Ddag_Precondition(const Dirac* D):D_(D){}
+
+  const Field mult(const Field& f) const {return D_->mult_dag_prec(f);}
+  const Field mult_dag(const Field& f) const {return D_->mult_prec(f);}
   size_t fsize()const {return D_->fsize();}
 };
 
@@ -71,6 +93,17 @@ public:
   const Field mult(const Field& f) const{return D_->mult_dag(D_->mult(f));}
   size_t fsize()const {return D_->fsize();}
 };
+
+class Fopr_DdagD_Precondition : public Fopr_Herm {
+private:
+  const Dirac* D_;
+public:
+  Fopr_DdagD_Precondition(const Dirac* D):D_(D){}
+  
+  const Field mult(const Field& f) const{return D_->mult_dag_prec(D_->mult_prec(f));}
+  size_t fsize()const {return D_->fsize();}
+};
+
 
 class Fopr_DDdag: public Fopr_Herm {
 private:

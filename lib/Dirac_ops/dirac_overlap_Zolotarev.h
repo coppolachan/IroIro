@@ -46,6 +46,10 @@ public:
 
   const Field mult(const Field& f) const;
   const Field mult_dag(const Field& f) const;
+  //Preconditioned versions
+  const Field mult_prec(const Field& f) const {};//empty now
+  const Field mult_dag_prec(const Field& f) const{};//empty now
+
   const Field md_force(const Field& eta,const Field& zeta) const;
   const Field gamma5(const Field& f) const;
 };

@@ -4,7 +4,7 @@
 #include "PugiXML/pugixml.hpp"
 #include "include/singleton.h"
 #include <vector>
-
+#include <string>
 #define MANDATORY true
 
 /*!
@@ -42,6 +42,9 @@ namespace XML
   void read(pugi::xml_node node, const char *name, double& value,  bool type = false);
 
   void read(pugi::xml_node node, const char *name, bool& value, bool type = false);
+
+  void read(pugi::xml_node node, const char *name, std::string& string, bool type = false);
+
 
   void read_array(pugi::xml_node node, 
 		  const char* name, 

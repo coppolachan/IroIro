@@ -1,6 +1,8 @@
 /*!
  * @mainpage KEK common code for %Lattice QCD simulations
  *
+ * JLQCD branch of the code for lattice simulations of QCD  
+ *
  */
 
 //------------------------------------------------------------------------
