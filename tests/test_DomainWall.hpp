@@ -16,15 +16,9 @@ class Test_optimalDomainWall: public TestGeneral{
 private:
   GaugeField& conf_;
 
-  int mult5d_test(Dirac_optimalDomainWall& DWF,
-		  Field& InputField,
-		  int iterations);
-  int mult5d_dag_test(Dirac_optimalDomainWall& DWF,
-		      Field& InputField,
-		      int iterations);
-  int mult5d_gamma5_test(Dirac_optimalDomainWall& DWF,
-		      Field& InputField,
-		      int iterations);
+  int mult5d_test(const Dirac_optimalDomainWall&,const Field&,int);
+  int mult5d_dag_test(const Dirac_optimalDomainWall&,const Field&,int);
+  int mult5d_gamma5_test(const Dirac_optimalDomainWall&,const Field&,int);
 
 public:
   Test_optimalDomainWall(GaugeField& conf):conf_(conf){}

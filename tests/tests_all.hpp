@@ -12,3 +12,4 @@
 #include "tests/test_wilson_EvenOdd.hpp"
 #include "tests/test_overlap.hpp"
 #include "tests/test_DomainWall.hpp"
+#include "tests/test_HMC_DomainWall.hpp"

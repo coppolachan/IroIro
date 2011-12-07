@@ -16,11 +16,12 @@
 #include "dirac_Preconditioners.hpp"
 
 namespace DomainWallFermions {
-  
+  struct PauliVillars{};
+  struct LUPrecond{};
+
   std::vector<double> getOmega(int Ns, 
 			       double lambda_min,
 			       double lambda_max);
-  
 }
 
 enum DWFType {Standard, PauliVillars};
@@ -101,8 +102,7 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     const Field mult_dag(const Field&) const;  
   };
 
-  int choose_Preconditioner(int PrecondID);
-  
+  Preconditioner* choose_Preconditioner(int PrecondID);
 
   const Field get4d(const Field& f5,int s) const{
     return Field(f5[std::slice(s*f4size_,f4size_,1)]);
@@ -126,8 +126,8 @@ public:
 			  const double c,
 			  const double mq,
 			  const std::vector<double>& omega,
-			  Preconditioners Precond,
-			  const Dirac_Wilson* Kernel);
+			  const Dirac_Wilson* Kernel,
+			  Preconditioners Precond);
 
   /*! @brief Copy constructor to build the Pauli-Villars operator */
   Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dcopy, 
@@ -141,9 +141,18 @@ public:
      gsize_(Dcopy.gsize_),
      M0_(Dcopy.M0_){}
 
-  ~Dirac_optimalDomainWall(){
-    delete Precond_;
-    }
+  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dcopy, 
+			  const DomainWallFermions::PauliVillars&)
+    :Params(Dcopy.Params, PauliVillars),
+     Dw_(Dcopy.Dw_),
+     Precond_(Dcopy.Precond_),
+     N5_(Dcopy.N5_),
+     f4size_(Dcopy.f4size_),
+     fsize_(Dcopy.fsize_),
+     gsize_(Dcopy.gsize_),
+     M0_(Dcopy.M0_){}
+
+  ~Dirac_optimalDomainWall(){  delete Precond_; }
   
   size_t f4size() const{ return f4size_;}
   size_t fsize()  const{ return fsize_; }

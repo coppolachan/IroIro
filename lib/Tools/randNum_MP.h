@@ -19,57 +19,52 @@ namespace MPrand{
   void mp_get(std::valarray<double>& rn,
 	      const RandNum& rand,const FMT& fmt){
 
-    int NP = CommonPrms::instance()->NP();
-    int Nvol = CommonPrms::instance()->Nvol();
-    int Lvol = CommonPrms::instance()->Lvol();
+    rn=0.0;
+    assert(rn.size()==fmt.size());
+    int Nvol = fmt.Nvol();
     int Nin = fmt.Nin();
     int Nex = fmt.Nex();
+
+    int NP = CommonPrms::instance()->NP();
+    int Lvol = NP*Nvol;
 
     std::valarray<double> Rn(NP*rn.size());
     rand.get(Rn);	
 
-    assert(rn.size()==fmt.size());
+    std::vector<int> gsite;
+    for(int site=0; site<Nvol; ++site)
+      gsite.push_back(SiteIndex::instance()->gsite(site));
+
     FMT Fmt(Lvol,Nex);
-    
-    for(int ex=0; ex<Nex;++ex){
-      for(int site=0; site<Nvol; ++site){
-	int gsite = SiteIndex::instance()->gsite(site);
-	for(int in=0; in<Nin;++in){
-	  rn[fmt.index(in,site,ex)] = Rn[Fmt.index(in,gsite,ex)];
-	}
-      }
-    }    
+    rn = Rn[Fmt.get_sub(gsite)];
   }
-    
+
   template<typename FMT>
   void mp_get_gauss(std::valarray<double>& rn,
 		    const RandNum& rand,const FMT& fmt){
 
-    int NP = CommonPrms::instance()->NP();
-    int Nvol = CommonPrms::instance()->Nvol();
-    int Lvol = CommonPrms::instance()->Lvol();
+    assert(rn.size()==fmt.size());
+    int Nvol = fmt.Nvol();
     int Nin = fmt.Nin();
     int Nex = fmt.Nex();
+
+    int NP = CommonPrms::instance()->NP();
+    int Lvol = NP*Nvol;
 
     std::valarray<double> Rn(NP*rn.size());
     rand.get_gauss(Rn);	
 
-    assert(rn.size()==fmt.size());
+    std::vector<int> gsite;
+    for(int site=0; site<Nvol; ++site)
+      gsite.push_back(SiteIndex::instance()->gsite(site));
+
     FMT Fmt(Lvol,Nex);
-
-    for(int ex=0; ex<fmt.Nex();++ex){
-      for(int site=0; site<Nvol; ++site){
-	int gsite = SiteIndex::instance()->gsite(site);
-
-	for(int in=0; in<Nin;++in){
-	  rn[fmt.index(in,site,ex)] = Rn[Fmt.index(in,gsite,ex)];
-	}
-      }
-    }
+    rn = Rn[Fmt.get_sub(gsite)];
   }
 
-  void mp_get_gauss(std::valarray<double>& rn,const RandNum& rand);
   void mp_get(std::valarray<double>& rn,const RandNum& rand);
+  void mp_get_gauss(std::valarray<double>& rn,const RandNum& rand);
+
 }
 
 #endif 

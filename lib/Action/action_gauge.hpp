@@ -22,13 +22,10 @@ struct ActionGaugeWilsonPrm {
   ActionGaugeWilsonPrm(const XML::node node){
     //read parameters from XML tree
     XML::read(node, "beta", beta);
-   };
-
-  ActionGaugeWilsonPrm(const double beta_){
-    beta = beta_;
   }
+  ActionGaugeWilsonPrm(const double beta_)
+    :beta(beta_){}
 };
-
 
 /*!
   Defines a concrete class for %gauge %Actions
@@ -44,8 +41,6 @@ private:
   const Staples* stpl_;
   Field* const u_;
   int nodeid_;
-
-
 
   void md_mom(Field&, const RandNum&);
   void md_mom_su3(Field&, const RandNum&);
@@ -63,8 +58,10 @@ public:
   Field  md_force(const void* = 0);
   Field  md_force(const Field&, const void* = 0);
 
-  ActionGaugeWilson(const double beta, const Format::Format_G& gf)
-    :u_(new Field(gf.size())),
+  ActionGaugeWilson(const double beta, 
+		    const Format::Format_G& gf, 
+		    Field* const GField)
+    :u_(GField),
      Params(ActionGaugeWilsonPrm(beta)), 
      Ndim_(CommonPrms::instance()->Ndim()),
      Nvol_(CommonPrms::instance()->Nvol()),
@@ -73,18 +70,6 @@ public:
      sf_(new Format::Format_G(Nvol_,1)),
      stpl_(new Staples(gf_)),
      nodeid_(Communicator::instance()->nodeid()){};
-  
-  ActionGaugeWilson(const XML::node node,const Format::Format_G& gf)
-    :u_(new Field(gf.size())),
-     Params(ActionGaugeWilsonPrm(node)), 
-     Ndim_(CommonPrms::instance()->Ndim()),
-     Nvol_(CommonPrms::instance()->Nvol()),
-     Nc_(  CommonPrms::instance()->Nc()),
-     gf_(gf),
-     sf_(new Format::Format_G(Nvol_,1)),
-     stpl_(new Staples(gf_)),
-     nodeid_(Communicator::instance()->nodeid()){};
-
 
   ActionGaugeWilson(const XML::node node, 
 		    const Format::Format_G& gf,

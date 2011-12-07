@@ -8,10 +8,7 @@
 #include "qprop_DomainWall.hpp"
 #include "Communicator/comm_io.hpp"
 
-void QpropDWF::calc(prop_t& xq,
-		    Source& src) const{
-  
-  
+void QpropDWF::calc(prop_t& xq,Source& src) const{
   xq.clear();
 
   for(int s=0; s<Nd_;++s) {
@@ -27,7 +24,6 @@ void QpropDWF::calc(prop_t& xq,
 		    Source& src,
 		    int dirac_index,
 		    int color) const{
-  
   xq.clear();
   CCIO::cout << "Dirac = " << dirac_index 
 	    << " Color = " << color << std::endl;
@@ -35,10 +31,7 @@ void QpropDWF::calc(prop_t& xq,
 
 }
 
-void QpropDWF::calc(prop_t& xq,
-		    const prop_t& prp)const{
-  
-  
+void QpropDWF::calc(prop_t& xq,const prop_t& prp)const{
   xq.clear();
   
   for(int s=0; s<Nd_;++s) {
