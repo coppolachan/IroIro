@@ -362,18 +362,15 @@ const Field Dirac_optimalDomainWall::proj_m(const Field& f4) const{
 
 namespace DomainWallFermions {
 
-  inline double set_vs( int is , int ns , double kprime )
-  {
+  inline double set_vs( int is, int ns, double kprime ){
     double ekprime = gsl_sf_ellint_Kcomp( kprime , 0 ); 
     double vs = is * ekprime / ns; 
     return vs;
   }
-  
 
-  vector<double> getOmega(int Ns, 
-			  double lambda_min, 
-			  double lambda_max)
-  {
+  const vector<double> getOmega(int Ns, 
+				double lambda_min, 
+				double lambda_max){
     double u, m;
     double sn , cn , dn; 
     double kprime = sqrt( 1.0 - (lambda_min/lambda_max) *
@@ -381,21 +378,18 @@ namespace DomainWallFermions {
     
     vector<double> omegas(Ns);
 
-    for( int ii = 0 ; ii < Ns ; ii ++ )
-      {
-	int is = 2 * ii + 1;
-	m = kprime * kprime;
-	double vs = set_vs( is , Ns*2 , kprime );
-	gsl_sf_elljac_e( vs , m , &sn , &cn , &dn );
-	double sn2 = sn * sn;
-	double kappaprime2 = kprime * kprime;
-	omegas[ii] = ( 1.0 / lambda_min ) * sqrt( 1.0 - kappaprime2 * sn2 );
-      }
-    
-    #ifdef VERBOSE2
-    for( int ii = 0 ; ii < Ns ; ii ++ )
-      printf("%24.16E\n", omegas[ii] );
-    #endif
+    for( int ii = 0 ; ii < Ns ; ++ii){
+      int is = 2 * ii + 1;
+      m = kprime * kprime;
+      double vs = set_vs( is, Ns*2, kprime );
+      gsl_sf_elljac_e( vs, m, &sn, &cn, &dn );
+      double sn2 = sn * sn;
+      double kappaprime2 = kprime * kprime;
+      omegas[ii] = ( 1.0 / lambda_min )* sqrt( 1.0 - kappaprime2 * sn2 );
+    }
+#ifdef VERBOSE2
+    for( int ii = 0; ii < Ns; ++ii) printf("%24.16E\n", omegas[ii] );
+#endif
     return omegas;
   }
 }

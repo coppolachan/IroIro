@@ -28,24 +28,22 @@ public:
  @brief Concrete class for creating Conjugate Gradient Solver
  operator
  
- */
+*/
 class SolverCGFactory : public SolverOperatorFactory {
   const XML::node Solver_node;
 
 public:
-  SolverCGFactory(const XML::node node):
-    Solver_node(node){};
+  SolverCGFactory(const XML::node node):Solver_node(node){}
 
   Solver_CG* getSolver(const Fopr_Herm* HermitianOperator){
     return new Solver_CG(Solver_node, HermitianOperator);
-  };
+  }
 
   Solver_CG* getSolver(const Fopr* LinearOperator){
     std::cerr<< "getSolver Error: Solver_CG requires Hermitian Operator" 
 	     << std::endl;
     abort();
-  };
-
+  }
 };
 
 /*!
@@ -57,16 +55,15 @@ class SolverBiCGStabFactory : public SolverOperatorFactory {
   const XML::node Solver_node;
 
 public:
-  SolverBiCGStabFactory(const XML::node node):
-    Solver_node(node){};
+  SolverBiCGStabFactory(const XML::node node):Solver_node(node){}
 
   Solver_BiCGStab* getSolver(const Fopr_Herm* HermitianOperator){
     return new Solver_BiCGStab(Solver_node, HermitianOperator);
-  };
+  }
 
   Solver_BiCGStab* getSolver(const Fopr* LinearOperator){
     return new Solver_BiCGStab(Solver_node, LinearOperator);
-  };
+  }
 
 };
 

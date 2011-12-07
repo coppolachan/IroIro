@@ -75,10 +75,7 @@ public:
 };
 
 class Solver_CG_Preconditioned : public Solver_CG {
-
-
-
-}
+};
 
 
 #endif    
