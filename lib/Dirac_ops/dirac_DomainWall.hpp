@@ -17,7 +17,6 @@
 
 namespace DomainWallFermions {
   struct PauliVillars{};
-  struct LUPrecond{};
 
   std::vector<double> getOmega(int Ns, 
 			       double lambda_min,
@@ -112,7 +111,6 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     f5.add(std::slice(s*f4size_,f4size_,1),f4.getva());
   }
 
-
 public:
   Dirac_optimalDomainWall(XML::node DWF_node,
 			  const Dirac_Wilson* Kernel);
@@ -156,7 +154,7 @@ public:
   size_t fsize()  const{ return fsize_; }
   size_t gsize()  const{ return gsize_; }
   
-  const Field operator()(int, const Field&) const{};
+  const Field operator()(int, const Field&) const{}
 
   const double getMass() const{return Params.mq_;}
 
@@ -164,8 +162,10 @@ public:
   
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
-  const Field mult_prec(const Field& in) const {return Precond_->mult(in);};
-  const Field mult_dag_prec(const Field& in) const {return Precond_->mult_dag(in);}
+  const Field mult_prec(const Field& in) const {return Precond_->mult(in);}
+  const Field mult_dag_prec(const Field& in) const {
+    return Precond_->mult_dag(in);
+  }
 
   const Field gamma5(const Field&) const;
 
