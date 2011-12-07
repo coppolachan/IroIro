@@ -12,6 +12,7 @@
 #include "Solver/solver_CG.h"
 #include "Solver/solver_BiCGStab.h"
 #include "Measurements/FermionicM/qprop.h"
+#include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/mesonCorrel.h"
 #include "Tools/randNum_MT19937.h"
 #include <stdio.h>

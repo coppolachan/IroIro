@@ -34,6 +34,8 @@ private:
 public:
   /*!
    * @brief Standard constructor 
+   * 
+   * CG solver is assumed
    */
   Action_Nf2(Field* const GField,
 	     const Dirac* D, 

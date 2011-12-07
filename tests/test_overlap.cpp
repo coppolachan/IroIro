@@ -8,6 +8,7 @@
 #include "Solver/solver_CG.h"
 #include "Measurements/FermionicM/qprop.h"
 #include "Measurements/FermionicM/mesonCorrel.h"
+#include "Measurements/FermionicM/source_types.hpp"
 
 #include <stdio.h>
 

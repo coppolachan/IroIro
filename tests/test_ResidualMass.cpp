@@ -10,7 +10,7 @@
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Tools/randNum_MT19937.h"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
-#include "Measurements/FermionicM/source.hpp"
+#include "Measurements/FermionicM/source_types.hpp"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -53,9 +53,7 @@ int Test_ResMass::run(XML::node node) {
   int length=4;
   RandNum_MT19937 rand(init, length);
 
-  Source_wnoise<Format_F> src(rand,CommonPrms::instance()->Nvol());
-  
-
+  Source_Z2noise<Format_F> src(rand,CommonPrms::instance()->Nvol(), ComplexZ2);
 
   prop_t sq;  //Defines a vector of fields
   CCIO::cout << "Calculating propagator\n";

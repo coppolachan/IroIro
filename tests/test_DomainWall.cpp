@@ -13,6 +13,7 @@
 #include "Solver/solver_BiCGStab.h"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
 #include "Measurements/FermionicM/mesonCorrel.h"
+#include "Measurements/FermionicM/source_types.hpp"
 
 #include <stdlib.h>
 #include <stdio.h>
