@@ -83,7 +83,7 @@ int Test_optimalDomainWall::run(XML::node node){
   vector<double> omega(N5d,1.0);
 
   Dirac_Wilson Kernel(mzero, &(conf_.U));
-  Dirac_optimalDomainWall Ddwf_5d(b, c, mq, omega, &Kernel);
+  Dirac_optimalDomainWall Ddwf_5d(b, c, mq, omega, &Kernel, NoPreconditioner);
   /////////////////////////////
 
   // operator using factories
@@ -107,8 +107,8 @@ int Test_optimalDomainWall::run(XML::node node){
   double mq1 = 0.05;
   double mq2 = 0.10;
   
-  Dirac_optimalDomainWall Ddwf1(b,c,mq1,omega,&Kernel);
-  Dirac_optimalDomainWall Ddwf2(b,c,mq2,omega,&Kernel);
+  Dirac_optimalDomainWall Ddwf1(b,c,mq1,omega,&Kernel,NoPreconditioner);
+  Dirac_optimalDomainWall Ddwf2(b,c,mq2,omega,&Kernel,NoPreconditioner);
 
   Fopr_DdagD DdagD2(&Ddwf2);
 
