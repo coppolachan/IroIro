@@ -1,8 +1,9 @@
-/*!
+/*!--------------------------------------------------------------------------
  * @file dirac_DomainWall.cpp
  *
  * @brief Definition of class methods for Dirac_optimalDomainWall (5d operator)
- */
+ *
+ *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall.hpp"
 #include "Communicator/comm_io.hpp"
 #include<stdlib.h>
@@ -315,6 +316,18 @@ md_force(const Field& phi,const Field& psi) const{
     force += (4.0+M0_)*Params.omega_[s]*Dw_->md_force(get4d(w5,s),get4d(psi,s));
 
   return force;
+}
+
+const Field Dirac_optimalDomainWall::Dminus(const Field& f5) const{
+  //1-c_s * D_w(-M)
+  Field w5(fsize_);
+  w5 = f5;
+  for(int s = 0; s < N5_; ++s) {
+    Field temp =  Dw_->mult(get4d(f5,s));
+    temp *= -Params.cs_[s]; // = [-c_s * D_w(-M)]f5
+    add5d(w5, temp, s); //= [1-c_s * D_w(-M)]f5
+  }
+  return w5;
 }
 
 const Field Dirac_optimalDomainWall::gamma5(const Field& f5) const{

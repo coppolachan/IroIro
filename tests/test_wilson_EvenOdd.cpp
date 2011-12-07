@@ -14,6 +14,7 @@
 #include "Measurements/FermionicM/qprop_EvenOdd.h"
 #include "Measurements/FermionicM/mesonCorrel.h"
 #include "Tools/randNum_MT19937.h"
+#include "Measurements/FermionicM/source_types.hpp"
 #include <stdio.h>
 
 using namespace std;

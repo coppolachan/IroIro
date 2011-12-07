@@ -87,6 +87,7 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     Dirac_optimalDomainWall* DWF_;
   public: 
     NoPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
+    const Field precondition(const Field&) const;  
     const Field mult(const Field&) const;  
     const Field mult_dag(const Field&) const;
   };
@@ -95,6 +96,7 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     Dirac_optimalDomainWall* DWF_;
   public: 
     LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
+    const Field precondition(const Field&) const;  
     const Field mult(const Field&) const;  
     const Field mult_dag(const Field&) const;  
   };
@@ -157,6 +159,8 @@ public:
   const Field mult_dag(const Field&)const;
   const Field mult_prec(const Field& in) const {return Precond_->mult(in);};
   const Field mult_dag_prec(const Field& in) const {return Precond_->mult_dag(in);}
+
+  const Field Dminus(const Field&)const;
 
   const Field gamma5(const Field&) const;
 

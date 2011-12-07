@@ -31,8 +31,8 @@ const Field Dirac_optimalDomainWall_4D::mult_inv(const Field& f)const{
   int Nconv;
   double diff;
   Field sol5(Dodw_.fsize());
-
-  slv_odw_->solve(sol5,Dodw_.mult_dag(Dpv_.mult(Dodw_.Bproj_dag(f))),
+  
+  slv_odw_->solve(sol5,Dodw_.mult_dag(Dpv_.mult(Dodw_.Dminus(Dodw_.Bproj_dag(f)))),
 		 diff,Nconv);
   return Dodw_.Bproj(sol5);
 }

@@ -41,7 +41,7 @@ struct Solver_CG_Prms{
  * An hermitian operator is assumed 
  */
 class Solver_CG: public Solver{
-private:
+protected:
   const Fopr_Herm* opr_;/*!< @brief Hermitian input operator */
   const Solver_CG_Prms Params;/*!< @brief Inputs container */
   const int nodeid_;
@@ -73,5 +73,12 @@ public:
   }
 
 };
+
+class Solver_CG_Preconditioned : public Solver_CG {
+
+
+
+}
+
 
 #endif    
