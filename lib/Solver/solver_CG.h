@@ -41,7 +41,7 @@ struct Solver_CG_Prms{
  * An hermitian operator is assumed 
  */
 class Solver_CG: public Solver{
-protected:
+private:
   const Fopr_Herm* opr_;/*!< @brief Hermitian input operator */
   const Solver_CG_Prms Params;/*!< @brief Inputs container */
   const int nodeid_;
@@ -74,11 +74,41 @@ public:
 
 };
 
-class Solver_CG_Preconditioned : public Solver_CG {
+class Solver_CG_Precondition : public Solver {
+private:
+  const Fopr_Herm_Precondition* opr_;/*!< @brief Hermitian Preconditioned input operator */
+  const Solver_CG_Prms Params;/*!< @brief Inputs container */
+  const int nodeid_;
 
 
+  void solve_step(Field&, Field&, Field&, double&) const;
 
-}
+public:
+  Solver_CG_Precondition(const double prec, 
+			 const int MaxIterations,
+			 const Fopr_Herm_Precondition* fopr)
+    :opr_(fopr),
+     nodeid_(Communicator::instance()->nodeid()),
+     Params(Solver_CG_Prms(prec, MaxIterations)){};
+  
+  Solver_CG_Precondition(const XML::node Solver_node,
+			 const Fopr_Herm_Precondition* fopr)
+    :opr_(fopr),
+     Params(Solver_CG_Prms(Solver_node)),
+     nodeid_(Communicator::instance()->nodeid()){};
+  
+  ~Solver_CG_Precondition(){}
+  
+  void solve(Field& solution, const Field& source, 
+	     double& diff, int& Nconv) const;
+  
+  bool check_DdagD() const  {
+    return  (typeid(*opr_) == typeid(Fopr_DdagD_Precondition));
+  }
+  
+  
+
+};
 
 
 #endif    

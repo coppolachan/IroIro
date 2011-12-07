@@ -12,6 +12,9 @@ SolverOperatorFactory* createSolverOperatorFactory(const XML::node node)
       if (!strcmp(Solver_name, "Solver_CG")) { 
 	return new SolverCGFactory(node);
       }
+      if (!strcmp(Solver_name, "Solver_CG_Precondition")) { 
+	return new SolverCGPrecFactory(node);
+      }
       if (!strcmp(Solver_name, "Solver_BiCGStab")) { 
 	return new SolverBiCGStabFactory(node);
       }

@@ -91,6 +91,8 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     const Field precondition(const Field&) const;  
     const Field mult(const Field&) const;  
     const Field mult_dag(const Field&) const;
+    const Field left(const Field&) const;  
+    const Field right(const Field&) const;  
   };
   
   class LUPrecond : public Preconditioner {
@@ -99,7 +101,9 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
     const Field precondition(const Field&) const;  
     const Field mult(const Field&) const;  
-    const Field mult_dag(const Field&) const;  
+    const Field mult_dag(const Field&) const;
+    const Field left(const Field&) const;  
+    const Field right(const Field&) const; 
   };
 
   Preconditioner* choose_Preconditioner(int PrecondID);
@@ -166,11 +170,15 @@ public:
   
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
-  const Field mult_prec(const Field& in) const {return Precond_->mult(in);};
-  const Field mult_dag_prec(const Field& in) const {return Precond_->mult_dag(in);}
+
+  //Preconditioning methods
+  const Field mult_prec    (const Field& in)const{return Precond_->mult(in);};
+  const Field mult_dag_prec(const Field& in)const{return Precond_->mult_dag(in);}
+  const Field left_precond (const Field& in)const{return Precond_->left(in);};
+  const Field right_precond(const Field& in)const{return Precond_->right(in);};
+  //////////////////////////////////////////////////////////////////////
 
   const Field Dminus(const Field&)const;
-
   const Field gamma5(const Field&) const;
 
   /*!

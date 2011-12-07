@@ -69,7 +69,8 @@ public:
   //Preconditioned versions
   const Field mult_prec(const Field&)const{};//empty now
   const Field mult_dag_prec(const Field&)const{};//empty now
-
+  const Field left_precond(const Field&)const{};//empty now
+  const Field right_precond(const Field&)const{};//empty now
 
   const Field mult_inv(const Field&)const;
   const Field mult_dag_inv(const Field&)const;

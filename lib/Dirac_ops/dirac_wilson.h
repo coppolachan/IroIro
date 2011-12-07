@@ -189,6 +189,8 @@ public:
   //Preconditioned versions
   const Field mult_prec(const Field&)const {};//empty now
   const Field mult_dag_prec(const Field&)const{};//empty now
+  const Field left_precond(const Field&)const{};//empty now
+  const Field right_precond(const Field&)const{};//empty now
 
   const Field gamma5(const Field&) const;
   const Field proj_p(const Field&) const;

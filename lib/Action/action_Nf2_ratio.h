@@ -7,25 +7,11 @@
 #ifndef ACTION_RATIO_INCLUDED
 #define ACTION_RATIO_INCLUDED
 
-#ifndef RANDNUM_MP_INCLUDED
 #include "Tools/randNum_MP.h"
-#endif
-
-#ifndef ACTION_INCLUDED
 #include "Action/action.h"
-#endif
+#include "Dirac_ops/dirac.h"
+#include "Solver/solver.h"
 
-#ifndef FOPR_INCLUDED
-#include "include/fopr.h"
-#endif
-
-#ifndef FORMAT_G_INCLUDED
-#include "include/format_G.h"
-#endif
-
-#ifndef FORMAT_F_INCLUDED
-#include "include/format_F.h"
-#endif
 
 /*!
  * @class Action_Nf2_ratio
