@@ -39,6 +39,8 @@ struct Solver_CG_Prms{
  *
  *
  * An hermitian operator is assumed 
+ * 
+ * WARNING: Never use with (non trivially) preconditioned operators
  */
 class Solver_CG: public Solver{
 private:
@@ -73,6 +75,16 @@ public:
   }
 
 };
+
+/*!
+ * @brief Solves \f$Dx = b\f$ using 
+ * <a href="http://en.wikipedia.org/wiki/Conjugate_gradient_method">Conjugate Gradient method</a>
+ * 
+ *
+ * An hermitian preconditioned operator is assumed 
+ *
+ *
+ */
 
 class Solver_CG_Precondition : public Solver {
 private:

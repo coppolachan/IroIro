@@ -41,19 +41,19 @@ int Test_ResMass::run(XML::node node) {
   //Propagator
   QpropDWF QuarkPropagator(*DiracDWF_4d);
 
-  /*
+  
   vector<int> spos(4,0); 
   //Source generator
   Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
-  */
-
-  
+   
   // noise source
+  /*
   unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
   int length=4;
   RandNum_MT19937 rand(init, length);
 
   Source_Z2noise<Format_F> src(rand,CommonPrms::instance()->Nvol(), ComplexZ2);
+  */
 
   prop_t sq;  //Defines a vector of fields
   CCIO::cout << "Calculating propagator\n";

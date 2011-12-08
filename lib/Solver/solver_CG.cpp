@@ -25,18 +25,18 @@ void Solver_CG::solve(Field& xq,
   if(nodeid_==0) cout << "CG solver start" << endl;
   Nconv = -1;
 
-  Field x = b;
-  Field r = b;
-  r -= opr_->mult(b);
+  Field x = b;//initial condition
+  Field r = b;//initial residual
+  r -= opr_->mult(x);
   Field p = r;
-  double rr = r*r;
+  double rr = r*r;// (r,r)
   double snorm = b.norm();
   snorm = 1.0/snorm;
 
   if(Communicator::instance()->nodeid()==0)cout<<"snorm="<<snorm<<endl;
   if(nodeid_==0) pprintf("  init: %22.15e\n",rr*snorm);
 
-  for(int it = 0; it < Params.MaxIter; it++){
+  for(int it = 0; it < Params.MaxIter; ++it){
     solve_step(r,p,x,rr);
     if(nodeid_==0) pprintf("%6d  %22.15e\n",it,rr*snorm);
     
@@ -58,19 +58,18 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
 
   using namespace FieldExpression;
 
-  Field s = opr_->mult(p);
+  Field s = opr_->mult(p);//Ap
 
-  double pap = p*s;
+  double pap = p*s;// (p,Ap)
   double rrp = rr;
-  double cr = rrp/pap;
+  double cr = rrp/pap;// (r,r)/(p,Ap)
 
-  Field v = p;
-  x += cr*p;
-  r -= cr*s;
+  x += cr*p; // x = x + cr * p
+  r -= cr*s; // r_k = r_k - cr * Ap
 
-  rr = r*r;
-  p *= rr/rrp;
-  p += r;
+  rr = r*r; // rr = (r_k,r_k)
+  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
+  p += r; // p = p + p*(r_k,r_k)/(r,r)
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -83,16 +82,15 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
  * @param Nconv  Number of iterations for convergence
  */
 void Solver_CG_Precondition::solve(Field& xq, 
-				     const Field& b_unprec, 
-				     double& diff, 
-				     int& Nconv) const{ 
-  if(nodeid_==0) cout << "CG solver start" << endl;
+				   const Field& b, 
+				   double& diff, 
+				   int& Nconv) const{ 
+  if(nodeid_==0) cout << "CG solver Preconditioned start" << endl;
   Nconv = -1;
-  Field b = opr_->left_precond(b_unprec);//precondition the source  
-
-  Field x = b;
+  
+  Field x = b;//starting guess
   Field r = b;
-  r -= opr_->mult(b);
+  r -= opr_->mult_prec(x);
   Field p = r;
   double rr = r*r;
   double snorm = b.norm();
@@ -112,18 +110,18 @@ void Solver_CG_Precondition::solve(Field& xq,
   }
   if(Nconv == -1) throw "Not converged.";
 
-  p = opr_->mult(x);
+  p = opr_->mult_prec(x);
   p -= b;
   diff = p.norm();
 
-  xq = opr_->right_precond(x);//condition the output
+  xq = x;
 }
 
 inline void Solver_CG_Precondition::solve_step(Field& r,Field& p,Field& x,double& rr)const {
   
   using namespace FieldExpression;
   
-  Field s = opr_->mult(p);
+  Field s = opr_->mult_prec(p);
   
   double pap = p*s;
   double rrp = rr;

@@ -138,23 +138,25 @@ public:
 			  DWFType Type = Standard)
     :Params(Dcopy.Params, Type),
      Dw_(Dcopy.Dw_),
-     Precond_(Dcopy.Precond_),
+     N5_(Dcopy.N5_),
+     f4size_(Dcopy.f4size_),
+     fsize_(Dcopy.fsize_),
+     gsize_(Dcopy.gsize_),
+     M0_(Dcopy.M0_),
+     Precond_(choose_Preconditioner(Params.Preconditioning_))//cannot just copy
+  {}
+
+  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dcopy, 
+			  const DomainWallFermions::PauliVillars&)
+    :Params(Dcopy.Params, PauliVillars),
+     Dw_(Dcopy.Dw_),
+     Precond_(choose_Preconditioner(Params.Preconditioning_)),
      N5_(Dcopy.N5_),
      f4size_(Dcopy.f4size_),
      fsize_(Dcopy.fsize_),
      gsize_(Dcopy.gsize_),
      M0_(Dcopy.M0_){}
 
-  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dcopy, 
-			  const DomainWallFermions::PauliVillars&)
-    :Params(Dcopy.Params, PauliVillars),
-     Dw_(Dcopy.Dw_),
-     Precond_(Dcopy.Precond_),
-     N5_(Dcopy.N5_),
-     f4size_(Dcopy.f4size_),
-     fsize_(Dcopy.fsize_),
-     gsize_(Dcopy.gsize_),
-     M0_(Dcopy.M0_){}
 
   ~Dirac_optimalDomainWall(){  delete Precond_; }
   

@@ -26,8 +26,8 @@ public:
   //if the solver do not provide preconditioned version
   virtual const Field mult_prec(const Field&) const =0;  
   virtual const Field mult_dag_prec(const Field&) const =0;
-  virtual const Field left_precond(const Field&) const =0;
-  virtual const Field right_precond(const Field&) const =0;
+  // virtual const Field left_precond(const Field&) const =0;
+  // virtual const Field right_precond(const Field&) const =0;
 };
 
 class Fopr_D:public Fopr{
@@ -50,8 +50,8 @@ public:
   const Field mult_dag(const Field& f)const{return D_->mult_dag(f);}//fallback
   const Field mult_prec(    const Field& f)const{return D_->mult_prec(f);}
   const Field mult_dag_prec(const Field& f)const{return D_->mult_dag_prec(f);}
-  const Field left_precond(const Field& f) const{return D_->left_precond(f);};
-  const Field right_precond(const Field& f) const{return D_->right_precond(f);}
+  // const Field left_precond(const Field& f) const{return D_->left_precond(f);};
+  // const Field right_precond(const Field& f) const{return D_->right_precond(f);}
   size_t fsize()const {return D_->fsize();}
 };
 
@@ -91,10 +91,11 @@ class Fopr_Herm_Precondition : public Fopr_Herm {
 public:
   //mult_dag is a fallback
   virtual const Field mult_prec(const Field&) const =0;  
-  virtual const Field left_precond(const Field&) const =0;
-  virtual const Field right_precond(const Field&) const =0;
+  // virtual const Field left_precond(const Field&) const =0;
+  // virtual const Field right_precond(const Field&) const =0;
 
   const Field mult_dag_prec(const Field& f) const{return mult_prec(f);}
+
 };
 
 class Fopr_DdagD : public Fopr_Herm {
@@ -114,8 +115,8 @@ public:
   Fopr_DdagD_Precondition(const Dirac* D):D_(D){}
   const Field mult(const Field& f) const{return D_->mult_dag(D_->mult(f));}
   const Field mult_prec(const Field& f) const{return D_->mult_dag_prec(D_->mult_prec(f));}
-  const Field left_precond(const Field& f) const{return D_->left_precond(f);};
-  const Field right_precond(const Field& f) const{return D_->right_precond(f);}
+  // const Field left_precond(const Field& f) const{return D_->left_precond(f);};
+  // const Field right_precond(const Field& f) const{return D_->right_precond(f);}
   size_t fsize()const {return D_->fsize();}
 };
 
