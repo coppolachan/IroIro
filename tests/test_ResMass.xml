@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- sample input file for configuration generator -->
+<!-- Input file for Residual Mass test -->
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
@@ -9,36 +9,35 @@
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
-
-
   
   <TestResMass>
     <RandomNumberGen name="Mersenne Twister">
       <init>0x123 0x234 0x345 0x456</init>
     </RandomNumberGen>
-    <DiracOperator name="DiracOptimalDomainWall4d">
-      <Kernel5d>
-      <Preconditioning>LUPreconditioner</Preconditioning>
-      <N5d>8</N5d>
-      <b>1.0</b>
-      <c>1.0</c>
-      <mass>0.02</mass>
-      <approximation name="Zolotarev">
-        <lambda_min>0.1</lambda_min>
-        <lambda_max>1.5</lambda_max>
-      </approximation>
-      <Kernel name="DiracWilson">
-        <mass>-1.6</mass>
-      </Kernel>
-      </Kernel5d>
-      <SolverDWF type="Solver_CG_Precondition">
-	<MaxIter>10000</MaxIter>
-	<Precision>1e-10</Precision>
-      </SolverDWF>
-    </DiracOperator>
-    <Source type="Exp">
+    <QuarkDWFProp>
+      <Kernel4d>
+	<Kernel5d>
+	  <Preconditioning>LUPreconditioner</Preconditioning>
+	  <N5d>8</N5d>
+	  <b>1.0</b>
+	  <c>1.0</c>
+	  <mass>0.02</mass>
+	  <approximation name="Zolotarev">
+	    <lambda_min>0.1</lambda_min>
+	    <lambda_max>1.5</lambda_max>
+	  </approximation>
+	  <Kernel name="DiracWilson">
+	    <mass>-1.6</mass>
+	  </Kernel>
+	</Kernel5d>
+	<SolverDWF type="Solver_CG_Precondition">
+	  <MaxIter>10000</MaxIter>
+	  <Precision>1e-10</Precision>
+	</SolverDWF>
+      </Kernel4d>
+    </QuarkDWFProp>
+    <Source type="Local">
       <position>0 0 0 0</position>
-      <alpha>0.5</alpha>
     </Source>
   </TestResMass>
 </Parameters>

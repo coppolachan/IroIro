@@ -34,6 +34,7 @@ public:
 
   ~QpropDWF(){}
   
+  const Dirac_optimalDomainWall_4D* getKernel() const {return &Dgw_;}
   void calc(prop_t& xq,Source& src) const;
   void calc(prop_t& xq,Source& src, int, int) const;/*!< For tests */
   void calc(prop_t& xq,const prop_t& prp) const;

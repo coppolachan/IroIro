@@ -62,7 +62,7 @@ public:
   const Field operator()(int, const Field&) const{};
 
   const Field gamma5(const Field& f) const{ return Dodw_.gamma5_4d(f);}
-  const double getMass() {return Dodw_.getMass();}
+  const double getMass() const {return Dodw_.getMass();}
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;

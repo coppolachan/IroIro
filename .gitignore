@@ -8,5 +8,6 @@ docs/doxy.cfg
 Makefile
 commoncode-*
 autom4te.cache/*
+temporaries/
 .*
 #*#
