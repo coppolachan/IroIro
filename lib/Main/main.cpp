@@ -1,8 +1,22 @@
 /*!
  * @mainpage KEK common code for %Lattice QCD simulations
  *
+ * \image html keklogo-c.jpg 
+ * \image html JICFUSsymbolmark170px.jpg 
+ *
  * JLQCD branch of the code for lattice simulations of QCD  
  *
+ * \section Features
+ *
+ * Current implementation:
+ * - Actions (2 flavors, 2 flavors Ratio, Overlap)
+ * - %Dirac operators (Wilson, Overlap, Generalized Domain Wall (4d - 5d)
+ * - Linear Solvers (Conjugate Gradient Unpreconditioned, Conjigate Gradient Preconditioned, BiConjugate Gradient)
+ * - Measurements (Quark Propagator [Wilson, Domain Wall], Gauge Quantities)
+ * - Random Number Generators (Mersenne Twister)
+ * - %XML control of program behavior
+ *
+ * \authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>,  Shoji Hashimoto, Jun-Ichi Noaki}
  */
 
 //------------------------------------------------------------------------

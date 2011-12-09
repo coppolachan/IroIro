@@ -6,11 +6,14 @@
  *
  * Include this file if you need to specify explicitly the source type
  */
+#ifndef SOURCES_TYPES_H_
+#define SOURCES_TYPES_H_
 
 #include "Main/Geometry/siteIndex.h"
 #include "Tools/randNum.h"
 #include "Tools/randNum_MP.h"
 #include "source.hpp"
+#include "Tools/EnumToString.hpp"
 
 #include <cmath>
 
@@ -83,6 +86,7 @@ public:
   Source_exp(std::vector<int> sp, double al, int Nvol)
     :sp_(sp),ff_(new FMT(Nvol)),alpha_(al){
     src_.resize(ff_->size());    
+    smr_.resize(ff_->size());    
     set_src();
   }
   ~Source_exp(){ delete ff_;}
@@ -269,6 +273,11 @@ mksrc(const std::vector<int>& lv,int s,int c){
  * @brief Source type: Z2 noise source
  */
 enum Z2Type {StandardZ2, ComplexZ2};
+Begin_Enum_String( Z2Type ) {
+  Enum_String( StandardZ2 );
+  Enum_String( ComplexZ2 );
+} 
+End_Enum_String;
 
 template<typename FMT> class Source_Z2noise :public Source{
 private:
@@ -300,7 +309,7 @@ public:
     
     for (int idx = 0; idx <white_noise.size()/2; ++idx){
       cosine = cos(white_noise[idx]);
-      source_[idx] = copysign(1.0,cosine);
+      source_[2*idx] = copysign(1.0,cosine);
       source_[2*idx+1] = 0;	
       if (Type_ == ComplexZ2) {
        	source_[2*idx]   = source_[2*idx]*INVSQRT2;
@@ -331,3 +340,4 @@ mksrc(const std::vector<int>& lv,int s,int c){
   return Field(scs[ff_->get_sub(lv)]);
 }
 
+#endif

@@ -8,10 +8,10 @@
 #include "Communicator/comm_io.hpp"
 #include "Communicator/fields_io.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
-#include "Tools/randNum_MT19937.h"
+#include "Tools/randNum_Factory.h"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
-
+#include "Measurements/FermionicM/sources_factory.hpp"
 #include <stdlib.h>
 #include <stdio.h>
 #include <iomanip>
@@ -32,32 +32,23 @@ const Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D* DWF, Field& ph
 }
 
 int Test_ResMass::run(XML::node node) {
+  RNG_Env::RNG = RNG_Env::createRNGfactory(node);
+  
   XML::descend(node, "DiracOperator");
   // operator
   // here using a specific factory since we are testing the DWF-4d operator
   DiracDWF4dFactory* DWF_4d_Factory = new DiracDWF4dFactory(node);
   Dirac_optimalDomainWall_4D* DiracDWF_4d = DWF_4d_Factory->getDiracOperator(&(conf_.U));
-
   //Propagator
   QpropDWF QuarkPropagator(*DiracDWF_4d);
 
-  
-  vector<int> spos(4,0); 
-  //Source generator
-  Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
-   
-  // noise source
-  /*
-  unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
-  int length=4;
-  RandNum_MT19937 rand(init, length);
-
-  Source_Z2noise<Format_F> src(rand,CommonPrms::instance()->Nvol(), ComplexZ2);
-  */
+  XML::next_sibling(node, "Source");
+  SourceFactory* Source_Factory = Sources::createSourceFactory<Format_F>(node);
+  Source* SourceObj =  Source_Factory->getSource();
 
   prop_t sq;  //Defines a vector of fields
   CCIO::cout << "Calculating propagator\n";
-  QuarkPropagator.calc(sq,src);
+  QuarkPropagator.calc(sq,*SourceObj);
  
   // Cycle among Dirac and color indexes and contract
   // D^-1 * Delta * D^-1
@@ -76,7 +67,7 @@ int Test_ResMass::run(XML::node node) {
       
       //Denominator
       Denom = sq[c+3*s];
-      Denom -= src.mksrc(s,c); // (D^-1 - 1)*src
+      Denom -= SourceObj->mksrc(s,c); // (D^-1 - 1)*src
       Denom /= (1.0 - DiracDWF_4d->getMass());
       mres_denominator += Denom*Denom;
       CCIO::cout << "Denominator = " << mres_denominator << endl;

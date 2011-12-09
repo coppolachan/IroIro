@@ -778,11 +778,15 @@ dl.bug
   vertical-align: bottom;
   border-collapse: separate;
   visibility: hidden;
+ height: 1px;
+  width: 1px;
   }
 
 #projectlogo img
 { 
   border: 0px none;
+  height: 1px;
+  width: 1px;
   }
 
 #projectname
@@ -807,7 +811,7 @@ dl.bug
 {
   font-family: Tahoma, sans-serif;
   font-size: 50%;
-  margin: 0 0 0 900px;
+  margin: 0 0 0 950px;
   padding: 0px;
   color: #cdcdcd;
   }

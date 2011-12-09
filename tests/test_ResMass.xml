@@ -3,14 +3,19 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
+    <Lattice>4 4 4 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
 
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+
+
   
   <TestResMass>
+    <RandomNumberGen name="Mersenne Twister">
+      <init>0x123 0x234 0x345 0x456</init>
+    </RandomNumberGen>
     <DiracOperator name="DiracOptimalDomainWall4d">
       <Kernel5d>
       <Preconditioning>LUPreconditioner</Preconditioning>
@@ -31,6 +36,10 @@
 	<Precision>1e-10</Precision>
       </SolverDWF>
     </DiracOperator>
+    <Source type="Exp">
+      <position>0 0 0 0</position>
+      <alpha>0.5</alpha>
+    </Source>
   </TestResMass>
 </Parameters>
 
