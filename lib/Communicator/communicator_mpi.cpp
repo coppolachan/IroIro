@@ -32,10 +32,21 @@ void Communicator::setup(){
   int NPEz = CommonPrms::instance()->NPEz();
   int NPEt = CommonPrms::instance()->NPEt();
 
+  CCIO::cout.init(&std::cout);
+  CCIO::cerr.init(&std::cerr);
+
+  //Check number of nodes
+  if (NPEx*NPEy*NPEz*NPEt != Nproc_) {
+    if(my_rank_==0) cerr << "Number of nodes provided is different from MPI environment ["
+			 << Nproc_<<"]\n"; 
+    abort();
+  }
+
   int px =  nodeid %NPEx;
   int py = (nodeid/NPEx) %NPEy;
   int pz = (nodeid/(NPEx*NPEy)) %NPEz;
   int pt = (nodeid/(NPEx*NPEy*NPEz)) %NPEt;
+
 
   ipe_[0] = px;
   ipe_[1] = py;
@@ -52,11 +63,9 @@ void Communicator::setup(){
   nd_dn_[2] = px +py*NPEx +((pz-1+NPEz)%NPEz)*NPEx*NPEy +pt*NPEx*NPEy*NPEz;
   nd_dn_[3] = px +py*NPEx +pz*NPEx*NPEy +((pt-1+NPEt)%NPEt)*NPEx*NPEy*NPEz;
 
-  CCIO::cout.init(&std::cout);
-  CCIO::cerr.init(&std::cerr);
-  if(my_rank_==0) cout << "Communicator using MPI with "
-		       << Nproc_ << " processes.\n";
 
+  if(my_rank_==0) cout << "Communicator initialized using MPI with "
+		       << Nproc_ << " processes.\n";
 }
 
 Communicator::~Communicator(){  MPI_Finalize();}

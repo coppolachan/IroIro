@@ -11,4 +11,5 @@
 namespace CCIO
 {
   int SaveOnDisk(const std::vector<Field>& f, const char* filename);
+  int SaveOnDisk(const Field& f, const char* filename);
 }

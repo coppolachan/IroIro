@@ -19,7 +19,7 @@ namespace XML
     
     if (!res) {
       std::cout << "Error parsing XML input file ["<< filename <<"]\n";
-      return 1;
+      abort();
     }
     return 0;
   }

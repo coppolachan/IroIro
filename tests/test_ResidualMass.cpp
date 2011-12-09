@@ -39,6 +39,8 @@ int Test_ResMass::run(XML::node node) {
   CCIO::cout << "Calculating propagator\n";
   QuarkPropDW->calc(sq,*SourceObj);
  
+  
+
   // Cycle among Dirac and color indexes and contract
   // D^-1 * Delta * D^-1
   double mres_numerator = 0;

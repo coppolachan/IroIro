@@ -8,12 +8,11 @@
 
 #include <iostream>
 #include <vector>
-#include <stdlib.h>
 
 #include "include/commonPrms.h"
-#include "Main/Geometry/siteIndex.h"
 #include "include/pugi_interface.h"
-#include "Communicator/comm_io.hpp"
+#include "Main/Geometry/siteIndex.h"
+#include "Communicator/communicator.h"
 
 /*!
  * @class Geometry
@@ -24,7 +23,7 @@
  */
 class Geometry {
   /*!
-   * @brief initializer function
+   * @brief Initializer function
    */
   void initialize(pugi::xml_node node) {
     std::vector<int> Dim;
@@ -33,8 +32,8 @@ class Geometry {
     Dim.resize(4);
     Node.resize(4);
 
-    XML::read_array(node,"Lattice",Dim);
-    XML::read_array(node,"Nodes",Node);
+    XML::read_array(node,"Lattice",Dim, MANDATORY);
+    XML::read_array(node,"Nodes",Node, MANDATORY);
       
     Lattice t_latt = {0,
 		      Dim[0],
@@ -57,9 +56,8 @@ class Geometry {
      #endif
 
     parameters = CommonPrms::instance(latt);
-    
+
     idx = SiteIndex::instance();
-    
   }
 
  public:
@@ -69,11 +67,10 @@ class Geometry {
   CommonPrms* parameters; /*!< Singleton handling the global lattice parameters */
 
   /*!
-    fdfsdjkflsdjkl
+   * @brief Constructor - Initialized geometry object
   */
-  Geometry(pugi::xml_node node) {
-    pugi::xml_node geom_node = node.child("Geometry");
-    initialize(geom_node);
+  Geometry(XML::node node) {
+     initialize(node.child("Geometry"));
   };
   
   

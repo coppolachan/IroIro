@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 2</Nodes>
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+
+</Parameters>
+

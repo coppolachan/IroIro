@@ -102,6 +102,11 @@ public:
 
   double im_prod(const Field&) const;
   double im_prod(const std::valarray<double>&) const;
+
+  void write_stream(std::ofstream& out) const {
+    out.write((char*)&field_[0], sizeof(double)*field_.size());
+  }
+
 };
 
 inline Field& Field::operator-(){
