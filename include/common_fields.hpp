@@ -43,7 +43,9 @@ public:
   
   /*!
    * Initializes the gauge field with an \n
-   * external configuration in file Filename
+   * external configuration in file <Filename>
+   *
+   * Configuration type in XML: TextFile
    * @param Filename String containing the filename
    */
   void initializeTxt(const std::string &Filename) {
@@ -51,10 +53,30 @@ public:
     gconf.init_conf(U);
   }
 
+  /*!
+   * Initializes the gauge field with an \n
+   * external configuration in binary format
+   * contained in file <Filename>
+   *
+   * Configuration type in XML: Binary
+   * @param Filename String containing the filename
+   */
   void initializeBin(const std::string &Filename) {
     GaugeConf_bin gconf(Format,Filename);
     gconf.init_conf(U);
   }
+
+ /*!
+   * Initializes the gauge field with \n
+   * unit matrices
+   *
+   * Configuration type in XML: Unit
+   */
+  void initializeUnit(){
+    GaugeConf_unit gconf(Format);
+    gconf.init_conf(U);
+  }
+
 
   int initialize(XML::node node) {
     try {
@@ -78,14 +100,6 @@ public:
     }
   }
 
- /*!
-   * Initializes the gauge field with \n
-   * unit matrices
-   */
-  void initializeUnit(){
-    GaugeConf_unit gconf(Format);
-    gconf.init_conf(U);
-  }
 
 };
 

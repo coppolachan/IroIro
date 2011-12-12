@@ -6,6 +6,7 @@
  */
 #include "test_ResidualMass.hpp"
 #include "Tools/randNum_Factory.h"
+#include "Communicator/fields_io.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Measurements/FermionicM/fermion_meas_factory.hpp"
 #include "Measurements/FermionicM/sources_factory.hpp"
@@ -37,10 +38,10 @@ int Test_ResMass::run(XML::node node) {
 
   prop_t sq;  //Defines a vector of fields
   CCIO::cout << "Calculating propagator\n";
-  QuarkPropDW->calc(sq,*SourceObj);
+  //QuarkPropDW->calc(sq,*SourceObj);
+  CCIO::ReadFromDisk < Format::Format_F >(sq, "propagator.bin", 12);
+  //CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
  
-  
-
   // Cycle among Dirac and color indexes and contract
   // D^-1 * Delta * D^-1
   double mres_numerator = 0;
