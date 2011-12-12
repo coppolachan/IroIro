@@ -49,7 +49,10 @@ namespace CCIO {
 	    for (int internal =0; internal < format.Nin(); ++internal) {
 	      for (int external =0; external < format.Nex(); ++external) {
 		local_index = format.index(internal, site, external);
-		global_index = internal +format.Nin()*(global_site[site]+total_volume*external);
+		//global_index = internal +format.Nin()*(global_site[site]+total_volume*external);
+		//lime format
+		global_index = internal +format.Nin()*(external+ format.Nex()*global_site[site]);
+		
 		Global.set(global_index, local[local_index]);
 	      }
 	    }
@@ -124,7 +127,9 @@ namespace CCIO {
 	    for (int internal =0; internal < format.Nin(); ++internal) {
 	      for (int external =0; external < format.Nex(); ++external) {
 		local_index = format.index(internal, site, external);
-		global_index = internal +format.Nin()*(global_site[site]+total_volume*external);
+		//global_index = internal +format.Nin()*(global_site[site]+total_volume*external);
+		//lime format
+		global_index = internal +format.Nin()*(external+ format.Nex()*global_site[site]);
 		(*primaryField[node])[local_index] = Global[global_index];
 		
 	      };

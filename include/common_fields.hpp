@@ -51,6 +51,11 @@ public:
     gconf.init_conf(U);
   }
 
+  void initializeBin(const std::string &Filename) {
+    GaugeConf_bin gconf(Format,Filename);
+    gconf.init_conf(U);
+  }
+
   int initialize(XML::node node) {
     try {
       XML::descend(node, "Configuration");
@@ -61,6 +66,11 @@ public:
       }
       if (!XML::attribute_compare(node,"Type","Unit")){
 	initializeUnit();
+	return 0;
+      }
+      if (!XML::attribute_compare(node,"Type","Binary")){
+	std::string filename(node.child_value());
+	initializeBin(filename);
 	return 0;
       }
     } catch(...) {
