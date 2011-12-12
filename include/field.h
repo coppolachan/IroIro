@@ -106,6 +106,10 @@ public:
   void write_stream(std::ofstream& out) const {
     out.write((char*)&field_[0], sizeof(double)*field_.size());
   }
+  void read_stream(std::ifstream& in) const {
+    in.read((char*)&field_[0], sizeof(double)*field_.size());
+  }
+
 
 };
 

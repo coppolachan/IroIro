@@ -23,8 +23,9 @@ int Test_IO::run(XML::node node){
   Staples Staple(Gfield_.Format);
   CCIO::cout << "Plaquette : " << Staple.plaquette(Gfield_.U) << std::endl;
 
-  //CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "temp_out");
+  CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "temp_out");
 
-
-
+  CCIO::ReadFromDisk< Format::Format_G >(Gfield_.U, "temp_out");
+  Staples Staple2(Gfield_.Format);
+  CCIO::cout << "Plaquette : " << Staple2.plaquette(Gfield_.U) << std::endl;
 }
