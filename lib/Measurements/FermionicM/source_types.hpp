@@ -112,8 +112,8 @@ void Source_exp<FMT>::set_src(){
     int z = NPz+SiteIndex::instance()->z(site);
     int t = NPt+SiteIndex::instance()->t(site);
 
-    double r = sqrt((x-sp_[0])*(x-sp_[0]) +(y-sp_[1])*(y-sp_[1])
-		    +(z-sp_[2])*(z-sp_[2]) +(t-sp_[3])*(t-sp_[3]));
+    double r = sqrt((double)((x-sp_[0])*(x-sp_[0]) +(y-sp_[1])*(y-sp_[1])
+			     +(z-sp_[2])*(z-sp_[2]) +(t-sp_[3])*(t-sp_[3])));
     smr_[site]= exp(-alpha_*r);
   }
 }
