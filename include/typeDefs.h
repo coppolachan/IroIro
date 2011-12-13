@@ -31,9 +31,6 @@ class Action;
 
 
 typedef ActionGaugeWilson Sg;
-//typedef Action_Nf2<Dirac_Wilson,Solver_CG> Spsf;
-/* typedef Action_Nf2_ratio<Dirac_Wilson,Solver_CG, */
-/* 			 Dirac_Wilson,Solver_CG> Srto; */
 
 typedef std::vector<Action*> ActionLevel;
 typedef std::vector<ActionLevel> ActionSet;

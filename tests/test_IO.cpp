@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------
 /*!
- * @file test_IO.hpp
+ * @file test_IO.cpp
  *
  * @brief run() function for  input/output functions test
  *
@@ -11,9 +11,6 @@
 #include <time.h>
 
 #include "test_IO.hpp"
-#include "include/format_G.h"
-#include "Communicator/comm_io.hpp"
-#include "Communicator/fields_io.hpp"
 #include "Measurements/GaugeM/staples.h"
 
 int Test_IO::run(XML::node node){
