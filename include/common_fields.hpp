@@ -9,7 +9,7 @@
 #define COMMON_FIELDS_H_
 
 #include "Main/gaugeConf.hpp"
-#include "include/geometry.h"
+#include "include/geometry.hpp"
 #include "include/field.h"
 #include "include/format_G.h"
 
@@ -66,6 +66,11 @@ public:
     gconf.init_conf(U);
   }
 
+  void initializeJLQCDlegacy(const std::string &Filename) {
+    GaugeConf_JLQCDLegacy gconf(Format,Filename);
+    gconf.init_conf(U);
+  }
+
  /*!
    * Initializes the gauge field with \n
    * unit matrices
@@ -93,6 +98,11 @@ public:
       if (!XML::attribute_compare(node,"Type","Binary")){
 	std::string filename(node.child_value());
 	initializeBin(filename);
+	return 0;
+      }
+      if (!XML::attribute_compare(node,"Type","JLQCDlegacy")){
+	std::string filename(node.child_value());
+	initializeJLQCDlegacy(filename);
 	return 0;
       }
     } catch(...) {

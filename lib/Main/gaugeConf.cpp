@@ -4,8 +4,8 @@
 #include <vector>
 #include <valarray>
 #include "gaugeConf.hpp"
-#include "Communicator/communicator.h"
 #include "include/field.h"
+#include "Communicator/communicator.h"
 #include "Communicator/fields_io.hpp"
 
 using namespace std;
@@ -17,6 +17,14 @@ int GaugeConf::getid(int x,int y,int z,int t){
 void GaugeConf_bin::init_conf(Field& U){
   CCIO::ReadFromDisk< Format::Format_G >(U,file.c_str());
 }
+
+void GaugeConf_JLQCDLegacy::init_conf(Field& U){
+  CCIO::ReadFromDisk< Format::Format_G >(U,file.c_str(),
+					 FORTRAN_CONTROL_WORDS, 
+					 CCIO::JLQCDLegacyFormat);
+}
+
+
 
 void GaugeConf_txt::init_conf(Field& u){
 

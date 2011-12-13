@@ -82,8 +82,9 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/common_code.hpp		\
 			$(top_srcdir)/include/common_fields.hpp		\
 			$(top_srcdir)/include/config.h			\
-			$(top_srcdir)/include/geometry.h		\
+			$(top_srcdir)/include/geometry.hpp		\
 			$(top_srcdir)/include/field.h			\
+			$(top_srcdir)/include/factories.hpp		\
 			$(top_srcdir)/include/fopr_chebyshev_DdagD.h	\
 			$(top_srcdir)/include/fopr_Dhat.h		\
 			$(top_srcdir)/include/fopr_eo.h			\
@@ -156,6 +157,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/randNum_Factory.h			\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
+			Tools/byteswap.hpp			\
 			../tests/tests_all.hpp			\
 			../tests/test_EigenModes_IRL.h		\
 			../tests/test_MultiShiftSolver.h	\

@@ -39,6 +39,14 @@ public:
   void init_conf(Field&);
 };
 
+class GaugeConf_JLQCDLegacy:public GaugeConf{
+  std::string file;
+public:
+  GaugeConf_JLQCDLegacy(const Format::Format_G& fg, const std::string& fname)
+    :GaugeConf(fg), file(fname){}
+  void init_conf(Field&);
+};
+
 class GaugeConf_txt:public GaugeConf{
   std::string file;
 public:

@@ -1,3 +1,10 @@
+/*!
+ * @file commonPrms.h
+ *
+ * @brief Declares and defines CommonPrms class
+ */
+
+
 #ifndef COMMONPRMS_INCLUDED
 #define COMMONPRMS_INCLUDED
 
@@ -13,6 +20,18 @@ struct Lattice{
   int NPEt;
 };
 
+
+/*!
+ * @brief Defines a static class to store several global parameters
+ *
+ * Lattice size and processors topology are stored in this class
+ *
+ * Color and spinor dimensions are stored too.
+ *
+ * Access to private parameters is provided through public functions
+ *
+ *
+ */
 class CommonPrms{
 private:
   // color, spinor and space-time dimension

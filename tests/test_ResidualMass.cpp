@@ -5,11 +5,7 @@
  *
  */
 #include "test_ResidualMass.hpp"
-#include "Tools/randNum_Factory.h"
-#include "Communicator/fields_io.hpp"
-#include "Dirac_ops/dirac_Operator_Factory.hpp"
-#include "Measurements/FermionicM/fermion_meas_factory.hpp"
-#include "Measurements/FermionicM/sources_factory.hpp"
+#include "include/factories.hpp"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
 #include <ctime>
 
@@ -26,11 +22,15 @@ const Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D* DWF, const Fie
 
 int Test_ResMass::run(XML::node node) {
   RNG_Env::RNG = RNG_Env::createRNGfactory(node); //create the factory for Rand Numbers Gen
+
+  Staples Staple(conf_.Format);
+  CCIO::cout << "Plaquette : " << Staple.plaquette(conf_.U) << std::endl;
+
   
   XML::descend(node, "QuarkDWFProp");
   QPropDWFFactory QP_DomainWallFact(node);//uses specific factory (this is a test program)
   QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(conf_));
-  // the prevoius static_cast is perfectly safe since we know exaclty what class we are creating
+  // the prevoius static_cast is absolutely safe since we know exaclty what class we are creating
 
   XML::next_sibling(node, "Source");
   SourceFactory* Source_Factory = Sources::createSourceFactory<Format::Format_F>(node);
