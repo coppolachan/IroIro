@@ -153,23 +153,18 @@ private:
   bool open;
 };
 
-
 // NOTE: A write of an array is *NOT* provided since these are usual special purpose
 //template<class T>
 //inline
 //StandardOutputStream& operator<<(StandardOutputStream& s, const multi1d<T>& d);
 
-
-
 // Make global (parallel) versions of stdin, stdout, stderr
 // Put this in a different namespace to avoid collisions
-namespace CCIO
-{
+namespace CCIO{
   extern StandardInputStream  cin;
   extern StandardOutputStream cout;
   extern StandardOutputStream cerr;
-
-};
+}
 
 #endif //COMM_IO_H_
 

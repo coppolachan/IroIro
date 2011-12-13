@@ -112,6 +112,23 @@ namespace SUNmat_utils{
     return tmp.reunit();
   }
 
+  const valarray<double> trace_less(const SUNmat& m){
+    int Nc = CommonPrms::instance()->Nc();
+    
+    double rtr = ReTr(m);
+    double itr = ImTr(m);
+
+    rtr /= Nc;
+    itr /= Nc;
+
+    valarray<double> va(m.getva());
+    for(int c=0; c<Nc; ++c){
+      va[2*(Nc*c+c)  ]-= rtr;
+      va[2*(Nc*c+c)+1]-= itr;
+    }
+    return va;
+  }
+
   const valarray<double> anti_hermite(const SUNmat& m){
 
     int Nc = CommonPrms::instance()->Nc();
@@ -119,11 +136,11 @@ namespace SUNmat_utils{
     trace /= Nc;
 
     valarray<double> va(m.getva());
-    for (int a=0; a<Nc; ++a) {
+    for(int a=0; a<Nc; ++a){
       va[2*(Nc*a+a)  ]= 0.0;
       va[2*(Nc*a+a)+1]-= trace;
       
-      for (int b=0; b<a; ++b) {
+      for(int b=0; b<a; ++b){
 	int ab = 2*(Nc*a+b);
 	int ba = 2*(Nc*b+a);
 

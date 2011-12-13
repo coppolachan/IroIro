@@ -22,7 +22,7 @@ void Solver_CG::solve(Field& xq,
 		      const Field& b, 
 		      double& diff, 
 		      int& Nconv) const{ 
-  if(nodeid_==0) cout << "CG solver start" << endl;
+  //if(nodeid_==0) cout << "CG solver start" << endl;
   Nconv = -1;
 
   Field x = b;//initial condition
@@ -33,12 +33,12 @@ void Solver_CG::solve(Field& xq,
   double snorm = b.norm();
   snorm = 1.0/snorm;
 
-  if(Communicator::instance()->nodeid()==0)cout<<"snorm="<<snorm<<endl;
-  if(nodeid_==0) pprintf("  init: %22.15e\n",rr*snorm);
+  //  if(Communicator::instance()->nodeid()==0)cout<<"snorm="<<snorm<<endl;
+  //if(nodeid_==0) pprintf("  init: %22.15e\n",rr*snorm);
 
   for(int it = 0; it < Params.MaxIter; ++it){
     solve_step(r,p,x,rr);
-    if(nodeid_==0) pprintf("%6d  %22.15e\n",it,rr*snorm);
+    //if(nodeid_==0) pprintf("%6d  %22.15e\n",it,rr*snorm);
     
     if(rr*snorm < Params.GoalPrecision){
       Nconv = it;

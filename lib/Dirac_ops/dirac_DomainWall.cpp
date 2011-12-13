@@ -328,14 +328,20 @@ const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
     if(s == N5_-1) lmf *= -Params.mq_;
       
     Field w = get4d(f5,s);
-    w -= lpf;
-    w -= lmf;
-      
-    Field v = get4d(f5,s);
-    v += (Params.cs_[s]/Params.bs_[s])*lpf;
-    v += (Params.cs_[s]/Params.bs_[s])*lmf;
+    w -= lpf + lmf;
+    // w -= lpf;
+    // w -= lmf;
 
-    w += (4.0+M0_)*Params.bs_[s]*(Dw_->mult(v));      
+    Field v = get4d(f5,s);
+
+    v *= Params.bs_[s];
+    v += Params.cs_[s]*(lpf +lmf);
+
+    //v += Params.cs_[s]*lpf;
+    //v += Params.cs_[s]*lmf;
+    
+    w += (4.0+M0_)*Dw_->mult(v);          
+    //w += (4.0+M0_)*Params.bs_[s]*Dw_->mult(v);      
     set5d(w5,w,s);
   }
   return w5;
@@ -369,33 +375,6 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
 
   }
   return w5;
-}
-
-const Field Dirac_optimalDomainWall::
-md_force(const Field& phi,const Field& psi) const{
-
-  using namespace FieldExpression;
-
-  Field w5(fsize_);
-  for(int s = 0; s < N5_; ++s){
-
-    Field lpf = proj_p(get4d(phi,(s +1)%N5_));
-    if(s == N5_-1) lpf *= -Params.mq_;
-    Field lmf = proj_m(get4d(phi,(s +N5_-1)%N5_));
-    if(s == 0) lmf *= -Params.mq_;
-
-    Field w4 = Field(get4d(phi,s));
-    w4 += Params.c_*lpf;
-    w4 += Params.c_*lmf;
-    
-    set5d(w5,w4,s);
-  }
-
-  Field force(gsize_);
-  for(int s = 0; s < N5_; ++s)
-    force += (4.0+M0_)*Params.omega_[s]*Dw_->md_force(get4d(w5,s),get4d(psi,s));
-
-  return force;
 }
 
 const Field Dirac_optimalDomainWall::Dminus(const Field& f5) const{
@@ -453,20 +432,40 @@ const Field Dirac_optimalDomainWall::proj_m(const Field& f4) const{
   return w4;
 }
 
+const Field Dirac_optimalDomainWall::
+md_force(const Field& phi,const Field& psi) const{
+  using namespace FieldExpression;
+
+  Field w5(fsize_);
+  Field force(gsize_);
+
+  for(int s=0; s<N5_; ++s){
+    Field lpf = proj_p(get4d(phi,(s+N5_-1)%N5_));
+    if(s == 0)     lpf *= -Params.mq_;
+    Field lmf = proj_m(get4d(phi,(s+1)%N5_));
+    if(s == N5_-1) lmf *= -Params.mq_;
+
+    Field w = get4d(phi,s);
+
+    w *= Params.bs_[s];
+    w += Params.cs_[s]*(lpf +lmf);
+    
+    force += (4.0+M0_)*Dw_->md_force(w,get4d(psi,s));
+  }
+  return force;
+}
+
 namespace DomainWallFermions {
 
-  inline double set_vs( int is , int ns , double kprime )
-  {
+  inline double set_vs( int is, int ns, double kprime ){
     double ekprime = gsl_sf_ellint_Kcomp( kprime , 0 ); 
     double vs = is * ekprime / ns; 
     return vs;
   }
-  
 
-  vector<double> getOmega(int Ns, 
-			  double lambda_min, 
-			  double lambda_max)
-  {
+  const vector<double> getOmega(int Ns, 
+				double lambda_min, 
+				double lambda_max){
     double u, m;
     double sn , cn , dn; 
     double kprime = sqrt( 1.0 - (lambda_min/lambda_max) *
@@ -474,21 +473,18 @@ namespace DomainWallFermions {
     
     vector<double> omegas(Ns);
 
-    for( int ii = 0 ; ii < Ns ; ii ++ )
-      {
-	int is = 2 * ii + 1;
-	m = kprime * kprime;
-	double vs = set_vs( is , Ns*2 , kprime );
-	gsl_sf_elljac_e( vs , m , &sn , &cn , &dn );
-	double sn2 = sn * sn;
-	double kappaprime2 = kprime * kprime;
-	omegas[ii] = ( 1.0 / lambda_min ) * sqrt( 1.0 - kappaprime2 * sn2 );
-      }
-    
-    #ifdef VERBOSE2
-    for( int ii = 0 ; ii < Ns ; ii ++ )
-      printf("%24.16E\n", omegas[ii] );
-    #endif
+    for( int ii = 0 ; ii < Ns ; ++ii){
+      int is = 2 * ii + 1;
+      m = kprime * kprime;
+      double vs = set_vs( is, Ns*2, kprime );
+      gsl_sf_elljac_e( vs, m, &sn, &cn, &dn );
+      double sn2 = sn * sn;
+      double kappaprime2 = kprime * kprime;
+      omegas[ii] = ( 1.0 / lambda_min )* sqrt( 1.0 - kappaprime2 * sn2 );
+    }
+#ifdef VERBOSE2
+    for( int ii = 0; ii < Ns; ++ii) printf("%24.16E\n", omegas[ii] );
+#endif
     return omegas;
   }
 }

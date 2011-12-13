@@ -42,8 +42,8 @@ int Test_HMC_DomainWall::run(XML::node node){
   vector<double> omega(N5d,1.0);
   Dirac_Wilson Kernel(mzero,&CommonField);
   
-  Dirac_optimalDomainWall Ddwf1(b,c,mq1,omega,&Kernel,NoPreconditioner);
-  Dirac_optimalDomainWall Ddwf2(b,c,mq2,omega,&Kernel,NoPreconditioner);
+  Dirac_optimalDomainWall Ddwf1(b,c,mq1,omega,&Kernel);
+  Dirac_optimalDomainWall Ddwf2(b,c,mq2,omega,&Kernel);
 
   // gauge term
   ActionLevel al_1, al_2, al_3;

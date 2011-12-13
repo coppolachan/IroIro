@@ -40,8 +40,7 @@ public:
   Action_Nf2_DomainWall(Field* const GField,
 			const Dirac_optimalDomainWall* D, 
 			const Solver* Solv)
-    :u_(GField),
-     Dpv_(*D,DomainWallFermions::PauliVillars()),
+    :u_(GField),Dpv_(*D,PauliVillars),
      action_(GField,D,&Dpv_,Solv,Solv),
      fsize_(D->fsize()),phi_(fsize_){}
   
