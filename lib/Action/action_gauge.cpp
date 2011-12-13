@@ -28,7 +28,7 @@ inline SUNmat ActionGaugeWilson::u_dag(const Field& g,int site){
 }
 
 double ActionGaugeWilson::calc_H(){
-  CCIO::cout<<"ActionGaugeWilson::calc_H"<<endl;
+  //CCIO::cout<<"ActionGaugeWilson::calc_H"<<endl;
   double plaq = stpl_->plaquette(*u_);
   int NP = CommonPrms::instance()->NP();
 
@@ -62,7 +62,7 @@ Field ActionGaugeWilson::md_force(const void*){
       force.set(gf_.cslice(0,site,m), anti_hermite(pl));
     }
   }
-  force *= Params.beta/Nc_;
+  force *= Params.beta/Nc_/2.0;
   return force;
 }
 
@@ -88,7 +88,8 @@ void ActionGaugeWilson::md_mom_su3(Field& P,const RandNum& rand){
   valarray<double> pj(fmt.size());
 
   MPrand::mp_get_gauss(pj,rand,fmt);
-
+  pj *= sqrt(2.0); // to get Px,mu^a with the distribution exp(-1/2*P*P)
+  pj /= 2.0;       // to get i*Px,mu =i*Px,mu^a*lambda^a/2 below
   for(int d=0; d<Ndim_; ++d){
     for(int site=0; site<Nvol_; ++site){
 

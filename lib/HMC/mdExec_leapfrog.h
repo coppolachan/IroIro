@@ -34,19 +34,15 @@ struct MDexec_leapfrogParams{
   int MDsteps;
   double step_size;
 
-  MDexec_leapfrogParams(XML::node node) {
+  MDexec_leapfrogParams(XML::node node){
     XML::read(node, "MDsteps", MDsteps);
     XML::read(node, "step_size" , step_size);
     XML::read(node, "exp_approx", Nexp);
   }
 
-  MDexec_leapfrogParams(int Nexp_, 
-			int MDsteps_,
-			double step):
-    Nexp(Nexp_),MDsteps(MDsteps_),step_size(step){};
-  
+  MDexec_leapfrogParams(int Nexp_,int MDsteps_,double step)
+    :Nexp(Nexp_),MDsteps(MDsteps_),step_size(step){}
 };
-
 
 class MDexec_leapfrog : public MDexec {
 private:
@@ -56,15 +52,11 @@ private:
   const Format::Format_G& gf_;
   const Staples* stpl_;
   Field* const CommonField;
-  
+
   SUNmat u(const Field& g,int site,int dir) const;
-  
   void update_P(Field& P,int lv,double ep) const;
   void update_U(const Field& P,double ep) const;
-  
-  void integrator_step(Field& P,int level, 
-		       std::vector<int>& clock, int nodeid) const;
-  
+  void integrator_step(Field& P,int level,std::vector<int>& clock) const;
   
 public:
   MDexec_leapfrog(int Nexp, int MDiter, double step,
@@ -77,7 +69,6 @@ public:
      Nrel_(multipliers),
      CommonField(CommonF){}
   
-  
   MDexec_leapfrog(XML::node node,
 		  const ActionSet as,
 		  const std::vector<int> multipliers,
@@ -89,16 +80,11 @@ public:
      Nrel_(multipliers),
      CommonField(CommonF){}
   
-  void init(std::vector<int>& clock,
-	    Field& P,
-	    const Field& U,
+  void init(std::vector<int>& clock,Field& P,const Field& U,
 	    const RandNum& rand)const;
   
-  void integrator(Field& P,
-		  int level, 
-		  std::vector<int>& clock) const;
-  double calc_H()const;
+  void integrator(Field& P,int level,std::vector<int>& clock) const;
+  double calc_H(const Field& P)const;
 };
-
 
 #endif  //MD_LEAPFROG_INCLUDED

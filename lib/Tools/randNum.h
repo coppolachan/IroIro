@@ -22,7 +22,7 @@ public:
   
   double get()const{ return do_rand();}
   double get_gauss()const{
-    // get the gaussian random number deviation 1/\sqrt(2)
+    // get the gaussian random number with the variance 1/\sqrt(2)
     static bool has_rand = false;
     static double gauss_rand = 0;
     //static double sq2i = 1 / sqrt(2);

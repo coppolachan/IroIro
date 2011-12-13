@@ -175,6 +175,7 @@ namespace SUNmat_utils{
   const SUNmat operator*(const SUNmat& m1, const SUNmat& m2);
 
   const SUNmat reunit(const SUNmat& m);
+  const std::valarray<double> trace_less(const SUNmat& m);
   const std::valarray<double> anti_hermite(const SUNmat& m);
 }
 

@@ -18,7 +18,7 @@ Field Action_Nf2::DdagD_inv(const Field& src){
 void Action_Nf2::init(Field&,const RandNum& rand,const void*){
   std::valarray<double> ph(fsize_);
   Format::Format_F fmt(CommonPrms::instance()->Nvol());
-  MPrand::mp_get(ph,rand,fmt);
+  MPrand::mp_get_gauss(ph,rand,fmt);
 
   phi_= D_->mult_dag(Field(ph));
 }

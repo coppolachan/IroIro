@@ -33,22 +33,17 @@ void Action_Nf2_ratio::init(Field&,const RandNum& rand,const void*){
   int Nex = fsize_/Format::Format_F(1).Nin()/Nvol;
   Format::Format_F fmt(Nvol,Nex);
 
-  rand.get(ph);
-  //MPrand::mp_get(ph,rand,fmt);
+  MPrand::mp_get_gauss(ph,rand,fmt);
   
   double phsum= (ph*ph).sum();
   double phnorm= Communicator::instance()->reduce_sum(phsum);
   
-  CCIO::cout<<"ph.norm="<<sqrt(phnorm)<<std::endl;
-
-  CCIO::cout<<"typeid(D1_)="<<typeid(D1_).name()<<std::endl;
+  //CCIO::cout<<"ph.norm="<<sqrt(phnorm)<<std::endl;
 
   phi_= D1_->mult_dag(Field(ph));
 
   double phisum= phi_.norm();
   double phinorm= Communicator::instance()->reduce_sum(phisum);
-
-  CCIO::cout<<"phi_.norm="<<sqrt(phinorm)<<std::endl;
 
   //  for(int i=0; i<ph.size();++i) CCIO::cout<<"phi_["<<i<<"]="
   //					  << phi_[i]<<std::endl;
@@ -56,7 +51,6 @@ void Action_Nf2_ratio::init(Field&,const RandNum& rand,const void*){
 }
 
 double Action_Nf2_ratio::calc_H(){
-  CCIO::cout<<"Action_Nf2_ratio::calc_H"<<std::endl;
   Field zeta = D2_->mult_dag(phi_);
   return zeta*DdagD1_inv(zeta);
 }

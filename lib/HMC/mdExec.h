@@ -21,8 +21,7 @@ public:
   virtual ~MDexec(){};
   virtual void init(std::vector<int>& clock,Field& P,const Field& U,
 		    const RandNum& rand)const=0;
-  virtual double calc_H()const =0;
-  virtual void integrator(Field& P,int level,
-			  std::vector<int>& clock)const =0;
+  virtual double calc_H(const Field& P)const =0;
+  virtual void integrator(Field& P,int level,std::vector<int>& clock)const =0;
 };
 #endif//MDEXEC_INCLUDED
