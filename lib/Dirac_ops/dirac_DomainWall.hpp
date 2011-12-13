@@ -16,7 +16,8 @@
 #include "dirac_Preconditioners.hpp"
 
 namespace DomainWallFermions {
-  const std::vector<double> getOmega(int Ns,double lambda_min,double lambda_max);
+  const std::vector<double> 
+  getOmega(int Ns,double lambda_min,double lambda_max);
 }
 
 enum DWFType {Standard, PauliVillars};
@@ -86,6 +87,8 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     const Field precondition(const Field&) const;  
     const Field mult(const Field&) const;  
     const Field mult_dag(const Field&) const;
+    const Field left(const Field&) const;  
+    const Field right(const Field&) const;  
   };
   
   class LUPrecond : public Preconditioner {
@@ -94,7 +97,9 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
     const Field precondition(const Field&) const;  
     const Field mult(const Field&) const;  
-    const Field mult_dag(const Field&) const;  
+    const Field mult_dag(const Field&) const;
+    const Field left(const Field&) const;  
+    const Field right(const Field&) const; 
   };
 
   Preconditioner* choose_Preconditioner(int PrecondID);
@@ -128,12 +133,13 @@ public:
 			  DWFType Type = Standard)
     :Params(Dcopy.Params, Type),
      Dw_(Dcopy.Dw_),
-     Precond_(Dcopy.Precond_),
      N5_(Dcopy.N5_),
      f4size_(Dcopy.f4size_),
      fsize_(Dcopy.fsize_),
      gsize_(Dcopy.gsize_),
-     M0_(Dcopy.M0_){}
+     M0_(Dcopy.M0_),
+     Precond_(choose_Preconditioner(Params.Preconditioning_))//cannot just copy
+  {}
 
   ~Dirac_optimalDomainWall(){  delete Precond_; }
   
@@ -149,13 +155,15 @@ public:
   
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
-  const Field mult_prec(const Field& in) const {return Precond_->mult(in);}
-  const Field mult_dag_prec(const Field& in) const {
-    return Precond_->mult_dag(in);
-  }
+
+  //Preconditioning methods
+  const Field mult_prec    (const Field& in)const{return Precond_->mult(in);}
+  const Field mult_dag_prec(const Field& in)const{return Precond_->mult_dag(in);}
+  const Field left_precond (const Field& in)const{return Precond_->left(in);}
+  const Field right_precond(const Field& in)const{return Precond_->right(in);}
+  //////////////////////////////////////////////////////////////////////
 
   const Field Dminus(const Field&)const;
-
   const Field gamma5(const Field&) const;
 
   /*!

@@ -28,6 +28,14 @@ public:
   virtual ~QuarkPropagatorFactory(){}
 };
 
+/*
+class GenericMeasurementFactory {
+public:
+  virtual GenericMeasurement* getGMeas(GaugeField& Field) = 0;
+  ~GenericMeasurementFactory();
+}
+*/
+
 /////////////////////////////////////////////////
 /*!
  @brief Concrete class for creating Quark Propagator Qprop operator
@@ -112,6 +120,9 @@ public:
     return new QpropDWF(*Kernel_DWF4D.get());
   }
 };
+
+
+
 
 ///////////////////////////////////////////////////
 

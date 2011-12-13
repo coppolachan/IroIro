@@ -12,7 +12,7 @@ const Field Dirac_optimalDomainWall_4D::mult(const Field& f)const{
   double diff;
   Field sol5(Dodw_.fsize());
   
-  slv_pv_->solve(sol5,Dpv_.mult_dag(Dodw_.mult(Dodw_.Bproj_dag(f))),
+  slv_pv_->solve(sol5,Dpv_.mult_dag_prec(Dodw_.mult_prec(Dodw_.Bproj_dag(f))),
                  diff, Nconv);
   return Dodw_.Bproj(sol5);
 }
@@ -23,7 +23,7 @@ const Field Dirac_optimalDomainWall_4D::mult_dag(const Field& f)const{
   Field sol5(Dodw_.fsize());
 
   slv_pv_->solve(sol5,Dodw_.Bproj_dag(f),diff, Nconv);
-  return Dodw_.Bproj(Dodw_.mult_dag(Dpv_.mult(sol5)));
+  return Dodw_.Bproj(Dodw_.mult_dag_prec(Dpv_.mult(sol5)));
 }
 
 
@@ -31,8 +31,8 @@ const Field Dirac_optimalDomainWall_4D::mult_inv(const Field& f)const{
   int Nconv;
   double diff;
   Field sol5(Dodw_.fsize());
-  
-  slv_odw_->solve(sol5,Dodw_.mult_dag(Dpv_.mult(Dodw_.Dminus(Dodw_.Bproj_dag(f)))),
+  //prec version to precondition the source
+  slv_odw_->solve(sol5,Dodw_.mult_dag_prec(Dpv_.mult_prec(Dodw_.Bproj_dag(f))),
 		 diff,Nconv);
   return Dodw_.Bproj(sol5);
 }
@@ -44,7 +44,7 @@ const Field Dirac_optimalDomainWall_4D::mult_dag_inv(const Field& f)const{
   Field sol5(Dodw_.fsize());
 
   slv_odw_->solve(sol5,Dodw_.Bproj_dag(f),diff,Nconv);
-  return Dodw_.Bproj(Dpv_.mult_dag(Dodw_.mult(sol5)));
+  return Dodw_.Bproj(Dpv_.mult_dag_prec(Dodw_.mult_prec(sol5)));
 }
 
 /*!

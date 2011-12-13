@@ -5,22 +5,15 @@
  *
  */
 #include "test_ResidualMass.hpp"
-#include "Communicator/comm_io.hpp"
+#include "Tools/randNum_Factory.h"
 #include "Communicator/fields_io.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
-#include "Tools/randNum_MT19937.h"
+#include "Measurements/FermionicM/fermion_meas_factory.hpp"
+#include "Measurements/FermionicM/sources_factory.hpp"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
-#include "Measurements/FermionicM/source_types.hpp"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <iomanip>
 #include <ctime>
 
-using namespace std;
-using namespace Format;
-
-const Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D* DWF, Field& phi){
+const Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D* DWF, const Field& phi){
   //Delta function = 1/4 * (1- sign^2(Hw))
   Field sign = DWF->signKernel(phi);
   Field delta = DWF->signKernel(sign); //sign^2(Hw)
@@ -32,32 +25,22 @@ const Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D* DWF, Field& ph
 }
 
 int Test_ResMass::run(XML::node node) {
-  XML::descend(node, "DiracOperator");
-  // operator
-  // here using a specific factory since we are testing the DWF-4d operator
-  DiracDWF4dFactory* DWF_4d_Factory = new DiracDWF4dFactory(node);
-  Dirac_optimalDomainWall_4D* DiracDWF_4d = DWF_4d_Factory->getDiracOperator(&(conf_.U));
-
-  //Propagator
-  QpropDWF QuarkPropagator(*DiracDWF_4d);
-
-  /*
-  vector<int> spos(4,0); 
-  //Source generator
-  Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
-  */
-
+  RNG_Env::RNG = RNG_Env::createRNGfactory(node); //create the factory for Rand Numbers Gen
   
-  // noise source
-  unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
-  int length=4;
-  RandNum_MT19937 rand(init, length);
+  XML::descend(node, "QuarkDWFProp");
+  QPropDWFFactory QP_DomainWallFact(node);//uses specific factory (this is a test program)
+  QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(conf_));
+  // the prevoius static_cast is perfectly safe since we know exaclty what class we are creating
 
-  Source_Z2noise<Format_F> src(rand,CommonPrms::instance()->Nvol(), ComplexZ2);
+  XML::next_sibling(node, "Source");
+  SourceFactory* Source_Factory = Sources::createSourceFactory<Format::Format_F>(node);
+  Source* SourceObj =  Source_Factory->getSource();
 
   prop_t sq;  //Defines a vector of fields
   CCIO::cout << "Calculating propagator\n";
-  QuarkPropagator.calc(sq,src);
+  //QuarkPropDW->calc(sq,*SourceObj);
+  CCIO::ReadFromDisk < Format::Format_F >(sq, "propagator.bin", 12);
+  //CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
  
   // Cycle among Dirac and color indexes and contract
   // D^-1 * Delta * D^-1
@@ -65,10 +48,10 @@ int Test_ResMass::run(XML::node node) {
   double im_check = 0;
   double mres_denominator = 0;
   Field Delta, Denom;
-
+  
   for (int s = 0; s < 4; ++s) {
     for (int c = 0; c < 3; ++c) {
-      Delta = delta(DiracDWF_4d,sq[c+3*s]); // (Delta * D^-1)*source
+      Delta = delta(QuarkPropDW->getKernel(),sq[c+3*s]); // (Delta * D^-1)*source
       //Contracting 
       mres_numerator += sq[c+3*s]*Delta;          // Re(sq[],Delta)    sq[]=D^-1*source
       im_check       += sq[c+3*s].im_prod(Delta); //should be always zero (just a check)
@@ -76,13 +59,14 @@ int Test_ResMass::run(XML::node node) {
       
       //Denominator
       Denom = sq[c+3*s];
-      Denom -= src.mksrc(s,c); // (D^-1 - 1)*src
-      Denom /= (1.0 - DiracDWF_4d->getMass());
+      Denom -= SourceObj->mksrc(s,c); // (D^-1 - 1)*src
+      Denom /= (1.0 - (QuarkPropDW->getKernel()->getMass()) );
       mres_denominator += Denom*Denom;
-      CCIO::cout << "Denominator = " << mres_denominator << endl;
-      CCIO::cout << "Residual mass = " << mres_numerator/mres_denominator << endl;
+      CCIO::cout << "Denominator = " << mres_denominator << std::endl;
+      CCIO::cout << "Residual mass = " << mres_numerator/mres_denominator << std::endl;
     }
   }
+  
 
   return 0;
 }

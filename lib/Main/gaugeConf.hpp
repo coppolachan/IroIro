@@ -4,9 +4,7 @@
 #include "Main/Geometry/siteIndex.h"
 #include "include/format_G.h"
 
-
-#include <iostream>
-#include <fstream>
+//#include <fstream>
 
 class Field;
 
@@ -33,22 +31,26 @@ public:
   virtual void init_conf(Field&) = 0;
 };  
 
+class GaugeConf_bin:public GaugeConf{
+  std::string file;
+public:
+  GaugeConf_bin(const Format::Format_G& fg, const std::string& fname)
+    :GaugeConf(fg), file(fname){}
+  void init_conf(Field&);
+};
+
 class GaugeConf_txt:public GaugeConf{
-private:
   std::string file;
 public:
   GaugeConf_txt(const Format::Format_G& fg, const std::string& fname)
-    :GaugeConf(fg),file(fname){
-  }
+    :GaugeConf(fg),file(fname){}
   void init_conf(Field&);
 };
 
 class GaugeConf_unit:public GaugeConf{
 public:
   GaugeConf_unit(const Format::Format_G& fg)
-    :GaugeConf(fg){
-    std::cout << "GaugeConf_unit class"<< std::endl;
-  }
+    :GaugeConf(fg){}
   void init_conf(Field&);
 };
 

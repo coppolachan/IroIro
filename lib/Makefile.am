@@ -56,7 +56,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
-		Measurements/FermionicM/qprop_DomainWall.cpp	\
+		Measurements/FermionicM/qprop_DomainWall.cpp		\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
 		Main/commonPrms.cpp			\
 		Main/Geometry/siteIndex.cpp		\
@@ -116,9 +116,10 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/qprop.h				\
 			Measurements/FermionicM/qprop_EvenOdd.h			\
 			Measurements/FermionicM/mesonCorrel.h			\
-			Measurements/FermionicM/qprop_DomainWall.hpp 	\
+			Measurements/FermionicM/qprop_DomainWall.hpp 		\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp		\
+			Measurements/FermionicM/sources_factory.hpp		\
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\

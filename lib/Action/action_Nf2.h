@@ -9,11 +9,8 @@
 
 #include "Tools/randNum_MP.h"
 #include "Action/action.h"
-#include "include/fopr.h"
-#include "include/format_G.h"
-#include "Dirac_ops/dirac_Operator_Factory.hpp"
-#include "Solver/solver_Factory.hpp"
-
+#include "Dirac_ops/dirac.h"
+#include "Solver/solver.h"
 
 /*!
  * @class Action_Nf2

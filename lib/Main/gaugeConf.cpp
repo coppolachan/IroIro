@@ -6,11 +6,16 @@
 #include "gaugeConf.hpp"
 #include "Communicator/communicator.h"
 #include "include/field.h"
+#include "Communicator/fields_io.hpp"
 
 using namespace std;
 
 int GaugeConf::getid(int x,int y,int z,int t){
   return Communicator::instance()->nodeid(x/Nx_,y/Ny_,z/Nz_,t/Nt_);
+}
+
+void GaugeConf_bin::init_conf(Field& U){
+  CCIO::ReadFromDisk< Format::Format_G >(U,file.c_str());
 }
 
 void GaugeConf_txt::init_conf(Field& u){

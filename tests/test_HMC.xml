@@ -9,7 +9,7 @@
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  <Configuration Type="Binary">conf_04040408.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>2</Nsweeps>

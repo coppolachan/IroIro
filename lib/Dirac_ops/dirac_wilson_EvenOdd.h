@@ -23,8 +23,13 @@ namespace Dw{
 
     const Field mult(const Field&) const;
     const Field mult_dag(const Field&) const;
+
+    //Preconditioning methods
     const Field mult_prec(const Field&)const {}//empty now preconditioned 
     const Field mult_dag_prec(const Field&)const{}//empty now preconditioned
+    const Field left_precond(const Field&)const{};//empty now
+    const Field right_precond(const Field&)const{};//empty now
+    //////////////////////////////////////////////////////////////////////
 
     const Field gamma5(const Field& f) const{return Dirac_Wilson::gamma5(f);}
     const Field md_force(const Field& eta,const Field& zeta) const{
@@ -45,8 +50,13 @@ namespace Dw{
 
     const Field mult(const Field&) const;
     const Field mult_dag(const Field&) const;
+
+    //Preconditioning methods
     const Field mult_prec(const Field&)const {}//empty now preconditioned 
     const Field mult_dag_prec(const Field&)const{}//empty now preconditioned
+    const Field left_precond(const Field&)const{};//empty now
+    const Field right_precond(const Field&)const{};//empty now
+    //////////////////////////////////////////////////////////////////////
 
     const Field gamma5(const Field& f) const{return Dirac_Wilson::gamma5(f);}
     const Field md_force(const Field& eta,const Field& zeta) const{
@@ -76,8 +86,14 @@ public:
 
   const Field mult(const Field&) const;
   const Field mult_dag(const Field&) const;
-  const Field mult_prec(const Field&)const {}//empty now
-  const Field mult_dag_prec(const Field&)const{}//empty now
+
+  //Preconditioning methods
+  const Field mult_prec(const Field&)const {}//empty now preconditioned 
+  const Field mult_dag_prec(const Field&)const{}//empty now preconditioned
+  const Field left_precond(const Field&)const{};//empty now
+  const Field right_precond(const Field&)const{};//empty now
+  //////////////////////////////////////////////////////////////////////
+  
 
   const Field md_force(const Field&,const Field&) const;
 

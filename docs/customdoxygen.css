@@ -778,21 +778,26 @@ dl.bug
   vertical-align: bottom;
   border-collapse: separate;
   visibility: hidden;
+ height: 1px;
+  width: 1px;
   }
 
 #projectlogo img
 { 
   border: 0px none;
+  height: 1px;
+  width: 1px;
   }
 
 #projectname
 {
   font-family: 'Bowlby One', sans-serif;
   font-size: 45px;
-  text-shadow:5px 5px 2px black;
+  text-shadow:2px 2px 2px black;
   color: white;
-  margin: 15px 0 0 0;
+  margin: 35px 0 0 0;
   padding: 2px 0px;
+  text-indent: -1000px;
   }
 
 #projectbrief
@@ -806,14 +811,15 @@ dl.bug
 {
   font-family: Tahoma, sans-serif;
   font-size: 50%;
-  margin: 0px;
+  margin: 0 0 0 950px;
   padding: 0px;
+  color: #cdcdcd;
   }
 
 #titlearea
 {
   font-family: 'Bowlby One', sans-serif;
-  background-image: url(CommonCodeBG.png);
+  background-image: url(CommonCodeBanner250.png);
   background-repeat: no-repeat;
   height: 100px;
   padding: 0px;

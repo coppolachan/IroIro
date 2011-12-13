@@ -25,9 +25,9 @@ namespace Format{
 				  Nin_(2*Nc_*Nc_){
       if(Nex) Nex_= Nex;
     }
-    int Nin() const {return Nin_;}
+    int Nin()  const {return Nin_;}
     int Nvol() const {return Nvol_;}
-    int Nex() const {return Nex_;}
+    int Nex()  const {return Nex_;}
     int size() const {return Nin_*Nvol_*Nex_;}
 
     // get indices 

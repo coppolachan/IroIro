@@ -33,6 +33,9 @@ public:
   virtual const Field mult_prec(const Field&)const = 0;
   virtual const Field mult_dag_prec(const Field&)const = 0;
 
+  virtual const Field left_precond(const Field&)const = 0;
+  virtual const Field right_precond(const Field&)const = 0;
+
   virtual const Field md_force(const Field& eta,const Field& zeta)const = 0;
 };
 

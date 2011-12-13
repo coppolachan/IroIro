@@ -8,14 +8,18 @@
 
 namespace XML 
 {
-  
+  void MandatoryReadError(pugi::xml_node &node, const char* name){
+    CCIO::cout << "Error: mandatory node ["<< name << "] not found - Requested by node ["
+	       << node.name() <<"]\n";
+    abort();
+  }
 
   int load_file(pugi::xml_document &doc, const char* filename) {
     pugi::xml_parse_result res = doc.load_file(filename);
     
     if (!res) {
       std::cout << "Error parsing XML input file ["<< filename <<"]\n";
-      return 1;
+      abort();
     }
     return 0;
   }
@@ -62,8 +66,7 @@ namespace XML
     value = atoi(node.child_value(name));
     } else {
       if (type == MANDATORY) {
-	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
-	abort();
+	MandatoryReadError(node, name);
       } else {
 	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
       }
@@ -75,8 +78,7 @@ namespace XML
       value.assign(node.child_value(name));
     } else {
       if (type == MANDATORY) {
-	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
-	abort();
+	MandatoryReadError(node, name);
       } else {
 	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
       }
@@ -90,8 +92,7 @@ namespace XML
       value = strtol(node.child_value(name),&end, 0);
     } else {
       if (type == MANDATORY) {
-	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
-	abort();
+	MandatoryReadError(node, name);
       } else {
 	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
       }
@@ -105,8 +106,7 @@ namespace XML
     value = atof(node.child_value(name));
     } else {
       if (type == MANDATORY) {
-	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
-	abort();
+	MandatoryReadError(node, name);
       } else {
 	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
       }
@@ -122,8 +122,7 @@ namespace XML
       } else { value = false; }
     } else {
       if (type == MANDATORY) {
-	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
-	abort();
+	MandatoryReadError(node, name);
       } else {
 	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
       }
@@ -162,8 +161,7 @@ namespace XML
       }
     } else {//end of -- if (node.child(name)!=NULL)
       if (type == MANDATORY) {
-	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
-	abort();
+	MandatoryReadError(node, name);
       } else {
 	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
       }
@@ -205,8 +203,7 @@ namespace XML
       }
     } else {//end of -- if (node.child(name)!=NULL)
       if (type == MANDATORY) {
-	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
-	abort();
+	MandatoryReadError(node, name);
       } else {
 	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
       }
@@ -248,8 +245,7 @@ namespace XML
     }
     } else {//end of -- if (node.child(name)!=NULL)
       if (type == MANDATORY) {
-	CCIO::cout << "Error: mandatory node ["<< name << "] not found\n"; 
-	abort();
+	MandatoryReadError(node, name);
       } else {
 	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
       }
