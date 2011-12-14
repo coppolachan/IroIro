@@ -132,7 +132,8 @@ int Test_Wilson_EvenOdd::run(){
   CCIO::cout<<"quark propagator obtained"<<std::endl;
   
   // meson correlators
-  MesonCorrelator meson;
+  GammaMatrices::Unit Gamma;//pion
+  MesonCorrelator meson(Gamma,Gamma);
   vector<double> mcorr = meson.calculate<Format_F>(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;

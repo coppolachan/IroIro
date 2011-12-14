@@ -109,11 +109,14 @@ int Test_Overlap::ovsolver_subt(){
   std::vector<Field> sq;
   qprop.calc(sq,src);
   
-  MesonCorrelator meson;
+  
+
+  GammaMatrices::Unit Gamma;//pion
+  MesonCorrelator meson(Gamma,Gamma);
   std::vector<double> mcorr = meson.calculate< Format::Format_F >(sq,sq);
   for(int t = 0; t < mcorr.size(); ++t)
     std::cout << t << "  "<< mcorr[t] << std::endl;
-
+  
   return 0;
 }
 

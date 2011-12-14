@@ -71,12 +71,14 @@ int Test_Wilson::run(){
   
   // meson correlators
   
-  MesonCorrelator meson;
+  GammaMatrices::Unit Gamma;//pion
+  MesonCorrelator meson(Gamma,Gamma);
   vector<double> mcorr = meson.calculate<Format_F>(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
   while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);
   
+
   return 0;
 }
 
