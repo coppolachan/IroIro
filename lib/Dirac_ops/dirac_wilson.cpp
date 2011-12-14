@@ -653,7 +653,7 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
   Field et5 = gamma5(eta);
   Field zt5 = gamma5(zeta);
 
-  Field xie(fsize_), xiz(fsize_);
+  Field xie(fsize_), xz5(fsize_);
   Field fce(gf_->size());
 
   SUNmat f;
@@ -662,8 +662,8 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
     sf_up_[mu]->setf(const_cast<Field&>(eta));
     (this->*mult_p[mu])(xie, sf_up_[mu]);
 
-    sf_up_[mu]->setf(const_cast<Field&>(zeta));
-    (this->*mult_p[mu])(xiz, sf_up_[mu]);
+    sf_up_[mu]->setf(const_cast<Field&>(zt5));
+    (this->*mult_p[mu])(xz5, sf_up_[mu]);
 
     for(int site=0; site<Nvol_; ++site){
 
@@ -678,12 +678,12 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
 
 	    size_t rb =ff_->index_r(b,s,site);
 	    size_t ib =ff_->index_i(b,s,site);
-	    
-	    fre += zt5[rb]*xie[ra] +zt5[ib]*xie[ia]
- 	          -xiz[rb]*et5[ra] -xiz[ib]*et5[ia];
 
-	    fim += zt5[rb]*xie[ia] -zt5[ib]*xie[ra]
- 	          -xiz[rb]*et5[ia] +xiz[ib]*et5[ra];
+	    fre += zeta[rb]*xie[ra] +zeta[ib]*xie[ia]
+ 	           -xz5[rb]*et5[ra]  -xz5[ib]*et5[ia];
+	    
+	    fim += zeta[rb]*xie[ia] -zeta[ib]*xie[ra]
+  	           -xz5[rb]*et5[ia]  +xz5[ib]*et5[ra];
           }
           f.set(a,b,fre,fim);
         }

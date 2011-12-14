@@ -18,7 +18,7 @@
 using namespace std;
 
 // Constructors
-//--------------------------------------------------------------------------------
+//----------------------------------------------------------------------------
 Dirac_optimalDomainWall_params::
 Dirac_optimalDomainWall_params(XML::node DWF_node){
   std::string Precond_string;
@@ -29,19 +29,19 @@ Dirac_optimalDomainWall_params(XML::node DWF_node){
   XML::read(DWF_node, "mass", mq_, MANDATORY);
   omega_.resize(N5dim_);
   XML::node ApproxNode = DWF_node.child("approximation");
-  if (ApproxNode !=NULL) {
+  if(ApproxNode !=NULL) {
     const char* Approx_name = ApproxNode.attribute("name").value();
-    if (!strcmp(Approx_name, "Zolotarev")){
+    if(!strcmp(Approx_name, "Zolotarev")){
       double lambda_min, lambda_max;
       XML::read(ApproxNode, "lambda_min", lambda_min); 
       XML::read(ApproxNode, "lambda_max", lambda_max); 
       omega_ = DomainWallFermions::getOmega(N5dim_,lambda_min,lambda_max);
     }
-    if (!strcmp(Approx_name, "Tanh")){
-      for (int s = 0; s < N5dim_; ++s) omega_[s] = 1.0;
-    }
-  } else {
-    CCIO::cout << "Error: missing [approximation] node or wrong entry" << std::endl;
+    if (!strcmp(Approx_name, "Tanh"))
+      for (int s=0; s<N5dim_; ++s) omega_[s] = 1.0;
+  }else{
+    CCIO::cout << "Error: missing [approximation] node or wrong entry" 
+	       <<std::endl;
     abort();
   }
   
@@ -51,11 +51,12 @@ Dirac_optimalDomainWall_params(XML::node DWF_node){
   dm_.resize(N5dim_);
   
   if (!EnumString<Preconditioners>::To( Preconditioning_, Precond_string )){
-    CCIO::cerr << "Error: string ["<< Precond_string <<"] not valid"  << std::endl;
+    CCIO::cerr << "Error: string ["<< Precond_string <<"] not valid" 
+	       <<std::endl;
     abort();
   } else {
-    CCIO::cout << "Choosing preconditioner type: "<< 
-      Precond_string << " Code: "<< Preconditioning_ << std::endl;
+    CCIO::cout << "Choosing preconditioner type: "
+	       << Precond_string << " Code: "<< Preconditioning_ <<std::endl;
   }
 }
 
@@ -97,7 +98,7 @@ Dirac_optimalDomainWall_params(const Dirac_optimalDomainWall_params& Par,
   }
 }
 
-//----------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 Dirac_optimalDomainWall::Dirac_optimalDomainWall(XML::node DWF_node,
 						 const Dirac_Wilson* Kernel)
@@ -118,8 +119,9 @@ Dirac_optimalDomainWall::Dirac_optimalDomainWall(XML::node DWF_node,
   }
 }
 
-Dirac_optimalDomainWall::Dirac_optimalDomainWall(Dirac_optimalDomainWall_params Prm,
-						 const Dirac_Wilson* Kernel)
+Dirac_optimalDomainWall::
+Dirac_optimalDomainWall(Dirac_optimalDomainWall_params Prm,
+			const Dirac_Wilson* Kernel)
   :Params(Prm),
    Dw_(Kernel),
    N5_(Params.omega_.size()),
@@ -129,12 +131,13 @@ Dirac_optimalDomainWall::Dirac_optimalDomainWall(Dirac_optimalDomainWall_params 
    M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
    Precond_(choose_Preconditioner(Params.Preconditioning_)){} 
 
-Dirac_optimalDomainWall::Dirac_optimalDomainWall(const double b,
-						 const double c,
-						 const double mq,
-						 const std::vector<double>& omega,
-						 const Dirac_Wilson* Kernel,
-						 Preconditioners Precond)
+Dirac_optimalDomainWall::
+Dirac_optimalDomainWall(const double b,
+			const double c,
+			const double mq,
+			const std::vector<double>& omega,
+			const Dirac_Wilson* Kernel,
+			Preconditioners Precond)
   :Params(b,c,mq,omega),
    Dw_(Kernel),
    N5_(Params.omega_.size()),
@@ -151,8 +154,9 @@ Dirac_optimalDomainWall::Dirac_optimalDomainWall(const double b,
   }
 }
 
-Preconditioner* Dirac_optimalDomainWall::choose_Preconditioner(int PrecondID) {
-  switch (PrecondID) {
+Preconditioner* Dirac_optimalDomainWall::
+choose_Preconditioner(int PrecondID){
+  switch (PrecondID){
   case NoPreconditioner:
     return new NoPrecond(this);
   case LUPreconditioner:
@@ -162,7 +166,7 @@ Preconditioner* Dirac_optimalDomainWall::choose_Preconditioner(int PrecondID) {
   }
 }
 
-//--------------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 const Field Dirac_optimalDomainWall::NoPrecond::mult(const Field& f5) const{
   return DWF_->mult(f5);
 }
@@ -178,7 +182,8 @@ const Field Dirac_optimalDomainWall::NoPrecond::left(const Field& f5) const{
 const Field Dirac_optimalDomainWall::NoPrecond::right(const Field& f5) const{
   return f5;
 }
-//----------------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
 const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
    
  using namespace FieldExpression;
@@ -204,7 +209,6 @@ const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
     DWF_->set5d(w5,v,s);
   }
   return w5;
-  
 
   /*
   using namespace FieldExpression;
@@ -251,15 +255,10 @@ const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
 
   return w5;
   */
-
-
-
-
-
-
 }
 
-const Field Dirac_optimalDomainWall::LUPrecond::mult_dag(const Field& f5) const{
+const Field Dirac_optimalDomainWall::LUPrecond::
+mult_dag(const Field& f5) const{
    
  assert(f5.size()==DWF_->fsize_);
   Field t5(DWF_->fsize_);
@@ -288,7 +287,8 @@ const Field Dirac_optimalDomainWall::LUPrecond::mult_dag(const Field& f5) const{
   return DWF_->mult_dag(t5); 
 }
 
-const Field Dirac_optimalDomainWall::LUPrecond::left(const Field& f5) const{
+const Field Dirac_optimalDomainWall::LUPrecond::
+left(const Field& f5) const{
   Field w5(f5);
   
   for (int s=1; s<DWF_->N5_; ++s) {
@@ -310,10 +310,11 @@ const Field Dirac_optimalDomainWall::LUPrecond::left(const Field& f5) const{
   return w5;
 }
 
-const Field Dirac_optimalDomainWall::LUPrecond::right(const Field& f5) const{
+const Field Dirac_optimalDomainWall::LUPrecond::
+right(const Field& f5) const{
   return f5;
 }
-//----------------------------------------------------------------------------------
+//--------------------------------------------------------------------------
 
 const Field Dirac_optimalDomainWall::mult(const Field& f5) const{ 
   using namespace FieldExpression;
@@ -372,7 +373,6 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
     if(s == 0)     lmf *= -Params.mq_;
     add5d(w5,lpf,s);
     add5d(w5,lmf,s);
-
   }
   return w5;
 }
@@ -442,10 +442,10 @@ md_force(const Field& phi,const Field& psi) const{
   for(int s=0; s<N5_; ++s){
     Field lpf = proj_p(get4d(phi,(s+N5_-1)%N5_));
     if(s == 0)     lpf *= -Params.mq_;
-    Field lmf = proj_m(get4d(phi,(s+1)%N5_));
+    Field lmf = proj_m(get4d(phi,(s+1    )%N5_));
     if(s == N5_-1) lmf *= -Params.mq_;
 
-    Field w = get4d(phi,s);
+    Field w = get4d(phi,s); // pseudo-scalar in 4D
 
     w *= Params.bs_[s];
     w += Params.cs_[s]*(lpf +lmf);
@@ -463,27 +463,24 @@ namespace DomainWallFermions {
     return vs;
   }
 
-  const vector<double> getOmega(int Ns, 
-				double lambda_min, 
-				double lambda_max){
+  const vector<double> getOmega(int Ns,double lambda_min,double lambda_max){
     double u, m;
-    double sn , cn , dn; 
-    double kprime = sqrt( 1.0 - (lambda_min/lambda_max) *
-			  (lambda_min/lambda_max));
+    double sn, cn, dn; 
+    double kprime = sqrt(1.0-(lambda_min/lambda_max)*(lambda_min/lambda_max));
     
     vector<double> omegas(Ns);
 
-    for( int ii = 0 ; ii < Ns ; ++ii){
-      int is = 2 * ii + 1;
-      m = kprime * kprime;
+    for(int ii=0; ii<Ns; ++ii){
+      int is = 2*ii + 1;
+      m = kprime*kprime;
       double vs = set_vs( is, Ns*2, kprime );
       gsl_sf_elljac_e( vs, m, &sn, &cn, &dn );
       double sn2 = sn * sn;
       double kappaprime2 = kprime * kprime;
-      omegas[ii] = ( 1.0 / lambda_min )* sqrt( 1.0 - kappaprime2 * sn2 );
+      omegas[ii] = (1.0/lambda_min)* sqrt(1.0-kappaprime2*sn2);
     }
 #ifdef VERBOSE2
-    for( int ii = 0; ii < Ns; ++ii) printf("%24.16E\n", omegas[ii] );
+    for( int ii=0; ii<Ns; ++ii) printf("%24.16E\n", omegas[ii] );
 #endif
     return omegas;
   }
