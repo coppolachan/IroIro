@@ -7,6 +7,7 @@
 #include "test_ResidualMass.hpp"
 #include "include/factories.hpp"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
+#include "Measurements/FermionicM/meson_correlator.hpp"
 #include <ctime>
 
 const Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D* DWF, const Field& phi){
@@ -41,6 +42,13 @@ int Test_ResMass::run(XML::node node) {
   //QuarkPropDW->calc(sq,*SourceObj);
   CCIO::ReadFromDisk < Format::Format_F >(sq, "propagator.bin", 12);
   //CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
+
+  //Pion Correlator
+  MesonCorrelator PionCorr;
+  std::vector<double> corr =  PionCorr.calculate < Format::Format_F >(sq,sq);
+  for(int i = 0; i < corr.size(); ++i) {
+    CCIO::cout << i << "  " << corr[i] << std::endl;
+  }
  
   // Cycle among Dirac and color indexes and contract
   // D^-1 * Delta * D^-1

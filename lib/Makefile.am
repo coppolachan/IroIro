@@ -116,11 +116,11 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/qprop_MultiShift.hpp 		\
 			Measurements/FermionicM/qprop.h				\
 			Measurements/FermionicM/qprop_EvenOdd.h			\
-			Measurements/FermionicM/mesonCorrel.h			\
 			Measurements/FermionicM/qprop_DomainWall.hpp 		\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp		\
 			Measurements/FermionicM/sources_factory.hpp		\
+			Measurements/FermionicM/meson_correlator.hpp		\
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\

@@ -9,7 +9,6 @@
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
 
-
 #include "include/field.h"
 #include "Main/Geometry/siteIndex.h"
 #include "Tools/byteswap.hpp"
@@ -18,6 +17,32 @@
 #define FORTRAN_CONTROL_WORDS 4  //number of fortran bytes for control
 
 namespace CCIO {
+  
+  inline int ILDGBinFormat(int gsite, 
+			   int internal, 
+			   int external, 
+			   int tot_volume,
+			   int tot_internal, 
+			   int tot_external)  {
+    return (internal +tot_internal*(external+ tot_external*gsite));
+  }
+  
+  inline int JLQCDLegacyFormat(int gsite, 
+			       int internal, 
+			       int external, 
+			       int tot_volume,
+			       int tot_internal, 
+			       int tot_external)  {
+    return (internal +tot_internal*(gsite+ tot_volume*external));
+  }
+  
+  typedef int (*StoringFormat)(int, int, int , int, int, int);
+
+  /*!
+   * @brief Saves a Field on the disk 
+   *
+   * @param append_mode Used to write several fields in the same file (default = off)
+   */
   template <typename T>
   int SaveOnDisk(const Field& f, const char* filename, bool append_mode = false) 
   {
@@ -36,7 +61,6 @@ namespace CCIO {
     
     if(comm->primaryNode()) 
       Global.resize(f.size()*num_nodes);
-    
     
     //Gather information
     for (int node=0; node < num_nodes; ++node) {
@@ -89,6 +113,9 @@ namespace CCIO {
     return 0;
   }
   
+  /*!
+   * @brief Saves several fields in the same file
+   */
   template <typename T>
   int SaveOnDisk(const std::vector<Field>& f, const char* filename) {
     for (int field_num = 0; field_num < f.size(); ++field_num) {
@@ -96,26 +123,13 @@ namespace CCIO {
     }
   }
   
-  inline int ILDGBinFormat(int gsite, 
-			   int internal, 
-			   int external, 
-			   int tot_volume,
-			   int tot_internal, 
-			   int tot_external)  {
-    return (internal +tot_internal*(external+ tot_external*gsite));
-  }
-  
-  inline int JLQCDLegacyFormat(int gsite, 
-			       int internal, 
-			       int external, 
-			       int tot_volume,
-			       int tot_internal, 
-			       int tot_external)  {
-    return (internal +tot_internal*(gsite+ tot_volume*external));
-  }
-  
-  typedef int (*StoringFormat)(int, int, int , int, int, int);
-  
+  /*!
+   * @brief Reads a Field from the disk 
+   *
+   * @param storeFormat Function pointer to the storing format (ILDG / JLQCD legacy)
+   * @param offset Starting point in file reading (byte offset)
+   */
+
   template <typename T>
   int ReadFromDisk(Field& f, const char* filename, int offset = 0, StoringFormat storeFormat = ILDGBinFormat) {
     T format(CommonPrms::instance()->Nvol());
@@ -175,7 +189,6 @@ namespace CCIO {
 	  for (int internal =0; internal < format.Nin(); ++internal) {
 	    for (int external =0; external < format.Nex(); ++external) {
 	      local_index = format.index(internal, site, external);
-	      //lime format: nb  external and site index are reverted from original order
 	      global_index = storeFormat(global_site[site], internal, external, 
 					 total_volume, format.Nin(), format.Nex());
 	      (*primaryField[node])[local_index] = Global[global_index];
