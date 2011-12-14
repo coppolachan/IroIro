@@ -12,7 +12,7 @@
 #include "Solver/solver_CG.h"
 #include "Solver/solver_BiCGStab.h"
 #include "Measurements/FermionicM/qprop_EvenOdd.h"
-#include "Measurements/FermionicM/mesonCorrel.h"
+#include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Tools/randNum_MT19937.h"
 #include "Measurements/FermionicM/source_types.hpp"
 #include <stdio.h>
@@ -132,11 +132,11 @@ int Test_Wilson_EvenOdd::run(){
   CCIO::cout<<"quark propagator obtained"<<std::endl;
   
   // meson correlators
-  MesonCorrel<Format_F> meson;
-  vector<double> mcorr = meson.pp(sq,sq);  
+  MesonCorrelator meson;
+  vector<double> mcorr = meson.calculate<Format_F>(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
-  while(it!=mcorr.end()) pprintf ("%d %.8e\n",t++, *it++);
+  while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);
   return 0;
 }
 

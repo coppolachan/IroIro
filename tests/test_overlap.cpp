@@ -7,7 +7,7 @@
 #include "EigenModes/eigenProc_Zolotarev.h"
 #include "Solver/solver_CG.h"
 #include "Measurements/FermionicM/qprop.h"
-#include "Measurements/FermionicM/mesonCorrel.h"
+#include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
 
 #include <stdio.h>
@@ -109,8 +109,8 @@ int Test_Overlap::ovsolver_subt(){
   std::vector<Field> sq;
   qprop.calc(sq,src);
   
-  MesonCorrel<Format::Format_F> meson;
-  std::vector<double> mcorr = meson.pp(sq,sq);
+  MesonCorrelator meson;
+  std::vector<double> mcorr = meson.calculate< Format::Format_F >(sq,sq);
   for(int t = 0; t < mcorr.size(); ++t)
     std::cout << t << "  "<< mcorr[t] << std::endl;
 
