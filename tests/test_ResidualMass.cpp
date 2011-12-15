@@ -44,8 +44,8 @@ int Test_ResMass::run(XML::node node) {
   //CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
 
   //Pion Correlator
-  MesonCorrelator PionCorr;
-  std::vector<double> corr =  PionCorr.calculate < Format::Format_F >(sq,sq);
+  MesonCorrelator Meson(Scalar);
+  std::vector<double> corr =  Meson.calculate < Format::Format_F >(sq,sq);
   for(int i = 0; i < corr.size(); ++i) {
     CCIO::cout << i << "  " << corr[i] << std::endl;
   }

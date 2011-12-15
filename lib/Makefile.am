@@ -67,6 +67,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/sunMat.cpp			\
+		Tools/gammaMatrices.cpp			\
 		../tests/test_Gauge.cpp			\
 		../tests/test_EigenModes_IRL.cpp		\
 		../tests/test_MultiShiftSolver.cpp		\
@@ -158,6 +159,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
+			Tools/gammaMatrices.hpp			\
 			../tests/tests_all.hpp			\
 			../tests/test_EigenModes_IRL.h		\
 			../tests/test_MultiShiftSolver.h	\
