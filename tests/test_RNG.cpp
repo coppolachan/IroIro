@@ -36,7 +36,7 @@ int main(){
 
   CCIO::cout << "Original RNG      From saved file     Difference" 
 	     << std::endl;  
-  for (int i = 0; i < 10; ++i) {
+  for (int i = 0; i < 10; ++i){
     double r1, r2;
     r1 = rand1->get();
     r2 = rand2->get();
@@ -44,7 +44,4 @@ int main(){
 	       << r2 << " " 
 	       << r1-r2 << std::endl;
   }
-
-
-
 }

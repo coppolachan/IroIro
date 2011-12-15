@@ -656,7 +656,6 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
   Field xie(fsize_), xz5(fsize_);
   Field fce(gf_->size());
 
-  SUNmat f;
   for(int mu=0; mu<Ndim_; ++mu){
 
     sf_up_[mu]->setf(const_cast<Field&>(eta));
@@ -666,7 +665,7 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
     (this->*mult_p[mu])(xz5, sf_up_[mu]);
 
     for(int site=0; site<Nvol_; ++site){
-
+      SUNmat f;
       for(int a=0; a<Nc; ++a){
         for(int b=0; b<Nc; ++b){
           double fre = 0.0;

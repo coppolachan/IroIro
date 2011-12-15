@@ -71,7 +71,7 @@ int Test_HMC_DomainWall::run(XML::node node){
   ASet.push_back(al_2);
   ASet.push_back(al_1);
   
-  MDexec_leapfrog Integrator(8,3,0.1,ASet,multip,
+  MDexec_leapfrog Integrator(8,3,0.00004,ASet,multip,
 			     Gfield_.Format,&CommonField);
 
   HMCgeneral hmc_general(node,Integrator);  
