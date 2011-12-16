@@ -39,12 +39,12 @@ int Test_ResMass::run(XML::node node) {
 
   prop_t sq;  //Defines a vector of fields
   CCIO::cout << "Calculating propagator\n";
-  //QuarkPropDW->calc(sq,*SourceObj);
-  CCIO::ReadFromDisk < Format::Format_F >(sq, "propagator.bin", 12);
-  //CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
+  QuarkPropDW->calc(sq,*SourceObj);
+  //CCIO::ReadFromDisk < Format::Format_F >(sq, "propagator.bin", 12);
+  CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
 
   //Pion Correlator
-  MesonCorrelator Meson(Scalar);
+  MesonCorrelator Meson(Pion);
   std::vector<double> corr =  Meson.calculate < Format::Format_F >(sq,sq);
   for(int i = 0; i < corr.size(); ++i) {
     CCIO::cout << i << "  " << corr[i] << std::endl;

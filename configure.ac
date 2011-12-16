@@ -70,6 +70,11 @@ AC_CHECK_HEADERS([/usr/include/mpich2/mpi.h])
 AC_DEFINE([HAVE_MPI],[],[Processing MPI routines])
 fi
 
+if [ $mpihitachi ]
+then
+AC_DEFINE([BIG_ENDIAN],[],[Using Big Endian machine type])
+AC_DEFINE([HITACHISR16K],[],[Specific tweaks for Hitachi SR16K])
+fi
 # Checks for doxygen support
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN";
