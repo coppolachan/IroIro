@@ -26,7 +26,7 @@
 
     <Integrator name="leapfrog_multistep">
       <MDsteps>3</MDsteps>
-      <step_size>0.1</step_size>
+      <step_size>0.002</step_size>
       <exp_approx>8</exp_approx>
     
       <step><!-- just for multistep -->

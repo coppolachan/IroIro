@@ -60,6 +60,7 @@ unsigned long RandNum_MT19937::twist(unsigned long u,unsigned long v)const{
 }
 
 void RandNum_MT19937::next_state()const{
+ 
   unsigned long* p = state_;
   left_= N;
   next_= state_;
@@ -152,8 +153,7 @@ void RandNum_MT19937::loadSeed(std::string& file) {
 	       << file << "] is missing\n";
     std::abort();
   }
-
-
-
+  
+  next_ = &state_[left_];
 }
 //--------------------------

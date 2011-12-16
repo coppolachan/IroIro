@@ -39,9 +39,7 @@ public:
   RandNum_MT19937(unsigned long s = 5489UL):left_(1){init(s);}
   RandNum_MT19937(unsigned long* key,int key_length)
     :left_(1){init(19650218UL,key,key_length);}
-  RandNum_MT19937(std::string& file,
-		  unsigned long s = 5489UL):left_(1){
-    init(s);
+  RandNum_MT19937(std::string& file){
     loadSeed(file);
   }
 

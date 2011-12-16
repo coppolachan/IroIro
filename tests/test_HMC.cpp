@@ -42,9 +42,5 @@ int Test_HMC::run(XML::node node){
   //temporary
   CCIO::cout << "Saving configuration on disk in binary format\n";
   CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "final_conf.bin");
-  std::string seedfile("seed_file");
-  //RNG_Env::RNG->getRandomNumGenerator()->saveSeed(seedfile);
-
-
   return 0;
 }
