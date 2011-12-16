@@ -9,6 +9,7 @@
 #ifndef SOURCES_TYPES_H_
 #define SOURCES_TYPES_H_
 
+#include "include/numerical_const.hpp"
 #include "Main/Geometry/siteIndex.h"
 #include "Tools/randNum.h"
 #include "Tools/randNum_MP.h"
@@ -19,7 +20,7 @@
 
 #include <iostream>
 
-#define INVSQRT2 0.7071067811865475
+
 ////// Source_local -------------------------------------------------------
 
 template<typename FMT> class Source_local :public Source{
@@ -308,12 +309,12 @@ public:
     MPrand::mp_get(white_noise,rand_generator_,*ff_);
     
     for (int idx = 0; idx <white_noise.size()/2; ++idx){
-      cosine = cos(white_noise[idx]);
+      cosine = cos(2.0*PI*white_noise[idx]);
       source_[2*idx] = copysign(1.0,cosine);
       source_[2*idx+1] = 0;	
       if (Type_ == ComplexZ2) {
        	source_[2*idx]   = source_[2*idx]*INVSQRT2;
-       	source_[2*idx+1] = source_[2*idx];
+       	source_[2*idx+1] = source_[2*idx]*INVSQRT2;
       }		   
     }
   }	   

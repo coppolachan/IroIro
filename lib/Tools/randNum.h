@@ -7,11 +7,9 @@
 #include <valarray>
 #include <math.h>
 #include <time.h>
+#include <string>
 
-
-static const double PI = 6.0*asin(0.5);
-//static const double PI = 3.141592653589793;
-
+#include "include/numerical_const.hpp"
 
 class RandNum{
 private:
@@ -46,6 +44,10 @@ public:
   void get_gauss(std::valarray<double>& rn) const{
     for(int n = 0; n < rn.size(); ++n) rn[n] = get_gauss();
   }
+
+  virtual void saveSeed(std::string&) = 0;
+  virtual void loadSeed(std::string&) = 0;
+
 };
 
 
