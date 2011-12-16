@@ -1,5 +1,8 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
+/* Using Big Endian machine type */
+#undef BIG_ENDIAN
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -54,6 +57,9 @@
 
 /* Define to 1 if you have the </usr/include/mpich2/mpi.h> header file. */
 #undef HAVE__USR_INCLUDE_MPICH2_MPI_H
+
+/* Specific tweaks for Hitachi SR16K */
+#undef HITACHISR16K
 
 /* Name of package */
 #undef PACKAGE

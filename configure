@@ -5559,6 +5559,15 @@ $as_echo "#define HAVE_MPI /**/" >>confdefs.h
 
 fi
 
+if  $mpihitachi
+then
+
+$as_echo "#define BIG_ENDIAN /**/" >>confdefs.h
+
+
+$as_echo "#define HITACHISR16K /**/" >>confdefs.h
+
+fi
 # Checks for doxygen support
 for ac_prog in doxygen
 do

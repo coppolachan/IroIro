@@ -9,5 +9,6 @@ Makefile
 commoncode-*
 autom4te.cache/*
 backups/
+stats/
 .*
 #*#
