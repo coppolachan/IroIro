@@ -34,7 +34,7 @@ struct HMCGeneralParams {
 
 class HMCgeneral{
 private:
-  const MDexec* md_;
+  MDexec* md_;
   const RandNum* rand_;
   const HMCGeneralParams Params;
   int delete_me_;
@@ -42,7 +42,7 @@ private:
 
 public:
   HMCgeneral(pugi::xml_node node, 
-	     const MDexec& md_exec, 
+	     MDexec& md_exec, 
 	     const RandNum& rand_num)
     :md_(&md_exec),
      rand_(&rand_num),
@@ -50,7 +50,7 @@ public:
      delete_me_(0){}
   
   HMCgeneral(pugi::xml_node node, 
-	     const MDexec& md_exec)
+	     MDexec& md_exec)
     :md_(&md_exec),
      rand_(RNG_Env::RNG->getRandomNumGenerator()),
      Params(HMCGeneralParams(node)),

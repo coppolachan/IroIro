@@ -21,7 +21,7 @@ public:
   /*!
     Initializes the Action class
    */
-  virtual void init(Field&,const RandNum&, const void* x=0)= 0;
+  virtual void init(const RandNum&, const void* x=0)= 0;
 
   /*!
     Calculates action contribution
@@ -30,7 +30,7 @@ public:
 
   virtual Field md_force(const void* x=0)= 0;
 
-  virtual ~Action(){};
+  virtual ~Action(){}
 };
 
 #endif

@@ -97,8 +97,8 @@ am__libcommcode_a_SOURCES_DIST = Communicator/communicator_dummy.cpp \
 	EigenModes/fopr_chebyshev_DdagD.cpp Solver/solver_BiCGStab.cpp \
 	Solver/solver_CG.cpp Solver/solver_Factory.cpp \
 	Solver/multiShiftSolver_CG.cpp HMC/hmcGeneral.cpp \
-	HMC/hmcPrms.cpp HMC/mdExec_leapfrog.cpp HMC/mdExec_Factory.cpp \
-	Measurements/GaugeM/staples.cpp \
+	HMC/hmcPrms.cpp HMC/mdExec.cpp HMC/mdExec_leapfrog.cpp \
+	HMC/mdExec_Factory.cpp Measurements/GaugeM/staples.cpp \
 	Measurements/FermionicM/qprop_MultiShift.cpp \
 	Measurements/FermionicM/qprop.cpp \
 	Measurements/FermionicM/qprop_EvenOdd.cpp \
@@ -128,7 +128,7 @@ am_libcommcode_a_OBJECTS = $(am__objects_1) action_gauge.$(OBJEXT) \
 	fopr_chebyshev_DdagD.$(OBJEXT) solver_BiCGStab.$(OBJEXT) \
 	solver_CG.$(OBJEXT) solver_Factory.$(OBJEXT) \
 	multiShiftSolver_CG.$(OBJEXT) hmcGeneral.$(OBJEXT) \
-	hmcPrms.$(OBJEXT) mdExec_leapfrog.$(OBJEXT) \
+	hmcPrms.$(OBJEXT) mdExec.$(OBJEXT) mdExec_leapfrog.$(OBJEXT) \
 	mdExec_Factory.$(OBJEXT) staples.$(OBJEXT) \
 	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
 	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
@@ -338,6 +338,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Solver/multiShiftSolver_CG.cpp		\
 		HMC/hmcGeneral.cpp			\
 		HMC/hmcPrms.cpp				\
+		HMC/mdExec.cpp		        	\
 		HMC/mdExec_leapfrog.cpp			\
 		HMC/mdExec_Factory.cpp			\
 		Measurements/GaugeM/staples.cpp		\
@@ -599,6 +600,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcPrms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_leapfrog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multiShiftSolver_CG.Po@am__quote@
@@ -1003,6 +1005,20 @@ hmcPrms.obj: HMC/hmcPrms.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='HMC/hmcPrms.cpp' object='hmcPrms.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hmcPrms.obj `if test -f 'HMC/hmcPrms.cpp'; then $(CYGPATH_W) 'HMC/hmcPrms.cpp'; else $(CYGPATH_W) '$(srcdir)/HMC/hmcPrms.cpp'; fi`
+
+mdExec.o: HMC/mdExec.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mdExec.o -MD -MP -MF $(DEPDIR)/mdExec.Tpo -c -o mdExec.o `test -f 'HMC/mdExec.cpp' || echo '$(srcdir)/'`HMC/mdExec.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/mdExec.Tpo $(DEPDIR)/mdExec.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='HMC/mdExec.cpp' object='mdExec.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mdExec.o `test -f 'HMC/mdExec.cpp' || echo '$(srcdir)/'`HMC/mdExec.cpp
+
+mdExec.obj: HMC/mdExec.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mdExec.obj -MD -MP -MF $(DEPDIR)/mdExec.Tpo -c -o mdExec.obj `if test -f 'HMC/mdExec.cpp'; then $(CYGPATH_W) 'HMC/mdExec.cpp'; else $(CYGPATH_W) '$(srcdir)/HMC/mdExec.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/mdExec.Tpo $(DEPDIR)/mdExec.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='HMC/mdExec.cpp' object='mdExec.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mdExec.obj `if test -f 'HMC/mdExec.cpp'; then $(CYGPATH_W) 'HMC/mdExec.cpp'; else $(CYGPATH_W) '$(srcdir)/HMC/mdExec.cpp'; fi`
 
 mdExec_leapfrog.o: HMC/mdExec_leapfrog.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mdExec_leapfrog.o -MD -MP -MF $(DEPDIR)/mdExec_leapfrog.Tpo -c -o mdExec_leapfrog.o `test -f 'HMC/mdExec_leapfrog.cpp' || echo '$(srcdir)/'`HMC/mdExec_leapfrog.cpp

@@ -25,7 +25,7 @@ Field Action_Nf2_ratio::DdagD2_inv(const Field& src){
   return sol;
 }
 
-void Action_Nf2_ratio::init(Field&,const RandNum& rand,const void*){
+void Action_Nf2_ratio::init(const RandNum& rand,const void*){
   
   CCIO::cout<<"Action_ratio::init"<<std::endl;
   std::valarray<double> ph(fsize_);

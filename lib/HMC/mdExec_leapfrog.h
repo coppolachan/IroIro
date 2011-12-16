@@ -51,12 +51,13 @@ private:
   const ActionSet as_;
   const Format::Format_G& gf_;
   const Staples* stpl_;
-  Field* const CommonField;
+  Field* const U_;
+  Field P_;
 
   SUNmat u(const Field& g,int site,int dir) const;
-  void update_P(Field& P,int lv,double ep) const;
-  void update_U(const Field& P,double ep) const;
-  void integrator_step(Field& P,int level,std::vector<int>& clock) const;
+  void update_P(int lv,double ep);
+  void update_U(double ep);
+  void integrator_step(int level,std::vector<int>& clock);
   
 public:
   MDexec_leapfrog(int Nexp, int MDiter, double step,
@@ -67,7 +68,7 @@ public:
     :as_(as),gf_(gf),stpl_(new Staples(gf)),
      Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
      Nrel_(multipliers),
-     CommonField(CommonF){}
+     U_(CommonF),P_(CommonF->size()){}
   
   MDexec_leapfrog(XML::node node,
 		  const ActionSet as,
@@ -78,13 +79,12 @@ public:
     :as_(as),gf_(gf),stpl_(stpl),
      Params(MDexec_leapfrogParams(node)),
      Nrel_(multipliers),
-     CommonField(CommonF){}
+     U_(CommonF),P_(CommonF->size()){}
   
-  void init(std::vector<int>& clock,Field& P,const Field& U,
-	    const RandNum& rand)const;
-  
-  void integrator(Field& P,int level,std::vector<int>& clock) const;
-  double calc_H(const Field& P)const;
+  void init(std::vector<int>& clock,const Field& U,const RandNum& rand);
+  void integrator(int level,std::vector<int>& clock);
+  double calc_H() const;
+  const Field get_U() const;
 };
 
 #endif  //MD_LEAPFROG_INCLUDED

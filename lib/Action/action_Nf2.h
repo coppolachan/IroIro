@@ -4,8 +4,8 @@
  * @brief Declaration of Action_Nf2 class
  *
  */
-#ifndef ACTION_PSF_INCLUDED
-#define ACTION_PSF_INCLUDED
+#ifndef ACTION_NF2_INCLUDED
+#define ACTION_NF2_INCLUDED
 
 #include "Tools/randNum_MP.h"
 #include "Action/action.h"
@@ -42,7 +42,7 @@ public:
 
   ~Action_Nf2(){}
 
-  void init(Field&,const RandNum& rand,const void* = 0);
+  void init(const RandNum& rand,const void* = 0);
   Field md_force(const void* = 0);
   double calc_H();
 };

@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 #ifndef MDEXEC_INCLUDED
 #define MDEXEC_INCLUDED
-
+#include "include/format_G.h"
 #include<vector>
 
 class Action;
@@ -15,13 +15,19 @@ typedef std::vector<ActionLevel> ActionSet;
 
 class MDexec{
 private:
-  virtual void update_P(Field& P,int lv,double ep)const=0;
-  virtual void update_U(const Field& P,double ep)const=0;
+  virtual void update_P(int lv,double ep)=0;
+  virtual void update_U(double ep)=0;
 public:
-  virtual ~MDexec(){};
-  virtual void init(std::vector<int>& clock,Field& P,const Field& U,
-		    const RandNum& rand)const=0;
-  virtual double calc_H(const Field& P)const =0;
-  virtual void integrator(Field& P,int level,std::vector<int>& clock)const =0;
+  virtual ~MDexec(){}
+  virtual void init(std::vector<int>& clock,const Field& U,
+		    const RandNum& rand)=0;
+  virtual double calc_H()const =0;
+  virtual void integrator(int level,std::vector<int>& clock) =0;
+  virtual const Field get_U() const =0;
 };
+
+namespace MDutils{
+  void md_mom(Field& P,const RandNum& rand,const Format::Format_G& gf);
+  void md_mom_su3(Field& P,const RandNum& rand,const Format::Format_G& gf);
+}
 #endif//MDEXEC_INCLUDED

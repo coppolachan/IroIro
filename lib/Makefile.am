@@ -50,6 +50,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Solver/multiShiftSolver_CG.cpp		\
 		HMC/hmcGeneral.cpp			\
 		HMC/hmcPrms.cpp				\
+		HMC/mdExec.cpp		        	\
 		HMC/mdExec_leapfrog.cpp			\
 		HMC/mdExec_Factory.cpp			\
 		Measurements/GaugeM/staples.cpp		\

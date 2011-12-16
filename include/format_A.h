@@ -8,6 +8,8 @@
 #include "commonPrms.h"
 #endif
 
+#include <valarray>
+
 namespace Format{
 
   class Format_A{

@@ -46,8 +46,8 @@ public:
   
   ~Action_Nf2_DomainWall(){}
 
-  void init(Field& F,const RandNum& rand,const void* vp= 0){
-    action_.init(F,rand,vp);
+  void init(const RandNum& rand,const void* vp= 0){
+    action_.init(rand,vp);
   }
 
   double calc_H(){return action_.calc_H();}

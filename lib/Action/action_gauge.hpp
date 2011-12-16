@@ -11,8 +11,6 @@
 #include "Measurements/GaugeM/staples.h"
 #include "include/pugi_interface.h"
 
-
-
 /*!
   Parameters for the ActionGauge class
  */
@@ -42,9 +40,6 @@ private:
   Field* const u_;
   int nodeid_;
 
-  void md_mom(Field&, const RandNum&);
-  void md_mom_su3(Field&, const RandNum&);
-
   SUNmat u(const Field&, int site, int dir);
   SUNmat u(const Field&, int site);
 
@@ -52,11 +47,11 @@ private:
   SUNmat u_dag(const Field&, int site);
 
 public:
-  void  init(Field&,const RandNum&,const Field& U,const void* = 0);//for tests
-  void  init(Field&,const RandNum&,const void* = 0);
+  void  init(const RandNum&,const void* = 0){
+    CCIO::cout<<"Action_gauge initialized"<<std::endl;
+  }
   double calc_H();
   Field  md_force(const void* = 0);
-  Field  md_force(const Field&, const void* = 0);
 
   ActionGaugeWilson(const double beta, 
 		    const Format::Format_G& gf, 
@@ -69,7 +64,7 @@ public:
      gf_(gf),
      sf_(new Format::Format_G(Nvol_,1)),
      stpl_(new Staples(gf_)),
-     nodeid_(Communicator::instance()->nodeid()){};
+     nodeid_(Communicator::instance()->nodeid()){}
 
   ActionGaugeWilson(const XML::node node, 
 		    const Format::Format_G& gf,
@@ -82,9 +77,7 @@ public:
      gf_(gf),
      sf_(new Format::Format_G(Nvol_,1)),
      stpl_(new Staples(gf_)),
-     nodeid_(Communicator::instance()->nodeid()){};
-
-
+     nodeid_(Communicator::instance()->nodeid()){}
 
   ~ActionGaugeWilson(){}
 };

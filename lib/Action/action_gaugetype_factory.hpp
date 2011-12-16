@@ -15,7 +15,6 @@ public:
     return getGaugeAction(GaugeForm,
 			  GaugeField);
   }
-  
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -33,8 +32,7 @@ private:
     return new ActionGaugeWilson(Action_node,
 				 Form,
 				 GaugeField); //pass xml node
-  };
-  
+  }
 };
 
 //Add new gauge action factories here

@@ -18,22 +18,20 @@ void HMCgeneral::evolve(Field& Uin)const{
 
   for(int swp=0; swp < Params.Nsweeps; ++swp){
     CCIO::cout << "-- # sweep = "<< swp << endl;
-    Field U(Uin);
-    Field P(Uin.size());
+    
     vector<int> clock;
-
-    md_->init(clock,P,U,*rand_);    // generate internal P and phi's 
+    md_->init(clock,Uin,*rand_);     // set U and initialize P and phi's 
 
     int init_level = 0;
-    double H0 = md_->calc_H(P);     // current state            
+    double H0 = md_->calc_H();     // current state            
     CCIO::cout<<"total H_before = "<< H0 <<endl;
 
-    md_->integrator(P,init_level,clock);
+    md_->integrator(init_level,clock);
 
-    double H1 = md_->calc_H(P);     // updated state            
+    double H1 = md_->calc_H();     // updated state            
     CCIO::cout<<"Total H_after = "<< H1 <<endl;
     
-    if(metropolis_test(H1-H0)) Uin = U;  
+    if(metropolis_test(H1-H0)) Uin = md_->get_U();
   }
 }
 

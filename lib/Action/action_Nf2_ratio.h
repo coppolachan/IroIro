@@ -44,7 +44,7 @@ private:
   
   ~Action_Nf2_ratio();
   
-  void init(Field&,const RandNum& rand,const void* = 0);  
+  void init(const RandNum& rand,const void* = 0);  
   Field md_force(const void* = 0);
   double calc_H();
 };
