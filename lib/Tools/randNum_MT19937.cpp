@@ -154,6 +154,6 @@ void RandNum_MT19937::loadSeed(std::string& file) {
     std::abort();
   }
   
-  next_ = &state_[left_];
+  next_ = &state_[N-left_+1];
 }
 //--------------------------

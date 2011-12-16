@@ -9,7 +9,7 @@
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Binary">conf_04040408.bin</Configuration> 
+  <Configuration Type="Binary">final_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>2</Nsweeps>
@@ -17,8 +17,8 @@
     <save_interval>5</save_interval>
 
     <RandomNumberGen name="Mersenne Twister">
-      <seedFile>seed_file</seedFile>
-      <!-- Using seedFile superseeds the <init> line 
+     <seedFile>seed_file</seedFile>
+     <!--  Using seedFile superseeds the <init> line 
 	   that can be safely omitted
 	   It is ignored by factory in this case -->
       <init>0x123 0x234 0x345 0x456</init> 
