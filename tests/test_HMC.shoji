@@ -4,19 +4,20 @@
   <!-- Geometry parameters here -->
   <Geometry>
     <Lattice>8 8 8 8</Lattice>
-    <Nodes>1 1 1 1</Nodes>
+    <Nodes>2 2 2 4</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Unit">final_conf.bin</Configuration> 
+  <Configuration Type="Binary">final_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>15</Nsweeps>
-    <Thermalization>30</Thermalization>
+    <Nsweeps>10</Nsweeps>
 
     <RandomNumberGen name="Mersenne Twister">
+
       <seedFile>seed_file</seedFile>
+
       <!-- Using seedFile superseeds the <init> line 
            that can be safely omitted
            It is ignored by factory in this case -->
@@ -24,23 +25,26 @@
     </RandomNumberGen>
 
     <Integrator name="leapfrog_multistep">
-      <MDsteps>20</MDsteps>
-      <step_size>0.025</step_size>
+      <MDsteps>2</MDsteps>
+      <step_size>0.5</step_size>
       <exp_approx>8</exp_approx>
       <step>
-          <multiplier>1</multiplier>
+          <multiplier>100</multiplier>
           <Action type="Fermion" name="TwoFlavors">
             <Kernel name="DiracWilson">
-              <mass>200.0</mass>
+              <mass>1.0</mass>
             </Kernel>
             <Solver type="Solver_CG">
               <MaxIter>1000</MaxIter>
               <Precision>10e-12</Precision>
             </Solver>
           </Action>
+          <step><!-- inner step -->
+            <multiplier>1</multiplier>
             <Action type="Gauge" name="Wilson">
-              <beta>5.5</beta>
+              <beta>5.4</beta>
             </Action>
+          </step>
         </step>
 
     </Integrator>

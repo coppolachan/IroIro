@@ -30,7 +30,7 @@ double ActionGaugeWilson::calc_H(){
   CCIO::cout<<"Plaq = "<<plaq<<endl;
  
   double Hgauge = Params.beta*Nvol_*NP*Ndim_*(Ndim_-1)/2*(1-plaq);
-  if(nodeid_==0) printf ("H_gauge= %.15e\n",Hgauge);
+  CCIO::cout << "[Action_Gauge] H = "<<Hgauge<<std::endl;
   return Hgauge;
 }
 

@@ -7,7 +7,6 @@
 #include "include/field.h"
 #include "include/format_G.h"
 
-//#include "Tools/randNum.h"
 #include "Tools/sunMat.h"
 #include "Communicator/comm_io.hpp"
 #include "Action/action.h"
@@ -16,8 +15,24 @@ using namespace std;
 
 void HMCgeneral::evolve(Field& Uin)const{
 
-  for(int swp=0; swp < Params.Nsweeps; ++swp){
-    CCIO::cout << "-- # sweep = "<< swp << endl;
+  for(int iter=1; iter <= Params.ThermalizationSteps; ++iter){
+    CCIO::cout << "-- # Thermalization step = "<< iter << endl;
+
+    double Hdiff = evolve_step(Uin);
+    CCIO::cout<< "dH = "<<Hdiff << std::endl;
+    Uin = md_->get_U();  //accept every time
+  }
+
+  for(int iter=1; iter <= Params.Nsweeps; ++iter){
+    CCIO::cout << "-- # Sweep = "<< iter << endl;
+
+    double Hdiff = evolve_step(Uin);
+    
+    if(metropolis_test(Hdiff)) Uin = md_->get_U();
+  }
+}
+
+double HMCgeneral::evolve_step(Field& Uin)const{
     
     vector<int> clock;
     md_->init(clock,Uin,*rand_);     // set U and initialize P and phi's 
@@ -30,10 +45,10 @@ void HMCgeneral::evolve(Field& Uin)const{
 
     double H1 = md_->calc_H();     // updated state            
     CCIO::cout<<"Total H_after = "<< H1 <<endl;
-    
-    if(metropolis_test(H1-H0)) Uin = md_->get_U();
-  }
+
+    return (H1-H0);
 }
+
 
 bool HMCgeneral::metropolis_test(const double Hdiff)const{
 

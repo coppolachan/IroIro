@@ -12,7 +12,7 @@
   <Configuration Type="Unit">final_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>15</Nsweeps>
+    <Nsweeps>0</Nsweeps>
     <Thermalization>30</Thermalization>
 
     <RandomNumberGen name="Mersenne Twister">
@@ -24,25 +24,15 @@
     </RandomNumberGen>
 
     <Integrator name="leapfrog_multistep">
-      <MDsteps>20</MDsteps>
+      <MDsteps>10</MDsteps>
       <step_size>0.025</step_size>
       <exp_approx>8</exp_approx>
       <step>
-          <multiplier>1</multiplier>
-          <Action type="Fermion" name="TwoFlavors">
-            <Kernel name="DiracWilson">
-              <mass>200.0</mass>
-            </Kernel>
-            <Solver type="Solver_CG">
-              <MaxIter>1000</MaxIter>
-              <Precision>10e-12</Precision>
-            </Solver>
-          </Action>
-            <Action type="Gauge" name="Wilson">
-              <beta>5.5</beta>
-            </Action>
-        </step>
-
+	<multiplier>1</multiplier>
+	<Action type="Gauge" name="Wilson">
+	  <beta>5.5</beta>
+	</Action>
+      </step>
     </Integrator>
   </HMC>
 

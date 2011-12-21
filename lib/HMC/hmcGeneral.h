@@ -27,8 +27,8 @@ struct HMCGeneralParams {
   int ThermalizationSteps;
 
   HMCGeneralParams(pugi::xml_node node) {
-    XML::read(node, "Nsweeps", Nsweeps);
-    XML::read(node, "thermalization", ThermalizationSteps);
+    XML::read(node, "Nsweeps", Nsweeps, MANDATORY);
+    XML::read(node, "Thermalization", ThermalizationSteps, MANDATORY);
   }
 };
 
@@ -39,6 +39,7 @@ private:
   const HMCGeneralParams Params;
   int delete_me_;
   bool metropolis_test(const double Hdiff)const;
+  double evolve_step(Field&)const;
 
 public:
   HMCgeneral(pugi::xml_node node, 
