@@ -21,7 +21,7 @@
 class Action_Nf2 :public Action{
 private:
   Field* const u_; /*!< The gauge field */
-  const Dirac* D_; /*!< Dirac Kernel operator */ 
+  const DiracWilsonLike* D_; /*!< Dirac Kernel operator */ 
   const Solver* slv_;  /*!< Linear solver operator */
   size_t fsize_;
   Field phi_;
@@ -35,7 +35,7 @@ public:
    * CG solver is assumed
    */
   Action_Nf2(Field* const GField,
-	     const Dirac* D, 
+	     const DiracWilsonLike* D, 
 	     const Solver* Solv)
     :u_(GField),D_(D),slv_(Solv),
      fsize_(D_->fsize()),phi_(fsize_){}

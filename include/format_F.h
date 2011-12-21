@@ -75,7 +75,7 @@ namespace Format{
       for(int e=0;e<Nex_;++e)
 	for(int v=0;v<sv.size();++v)
 	  for(int i=0;i<Nin_;++i)
-	    sub[j++] = i+Nin_*(sv[v] +sv.size()*e);
+	    sub[j++] = i+Nin_*(sv[v] +Nvol_*e);
 
       return sub;
     }

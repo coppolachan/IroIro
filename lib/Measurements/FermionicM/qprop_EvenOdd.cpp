@@ -42,7 +42,7 @@ void Qprop_EvenOdd::calc(prop_t& xq,Source& src) const{
       bo -= D_->mult_oo_inv(D_->mult_oe(ye));
 
       Field sol(2*fsize_);
-      Format_F ff(2*fsize_);
+      Format::Format_F ff(2*fsize_);
 
       for(int hs=0; hs<CommonPrms::instance()->Nvol()/2; ++hs){
 	sol.set(ff.islice(idx_eo_->esec(hs)), ye[ff.islice(hs)]);
@@ -62,8 +62,8 @@ void Qprop_EvenOdd::calc(prop_t& xq,const prop_t& prp)const{
   double diff;
   Field ye(fsize_);
 
-  Format_F ff(2*fsize_);
-  Format_F hf(fsize_);
+  Format::Format_F ff(2*fsize_);
+  Format::Format_F hf(fsize_);
   /*
   vector<int> esub = hf.get_sub(idx_eo_->esec());
   vector<int> osub = hf.get_sub(idx_eo_->osec());

@@ -94,7 +94,7 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
   class LUPrecond : public Preconditioner {
     Dirac_optimalDomainWall* DWF_;
   public: 
-    LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){};
+    LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){}
     const Field precondition(const Field&) const;  
     const Field mult(const Field&) const;  
     const Field mult_dag(const Field&) const;
@@ -182,6 +182,10 @@ public:
   const Field R5g5(const Field&) const;
 
   const Field md_force( const Field& eta,const Field& zeta) const;
+  const Format::Format_F get_fermionFormat() const{
+    Format::Format_F ff = Dw_->get_fermionFormat();
+    return Format::Format_F(ff.Nvol(),N5_);
+  }
 };
 
 

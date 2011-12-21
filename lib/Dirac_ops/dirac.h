@@ -9,9 +9,10 @@
 #define DIRAC_H_
 
 #include "include/field.h"
+#include "include/format_F.h"
 
 enum {Op, Dag};
-
+//class Format::Format_F;
 
 /*
  * @class Dirac
@@ -20,7 +21,7 @@ enum {Op, Dag};
  */
 class Dirac {
 public:
-  virtual ~Dirac(){};
+  virtual ~Dirac(){}
   virtual size_t fsize() const = 0;
   virtual size_t gsize() const = 0;
 
@@ -45,18 +46,18 @@ public:
  */
 class DiracWilsonLike : public Dirac {
 public:
-  virtual ~DiracWilsonLike(){};
+  virtual ~DiracWilsonLike(){}
   virtual const Field gamma5(const Field&) const = 0;
+  virtual const Format::Format_F get_fermionFormat() const =0;
 };
 
 /*
  * @class DiracWilsonLike_EvenOdd
  * @brief Declaration of abstract base class for Dirac operators of Wilson type
  */
-class DiracWilsonLike_EvenOdd : public Dirac {
+class DiracWilsonLike_EvenOdd : public DiracWilsonLike {
 public:
-  virtual ~DiracWilsonLike_EvenOdd(){};
-  virtual const Field gamma5(const Field&) const = 0;
+  virtual ~DiracWilsonLike_EvenOdd(){}
 
   virtual const Field mult_eo(const Field&) const =0;
   virtual const Field mult_oe(const Field&) const =0;
@@ -77,7 +78,7 @@ public:
  */
 class DiracStaggeredLike : public Dirac {
  public:
-    virtual ~DiracStaggeredLike(){};
+    virtual ~DiracStaggeredLike(){}
 
 };
 

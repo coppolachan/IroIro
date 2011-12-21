@@ -24,9 +24,8 @@
 #include "EigenModes/sortEigen.h"
 #endif
 
-
+#include "include/format_F.h"
 #include <vector>
-
 
 struct EigenData{
   
@@ -79,8 +78,6 @@ struct EigenPrms{
   int Npoly;
 };
 
-
-
 class Fopr_signH_Zolotarev: public Fopr {
   const DiracWilsonLike* D_;
   const MultiShiftSolver_CG* msslv_;
@@ -102,15 +99,12 @@ public:
     :ed_(ed),
      D_(D),
      msslv_(new MultiShiftSolver_CG(new Fopr_DdagD(D_),
-				    Eprms.stp_cnd,
-				    Eprms.Niter)),
+				    Eprms.stp_cnd,Eprms.Niter)),
      fsize_(D_->fsize()),
      gsize_(D_->gsize()),
      Np_(Eprms.Npoly){}
   
-  ~Fopr_signH_Zolotarev(){
-    delete msslv_;
-  }
+  ~Fopr_signH_Zolotarev(){ delete msslv_;}
   const Field mult(const Field& f) const;
   const Field mult_dag(const Field& f) const{return mult(f);}
   const Field gamma5(const Field&f) const { return D_->gamma5(f); }
@@ -119,6 +113,9 @@ public:
 
   size_t fsize() const{return fsize_;}
   size_t gsize() const{return gsize_;}
+  const Format::Format_F get_fermionFormat() const{ 
+    return D_->get_fermionFormat();
+  }
 };
 
 #endif

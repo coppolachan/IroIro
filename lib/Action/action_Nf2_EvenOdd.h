@@ -40,7 +40,7 @@ public:
     :u_(GField),D_(D),slv_(Solv),
      fsize_(D_->fsize()),phi_(fsize_){}
   
-  ~Action_Nf2(){}
+  ~Action_Nf2_EvenOdd(){}
 
   void init(const RandNum& rand,const void* = 0);
   Field md_force(const void* = 0);

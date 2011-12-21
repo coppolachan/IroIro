@@ -187,17 +187,17 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
   //Preconditioned versions
-  const Field mult_prec(const Field&)const {};//empty now
-  const Field mult_dag_prec(const Field&)const{};//empty now
-  const Field left_precond(const Field&)const{};//empty now
-  const Field right_precond(const Field&)const{};//empty now
+  const Field mult_prec(const Field&)const {}//empty now
+  const Field mult_dag_prec(const Field&)const{}//empty now
+  const Field left_precond(const Field&)const{}//empty now
+  const Field right_precond(const Field&)const{}//empty now
 
   const Field gamma5(const Field&) const;
   const Field proj_p(const Field&) const;
   const Field proj_m(const Field&) const;
   const Field md_force(const Field& eta,const Field& zeta)const;
-
+  
   const double getKappa() const {return kpp_;}  
+  const ffmt_t get_fermionFormat() const {return *ff_;}
 };
-
 #endif

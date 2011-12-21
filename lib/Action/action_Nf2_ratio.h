@@ -22,8 +22,8 @@
 class Action_Nf2_ratio : public Action{
 private:
   Field* const u_;
-  const Dirac* D1_;
-  const Dirac* D2_;
+  const DiracWilsonLike* D1_;
+  const DiracWilsonLike* D2_;
   const Solver* slv1_;
   const Solver* slv2_;
   size_t fsize_;
@@ -34,7 +34,7 @@ private:
   
  public:
   Action_Nf2_ratio(Field* const GField, 
-		   const Dirac* D1,const Dirac* D2,
+		   const DiracWilsonLike* D1,const DiracWilsonLike* D2,
 		   const Solver* Solv1,const Solver* Solv2)
     :u_(GField),
      D1_(D1), D2_(D2),

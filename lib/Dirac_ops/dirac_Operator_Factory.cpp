@@ -4,8 +4,8 @@
 #include "Communicator/comm_io.hpp"
 
 namespace DiracOperators {
-  DiracOperatorFactory* createDiracOperatorFactory(const XML::node node)
-  {
+  DiracWilsonLikeOperatorFactory* 
+  createDiracWilsonLikeOperatorFactory(const XML::node node){
     if (node !=NULL) {
       
       const char* Dirac_name = node.attribute("name").value();

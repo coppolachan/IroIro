@@ -19,9 +19,9 @@
  * @brief Abstract base class for creating Dirac operators
  *
  */
-class DiracOperatorFactory {
+class DiracWilsonLikeOperatorFactory {
 public:
-  virtual Dirac* getDiracOperator(Field* const) = 0;
+  virtual DiracWilsonLike* getDiracOperator(Field* const) = 0;
 };
 
 
@@ -30,7 +30,7 @@ public:
  * @brief Concrete class for creating Dirac Wilson operators
  *
  */
-class DiracWilsonFactory : public DiracOperatorFactory {
+class DiracWilsonFactory : public DiracWilsonLikeOperatorFactory {
   const XML::node Dirac_node;
 
 public:
@@ -45,7 +45,7 @@ public:
  * @brief Concrete class for creating Dirac Wilson operators
  *
  */
-class DiracWilsonEvenOddFactory : public DiracOperatorFactory {
+class DiracWilsonEvenOddFactory : public DiracWilsonLikeOperatorFactory {
   const XML::node Dirac_node;
 
 public:
@@ -60,7 +60,7 @@ public:
  * @brief Concrete class for creating Dirac Optimal DWF-5d operators
  *
  */
-class DiracDWF5dFactory : public DiracOperatorFactory {
+class DiracDWF5dFactory : public DiracWilsonLikeOperatorFactory {
   RaiiFactoryObj<DiracWilsonFactory> DiracObj;
   RaiiFactoryObj<Dirac_Wilson> Kernel;
 
@@ -84,7 +84,7 @@ public:
  * @brief Concrete class for creating Dirac Optimal DWF-4d operators
  *
  */
-class DiracDWF4dFactory : public DiracOperatorFactory {
+class DiracDWF4dFactory : public DiracWilsonLikeOperatorFactory {
   RaiiFactoryObj<DiracDWF5dFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverDWF_Obj;
 
@@ -98,8 +98,8 @@ class DiracDWF4dFactory : public DiracOperatorFactory {
   const XML::node Dirac_node;
 
 public:
-  DiracDWF4dFactory(XML::node node):
-    Dirac_node(node){
+  DiracDWF4dFactory(XML::node node)
+    :Dirac_node(node){
     XML::descend(node,"Kernel5d");
     DiracObj.save(new DiracDWF5dFactory(node));
     XML::next_sibling(node, "SolverDWF");
@@ -118,19 +118,17 @@ public:
 					  SolverODWF.get(),
 					  SolverPV.get());
   }
-
-  ~DiracDWF4dFactory(){};
+  ~DiracDWF4dFactory(){}
 };
 
 
 //Add new factories here
 //....
 
-
-
 //////////////////////////////////////////////////////////////
 namespace DiracOperators {
-  DiracOperatorFactory* createDiracOperatorFactory(const XML::node);
+  DiracWilsonLikeOperatorFactory* 
+  createDiracWilsonLikeOperatorFactory(const XML::node);
 
 }
 

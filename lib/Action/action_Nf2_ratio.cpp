@@ -27,27 +27,26 @@ Field Action_Nf2_ratio::DdagD2_inv(const Field& src){
 
 void Action_Nf2_ratio::init(const RandNum& rand,const void*){
   
-  CCIO::cout<<"Action_ratio::init"<<std::endl;
+  CCIO::cout<<"Action_Nf2_ratio::init"<<std::endl;
   std::valarray<double> ph(fsize_);
 
-  int Nvol = CommonPrms::instance()->Nvol();
-  int Nex = fsize_/Format::Format_F(1).Nin()/Nvol;
-  Format::Format_F fmt(Nvol,Nex);
+  MPrand::mp_get_gauss(ph,rand,D1_->get_fermionFormat());
 
-  MPrand::mp_get_gauss(ph,rand,fmt);
-  
+  #if VERBOS1
   double phsum= (ph*ph).sum();
   double phnorm= Communicator::instance()->reduce_sum(phsum);
-  
-  //CCIO::cout<<"ph.norm="<<sqrt(phnorm)<<std::endl;
+  CCIO::cout<<"ph.norm="<<sqrt(phnorm)<<std::endl;
+  #endif 
 
   phi_= D1_->mult_dag(Field(ph));
 
+  #if VERBOS1
   double phisum= phi_.norm();
   double phinorm= Communicator::instance()->reduce_sum(phisum);
+  for(int i=0; i<ph.size();++i) CCIO::cout<<"phi_["<<i<<"]="
+  					  << phi_[i]<<std::endl;
+  #endif
 
-  //  for(int i=0; i<ph.size();++i) CCIO::cout<<"phi_["<<i<<"]="
-  //					  << phi_[i]<<std::endl;
   phi_= D2_->mult(DdagD2_inv(phi_));
 }
 

@@ -26,53 +26,49 @@ public:
     return getFermionAction(GaugeForm,
 			    GaugeField);
   }
-
 };
 
 ///////////////////////////////////////////////////////////////////////
 
 class TwoFlavorActionFactory : public FermionActionFactory {
-  RaiiFactoryObj<DiracOperatorFactory> DiracObj;
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverObj;
 
-  RaiiFactoryObj<Dirac> Kernel;
+  RaiiFactoryObj<DiracWilsonLike> Kernel;
   RaiiFactoryObj<Fopr_DdagD> HermitianOp;
   RaiiFactoryObj<Solver> Solv;
  
   const XML::node Action_node;
 
 public:
-  TwoFlavorActionFactory(XML::node node):
-    Action_node(node)
-    {
-      XML::descend(node,"Kernel");
-      DiracObj.save(DiracOperators::createDiracOperatorFactory(node));
-      XML::next_sibling(node,"Solver");
-      SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
-    };
+  TwoFlavorActionFactory(XML::node node)
+    :Action_node(node){
+    XML::descend(node,"Kernel");
+    DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
+    XML::next_sibling(node,"Solver");
+    SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
+  }
 
   ~TwoFlavorActionFactory(){}
 private:
-
+  
   Action_Nf2* getFermionAction(const Format::Format_G& Form,
 			       Field* const GaugeField){
     Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
     return new Action_Nf2(GaugeField, Kernel.get(), Solv.get());
-
-  };
-  
+  }
 };
 
 class TwoFlavorRatioActionFactory : public FermionActionFactory {
-  RaiiFactoryObj<DiracOperatorFactory> DiracNumObj;
-  RaiiFactoryObj<DiracOperatorFactory> DiracDenomObj;
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracNumObj;
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracDenomObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverNumObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverDenomObj;
 
-  RaiiFactoryObj<Dirac> DiracNumerator;
-  RaiiFactoryObj<Dirac> DiracDenominator;
+  RaiiFactoryObj<DiracWilsonLike> DiracNumerator;
+  RaiiFactoryObj<DiracWilsonLike> DiracDenominator;
   RaiiFactoryObj<Solver> Solver1;
   RaiiFactoryObj<Solver> Solver2;
 
@@ -81,20 +77,17 @@ class TwoFlavorRatioActionFactory : public FermionActionFactory {
 public:
   ~TwoFlavorRatioActionFactory(){}
 
-  TwoFlavorRatioActionFactory(XML::node node):
-    Action_node(node){
+  TwoFlavorRatioActionFactory(XML::node node)
+    :Action_node(node){
     XML::descend(node,"Numerator");
-    DiracNumObj.save(DiracOperators::createDiracOperatorFactory(node)); 
+    DiracNumObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node)); 
     XML::next_sibling(node,"Denominator");
-    DiracDenomObj.save(DiracOperators::createDiracOperatorFactory(node));
+    DiracDenomObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
     XML::next_sibling(node,"SolverNumerator");
     SolverNumObj.save(SolverOperators::createSolverOperatorFactory(node));
     XML::next_sibling(node,"SolverDenominator");
     SolverDenomObj.save(SolverOperators::createSolverOperatorFactory(node));
-
-};
-
-
+  }
   
 private:  
   Action_Nf2_ratio* getFermionAction(const Format::Format_G& Form,
@@ -110,9 +103,7 @@ private:
 				DiracDenominator.get(),
 				Solver1.get(),
 				Solver2.get()); 
-  };
-  
-
+  }
 };
 
 //Add new factories here

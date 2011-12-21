@@ -19,7 +19,7 @@ struct Dirac_overlap_ZolotarevParams{
   
   Dirac_overlap_ZolotarevParams(const double M0_, 
 				const double mq_):
-    M0(M0_),mq(mq_){};
+    M0(M0_),mq(mq_){}
 };
 
 class Dirac_overlap_Zolotarev : public DiracWilsonLike {
@@ -42,19 +42,22 @@ public:
   size_t fsize()const {return Fopr_signH->fsize();}
   size_t gsize()const {return Fopr_signH->gsize();}
 
-  const Field operator()(int, const Field&) const{};//temporary
+  const Field operator()(int, const Field&) const{}//temporary
 
   const Field mult(const Field& f) const;
   const Field mult_dag(const Field& f) const;
 
   //Preconditioned versions
-  const Field mult_prec(const Field& f) const {};//empty now
-  const Field mult_dag_prec(const Field& f) const{};//empty now
-  const Field left_precond(const Field&)const{};//empty now
-  const Field right_precond(const Field&)const{};//empty now
+  const Field mult_prec(const Field& f) const {}//empty now
+  const Field mult_dag_prec(const Field& f) const{}//empty now
+  const Field left_precond(const Field&)const{}//empty now
+  const Field right_precond(const Field&)const{}//empty now
 
   const Field md_force(const Field& eta,const Field& zeta) const;
   const Field gamma5(const Field& f) const;
+  const Format::Format_F get_fermionFormat() const{
+    return Fopr_signH->get_fermionFormat();
+  }
 };
 
 #endif

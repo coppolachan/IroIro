@@ -176,7 +176,7 @@ int Test_optimalDomainWall::run(XML::node node){
   QpropDWF QuarkPropagator(Ddwf_5d,stop_cond,Niter);
   
   vector<int> spos(4,0); 
-  Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
+  Source_local<Format::Format_F> src(spos,CommonPrms::instance()->Nvol());
   
   prop_t sq;
   QuarkPropagator.calc(sq,src);
@@ -185,7 +185,7 @@ int Test_optimalDomainWall::run(XML::node node){
   
   GammaMatrices::Unit Gamma;
   MesonCorrelator meson(Gamma,Gamma);
-  vector<double> mcorr = meson.calculate<Format_F>(sq,sq);
+  vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
   while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);

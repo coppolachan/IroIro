@@ -27,7 +27,7 @@ int Test_Wilson_EvenOdd::run(){
   // local source
   vector<int> spos(4,0); 
   //vector<int> spos(4,1); 
-  Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
+  Source_local<Format::Format_F> src(spos,CommonPrms::instance()->Nvol());
 
   /*
   // noise source
@@ -54,7 +54,7 @@ int Test_Wilson_EvenOdd::run(){
   vector<int> esec= ieo->esec();
   vector<int> osec= ieo->osec();
 
-  Format_F fmt(CommonPrms::instance()->Nvol());
+  Format::Format_F fmt(CommonPrms::instance()->Nvol());
   valarray<size_t> ie = fmt.get_sub(esec);
   valarray<size_t> io = fmt.get_sub(osec);
 
@@ -134,7 +134,7 @@ int Test_Wilson_EvenOdd::run(){
   // meson correlators
   GammaMatrices::Unit Gamma;//pion
   MesonCorrelator meson(Gamma,Gamma);
-  vector<double> mcorr = meson.calculate<Format_F>(sq,sq);  
+  vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
   while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);

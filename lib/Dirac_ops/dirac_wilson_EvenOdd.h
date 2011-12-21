@@ -9,6 +9,7 @@
 
 #include "dirac_wilson.h"
 //#include "Communicator/comm_io.hpp"
+
 namespace Dw{
   class EvOd:private Dirac_Wilson{
   private:
@@ -20,7 +21,10 @@ namespace Dw{
 				     idx_(SiteIndex_eo::instance()){}
     size_t fsize() const{return Dirac_Wilson::fsize();}
     size_t gsize() const{return Dirac_Wilson::gsize();}
-
+    
+    const Format::Format_F get_fermionFormat() const {
+      return Dirac_Wilson::get_fermionFormat();
+    }
     const Field mult(const Field&) const;
     const Field mult_dag(const Field&) const;
 
@@ -48,6 +52,9 @@ namespace Dw{
     size_t fsize() const{return Dirac_Wilson::fsize();}
     size_t gsize() const{return Dirac_Wilson::gsize();}
 
+    const Format::Format_F get_fermionFormat() const {
+      return Dirac_Wilson::get_fermionFormat();
+    }
     const Field mult(const Field&) const;
     const Field mult_dag(const Field&) const;
 
@@ -107,6 +114,7 @@ public:
   const Field mult_oo_inv(const Field& f)const {return f;}
   const Field mult_ee_inv(const Field& f)const {return f;}
 
+  const ffmt_t get_fermionFormat() const {return Deo_.get_fermionFormat();}
   const Field operator()(int OpType,const Field&)const{}
 };
 

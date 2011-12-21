@@ -41,10 +41,10 @@ public:
  @brief Concrete class for creating Quark Propagator Qprop operator
 */
 class QPropFactory : public QuarkPropagatorFactory {
-  RaiiFactoryObj<DiracOperatorFactory> DiracObj;
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverObj;
 
-  RaiiFactoryObj<Dirac> Kernel;
+  RaiiFactoryObj<DiracWilsonLike> Kernel;
   RaiiFactoryObj<Solver> Solv;
   const XML::node Qprop_node;
 
@@ -52,7 +52,7 @@ public:
   QPropFactory(XML::node node):Qprop_node(node){
     //some leaking expected - check!
     XML::descend(node,"Kernel");
-    DiracObj.save(DiracOperators::createDiracOperatorFactory(node));
+    DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
     XML::next_sibling(node,"Solver");
     SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
   }
@@ -69,10 +69,10 @@ public:
  @brief Concrete class for creating Quark Propagator Qprop_EvenOdd operator
 */
 class QPropFactory_EvenOdd : public QuarkPropagatorFactory {
-  RaiiFactoryObj<DiracOperatorFactory> DiracObj;
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverObj;
 
-  RaiiFactoryObj<Dirac> Kernel;
+  RaiiFactoryObj<DiracWilsonLike> Kernel;
   RaiiFactoryObj<Solver> Solv;
   const XML::node Qprop_node;
 
@@ -80,7 +80,7 @@ public:
   QPropFactory_EvenOdd(XML::node node):Qprop_node(node){
     //some leaking expected - check!
     XML::descend(node,"Kernel");
-    DiracObj.save(DiracOperators::createDiracOperatorFactory(node));
+    DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
     XML::next_sibling(node,"Solver");
     SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
   }

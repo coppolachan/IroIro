@@ -12,6 +12,7 @@
 #include "Solver/solver_BiCGStab.h"
 #include "include/fopr.h"
 
+class Format_F;
 
 /*!
  * @brief Container for parameter of the 4d Optimal Domain Wall operator
@@ -38,9 +39,11 @@ public:
 			     const double stp_cnd_pv, 
 			     const int Niter)
     :Dodw_(D),
-     slv_odw_(new Solver_BiCGStab(stp_cnd_odw,Niter,new Fopr_DdagD_Precondition(&Dodw_))),
+     slv_odw_(new Solver_BiCGStab(stp_cnd_odw,Niter,
+				  new Fopr_DdagD_Precondition(&Dodw_))),
      Dpv_(Dirac_optimalDomainWall(Dodw_,PauliVillars)),
-     slv_pv_(new Solver_BiCGStab(stp_cnd_pv,Niter,new Fopr_DdagD_Precondition(&Dpv_))){}
+     slv_pv_(new Solver_BiCGStab(stp_cnd_pv,Niter,
+				 new Fopr_DdagD_Precondition(&Dpv_))){}
 
    /*!
    * @brief Constructor using external solvers (mostly used by factories)
@@ -59,7 +62,7 @@ public:
   size_t fsize() const {return Dodw_.f4size();}
   size_t gsize() const {return Dodw_.gsize();}
 
-  const Field operator()(int, const Field&) const{};
+  const Field operator()(int, const Field&) const{}
 
   const Field gamma5(const Field& f) const{ return Dodw_.gamma5_4d(f);}
   const double getMass() const {return Dodw_.getMass();}
@@ -67,18 +70,20 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
   //Preconditioned versions
-  const Field mult_prec(const Field&)const{};//empty now
-  const Field mult_dag_prec(const Field&)const{};//empty now
-  const Field left_precond(const Field&)const{};//empty now
-  const Field right_precond(const Field&)const{};//empty now
+  const Field mult_prec(const Field&)const{}//empty now
+  const Field mult_dag_prec(const Field&)const{}//empty now
+  const Field left_precond(const Field&)const{}//empty now
+  const Field right_precond(const Field&)const{}//empty now
 
   const Field mult_inv(const Field&)const;
   const Field mult_dag_inv(const Field&)const;
 
   const Field signKernel(const Field&)const;
+  const Format::Format_F get_fermionFormat() const {
+    return Dodw_.get_fermionFormat();
+  }
 
-  const Field md_force( const Field& eta,const Field& zeta) const{};
-
+  const Field md_force( const Field& eta,const Field& zeta) const{}
 };
 
 #endif

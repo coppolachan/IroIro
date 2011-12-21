@@ -38,7 +38,7 @@ int Test_Wilson::run(){
   vector<int> spos(4,0); 
   //vector<int> spos(4,1); 
 
-  Source_local<Format_F> src(spos,CommonPrms::instance()->Nvol());
+  Source_local<Format::Format_F> src(spos,CommonPrms::instance()->Nvol());
   //Source_wnoise<Format_F> src(rand,CommonPrms::instance()->Nvol());
   //Source_wall<Format_F> src(0,CommonPrms::instance()->Nvol());
   //wall source not working
@@ -73,7 +73,7 @@ int Test_Wilson::run(){
   
   GammaMatrices::Unit Gamma;//pion
   MesonCorrelator meson(Gamma,Gamma);
-  vector<double> mcorr = meson.calculate<Format_F>(sq,sq);  
+  vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
   while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);

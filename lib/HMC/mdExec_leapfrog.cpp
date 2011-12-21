@@ -15,8 +15,7 @@ u(const Field& g,int site,int dir)const{
   return SUNmat(g[gf_.cslice(0,site,dir)]);
 }
 
-void MDexec_leapfrog::
-update_U(double ep){
+void MDexec_leapfrog::update_U(double ep){
   using namespace SUNmat_utils;
 
   //if(stpl_) printf("plaq0=%.12f\n",stpl_->plaquette(U));    
@@ -42,8 +41,7 @@ update_U(double ep){
   //if(stpl_) printf("plaq1=%.12f\n",stpl_->plaquette(U));    
 }
 
-void MDexec_leapfrog::
-update_P(int lv,double ep){
+void MDexec_leapfrog::update_P(int lv,double ep){
   for(int a = 0; a < as_[lv].size(); ++a){
     Field fce = as_[lv].at(a)->md_force();
     fce *= ep;
@@ -111,12 +109,12 @@ integrator_step(int cl,std::vector<int>& clock){
     if(clock[cl] == 0){    // initial half step 
       update_P(cl,eps/2);
       ++clock[cl];
-      for(int l=0; l<=cl;++l) CCIO::cout<<"   ";
+      for(int l=0; l<cl;++l) CCIO::cout<<"   ";
       CCIO::cout<<"P "<< static_cast<double>(clock[cl])/2 <<endl;
     }
     if(cl == fl){          // lowest level 
       update_U(eps);
-      for(int l=0; l<=cl;++l) CCIO::cout<<"   ";
+      for(int l=0; l<cl;++l) CCIO::cout<<"   ";
       CCIO::cout<<"U "<< static_cast<double>(clock[cl]+1)/2 <<endl;
     }else{                 // recursive function call 
       integrator_step(cl+1,clock);
@@ -125,13 +123,13 @@ integrator_step(int cl,std::vector<int>& clock){
       update_P(cl,eps/2);
       
       ++clock[cl];
-      for(int l=0; l<=cl;++l) CCIO::cout<<"   ";
+      for(int l=0; l<cl;++l) CCIO::cout<<"   ";
       CCIO::cout<<"P "<< static_cast<double>(clock[cl])/2 <<endl;
     }else{                  // bulk step
       update_P(cl,eps);
       
       clock[cl]+=2;
-      for(int l=0; l<=cl;++l) CCIO::cout<<"   ";
+      for(int l=0; l<cl;++l) CCIO::cout<<"   ";
       CCIO::cout<<"P "<< static_cast<double>(clock[cl])/2 <<endl;
     }
   }
