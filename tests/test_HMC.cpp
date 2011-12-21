@@ -39,5 +39,8 @@ int Test_HMC::run(XML::node node){
   clock_t end_t = clock();
   CCIO::cout << (double)(end_t -start_t)/CLOCKS_PER_SEC << std::endl;
 
+  //temporary
+  CCIO::cout << "Saving configuration on disk in binary format\n";
+  CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "final_conf.bin");
   return 0;
 }

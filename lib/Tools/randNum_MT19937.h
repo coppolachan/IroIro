@@ -36,11 +36,16 @@ private:
   double do_rand()const{ return rand_res53();}
 
 public:
-  RandNum_MT19937(unsigned long s = 5489UL):left_(1){ init(s);}
+  RandNum_MT19937(unsigned long s = 5489UL):left_(1){init(s);}
   RandNum_MT19937(unsigned long* key,int key_length)
     :left_(1){init(19650218UL,key,key_length);}
+  RandNum_MT19937(std::string& file){
+    loadSeed(file);
+  }
 
-  ~RandNum_MT19937(){}
+  ~RandNum_MT19937(){
+    std::string file("seed_file");
+    saveSeed(file);}//saving seed when destroyed?
 
   void saveSeed(std::string& file);
   void loadSeed(std::string& file);

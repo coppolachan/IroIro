@@ -8,6 +8,7 @@
 #ifndef COMMONPRMS_INCLUDED
 #define COMMONPRMS_INCLUDED
 
+
 struct Lattice{
   bool stdinput;
   int Lx;

@@ -56,6 +56,9 @@ init(vector<int>& clock,const Field& U,const RandNum& rand){
   *U_= U;                       // initialize U_ (common to actions) to U
   MDutils::md_mom(P_,rand,gf_); // initialize P_ 
 
+  double pnorm = P_.norm();
+  CCIO::cout<<"P_->norm()= "<<pnorm<<endl;
+
   for(int lv = 0; lv< as_.size(); ++lv){
     for(int id = 0; id < as_.at(lv).size(); ++id){
       CCIO::cout<<"initializing MD steps level= "<< lv <<" id= "<< id<<endl;
@@ -66,10 +69,6 @@ init(vector<int>& clock,const Field& U,const RandNum& rand){
 
 double MDexec_leapfrog::calc_H()const{
   using namespace SUNmat_utils;
-
-  double pnorm = P_.norm();
-  //CCIO::cout<<"P_->norm()= "<<pnorm<<endl;
-
   // kinetic term
   double H_local = 0.0;
   Format::Format_G gf(CommonPrms::instance()->Nvol());
@@ -81,6 +80,7 @@ double MDexec_leapfrog::calc_H()const{
     }
   }
   double H = Communicator::instance()->reduce_sum(H_local);
+  CCIO::cout << "[Momenta] H_p = "<< H << std::endl;
 
   // action terms
   for(int lv = 0; lv< as_.size(); ++lv)

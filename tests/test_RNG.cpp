@@ -27,8 +27,8 @@ int main(){
   int length = 4;
 
   RandNum_MT19937* rand1 = new RandNum_MT19937(seeds, length);
-
   std::string seed_file = "seed_file";
+  //RandNum_MT19937* rand1 = new RandNum_MT19937(seed_file);
   rand1->saveSeed(seed_file);
 
   RandNum_MT19937* rand2 = new RandNum_MT19937();
@@ -44,4 +44,8 @@ int main(){
 	       << r2 << " " 
 	       << r1-r2 << std::endl;
   }
+
+
+  delete rand1;
+  delete rand2;
 }

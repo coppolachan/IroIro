@@ -44,7 +44,7 @@ namespace Format{
 
     const std::valarray<size_t> get_sub(const std::vector<int>& sv)const{
       std::valarray<size_t> sub(Nin_*sv.size()*Nex_);
-      int j=0;
+      int j=0; 
       for(int e=0;e<Nex_;++e)
 	for(int v=0;v<sv.size();++v)
 	  for(int i=0;i<Nin_;++i)

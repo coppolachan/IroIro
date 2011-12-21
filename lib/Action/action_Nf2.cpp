@@ -25,12 +25,13 @@ void Action_Nf2::init(const RandNum& rand,const void*){
   phi_= D_->mult_dag(Field(ph));
 }
 
-double Action_Nf2::calc_H(){ return phi_*DdagD_inv(phi_);}
+double Action_Nf2::calc_H(){ 
+  double H_nf2 = phi_*DdagD_inv(phi_);
+  CCIO::cout << "[Action_Nf2] H = "<< H_nf2 << std::endl; 
+  return H_nf2;
+}
 
 Field Action_Nf2::md_force(const void*){
   Field eta = DdagD_inv(phi_);
   return D_->md_force(eta,D_->mult(eta));
 }
-
-
-  

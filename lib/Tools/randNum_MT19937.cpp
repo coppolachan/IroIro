@@ -9,6 +9,7 @@
 #include <string>
 #include <fstream>
 #include <cstdlib>
+#include "Communicator/comm_io.hpp"
 //-----------------------
 
 void RandNum_MT19937::init(unsigned long s){
@@ -59,6 +60,7 @@ unsigned long RandNum_MT19937::twist(unsigned long u,unsigned long v)const{
 }
 
 void RandNum_MT19937::next_state()const{
+ 
   unsigned long* p = state_;
   left_= N;
   next_= state_;
@@ -115,6 +117,8 @@ double RandNum_MT19937::rand_res53()const{
 //--------------------------
 // save the seed config
 void RandNum_MT19937::saveSeed(std::string& file) {
+  CCIO::cout << "Saving Mersenne Twister in file ["
+	     << file << "]\n";
   std::ofstream writer(file.c_str());
   for (int i = 0; i < N; ++i) {
     writer << state_[i] << std::endl;
@@ -124,6 +128,8 @@ void RandNum_MT19937::saveSeed(std::string& file) {
 
 // load the seed config
 void RandNum_MT19937::loadSeed(std::string& file) {
+  CCIO::cout << "Loading Mersenne Twister seeds from file ["
+	     << file << "]\n";
   
   std::ifstream reader(file.c_str());
   if (reader) {
@@ -132,19 +138,22 @@ void RandNum_MT19937::loadSeed(std::string& file) {
       if (reader >> n) {
         state_[i] = n;
       } else {
-        std::cout << "# of seed in file is lacked" << std::endl;
+        CCIO::cout << "Error: wrong number of seeds in file\n";
         std::abort();
       }
     }
     if (reader >> n) {
       left_ = n;
     } else {
-      std::cout << "# of seed in file is lacked" << std::endl;
+      CCIO::cout << "Error: wrong number of seeds in file\n";
       std::abort();
     }
   } else {
-    std::cout << "There is no such a seed file: "
-              << file << std::endl;
+    CCIO::cout << "Error: Seed file ["
+	       << file << "] is missing\n";
+    std::abort();
   }
+  
+  next_ = &state_[N-left_+1];
 }
 //--------------------------
