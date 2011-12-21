@@ -1,0 +1,5 @@
+Add new Mersenn Twister (should be faster)
+Add new exponential calculation (exact)
+
+check single-core/multicore runs
+check RNG on multicore

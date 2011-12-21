@@ -30,6 +30,8 @@ namespace MDutils{
     MPrand::mp_get_gauss(pj,rand,fmt);
     pj *= sqrt(2.0); // to get Px,mu^a with the distribution exp(-1/2*P*P)
     pj /= 2.0;       // to get i*Px,mu =i*Px,mu^a*lambda^a/2 below
+
+    
     for(int d=0; d< CommonPrms::instance()->Ndim(); ++d){
       for(int site=0; site<Nvol; ++site){
 	
