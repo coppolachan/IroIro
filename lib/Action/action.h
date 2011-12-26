@@ -7,7 +7,8 @@
 #ifndef ACTION_INCLUDED
 #define ACTION_INCLUDED
 
-//#include "config.h" //definition of VERBOSITY
+#include <string>
+#include "include/macros.hpp"
 
 class Field;
 class RandNum;
@@ -30,9 +31,18 @@ public:
    */
   virtual double calc_H()= 0;
 
+  /*!
+    Calculates force contribution
+   */
   virtual Field md_force(const void* x=0)= 0;
 
   virtual ~Action(){}
+
+  /*!
+    Monitor force contribution
+   */
+  void monitor_force(Field&, std::string);
+
 };
 
 #endif

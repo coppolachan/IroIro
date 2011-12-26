@@ -4,7 +4,7 @@
   <!-- Geometry parameters here -->
   <Geometry>
     <Lattice>8 8 8 8</Lattice>
-    <Nodes>1 1 1 1</Nodes>
+    <Nodes>1 1 1 2</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
   </Geometry>
@@ -35,7 +35,7 @@
             </Kernel>
             <Solver type="Solver_CG">
               <MaxIter>1000</MaxIter>
-              <Precision>10e-20</Precision>
+              <Precision>10e-8</Precision>
             </Solver>
           </Action>
             <Action type="Gauge" name="Wilson">

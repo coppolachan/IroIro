@@ -14,9 +14,7 @@
 #ifndef COMMON_CODE_HPP_
 #define COMMON_CODE_HPP_
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#include "include/macros.hpp"
 
 //Fields and common parameters
 #include "include/common_fields.hpp"

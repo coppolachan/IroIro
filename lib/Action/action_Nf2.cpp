@@ -35,15 +35,10 @@ double Action_Nf2::calc_H(){
 Field Action_Nf2::md_force(const void*){
   Field eta = DdagD_inv(phi_);
   Field force(D_->md_force(eta,D_->mult(eta)));
-  //
-  double f_re= force.average_real();
-  double f_im= force.average_imag();
-  CCIO::cout<<"Action_Nf2: averaged MD-force = ("
-	    << f_re<<","<< f_im 
-	    <<")"<< std::endl;
-  double f_max= force.max_element();
-  CCIO::cout<<"Action_Nf2: maximum MD-force = "
-	    << f_max<< std::endl;
-  //  
+
+#if VERBOSITY>1
+  monitor_force(force, "Action_Nf2");
+#endif
+
   return force;
 }

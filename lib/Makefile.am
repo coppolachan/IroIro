@@ -27,6 +27,7 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
+		Action/action.cpp			\
 	 	Action/action_gauge.cpp 		\
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\
@@ -99,6 +100,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/format_F.h		\
 			$(top_srcdir)/include/format_G.h		\
 			$(top_srcdir)/include/numerical_const.hpp	\
+			$(top_srcdir)/include/macros.hpp		\
 			$(top_srcdir)/include/typeDefs.h		\
 			$(top_srcdir)/include/pugi_interface.h		\
 			$(top_srcdir)/include/singleton.h		\

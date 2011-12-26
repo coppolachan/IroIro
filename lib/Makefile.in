@@ -82,8 +82,9 @@ libcommcode_a_AR = $(AR) $(ARFLAGS)
 libcommcode_a_LIBADD =
 am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Communicator/communicator_dummy.cpp \
-	Communicator/communicator_mpi.cpp Action/action_gauge.cpp \
-	Action/action_Nf2.cpp Action/action_Nf2_ratio.cpp \
+	Communicator/communicator_mpi.cpp Action/action.cpp \
+	Action/action_gauge.cpp Action/action_Nf2.cpp \
+	Action/action_Nf2_ratio.cpp \
 	Action/action_gaugetype_factory.cpp \
 	Action/action_fermiontype_factory.cpp Communicator/comm_io.cpp \
 	Communicator/fields_io.cpp Dirac_ops/dirac_wilson.cpp \
@@ -118,7 +119,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
-	action_gauge.$(OBJEXT) action_Nf2.$(OBJEXT) \
+	action.$(OBJEXT) action_gauge.$(OBJEXT) action_Nf2.$(OBJEXT) \
 	action_Nf2_ratio.$(OBJEXT) action_gaugetype_factory.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	fields_io.$(OBJEXT) dirac_wilson.$(OBJEXT) \
@@ -319,6 +320,7 @@ EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
+		Action/action.cpp			\
 	 	Action/action_gauge.cpp 		\
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\
@@ -390,6 +392,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/format_F.h		\
 			$(top_srcdir)/include/format_G.h		\
 			$(top_srcdir)/include/numerical_const.hpp	\
+			$(top_srcdir)/include/macros.hpp		\
 			$(top_srcdir)/include/typeDefs.h		\
 			$(top_srcdir)/include/pugi_interface.h		\
 			$(top_srcdir)/include/singleton.h		\
@@ -582,6 +585,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2_ratio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_fermiontype_factory.Po@am__quote@
@@ -693,6 +697,20 @@ communicator_mpi.obj: Communicator/communicator_mpi.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_mpi.cpp' object='communicator_mpi.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_mpi.obj `if test -f 'Communicator/communicator_mpi.cpp'; then $(CYGPATH_W) 'Communicator/communicator_mpi.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_mpi.cpp'; fi`
+
+action.o: Action/action.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action.o -MD -MP -MF $(DEPDIR)/action.Tpo -c -o action.o `test -f 'Action/action.cpp' || echo '$(srcdir)/'`Action/action.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/action.Tpo $(DEPDIR)/action.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action.cpp' object='action.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action.o `test -f 'Action/action.cpp' || echo '$(srcdir)/'`Action/action.cpp
+
+action.obj: Action/action.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action.obj -MD -MP -MF $(DEPDIR)/action.Tpo -c -o action.obj `if test -f 'Action/action.cpp'; then $(CYGPATH_W) 'Action/action.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/action.Tpo $(DEPDIR)/action.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action.cpp' object='action.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action.obj `if test -f 'Action/action.cpp'; then $(CYGPATH_W) 'Action/action.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action.cpp'; fi`
 
 action_gauge.o: Action/action_gauge.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge.o -MD -MP -MF $(DEPDIR)/action_gauge.Tpo -c -o action_gauge.o `test -f 'Action/action_gauge.cpp' || echo '$(srcdir)/'`Action/action_gauge.cpp

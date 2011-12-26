@@ -7,7 +7,7 @@
 #define SOLVER_INCLUDED
 
 #include <string>
-#include "include/config.h" //defines VERBOSITY
+#include "include/macros.hpp" 
 
 class Field;
 

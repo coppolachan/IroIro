@@ -36,13 +36,13 @@ double ActionGaugeWilson::calc_H(){
 
 Field ActionGaugeWilson::md_force(const void*){
   using namespace SUNmat_utils;
-
+  
   Field force(gf_.size());
-
+  
   for(int m = 0; m < Ndim_; ++m){
-
+    
     Field tmp(sf_->size());
-
+    
     for(int n=0; n< Ndim_; ++n){
       if(n != m){
 	tmp += stpl_->upper(*u_,m,n);
@@ -50,7 +50,7 @@ Field ActionGaugeWilson::md_force(const void*){
       }
     }
     for(int site=0; site<Nvol_; ++site){
-
+      
       SUNmat staple_sum = u_dag(tmp,site);
       SUNmat link = u(*u_,site,m);
       SUNmat pl = link*staple_sum;
@@ -59,16 +59,11 @@ Field ActionGaugeWilson::md_force(const void*){
     }
   }
   force *= Params.beta/Nc_/2.0;
-  //
-  double f_re= force.average_real();
-  double f_im= force.average_imag();
-  CCIO::cout<<"ActionGaugeWilson: averaged MD-force = ("
-	    << f_re<<","<< f_im 
-	    <<")"<< endl;
-  double f_max= force.max_element();
-  CCIO::cout<<"ActionGaugeWilson: maximum MD-force = "
-	    << f_max<< endl;
-  //
+
+#if VERBOSITY>1
+  monitor_force(force, "Action_Gauge");
+#endif
+
   return force;
 }
 
