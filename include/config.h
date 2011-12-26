@@ -72,7 +72,7 @@
 #define PACKAGE_NAME "CommonCode++"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "CommonCode++ 0.6.6"
+#define PACKAGE_STRING "CommonCode++ 0.7"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "commoncode--"
@@ -81,13 +81,16 @@
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.6.6"
+#define PACKAGE_VERSION "0.7"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
+/* Code Verbosity level */
+#define VERBOSITY 1
+
 /* Version number of package */
-#define VERSION "0.6.6"
+#define VERSION "0.7"
 
 /* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */

@@ -11,4 +11,5 @@ autom4te.cache/*
 backups/
 stats/
 .*
+tests/conf_*
 #*#
