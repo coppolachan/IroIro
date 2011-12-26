@@ -96,8 +96,8 @@ public:
 	idx = i;
       }
     }	
-    Communicator::instance()->reduce_max(max,idx,field_.size()/2);
-    return max;
+    int mn = Communicator::instance()->reduce_max(max,idx,field_.size()/2);
+    return sqrt(max);
   }
 
   double min_element() const{
@@ -112,8 +112,8 @@ public:
 	idx = i;
       }
     }	
-    Communicator::instance()->reduce_min(min,idx,field_.size()/2);
-    return min;
+    int mn = Communicator::instance()->reduce_min(min,idx,field_.size()/2);
+    return sqrt(min);
   }
   
   template<typename T>
@@ -158,8 +158,6 @@ public:
   void read_stream(std::ifstream& in) {
     in.read((char*)&field_[0], sizeof(double)*field_.size());
   }
-
-
 };
 
 inline Field& Field::operator-(){

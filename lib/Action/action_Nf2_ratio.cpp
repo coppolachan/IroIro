@@ -65,6 +65,9 @@ Field Action_Nf2_ratio::md_force(const void*){
   CCIO::cout<<"Action_Nf2_ratio: averaged MD-force = ("
 	    << f_re<<","<< f_im 
 	    <<")"<< std::endl;
+  double f_max= force.max_element();
+  CCIO::cout<<"Action_Nf2_ratio: maximum MD-force = "
+	    << f_max<< std::endl;
   // 
   return force;
 }

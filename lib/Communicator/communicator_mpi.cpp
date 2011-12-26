@@ -213,9 +213,9 @@ void Communicator::broadcast(int size, double &data, int sender){
 
 int Communicator::reduce_max(double& val,int& idx,int size){
   /*! size is the maximum value of idx */
-  VaId vi = {val, myrank_*size +idx};
+  VaId vi = {val, my_rank_*size +idx};
   VaId vo;
-  MPI_Reduce(&vi,&vo,1,MPI_DOUBLE_INT,MPI_MAXLOC,my_rank_,MPI_COMM_WORLD);
+  MPI_Reduce(&vi,&vo,1,MPI_DOUBLE_INT,MPI_MAXLOC,0,MPI_COMM_WORLD);
   val = vo.value;
   idx = vo.index%size;
   return vo.index/size;
@@ -224,9 +224,9 @@ int Communicator::reduce_max(double& val,int& idx,int size){
 int Communicator::reduce_min(double& val,int& idx,int size){
   /*! size is the maximum value of idx */
   
-  VaId vi = {val, myrank_*size +idx};
+  VaId vi = {val, my_rank_*size +idx};
   VaId vo;
-  MPI_Reduce(&vi,&vo,1,MPI_DOUBLE_INT,MPI_MINLOC,my_rank_,MPI_COMM_WORLD);
+  MPI_Reduce(&vi,&vo,1,MPI_DOUBLE_INT,MPI_MINLOC,0,MPI_COMM_WORLD);
   val = vo.value;
   idx = vo.index%size;
   return vo.index/size;

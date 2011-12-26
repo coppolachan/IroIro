@@ -65,6 +65,9 @@ Field ActionGaugeWilson::md_force(const void*){
   CCIO::cout<<"ActionGaugeWilson: averaged MD-force = ("
 	    << f_re<<","<< f_im 
 	    <<")"<< endl;
+  double f_max= force.max_element();
+  CCIO::cout<<"ActionGaugeWilson: maximum MD-force = "
+	    << f_max<< endl;
   //
   return force;
 }
