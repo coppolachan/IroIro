@@ -7,6 +7,7 @@
 #include "action_Nf2_ratio.h"
 #include "include/format_F.h"
 #include "Communicator/comm_io.hpp"
+#include "include/macro.hpp"
 #include <typeinfo> 
 
 Field Action_Nf2_ratio::DdagD1_inv(const Field& src){
@@ -34,7 +35,7 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
 
   MPrand::mp_get_gauss(ph,rand,D1_->get_fermionFormat());
 
-  #if VERBOS1
+  #if VERBOSITY>2
   double phsum= (ph*ph).sum();
   double phnorm= Communicator::instance()->reduce_sum(phsum);
   CCIO::cout<<"ph.norm="<<sqrt(phnorm)<<std::endl;
@@ -42,7 +43,7 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
 
   phi_= D1_->mult_dag(Field(ph));
 
-  #if VERBOS1
+  #if VERBOSITY>2
   double phisum= phi_.norm();
   double phinorm= Communicator::instance()->reduce_sum(phisum);
   for(int i=0; i<ph.size();++i) CCIO::cout<<"phi_["<<i<<"]="
@@ -61,16 +62,11 @@ Field Action_Nf2_ratio::md_force(const void*){
   Field eta = DdagD1_inv(D2_->mult_dag(phi_));
   Field force= D1_->md_force(eta,D1_->mult(eta));
   force -= D2_->md_force(eta,phi_);
-  //
-  double f_re= force.average_real();
-  double f_im= force.average_imag();
-  CCIO::cout<<"Action_Nf2_ratio: averaged MD-force = ("
-	    << f_re<<","<< f_im 
-	    <<")"<< std::endl;
-  double f_max= force.max_element();
-  CCIO::cout<<"Action_Nf2_ratio: maximum MD-force = "
-	    << f_max<< std::endl;
-  // 
+
+#if VERBOSITY>1
+  monitor_force(force, "Action_Nf2_ratio");
+#endif
+
   return force;
 }
 

@@ -210,51 +210,6 @@ const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
   }
   return w5;
 
-  /*
-  using namespace FieldExpression;
-
-  assert(f5.size()==DWF_->fsize_);
-  Field w5(fsize_);
-
-  for(int s=0; s<N5_; ++s) {
-    Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
-    if(s == 0)     lpf *= -Params.mq_;
-    Field lmf = proj_m(get4d(f5,(s+1)%N5_));
-    if(s == N5_-1) lmf *= -Params.mq_;
-      
-    Field w = get4d(f5,s);
-    w -= lpf;
-    w -= lmf;
-      
-    Field v = get4d(f5,s);
-    v += (Params.cs_[s]/Params.bs_[s])*lpf;
-    v += (Params.cs_[s]/Params.bs_[s])*lmf;
-
-    w += (4.0+M0_)*Params.bs_[s]*(Dw_->mult(v));      
-    set5d(w5,w,s);
-    }
-
-  // precond.LU: (LU)^-1 = U^-1 L^-1
-  for (int s=1; s<N5_; ++s) {
-    Field lpf = proj_p(get4d(w5,s-1));
-    lpf *= (Params.dm_[s]/Params.dp_[s-1]);
-    add5d(w5,lpf,s);
-  };
-  Field v = get4d(w5,N5_-1);
-  v *= 1.0/Params.dp_[N5_-1];
-  set5d(w5,v,N5_-1);
-  for (int s=N5_-2; s>=0; --s) {
-    Field lmf = proj_m(get4d(w5,s+1));
-    lmf *= Params.dm_[s];
-    add5d(w5,lmf,s);
-    v = get4d(w5,s);
-    v *= 1.0/Params.dp_[s];
-    set5d(w5,v,s);
-  }
-  // end precond LU
-
-  return w5;
-  */
 }
 
 const Field Dirac_optimalDomainWall::LUPrecond::
@@ -452,6 +407,7 @@ md_force(const Field& phi,const Field& psi) const{
     
     force += (4.0+M0_)*Dw_->md_force(w,get4d(psi,s));
   }
+
   return force;
 }
 
@@ -479,7 +435,7 @@ namespace DomainWallFermions {
       double kappaprime2 = kprime * kprime;
       omegas[ii] = (1.0/lambda_min)* sqrt(1.0-kappaprime2*sn2);
     }
-#ifdef VERBOSE2
+#ifdef VERBOSITY>2
     for( int ii=0; ii<Ns; ++ii) printf("%24.16E\n", omegas[ii] );
 #endif
     return omegas;

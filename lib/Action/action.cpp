@@ -17,7 +17,7 @@ void Action::monitor_force(Field& force, std::string ActionName){
   CCIO::cout<<"["<<ActionName<<"]\n";  
   //we want to check the real part of iP only for debugging purposes
   //so I'm putting the output to a higher level of verbosity (=4)
-  CCIO::cout<<" |------- average MD-force (iPdot) = "  
+  CCIO::cout<<" +------- average MD-force (iPdot) = "  
 #if VERBOSITY>3  
 	    <<"(" << f_re <<","
 #endif
@@ -27,7 +27,7 @@ void Action::monitor_force(Field& force, std::string ActionName){
 #endif
 	    << "\n";
   
-  CCIO::cout<<" |------- maximum MD-force (iPdot) = "
+  CCIO::cout<<" +------- maximum MD-force (iPdot) = "
 	    << f_max
 	    << "\n";
 
