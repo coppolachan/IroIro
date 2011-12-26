@@ -653,11 +653,11 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
   Field et5 = gamma5(eta);
   Field zt5 = gamma5(zeta);
 
-  Field xie(fsize_), xz5(fsize_);
   Field fce(gf_->size());
 
   for(int mu=0; mu<Ndim_; ++mu){
-
+    Field xie(fsize_), xz5(fsize_);
+  
     sf_up_[mu]->setf(const_cast<Field&>(eta));
     (this->*mult_p[mu])(xie, sf_up_[mu]);
 

@@ -59,6 +59,7 @@ public:
 	   const std::valarray<double>& va){ 
     field_[idx]+= va;
   }
+
   double norm() const {
     double a = (field_*field_).sum();
     //    std::cout<<"a="<<a<<std::endl;
@@ -67,6 +68,26 @@ public:
     return sqrt(b);
   }
 
+  double average_real() const{
+    double a = 0.0;
+    for(int i=0; i<field_.size()/2; ++i) a += field_[2*i];
+    double b = Communicator::instance()->reduce_sum(a);
+    double c = Communicator::instance()->reduce_sum(field_.size()/2);
+    return b/c;
+  }
+
+  double average_imag() const{
+    double a = 0.0;
+    for(int i=0; i<field_.size()/2; ++i) a += field_[2*i+1];
+    double b = Communicator::instance()->reduce_sum(a);
+    double c = Communicator::instance()->reduce_sum(field_.size()/2);
+    return b/c;
+  }
+
+  std::vector<double> max_element() const{}
+
+
+  
   template<typename T>
   Field& operator=(const T& rhs){
     *this = rhs.eval();

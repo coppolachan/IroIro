@@ -17,8 +17,9 @@ namespace Dw{
     int gauge_site_p(int hsite)const { return idx_->esec(hsite);}
     int gauge_site_m(int hsite)const { return idx_->osec(hsite);}
   public:    
-    EvOd(double mass,const Field* u):Dirac_Wilson(mass,u,EOtag()),
-				     idx_(SiteIndex_eo::instance()){}
+    EvOd(double mass,const Field* u)
+      :Dirac_Wilson(mass,u,EOtag()),
+       idx_(SiteIndex_eo::instance()){}
     size_t fsize() const{return Dirac_Wilson::fsize();}
     size_t gsize() const{return Dirac_Wilson::gsize();}
     
@@ -29,13 +30,15 @@ namespace Dw{
     const Field mult_dag(const Field&) const;
 
     //Preconditioning methods
-    const Field mult_prec(const Field&)const {}//empty now preconditioned 
+    const Field mult_prec(const Field&)const{}//empty now preconditioned 
     const Field mult_dag_prec(const Field&)const{}//empty now preconditioned
-    const Field left_precond(const Field&)const{};//empty now
-    const Field right_precond(const Field&)const{};//empty now
-    //////////////////////////////////////////////////////////////////////
+    const Field left_precond(const Field&)const{}//empty now
+    const Field right_precond(const Field&)const{}//empty now
+    ////////////////////////////////////////////////////////////////////
 
-    const Field gamma5(const Field& f) const{return Dirac_Wilson::gamma5(f);}
+    const Field gamma5(const Field& f) const{
+      return Dirac_Wilson::gamma5(f);
+    }
     const Field md_force(const Field& eta,const Field& zeta) const{
       return Dirac_Wilson::md_force(eta,zeta);
     }
@@ -59,13 +62,15 @@ namespace Dw{
     const Field mult_dag(const Field&) const;
 
     //Preconditioning methods
-    const Field mult_prec(const Field&)const {}//empty now preconditioned 
+    const Field mult_prec(const Field&)const{}//empty now preconditioned 
     const Field mult_dag_prec(const Field&)const{}//empty now preconditioned
-    const Field left_precond(const Field&)const{};//empty now
-    const Field right_precond(const Field&)const{};//empty now
-    //////////////////////////////////////////////////////////////////////
+    const Field left_precond(const Field&)const{}//empty now
+    const Field right_precond(const Field&)const{}//empty now
+    ///////////////////////////////////////////////////////////////////
 
-    const Field gamma5(const Field& f) const{return Dirac_Wilson::gamma5(f);}
+    const Field gamma5(const Field& f) const{
+      return Dirac_Wilson::gamma5(f);
+    }
     const Field md_force(const Field& eta,const Field& zeta) const{
       return Dirac_Wilson::md_force(eta,zeta);
     }
@@ -95,10 +100,10 @@ public:
   const Field mult_dag(const Field&) const;
 
   //Preconditioning methods
-  const Field mult_prec(const Field&)const {}//empty now preconditioned 
+  const Field mult_prec(const Field&)const{}//empty now preconditioned 
   const Field mult_dag_prec(const Field&)const{}//empty now preconditioned
-  const Field left_precond(const Field&)const{};//empty now
-  const Field right_precond(const Field&)const{};//empty now
+  const Field left_precond(const Field&)const{}//empty now
+  const Field right_precond(const Field&)const{}//empty now
   //////////////////////////////////////////////////////////////////////
   
 
@@ -106,15 +111,20 @@ public:
 
   const Field mult_eo(const Field& f) const {return Deo_.mult(f);}
   const Field mult_oe(const Field& f) const {return Doe_.mult(f);}
-  const Field mult_eo_dag(const Field& f) const {return Deo_.mult_dag(f);}
-  const Field mult_oe_dag(const Field& f) const {return Doe_.mult_dag(f);}
-
+  const Field mult_eo_dag(const Field& f) const {
+    return Deo_.mult_dag(f);
+  }
+  const Field mult_oe_dag(const Field& f) const {
+    return Doe_.mult_dag(f);
+  }
   const Field mult_oo(const Field& f)const {return f;}
   const Field mult_ee(const Field& f)const {return f;}
   const Field mult_oo_inv(const Field& f)const {return f;}
   const Field mult_ee_inv(const Field& f)const {return f;}
 
-  const ffmt_t get_fermionFormat() const {return Deo_.get_fermionFormat();}
+  const ffmt_t get_fermionFormat() const {
+    return Deo_.get_fermionFormat();
+  }
   const Field operator()(int OpType,const Field&)const{}
 };
 

@@ -33,5 +33,13 @@ double Action_Nf2::calc_H(){
 
 Field Action_Nf2::md_force(const void*){
   Field eta = DdagD_inv(phi_);
-  return D_->md_force(eta,D_->mult(eta));
+  Field force(D_->md_force(eta,D_->mult(eta)));
+  //
+  double f_re= force.average_real();
+  double f_im= force.average_imag();
+  CCIO::cout<<"ActionGaugeWilson: averaged MD-force = ("
+	    << f_re<<","<< f_im 
+	    <<")"<< std::endl;
+  //  
+  return force;
 }

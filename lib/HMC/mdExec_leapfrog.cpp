@@ -142,7 +142,7 @@ integrator(int cl,std::vector<int>& clock){
   // eps : current step size
   
   for(int step=0; step< Params.MDsteps; ++step){   // MD step 
-    CCIO::cout<<"MDstep = "<< step << endl;
+    //CCIO::cout<<"MDstep = "<< step << endl;
     integrator_step(cl,clock);
   }
 }
