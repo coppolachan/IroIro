@@ -38,9 +38,12 @@ Field Action_Nf2::md_force(const void*){
   //
   double f_re= force.average_real();
   double f_im= force.average_imag();
-  CCIO::cout<<"ActionGaugeWilson: averaged MD-force = ("
+  CCIO::cout<<"Action_Nf2: averaged MD-force = ("
 	    << f_re<<","<< f_im 
 	    <<")"<< std::endl;
+  double f_max= force.max_element();
+  CCIO::cout<<"Action_Nf2: maximum MD-force = "
+	    << f_max<< std::endl;
   //  
   return force;
 }

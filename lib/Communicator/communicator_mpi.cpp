@@ -37,8 +37,9 @@ void Communicator::setup(){
 
   //Check number of nodes
   if (NPEx*NPEy*NPEz*NPEt != Nproc_) {
-    if(my_rank_==0) cerr << "Number of nodes provided is different from MPI environment ["
-			 << Nproc_<<"]\n"; 
+    if(my_rank_==0) 
+      cerr << "Number of nodes provided is different from MPI environment ["
+	   << Nproc_<<"]\n"; 
     abort();
   }
 
@@ -46,7 +47,6 @@ void Communicator::setup(){
   int py = (nodeid/NPEx) %NPEy;
   int pz = (nodeid/(NPEx*NPEy)) %NPEz;
   int pt = (nodeid/(NPEx*NPEy*NPEz)) %NPEt;
-
 
   ipe_[0] = px;
   ipe_[1] = py;
@@ -62,7 +62,6 @@ void Communicator::setup(){
   nd_dn_[1] = px +((py-1+NPEy)%NPEy)*NPEx +pz*NPEx*NPEy +pt*NPEx*NPEy*NPEz;
   nd_dn_[2] = px +py*NPEx +((pz-1+NPEz)%NPEz)*NPEx*NPEy +pt*NPEx*NPEy*NPEz;
   nd_dn_[3] = px +py*NPEx +pz*NPEx*NPEy +((pt-1+NPEt)%NPEt)*NPEx*NPEy*NPEz;
-
 
   if(my_rank_==0) cout << "Communicator initialized using MPI with "
 		       << Nproc_ << " processes.\n";
@@ -157,7 +156,6 @@ transfer_bk(valarray<double>& bin,const valarray<double>& data,
   MPIErr = MPI_Type_create_indexed_block(index.size(),1,
      				&(const_cast<vector<int>& >(index))[0],
      				MPI_DOUBLE,&subarray); 
-
   MPI_Type_commit(&subarray);
 
   int p_send = nd_up_[dir];
@@ -172,8 +170,6 @@ transfer_bk(valarray<double>& bin,const valarray<double>& data,
 	       MPI_COMM_WORLD,&status);
 
   MPI_Type_free (&subarray);
-
-
 }
 
 void Communicator::send_1to1(double *bin,double *data,int size,
@@ -213,6 +209,27 @@ void Communicator::broadcast(int size, int &data, int sender){
 
 void Communicator::broadcast(int size, double &data, int sender){
   MPI_Bcast( &data, size, MPI_DOUBLE, sender, MPI_COMM_WORLD );
+}
+
+int Communicator::reduce_max(double& val,int& idx,int size){
+  /*! size is the maximum value of idx */
+  VaId vi = {val, my_rank_*size +idx};
+  VaId vo;
+  MPI_Reduce(&vi,&vo,1,MPI_DOUBLE_INT,MPI_MAXLOC,0,MPI_COMM_WORLD);
+  val = vo.value;
+  idx = vo.index%size;
+  return vo.index/size;
+}
+
+int Communicator::reduce_min(double& val,int& idx,int size){
+  /*! size is the maximum value of idx */
+  
+  VaId vi = {val, my_rank_*size +idx};
+  VaId vo;
+  MPI_Reduce(&vi,&vo,1,MPI_DOUBLE_INT,MPI_MINLOC,0,MPI_COMM_WORLD);
+  val = vo.value;
+  idx = vo.index%size;
+  return vo.index/size;
 }
 
 int Communicator::pprintf(const char* format ...){
