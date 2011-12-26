@@ -10,7 +10,7 @@
 
 #include "quark_propagators.hpp"
 #include "Dirac_ops/dirac.h"
-#include "Solver/solver.h"
+#include "Solver/solver.hpp"
 #include "Measurements/FermionicM/source.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"

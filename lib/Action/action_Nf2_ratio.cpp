@@ -10,18 +10,20 @@
 #include <typeinfo> 
 
 Field Action_Nf2_ratio::DdagD1_inv(const Field& src){
-  int Nconv;
-  double diff;
   Field sol(fsize_);
-  slv1_->solve(sol,src,diff,Nconv);
+  SolverOutput monitor = slv1_->solve(sol,src);
+#if VERBOSITY > 0
+  monitor.print();
+#endif
   return sol;
 }
 
 Field Action_Nf2_ratio::DdagD2_inv(const Field& src){
-  int Nconv;
-  double diff;
   Field sol(fsize_);
-  slv2_->solve(sol,src,diff,Nconv);
+  SolverOutput monitor = slv2_->solve(sol,src);
+#if VERBOSITY > 0
+  monitor.print();
+#endif
   return sol;
 }
 

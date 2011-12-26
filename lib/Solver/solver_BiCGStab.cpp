@@ -10,17 +10,24 @@
 using CommunicatorItems::pprintf;
 using namespace std;
 
-void Solver_BiCGStab::
-solve(Field& xq, const Field& b, double& diff, int& Nconv)const{ 
+SolverOutput Solver_BiCGStab::
+solve(Field& xq, const Field& b)const{ 
   using namespace FieldExpression;
 
-  if(Communicator::instance()->nodeid()==0)
-    cout<<"BiCGStab solver start"<<endl;
+#if VERBOSITY > 1
+  CCIO::header("BiCGStab solver start");
+#endif
+  SolverOutput Out;
+  Out.Msg = "BiCGStab solver";
+  Out.Iterations = -1;
+
 
   double bnorm = b.norm();
   double snorm = 1.0/bnorm;
-  if(Communicator::instance()->nodeid()==0) cout<<"b.norm()="<<bnorm<<endl;
-  Nconv = -1;
+
+#if VERBOSITY > 1
+  CCIO::cout<<"b.norm()="<<bnorm<<std::endl;
+#endif
 
   Field x = b;
   Field p(b.size());
@@ -35,23 +42,28 @@ solve(Field& xq, const Field& b, double& diff, int& Nconv)const{
   double alp = 1.0;
   double omg = 1.0;
 
-  pprintf("solve_init");
-  pprintf("  init: %22.15e\n",rr*snorm);
-
+#if VERBOSITY > 1
+  CCIO::cout << " Init: "<< rr*snorm << std::endl;
+#endif
+  
   for(int it = 0; it < Params.MaxIter; it++){
     solve_step(r,p,x,v,rr,rho,alp,omg);
-    pprintf("%6d  %22.15e\n",it,rr*snorm);
-
+#if VERBOSITY > 1
+    CCIO::cout<< std::setw(5)<< "["<<it<<"] "
+	      << std::setw(20) << rr*snorm<< "\n";
+#endif
     if(rr*snorm < Params.GoalPrecision){
-      Nconv = it;
+      Out.Iterations = it;
       break;
     }
   }
-  if(Nconv == -1) throw "Not converged.";
+  if(Out.Iterations == -1) throw "Not converged.";
 
   p = opr_->mult(x) -b;
-  diff = p.norm();
+  Out.diff = p.norm();
   xq = x;
+  
+  return Out;
 }
 
 void Solver_BiCGStab::

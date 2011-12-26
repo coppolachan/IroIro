@@ -4,6 +4,9 @@
  * @brief Definition of Solver_CG class member functions
  *
  */
+
+#include <iostream>
+#include <iomanip>
 #include "Communicator/communicator.h"
 #include "solver_CG.h"
 using CommunicatorItems::pprintf;
@@ -15,16 +18,16 @@ using namespace std;
  *
  * @param xq  Output vector
  * @param b   Input vector
- * @param diff  Final residual
- * @param Nconv  Number of iterations for convergence
  */
-void Solver_CG::solve(Field& xq, 
-		      const Field& b, 
-		      double& diff, 
-		      int& Nconv) const{ 
-  //if(nodeid_==0) cout << "CG solver start" << endl;
-  Nconv = -1;
-
+SolverOutput Solver_CG::solve(Field& xq, 
+		      const Field& b) const{ 
+#if VERBOSITY>1
+  CCIO::header("CG solver start");
+#endif
+  SolverOutput Out;
+  Out.Msg = "CG solver";
+  Out.Iterations = -1;
+  
   Field x = b;//initial condition
   Field r = b;//initial residual
   r -= opr_->mult(x);
@@ -33,25 +36,30 @@ void Solver_CG::solve(Field& xq,
   double snorm = b.norm();
   snorm = 1.0/snorm;
 
-  //  if(Communicator::instance()->nodeid()==0)cout<<"snorm="<<snorm<<endl;
-  //if(nodeid_==0) pprintf("  init: %22.15e\n",rr*snorm);
-
+#if VERBOSITY>1
+  CCIO::cout<<" Snorm = "<< snorm << endl;
+  CCIO::cout<<" Init  = "<< rr*snorm<< endl;
+#endif
   for(int it = 0; it < Params.MaxIter; ++it){
     solve_step(r,p,x,rr);
-    //if(nodeid_==0) pprintf("%6d  %22.15e\n",it,rr*snorm);
-    
+#if VERBOSITY>1
+    CCIO::cout<< std::setw(5)<< "["<<it<<"] "
+	      << std::setw(20) << rr*snorm<< "\n";
+#endif    
     if(rr*snorm < Params.GoalPrecision){
-      Nconv = it;
+      Out.Iterations = it;
       break;
     }
   }
-  if(Nconv == -1) throw "Not converged.";
+  if(Out.Iterations == -1) throw "Not converged.";
 
   p = opr_->mult(x);
   p -= b;
-  diff = p.norm();
+  Out.diff = p.norm();
 
   xq = x;
+
+  return Out;
 }
 
 inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
@@ -78,15 +86,16 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
  *
  * @param xq  Output vector
  * @param b   Input vector
- * @param diff  Final residual
- * @param Nconv  Number of iterations for convergence
  */
-void Solver_CG_Precondition::solve(Field& xq, 
-				   const Field& b, 
-				   double& diff, 
-				   int& Nconv) const{ 
-  if(nodeid_==0) cout << "CG solver Preconditioned start" << endl;
-  Nconv = -1;
+SolverOutput Solver_CG_Precondition::solve(Field& xq, 
+				   const Field& b) const{ 
+
+#if VERBOSITY > 1
+  CCIO::header("CG solver Preconditioned start");
+#endif
+  SolverOutput Out;
+  Out.Msg = "CG solver Preconditioned";
+  Out.Iterations = -1;
   
   Field x = b;//starting guess
   Field r = b;
@@ -96,25 +105,30 @@ void Solver_CG_Precondition::solve(Field& xq,
   double snorm = b.norm();
   snorm = 1.0/snorm;
 
-  if(Communicator::instance()->nodeid()==0)cout<<"snorm="<<snorm<<endl;
-  if(nodeid_==0) pprintf("  init: %22.15e\n",rr*snorm);
+#if VERBOSITY > 1
+  CCIO::cout<<" Snorm = "<<snorm<<std::endl;
+  CCIO::cout<<" Init  = "<< rr*snorm << std::endl;
+#endif
 
   for(int it = 0; it < Params.MaxIter; it++){
     solve_step(r,p,x,rr);
-    if(nodeid_==0) pprintf("%6d  %22.15e\n",it,rr*snorm);
-    
+#if VERBOSITY > 1
+    CCIO::cout<< std::setw(5)<< "["<<it<<"] "<< std::setw(20) << rr*snorm<< "\n";
+#endif    
+  
     if(rr*snorm < Params.GoalPrecision){
-      Nconv = it;
+      Out.Iterations = it;
       break;
     }
   }
-  if(Nconv == -1) throw "Not converged.";
+  if(Out.Iterations == -1) throw "Not converged.";
 
   p = opr_->mult_prec(x);
   p -= b;
-  diff = p.norm();
+  Out.diff = p.norm();
 
   xq = x;
+  return Out;
 }
 
 inline void Solver_CG_Precondition::solve_step(Field& r,Field& p,Field& x,double& rr)const {

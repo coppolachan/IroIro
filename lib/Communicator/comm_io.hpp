@@ -10,6 +10,7 @@
 
 #include <istream>
 #include <ostream>
+#include <iomanip>
 #include <string>
 #include <vector>
 
@@ -114,6 +115,10 @@ public:
 
   //! Hook for manipulators
   StandardOutputStream& operator<<(std::ostream& (*op)(std::ostream&));
+  StandardOutputStream& operator<<(StandardOutputStream& (*op)(StandardOutputStream&));
+  friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Setw f);
+  friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Setprecision f);
+
 
   // Overloaded output functions
   StandardOutputStream& operator<<(const std::string& output);
@@ -164,7 +169,10 @@ namespace CCIO{
   extern StandardInputStream  cin;
   extern StandardOutputStream cout;
   extern StandardOutputStream cerr;
+  void header(std::string name);
 }
+
+
 
 #endif //COMM_IO_H_
 

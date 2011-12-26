@@ -23,6 +23,15 @@ namespace CCIO
   StandardInputStream  cin;
   StandardOutputStream cout;
   StandardOutputStream cerr;
+
+  void header(std::string name){
+    cout << "\n--------------------------------\n";
+    cout << name;
+    cout << "\n--------------------------------\n";
+
+  }
+
+
 }
 
 
@@ -179,6 +188,23 @@ StandardOutputStream& StandardOutputStream::operator<<(std::ostream& (*op)(std::
 }
 
 
+  
+
+  StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Setw f) {
+    if (Communicator::instance()->primaryNode()) 
+      obj.getOstream() << f;
+    
+    return obj;
+  }
+  
+  StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Setprecision f) {
+    if (Communicator::instance()->primaryNode()) 
+      obj.getOstream() << f;
+    
+    return obj;
+  }
+
+
 StandardOutputStream& StandardOutputStream::operator<<(const std::string& output)
 {
 
@@ -266,6 +292,7 @@ StandardOutputStream& StandardOutputStream::operator<<(long double output)
 {
   return writePrimitive<long double>(output);
 }
+
 
 StandardOutputStream& StandardOutputStream::operator<<(bool output)
 {

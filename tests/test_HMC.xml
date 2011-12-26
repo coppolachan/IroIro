@@ -4,7 +4,7 @@
   <!-- Geometry parameters here -->
   <Geometry>
     <Lattice>8 8 8 8</Lattice>
-    <Nodes>1 1 2 2</Nodes>
+    <Nodes>1 1 1 1</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
   </Geometry>
@@ -12,7 +12,7 @@
   <Configuration Type="Binary">final_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>30</Nsweeps>
+    <Nsweeps>2</Nsweeps>
     <Thermalization>0</Thermalization>
 
     <RandomNumberGen name="Mersenne Twister">
@@ -31,7 +31,7 @@
           <multiplier>1</multiplier>
           <Action type="Fermion" name="TwoFlavors">
             <Kernel name="DiracWilson">
-              <mass>0.875</mass>
+              <mass>-0.875</mass>
             </Kernel>
             <Solver type="Solver_CG">
               <MaxIter>1000</MaxIter>

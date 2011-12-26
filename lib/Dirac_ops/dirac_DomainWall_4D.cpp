@@ -8,42 +8,45 @@
 #include "dirac_DomainWall_4D.hpp"
 
 const Field Dirac_optimalDomainWall_4D::mult(const Field& f)const{
-  int Nconv;
-  double diff;
   Field sol5(Dodw_.fsize());
   
-  slv_pv_->solve(sol5,Dpv_.mult_dag_prec(Dodw_.mult_prec(Dodw_.Bproj_dag(f))),
-                 diff, Nconv);
+  SolverOutput monitor = slv_pv_->solve(sol5,
+					Dpv_.mult_dag_prec(Dodw_.mult_prec(Dodw_.Bproj_dag(f))));
+#if VERBOSITY > 0
+  monitor.print();
+#endif
   return Dodw_.Bproj(sol5);
 }
 
 const Field Dirac_optimalDomainWall_4D::mult_dag(const Field& f)const{
-  int Nconv;
-  double diff;
   Field sol5(Dodw_.fsize());
 
-  slv_pv_->solve(sol5,Dodw_.Bproj_dag(f),diff, Nconv);
+  SolverOutput monitor = slv_pv_->solve(sol5,Dodw_.Bproj_dag(f));
+#if VERBOSITY > 0
+  monitor.print();
+#endif
   return Dodw_.Bproj(Dodw_.mult_dag_prec(Dpv_.mult(sol5)));
 }
 
 
 const Field Dirac_optimalDomainWall_4D::mult_inv(const Field& f)const{
-  int Nconv;
-  double diff;
   Field sol5(Dodw_.fsize());
   //prec version to precondition the source
-  slv_odw_->solve(sol5,Dodw_.mult_dag_prec(Dpv_.mult_prec(Dodw_.Bproj_dag(f))),
-		 diff,Nconv);
+  SolverOutput monitor =slv_odw_->solve(sol5,Dodw_.mult_dag_prec(Dpv_.mult_prec(Dodw_.Bproj_dag(f))));
+#if VERBOSITY > 0
+  monitor.print();
+#endif
   return Dodw_.Bproj(sol5);
 }
 
 
 const Field Dirac_optimalDomainWall_4D::mult_dag_inv(const Field& f)const{
-  int Nconv;
-  double diff;
   Field sol5(Dodw_.fsize());
 
-  slv_odw_->solve(sol5,Dodw_.Bproj_dag(f),diff,Nconv);
+  SolverOutput monitor =slv_odw_->solve(sol5,Dodw_.Bproj_dag(f));
+#if VERBOSITY > 0
+  monitor.print();
+#endif
   return Dodw_.Bproj(Dpv_.mult_dag_prec(Dodw_.mult_prec(sol5)));
 }
 

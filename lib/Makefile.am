@@ -25,7 +25,8 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		../tests/test_HMC_noFactories.cpp
 
 
-libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
+libcommcode_a_SOURCES = Main/commonPrms.cpp		\
+		$(COMMUNICATOR_SRCS)     	        \
 	 	Action/action_gauge.cpp 		\
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\
@@ -48,6 +49,7 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Solver/solver_CG.cpp			\
 		Solver/solver_Factory.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
+		Solver/solver.cpp			\
 		HMC/hmcGeneral.cpp			\
 		HMC/hmcPrms.cpp				\
 		HMC/mdExec.cpp		        	\
@@ -59,7 +61,6 @@ libcommcode_a_SOURCES = $(COMMUNICATOR_SRCS)            \
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
-		Main/commonPrms.cpp			\
 		Main/Geometry/siteIndex.cpp		\
 		Main/Geometry/siteIndex_eo.cpp		\
 		Main/gaugeConf.cpp			\
@@ -143,7 +144,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.h		\
-			Solver/solver.h				\
+			Solver/solver.hpp			\
 			Solver/solver_CG.h			\
 			Solver/multiShiftSolver_CG.hpp		\
 			Solver/multiShiftSolver.hpp		\

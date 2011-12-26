@@ -18,26 +18,24 @@ using namespace Format;
 void Qprop_EvenOdd::calc(prop_t& xq,Source& src) const{
 
   xq.clear();
-  int Nconv;
-  double diff;
+  SolverOutput monitor;
   Field ye(fsize_);
   
   for(int s=0; s<Nd_;++s){
     for(int c=0; c<Nc_;++c){
  
-      if(Communicator::instance()->nodeid()==0) 
-	CCIO::cout<<" Dirac index ="<<s<<" Color ="<<c<<std::endl;
+      CCIO::cout<<" Dirac index ="<<s<<" Color ="<<c<<std::endl;
 
       Field be(src.mksrc(idx_eo_->esec(),s,c));
       Field bo(src.mksrc(idx_eo_->osec(),s,c));
       
       be -= D_->mult_eo(D_->mult_oo_inv(bo));
 
-      slv_->solve(ye,D_->mult_dag(be),diff,Nconv);
-
-      CCIO::cout<<"s="<<s<<" c="<<c
-		<<" Nconv= "<<Nconv 
-		<<" diff= "<<diff<<std::endl;     
+      monitor = slv_->solve(ye,D_->mult_dag(be));
+#if VERBOSITY > 0
+      CCIO::cout<<"s="<<s<<" c="<<c<< std::endl;
+      monitor.print();
+#endif
 
       bo -= D_->mult_oo_inv(D_->mult_oe(ye));
 
@@ -58,8 +56,7 @@ void Qprop_EvenOdd::calc(prop_t& xq,Source& src, int Nd, int Nc) const{};
 void Qprop_EvenOdd::calc(prop_t& xq,const prop_t& prp)const{
 
   xq.clear();
-  int Nconv;
-  double diff;
+  SolverOutput monitor;
   Field ye(fsize_);
 
   Format::Format_F ff(2*fsize_);
@@ -74,31 +71,22 @@ void Qprop_EvenOdd::calc(prop_t& xq,const prop_t& prp)const{
   for(int s=0; s<Nd_;++s){
     for(int c=0; c<Nc_;++c){
 
-      /*      
-      Field be(fsize_);
-      Field bo(fsize_);
-      for(int i=0;i<fsize_;++i){
-	be.set(i, prp[Nc_*s+c][esub[i]]);
-	bo.set(i, prp[Nc_*s+c][osub[i]]);
-      }
-      */
       Field be(prp[Nc_*s+c][esub]);
       Field bo(prp[Nc_*s+c][osub]);
 
       be -= D_->mult_eo(D_->mult_oo_inv(bo));
 
-      slv_->solve(ye,D_->mult_dag(be),diff,Nconv);
-
-      CCIO::cout<<"s="<<s<<" c="<<c
-		<<" Nconv= "<<Nconv 
-		<<" diff= "<<diff<<std::endl;     
+      monitor = slv_->solve(ye,D_->mult_dag(be));
+#if VERBOSITY > 0
+      CCIO::cout<<"s="<<s<<" c="<<c<< std::endl;
+      monitor.print();
+#endif
 
       bo -= D_->mult_oo_inv(D_->mult_oe(ye));
 
       Field sol(2*fsize_);
 
       for(int hs=0; hs<fsize_;++hs){
-	//CCIO::cout<<"hs="<<hs<<endl;
 	sol.set(ff.islice(idx_eo_->esec(hs)), ye[ff.islice(hs)]);
 	sol.set(ff.islice(idx_eo_->osec(hs)), bo[ff.islice(hs)]);
       }

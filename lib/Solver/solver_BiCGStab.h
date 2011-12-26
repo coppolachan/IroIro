@@ -10,7 +10,7 @@
 #include <typeinfo>
 #include "include/pugi_interface.h"
 #include "include/fopr.h"
-#include "Solver/solver.h"
+#include "Solver/solver.hpp"
 
 
 
@@ -68,10 +68,8 @@ public:
     return  (typeid(*opr_) == typeid(Fopr_DdagD));
   }
 
-  void solve(Field& solution, 
-	     const Field& source, 
-	     double& diff, 
-	     int& iterations) const;
+  SolverOutput solve(Field& solution, 
+		     const Field& source) const;
 };
 
 #endif    

@@ -10,7 +10,7 @@
 #include <typeinfo>
 #include "include/pugi_interface.h"
 #include "include/fopr.h"
-#include "solver.h"
+#include "solver.hpp"
 
 /*!
  * @brief Structure containing parameters for the Solver_CG class
@@ -60,8 +60,7 @@ public:
 
   ~Solver_CG(){}
 
-  void solve(Field& solution, const Field& source, 
-	     double& diff, int& Nconv) const;
+  SolverOutput solve(Field& solution, const Field& source) const;
 
   bool check_DdagD() const {
     return (typeid(*opr_) == typeid(Fopr_DdagD));
@@ -99,8 +98,7 @@ public:
   
   ~Solver_CG_Precondition(){}
   
-  void solve(Field& solution, const Field& source, 
-	     double& diff, int& Nconv) const;
+  SolverOutput solve(Field& solution, const Field& source) const;
   
   bool check_DdagD() const  {
     return  (typeid(*opr_) == typeid(Fopr_DdagD_Precondition));

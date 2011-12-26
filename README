@@ -32,3 +32,15 @@ Run with mpirun -np #nodes #executable
 Testing and debugging
 =====================
 valgrind --leak-check=yes --log-file=valgrind.log ./hmc
+
+
+Verbosity
+=========
+
+In order to set the verbosity of executable files during runtime
+use the variable code_verbosity in configuration.
+
+Example
+./configure code_verbosity=5
+
+set maximum verbosity. Allowed values from 0 to 5. Default is 1.

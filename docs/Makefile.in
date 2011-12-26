@@ -116,6 +116,7 @@ build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
 builddir = @builddir@
+code_verbosity = @code_verbosity@
 datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@

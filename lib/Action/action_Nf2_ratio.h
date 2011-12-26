@@ -10,7 +10,7 @@
 #include "Tools/randNum_MP.h"
 #include "Action/action.h"
 #include "Dirac_ops/dirac.h"
-#include "Solver/solver.h"
+#include "Solver/solver.hpp"
 
 
 /*!

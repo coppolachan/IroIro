@@ -7,6 +7,8 @@
 #ifndef ACTION_INCLUDED
 #define ACTION_INCLUDED
 
+//#include "config.h" //definition of VERBOSITY
+
 class Field;
 class RandNum;
 

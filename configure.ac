@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([CommonCode++], [0.6.6], [cossu@post.kek.jp])
+AC_INIT([CommonCode++], [0.7], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 AC_CONFIG_HEADERS([include/config.h])
@@ -43,7 +43,8 @@ AC_TYPE_SIZE_T
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([sqrt])
 
-# MPI communicator
+###################################################################
+# MPI communicator flags
      AC_ARG_ENABLE([mpi],
      [  --enable-mpi    Turn on mpi communicator routines],
      [case "${enableval}" in
@@ -63,6 +64,8 @@ AC_CHECK_FUNCS([sqrt])
      AM_CONDITIONAL([USE_MPI], [(test x$mpihitachi = xtrue)||(test x$mpi = xtrue)])
      AM_CONDITIONAL([HITACHI], [test x$mpihitachi = xtrue])
 
+
+
 if [ $mpi || $mpihitachi ]
 then
 
@@ -75,6 +78,7 @@ then
 AC_DEFINE([BIG_ENDIAN],[],[Using Big Endian machine type])
 AC_DEFINE([HITACHISR16K],[],[Specific tweaks for Hitachi SR16K])
 fi
+###################################################################
 # Checks for doxygen support
 AC_CHECK_PROGS([DOXYGEN], [doxygen])
 if test -z "$DOXYGEN";
@@ -83,6 +87,7 @@ fi
 
 AM_CONDITIONAL([HAVE_DOXYGEN],
 [test -n "$DOXYGEN"])AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/doxy.cfg])])
+###################################################################
 
 if [ $mpihitachi ] 
 then
@@ -90,6 +95,13 @@ ARFLAGS="-X64 -c -ru"
 else
 ARFLAGS="cru"
 fi
+
+# Verbosity level - default level is 1
+AC_ARG_VAR(code_verbosity, Sets code verbosity level 0..5)
+AC_DEFINE_UNQUOTED([VERBOSITY],[${code_verbosity=1}],[Code Verbosity level])
+###################################################################
+
+
 
 AC_SUBST(ARFLAGS)
 

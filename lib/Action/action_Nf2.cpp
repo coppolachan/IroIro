@@ -9,10 +9,11 @@
 #include "include/format_F.h"
 
 Field Action_Nf2::DdagD_inv(const Field& src){
-  int Nconv;
-  double diff;
   Field sol(fsize_);
-  slv_->solve(sol,src,diff,Nconv);
+  SolverOutput monitor = slv_->solve(sol,src);
+#if VERBOSITY > 0
+  monitor.print();
+#endif
   return sol;
 }
 

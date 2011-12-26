@@ -121,11 +121,11 @@ int Test_optimalDomainWall::run(XML::node node){
   CCIO::cout<<"phi_.norm="<<sqrt(phinorm)<<std::endl;
   CCIO::cout<<"typeid(D1_)="<<typeid(Ddwf1).name()<<std::endl;
 
-  int Nconv;
+  SolverOutput monitor;
   double diff;
   Field sol(Ddwf1.fsize());
-  SolvR2.solve(sol,D1phi,diff,Nconv);
-
+  monitor = SolvR2.solve(sol,D1phi);
+  monitor.print();
   ///////////////
 
   

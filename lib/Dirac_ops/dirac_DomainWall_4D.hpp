@@ -8,7 +8,7 @@
 #define DIRAC_OPTIMALDOMAINWALL_4D_INCLUDED
 
 #include "Dirac_ops/dirac_DomainWall.hpp"
-#include "Solver/solver.h"
+#include "Solver/solver.hpp"
 #include "Solver/solver_BiCGStab.h"
 #include "include/fopr.h"
 
