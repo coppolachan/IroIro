@@ -76,5 +76,5 @@ double Communicator::reduce_sum(double a){ return a;}
 void Communicator::sync(){}
 void Communicator::broadcast(int size, int &data, int sender){}
 void Communicator::broadcast(int size, double &data, int sender){}
-
-
+int Communicator::reduce_max(double& val,int& idx,int size){return 0;}
+int Communicator::reduce_min(double& val,int& idx,int size){return 0;}

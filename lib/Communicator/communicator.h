@@ -30,6 +30,11 @@ private:
   }
   Communicator(const Communicator&){}
 
+  struct VaId{
+    double value;
+    int index;
+  };
+
 public:
   ~Communicator();
   static Communicator* instance();
@@ -68,6 +73,9 @@ public:
 		 int p_to, int p_from, int tag);
   void send_1to1(std::valarray<double>& bin, const std::valarray<double>& data,
 		 int size, int p_to, int p_from, int tag);
+
+  int reduce_max(double& val,int& idx,int size);
+  int reduce_min(double& val,int& idx,int size);
 
   double get_time(){return 0.0;};
 

@@ -84,9 +84,37 @@ public:
     return b/c;
   }
 
-  std::vector<double> max_element() const{}
+  double max_element() const{
+    std::valarray<double> fab = field_*field_;
+    double max= fab[0]+fab[1];
+    int idx = 0;
+    for(int i=1; i< field_.size()/2; ++i){
 
+      double tmp = fab[2*i] +fab[2*i+1];
+      if(max > tmp){
+	max = tmp;
+	idx = i;
+      }
+    }	
+    Communicator::instance()->reduce_max(max,idx,field_.size()/2);
+    return max;
+  }
 
+  double min_element() const{
+    std::valarray<double> fab = field_*field_;
+    double min= fab[0]+fab[1];
+    int idx = 0;
+    for(int i=1; i< field_.size()/2; ++i){
+
+      double tmp = fab[2*i] +fab[2*i+1];
+      if(min < tmp){
+	min = tmp;
+	idx = i;
+      }
+    }	
+    Communicator::instance()->reduce_min(min,idx,field_.size()/2);
+    return min;
+  }
   
   template<typename T>
   Field& operator=(const T& rhs){
