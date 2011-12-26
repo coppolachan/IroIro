@@ -435,7 +435,7 @@ namespace DomainWallFermions {
       double kappaprime2 = kprime * kprime;
       omegas[ii] = (1.0/lambda_min)* sqrt(1.0-kappaprime2*sn2);
     }
-#ifdef VERBOSITY>2
+#if VERBOSITY>2
     for( int ii=0; ii<Ns; ++ii) printf("%24.16E\n", omegas[ii] );
 #endif
     return omegas;

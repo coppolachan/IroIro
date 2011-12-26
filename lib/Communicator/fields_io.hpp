@@ -168,6 +168,9 @@ namespace CCIO {
 	    delete[] storage;
 	  }
 	}
+      } else {
+	std::cout<< "Error in opening file [" << filename << "]\n";
+	abort();
       }
       Inputfile.close();
     }

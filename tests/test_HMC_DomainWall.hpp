@@ -2,7 +2,7 @@
 /*!
  * @file test_HMC_DomainWall.hpp
  *
- * @brief Test for %HMC update classes
+ * @brief Test for %HMC with Domain Wall fermions update classes
  *
  * @author Jun-Ichi Noaki
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>

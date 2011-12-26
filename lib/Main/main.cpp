@@ -81,13 +81,14 @@ int main(){
   /*
   Test_Wilson test_Wilson(GaugeF);
   test_Wilson.run();
-  */
+  
 
   node HMC_node = top_node;
   descend(HMC_node, "HMC");
 
   Test_HMC_DomainWall test_HMC_DomainWall(GaugeF);
   test_HMC_DomainWall.run(HMC_node);
+  */
 
   return 0;
 }

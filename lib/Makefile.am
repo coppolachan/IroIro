@@ -77,7 +77,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		../tests/test_overlap.cpp			\
 		../tests/test_wilson_EvenOdd.cpp		\
 		../tests/test_DomainWall.cpp		\
-                ../tests/test_HMC_DomainWall.cpp        \
                 ../tests/test_HMC_EvenOdd.cpp
 
 mainprog_SOURCES = Main/main.cpp 				
@@ -172,7 +171,6 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			../tests/test_overlap.hpp		\
 			../tests/test_wilson_EvenOdd.hpp	\
 			../tests/test_Gauge.hpp			\
-                        ../tests/test_HMC_DomainWall.hpp        \
                         ../tests/test_HMC_EvenOdd.hpp           \
 			../tests/tests.hpp                      
 

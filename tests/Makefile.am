@@ -10,14 +10,16 @@ EXTRA_DIST = 	test_HMC.xml	 \
 		test_Wilson.xml	 \
 		test_ODWF.xml 	\
 		test_ResMass.xml \
-		test_IO.xml
+		test_IO.xml	\
+		test_HMC_DWF.xml
 
 test_PROGRAMS = test_HMC \
 		test_RNG \
 		test_Wilson \
 		test_ODWF \
 		test_ResMass \
-		test_IO
+		test_IO   \
+		test_HMC_DWF
 
 test_HMC_SOURCES = 	test_HMC.cpp \
 		  	testerHMC.cpp
@@ -36,8 +38,12 @@ test_ResMass_SOURCES = test_ResidualMass.cpp \
 test_IO_SOURCES = test_IO.cpp 	\
 		testerIO.cpp
 
+test_HMC_DWF_SOURCES = test_HMC_DomainWall.cpp \
+			testerHMC_DWF.cpp
+
 include_HEADERS =	test_HMC.hpp \
 			test_wilson.hpp \
 			test_DomainWall.hpp \
 			test_ResidualMass.hpp \
-			test_IO.hpp
+			test_IO.hpp	\
+			test_HMC_DomainWall.hpp

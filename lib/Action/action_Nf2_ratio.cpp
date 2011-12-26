@@ -7,7 +7,7 @@
 #include "action_Nf2_ratio.h"
 #include "include/format_F.h"
 #include "Communicator/comm_io.hpp"
-#include "include/macro.hpp"
+#include "include/macros.hpp"
 #include <typeinfo> 
 
 Field Action_Nf2_ratio::DdagD1_inv(const Field& src){

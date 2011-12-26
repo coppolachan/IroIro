@@ -2,7 +2,7 @@
 /*!
  * @file test_HMC_DomainWall.cpp
  *
- * @brief run() function for HMCgeneral class test
+ * @brief run() function for HMCgeneral class test (DWF case)
  *
  * @author Jun-Ichi Noaki
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>

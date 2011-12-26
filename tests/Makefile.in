@@ -38,7 +38,7 @@ host_triplet = @host@
 target_triplet = @target@
 test_PROGRAMS = test_HMC$(EXEEXT) test_RNG$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_ODWF$(EXEEXT) test_ResMass$(EXEEXT) \
-	test_IO$(EXEEXT)
+	test_IO$(EXEEXT) test_HMC_DWF$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -56,6 +56,11 @@ am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
 test_HMC_DEPENDENCIES =
+am_test_HMC_DWF_OBJECTS = test_HMC_DomainWall.$(OBJEXT) \
+	testerHMC_DWF.$(OBJEXT)
+test_HMC_DWF_OBJECTS = $(am_test_HMC_DWF_OBJECTS)
+test_HMC_DWF_LDADD = $(LDADD)
+test_HMC_DWF_DEPENDENCIES =
 am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
 test_IO_LDADD = $(LDADD)
@@ -86,11 +91,11 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(test_HMC_SOURCES) $(test_IO_SOURCES) $(test_ODWF_SOURCES) \
-	$(test_RNG_SOURCES) $(test_ResMass_SOURCES) \
-	$(test_Wilson_SOURCES)
-DIST_SOURCES = $(test_HMC_SOURCES) $(test_IO_SOURCES) \
-	$(test_ODWF_SOURCES) $(test_RNG_SOURCES) \
+SOURCES = $(test_HMC_SOURCES) $(test_HMC_DWF_SOURCES) \
+	$(test_IO_SOURCES) $(test_ODWF_SOURCES) $(test_RNG_SOURCES) \
+	$(test_ResMass_SOURCES) $(test_Wilson_SOURCES)
+DIST_SOURCES = $(test_HMC_SOURCES) $(test_HMC_DWF_SOURCES) \
+	$(test_IO_SOURCES) $(test_ODWF_SOURCES) $(test_RNG_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_Wilson_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -232,7 +237,8 @@ EXTRA_DIST = test_HMC.xml	 \
 		test_Wilson.xml	 \
 		test_ODWF.xml 	\
 		test_ResMass.xml \
-		test_IO.xml
+		test_IO.xml	\
+		test_HMC_DWF.xml
 
 test_HMC_SOURCES = test_HMC.cpp \
 		  	testerHMC.cpp
@@ -250,11 +256,15 @@ test_ResMass_SOURCES = test_ResidualMass.cpp \
 test_IO_SOURCES = test_IO.cpp 	\
 		testerIO.cpp
 
+test_HMC_DWF_SOURCES = test_HMC_DomainWall.cpp \
+			testerHMC_DWF.cpp
+
 include_HEADERS = test_HMC.hpp \
 			test_wilson.hpp \
 			test_DomainWall.hpp \
 			test_ResidualMass.hpp \
-			test_IO.hpp
+			test_IO.hpp	\
+			test_HMC_DomainWall.hpp
 
 all: all-am
 
@@ -330,6 +340,9 @@ clean-testPROGRAMS:
 test_HMC$(EXEEXT): $(test_HMC_OBJECTS) $(test_HMC_DEPENDENCIES) 
 	@rm -f test_HMC$(EXEEXT)
 	$(CXXLINK) $(test_HMC_OBJECTS) $(test_HMC_LDADD) $(LIBS)
+test_HMC_DWF$(EXEEXT): $(test_HMC_DWF_OBJECTS) $(test_HMC_DWF_DEPENDENCIES) 
+	@rm -f test_HMC_DWF$(EXEEXT)
+	$(CXXLINK) $(test_HMC_DWF_OBJECTS) $(test_HMC_DWF_LDADD) $(LIBS)
 test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES) 
 	@rm -f test_IO$(EXEEXT)
 	$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
@@ -354,11 +367,13 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RNG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ResidualMass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC_DWF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerODWF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerResMass.Po@am__quote@
