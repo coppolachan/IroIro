@@ -189,7 +189,7 @@ StandardOutputStream& StandardOutputStream::operator<<(std::ostream& (*op)(std::
 
 
   
-
+#ifndef HITACHISR16K
   StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Setw f) {
     if (Communicator::instance()->primaryNode()) 
       obj.getOstream() << f;
@@ -203,7 +203,7 @@ StandardOutputStream& StandardOutputStream::operator<<(std::ostream& (*op)(std::
     
     return obj;
   }
-
+  #endif
 
 StandardOutputStream& StandardOutputStream::operator<<(const std::string& output)
 {

@@ -65,6 +65,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Main/Geometry/siteIndex.cpp		\
 		Main/Geometry/siteIndex_eo.cpp		\
 		Main/gaugeConf.cpp			\
+		Main/commandline.cpp			\
 		PugiXML/pugixml.cpp			\
 		PugiXML/pugi_interface.cpp		\
 		Tools/randNum_MT19937.cpp		\
@@ -135,6 +136,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Main/Geometry/shiftField_eo.h		\
 			Main/Geometry/siteIndex_eo.h		\
 			Main/gaugeConf.hpp			\
+			Main/commandline.cpp			\
 			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_overlap_Zolotarev.h	\
 			Dirac_ops/dirac_wilson.h		\
