@@ -6,4 +6,10 @@
  *
  */
 
-int ReadCmdLine(int argc, char* argv[]);
+struct CommandOptions{
+  char* filename;
+  char* output;
+
+};
+
+CommandOptions ReadCmdLine(int argc, char* argv[]);
