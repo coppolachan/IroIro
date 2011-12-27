@@ -52,6 +52,12 @@ public:
 
   double calc_H(){return action_.calc_H();}
 
-  Field md_force(const void* vp = 0){ return action_.md_force(vp);}
+  Field md_force(const void* vp = 0){
+    Field force = action_.md_force(vp);
+#if VERBOSITY>0
+    monitor_force(force, "Action_Nf2_DomainWall");
+#endif
+
+  }
 };
 #endif
