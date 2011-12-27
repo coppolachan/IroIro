@@ -1,11 +1,11 @@
 /*! 
- * @file action_Clover_Nf2_EvenOdd.cpp
+ * @file action_Nf2_EvenOdd.cpp
  *
  * @brief Definition of methods of Action_Nf2_EvenOdd class
  *
  */
 
-#include "action_Clover_Nf2_EvenOdd.h"
+#include "action_Nf2_EvenOdd.h"
 
 Field Action_Nf2::DdagD_inv(const Field& src){
   int Nconv;
@@ -26,7 +26,13 @@ double Action_Nf2_EvenOdd::calc_H(){ return phi_*DdagD_inv(phi_);}
 
 Field Action_Nf2::md_force(const void*){
   Field eta = DdagD_inv(phi_);
-  return D_->md_force(eta,D_->mult(eta));
+  Field force = D_->md_force(eta,D_->mult(eta));
+
+  #if VERBOSITY>1
+  monitor_force(force, "Action_Nf2_EvenOdd");
+  #endif
+
+  return force;
 }
 
 

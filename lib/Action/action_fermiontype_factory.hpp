@@ -12,7 +12,9 @@
 
 #include "action_Factory.hpp"
 #include "Action/action_Nf2.h"
+#include "Action/action_Nf2_EvenOdd.h"
 #include "Action/action_Nf2_ratio.h"
+#include "Action/action_Nf2_DomainWall.h"
 #include "Solver/solver_CG.h"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -61,6 +63,8 @@ private:
   }
 };
 
+////////////////////////////////////////////////////
+
 class TwoFlavorRatioActionFactory : public FermionActionFactory {
   RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracNumObj;
   RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracDenomObj;
@@ -105,6 +109,74 @@ private:
 				Solver2.get()); 
   }
 };
+
+////////////////////////////////////////////////////
+
+class TwoFlavorDomainWallActionFactory : public FermionActionFactory {
+  RaiiFactoryObj<DiracDWF5dFactory> DiracObj;
+  RaiiFactoryObj<SolverOperatorFactory> SolverObj;
+  
+  RaiiFactoryObj<Dirac_optimalDomainWall> DWF5d_Kernel;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOp;
+  RaiiFactoryObj<Solver> Solv;
+  
+
+  const XML::node Action_node;
+
+public:
+  TwoFlavorDomainWallActionFactory(XML::node node)
+    :Action_node(node){
+    XML::descend(node,"Kernel5D");
+    DiracObj.save(new DiracDWF5dFactory(node));
+    XML::next_sibling(node,"Solver");
+    SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
+  }
+
+  ~TwoFlavorDomainWallActionFactory(){}
+private:
+  
+  Action_Nf2_DomainWall* getFermionAction(const Format::Format_G& Form,
+					  Field* const GaugeField){
+    DWF5d_Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
+    HermitianOp.save(new Fopr_DdagD_Precondition(DWF5d_Kernel.get()));
+    Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
+    return new Action_Nf2_DomainWall(GaugeField, DWF5d_Kernel.get(), Solv.get());
+  }
+};
+
+///////////////////////////////////////////////////////////////////////
+
+class TwoFlavorEvenOddActionFactory : public FermionActionFactory {
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracObj;
+  RaiiFactoryObj<SolverOperatorFactory> SolverObj;
+
+  RaiiFactoryObj<DiracWilsonLike> Kernel;
+  RaiiFactoryObj<Fopr_DdagD> HermitianOp;
+  RaiiFactoryObj<Solver> Solv;
+ 
+  const XML::node Action_node;
+
+public:
+  TwoFlavorEvenOddActionFactory(XML::node node)
+    :Action_node(node){
+    XML::descend(node,"Kernel");
+    DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
+    XML::next_sibling(node,"Solver");
+    SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
+  }
+
+  ~TwoFlavorEvenOddActionFactory(){}
+private:
+  
+  Action_Nf2_EvenOdd* getFermionAction(const Format::Format_G& Form,
+				       Field* const GaugeField){
+    Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
+    HermitianOp.save(new Fopr_DdagD(Kernel.get()));
+    Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
+    return new Action_Nf2_EvenOdd(GaugeField, Kernel.get(), Solv.get());
+  }
+};
+
 
 //Add new factories here
 //....
