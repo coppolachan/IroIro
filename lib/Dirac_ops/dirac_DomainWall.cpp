@@ -37,7 +37,7 @@ Dirac_optimalDomainWall_params(XML::node DWF_node){
       XML::read(ApproxNode, "lambda_max", lambda_max); 
       omega_ = DomainWallFermions::getOmega(N5dim_,lambda_min,lambda_max);
     }
-    if (!strcmp(Approx_name, "Tanh"))
+    if (!strcmp(Approx_name, "Tanh")) 
       for (int s=0; s<N5dim_; ++s) omega_[s] = 1.0;
   }else{
     CCIO::cout << "Error: missing [approximation] node or wrong entry" 
@@ -117,6 +117,9 @@ Dirac_optimalDomainWall::Dirac_optimalDomainWall(XML::node DWF_node,
     Params.dp_[s] = Params.bs_[s]*(4.0+M0_)+1.0;
     Params.dm_[s] = 1.0-Params.cs_[s]*(4.0+M0_);
   }
+#if VERBOSITY>4
+  CCIO::cout << "Created Dirac_optimalDomainWall" << std::endl;
+#endif
 }
 
 Dirac_optimalDomainWall::
@@ -310,6 +313,7 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
 
   Field t5(fsize_);
   t5 = f5;
+
   
   for(int s=0; s<N5_; ++s){
     Field dv = Dw_->mult_dag(get4d(t5,s));
@@ -317,9 +321,13 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
     set5d(w5,dv,s);
     dv *= (Params.cs_[s]/Params.bs_[s]);
     set5d(v5,dv,s);
+
+
+
   }
   w5 += t5;
   v5 -= t5;
+
 
   for(int s = 0; s < N5_; ++s){
     Field lpf = proj_p(get4d(v5,(s+1)%N5_));
@@ -329,6 +337,9 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
     add5d(w5,lpf,s);
     add5d(w5,lmf,s);
   }
+
+ 
+
   return w5;
 }
 

@@ -9,6 +9,8 @@
 #include <string>
 #include <string.h>
 #include "include/field.h"
+#include "include/macros.hpp"
+
 #include "include/pugi_interface.h"
 #include "Tools/EnumToString.hpp"
 
@@ -141,7 +143,13 @@ public:
      Precond_(choose_Preconditioner(Params.Preconditioning_))//cannot just copy
   {}
 
-  ~Dirac_optimalDomainWall(){  delete Precond_; }
+  ~Dirac_optimalDomainWall(){
+    #if VERBOSITY>4
+    CCIO::cout << "Deleting Dirac_optimalDomainWall" << std::endl;
+    #endif
+    
+    delete Precond_; 
+  }
   
   size_t f4size() const{ return f4size_;}
   size_t fsize()  const{ return fsize_; }
