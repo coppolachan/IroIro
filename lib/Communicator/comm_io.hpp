@@ -116,11 +116,14 @@ public:
   //! Hook for manipulators
   StandardOutputStream& operator<<(std::ostream& (*op)(std::ostream&));
   StandardOutputStream& operator<<(StandardOutputStream& (*op)(StandardOutputStream&));
-  #ifndef HITACHISR16K
+#ifndef HITACHISR16K
   friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Setw f);
   friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Setprecision f);
-  #endif
-
+#endif
+#ifdef HITACHISR16K //Hitachi hack
+  friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Smanip<int>);
+#endif
+  
   // Overloaded output functions
   StandardOutputStream& operator<<(const std::string& output);
   StandardOutputStream& operator<<(const char* output);
