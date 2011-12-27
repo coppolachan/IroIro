@@ -57,7 +57,7 @@ public:
 #if VERBOSITY>0
     monitor_force(force, "Action_Nf2_DomainWall");
 #endif
-
+    return force;
   }
 };
 #endif
