@@ -91,7 +91,7 @@ public:
     for(int i=1; i< field_.size()/2; ++i){
 
       double tmp = fab[2*i] +fab[2*i+1];
-      if(max > tmp){
+      if(max < tmp){
 	max = tmp;
 	idx = i;
       }
@@ -107,7 +107,7 @@ public:
     for(int i=1; i< field_.size()/2; ++i){
 
       double tmp = fab[2*i] +fab[2*i+1];
-      if(min < tmp){
+      if(min > tmp){
 	min = tmp;
 	idx = i;
       }
