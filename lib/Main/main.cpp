@@ -55,10 +55,8 @@ int main(){
   GaugeTest.run();
   */
 
-  /*
   Test_EigenModes_IRL EigenTest(GaugeF.U);
   EigenTest.run();
-  */
 
   /*
   Test_MultiShiftSolver MShift_SolverTest(GaugeF);
@@ -81,7 +79,6 @@ int main(){
   /*
   Test_Wilson test_Wilson(GaugeF);
   test_Wilson.run();
-  
 
   node HMC_node = top_node;
   descend(HMC_node, "HMC");
