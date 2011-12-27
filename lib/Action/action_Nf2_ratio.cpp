@@ -63,7 +63,7 @@ Field Action_Nf2_ratio::md_force(const void*){
   Field force= D1_->md_force(eta,D1_->mult(eta));
   force -= D2_->md_force(eta,phi_);
 
-#if VERBOSITY>1
+#if VERBOSITY>0
   monitor_force(force, "Action_Nf2_ratio");
 #endif
 

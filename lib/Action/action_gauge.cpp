@@ -60,7 +60,7 @@ Field ActionGaugeWilson::md_force(const void*){
   }
   force *= Params.beta/Nc_/2.0;
 
-#if VERBOSITY>1
+#if VERBOSITY>0
   monitor_force(force, "Action_Gauge");
 #endif
 

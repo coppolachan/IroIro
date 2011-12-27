@@ -186,24 +186,31 @@ StandardOutputStream& StandardOutputStream::operator<<(std::ostream& (*op)(std::
 
   return *this;
 }
-
-
   
 #ifndef HITACHISR16K
-  StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Setw f) {
-    if (Communicator::instance()->primaryNode()) 
-      obj.getOstream() << f;
-    
-    return obj;
-  }
+StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Setw f) {
+  if (Communicator::instance()->primaryNode()) 
+    obj.getOstream() << f;
   
-  StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Setprecision f) {
+  return obj;
+}
+
+StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Setprecision f) {
+  if (Communicator::instance()->primaryNode()) 
+    obj.getOstream() << f;
+  
+  return obj;
+}
+#endif
+#ifdef HITACHISR16K
+  StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Smanip<int> op){
     if (Communicator::instance()->primaryNode()) 
-      obj.getOstream() << f;
-    
-    return obj;
+      obj.getOstream() << op;
+    return obj; 
   }
-  #endif
+#endif
+
+
 
 StandardOutputStream& StandardOutputStream::operator<<(const std::string& output)
 {
