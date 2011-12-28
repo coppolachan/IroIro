@@ -62,10 +62,18 @@ public:
 
   double norm() const {
     double a = (field_*field_).sum();
-    //    std::cout<<"a="<<a<<std::endl;
     double b = Communicator::instance()->reduce_sum(a);
-    // if(Communicator::instance()->nodeid()==0) std::cout<<"b="<<b<<std::endl;
     return sqrt(b);
+  }
+
+  double average_abs() const{
+    double a = 0.0;
+    for(int i=0; i<field_.size()/2; ++i) 
+      a += sqrt(field_[2*i]*field_[2*i] +field_[2*i+1]*field_[2*i+1]);
+    
+    double b = Communicator::instance()->reduce_sum(a);
+    double c = Communicator::instance()->reduce_sum(field_.size()/2);
+    return b/c;
   }
 
   double average_real() const{

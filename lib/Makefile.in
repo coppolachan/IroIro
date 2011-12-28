@@ -377,6 +377,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 mainprog_SOURCES = Main/main.cpp 				
 mainprog_LDADD = libcommcode.a
 include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
+                        $(top_srcdir)/include/commandline.hpp           \
 			$(top_srcdir)/include/common_code.hpp		\
 			$(top_srcdir)/include/common_fields.hpp		\
 			$(top_srcdir)/include/config.h			\
