@@ -25,14 +25,13 @@ public:
     std::cerr<< "getSolver Error: not defined for Fopr_Herm_Precondition Operator" 
 	     << std::endl;
     abort();
-  };//for Prec like inverters
+  }//for Prec like inverters
 };
 
 /////////////////////////////////////////////////
 /*!
  @brief Concrete class for creating Conjugate Gradient Solver
  operator
- 
 */
 class SolverCGFactory : public SolverOperatorFactory {
   const XML::node Solver_node;
@@ -46,7 +45,7 @@ public:
 
   Solver_CG* getSolver(const Fopr_Herm_Precondition* HermitianOperator){
     return new Solver_CG(Solver_node, HermitianOperator);
-  };
+  }
 
   Solver_CG* getSolver(const Fopr* LinearOperator){
     std::cerr<< "getSolver Error: Solver_CG requires Hermitian Operator" 
@@ -64,27 +63,24 @@ class SolverCGPrecFactory : public SolverOperatorFactory {
   const XML::node Solver_node;
 
 public:
-  SolverCGPrecFactory(const XML::node node):
-    Solver_node(node){};
+  SolverCGPrecFactory(const XML::node node):Solver_node(node){}
 
   Solver_CG_Precondition* getSolver(const Fopr_Herm_Precondition* HermitianOperator){
     return new Solver_CG_Precondition(Solver_node, HermitianOperator);
-  };
+  }
 
   Solver_CG_Precondition* getSolver(const Fopr_Herm* HermitianOperator){
      std::cerr<< "getSolver Error: Solver_CG_Precondition requires Hermitian Preconditioned Operator" 
 	     << std::endl;
     abort();
-  };
+  }
   
   Solver_CG_Precondition* getSolver(const Fopr* LinearOperator){
     std::cerr<< "getSolver Error: Solver_CG_Precondition requires Hermitian Preconditioned Operator" 
 	     << std::endl;
     abort();
-  };
-
+  }
 };
-
 
 /*!
  @brief Concrete class for creating BiConjugate Gradient Stabilized Solver
@@ -103,12 +99,11 @@ public:
 
   Solver_BiCGStab* getSolver(const Fopr_Herm_Precondition* HermitianOperator){
     return new Solver_BiCGStab(Solver_node, HermitianOperator);
-  };
+  }
 
   Solver_BiCGStab* getSolver(const Fopr* LinearOperator){
     return new Solver_BiCGStab(Solver_node, LinearOperator);
   }
-
 };
 
 ///////////////////////////////////////////////////

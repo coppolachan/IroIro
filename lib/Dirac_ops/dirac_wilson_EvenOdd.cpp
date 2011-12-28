@@ -40,8 +40,11 @@ const Field Dirac_Wilson_EvenOdd::mult_dag(const Field& f) const{
 
 const Field Dirac_Wilson_EvenOdd::
 md_force(const Field& eta,const Field& zeta) const{
-  Field fce = Deo_.md_force(eta,Doe_.mult(zeta));
-  fce += Doe_.md_force(Deo_.mult_dag(eta),zeta);
+  //  Field fce = Deo_.md_force(eta,Doe_.mult(zeta));
+  //  fce += Doe_.md_force(Deo_.mult_dag(eta),zeta);
+
+  Field fce = Doe_.md_force(eta,Deo_.mult_dag(zeta));
+  fce += Deo_.md_force(Doe_.mult(eta),zeta);
   return -fce;
 }
 

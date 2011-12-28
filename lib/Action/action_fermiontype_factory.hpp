@@ -12,7 +12,7 @@
 
 #include "action_Factory.hpp"
 #include "Action/action_Nf2.h"
-#include "Action/action_Nf2_EvenOdd.h"
+//#include "Action/action_Nf2_EvenOdd.h"
 #include "Action/action_Nf2_ratio.h"
 #include "Action/action_Nf2_DomainWall.h"
 #include "Solver/solver_CG.h"
@@ -145,7 +145,7 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-
+/*
 class TwoFlavorEvenOddActionFactory : public FermionActionFactory {
   RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverObj;
@@ -176,7 +176,7 @@ private:
     return new Action_Nf2_EvenOdd(GaugeField, Kernel.get(), Solv.get());
   }
 };
-
+*/
 
 //Add new factories here
 //....

@@ -19,8 +19,8 @@ using namespace std;
  * @param xq  Output vector
  * @param b   Input vector
  */
-SolverOutput Solver_CG::solve(Field& xq, 
-		      const Field& b) const{ 
+SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{ 
+
 #if VERBOSITY>1
   CCIO::header("CG solver start");
 #endif
