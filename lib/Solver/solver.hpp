@@ -14,6 +14,7 @@ class Field;
 struct SolverOutput{
   double diff;   /*!< Residual */
   int Iterations; /*!< Iterations for convergence */
+  double timing;
   std::string Msg;
   void print(std::string Msg2="");
 };

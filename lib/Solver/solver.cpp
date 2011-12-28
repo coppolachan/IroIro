@@ -10,5 +10,7 @@
 #include "Communicator/comm_io.hpp"
 
 void SolverOutput::print(std::string FurtherMsg) {
-  CCIO::cout << "Solver ["<<Msg<<"]: Iterations = "<<Iterations<< " Residual = "<<diff<< std::endl;
+  CCIO::cout << "Solver ["<<Msg<<"]: Iterations = "<<Iterations
+	     << " Residual = "<<diff
+	     << " Timing(ms) = "<< timing << std::endl;
 }
