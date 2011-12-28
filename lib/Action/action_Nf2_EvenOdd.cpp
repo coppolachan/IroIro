@@ -11,7 +11,11 @@ Field Action_Nf2::DdagD_inv(const Field& src){
   int Nconv;
   double diff;
   Field sol(fsize_);
-  slv_->solve(sol,src,diff,Nconv);
+  SolverOutput monitor = slv_->solve(sol,src,diff,Nconv);
+#if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
+  monitor.print();
+#endif
+
   return sol;
 }
 
@@ -28,7 +32,7 @@ Field Action_Nf2::md_force(const void*){
   Field eta = DdagD_inv(phi_);
   Field force = D_->md_force(eta,D_->mult(eta));
 
-  #if VERBOSITY>0
+  #if VERBOSITY>=ACTION_VERB_LEVEL
   monitor_force(force, "Action_Nf2_EvenOdd");
   #endif
 

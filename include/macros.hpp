@@ -1,7 +1,7 @@
 /*!
  * @file macros.hpp
  *
- * @brief Include several useful macros 
+ * @brief Include several useful macros and definitions
  *
  */
 
@@ -12,5 +12,10 @@
 #include "config.h"
 #endif
 
+// Predefined verbosity levels
+#define ACTION_VERB_LEVEL 1
+#define SOLV_ITER_VERB_LEVEL 2
+#define SOLV_MONITOR_VERB_LEVEL 1
+#define DEBUG_VERB_LEVEL 5
 
 #endif

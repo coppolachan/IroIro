@@ -54,7 +54,7 @@ public:
 
   Field md_force(const void* vp = 0){
     Field force = action_.md_force(vp);
-#if VERBOSITY>0
+#if VERBOSITY>=ACTION_VERB_LEVEL
     monitor_force(force, "Action_Nf2_DomainWall");
 #endif
     return force;

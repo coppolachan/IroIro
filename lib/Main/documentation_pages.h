@@ -1,4 +1,64 @@
 /*!
+
+  @page configure Configuration and compilation
+ 
+ 
+  @section simple Simple compilation
+ 
+  
+  For a single core run just compile with
+  
+  @verbatim
+  ./configure
+  make @endverbatim
+  
+
+  @section AIX-XLC Compilation on AIX with XLC
+  
+  Use the following lines
+  
+  @verbatim
+  ./configure --enable-mpi-hitachi CXX=mpCC -host=rs6000-ibm-aix CXXFLAGS="-I/srhome/scqcd/cossu/gsl/include -qlanglvl=stdc99 -qrtti=type" LDFLAGS="-L/srhome/scqcd/cossu/gsl/lib"
+  gmake@endverbatim
+  
+  In order to override the default optimization level just add the 
+  
+  @verbatim
+  "-qoptimize=#"@endverbatim 
+  
+  option inside the \c CXXFLAGS (where # in between 1 - 5)
+ 
+
+  @section openMPI Compilation on MPI capable general machine
+ 
+  Use this on a general multicore machine with openMPI installed
+
+  @verbatim
+  ./configure --enable-mpi CXX=mpicxx.openmpi
+  @endverbatim
+
+  Run with <tt>mpirun -np #nodes #executable</tt>
+  
+  @section testing Testing and debugging
+
+  @verbatim
+  valgrind --leak-check=yes --log-file=valgrind.log #executable@endverbatim
+  
+  
+  @section verbosity Verbosity control 
+  
+  In order to set the verbosity of executable files during runtime use the variable \c code_verbosity in configuration.
+  
+  Example
+  @verbatim
+  ./configure code_verbosity=5@endverbatim
+  
+  sets maximum verbosity. Allowed values from 0 to 5. Default is 1.
+  
+
+*/
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*!
   @page Using XML input
 
   The code uses %XML files for controlling parameters and object creation.
@@ -262,7 +322,7 @@
 
      The \c \<%Kernel\> section refers to the Dirac kernel to be used inside the Domain Wall operator, in this case a Wilson operator with mass = -1.8 .
      
-     Sections \c \<%N5d\> \c \<%b\> \c \<%c\> and \c \<%mass\> provide respectively the length of the five dimension, the \f$b\f$ and \f$c\f$ parameters and the mass \f$m\f$ like in the following equation
+     Sections \c \<%N5d\> \c \<%b\> \c \<%c\> and \c \<%mass\> provide respectively the length of the fifth dimension, the \f$b\f$ and \f$c\f$ parameters and the mass \f$m\f$ like in the following equation
 
      \f[ insert-equation \f]
 

@@ -13,7 +13,7 @@
 Field Action_Nf2_ratio::DdagD1_inv(const Field& src){
   Field sol(fsize_);
   SolverOutput monitor = slv1_->solve(sol,src);
-#if VERBOSITY > 0
+#if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
   monitor.print();
 #endif
   return sol;
@@ -22,7 +22,7 @@ Field Action_Nf2_ratio::DdagD1_inv(const Field& src){
 Field Action_Nf2_ratio::DdagD2_inv(const Field& src){
   Field sol(fsize_);
   SolverOutput monitor = slv2_->solve(sol,src);
-#if VERBOSITY > 0
+#if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
   monitor.print();
 #endif
   return sol;
@@ -35,7 +35,7 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
 
   MPrand::mp_get_gauss(ph,rand,D1_->get_fermionFormat());
 
-  #if VERBOSITY>2
+  #if VERBOSITY>=DEBUG_VERB_LEVEL
   double phsum= (ph*ph).sum();
   double phnorm= Communicator::instance()->reduce_sum(phsum);
   CCIO::cout<<"ph.norm="<<sqrt(phnorm)<<std::endl;
@@ -43,7 +43,7 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
 
   phi_= D1_->mult_dag(Field(ph));
 
-  #if VERBOSITY>2
+  #if VERBOSITY>=DEBUG_VERB_LEVEL
   double phisum= phi_.norm();
   double phinorm= Communicator::instance()->reduce_sum(phisum);
   for(int i=0; i<ph.size();++i) CCIO::cout<<"phi_["<<i<<"]="
@@ -63,7 +63,7 @@ Field Action_Nf2_ratio::md_force(const void*){
   Field force= D1_->md_force(eta,D1_->mult(eta));
   force -= D2_->md_force(eta,phi_);
 
-#if VERBOSITY>0
+#if VERBOSITY>=ACTION_VERB_LEVEL
   monitor_force(force, "Action_Nf2_ratio");
 #endif
 
