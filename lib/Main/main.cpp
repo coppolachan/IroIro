@@ -17,8 +17,9 @@
  * - %XML control of program behavior
  *
  * \authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>,  Shoji Hashimoto, Jun-Ichi Noaki}
+ *
  */
-
+#include "documentation_pages.h"
 //------------------------------------------------------------------------
 /*!
  * @file main.cpp 
@@ -27,6 +28,8 @@
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
+
+
 
 #include "include/common_code.hpp"
 

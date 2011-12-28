@@ -22,7 +22,8 @@ bin_PROGRAMS = mainprog
 lib_LIBRARIES = libcommcode.a
 
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
-		../tests/test_HMC_noFactories.cpp
+		../tests/test_HMC_noFactories.cpp \
+		Main/documentation_pages.h
 
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
