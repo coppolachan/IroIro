@@ -644,6 +644,98 @@ const Field Dirac_Wilson::mult_dag(const Field& f)const{
 /*!
  *  @brief MD-force contribution: \f$\zeta^\dagger\frac{dH_W}{d\tau}\eta\f$
  */
+void Dirac_Wilson::md_force_p(Field& fce,
+			      const Field& eta,const Field& zeta)const{
+  using namespace SUNmat_utils;
+
+  int Nc = CommonPrms::instance()->Nc();
+  int Nd = CommonPrms::instance()->Nd();
+
+  for(int mu=0; mu<Ndim_; ++mu){
+    Field xie(fsize_);
+  
+    sf_up_[mu]->setf(const_cast<Field&>(eta));
+    (this->*mult_p[mu])(xie, sf_up_[mu]);
+
+    for(int site=0; site<Nvol_; ++site){
+      SUNmat f;
+      for(int a=0; a<Nc; ++a){
+        for(int b=0; b<Nc; ++b){
+          double fre = 0.0;
+          double fim = 0.0;
+          for(int s=0; s<Nd; ++s){
+
+	    size_t ra =ff_->index_r(a,s,site);
+	    size_t ia =ff_->index_i(a,s,site);
+
+	    size_t rb =ff_->index_r(b,s,site);
+	    size_t ib =ff_->index_i(b,s,site);
+
+	    fre += zeta[rb]*xie[ra] +zeta[ib]*xie[ia];
+	    fim += zeta[rb]*xie[ia] -zeta[ib]*xie[ra];
+          }
+          f.set(a,b,fre,fim);
+        }
+      }
+      fce.set(gf_->cslice(0,gauge_site_p(site),mu),anti_hermite(f));
+    }
+  }
+  fce *= -kpp_;
+}
+
+void Dirac_Wilson::md_force_m(Field& fce,
+			      const Field& eta,const Field& zeta)const{
+  using namespace SUNmat_utils;
+
+  int Nc = CommonPrms::instance()->Nc();
+  int Nd = CommonPrms::instance()->Nd();
+
+  Field et5 = gamma5(eta);
+  Field zt5 = gamma5(zeta);
+
+  for(int mu=0; mu<Ndim_; ++mu){
+    Field xz5(fsize_);
+    sf_up_[mu]->setf(const_cast<Field&>(zt5));
+    (this->*mult_p[mu])(xz5, sf_up_[mu]);
+
+    for(int site=0; site<Nvol_; ++site){
+      SUNmat f;
+      for(int a=0; a<Nc; ++a){
+        for(int b=0; b<Nc; ++b){
+          double fre = 0.0;
+          double fim = 0.0;
+          for(int s=0; s<Nd; ++s){
+
+	    size_t ra =ff_->index_r(a,s,site);
+	    size_t ia =ff_->index_i(a,s,site);
+
+	    size_t rb =ff_->index_r(b,s,site);
+	    size_t ib =ff_->index_i(b,s,site);
+
+	    fre += -xz5[rb]*et5[ra] -xz5[ib]*et5[ia];
+	    fim += -xz5[rb]*et5[ia] +xz5[ib]*et5[ra];
+          }
+          f.set(a,b,fre,fim);
+        }
+      }
+      fce.set(gf_->cslice(0,gauge_site_m(site),mu),anti_hermite(f));
+    }
+  }
+  fce *= -kpp_;
+}
+
+const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
+  Field fp(gf_->size());
+  md_force_p(fp,eta,zeta);
+
+  Field fm(gf_->size());
+  md_force_m(fm,eta,zeta);
+  
+  fp += fm;
+  return fp;
+}
+
+/*
 const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
   using namespace SUNmat_utils;
 
@@ -693,6 +785,7 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
   fce *= -kpp_;
   return fce;
 }
+*/
 
 namespace Dw{
   

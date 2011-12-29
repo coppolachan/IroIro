@@ -103,6 +103,9 @@ protected:
   void mult_tm(std::valarray<double>&,const Field&)const;
   void mult_core(Field&,Field&)const;
 
+  void md_force_p(Field&,const Field& eta,const Field& zeta)const;
+  void md_force_m(Field&,const Field& eta,const Field& zeta)const;
+
   static void(Dirac_Wilson::*mult_p[])(Field&,ShiftField*)const;
   static void(Dirac_Wilson::*mult_m[])(std::valarray<double>&,
 				       const Field&)const;

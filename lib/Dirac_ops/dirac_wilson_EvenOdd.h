@@ -39,9 +39,7 @@ namespace Dw{
     const Field gamma5(const Field& f) const{
       return Dirac_Wilson::gamma5(f);
     }
-    const Field md_force(const Field& eta,const Field& zeta) const{
-      return Dirac_Wilson::md_force(eta,zeta);
-    }
+    const Field md_force(const Field& eta,const Field& zeta) const;
   };
 
   class OdEv:private Dirac_Wilson{
@@ -71,9 +69,7 @@ namespace Dw{
     const Field gamma5(const Field& f) const{
       return Dirac_Wilson::gamma5(f);
     }
-    const Field md_force(const Field& eta,const Field& zeta) const{
-      return Dirac_Wilson::md_force(eta,zeta);
-    }
+    const Field md_force(const Field& eta,const Field& zeta) const;
   };
 }
 

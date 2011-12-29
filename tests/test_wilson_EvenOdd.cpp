@@ -35,15 +35,12 @@ int Test_Wilson_EvenOdd::run(){
   int length=4;
   RandNum_MT19937 rand(init, length);
 
-  Source_wnoise<Format_F> src(rand,CommonPrms::instance()->Nvol());
+  Source_wnoise<Format::Format_F> src(rand,CommonPrms::instance()->Nvol());
   */
-
   /*
   //wall source not working
   Source_wall<Format_F> src(0,CommonPrms::instance()->Nvol());
   */
-
-  prop_t sq; // propagator
 
   // Without factories -----------------------------------------------------
   //Dirac Kernel definition
@@ -58,11 +55,11 @@ int Test_Wilson_EvenOdd::run(){
   valarray<size_t> ie = fmt.get_sub(esec);
   valarray<size_t> io = fmt.get_sub(osec);
 
-  // source generation
+  /*  // source generation
   Field ff= src.mksrc(1,1);
   Field fe= src.mksrc(esec,1,1);
   Field fo= src.mksrc(osec,1,1);
-  /*
+
   // test of spritting into even/odd
   for(int i=0;i<ie.size();++i)
     CCIO::cout<<" (fe["<<i<<"],ff["<<ie[i]<<"])=("<<fe[i]<<","<<ff[ie[i]]<<")"
@@ -72,11 +69,11 @@ int Test_Wilson_EvenOdd::run(){
 
   /*
   // test of shift_field (up)
-  Format_F fmh(CommonPrms::instance()->Nvol()/2);
+  Format::Format_F fmh(CommonPrms::instance()->Nvol()/2);
 
-  ShiftField_up<Format_F>      ffp(ff,&fmt,0);  valarray<double> ffpv(ffp.getva());
-  ShiftField_even_up<Format_F> fep(fe,&fmh,0);  valarray<double> fepv(fep.getva());
-  ShiftField_odd_up<Format_F>  fop(fo,&fmh,0);  valarray<double> fopv(fop.getva());
+  ShiftField_up<Format::Format_F>      ffp(ff,&fmt,0); valarray<double> ffpv(ffp.getva());
+  ShiftField_even_up<Format::Format_F> fep(fe,&fmh,0); valarray<double> fepv(fep.getva());
+  ShiftField_odd_up<Format::Format_F>  fop(fo,&fmh,0); valarray<double> fopv(fop.getva());
 
   for(int i=0;i<ie.size();++i)
     CCIO::cout<<" (fep["<<i<<"],ffp["<<io[i]<<"])=("<<fepv[i]<<","<<ffpv[io[i]]<<")"
@@ -84,9 +81,9 @@ int Test_Wilson_EvenOdd::run(){
 	      <<std::endl;  
 
   // test of shift_field (dn)
-  ShiftField_dn<Format_F>      ffm(ff,&fmt,0);  valarray<double> ffmv(ffm.getva());
-  ShiftField_even_dn<Format_F> fem(fe,&fmh,0);  valarray<double> femv(fem.getva());
-  ShiftField_odd_dn<Format_F>  fom(fo,&fmh,0);  valarray<double> fomv(fom.getva());
+  ShiftField_dn<Format::Format_F>      ffm(ff,&fmt,0); valarray<double> ffmv(ffm.getva());
+  ShiftField_even_dn<Format::Format_F> fem(fe,&fmh,0); valarray<double> femv(fem.getva());
+  ShiftField_odd_dn<Format::Format_F>  fom(fo,&fmh,0); valarray<double> fomv(fom.getva());
 
   for(int i=0;i<ie.size();++i)
     CCIO::cout<<" (fem["<<i<<"],ffm["<<io[i]<<"])=("<<femv[i]<<","<<ffmv[io[i]]<<")"
@@ -104,16 +101,23 @@ int Test_Wilson_EvenOdd::run(){
 	      <<" (wo["<<i<<"],wf["<<io[i]<<"])=("<<wo[i]<<","<<wf[io[i]]<<")"
 	      <<std::endl;  
   */
-  
   // test of Solver & Qprop
   int    Niter= 1000;
   double stop_cond = 1.0e-24;
+
+  prop_t sq; // propagator
   Fopr_DdagD DdagD(&Deo);
   //Solver_BiCGStab solver(stop_cond,Niter,&DdagD);
   Solver_CG solver(stop_cond,Niter,&DdagD);  
 
   Qprop_EvenOdd qprop(&Deo,&solver);
   qprop.calc(sq,src);
+
+  prop_t sq_full; // propagator
+  Fopr_DdagD DdagDf(&D);
+  Solver_CG solver_full(stop_cond,Niter,&DdagDf);  
+  Qprop qprop_full(&D,&solver_full);
+  qprop_full.calc(sq_full,src);
 
 
   //  Using factories ------------------------------------------------------
@@ -134,9 +138,15 @@ int Test_Wilson_EvenOdd::run(){
   // meson correlators
   GammaMatrices::Unit Gamma;//pion
   MesonCorrelator meson(Gamma,Gamma);
+
   vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
+  while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);
+
+  mcorr = meson.calculate<Format::Format_F>(sq_full,sq_full);  
+  it=mcorr.begin();
+  t=0;
   while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);
   return 0;
 }

@@ -55,7 +55,10 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
 
 double Action_Nf2_ratio::calc_H(){
   Field zeta = D2_->mult_dag(phi_);
-  return zeta*DdagD1_inv(zeta);
+  //  return zeta*DdagD1_inv(zeta);
+  double H=zeta*DdagD1_inv(zeta);
+  CCIO::cout<< "Action_Nf2_ratio " << H << std::endl;
+  return H;
 }
   
 Field Action_Nf2_ratio::md_force(const void*){

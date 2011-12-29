@@ -45,27 +45,27 @@ int Test_Wilson::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  //  Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
+  Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
 
   // Solver definition
-  //  int    Niter= 1000;
-  //  double stop_cond = 1.0e-24;
+    int    Niter= 1000;
+    double stop_cond = 1.0e-24;
   //Solver* SolverBiCGstab = new Solver_BiCGStab(stop_cond,
   //   					       Niter,
   //   					       new Fopr_DdagD(Kernel));
 
-  //Solver_CG* SolverCG = new Solver_CG(stop_cond,
-  //				       Niter,
-  //				       new Fopr_DdagD(Kernel));
+  Solver_CG* SolverCG = new Solver_CG(stop_cond,
+  				       Niter,
+  				       new Fopr_DdagD(Kernel));
   
    // quark propagator
    // we force a type check on the Kernel (must be DdagD type).
-   // Qprop QuarkPropagator(Kernel,SolverBiCGstab);
-   //   QuarkPropagator.calc(sq,src);
+   Qprop QuarkPropagator(Kernel,SolverCG);
+   QuarkPropagator.calc(sq,src);
   //---------------------------------------------------------------------------
 
-  QP = QP_Factory->getQuarkProp(conf_);
-  QP->calc(sq,src);
+  //  QP = QP_Factory->getQuarkProp(conf_);
+  //  QP->calc(sq,src);
 
   CCIO::cout<<"quark propagator obtained"<<std::endl;
   
