@@ -21,12 +21,14 @@ using namespace std;
  */
 SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{ 
 
-#if VERBOSITY>1
+#if VERBOSITY>=SOLV_ITER_VERB_LEVEL
   CCIO::header("CG solver start");
 #endif
   SolverOutput Out;
   Out.Msg = "CG solver";
   Out.Iterations = -1;
+
+  TIMING_START;
   
   Field x = b;//initial condition
   Field r = b;//initial residual
@@ -58,6 +60,9 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   Out.diff = p.norm();
 
   xq = x;
+
+  TIMING_END(Out.timing);
+    
 
   return Out;
 }
