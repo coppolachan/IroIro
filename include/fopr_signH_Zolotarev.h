@@ -113,9 +113,12 @@ public:
 
   size_t fsize() const{return fsize_;}
   size_t gsize() const{return gsize_;}
+
   const Format::Format_F get_fermionFormat() const{ 
     return D_->get_fermionFormat();
   }
+  
+  std::vector<int> const get_gsite() const { return D_->get_gsite();}    
 };
 
 #endif

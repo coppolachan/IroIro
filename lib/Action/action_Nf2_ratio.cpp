@@ -33,7 +33,7 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
   CCIO::cout<<"Action_Nf2_ratio::init"<<std::endl;
   std::valarray<double> ph(fsize_);
   
-  MPrand::mp_get_gauss(ph,rand,D1_->get_fermionFormat());
+  MPrand::mp_get_gauss(ph,rand,D1_->get_gsite(),D1_->get_fermionFormat());
 
   #if VERBOSITY>=DEBUG_VERB_LEVEL
   double phsum= (ph*ph).sum();

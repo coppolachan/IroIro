@@ -24,9 +24,8 @@ public:
   virtual ~Dirac(){}
   virtual size_t fsize() const = 0;
   virtual size_t gsize() const = 0;
-
+  virtual const std::vector<int> get_gsite() const = 0;
   virtual const Field operator()(int OpType, const Field&)const = 0;
-
 
   virtual const Field mult(const Field&)const = 0;
   virtual const Field mult_dag(const Field&)const = 0;

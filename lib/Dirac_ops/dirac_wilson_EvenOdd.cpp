@@ -5,6 +5,7 @@
 */
 //--------------------------------------------------------------
 #include "dirac_wilson_EvenOdd.h"
+using namespace std;
 
 const Field Dw::EvOd::mult(const Field& f)const{
   Field w(f.size());
@@ -17,6 +18,14 @@ const Field Dw::EvOd::mult_dag(const Field& f)const{
 }
 const Field Dw::EvOd::md_force(const Field& eta,const Field& zeta) const{
   return Dirac_Wilson::md_force(eta,zeta);
+}
+
+const vector<int> Dw::EvOd::get_gsite() const{
+  vector<int> gsite;
+  for(int site=0; site<Nvol_; ++site)
+    gsite.push_back(idx_->gsite(site));
+
+  return gsite;
 }
 
 /*
@@ -75,6 +84,14 @@ const Field Dw::EvOd::md_force(const Field& eta,const Field& zeta) const{
   return fce;
 }  
 */
+
+const vector<int> Dw::OdEv::get_gsite() const{
+  vector<int> gsite;
+  for(int site=0; site<Nvol_; ++site)
+    gsite.push_back(idx_->gsite(site));
+
+  return gsite;
+}
 
 const Field Dw::OdEv::mult(const Field& f)const{
   Field w(f.size());
@@ -164,5 +181,9 @@ md_force(const Field& eta,const Field& zeta) const{
   Field fce = Doe_.md_force(eta,Deo_.mult_dag(zeta));
   fce += Deo_.md_force(Doe_.mult(eta),zeta);
   return -fce;
+}
+
+const vector<int> Dirac_Wilson_EvenOdd::get_gsite() const {
+  return Deo_.get_gsite();
 }
 

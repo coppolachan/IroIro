@@ -202,5 +202,6 @@ public:
   
   const double getKappa() const {return kpp_;}  
   const ffmt_t get_fermionFormat() const {return *ff_;}
+  const std::vector<int> get_gsite() const;
 };
 #endif

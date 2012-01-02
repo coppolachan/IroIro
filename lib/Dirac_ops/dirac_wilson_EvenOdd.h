@@ -26,6 +26,9 @@ namespace Dw{
     const Format::Format_F get_fermionFormat() const {
       return Dirac_Wilson::get_fermionFormat();
     }
+
+    const std::vector<int> get_gsite() const;
+
     const Field mult(const Field&) const;
     const Field mult_dag(const Field&) const;
 
@@ -56,6 +59,9 @@ namespace Dw{
     const Format::Format_F get_fermionFormat() const {
       return Dirac_Wilson::get_fermionFormat();
     }
+
+    const std::vector<int> get_gsite() const;
+
     const Field mult(const Field&) const;
     const Field mult_dag(const Field&) const;
 
@@ -102,7 +108,6 @@ public:
   const Field right_precond(const Field&)const{}//empty now
   //////////////////////////////////////////////////////////////////////
   
-
   const Field md_force(const Field&,const Field&) const;
 
   const Field mult_eo(const Field& f) const {return Deo_.mult(f);}
@@ -121,6 +126,9 @@ public:
   const ffmt_t get_fermionFormat() const {
     return Deo_.get_fermionFormat();
   }
+  
+  const std::vector<int> get_gsite() const;
+
   const Field operator()(int OpType,const Field&)const{}
 };
 

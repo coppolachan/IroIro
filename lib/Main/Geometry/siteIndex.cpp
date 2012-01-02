@@ -29,17 +29,16 @@ int (SiteIndex::*SiteIndex::xbds[])(int site)const ={
   &SiteIndex::xbd, &SiteIndex::ybd, &SiteIndex::zbd, &SiteIndex::tbd,};
 
 void SiteIndex::setup_bdry(){
-  int Nvol= CommonPrms::Nvol();
-  int Ndim= CommonPrms::Ndim();
 
+  int Ndim= CommonPrms::Ndim();
   bdup_.resize(Ndim);
   bdlw_.resize(Ndim);
 
   for(int d=0;d<Ndim;++d){
-    bdup_[d].resize(Nvol/Ndir_[d]);
-    bdlw_[d].resize(Nvol/Ndir_[d]);
+    bdup_[d].resize(Nvol_/Ndir_[d]);
+    bdlw_[d].resize(Nvol_/Ndir_[d]);
 
-    for(int site=0;site<Nvol;++site){
+    for(int site=0;site<Nvol_;++site){
       if(cmp(site,d)==0)        bdlw_[d][x_b(site,d)]= site;
       if(cmp(site,d)==Bdir_[d]) bdup_[d][x_b(site,d)]= site;
     }
@@ -47,25 +46,14 @@ void SiteIndex::setup_bdry(){
 }  
 
 int SiteIndex::gsite(int site) const{
-  
-  CommonPrms* cprms = CommonPrms::instance();
-  int Lx = cprms->Lx();
-  int Ly = cprms->Ly();
-  int Lz = cprms->Lz();
-  int Lt = cprms->Lt();
-  int Nx = cprms->Nx();
-  int Ny = cprms->Ny();
-  int Nz = cprms->Nz();
-  int Nt = cprms->Nt();
-
   Communicator* commu = Communicator::instance();
   int nx = commu->ipe(0);
   int ny = commu->ipe(1);
   int nz = commu->ipe(2);
   int nt = commu->ipe(3);
 
-  return x(site)+Nx*nx +Lx*((y(site)+Ny*ny)
-			    +Ly*((z(site)+Nz*nz)
-				 +Lz*(t(site)+Nt*nt)));
+  return x(site)+Nx_*nx +Lx_*((y(site)+Ny_*ny)
+			    +Ly_*((z(site)+Nz_*nz)
+				 +Lz_*(t(site)+Nt_*nt)));
 }
 

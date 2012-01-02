@@ -35,7 +35,7 @@ int Test_Wilson_EvenOdd::run(){
   int length=4;
   RandNum_MT19937 rand(init, length);
 
-  Source_wnoise<Format::Format_F> src(rand,CommonPrms::instance()->Nvol());
+  Source_wnoise<SiteIndex_eo,Format::Format_F> src(rand,CommonPrms::instance()->Nvol());
   */
   /*
   //wall source not working

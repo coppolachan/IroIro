@@ -13,7 +13,7 @@ class SiteIndex_eo{
 private:
   SiteIndex* idx_;
   int Nx_,Ny_,Nz_,Nt_;
-
+  int Nvol_,Ndim_,Lvol_;
   static std::vector<std::vector<int> > ebdup_;
   static std::vector<std::vector<int> > ebdlw_;
   static std::vector<std::vector<int> > obdup_;
@@ -30,11 +30,16 @@ private:
   static std::vector<int> ev_;
   static std::vector<int> ov_;
 
+  static std::vector<int> gev_;
+
   // constructor
   SiteIndex_eo():Nx_(CommonPrms::instance()->Nx()),
 		 Ny_(CommonPrms::instance()->Ny()),
 		 Nz_(CommonPrms::instance()->Nz()),
 		 Nt_(CommonPrms::instance()->Nt()),
+		 Nvol_(CommonPrms::instance()->Nvol()),
+		 Lvol_(CommonPrms::instance()->Lvol()),
+		 Ndim_(CommonPrms::instance()->Ndim()),
 		 idx_(SiteIndex::instance()){ setup_eo();}
   
   SiteIndex_eo(const SiteIndex_eo&){}
@@ -78,6 +83,7 @@ public:
   const std::vector<int>& osec(){return osec_;}
   static int esec(int site){return esec_[site];}
   static int osec(int site){return osec_[site];}
+  int gsite(int hs);
 };
 
 #endif
