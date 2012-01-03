@@ -43,6 +43,7 @@ int Test_HMC_DomainWall::run(XML::node node){
   Dirac_Wilson Kernel(mzero,&CommonField);
   
   Dirac_optimalDomainWall Ddwf1(b,c,mq1,omega,&Kernel);
+  Dirac_optimalDomainWall DdwfPV(b,c,1.0,omega,&Kernel);
   Dirac_optimalDomainWall Ddwf2(b,c,mq2,omega,&Kernel);
 
   // gauge term
@@ -53,9 +54,11 @@ int Test_HMC_DomainWall::run(XML::node node){
 
   // pf1 term
   Fopr_DdagD DdagD2(&Ddwf2);
+  Fopr_DdagD DdagD_PV(&DdwfPV);
   Solver_CG SolvNf2(10e-12,1000,&DdagD2);
+  Solver_CG SolvNf2PV(10e-12,1000,&DdagD_PV);
   Action* Nf2Action 
-    = new Action_Nf2_DomainWall(&CommonField,&Ddwf2,&SolvNf2);
+    = new Action_Nf2_DomainWall(&CommonField,&Ddwf2,&DdwfPV,&SolvNf2,&SolvNf2PV);
   al_2.push_back(Nf2Action);
 
   // pf2 term
