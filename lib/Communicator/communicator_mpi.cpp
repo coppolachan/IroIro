@@ -211,16 +211,6 @@ void Communicator::broadcast(int size, double &data, int sender){
   MPI_Bcast( &data, size, MPI_DOUBLE, sender, MPI_COMM_WORLD );
 }
 
-int Communicator::index_base(int size){
-  /*! accumulate size up to previous node */
-  int* recv;
-  MPI_allgather(size,1,MPI_INTEGER,recv,1,MPI_INTEGER,MPI_COMM_WORLD);
-  int base = 0;
-  for(int i=0; i<my_rank_-1; ++i) base +=recv[i];
-  return base;
-}
-  
-
 int Communicator::reduce_max(double& val,int& idx,int size){
   /*! size is the maximum value of idx */
   VaId vi = {val, my_rank_*size +idx};

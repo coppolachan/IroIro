@@ -74,7 +74,6 @@ public:
   void send_1to1(std::valarray<double>& bin, const std::valarray<double>& data,
 		 int size, int p_to, int p_from, int tag);
 
-  int index_base(int size);
   int reduce_max(double& val,int& idx,int size);
   int reduce_min(double& val,int& idx,int size);
 
