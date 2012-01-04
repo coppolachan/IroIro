@@ -11,17 +11,15 @@
 
 using namespace XML;
 
-int main(){
+int main(int argc, char* argv[]){
 
+  CommandOptions Options = ReadCmdLine(argc, argv);
   
-  //Reading input file
-  node top_node = getInputXML("test_HMC_DWF.xml");  
+  //Reading input file                                                                                                                                      node top_node = getInputXML(Options.filename);
 
-  //Initializing geometry using XML input
-  Geometry geom(top_node);
+  //Initializing geometry using XML input                                                                                                                  Geometry geom(top_node);
 
-  //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
+  //Initialize GaugeField using XML input                                                                                                                  GaugeField GaugeF(geom);
   GaugeF.initialize(top_node);
 
   /////////////

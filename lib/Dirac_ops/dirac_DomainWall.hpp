@@ -152,7 +152,10 @@ public:
   }
   
   size_t f4size() const{ return f4size_;}
-  size_t fsize()  const{ return fsize_; }
+  size_t fsize()  const{ 
+    CCIO::cout<<"Dirac_optimalDomainWall::fsize_="
+	      <<fsize_<<std::endl;
+    return fsize_; }
   size_t gsize()  const{ return gsize_; }
   
   const Field operator()(int, const Field&) const{}

@@ -37,7 +37,7 @@ void Dirac_Wilson::mult_xp(Field& fp, ShiftField* sfp) const{
 	v2tmp[c][1] = sfp->im_on_bulk(c,1,site) + sfp->re_on_bulk(c,2,site);
       }
     }
-    
+
     double v1[Nc][2], v2[Nc][2];
     for (int c = 0; c < Nc; ++c) {
       v1[c][0] = 0.0; v1[c][1] = 0.0; v2[c][0] = 0.0; v2[c][1] = 0.0;

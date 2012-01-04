@@ -182,7 +182,9 @@ public:
     for(int d=0;d<sf_dn_.size();++d) delete sf_dn_[d];
   }
   
-  size_t fsize() const{return fsize_;}
+  size_t fsize() const{
+    CCIO::cout<<"Dirac_Wilson::fsize_="<<fsize_<<std::endl;
+    return fsize_;}
   size_t gsize() const{return gsize_;}
 
   const Field operator()(int OpType, const Field&)const{};
