@@ -15,13 +15,13 @@
 
 #include "HMC/hmcGeneral.h"
 #include "test_HMC_DomainWall.hpp"
-<<<<<<< HEAD
+//<<<<<<< HEAD
+//#include "Action/action_gauge_wilson.hpp"
+//#include "Action/action_Nf2_DomainWall.h"
+//=======
 #include "Action/action_gauge_wilson.hpp"
-#include "Action/action_Nf2_DomainWall.h"
-=======
-#include "Action/action_gauge.hpp"
 #include "Action/action_Nf2_ratio.h"
->>>>>>> origin/master
+//>>>>>>> origin/master
 #include "Communicator/comm_io.hpp"
 
 using namespace std;
