@@ -2,3 +2,4 @@ Add new Mersenn Twister (should be faster)
 Add new exponential calculation (exact)
 
 Create XML by using a web interface
+Use ggplot2 for automatic generation of graphs

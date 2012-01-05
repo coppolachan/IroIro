@@ -1,8 +1,13 @@
 //----------------------------------------------------------------------
-// staples.h
+/*!
+  @file rectangular.hpp
+
+  @brief Declares RectangularStaple class
+
+*/ 
 //----------------------------------------------------------------------
-#ifndef STAPLES_INCLUDED
-#define STAPLES_INCLUDED
+#ifndef RECTANGULAR_INCLUDED
+#define RECTANGULAR_INCLUDED
 
 #ifndef COMMONPRMS_INCLUDED
 #include "include/commonPrms.h"
@@ -28,7 +33,11 @@
 #include "Tools/sunMat.h"
 #endif
 
-class Staples {
+#ifndef STAPLES_INCLUDED
+#include "staples.h"
+#endif
+
+class RectangularStaples: {
 private:
   int Nc_;
   int Ndim_;
@@ -39,9 +48,8 @@ private:
   SiteIndex* idx_;  
   Format::Format_G* format1d_;
 
-
 public:
-  Staples(const Format::Format_G& gf)
+  RectangularStaples(const Format::Format_G& gf)
     :gf_(gf),
      Nc_(CommonPrms::instance()->Nc()),
      Ndim_(CommonPrms::instance()->Ndim()),
@@ -54,25 +62,25 @@ public:
   ~Staples(){delete format1d_;}
 
   // functions for Field class
-  ShiftField_up<GaugeFieldFormat> LinkUp(const Field&, int, int) const;
-  Field upper(const Field&, int, int) const;
-  Field lower(const Field&, int, int) const;
+  Field upper_1(const Field&, int, int) const;
+  Field lower_1(const Field&, int, int) const;
 
-  double plaq_s(const Field&) const;
-  double plaq_t(const Field&) const;
-  double plaquette(const Field&) const;
-  
-  void staple(Field&, const Field&, int) const;
+  Field upper_2(const Field&, int, int) const;
+  Field lower_2(const Field&, int, int) const;
+
+  Field upper_3(const Field&, int, int) const;
+  Field lower_3(const Field&, int, int) const;
 
   // functions for ShiftField class
-  Field upper(const ShiftField&, int, int) const;
-  Field lower(const ShiftField&, int, int) const;
+  Field upper_1(const ShiftField&, int, int) const;
+  Field lower_1(const ShiftField&, int, int) const;
 
-  double plaq_s(const ShiftField&) const;
-  double plaq_t(const ShiftField&) const;
-  double plaquette(const ShiftField&) const;
-  
-  void staple(Field&, const ShiftField&, int) const;
+  Field upper_2(const ShiftField&, int, int) const;
+  Field lower_2(const ShiftField&, int, int) const;
+
+  Field upper_3(const ShiftField&, int, int) const;
+  Field lower_3(const ShiftField&, int, int) const;
+
 };
 
 #endif  

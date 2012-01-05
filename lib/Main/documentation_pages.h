@@ -243,6 +243,30 @@
 
     @section FActionNf2ratio Fermion - TwoFlavorsRatio
 
+    The \c TwoFlavorsRatio action is constructed in the following way
+
+    @verbatim
+    <Action type="Fermion" name="TwoFlavorsRatio">
+      <Numerator name="your Dirac operator">
+      ... dirac parameters
+      </Numerator>
+      
+      <Denominator name="another Dirac operator">
+      ... dirac parameters
+      </Denominator>
+      
+      <SolverNumerator type="your solver name for numerator">
+      ... solver parameters
+      </SolverNumerator>
+      
+      <SolverDenominator type="your solver name for denominator">
+      ... solver parameters
+      </SolverDenominator>
+    </Action>@endverbatim
+    
+    The meaning of the several sections is self-explanatory. Refer to \ref DiracOps and  \ref solversPage for details on Dirac Operators and linear Solvers.
+	
+
     @section FActionDWF Fermion - TwoFlavorsDomainWall
 
     A simple example is better to explain how to construct this action

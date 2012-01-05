@@ -1,18 +1,18 @@
 /*!
-  @file action_gauge.h
+  @file action_gauge_wilson.hpp
 
-  @brief Declaration of the Action_gauge class
+  @brief Declaration of the ActionGaugeWilson class
 */
-#ifndef ACTION_GAUGE_INCLUDED
-#define ACTION_GAUGE_INCLUDED
+#ifndef ACTION_GAUGE_WILSON_INCLUDED
+#define ACTION_GAUGE_WILSON_INCLUDED
 
-#include "include/common_fields.hpp"
 #include "action.h"
+#include "include/common_fields.hpp"
 #include "Measurements/GaugeM/staples.h"
 #include "include/pugi_interface.h"
 
 /*!
-  Parameters for the ActionGauge class
+  Parameters for the ActionGaugeWilson class
  */
 struct ActionGaugeWilsonPrm {
   double beta;/*!< %Gauge coupling */
@@ -26,7 +26,7 @@ struct ActionGaugeWilsonPrm {
 };
 
 /*!
-  Defines a concrete class for %gauge %Actions
+  Defines a concrete class for %gauge %Actions (Wilson)
  */
 class ActionGaugeWilson :public Action {
 private:
@@ -35,20 +35,13 @@ private:
   const int Nvol_;
   const int Nc_;
   const Format::Format_G& gf_;
-  const Format::Format_G* sf_;
-  const Staples* stpl_;
   Field* const u_;
-  int nodeid_;
+  const Staples* stpl_;
 
-  SUNmat u(const Field&, int site, int dir);
-  SUNmat u(const Field&, int site);
-
-  SUNmat u_dag(const Field&, int site, int dir);
-  SUNmat u_dag(const Field&, int site);
 
 public:
   void  init(const RandNum&,const void* = 0){
-    CCIO::cout<<"Action_gauge initialized"<<std::endl;
+    CCIO::cout<<"ActionGaugeWilson initialized"<<std::endl;
   }
   double calc_H();
   Field  md_force(const void* = 0);
@@ -62,9 +55,7 @@ public:
      Nvol_(CommonPrms::instance()->Nvol()),
      Nc_(  CommonPrms::instance()->Nc()),
      gf_(gf),
-     sf_(new Format::Format_G(Nvol_,1)),
-     stpl_(new Staples(gf_)),
-     nodeid_(Communicator::instance()->nodeid()){}
+     stpl_(new Staples(gf)){}
 
   ActionGaugeWilson(const XML::node node, 
 		    const Format::Format_G& gf,
@@ -75,9 +66,7 @@ public:
      Nvol_(CommonPrms::instance()->Nvol()),
      Nc_(  CommonPrms::instance()->Nc()),
      gf_(gf),
-     sf_(new Format::Format_G(Nvol_,1)),
-     stpl_(new Staples(gf_)),
-     nodeid_(Communicator::instance()->nodeid()){}
+     stpl_(new Staples(gf_)){}
 
   ~ActionGaugeWilson(){}
 };

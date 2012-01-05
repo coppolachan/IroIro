@@ -4,12 +4,24 @@
 #ifndef SUNMAT_INCLUDED
 #define SUNMAT_INCLUDED
 
+
+#include <iostream>
+#include <valarray>
+
 #ifndef COMMONPRMS_INCLUDED
 #include "include/commonPrms.h"
 #endif
 
-#include <iostream>
-#include <valarray>
+//for utilities
+#include "format_G.h"
+#include "field.h"
+#include "include/common_fields.hpp"
+#ifndef SHIFTFIELD_INCLUDED
+#include "Main/Geometry/shiftField.h"
+#endif
+
+
+
 
 class SUNmat{
 private:
@@ -110,7 +122,11 @@ inline SUNmat& SUNmat::operator-() {
   return *this;
 }
 inline SUNmat& SUNmat::operator=(const double& rhs){
-  va_= rhs;
+  va_= rhs; 
+  return *this;
+}
+inline SUNmat& SUNmat::operator=(const SUNmat& rhs){
+  va_= rhs.va_; 
   return *this;
 }
 inline SUNmat& SUNmat::operator+=(const SUNmat& rhs){
@@ -160,6 +176,9 @@ inline SUNmat& SUNmat::operator/=(const double& rhs){
   return *this;
 }
 
+class Field;
+class ShiftField;
+
 namespace SUNmat_utils{
   SUNmat unity();
   SUNmat zero();
@@ -177,6 +196,45 @@ namespace SUNmat_utils{
   const SUNmat reunit(const SUNmat& m);
   const std::valarray<double> trace_less(const SUNmat& m);
   const std::valarray<double> anti_hermite(const SUNmat& m);
+
+
+
+  // for variables with the direction unfixed 
+  inline SUNmat u(const Field& g,const Format::Format_G& gf_, int site,int dir){
+    return SUNmat(g[gf_.cslice(0,site,dir)]);
+  }
+  inline SUNmat u_dag(const Field& g,const Format::Format_G& gf_,int site,int dir){
+    return SUNmat(g[gf_.cslice(0,site,dir)]).dag();
+  }
+ 
+  // for variables with a specific direction
+  inline SUNmat u(const Field& g,const Format::Format_G& sf_,int site){
+    return SUNmat(g[sf_.cslice(0,site)]);
+  }
+  inline SUNmat u(const GaugeField1D& g,int site){
+    return SUNmat(g.U[g.Format.cslice(0,site)]);
+  }
+
+  inline SUNmat u(const std::valarray<double>& vu,const Format::Format_G& sf_,int site){
+    return SUNmat(vu[sf_.cslice(0,site)]);
+  }
+  inline SUNmat u(const ShiftField& su,int site){
+    return SUNmat(su.cv(0,site));
+  }
+  inline SUNmat u_dag(const Field& g,const Format::Format_G& sf_,int site){
+    return SUNmat(g[sf_.cslice(0,site)]).dag();
+  }
+  inline SUNmat u_dag(const GaugeField1D& g,int site){
+    return SUNmat(g.U[g.Format.cslice(0,site)]).dag();
+  }
+  inline SUNmat u_dag(const std::valarray<double>& vu,const Format::Format_G& sf_,int site){
+    return SUNmat(vu[sf_.cslice(0,site)]).dag();
+  }
+  inline SUNmat u_dag(const ShiftField& su,int site){
+    return SUNmat(su.cv(0,site)).dag();
+  }
+
+
 }
 
 #endif

@@ -40,7 +40,7 @@ public:
   GaugeField(Geometry geom): 
     Format(GaugeFieldFormat( geom.parameters->Nvol() )),
     U(Field(Format.size())){}
-  
+
   /*!
    * Initializes the gauge field with an \n
    * external configuration in file <Filename>
@@ -110,6 +110,32 @@ public:
     }
   }
 
+
+};
+
+
+class GaugeField1D {
+
+public:
+  const GaugeFieldFormat Format;/**< Format specifier */
+  Field U; /**< Field container */
+  
+  /*! 
+   * Default constructor\n 
+   * Takes Geometry class as input
+   * @param geom Defines the lattice geometry
+   */
+  GaugeField1D(): 
+    Format(GaugeFieldFormat(CommonPrms::instance()->Nvol(),1)),
+    U(Field(Format.size())){}
+
+  GaugeField1D(Field& f): 
+    Format(GaugeFieldFormat(CommonPrms::instance()->Nvol(),1)),
+    U(f){}
+
+  GaugeField1D(std::valarray<double> f): 
+    Format(GaugeFieldFormat(CommonPrms::instance()->Nvol(),1)),
+    U(Field(f)){}
 
 };
 
