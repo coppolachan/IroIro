@@ -43,9 +43,9 @@ class TwoFlavorActionFactory : public FermionActionFactory {
 
 public:
   TwoFlavorActionFactory(XML::node node):Action_node(node){
-    XML::descend(node,"Kernel");
+    XML::descend(node,"Kernel",MANDATORY);
     DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
-    XML::next_sibling(node,"Solver");
+    XML::next_sibling(node,"Solver", MANDATORY);
     SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
   }
 
@@ -79,13 +79,13 @@ public:
   ~TwoFlavorRatioActionFactory(){}
 
   TwoFlavorRatioActionFactory(XML::node node):Action_node(node){
-    XML::descend(node,"Numerator");
+    XML::descend(node,"Numerator", MANDATORY);
     DiracNumObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node)); 
-    XML::next_sibling(node,"Denominator");
+    XML::next_sibling(node,"Denominator", MANDATORY);
     DiracDenomObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
-    XML::next_sibling(node,"SolverNumerator");
+    XML::next_sibling(node,"SolverNumerator", MANDATORY);
     SolverNumObj.save(SolverOperators::createSolverOperatorFactory(node));
-    XML::next_sibling(node,"SolverDenominator");
+    XML::next_sibling(node,"SolverDenominator", MANDATORY);
     SolverDenomObj.save(SolverOperators::createSolverOperatorFactory(node));
   }
   
@@ -126,9 +126,9 @@ public:
 
   TwoFlavorDomainWallActionFactory(XML::node node):Action_node(node){
     CCIO::cout<<"TwoFlavorDomainWallActionFactory called"<<std::endl;
-    XML::descend(node,"Kernel5D");
+    XML::descend(node,"Kernel5D", MANDATORY);
     DiracObj.save(new DiracDWF5dFactory(node));
-    XML::next_sibling(node,"Solver");
+    XML::next_sibling(node,"Solver", MANDATORY);
     SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
   }
 
@@ -164,9 +164,9 @@ class TwoFlavorEvenOddActionFactory : public FermionActionFactory {
 public:
   TwoFlavorEvenOddActionFactory(XML::node node)
     :Action_node(node){
-    XML::descend(node,"Kernel");
+    XML::descend(node,"Kernel", MANDATORY);
     DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
-    XML::next_sibling(node,"Solver");
+    XML::next_sibling(node,"Solver", MANDATORY);
     SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
   }
 

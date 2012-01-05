@@ -141,17 +141,14 @@ class MDIntegrator_LeapfrogCreator : public MDIntegratorCreator {
   const Format::Format_G& Format;
   const XML::node Integrator_node;
   Field* CommonField;
-  RaiiFactoryObj<Staples> StaplePointer;
 
   MDexec* createLeapfrog() {
     
     CommonField->resize(Format.size()); 
     try {
-      StaplePointer.save(new Staples(Format));
       return new MDexec_leapfrog(Integrator_node,
 				 ActSetCreator.getActionSet(Format, CommonField), 
 				 ActSetCreator.getMultipliers(),
-				 StaplePointer.get(),
 				 Format,
 				 CommonField);
       

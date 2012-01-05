@@ -31,7 +31,7 @@ double Staples::plaq_s(const Field& g) const{
     stpl.U = lower(g,i,j);
 
     for(int site=0; site<Nvol_; ++site)
-      plaq += ReTr(u(g,gf_,site,i)*u_dag(stpl,site));  // P_ij
+      plaq += ReTr(u(g,gf_,site,i) * u_dag(stpl,site));  // P_ij
   }
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*Nc_*3.0);

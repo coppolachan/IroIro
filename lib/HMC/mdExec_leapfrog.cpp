@@ -4,7 +4,6 @@
 #include "mdExec_leapfrog.h"
 #include "include/field.h"
 #include "Tools/sunMat.h"
-#include "Measurements/GaugeM/staples.h"
 #include <iomanip>
 
 using namespace std;
@@ -17,8 +16,6 @@ u(const Field& g,int site,int dir)const{
 
 void MDexec_leapfrog::update_U(double ep){
   using namespace SUNmat_utils;
-
-  //if(stpl_) printf("plaq0=%.12f\n",stpl_->plaquette(U));    
 
   int Ndim = CommonPrms::instance()->Ndim();
   int Nvol = CommonPrms::instance()->Nvol();
@@ -38,7 +35,6 @@ void MDexec_leapfrog::update_U(double ep){
       U_->set(gf_.islice(site,m),au.reunit().getva());
     }
   }
-  //if(stpl_) printf("plaq1=%.12f\n",stpl_->plaquette(U));    
 }
 
 void MDexec_leapfrog::update_P(int lv,double ep){

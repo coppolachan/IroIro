@@ -3,6 +3,7 @@
 
 #include "include/pugi_interface.h"
 #include "Action/action_gauge_wilson.hpp"
+#include "Action/action_gauge_rect.hpp"
 #include "action_Factory.hpp"
 
 
@@ -32,6 +33,24 @@ private:
     return new ActionGaugeWilson(Action_node,
 				 Form,
 				 GaugeField); //pass xml node
+  }
+};
+
+///////////////////////////////////////////////////////////////////////
+
+class RectGaugeActionFactory : public GaugeActionFactory {
+  const XML::node Action_node;
+  
+public:
+  RectGaugeActionFactory(const XML::node node):
+    Action_node(node){};
+  
+private:  
+  ActionGaugeRect* getGaugeAction(const Format::Format_G& Form,
+				  Field* const GaugeField){
+    return new ActionGaugeRect(Action_node,
+			       Form,
+			       GaugeField); //pass xml node
   }
 };
 

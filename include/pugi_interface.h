@@ -27,9 +27,9 @@ namespace XML
 
   void descend(pugi::xml_node &node);
 
-  void descend(pugi::xml_node &node, const char *name);
+  void descend(pugi::xml_node &node, const char *name, bool type = false);
 
-  void next_sibling(pugi::xml_node &node, const char *name);
+  void next_sibling(pugi::xml_node &node, const char *name, bool type = false);
 
   bool attribute_compare(pugi::xml_node &node, 
 			 const char* attrname, 

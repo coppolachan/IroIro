@@ -7,9 +7,10 @@
 #include "Communicator/comm_io.hpp"
 
 using namespace std;
-using namespace SUNmat_utils;
+
 
 double ActionGaugeWilson::calc_H(){
+  using namespace SUNmat_utils;
   double plaq = stpl_->plaquette(*u_);//already reduced
   int NP = CommonPrms::instance()->NP();
 
@@ -21,6 +22,7 @@ double ActionGaugeWilson::calc_H(){
 #endif
   return Hgauge;
 }
+
 
 Field ActionGaugeWilson::md_force(const void*){
   using namespace SUNmat_utils;
@@ -42,7 +44,7 @@ Field ActionGaugeWilson::md_force(const void*){
       force.set(gf_.cslice(0,site,m), anti_hermite(pl));
     }
   }
-  force *= Params.beta/Nc_/2.0;
+  force *= 0.5*Params.beta/Nc_;
 
 #if VERBOSITY>=ACTION_VERB_LEVEL
   monitor_force(force, "ActionGaugeWilson");

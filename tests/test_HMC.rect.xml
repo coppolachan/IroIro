@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+    <!-- other params here -->
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="Unit">final_conf.bin</Configuration> 
+  <!-- definition of HMC trajectory -->
+  <HMC>
+    <Nsweeps>10</Nsweeps>
+    <Thermalization>30</Thermalization>
+    
+    <RandomNumberGen name="Mersenne Twister">
+      <!--   <seedFile>seed_file</seedFile>
+	   Using seedFile superseeds the <init> line 
+           that can be safely omitted
+           It is ignored by factory in this case -->
+      <init>0x123 0x234 0x345 0x456</init> 
+    </RandomNumberGen>
+    
+    <Integrator name="leapfrog_multistep">
+      <MDsteps>50</MDsteps>
+      <step_size>0.01</step_size>
+      <exp_approx>8</exp_approx>
+      <step>
+	<multiplier>1</multiplier>
+	<Action type="Gauge" name="Rectangle">
+	  <beta>6.0</beta>
+	  <c_plaq>3.648</c_plaq>
+	  <c_rect>-0.331</c_rect>
+	</Action>
+      </step>
+      
+    </Integrator>
+  </HMC>
+  
+</Parameters>
+

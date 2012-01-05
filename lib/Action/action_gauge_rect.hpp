@@ -15,7 +15,9 @@
 /*!
   @brief Parameters for the ActionGauge class
 
-  Iwasaki action: \f$c_pla =  3.648\f$, \f$c_rect = -0.331\f$
+  Iwasaki action: \f$c_plaq =  3.648\f$, \f$c_rect = -0.331\f$
+  Symanzik action: \f$c_plaq =  5/3\f$, \f$c_rect = -1/12\f$
+  DBW2 action: \f$c_plaq =  12.2704\f$, \f$c_rect = -1.4088\f$
  */
 struct ActionGaugeRectPrm {
   double beta;/*!< %Gauge coupling */
@@ -27,11 +29,11 @@ struct ActionGaugeRectPrm {
     XML::read(node, "beta", beta, MANDATORY);
     XML::read(node, "c_plaq", c_plaq, MANDATORY);
     XML::read(node, "c_rect", c_rect, MANDATORY);
-
   }
+
   ActionGaugeRectPrm(const double beta_,
-		       const double c_plaq_,
-		       const double c_rect_)
+		     const double c_plaq_,
+		     const double c_rect_)
     :beta(beta_),
      c_plaq(c_plaq_),
      c_rect(c_rect_){}
@@ -56,9 +58,7 @@ private:
   Field* const u_;
 
 public:
-  void  init(const RandNum&,const void* = 0){
-    CCIO::cout<<"ActionGaugeRect initialized"<<std::endl;
-  }
+  void  init(const RandNum&,const void* = 0){};
   double calc_H();
   Field  md_force(const void* = 0);
   
