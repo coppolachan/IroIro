@@ -15,7 +15,7 @@
 
 #include "HMC/hmcGeneral.h"
 #include "test_HMC_EvenOdd.hpp"
-#include "Action/action_gauge.hpp"
+#include "Action/action_gauge_wilson.hpp"
 #include "Action/action_Nf2.h"
 #include "Action/action_Nf2_ratio.h"
 #include "Communicator/comm_io.hpp"

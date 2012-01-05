@@ -16,6 +16,8 @@
 #include "include/field.h"
 #endif
 #include "Communicator/comm_io.hpp"
+#include "include/common_fields.hpp"
+
 
 class ShiftField{
 public:
@@ -66,6 +68,27 @@ public:
      bdry_(bdfmt_->size()){ 
     com_->transfer_fw(bdry_,(*field_)[bd_],dir);
   }
+
+  ShiftField_up(const GaugeField& field,int dir) 
+  :field_(&(field.U.getva())),dir_(dir),fmt_(&field.Format),
+     com_(Communicator::instance()),
+     idx_(SiteIndex::instance()),
+     bdfmt_(new FMT(idx_->Vdir(dir),fmt_->Nex())),
+     bd_(fmt_->get_sub(idx_->bdlw(dir))),
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_fw(bdry_,(*field_)[bd_],dir);
+  }
+
+  ShiftField_up(const GaugeField1D& field,int dir) 
+  :field_(&(field.U.getva())),dir_(dir),fmt_(&field.Format),
+     com_(Communicator::instance()),
+     idx_(SiteIndex::instance()),
+     bdfmt_(new FMT(idx_->Vdir(dir),fmt_->Nex())),
+     bd_(fmt_->get_sub(idx_->bdlw(dir))),
+     bdry_(bdfmt_->size()){ 
+    com_->transfer_fw(bdry_,(*field_)[bd_],dir);
+  }
+    
 
   ShiftField_up(const std::valarray<double>& field,const FMT* fmt,int dir)
     :field_(&field),dir_(dir),fmt_(fmt),
@@ -193,6 +216,26 @@ public:
 
   ShiftField_dn(const Field& field,const FMT* fmt,int dir)
     :field_(&(field.getva())),dir_(dir),fmt_(fmt),
+     com_(Communicator::instance()),
+     idx_(SiteIndex::instance()),
+     bdfmt_(new FMT(idx_->Vdir(dir),fmt_->Nex())),
+     bd_(fmt_->get_sub(idx_->bdup(dir))),
+     bdry_(bdfmt_->size()){
+    com_->transfer_bk(bdry_,(*field_)[bd_],dir);
+  }
+
+  ShiftField_dn(const GaugeField& field,int dir)
+    :field_(&(field.U.getva())),dir_(dir),fmt_(&field.Format),
+     com_(Communicator::instance()),
+     idx_(SiteIndex::instance()),
+     bdfmt_(new FMT(idx_->Vdir(dir),fmt_->Nex())),
+     bd_(fmt_->get_sub(idx_->bdup(dir))),
+     bdry_(bdfmt_->size()){
+    com_->transfer_bk(bdry_,(*field_)[bd_],dir);
+  }
+
+  ShiftField_dn(const GaugeField1D& field,int dir)
+    :field_(&(field.U.getva())),dir_(dir),fmt_(&field.Format),
      com_(Communicator::instance()),
      idx_(SiteIndex::instance()),
      bdfmt_(new FMT(idx_->Vdir(dir),fmt_->Nex())),

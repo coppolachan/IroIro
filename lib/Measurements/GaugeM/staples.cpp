@@ -7,33 +7,10 @@ using namespace SUNmat_utils;
 using namespace Format;
 using namespace std;
 
-// for variables with the direction unfixed 
-inline SUNmat Staples::u(const Field& g,int site,int dir)const{
-  return SUNmat(g[gf_.cslice(0,site,dir)]);
-}
-inline SUNmat Staples::u_dag(const Field& g,int site,int dir)const{
-  return SUNmat(g[gf_.cslice(0,site,dir)]).dag();
-}
+typedef ShiftField_up<GaugeFieldFormat> FieldUP;
+typedef ShiftField_dn<GaugeFieldFormat> FieldDN;
+typedef valarray<double> field1d;
 
-// for variables with a specific direction
-inline SUNmat Staples::u(const Field& g,int site)const{
-  return SUNmat(g[sf_->cslice(0,site)]);
-}
-inline SUNmat Staples::u(const std::valarray<double>& vu,int site)const{
-  return SUNmat(vu[sf_->cslice(0,site)]);
-}
-inline SUNmat Staples::u(const ShiftField& su,int site)const{
-  return SUNmat(su.cv(0,site));
-}
-inline SUNmat Staples::u_dag(const Field& g,int site)const{
-  return SUNmat(g[sf_->cslice(0,site)]).dag();
-}
-inline SUNmat Staples::u_dag(const std::valarray<double>& vu,int site)const{
-  return SUNmat(vu[sf_->cslice(0,site)]).dag();
-}
-inline SUNmat Staples::u_dag(const ShiftField& su,int site)const{
-  return SUNmat(su.cv(0,site)).dag();
-}
 
 double Staples::plaquette(const Field& g)const{ 
   return (plaq_s(g) +plaq_t(g))/2;
@@ -45,16 +22,16 @@ double Staples::plaquette(const ShiftField& gs)const{
 
 double Staples::plaq_s(const Field& g) const{
   double plaq = 0.0;
-  Field stpl(sf_->size());
+  //  Field stpl(sf_->size());
+  GaugeField1D stpl;
 
   for(int i=0;i<Ndim_-1;++i){
     int j = (i+1)%(Ndim_-1);
     
-    stpl = lower(g,i,j);
-    //cout<<" stpl(0)="<<stpl[0]<<" stpl(1)="<<stpl[1]<<endl;
+    stpl.U = lower(g,i,j);
 
     for(int site=0; site<Nvol_; ++site)
-      plaq += ReTr(u(g,site,i)*u_dag(stpl,site));  // P_ij
+      plaq += ReTr(u(g,gf_,site,i)*u_dag(stpl,site));  // P_ij
   }
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*Nc_*3.0);
@@ -67,12 +44,12 @@ double Staples::plaq_s(const ShiftField& gs) const{
 
 double Staples::plaq_t(const Field& g)const{
   double plaq = 0.0;
-  Field stpl(sf_->size());
+  GaugeField1D stpl;
 
   for(int nu=0; nu < Ndim_-1; ++nu){
-    stpl = lower(g,3,nu);
+    stpl.U = lower(g,3,nu);
     for(int site=0; site<Nvol_; ++site)
-      plaq += ReTr(u(g,site,3)*u_dag(stpl,site));  // P_zx
+      plaq += ReTr(u(g,gf_,site,3)*u_dag(stpl,site));  // P_zx
   }
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*Nc_*3.0);
@@ -101,49 +78,24 @@ void Staples::staple(Field& W, const ShiftField& gs, int mu)const {
 Field Staples::upper(const Field& g, int mu, int nu) const{
   //       mu,v                               
   //      +-->--+                                                    
-  // nu,w |     |w_dag(site+mu,nu)
+  // nu,w |     |t_dag(site+mu,nu)
   //  site+     +                                                             
 
-  valarray<double> w = g[gf_.dir_slice(nu)];
-  valarray<double> v = g[gf_.dir_slice(mu)];
-  ShiftField_up<Format_G> um(w,sf_,mu);
-  ShiftField_up<Format_G> un(v,sf_,nu);
+  field1d w = g[gf_.dir_slice(nu)];
+  field1d v = g[gf_.dir_slice(mu)];
+  FieldUP um(w,format1d_,mu);
+  FieldUP un(v,format1d_,nu);
 
-  valarray<double> c(sf_->size());
+  field1d c(format1d_->size());
   for(int site=0; site<Nvol_; ++site){
-    /*
-    cout<<" nodeid="<< Communicator::instance()->nodeid()
-	<<" w[0,"<<site <<"]="<<u(w, site).r(0)
-	<<" un[0,"<<site<<"]="<<u(un,site).r(0)
-      	<<" um[0,"<<site<<"]="<<u(um,site).r(0)
-	<<endl;
-    */
-    /*
-    SUNmat tmp1 = u(w,site)*u(un,site);
-    cout<<" nodeid="<< Communicator::instance()->nodeid()
-	<<" site="<<site
-	<<" tmp[0]="<<(tmp1.getva())[0]
-	<<" tmp[1]="<<(tmp1.getva())[1]
-      	<<" tmp[2]="<<(tmp1.getva())[2]
-	<<endl;
-    */
-    /*
-    valarray<double> tmp=(tmp1*u_dag(um,site)).getva();
-    cout<<" nodeid="<< Communicator::instance()->nodeid()
-	<<" site="<<site
-	<<" tmp[0]="<<tmp[0]
-	<<" tmp[1]="<<tmp[1]
-      	<<" tmp[2]="<<tmp[2]
-	<<endl;
-    */
-    c[sf_->cslice(0,site)] = (u(w,site)*u(un,site)*u_dag(um,site)).getva();
+    c[format1d_->cslice(0,site)] = (u(w,*format1d_,site)*u(un,site)*u_dag(um,site)).getva();
   }
   return Field(c);
 }
+
 		 
 Field Staples::upper(const ShiftField& gs, int mu,int nu) const{
-  Field g(gs.getva());
-  return upper(g,mu,nu);
+  return upper(Field(gs.getva()),mu,nu);
 }
 
 Field Staples::lower(const Field& g, int mu, int nu) const{
@@ -152,24 +104,23 @@ Field Staples::lower(const Field& g, int mu, int nu) const{
   //     site+-->--+ 
   //           mu,v              
 
-  valarray<double> v = g[gf_.dir_slice(mu)];
-  valarray<double> w = g[gf_.dir_slice(nu)];
+  field1d v(g[gf_.dir_slice(mu)]);
+  field1d w(g[gf_.dir_slice(nu)]);
 
-  ShiftField_up<Format_G> um(w,sf_,mu);
+  FieldUP um(w,format1d_,mu);
 
-  valarray<double> c(sf_->size());
+  field1d c(format1d_->size());
   for(int site=0; site<Nvol_; ++site)
-    c[sf_->cslice(0,site)] = (u_dag(w,site)*u(v,site)*u(um,site)).getva();
+    c[format1d_->cslice(0,site)] = (u_dag(w,*format1d_,site)*u(v,*format1d_,site)*u(um,site)).getva();
 
-  ShiftField_dn<Format_G> un(c,sf_,nu);
+  FieldDN un(c,format1d_,nu);
 
   for(int site=0; site<Nvol_; ++site)
-    v[sf_->cslice(0,site)] = u(un,site).getva();
+    v[format1d_->cslice(0,site)] = u(un,site).getva();
   return Field(v);
 }
 
 Field Staples::lower(const ShiftField& gs, int mu,int nu) const{
-  Field g(gs.getva());
-  return lower(g,mu,nu);
+  return lower(Field(gs.getva()),mu,nu);
 }
 

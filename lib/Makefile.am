@@ -29,7 +29,8 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
 		Action/action.cpp			\
-	 	Action/action_gauge.cpp 		\
+	 	Action/action_gauge_wilson.cpp 		\
+	 	Action/action_gauge_rect.cpp 		\
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\
 		Action/action_gaugetype_factory.cpp	\
@@ -108,7 +109,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/singleton.h		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
-			Action/action_gauge.hpp				\
+			Action/action_gauge_wilson.hpp			\
+			Action/action_gauge_rect.hpp			\
 			Action/action.h					\
 			Action/action_gaugetype_factory.hpp		\
 			Action/action_fermiontype_factory.hpp		\

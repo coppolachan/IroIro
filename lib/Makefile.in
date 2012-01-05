@@ -83,8 +83,8 @@ libcommcode_a_LIBADD =
 am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Communicator/communicator_dummy.cpp \
 	Communicator/communicator_mpi.cpp Action/action.cpp \
-	Action/action_gauge.cpp Action/action_Nf2.cpp \
-	Action/action_Nf2_ratio.cpp \
+	Action/action_gauge_wilson.cpp Action/action_gauge_rect.cpp \
+	Action/action_Nf2.cpp Action/action_Nf2_ratio.cpp \
 	Action/action_gaugetype_factory.cpp \
 	Action/action_fermiontype_factory.cpp Communicator/comm_io.cpp \
 	Communicator/fields_io.cpp Dirac_ops/dirac_wilson.cpp \
@@ -119,7 +119,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
-	action.$(OBJEXT) action_gauge.$(OBJEXT) action_Nf2.$(OBJEXT) \
+	action.$(OBJEXT) action_gauge_wilson.$(OBJEXT) \
+	action_gauge_rect.$(OBJEXT) action_Nf2.$(OBJEXT) \
 	action_Nf2_ratio.$(OBJEXT) action_gaugetype_factory.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	fields_io.$(OBJEXT) dirac_wilson.$(OBJEXT) \
@@ -322,7 +323,8 @@ EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
 		Action/action.cpp			\
-	 	Action/action_gauge.cpp 		\
+	 	Action/action_gauge_wilson.cpp 		\
+	 	Action/action_gauge_rect.cpp 		\
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\
 		Action/action_gaugetype_factory.cpp	\
@@ -400,7 +402,8 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/singleton.h		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
-			Action/action_gauge.hpp				\
+			Action/action_gauge_wilson.hpp			\
+			Action/action_gauge_rect.hpp			\
 			Action/action.h					\
 			Action/action_gaugetype_factory.hpp		\
 			Action/action_fermiontype_factory.hpp		\
@@ -591,7 +594,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2_ratio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_fermiontype_factory.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_rect.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gaugetype_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/comm_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commandline.Po@am__quote@
@@ -714,19 +718,33 @@ action.obj: Action/action.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action.obj `if test -f 'Action/action.cpp'; then $(CYGPATH_W) 'Action/action.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action.cpp'; fi`
 
-action_gauge.o: Action/action_gauge.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge.o -MD -MP -MF $(DEPDIR)/action_gauge.Tpo -c -o action_gauge.o `test -f 'Action/action_gauge.cpp' || echo '$(srcdir)/'`Action/action_gauge.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/action_gauge.Tpo $(DEPDIR)/action_gauge.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge.cpp' object='action_gauge.o' libtool=no @AMDEPBACKSLASH@
+action_gauge_wilson.o: Action/action_gauge_wilson.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_wilson.o -MD -MP -MF $(DEPDIR)/action_gauge_wilson.Tpo -c -o action_gauge_wilson.o `test -f 'Action/action_gauge_wilson.cpp' || echo '$(srcdir)/'`Action/action_gauge_wilson.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/action_gauge_wilson.Tpo $(DEPDIR)/action_gauge_wilson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge_wilson.cpp' object='action_gauge_wilson.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge.o `test -f 'Action/action_gauge.cpp' || echo '$(srcdir)/'`Action/action_gauge.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson.o `test -f 'Action/action_gauge_wilson.cpp' || echo '$(srcdir)/'`Action/action_gauge_wilson.cpp
 
-action_gauge.obj: Action/action_gauge.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge.obj -MD -MP -MF $(DEPDIR)/action_gauge.Tpo -c -o action_gauge.obj `if test -f 'Action/action_gauge.cpp'; then $(CYGPATH_W) 'Action/action_gauge.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/action_gauge.Tpo $(DEPDIR)/action_gauge.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge.cpp' object='action_gauge.obj' libtool=no @AMDEPBACKSLASH@
+action_gauge_wilson.obj: Action/action_gauge_wilson.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_wilson.obj -MD -MP -MF $(DEPDIR)/action_gauge_wilson.Tpo -c -o action_gauge_wilson.obj `if test -f 'Action/action_gauge_wilson.cpp'; then $(CYGPATH_W) 'Action/action_gauge_wilson.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_wilson.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/action_gauge_wilson.Tpo $(DEPDIR)/action_gauge_wilson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge_wilson.cpp' object='action_gauge_wilson.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge.obj `if test -f 'Action/action_gauge.cpp'; then $(CYGPATH_W) 'Action/action_gauge.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson.obj `if test -f 'Action/action_gauge_wilson.cpp'; then $(CYGPATH_W) 'Action/action_gauge_wilson.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_wilson.cpp'; fi`
+
+action_gauge_rect.o: Action/action_gauge_rect.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_rect.o -MD -MP -MF $(DEPDIR)/action_gauge_rect.Tpo -c -o action_gauge_rect.o `test -f 'Action/action_gauge_rect.cpp' || echo '$(srcdir)/'`Action/action_gauge_rect.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/action_gauge_rect.Tpo $(DEPDIR)/action_gauge_rect.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge_rect.cpp' object='action_gauge_rect.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_rect.o `test -f 'Action/action_gauge_rect.cpp' || echo '$(srcdir)/'`Action/action_gauge_rect.cpp
+
+action_gauge_rect.obj: Action/action_gauge_rect.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_rect.obj -MD -MP -MF $(DEPDIR)/action_gauge_rect.Tpo -c -o action_gauge_rect.obj `if test -f 'Action/action_gauge_rect.cpp'; then $(CYGPATH_W) 'Action/action_gauge_rect.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_rect.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/action_gauge_rect.Tpo $(DEPDIR)/action_gauge_rect.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge_rect.cpp' object='action_gauge_rect.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_rect.obj `if test -f 'Action/action_gauge_rect.cpp'; then $(CYGPATH_W) 'Action/action_gauge_rect.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_rect.cpp'; fi`
 
 action_Nf2.o: Action/action_Nf2.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_Nf2.o -MD -MP -MF $(DEPDIR)/action_Nf2.Tpo -c -o action_Nf2.o `test -f 'Action/action_Nf2.cpp' || echo '$(srcdir)/'`Action/action_Nf2.cpp

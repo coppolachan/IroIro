@@ -2,6 +2,8 @@
 //   sunMat.cpp
 //----------------------------------------------------------------------
 #include "sunMat.h"
+
+
 using namespace std;
 
 SUNmat& SUNmat::reunit(){
@@ -155,5 +157,6 @@ namespace SUNmat_utils{
     }
     return va;
   }
-}
+
+}//endof namespace SUNmat_utils
 

@@ -15,7 +15,7 @@
 
 #include "HMC/hmcGeneral.h"
 #include "test_HMC_DomainWall.hpp"
-#include "Action/action_gauge.hpp"
+#include "Action/action_gauge_wilson.hpp"
 #include "Action/action_Nf2_DomainWall.h"
 #include "Communicator/comm_io.hpp"
 
