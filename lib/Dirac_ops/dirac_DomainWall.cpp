@@ -28,7 +28,8 @@ Dirac_optimalDomainWall_params(XML::node DWF_node){
   XML::read(DWF_node, "c", c_, MANDATORY);
   XML::read(DWF_node, "mass", mq_, MANDATORY);
   omega_.resize(N5dim_);
-  
+
+  CCIO::cout<<"mass="<<mq_<<std::endl;
   CCIO::cout<<"Dirac_optimalDomainWall_params::N5dim_="<<N5dim_<<std::endl;
 
   XML::node ApproxNode = DWF_node.child("approximation");

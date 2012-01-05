@@ -64,7 +64,7 @@ double Action_Nf2_ratio::calc_H(){
 Field Action_Nf2_ratio::md_force(const void*){
   Field eta = DdagD1_inv(D2_->mult_dag(phi_));
   Field force= D1_->md_force(eta,D1_->mult(eta));
-  force -= D2_->md_force(phi_,eta);
+  force -= D2_->md_force(eta,phi_);
 
 #if VERBOSITY>=ACTION_VERB_LEVEL
   monitor_force(force, "Action_Nf2_ratio");

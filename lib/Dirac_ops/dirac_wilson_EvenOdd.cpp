@@ -21,11 +21,7 @@ const Field Dw::EvOd::md_force(const Field& eta,const Field& zeta) const{
 }
 
 const vector<int> Dw::EvOd::get_gsite() const{
-  vector<int> gsite;
-  for(int site=0; site<Nvol_; ++site)
-    gsite.push_back(idx_->gsite(site));
-
-  return gsite;
+  return idx_->get_gsite();
 }
 
 /*
@@ -86,11 +82,7 @@ const Field Dw::EvOd::md_force(const Field& eta,const Field& zeta) const{
 */
 
 const vector<int> Dw::OdEv::get_gsite() const{
-  vector<int> gsite;
-  for(int site=0; site<Nvol_; ++site)
-    gsite.push_back(idx_->gsite(site));
-
-  return gsite;
+  return idx_->get_gsite();
 }
 
 const Field Dw::OdEv::mult(const Field& f)const{
@@ -179,7 +171,10 @@ const Field Dirac_Wilson_EvenOdd::mult_dag(const Field& f) const{
 const Field Dirac_Wilson_EvenOdd::
 md_force(const Field& eta,const Field& zeta) const{
   Field fce = Doe_.md_force(eta,Deo_.mult_dag(zeta));
-  fce += Deo_.md_force(Doe_.mult(eta),zeta);
+  Field fce2 = Deo_.md_force(Doe_.mult(eta),zeta);
+  CCIO::cout<<"Doe.fce: average_abs="<<fce.average_abs()<<std::endl;
+  CCIO::cout<<"Deo.fce: average_abs="<<fce2.average_abs()<<std::endl;
+  fce += fce2;
   return -fce;
 }
 

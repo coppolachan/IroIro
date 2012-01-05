@@ -788,12 +788,7 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
 */
 
 const vector<int> Dirac_Wilson::get_gsite() const {
-  vector<int> gsite;
-  SiteIndex* idx = SiteIndex::instance();
-  for(int site=0; site<Nvol_; ++site)
-    gsite.push_back(idx->gsite(site));
-
-  return gsite;
+  return SiteIndex::instance()->get_gsite();
 }
 
 namespace Dw{

@@ -20,6 +20,7 @@ private:
   std::vector<int> Bdir_;
   std::vector<int> Ndir_;
   std::vector<int> Vdir_;
+  static std::vector<int> gsite_;
   static std::vector<std::vector<int> > bdup_;
   static std::vector<std::vector<int> > bdlw_;
 
@@ -64,12 +65,13 @@ private:
       Vdir_.push_back(Vdir[i]);
     }
     setup_bdry();
+    setup_global();
   }
 
   SiteIndex(const SiteIndex&){}
   SiteIndex& operator=(const SiteIndex&){}
   void setup_bdry();
-
+  void setup_global();
 public:
   static SiteIndex* instance();
   // components
@@ -87,8 +89,6 @@ public:
     return x +Nx_*y +NxNy_*z +NxNyNz_*t; 
   }
   
-  int gsite(int site) const;
-
   static int (SiteIndex::*cmps[])(int site) const;
   static int (SiteIndex::*xps[])(int site) const;
   static int (SiteIndex::*xms[])(int site) const;
@@ -109,6 +109,9 @@ public:
   int Vdir(int d)const{return Vdir_[d];}
   const std::vector<int> bdup(int d)const{return bdup_[d];}
   const std::vector<int> bdlw(int d)const{return bdlw_[d];}
+
+  const std::vector<int> get_gsite() const{ return gsite_;}
+  int get_gsite(int site) const{ return gsite_[site];}
 };
 
 #endif

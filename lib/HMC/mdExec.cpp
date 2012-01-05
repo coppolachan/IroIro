@@ -27,9 +27,7 @@ namespace MDutils{
     Format::Format_A fmt(Nvol);
     valarray<double> pj(fmt.size());
 
-    vector<int> gsite;
-    for(int site=0; site<Nvol; ++site)
-      gsite.push_back(SiteIndex::instance()->gsite(site));
+    vector<int> gsite = SiteIndex::instance()->get_gsite();
 
     MPrand::mp_get_gauss(pj,rand,gsite,fmt);
     pj *= sqrt(2.0); // to get Px,mu^a with the distribution exp(-1/2*P*P)
