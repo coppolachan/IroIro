@@ -103,6 +103,9 @@ protected:
   void mult_tm(std::valarray<double>&,const Field&)const;
   void mult_core(Field&,Field&)const;
 
+  void md_force_p(Field&,const Field& eta,const Field& zeta)const;
+  void md_force_m(Field&,const Field& eta,const Field& zeta)const;
+
   static void(Dirac_Wilson::*mult_p[])(Field&,ShiftField*)const;
   static void(Dirac_Wilson::*mult_m[])(std::valarray<double>&,
 				       const Field&)const;
@@ -179,7 +182,9 @@ public:
     for(int d=0;d<sf_dn_.size();++d) delete sf_dn_[d];
   }
   
-  size_t fsize() const{return fsize_;}
+  size_t fsize() const{
+    CCIO::cout<<"Dirac_Wilson::fsize_="<<fsize_<<std::endl;
+    return fsize_;}
   size_t gsize() const{return gsize_;}
 
   const Field operator()(int OpType, const Field&)const{};
@@ -199,5 +204,6 @@ public:
   
   const double getKappa() const {return kpp_;}  
   const ffmt_t get_fermionFormat() const {return *ff_;}
+  const std::vector<int> get_gsite() const;
 };
 #endif

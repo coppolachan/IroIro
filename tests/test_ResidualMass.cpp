@@ -34,7 +34,7 @@ int Test_ResMass::run(XML::node node) {
   // the prevoius static_cast is absolutely safe since we know exaclty what class we are creating
 
   XML::next_sibling(node, "Source");
-  SourceFactory* Source_Factory = Sources::createSourceFactory<Format::Format_F>(node);
+  SourceFactory* Source_Factory = Sources::createSourceFactory<SiteIndex,Format::Format_F>(node);
   Source* SourceObj =  Source_Factory->getSource();
 
   prop_t sq;  //Defines a vector of fields

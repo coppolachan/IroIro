@@ -15,6 +15,8 @@ private:
   int Nx_,Ny_,Nz_,Nt_;
   int NxNy_,NxNyNz_;
   int Nvol_;
+  int Lx_,Ly_,Lz_,Lt_;
+  int LxLy_,LxLyLz_;
   std::vector<int> Bdir_;
   std::vector<int> Ndir_;
   std::vector<int> Vdir_;
@@ -45,7 +47,12 @@ private:
 	      Nz_(CommonPrms::instance()->Nz()),
 	      Nt_(CommonPrms::instance()->Nt()),
 	      Nvol_(CommonPrms::instance()->Nvol()),
-	      NxNy_(Nx_*Ny_),NxNyNz_(Nx_*Ny_*Nz_){
+	      NxNy_(Nx_*Ny_),NxNyNz_(Nx_*Ny_*Nz_),
+	      Lx_(CommonPrms::instance()->Lx()),
+	      Ly_(CommonPrms::instance()->Ly()),
+	      Lz_(CommonPrms::instance()->Lz()),
+	      Lt_(CommonPrms::instance()->Lt()),
+	      LxLy_(Lx_*Ly_),LxLyLz_(Nx_*Ny_*Nz_){
 
     int Bdir[Ndim_max_]= {Nx_-1,Ny_-1,Nz_-1,Nt_-1,};
     int Ndir[Ndim_max_]= {Nx_,Ny_,Nz_,Nt_,};
@@ -70,6 +77,11 @@ public:
   int y(int site) const{ return (site/Nx_)%Ny_;}
   int z(int site) const{ return (site/NxNy_)%Nz_;}
   int t(int site) const{ return site/NxNyNz_;}
+
+  int gx(int site) const{ return site%Lx_;}
+  int gy(int site) const{ return (site/Lx_)%Ly_;}
+  int gz(int site) const{ return (site/LxLy_)%Lz_;}
+  int gt(int site) const{ return site/LxLyLz_;}
 
   int site(int x,int y,int z,int t) const{
     return x +Nx_*y +NxNy_*z +NxNyNz_*t; 

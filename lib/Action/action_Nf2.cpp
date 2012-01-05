@@ -20,9 +20,9 @@ Field Action_Nf2::DdagD_inv(const Field& src){
 void Action_Nf2::init(const RandNum& rand,const void*){
 
   CCIO::cout<<"Action_Nf2::init"<<std::endl;
-  std::valarray<double> ph(fsize_);
 
-  MPrand::mp_get_gauss(ph,rand,D_->get_fermionFormat());
+  std::valarray<double> ph(fsize_);
+  MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
   phi_= D_->mult_dag(Field(ph));
 }
 
@@ -34,8 +34,7 @@ double Action_Nf2::calc_H(){
 
 Field Action_Nf2::md_force(const void*){
   Field eta = DdagD_inv(phi_);
-  Field force(D_->md_force(eta,D_->mult(eta)));
-
+  Field force = D_->md_force(eta,D_->mult(eta));
 #if VERBOSITY>=ACTION_VERB_LEVEL
   monitor_force(force, "Action_Nf2");
 #endif

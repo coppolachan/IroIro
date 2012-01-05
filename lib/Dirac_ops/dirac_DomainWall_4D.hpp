@@ -79,10 +79,12 @@ public:
   const Field mult_dag_inv(const Field&)const;
 
   const Field signKernel(const Field&)const;
+
   const Format::Format_F get_fermionFormat() const {
     return Dodw_.get_fermionFormat();
   }
 
+  const std::vector<int> get_gsite() const{ return Dodw_.get_gsite();}
   const Field md_force( const Field& eta,const Field& zeta) const{}
 };
 

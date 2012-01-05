@@ -59,8 +59,7 @@ public:
     rh_.resize(opr_->fsize());
     s_.resize(opr_->fsize());
     t_.resize(opr_->fsize());
-  }
-  
+  }  
   
   ~Solver_BiCGStab(){}
   

@@ -15,13 +15,8 @@
 
 #include "HMC/hmcGeneral.h"
 #include "test_HMC_DomainWall.hpp"
-<<<<<<< HEAD
-#include "Action/action_gauge_wilson.hpp"
-#include "Action/action_Nf2_DomainWall.h"
-=======
 #include "Action/action_gauge.hpp"
-#include "Action/action_Nf2_ratio.h"
->>>>>>> origin/master
+#include "Action/action_Nf2_DomainWall.h"
 #include "Communicator/comm_io.hpp"
 
 using namespace std;
@@ -63,7 +58,7 @@ int Test_HMC_DomainWall::run(XML::node node){
   Solver_CG SolvNf2(10e-12,1000,&DdagD2);
   Solver_CG SolvNf2PV(10e-12,1000,&DdagD_PV);
   Action* Nf2Action 
-    = new Action_Nf2_ratio(&CommonField,&Ddwf2,&DdwfPV,&SolvNf2,&SolvNf2PV);
+    = new Action_Nf2_DomainWall(&CommonField,&Ddwf2,&DdwfPV,&SolvNf2,&SolvNf2PV);
   al_2.push_back(Nf2Action);
 
   // pf2 term

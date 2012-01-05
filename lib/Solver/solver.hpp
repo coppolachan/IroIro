@@ -10,6 +10,7 @@
 #include "include/macros.hpp" 
 
 class Field;
+class Fopr;
 
 struct SolverOutput{
   double diff;   /*!< Residual */
@@ -22,11 +23,8 @@ struct SolverOutput{
 class Solver{
 public:
   virtual ~Solver(){}
-  //virtual void set_mq(double) const = 0;
-  //virtual void set_gconf(const Field&) const = 0;
   virtual SolverOutput solve(Field& solution, 
 			     const Field& source) const =0;
-
   virtual bool check_DdagD() const  = 0;
 };
 

@@ -28,6 +28,9 @@ Dirac_optimalDomainWall_params(XML::node DWF_node){
   XML::read(DWF_node, "c", c_, MANDATORY);
   XML::read(DWF_node, "mass", mq_, MANDATORY);
   omega_.resize(N5dim_);
+  
+  CCIO::cout<<"Dirac_optimalDomainWall_params::N5dim_="<<N5dim_<<std::endl;
+
   XML::node ApproxNode = DWF_node.child("approximation");
   if(ApproxNode !=NULL) {
     const char* Approx_name = ApproxNode.attribute("name").value();
@@ -91,6 +94,7 @@ Dirac_optimalDomainWall_params(const Dirac_optimalDomainWall_params& Par,
     mq_ = Par.mq_;
     break;
   case PauliVillars:
+    CCIO::cout<<"PauliVillars operator created"<<std::endl;
     mq_ = 1.0;
     break;
     default:
@@ -117,6 +121,8 @@ Dirac_optimalDomainWall::Dirac_optimalDomainWall(XML::node DWF_node,
     Params.dp_[s] = Params.bs_[s]*(4.0+M0_)+1.0;
     Params.dm_[s] = 1.0-Params.cs_[s]*(4.0+M0_);
   }
+
+  CCIO::cout << "Dirac_optimalDomainWall::N5_="<<N5_<<std::endl;
 #if VERBOSITY>4
   CCIO::cout << "Created Dirac_optimalDomainWall" << std::endl;
 #endif
@@ -418,7 +424,6 @@ md_force(const Field& phi,const Field& psi) const{
     
     force += (4.0+M0_)*Dw_->md_force(w,get4d(psi,s));
   }
-
   return force;
 }
 

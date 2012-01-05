@@ -33,13 +33,13 @@ namespace Format{
     
     // get indices
     int index(int i, int site, int ex=0) const {
-      return i +Nin_*site;
+      return i +Nin_*(site +Nex_*ex);
     }
     int index_r(int c, int s, int site, int ex=0) const { 
-      return 2*(c +Nc_*s) +Nin_*site; 
+      return 2*(c +Nc_*s) +Nin_*(site +Nex_*ex); 
     }
     int index_i(int c, int s, int site, int ex=0) const { 
-      return 1+2*(c +Nc_*s) +Nin_*site; 
+      return 1+2*(c +Nc_*s) +Nin_*(site +Nex_*ex); 
     }
     // get slices
     std::slice cplx_slice(int c, int s, int site, int ex=0) const {
@@ -74,9 +74,7 @@ namespace Format{
       int j=0;
       for(int e=0;e<Nex_;++e)
 	for(int v=0;v<sv.size();++v)
-	  for(int i=0;i<Nin_;++i)
-	    sub[j++] = i+Nin_*(sv[v] +Nvol_*e);
-
+	  for(int i=0;i<Nin_;++i) sub[j++] = index(i,sv[v],e);
       return sub;
     }
   };  

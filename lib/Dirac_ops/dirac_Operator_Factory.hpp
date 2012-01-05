@@ -68,7 +68,7 @@ class DiracDWF5dFactory : public DiracWilsonLikeOperatorFactory {
 
 public:
   DiracDWF5dFactory(XML::node node):Dirac_node(node){
-    XML::descend(node, "Kernel");
+    XML::descend(node, "Kernel5d");
     DiracObj.save(new DiracWilsonFactory(node)); 
   }
 
@@ -78,7 +78,6 @@ public:
   }
   ~DiracDWF5dFactory(){}
 };
-
 
 /*!
  * @brief Concrete class for creating Dirac Optimal DWF-4d operators

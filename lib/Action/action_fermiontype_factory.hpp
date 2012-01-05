@@ -25,8 +25,7 @@ class FermionActionFactory : public ActionFactory {
 public:
   Action* getAction(const Format::Format_G& GaugeForm,
 		    Field* const GaugeField) {
-    return getFermionAction(GaugeForm,
-			    GaugeField);
+    return getFermionAction(GaugeForm,GaugeField);
   }
 };
 
@@ -43,8 +42,7 @@ class TwoFlavorActionFactory : public FermionActionFactory {
   const XML::node Action_node;
 
 public:
-  TwoFlavorActionFactory(XML::node node)
-    :Action_node(node){
+  TwoFlavorActionFactory(XML::node node):Action_node(node){
     XML::descend(node,"Kernel");
     DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
     XML::next_sibling(node,"Solver");
@@ -53,7 +51,6 @@ public:
 
   ~TwoFlavorActionFactory(){}
 private:
-  
   Action_Nf2* getFermionAction(const Format::Format_G& Form,
 			       Field* const GaugeField){
     Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
@@ -81,8 +78,7 @@ class TwoFlavorRatioActionFactory : public FermionActionFactory {
 public:
   ~TwoFlavorRatioActionFactory(){}
 
-  TwoFlavorRatioActionFactory(XML::node node)
-    :Action_node(node){
+  TwoFlavorRatioActionFactory(XML::node node):Action_node(node){
     XML::descend(node,"Numerator");
     DiracNumObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node)); 
     XML::next_sibling(node,"Denominator");
@@ -109,41 +105,50 @@ private:
 				Solver2.get()); 
   }
 };
-
 ////////////////////////////////////////////////////
 
 class TwoFlavorDomainWallActionFactory : public FermionActionFactory {
+
   RaiiFactoryObj<DiracDWF5dFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverObj;
-  
-  RaiiFactoryObj<Dirac_optimalDomainWall> DWF5d_Kernel;
-  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOp;
-  RaiiFactoryObj<Solver> Solv;
-  
 
+  RaiiFactoryObj<Dirac_optimalDomainWall> DWF5d_Kernel;
+  RaiiFactoryObj<Dirac_optimalDomainWall> DWF5d_KernelPV;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOp;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOpPV;
+  RaiiFactoryObj<Solver> Solv;
+  RaiiFactoryObj<Solver> SolvPV;
+  
   const XML::node Action_node;
 
 public:
-  TwoFlavorDomainWallActionFactory(XML::node node)
-    :Action_node(node){
+  ~TwoFlavorDomainWallActionFactory(){}
+
+  TwoFlavorDomainWallActionFactory(XML::node node):Action_node(node){
+    CCIO::cout<<"TwoFlavorDomainWallActionFactory called"<<std::endl;
     XML::descend(node,"Kernel5D");
     DiracObj.save(new DiracDWF5dFactory(node));
     XML::next_sibling(node,"Solver");
     SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
   }
 
-  ~TwoFlavorDomainWallActionFactory(){}
-private:
-  
-  Action_Nf2_DomainWall* getFermionAction(const Format::Format_G& Form,
-					  Field* const GaugeField){
+private:  
+  Action_Nf2_ratio* getFermionAction(const Format::Format_G& Form,
+				     Field* const GaugeField){
     DWF5d_Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
+    DWF5d_KernelPV.save(new Dirac_optimalDomainWall(*DWF5d_Kernel.get(),
+						    PauliVillars));
     HermitianOp.save(new Fopr_DdagD_Precondition(DWF5d_Kernel.get()));
+    HermitianOpPV.save(new Fopr_DdagD_Precondition(DWF5d_KernelPV.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
-    return new Action_Nf2_DomainWall(GaugeField, DWF5d_Kernel.get(), Solv.get());
+    SolvPV.save(SolverObj.get()->getSolver(HermitianOpPV.get()));
+    return new Action_Nf2_ratio(GaugeField,
+				DWF5d_Kernel.get(),
+				DWF5d_KernelPV.get(),
+				Solv.get(),
+				SolvPV.get());
   }
 };
-
 ///////////////////////////////////////////////////////////////////////
 /*
 class TwoFlavorEvenOddActionFactory : public FermionActionFactory {

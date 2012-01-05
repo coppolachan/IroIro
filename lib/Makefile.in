@@ -115,7 +115,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	../tests/test_EigenModes_IRL.cpp \
 	../tests/test_MultiShiftSolver.cpp ../tests/test_overlap.cpp \
 	../tests/test_wilson_EvenOdd.cpp ../tests/test_DomainWall.cpp \
-	../tests/test_HMC_EvenOdd.cpp
+	../tests/test_HMC_DomainWall.cpp ../tests/test_HMC_EvenOdd.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
@@ -144,7 +144,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	gammaMatrices.$(OBJEXT) test_Gauge.$(OBJEXT) \
 	test_EigenModes_IRL.$(OBJEXT) test_MultiShiftSolver.$(OBJEXT) \
 	test_overlap.$(OBJEXT) test_wilson_EvenOdd.$(OBJEXT) \
-	test_DomainWall.$(OBJEXT) test_HMC_EvenOdd.$(OBJEXT)
+	test_DomainWall.$(OBJEXT) test_HMC_DomainWall.$(OBJEXT) \
+	test_HMC_EvenOdd.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_mainprog_OBJECTS = main.$(OBJEXT)
@@ -369,11 +370,12 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunMat.cpp			\
 		Tools/gammaMatrices.cpp			\
 		../tests/test_Gauge.cpp			\
-		../tests/test_EigenModes_IRL.cpp		\
-		../tests/test_MultiShiftSolver.cpp		\
-		../tests/test_overlap.cpp			\
-		../tests/test_wilson_EvenOdd.cpp		\
+		../tests/test_EigenModes_IRL.cpp	\
+		../tests/test_MultiShiftSolver.cpp	\
+		../tests/test_overlap.cpp		\
+		../tests/test_wilson_EvenOdd.cpp	\
 		../tests/test_DomainWall.cpp		\
+		../tests/test_HMC_DomainWall.cpp	\
                 ../tests/test_HMC_EvenOdd.cpp
 
 mainprog_SOURCES = Main/main.cpp 				
@@ -470,6 +472,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			../tests/test_overlap.hpp		\
 			../tests/test_wilson_EvenOdd.hpp	\
 			../tests/test_Gauge.hpp			\
+                        ../tests/test_HMC_DomainWall.hpp        \
                         ../tests/test_HMC_EvenOdd.hpp           \
 			../tests/tests.hpp                      
 
@@ -643,6 +646,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModes_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_overlap.Po@am__quote@
@@ -1431,6 +1435,20 @@ test_DomainWall.obj: ../tests/test_DomainWall.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_DomainWall.cpp' object='test_DomainWall.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_DomainWall.obj `if test -f '../tests/test_DomainWall.cpp'; then $(CYGPATH_W) '../tests/test_DomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_DomainWall.cpp'; fi`
+
+test_HMC_DomainWall.o: ../tests/test_HMC_DomainWall.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_HMC_DomainWall.o -MD -MP -MF $(DEPDIR)/test_HMC_DomainWall.Tpo -c -o test_HMC_DomainWall.o `test -f '../tests/test_HMC_DomainWall.cpp' || echo '$(srcdir)/'`../tests/test_HMC_DomainWall.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_HMC_DomainWall.Tpo $(DEPDIR)/test_HMC_DomainWall.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_HMC_DomainWall.cpp' object='test_HMC_DomainWall.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_HMC_DomainWall.o `test -f '../tests/test_HMC_DomainWall.cpp' || echo '$(srcdir)/'`../tests/test_HMC_DomainWall.cpp
+
+test_HMC_DomainWall.obj: ../tests/test_HMC_DomainWall.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_HMC_DomainWall.obj -MD -MP -MF $(DEPDIR)/test_HMC_DomainWall.Tpo -c -o test_HMC_DomainWall.obj `if test -f '../tests/test_HMC_DomainWall.cpp'; then $(CYGPATH_W) '../tests/test_HMC_DomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_HMC_DomainWall.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/test_HMC_DomainWall.Tpo $(DEPDIR)/test_HMC_DomainWall.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_HMC_DomainWall.cpp' object='test_HMC_DomainWall.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_HMC_DomainWall.obj `if test -f '../tests/test_HMC_DomainWall.cpp'; then $(CYGPATH_W) '../tests/test_HMC_DomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_HMC_DomainWall.cpp'; fi`
 
 test_HMC_EvenOdd.o: ../tests/test_HMC_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_HMC_EvenOdd.o -MD -MP -MF $(DEPDIR)/test_HMC_EvenOdd.Tpo -c -o test_HMC_EvenOdd.o `test -f '../tests/test_HMC_EvenOdd.cpp' || echo '$(srcdir)/'`../tests/test_HMC_EvenOdd.cpp

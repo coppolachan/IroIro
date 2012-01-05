@@ -48,8 +48,8 @@ int main(){
 
   //Initialize GaugeField using XML input
   GaugeField GaugeF(geom);
-  //  GaugeF.initialize(top_node);
-  GaugeF.initializeTxt("conf_04040408.txt");
+  GaugeF.initialize(top_node);
+  //GaugeF.initializeTxt("conf_04040408.txt");
 
   /////////////
 

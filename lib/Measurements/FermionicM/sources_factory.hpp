@@ -3,14 +3,12 @@
  *
  * @brief Propagator Source factories
  */
-
 #ifndef SOURCES_FACT_
 #define SOURCES_FACT_
 
 #include <string>
 #include "include/pugi_interface.h"
 #include "Measurements/FermionicM/source_types.hpp"
-
 /*!
  * @brief Abstract base class for creating Source
  *
@@ -29,8 +27,7 @@ class LocalSourceFactory: public SourceFactory {
   const XML::node Source_node;
 
 public:
-  LocalSourceFactory(XML::node node):Source_node(node){
-  }
+  LocalSourceFactory(XML::node node):Source_node(node){}
 
   Source* getSource(){
     std::vector<int> position;
@@ -45,8 +42,7 @@ class ExpSourceFactory: public SourceFactory {
   const XML::node Source_node;
 
 public:
-  ExpSourceFactory(XML::node node):Source_node(node){
-  }
+  ExpSourceFactory(XML::node node):Source_node(node){}
 
   Source* getSource(){
     std::vector<int> position;
@@ -59,27 +55,25 @@ public:
   }
 };
 
-template <typename Format>
+template <typename Index,typename Format>
 class WhiteNoiseSourceFactory: public SourceFactory {
   const XML::node Source_node;
 
 public:
-  WhiteNoiseSourceFactory(XML::node node):Source_node(node){
-  }
+  WhiteNoiseSourceFactory(XML::node node):Source_node(node){}
 
   Source* getSource(){
-    return new Source_wnoise<Format>(*RNG_Env::RNG->getRandomNumGenerator(),
-				     CommonPrms::instance()->Nvol());
+    return new Source_wnoise<Index,Format>(*RNG_Env::RNG->getRandomNumGenerator(),
+					   CommonPrms::instance()->Nvol());
   }
 };
 
-template <typename Format>
+template <typename Index,typename Format>
 class Z2noiseSourceFactory: public SourceFactory {
   const XML::node Source_node;
 
 public:
-  Z2noiseSourceFactory(XML::node node):Source_node(node){
-  }
+  Z2noiseSourceFactory(XML::node node):Source_node(node){}
 
   Source* getSource(){
     Z2Type NoiseType;
@@ -91,26 +85,24 @@ public:
       abort();
     } else {
       CCIO::cout << "Choosing Z2Type type: "<< 	Z2Type_name << std::endl;
-    };
-    return new Source_Z2noise<Format>(*RNG_Env::RNG->getRandomNumGenerator(),
-				      CommonPrms::instance()->Nvol(),
-				      NoiseType);
+    }
+    return new 
+      Source_Z2noise<Index,Format>(*RNG_Env::RNG->getRandomNumGenerator(),
+				   CommonPrms::instance()->Nvol(),
+				   NoiseType);
   }
 };
 
 ///////////////////////////////////////////////////
-
 /*!
  * @brief Namespace for Sources factory caller
  *
  */
 namespace Sources{
-  template <typename Format>
-  SourceFactory* createSourceFactory(const XML::node node)
-  {
+  template <typename Index,typename Format>
+  SourceFactory* createSourceFactory(const XML::node node){
     
     if (node !=NULL) {
-      
       const char* Source_name = node.attribute("type").value();
       
       if (!strcmp(Source_name, "Local")) { 
@@ -120,12 +112,11 @@ namespace Sources{
         return new ExpSourceFactory<Format>(node);
       }
       if (!strcmp(Source_name, "WhiteNoise")) { 
-        return new WhiteNoiseSourceFactory<Format>(node);
+        return new WhiteNoiseSourceFactory<Index,Format>(node);
       }
       if (!strcmp(Source_name, "Z2noise")) { 
-        return new Z2noiseSourceFactory<Format>(node);
+        return new Z2noiseSourceFactory<Index,Format>(node);
       }
-      
       std::cerr << "No Source available with name ["
 		<< Source_name << "]" << std::endl;
       abort();
@@ -137,8 +128,6 @@ namespace Sources{
       abort();
     }
   }  
-  
 };
-
 
 #endif 

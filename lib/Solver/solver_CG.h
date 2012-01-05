@@ -52,7 +52,7 @@ public:
     :opr_(fopr),
      nodeid_(Communicator::instance()->nodeid()),
      Params(Solver_CG_Prms(prec, MaxIterations)){}
-  
+
   Solver_CG(const XML::node Solver_node,const Fopr_Herm* fopr)
     :opr_(fopr),
      Params(Solver_CG_Prms(Solver_node)),

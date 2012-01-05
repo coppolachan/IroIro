@@ -58,6 +58,9 @@ public:
   const Format::Format_F get_fermionFormat() const{
     return Fopr_signH->get_fermionFormat();
   }
+  const std::vector<int> get_gsite() const {
+    return Fopr_signH->get_gsite();
+  }
 };
 
 #endif

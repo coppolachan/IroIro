@@ -23,26 +23,17 @@
  */
 class Action_Nf2_DomainWall :public Action{
 private:
-  Field* const u_;    /*!< The gauge field       */
-  const Dirac* D_;    /*!< Dirac Kernel operator */ 
-  const Solver* slv_; /*!< Linear solver operator*/
   Action_Nf2_ratio action_;
-  Dirac_optimalDomainWall Dpv_;
-  size_t fsize_;
-  Field phi_;
-  
-  Field DdagD_inv(const Field& src);
-  
 public:
   /*!
    * @brief Standard constructor 
    */
   Action_Nf2_DomainWall(Field* const GField,
-			const Dirac_optimalDomainWall* D, 
-			const Solver* Solv)
-    :u_(GField),Dpv_(*D,PauliVillars),
-     action_(GField,D,&Dpv_,Solv,Solv),
-     fsize_(D->fsize()),phi_(fsize_){}
+			const Dirac_optimalDomainWall* D,
+			const Dirac_optimalDomainWall* Dpv,
+			const Solver* Solv,
+			const Solver* SolvPv)
+    :action_(GField,D,Dpv,Solv,SolvPv){}
   
   ~Action_Nf2_DomainWall(){}
 

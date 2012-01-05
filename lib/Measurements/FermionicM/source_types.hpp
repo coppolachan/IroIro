@@ -237,17 +237,23 @@ const Field Source_wall<FMT>::mksrc(const std::vector<int>& lv,int s,int c){
 }
 
 ////// Source_wnoise----------------------------------------------------
-template<typename FMT> class Source_wnoise :public Source{
+template<typename IDX,typename FMT> class Source_wnoise :public Source{
 private:
   const RandNum& rand_;
   FMT* ff_;
+  IDX* idx_;
   std::valarray<double> src_;
 public:
   Source_wnoise(const RandNum& rand, int Nvol)
-    :rand_(rand),ff_(new FMT(Nvol)){
+    :rand_(rand),idx_(IDX::instance()),ff_(new FMT(Nvol)){
     //
     src_.resize(ff_->size());
-    MPrand::mp_get(src_,rand_,*ff_);
+
+    std::vector<int> gsite;
+    for(int site=0; site<ff_->Nvol(); ++site)
+      gsite.push_back(idx_->gsite(site));
+
+    MPrand::mp_get(src_,rand_,gsite,*ff_);
   }
 
   ~Source_wnoise(){ delete ff_;}
@@ -255,15 +261,15 @@ public:
   const Field mksrc(const std::vector<int>& lv, int s, int c);
 };
 
-template<typename FMT>
-const Field Source_wnoise<FMT>::mksrc(int s, int c){
+template<typename IDX,typename FMT>
+const Field Source_wnoise<IDX,FMT>::mksrc(int s, int c){
   Field wns(ff_->size());
   wns.set(ff_->cs_slice(c,s), src_[ff_->cs_slice(c,s)]);
   return wns;
 }
 
-template<typename FMT> 
-const Field Source_wnoise<FMT>::
+template<typename IDX,typename FMT> 
+const Field Source_wnoise<IDX,FMT>::
 mksrc(const std::vector<int>& lv,int s,int c){
   Field scs = mksrc(s,c);
   return Field(scs[ff_->get_sub(lv)]);
@@ -280,10 +286,11 @@ Begin_Enum_String( Z2Type ) {
 } 
 End_Enum_String;
 
-template<typename FMT> class Source_Z2noise :public Source{
+template<typename IDX,typename FMT> class Source_Z2noise :public Source{
 private:
   const RandNum& rand_generator_;/*!< @brief Random number generator (to be provided)*/
   Z2Type Type_;
+  IDX* idx_;
   FMT* ff_;/*!< @brief %Field %Format specifier */
   std::valarray<double> source_;/*!< @brief %Source field result */
 public:
@@ -292,6 +299,7 @@ public:
    */
   Source_Z2noise(const RandNum& rand, int Nvol, Z2Type Type)
     :rand_generator_(rand),
+     idx_(IDX::instance()),
      ff_(new FMT(Nvol)),
      Type_(Type){
     setup_source();
@@ -306,7 +314,12 @@ public:
     std::valarray<double> white_noise(ff_->size());
     double cosine;
     source_.resize(ff_->size());
-    MPrand::mp_get(white_noise,rand_generator_,*ff_);
+    
+    std::vector<int> gsite;
+    for(int site=0; site<ff_->Nvol(); ++site)
+      gsite.push_back(idx_->gsite(site));
+
+    MPrand::mp_get(white_noise,rand_generator_,gsite,*ff_);
     
     for (int idx = 0; idx <white_noise.size()/2; ++idx){
       cosine = cos(2.0*PI*white_noise[idx]);
@@ -327,15 +340,15 @@ public:
   const Field mksrc(const std::vector<int>& lv, int s, int c);
 };
 
-template<typename FMT>
-const Field Source_Z2noise<FMT>::mksrc(int s, int c){
+template<typename IDX,typename FMT>
+const Field Source_Z2noise<IDX,FMT>::mksrc(int s, int c){
   Field wns(ff_->size());
   wns.set(ff_->cs_slice(c,s), source_[ff_->cs_slice(c,s)]);
   return wns;
 }
 
-template<typename FMT> 
-const Field Source_Z2noise<FMT>::
+template<typename IDX,typename FMT> 
+const Field Source_Z2noise<IDX,FMT>::
 mksrc(const std::vector<int>& lv,int s,int c){
   Field scs = mksrc(s,c);
   return Field(scs[ff_->get_sub(lv)]);
