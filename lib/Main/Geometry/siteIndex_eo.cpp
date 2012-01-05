@@ -57,16 +57,18 @@ void SiteIndex_eo::setup_eo(){
   assert(osec_.size()==Nvol_/2);
 
   /*! global even-list vector */
-  gev_.resize(Lvol_);
+  std::vector<int> Gev(Lvol_);
   e=0; 
   for(int gsite=0;gsite<Lvol_;++gsite){
     int eo =(idx_->gx(gsite)
 	    +idx_->gy(gsite)
 	    +idx_->gz(gsite)
 	    +idx_->gt(gsite))%2;
-
-    if(!eo) gev_[gsite] = e++;
+    
+    if(!eo) Gev[gsite] = e++;
   }
+  for(int hs=0; hs<Nvol_/2; ++hs) 
+    gev_.push_back(Gev[idx_->get_gsite(esec_[hs])]);
 
   /*! boundary for the even sector */
   ebdup_.resize(Ndim_);
@@ -143,6 +145,4 @@ int SiteIndex_eo::obid_lw(int hs,int d){return obprj_lw_[d][hs];}
 
 int SiteIndex_eo::e_cmp(int hs,int d){return idx_->cmp(esec_[hs],d);}
 int SiteIndex_eo::o_cmp(int hs,int d){return idx_->cmp(osec_[hs],d);}
-
-int SiteIndex_eo::gsite(int hs){return gev_[idx_->gsite(esec_[hs])];}
 

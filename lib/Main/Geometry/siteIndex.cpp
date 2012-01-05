@@ -9,6 +9,7 @@ using namespace std;
 
 vector<vector<int> > SiteIndex::bdup_;
 vector<vector<int> > SiteIndex::bdlw_;
+vector<int> SiteIndex::gsite_;
 
 SiteIndex* SiteIndex::instance(){
   static SiteIndex site_index;
@@ -45,15 +46,17 @@ void SiteIndex::setup_bdry(){
   }
 }  
 
-int SiteIndex::gsite(int site) const{
+void SiteIndex::setup_global() {
   Communicator* commu = Communicator::instance();
   int nx = commu->ipe(0);
   int ny = commu->ipe(1);
   int nz = commu->ipe(2);
   int nt = commu->ipe(3);
 
-  return x(site)+Nx_*nx +Lx_*((y(site)+Ny_*ny)
-			    +Ly_*((z(site)+Nz_*nz)
-				 +Lz_*(t(site)+Nt_*nt)));
+  for(int site=0; site<Nvol_; ++site)
+    gsite_.push_back(x(site)+Nx_*nx 
+		     +Lx_*((y(site)+Ny_*ny)
+			   +Ly_*((z(site)+Nz_*nz)
+				 +Lz_*(t(site)+Nt_*nt))));
 }
 

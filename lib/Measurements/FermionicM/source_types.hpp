@@ -248,11 +248,7 @@ public:
     :rand_(rand),idx_(IDX::instance()),ff_(new FMT(Nvol)){
     //
     src_.resize(ff_->size());
-
-    std::vector<int> gsite;
-    for(int site=0; site<ff_->Nvol(); ++site)
-      gsite.push_back(idx_->gsite(site));
-
+    std::vector<int> gsite = idx_->get_gsite();
     MPrand::mp_get(src_,rand_,gsite,*ff_);
   }
 
@@ -315,10 +311,7 @@ public:
     double cosine;
     source_.resize(ff_->size());
     
-    std::vector<int> gsite;
-    for(int site=0; site<ff_->Nvol(); ++site)
-      gsite.push_back(idx_->gsite(site));
-
+    std::vector<int> gsite = idx_->get_gsite();
     MPrand::mp_get(white_noise,rand_generator_,gsite,*ff_);
     
     for (int idx = 0; idx <white_noise.size()/2; ++idx){

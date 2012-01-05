@@ -51,7 +51,8 @@ namespace CCIO {
     Communicator* comm = Communicator::instance();
     size_t local_index, global_index;
     int num_nodes, total_volume;
-    int* global_site = new int[format.Nvol()];
+
+    std::vector<int> global_site(format.Nvol());
     
     total_volume = CommonPrms::instance()->Lvol();
     num_nodes    = CommonPrms::instance()->NP();
@@ -68,10 +69,11 @@ namespace CCIO {
       //copy one by one the local fields stored in the nodes into primary node
       comm->send_1to1(local, f.getva(), local.size(), 0, node, node);
       
-      for (int site = 0; site < format.Nvol(); ++site) {
-	global_site[site] = SiteIndex::instance()->
-	  gsite(site);
-      }
+      global_site = SiteIndex::instance()->get_gsite();
+      /*
+      for (int site=0; site<format.Nvol(); ++site) 
+	global_site[site] = SiteIndex::instance()-> gsite(site);
+      */
       comm->sync();    
       //copy global index array on primary node
       comm->broadcast(format.Nvol(), global_site[0], node);
@@ -100,16 +102,12 @@ namespace CCIO {
 	Outputfile.open(filename, std::ios::binary);
       
       if (Outputfile.good()) {
-	
 	std::cout << "Binary writing "<<f.size()*comm->size()*sizeof(double)
 		  <<" bytes on "<< filename << "\n";
 	Global.write_stream(Outputfile);
       }
       Outputfile.close();
-    };
-    
-    delete[] global_site;
-    
+    }
     return 0;
   }
   
@@ -175,17 +173,18 @@ namespace CCIO {
       Inputfile.close();
     }
     
-    int* global_site = new int[local_volume];
+    std::vector<int> global_site(local_volume);
     std::vector< std::valarray<double>* > primaryField;//for accumulation
     std::valarray<double> local(format.size());
     
     for (int node=0; node < num_nodes; ++node) {
       primaryField.push_back(new std::valarray<double>(format.size()));
+      
+      global_site = SiteIndex::instance()->get_gsite();
+      /*
       for (int site = 0; site < local_volume; ++site)
-	{
-	  global_site[site] = SiteIndex::instance()->
-	    gsite(site);
-	}
+	global_site[site] = SiteIndex::instance()-> gsite(site);
+      */
       comm->sync();    
       //copy global index array on primary node
       comm->broadcast(local_volume, global_site[0], node);//1to1 enough but int not provided
@@ -210,8 +209,6 @@ namespace CCIO {
       comm->send_1to1(local, *(primaryField[node]), local.size(),node, 0, node);	
     
     f = Field(local);
-    
-    delete[] global_site;
     return 0;
   }
   

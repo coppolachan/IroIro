@@ -83,7 +83,9 @@ public:
   const std::vector<int>& osec(){return osec_;}
   static int esec(int site){return esec_[site];}
   static int osec(int site){return osec_[site];}
-  int gsite(int hs);
+
+  const std::vector<int> get_gsite() const{ return gev_;}
+  int get_gsite(int hs) const{return gev_[hs];}
 };
 
 #endif

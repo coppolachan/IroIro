@@ -9,7 +9,7 @@
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFiles">conf_04040408.txt</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>2</Nsweeps>
@@ -25,16 +25,16 @@
 
     <Integrator name="leapfrog_multistep">
      <MDsteps>10</MDsteps>
-      <step_size>0.005</step_size>
+      <step_size>0.01</step_size>
       <exp_approx>8</exp_approx>
       <step>
         <multiplier>1</multiplier>
           <Action type="Fermion" name="TwoFlavorsDomainWall">
             <Kernel5D>
               <Preconditioning>NoPreconditioner</Preconditioning>
-              <Kernel name="DiracWilson">
+              <Kernel5d name="DiracWilson">
                 <mass>-1.8</mass>
-              </Kernel>
+              </Kernel5d>
               <N5d>8</N5d>
               <b>1.0</b>
               <c>1.0</c>
