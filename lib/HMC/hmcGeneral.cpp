@@ -5,7 +5,7 @@
  *
  */
 //--------------------------------------------------------------------
-#include "hmcGeneral.h"
+#include "hmcGeneral.hpp"
 #include "mdExec.h"
 #include "Communicator/comm_io.hpp"
 #include "Communicator/fields_io.hpp"

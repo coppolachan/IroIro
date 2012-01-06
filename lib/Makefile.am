@@ -54,7 +54,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
 		Solver/solver.cpp			\
 		HMC/hmcGeneral.cpp			\
-		HMC/hmcPrms.cpp				\
 		HMC/mdExec.cpp		        	\
 		HMC/mdExec_leapfrog.cpp			\
 		HMC/mdExec_Factory.cpp			\
@@ -156,8 +155,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Solver/solver_CG.h			\
 			Solver/multiShiftSolver_CG.hpp		\
 			Solver/multiShiftSolver.hpp		\
-			HMC/hmcGeneral.h			\
-			HMC/hmcPrms.h				\
+			HMC/hmcGeneral.hpp			\
 			HMC/mdExec.h				\
 			HMC/mdExec_leapfrog.h			\
 			HMC/mdExec_leapfrog_eigen.h		\

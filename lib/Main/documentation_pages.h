@@ -129,6 +129,8 @@
     <Nsweeps>1000</Nsweeps>
     <Thermalization>100</Thermalization>
     <SaveInterval>5</SaveInterval>
+    <SavePrefix>HMC_</SavePrefix>
+
     <RandomNumberGen name="Mersenne Twister">
       <seedFile>seed_file</seedFile>
     </RandomNumberGen>
@@ -140,8 +142,9 @@
 
    The sections \c \<%Nsweeps\> , \c \<%Thermalizations\> and  \c \<%SaveInterval\> do exactly what one expects: declare the number of sweeps for be performed, the number of thermalization steps to be done before that and the sweeps interval between configuration storage calls.
 
-   \c \<%Thermalizations\> and  \c \<%SaveInterval\> are not mandatory. If omitted the code will just use default values (0 and 1 respectively).
+   \c \<%Thermalizations\> and  \c \<%SaveInterval\> are not mandatory. If omitted the code will just use default values (0 and 1 respectively). Set \c SaveInterval to 0 to avoid configuration storage. 
   
+   \c \<%SavePrefix\> is used (optionally) to give a prefix to the configuration names (Default, if not provided, is \c "Conf_" , such that configuration names will be like \c "Conf_10").
 
    The \c \<%RandomNumberGen\> section describes and initializes the random number generator.
    Only one choice is available at the moment: <b>Mersenne Twister</b> generator.
@@ -229,7 +232,7 @@
       <beta>6.0</beta>
     </Action>@endverbatim
     
-    Just the \c \<%beta\> section is necessary an provides the \f$ \beta \f$ value.
+    Just the \c \<%beta\> section is necessary and provides the \f$ \beta \f$ value.
 
 
     @section GRect Gauge - Rectangle action

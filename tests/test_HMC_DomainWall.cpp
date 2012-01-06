@@ -13,7 +13,7 @@
 #include <time.h>
 #include <vector>
 
-#include "HMC/hmcGeneral.h"
+#include "HMC/hmcGeneral.hpp"
 #include "test_HMC_DomainWall.hpp"
 //<<<<<<< HEAD
 //#include "Action/action_gauge_wilson.hpp"
