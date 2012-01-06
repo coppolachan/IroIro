@@ -202,6 +202,10 @@
     Possible names for the action are (in the current implementation) 
     - \b Gauge
          - \b Wilson (Wilson type action, class ActionGaugeWilson)
+	 - \b Rectangle (Rectangle type action, class ActionGaugeRect)
+	 - \b Iwasaki (Iwasaki type action, specialization of ActionGaugeRect)
+	 - \b Symanzik (Symanzik type action, specialization of ActionGaugeRect)
+	 - \b DBW2 (DBW2 type action, specialization of ActionGaugeRect)
     - \b Fermion
          - \b TwoFlavors (Two flavors action, class Action_Nf2)
 	 - \b TwoFlavorsRatio (Two flavors ratio of operators, class Action_Nf2_ratio)
@@ -211,6 +215,8 @@
     Each one of these will be explained in the following sections.
 
     @section GWilson Gauge - Wilson action
+
+    The action is \f$ S_G = \frac{\beta}{N_c} \sum P^{1 \times 1}\f$
     
     This is easily defined by a structure like:
 
@@ -220,6 +226,36 @@
     </Action>@endverbatim
     
     Just the \c \<%beta\> section is necessary an provides the \f$ \beta \f$ value.
+
+
+    @section GRect Gauge - Rectangle action
+
+    The action is \f$ S_G = \frac{\beta}{N_c}( \sum c_1 \cdot P^{1 \times 1} + \sum  c_2 \cdot P^{1 \times 2})\f$
+
+    Defined in a way similar to the standard Wilson action plus the two additional parameters \c c_plaq and \c c_rect
+
+    @verbatim
+    <Action type="Gauge" name="Rectangle">
+      <beta>2.0</beta>
+      <c_plaq>2.0</c_plaq>
+      <c_rect>1.5</c_rect>
+    </Action>@endverbatim
+ 
+    @section GRectSpecial Gauge - Iwasaki, Symanzik, DBW2 actions
+
+    These are defined in a way identical to the Wilson action since the coefficients for the several terms are automatically defined in the code, being respectively:
+
+    - Iwasaki action: \f$c_1 =  3.648\f$, \f$c_2 = -0.331\f$
+    - Symanzik action: \f$c_1 =  5/3\f$, \f$c_2 = -1/12\f$
+    - DBW2 action: \f$c_2 =  12.2704\f$, \f$c_2 = -1.4088\f$
+    
+    So, a construction will look like the following:
+ 
+    @verbatim
+    <Action type="Gauge" name="Iwasaki">
+      <beta>2.25</beta>
+    </Action>@endverbatim
+
 
     @section FActionNf2 Fermion - TwoFlavors
 

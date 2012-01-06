@@ -7,7 +7,6 @@
 #define ACTION_GAUGE_WILSON_INCLUDED
 
 #include "action.h"
-#include "include/common_fields.hpp"
 #include "Measurements/GaugeM/staples.h"
 #include "include/pugi_interface.h"
 
@@ -18,7 +17,6 @@ struct ActionGaugeWilsonPrm {
   double beta;/*!< %Gauge coupling */
 
   ActionGaugeWilsonPrm(const XML::node node){
-    //read parameters from XML tree
     XML::read(node, "beta", beta);
   }
   ActionGaugeWilsonPrm(const double beta_)
@@ -26,18 +24,16 @@ struct ActionGaugeWilsonPrm {
 };
 
 /*!
-  Defines a concrete class for %gauge %Actions (Wilson)
+  @brief Defines a concrete class for %gauge %Actions (Wilson)
  */
 class ActionGaugeWilson :public Action {
 private:
+  Field* const u_;
+  const Format::Format_G& gf_;
+  const Staples* stpl_;
   ActionGaugeWilsonPrm Params;
   const int Ndim_;
   const int Nvol_;
-  const int Nc_;
-  const Format::Format_G& gf_;
-  Field* const u_;
-  const Staples* stpl_;
-
 
 public:
   void  init(const RandNum&,const void* = 0){
@@ -50,24 +46,27 @@ public:
 		    const Format::Format_G& gf, 
 		    Field* const GField)
     :u_(GField),
+     gf_(gf),
+     stpl_(new Staples(gf)),
      Params(ActionGaugeWilsonPrm(beta)), 
      Ndim_(CommonPrms::instance()->Ndim()),
-     Nvol_(CommonPrms::instance()->Nvol()),
-     Nc_(  CommonPrms::instance()->Nc()),
-     gf_(gf),
-     stpl_(new Staples(gf)){}
+     Nvol_(CommonPrms::instance()->Nvol()){}
 
+
+  /*!
+   * @brief Constructor with XML reader
+   *
+   */
   ActionGaugeWilson(const XML::node node, 
 		    const Format::Format_G& gf,
 		    Field* const GField)
     :u_(GField),
+     gf_(gf),
+     stpl_(new Staples(gf_)),
      Params(ActionGaugeWilsonPrm(node)), 
      Ndim_(CommonPrms::instance()->Ndim()),
-     Nvol_(CommonPrms::instance()->Nvol()),
-     Nc_(  CommonPrms::instance()->Nc()),
-     gf_(gf),
-     stpl_(new Staples(gf_)){}
+     Nvol_(CommonPrms::instance()->Nvol()){}
 
-  ~ActionGaugeWilson(){}
+  ~ActionGaugeWilson(){delete stpl_;}
 };
 #endif

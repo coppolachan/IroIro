@@ -18,7 +18,7 @@ double ActionGaugeRect::calc_H(){
   double rectF = 0.0;
 
   GaugeField1D Cup1, Cup2;
-  valarray<double> w(sf_->size()), v(sf_->size()), res(sf_->size());
+  valarray<double> U_nu(sf_->size()), U_mu(sf_->size()), res(sf_->size());
 
   // From Matsufuru-san code
   for(int mu = 0; mu < Ndim_; ++mu){
@@ -35,35 +35,35 @@ double ActionGaugeRect::calc_H(){
      }
      
      // rectangular terms
-     //       mu,v (UpNu) 
-     //      +-->--+-->--+
-     // nu,w |           |Cup2_dag(site+mu) (UpMu)
-     //  site+     +--<--+                               
+     //       mu,U_mu (UpNu) 
+     //         +-->--+-->--+
+     // nu,U_nu |           |Cup2_dag(site+mu) (UpMu)
+     //     site+     +--<--+                               
  
-     w = (*u_)[gf_.dir_slice(nu)];
-     v = (*u_)[gf_.dir_slice(mu)]; 
-     UpNu.setf(v);      //   v(x+nu)
+     U_nu = (*u_)[gf_.dir_slice(nu)];
+     U_mu = (*u_)[gf_.dir_slice(mu)]; 
+     UpNu.setf(U_mu);      //   U_mu(x+nu)
      UpMu.setf(Cup2.U); //Cup2(x+mu)     
 
      res = 0.0;
      for(int site = 0; site<Nvol_; ++site){
-       res[sf_->cslice(0,site)] = (u(w,*sf_,site)*u(UpNu,site)*u_dag(UpMu,site)).getva();
+       res[sf_->cslice(0,site)] = (u(U_nu,*sf_,site)*u(UpNu,site)*u_dag(UpMu,site)).getva();
        rectF += ReTr(u(*u_,gf_,site,mu)* u_dag(res,site));
      }
 
-     //     Cup1(site+nu)
-     //       +-->--+
-     //       |     |
-     //       +     +
-     // nu,w  |     | w+mu (UpMu)
-     // site  +     +
+     //        Cup1(site+nu)
+     //          +-->--+
+     //          |     |
+     //          +     +
+     // nu,U_nu  |     | U_nu+mu (UpMu)
+     //    site  +     +
 
      UpNu.setf(Cup1.U);
-     UpMu.setf(w);
+     UpMu.setf(U_nu);
   
      res = 0.0;
      for(int site = 0; site<Nvol_; ++site){
-       res[sf_->cslice(0,site)] = (u(w,*sf_,site)*u(UpNu,site)*u_dag(UpMu,site)).getva();
+       res[sf_->cslice(0,site)] = (u(U_nu,*sf_,site)*u(UpNu,site)*u_dag(UpMu,site)).getva();
        rectF += ReTr(u(*u_,gf_,site,mu)* u_dag(res,site));
      } 
          
@@ -94,7 +94,7 @@ Field ActionGaugeRect::md_force(const void*){
   using namespace SUNmat_utils;
   
   SUNmat force_mat;
-  Field force(gf_.size());
+  GaugeField force;
   GaugeField1D force_pl;
   GaugeField1D force_rect;
 
@@ -221,15 +221,15 @@ Field ActionGaugeRect::md_force(const void*){
     force_rect.U += force_pl.U; //force_rect = total force (staples term)
     for(int site = 0; site<Nvol_; ++site){
       force_mat = (u(*u_,gf_,site,mu)*u_dag(force_rect,site));
-      force.set(gf_.cslice(0,site,mu), anti_hermite(force_mat));
+      force.U.set(force.Format.cslice(0,site,mu), anti_hermite(force_mat));
     } 
   }
 
-  force *= 0.5*Params.beta/Nc_;
+  force.U *= 0.5*Params.beta/Nc_;
 
 #if VERBOSITY>=ACTION_VERB_LEVEL
-  monitor_force(force, "ActionGaugeRect");
+  monitor_force(force.U, "ActionGaugeRect");
 #endif
 
-  return force;
+  return force.U;
 }

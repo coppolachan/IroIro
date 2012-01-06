@@ -19,6 +19,15 @@ namespace GaugeAction {
       if (!strcmp(Action_name, "Rectangle")) { 
 	return new RectGaugeActionFactory(node);
       } 
+      if (!strcmp(Action_name, "Iwasaki")) { 
+	return new IwasakiGaugeActionFactory(node);
+      } 
+      if (!strcmp(Action_name, "Symanzik")) { 
+	return new SymanzikGaugeActionFactory(node);
+      } 
+      if (!strcmp(Action_name, "DBW2")) { 
+	return new DBW2GaugeActionFactory(node);
+      } 
       /////////////////////////////////////////////////
       std::cerr << "No Gauge Action available with name ["
                 << Action_name << "]. Request by <" << node.name() << ">\n";

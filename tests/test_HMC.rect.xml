@@ -12,8 +12,8 @@
   <Configuration Type="Unit">final_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>10</Nsweeps>
-    <Thermalization>30</Thermalization>
+    <Nsweeps>2000</Nsweeps>
+    <Thermalization>10</Thermalization>
     
     <RandomNumberGen name="Mersenne Twister">
       <!--   <seedFile>seed_file</seedFile>
@@ -25,14 +25,12 @@
     
     <Integrator name="leapfrog_multistep">
       <MDsteps>50</MDsteps>
-      <step_size>0.01</step_size>
+      <step_size>0.02</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
-	<Action type="Gauge" name="Rectangle">
-	  <beta>6.0</beta>
-	  <c_plaq>3.648</c_plaq>
-	  <c_rect>-0.331</c_rect>
+	<Action type="Gauge" name="DBW2">
+	  <beta>2.250</beta>
 	</Action>
       </step>
       

@@ -4,22 +4,21 @@
 #include "staples.h"
 
 using namespace SUNmat_utils;
-using namespace Format;
-using namespace std;
 
 typedef ShiftField_up<GaugeFieldFormat> FieldUP;
 typedef ShiftField_dn<GaugeFieldFormat> FieldDN;
-typedef valarray<double> field1d;
+typedef std::valarray<double> field1d;
 
-
+//------------------------------------------------------------
 double Staples::plaquette(const Field& g)const{ 
   return (plaq_s(g) +plaq_t(g))/2;
 }
+//------------------------------------------------------------
 double Staples::plaquette(const ShiftField& gs)const{
   Field g(gs.getva());
   return (plaq_s(g) +plaq_t(g))/2;
 }
-
+//------------------------------------------------------------
 double Staples::plaq_s(const Field& g) const{
   double plaq = 0.0;
   //  Field stpl(sf_->size());
@@ -36,12 +35,12 @@ double Staples::plaq_s(const Field& g) const{
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*Nc_*3.0);
 }
-
+//------------------------------------------------------------
 double Staples::plaq_s(const ShiftField& gs) const{
   Field g(gs.getva());
   plaq_s(g);
 }
-
+//------------------------------------------------------------
 double Staples::plaq_t(const Field& g)const{
   double plaq = 0.0;
   GaugeField1D stpl;
@@ -54,12 +53,12 @@ double Staples::plaq_t(const Field& g)const{
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*Nc_*3.0);
 }
-
+//------------------------------------------------------------
 double Staples::plaq_t(const ShiftField& gs)const{
   Field g(gs.getva());
   plaq_t(g);
 }
-
+//------------------------------------------------------------
 void Staples::staple(Field& W, const Field& g, int mu) const{
   W = 0.0;
   for(int nu = 0; nu < Ndim_; nu++){
@@ -69,13 +68,14 @@ void Staples::staple(Field& W, const Field& g, int mu) const{
     }
   }
 }
-
+//------------------------------------------------------------
 void Staples::staple(Field& W, const ShiftField& gs, int mu)const {
   Field g(gs.getva());
   staple(W,g,mu);
 }
-
+//------------------------------------------------------------
 Field Staples::upper(const Field& g, int mu, int nu) const{
+
   //       mu,v                               
   //      +-->--+                                                    
   // nu,w |     |t_dag(site+mu,nu)
@@ -92,12 +92,11 @@ Field Staples::upper(const Field& g, int mu, int nu) const{
   }
   return Field(c);
 }
-
-		 
+//------------------------------------------------------------		 
 Field Staples::upper(const ShiftField& gs, int mu,int nu) const{
   return upper(Field(gs.getva()),mu,nu);
 }
-
+//------------------------------------------------------------
 Field Staples::lower(const Field& g, int mu, int nu) const{
   //         +     +
   // nu,w_dag|     |w(site+mu,nu) 
@@ -119,7 +118,7 @@ Field Staples::lower(const Field& g, int mu, int nu) const{
     v[format1d_->cslice(0,site)] = u(un,site).getva();
   return Field(v);
 }
-
+//------------------------------------------------------------
 Field Staples::lower(const ShiftField& gs, int mu,int nu) const{
   return lower(Field(gs.getva()),mu,nu);
 }

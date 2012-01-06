@@ -3,7 +3,7 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
+    <Lattice>4 4 4 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
@@ -12,7 +12,7 @@
   <Configuration Type="Unit">final_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>0</Nsweeps>
+    <Nsweeps>10</Nsweeps>
     <Thermalization>30</Thermalization>
 
     <RandomNumberGen name="Mersenne Twister">
@@ -24,7 +24,7 @@
     </RandomNumberGen>
 
     <Integrator name="leapfrog_multistep">
-      <MDsteps>10</MDsteps>
+      <MDsteps>20</MDsteps>
       <step_size>0.025</step_size>
       <exp_approx>8</exp_approx>
       <step>
