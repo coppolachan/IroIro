@@ -1,52 +1,68 @@
 //--------------------------------------------------------------------
-// hmcGeneral.cpp
+/*! @file hmcGeneral.cpp
+ *
+ * @brief Definitions of functions for HMC update
+ *
+ */
 //--------------------------------------------------------------------
 #include "hmcGeneral.h"
 #include "mdExec.h"
-
-#include "include/field.h"
-#include "include/format_G.h"
-
-#include "Tools/sunMat.h"
 #include "Communicator/comm_io.hpp"
-#include "Action/action.h"
+#include "Communicator/fields_io.hpp"
 
-using namespace std;
+#include <string>
+#include <sstream>
+class Field;
+
 
 void HMCgeneral::evolve(Field& Uin)const{
-
+  double Hdiff;
+  // Thermalizations
   for(int iter=1; iter <= Params.ThermalizationSteps; ++iter){
-    CCIO::cout << "-- # Thermalization step = "<< iter << endl;
+    CCIO::cout << "-- # Thermalization step = "<< iter <<  "\n";
 
-    double Hdiff = evolve_step(Uin);
-    CCIO::cout<< "dH = "<<Hdiff << std::endl;
+    Hdiff = evolve_step(Uin);
+    CCIO::cout<< "dH = "<<Hdiff << "\n";
     Uin = md_->get_U();  //accept every time
   }
 
+  // Actual updates
   for(int iter=1; iter <= Params.Nsweeps; ++iter){
-    CCIO::cout << "-- # Sweep = "<< iter << endl;
+    CCIO::cout << "-- # Sweep = "<< iter <<  "\n";
+    CCIO::cout << "---------------------------\n";
 
-    double Hdiff = evolve_step(Uin);
-    
+    Hdiff = evolve_step(Uin);
+
+
     if(metropolis_test(Hdiff)) Uin = md_->get_U();
+
+    if (Params.SaveInterval!=0 && iter%Params.SaveInterval == 0) {
+      std::stringstream file;
+      file << Params.Filename_prefix << iter;
+      if(CCIO::SaveOnDisk<GaugeFieldFormat> (Uin, file.str().c_str())){
+	CCIO::cout << "Some error occurred in saving file\n";
+      }
+    }
+
+
   }
 }
 
 double HMCgeneral::evolve_step(Field& Uin)const{
     
-    vector<int> clock;
-    md_->init(clock,Uin,*rand_);     // set U and initialize P and phi's 
-
-    int init_level = 0;
-    double H0 = md_->calc_H();     // current state            
-    CCIO::cout<<"total H_before = "<< H0 <<endl;
-
-    md_->integrator(init_level,clock);
-
-    double H1 = md_->calc_H();     // updated state            
-    CCIO::cout<<"Total H_after = "<< H1 <<endl;
-
-    return (H1-H0);
+  std::vector<int> clock;
+  md_->init(clock,Uin,*rand_);     // set U and initialize P and phi's 
+  
+  int init_level = 0;
+  double H0 = md_->calc_H();     // current state            
+  CCIO::cout<<"total H_before = "<< H0 << "\n";
+  
+  md_->integrator(init_level,clock);
+  
+  double H1 = md_->calc_H();     // updated state            
+  CCIO::cout<<"Total H_after = "<< H1 << "\n";
+  
+  return (H1-H0);
 }
 
 

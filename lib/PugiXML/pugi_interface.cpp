@@ -14,6 +14,11 @@ namespace XML
     abort();
   }
 
+  void Warning(const char* node_name) {
+    CCIO::cout << "Warning: node ["<< node_name << "] not found.\n"; 
+  }
+
+
   int load_file(pugi::xml_document &doc, const char* filename) {
     pugi::xml_parse_result res = doc.load_file(filename);
     
@@ -23,6 +28,7 @@ namespace XML
     }
     return 0;
   }
+
 
 
   node select_node(pugi::xml_document &doc, const char *name) {
@@ -70,32 +76,36 @@ namespace XML
   }
 
 
-  void read(pugi::xml_node node, const char *name, int& value, bool type) {
+  int read(pugi::xml_node node, const char *name, int& value, bool type) {
     if (node.child(name)!=NULL){
     value = atoi(node.child_value(name));
     } else {
       if (type == MANDATORY) {
 	MandatoryReadError(node, name);
       } else {
-	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+	Warning(name);
+	return 1;
       }
     }
+    return 0;
   }
 
-  void read(pugi::xml_node node, const char *name, std::string& value, bool type) {
+  int read(pugi::xml_node node, const char *name, std::string& value, bool type) {
     if (node.child(name)!=NULL){
       value.assign(node.child_value(name));
     } else {
       if (type == MANDATORY) {
 	MandatoryReadError(node, name);
       } else {
-	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+	Warning(name);
+	return 1;
       }
     }
+    return 0;
   }
 
 
-  void read(pugi::xml_node node, const char *name, unsigned long& value, bool type) {
+  int read(pugi::xml_node node, const char *name, unsigned long& value, bool type) {
     char *end;
     if (node.child(name)!=NULL){
       value = strtol(node.child_value(name),&end, 0);
@@ -103,27 +113,29 @@ namespace XML
       if (type == MANDATORY) {
 	MandatoryReadError(node, name);
       } else {
-	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+	Warning(name);
+	return 1;
       }
     }
-    
+    return 0;
   }
 
 
-  void read(pugi::xml_node node, const char *name, double& value, bool type) {
+  int read(pugi::xml_node node, const char *name, double& value, bool type) {
     if (node.child(name)!=NULL){
     value = atof(node.child_value(name));
     } else {
       if (type == MANDATORY) {
 	MandatoryReadError(node, name);
       } else {
-	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+	Warning(name);
+	return 1;
       }
     }
-
+    return 0;
   }
 
-  void read(pugi::xml_node node, const char *name, bool& value, bool type) {
+  int read(pugi::xml_node node, const char *name, bool& value, bool type) {
     char *string;
     if (node.child(name)!=NULL){
       if (!strcmp(node.child_value(name),"true")){
@@ -133,14 +145,15 @@ namespace XML
       if (type == MANDATORY) {
 	MandatoryReadError(node, name);
       } else {
-	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+	Warning(name);
+	return 1;
       }
     }
-   
+    return 0;
   }
 
 
-  void read_array(pugi::xml_node node, 
+  int read_array(pugi::xml_node node, 
 		  const char* name, 
 		  std::vector<int>& array,
 		  bool type) {
@@ -172,14 +185,15 @@ namespace XML
       if (type == MANDATORY) {
 	MandatoryReadError(node, name);
       } else {
-	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+	Warning(name);
+	return 1;
       }
     }
-    
+    return 0;
     
   }
 
-  void read_array(pugi::xml_node node, 
+  int read_array(pugi::xml_node node, 
 		  const char* name, 
 		  std::vector<unsigned long>& array,
 		  bool type) {
@@ -214,16 +228,17 @@ namespace XML
       if (type == MANDATORY) {
 	MandatoryReadError(node, name);
       } else {
-	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+	Warning(name);
+	return 1;
       }
     }
     
-
+    return 0;
 
   }
 
 
-  void read_array(pugi::xml_node node, 
+  int read_array(pugi::xml_node node, 
 		  const char* name, 
 		  std::vector<double>& array,
 		  bool type) {
@@ -256,14 +271,15 @@ namespace XML
       if (type == MANDATORY) {
 	MandatoryReadError(node, name);
       } else {
-	CCIO::cout << "Warning: node ["<< name << "] not found\n"; 
+	Warning(name);
+	return 1;
       }
     } 
     
-
+    return 0;
   }
 
-
+ 
 
 };
 

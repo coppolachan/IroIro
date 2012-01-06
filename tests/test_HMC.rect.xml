@@ -12,9 +12,10 @@
   <Configuration Type="Unit">final_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>2000</Nsweeps>
-    <Thermalization>10</Thermalization>
-    
+    <Nsweeps>4</Nsweeps>
+    <Thermalization>0</Thermalization>
+    <SaveInterval>0</SaveInterval>
+    <SavePrefix>HMCrect_</SavePrefix>
     <RandomNumberGen name="Mersenne Twister">
       <!--   <seedFile>seed_file</seedFile>
 	   Using seedFile superseeds the <init> line 
@@ -24,12 +25,12 @@
     </RandomNumberGen>
     
     <Integrator name="leapfrog_multistep">
-      <MDsteps>50</MDsteps>
+      <MDsteps>10</MDsteps>
       <step_size>0.02</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
-	<Action type="Gauge" name="DBW2">
+	<Action type="Gauge" name="Iwasaki">
 	  <beta>2.250</beta>
 	</Action>
       </step>

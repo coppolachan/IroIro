@@ -13,6 +13,10 @@ class RandNum;
 typedef std::vector<Action*> ActionLevel;
 typedef std::vector<ActionLevel> ActionSet;
 
+/*! 
+ * @brief Abstract base class for Molecular Dynamics management
+ *
+ */
 class MDexec{
 private:
   virtual void update_P(int lv,double ep)=0;

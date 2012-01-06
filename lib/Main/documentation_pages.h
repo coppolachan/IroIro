@@ -128,6 +128,7 @@
    <HMC>
     <Nsweeps>1000</Nsweeps>
     <Thermalization>100</Thermalization>
+    <SaveInterval>5</SaveInterval>
     <RandomNumberGen name="Mersenne Twister">
       <seedFile>seed_file</seedFile>
     </RandomNumberGen>
@@ -137,7 +138,10 @@
     </Integrator>
    </HMC>@endverbatim
 
-   The sections \c \<%Nsweeps\> and \c \<%Thermalizations\> do exactly what one expects: declare the number of sweeps for be performed and the number of thermalization steps to be done before that.
+   The sections \c \<%Nsweeps\> , \c \<%Thermalizations\> and  \c \<%SaveInterval\> do exactly what one expects: declare the number of sweeps for be performed, the number of thermalization steps to be done before that and the sweeps interval between configuration storage calls.
+
+   \c \<%Thermalizations\> and  \c \<%SaveInterval\> are not mandatory. If omitted the code will just use default values (0 and 1 respectively).
+  
 
    The \c \<%RandomNumberGen\> section describes and initializes the random number generator.
    Only one choice is available at the moment: <b>Mersenne Twister</b> generator.
@@ -247,7 +251,7 @@
 
     - Iwasaki action: \f$c_1 =  3.648\f$, \f$c_2 = -0.331\f$
     - Symanzik action: \f$c_1 =  5/3\f$, \f$c_2 = -1/12\f$
-    - DBW2 action: \f$c_2 =  12.2704\f$, \f$c_2 = -1.4088\f$
+    - DBW2 action: \f$c_1 =  12.2704\f$, \f$c_2 = -1.4088\f$
     
     So, a construction will look like the following:
  
@@ -360,11 +364,11 @@
     The 5 dimensional Domain Wall operator is described by several parameters like in the following code snippet:
  
     @verbatim
-    <... name="DiracOptimalDomainWall5d>
+    <... name="DiracOptimalDomainWall5d">
       <Preconditioning>NoPreconditioner</Preconditioning>
-      <Kernel name="DiracWilson">
+      <Kernel5d name="DiracWilson">
         <mass>-1.8</mass>
-      </Kernel>
+      </Kernel5d>
       <N5d>6</N5d>
       <b>2.0</b>
       <c>0.0</c>

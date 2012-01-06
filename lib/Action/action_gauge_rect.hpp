@@ -15,9 +15,9 @@
 /*!
   @brief Parameters for the ActionGauge class
 
-  Iwasaki action: \f$c_1 =  3.648\f$, \f$c_2 = -0.331\f$
-  Symanzik action: \f$c_1 =  5/3\f$, \f$c_2 = -1/12\f$
-  DBW2 action: \f$c_1 =  12.2704\f$, \f$c_2 = -1.4088\f$
+  - Iwasaki action: \f$c_1 =  3.648\f$, \f$c_2 = -0.331\f$
+  - Symanzik action: \f$c_1 =  5/3\f$, \f$c_2 = -1/12\f$
+  - DBW2 action: \f$c_1 =  12.2704\f$, \f$c_2 = -1.4088\f$
  */
 struct ActionGaugeRectPrm {
   double beta;/*!< %Gauge coupling */

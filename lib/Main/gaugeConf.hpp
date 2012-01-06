@@ -4,8 +4,6 @@
 #include "Main/Geometry/siteIndex.h"
 #include "include/format_G.h"
 
-//#include <fstream>
-
 class Field;
 
 class SiteIndex;
