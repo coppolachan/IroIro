@@ -27,35 +27,35 @@ namespace XML
 
   void descend(pugi::xml_node &node);
 
-  void descend(pugi::xml_node &node, const char *name);
+  void descend(pugi::xml_node &node, const char *name, bool type = false);
 
-  void next_sibling(pugi::xml_node &node, const char *name);
+  void next_sibling(pugi::xml_node &node, const char *name, bool type = false);
 
   bool attribute_compare(pugi::xml_node &node, 
 			 const char* attrname, 
 			 const char* string);
 
-  void read(pugi::xml_node node, const char *name, int& value, bool type = false);
+  int read(pugi::xml_node node, const char *name, int& value, bool type = false);
 
-  void read(pugi::xml_node node, const char *name, unsigned long& value, bool type = false);
+  int read(pugi::xml_node node, const char *name, unsigned long& value, bool type = false);
 
-  void read(pugi::xml_node node, const char *name, double& value,  bool type = false);
+  int read(pugi::xml_node node, const char *name, double& value,  bool type = false);
 
-  void read(pugi::xml_node node, const char *name, bool& value, bool type = false);
+  int read(pugi::xml_node node, const char *name, bool& value, bool type = false);
 
-  void read(pugi::xml_node node, const char *name, std::string& string, bool type = false);
+  int read(pugi::xml_node node, const char *name, std::string& string, bool type = false);
 
 
-  void read_array(pugi::xml_node node, 
+  int read_array(pugi::xml_node node, 
 		  const char* name, 
 		  std::vector<int>& array, bool type = false);
 
-  void read_array(pugi::xml_node node, 
+  int read_array(pugi::xml_node node, 
 		  const char* name, 
 		  std::vector<unsigned long>& array, bool type = false);
 
 
-  void read_array(pugi::xml_node node, 
+  int read_array(pugi::xml_node node, 
 		  const char* name, 
 		  std::vector<double>& array, bool type = false);
 

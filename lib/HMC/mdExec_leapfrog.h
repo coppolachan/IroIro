@@ -50,7 +50,6 @@ private:
   const std::vector<int> Nrel_;
   const ActionSet as_;
   const Format::Format_G& gf_;
-  const Staples* stpl_;
   Field* const U_;
   Field P_;
 
@@ -65,7 +64,7 @@ public:
 		  const std::vector<int> multipliers,
 		  const Format::Format_G& gf,
 		  Field* const CommonF)
-    :as_(as),gf_(gf),stpl_(new Staples(gf)),
+    :as_(as),gf_(gf),
      Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
      Nrel_(multipliers),
      U_(CommonF),P_(CommonF->size()){}
@@ -73,10 +72,9 @@ public:
   MDexec_leapfrog(XML::node node,
 		  const ActionSet as,
 		  const std::vector<int> multipliers,
-		  const Staples* stpl,
 		  const Format::Format_G& gf,
 		  Field* const CommonF)
-    :as_(as),gf_(gf),stpl_(stpl),
+    :as_(as),gf_(gf),
      Params(MDexec_leapfrogParams(node)),
      Nrel_(multipliers),
      U_(CommonF),P_(CommonF->size()){}

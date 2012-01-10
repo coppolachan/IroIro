@@ -41,6 +41,16 @@ public:
     Format(GaugeFieldFormat( geom.parameters->Nvol() )),
     U(Field(Format.size())){}
 
+  /*! 
+   * Default constructor\n 
+   * No parameters, automatically creates a 4D field 
+   * of local dimension Nvol
+   */
+  GaugeField(): 
+    Format(GaugeFieldFormat( CommonPrms::instance()->Nvol() )),
+    U(Field(Format.size())){}
+  
+
   /*!
    * Initializes the gauge field with an \n
    * external configuration in file <Filename>
@@ -121,9 +131,9 @@ public:
   Field U; /**< Field container */
   
   /*! 
-   * Default constructor\n 
-   * Takes Geometry class as input
-   * @param geom Defines the lattice geometry
+   * Default constructor\n
+   *
+   * Contains links only in one direction
    */
   GaugeField1D(): 
     Format(GaugeFieldFormat(CommonPrms::instance()->Nvol(),1)),

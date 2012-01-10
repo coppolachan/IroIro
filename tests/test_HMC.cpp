@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "HMC/hmcGeneral.h"
+#include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"
 
 

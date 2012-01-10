@@ -117,12 +117,10 @@ class MDIntegrator_LeapfrogFactory : public MDIntegratorFactory {
   MDexec* createLeapfrog(){
     CommonField->resize(Format.size()); 
     try{
-      StaplePointer.save(new Staples(Format));
       return new MDexec_leapfrog(Integrator_node,
 				 ActSetFactory.
 				 getActionSet(Format,CommonField), 
 				 ActSetFactory.getMultipliers(),
-				 StaplePointer.get(),
 				 Format,
 				 CommonField);
     }catch(...){

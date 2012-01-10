@@ -32,7 +32,6 @@ CommandOptions ReadCmdLine(int argc, char* argv[]) {
 
   Result.output = const_cast<char*>("output.xml");
 
-  std::cout << "Filename : "<< Result.filename << "\n";
   return Result;
 }
 

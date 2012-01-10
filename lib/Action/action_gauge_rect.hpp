@@ -15,7 +15,9 @@
 /*!
   @brief Parameters for the ActionGauge class
 
-  Iwasaki action: \f$c_pla =  3.648\f$, \f$c_rect = -0.331\f$
+  - Iwasaki action: \f$c_1 =  3.648\f$, \f$c_2 = -0.331\f$
+  - Symanzik action: \f$c_1 =  5/3\f$, \f$c_2 = -1/12\f$
+  - DBW2 action: \f$c_1 =  12.2704\f$, \f$c_2 = -1.4088\f$
  */
 struct ActionGaugeRectPrm {
   double beta;/*!< %Gauge coupling */
@@ -27,11 +29,24 @@ struct ActionGaugeRectPrm {
     XML::read(node, "beta", beta, MANDATORY);
     XML::read(node, "c_plaq", c_plaq, MANDATORY);
     XML::read(node, "c_rect", c_rect, MANDATORY);
-
   }
+
+  /*! 
+   * @brief Constructor to accomodate the case 
+   * of predefined coefficients in factories 
+   *
+   */
+  ActionGaugeRectPrm(const XML::node node,
+		     const double c_plaq_,
+		     const double c_rect_)
+    :c_plaq(c_plaq_),c_rect(c_rect_)
+  {
+    XML::read(node, "beta", beta, MANDATORY);
+  }
+  
   ActionGaugeRectPrm(const double beta_,
-		       const double c_plaq_,
-		       const double c_rect_)
+		     const double c_plaq_,
+		     const double c_rect_)
     :beta(beta_),
      c_plaq(c_plaq_),
      c_rect(c_rect_){}
@@ -56,9 +71,7 @@ private:
   Field* const u_;
 
 public:
-  void  init(const RandNum&,const void* = 0){
-    CCIO::cout<<"ActionGaugeRect initialized"<<std::endl;
-  }
+  void  init(const RandNum&,const void* = 0){};
   double calc_H();
   Field  md_force(const void* = 0);
   
@@ -76,6 +89,10 @@ public:
      sf_(new Format::Format_G(Nvol_,1)),
      stpl_(new Staples(gf_)){}
   
+  /*!
+   * @brief Constructor for factories
+   *
+   */
   ActionGaugeRect(const XML::node node, 
 		  const Format::Format_G& gf,
 		  Field* const GField)
@@ -87,7 +104,31 @@ public:
      gf_(gf),
      sf_(new Format::Format_G(Nvol_,1)),
      stpl_(new Staples(gf_)){}
+
+  /*!
+   * @brief Specialized constructor for the case of
+   * prefedined coefficients c_plaq and c_rect
+   *
+   * To be used in factories
+   */
+  ActionGaugeRect(const XML::node node, 
+		  const double c_plaq,
+		  const double c_rect,
+		  const Format::Format_G& gf,
+		  Field* const GField)
+    :u_(GField),
+     Params(ActionGaugeRectPrm(node, c_plaq, c_rect)), 
+     Ndim_(CommonPrms::instance()->Ndim()),
+     Nvol_(CommonPrms::instance()->Nvol()),
+     Nc_(  CommonPrms::instance()->Nc()),
+     gf_(gf),
+     sf_(new Format::Format_G(Nvol_,1)),
+     stpl_(new Staples(gf_)){}
+
   
   ~ActionGaugeRect(){delete stpl_;}
 };
+
+
+
 #endif

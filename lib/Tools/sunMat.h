@@ -203,10 +203,17 @@ namespace SUNmat_utils{
   inline SUNmat u(const Field& g,const Format::Format_G& gf_, int site,int dir){
     return SUNmat(g[gf_.cslice(0,site,dir)]);
   }
+  inline SUNmat u(const GaugeField& g, int site,int dir){
+    return SUNmat(g.U[g.Format.cslice(0,site,dir)]);
+  }
   inline SUNmat u_dag(const Field& g,const Format::Format_G& gf_,int site,int dir){
     return SUNmat(g[gf_.cslice(0,site,dir)]).dag();
   }
- 
+  inline SUNmat u_dag(const GaugeField& g, int site,int dir){
+    return SUNmat(g.U[g.Format.cslice(0,site,dir)]).dag();
+  }
+  
+
   // for variables with a specific direction
   inline SUNmat u(const Field& g,const Format::Format_G& sf_,int site){
     return SUNmat(g[sf_.cslice(0,site)]);

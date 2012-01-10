@@ -68,7 +68,7 @@ class DiracDWF5dFactory : public DiracWilsonLikeOperatorFactory {
 
 public:
   DiracDWF5dFactory(XML::node node):Dirac_node(node){
-    XML::descend(node, "Kernel5d");
+    XML::descend(node, "Kernel5d", MANDATORY);
     DiracObj.save(new DiracWilsonFactory(node)); 
   }
 
@@ -99,9 +99,9 @@ class DiracDWF4dFactory : public DiracWilsonLikeOperatorFactory {
 public:
   DiracDWF4dFactory(XML::node node)
     :Dirac_node(node){
-    XML::descend(node,"Kernel5d");
+    XML::descend(node,"Kernel5d", MANDATORY);
     DiracObj.save(new DiracDWF5dFactory(node));
-    XML::next_sibling(node, "SolverDWF");
+    XML::next_sibling(node, "SolverDWF", MANDATORY);
     SolverDWF_Obj.save(SolverOperators::createSolverOperatorFactory(node));
   }
 

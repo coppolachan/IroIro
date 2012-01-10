@@ -128,6 +128,9 @@
    <HMC>
     <Nsweeps>1000</Nsweeps>
     <Thermalization>100</Thermalization>
+    <SaveInterval>5</SaveInterval>
+    <SavePrefix>HMC_</SavePrefix>
+
     <RandomNumberGen name="Mersenne Twister">
       <seedFile>seed_file</seedFile>
     </RandomNumberGen>
@@ -137,7 +140,11 @@
     </Integrator>
    </HMC>@endverbatim
 
-   The sections \c \<%Nsweeps\> and \c \<%Thermalizations\> do exactly what one expects: declare the number of sweeps for be performed and the number of thermalization steps to be done before that.
+   The sections \c \<%Nsweeps\> , \c \<%Thermalizations\> and  \c \<%SaveInterval\> do exactly what one expects: declare the number of sweeps for be performed, the number of thermalization steps to be done before that and the sweeps interval between configuration storage calls.
+
+   \c \<%Thermalizations\> and  \c \<%SaveInterval\> are not mandatory. If omitted the code will just use default values (0 and 1 respectively). Set \c SaveInterval to 0 to avoid configuration storage. 
+  
+   \c \<%SavePrefix\> is used (optionally) to give a prefix to the configuration names (Default, if not provided, is \c "Conf_" , such that configuration names will be like \c "Conf_10").
 
    The \c \<%RandomNumberGen\> section describes and initializes the random number generator.
    Only one choice is available at the moment: <b>Mersenne Twister</b> generator.
@@ -202,6 +209,10 @@
     Possible names for the action are (in the current implementation) 
     - \b Gauge
          - \b Wilson (Wilson type action, class ActionGaugeWilson)
+	 - \b Rectangle (Rectangle type action, class ActionGaugeRect)
+	 - \b Iwasaki (Iwasaki type action, specialization of ActionGaugeRect)
+	 - \b Symanzik (Symanzik type action, specialization of ActionGaugeRect)
+	 - \b DBW2 (DBW2 type action, specialization of ActionGaugeRect)
     - \b Fermion
          - \b TwoFlavors (Two flavors action, class Action_Nf2)
 	 - \b TwoFlavorsRatio (Two flavors ratio of operators, class Action_Nf2_ratio)
@@ -211,6 +222,8 @@
     Each one of these will be explained in the following sections.
 
     @section GWilson Gauge - Wilson action
+
+    The action is \f$ S_G = \frac{\beta}{N_c} \sum P^{1 \times 1}\f$
     
     This is easily defined by a structure like:
 
@@ -219,7 +232,37 @@
       <beta>6.0</beta>
     </Action>@endverbatim
     
-    Just the \c \<%beta\> section is necessary an provides the \f$ \beta \f$ value.
+    Just the \c \<%beta\> section is necessary and provides the \f$ \beta \f$ value.
+
+
+    @section GRect Gauge - Rectangle action
+
+    The action is \f$ S_G = \frac{\beta}{N_c}( \sum c_1 \cdot P^{1 \times 1} + \sum  c_2 \cdot P^{1 \times 2})\f$
+
+    Defined in a way similar to the standard Wilson action plus the two additional parameters \c c_plaq and \c c_rect
+
+    @verbatim
+    <Action type="Gauge" name="Rectangle">
+      <beta>2.0</beta>
+      <c_plaq>2.0</c_plaq>
+      <c_rect>1.5</c_rect>
+    </Action>@endverbatim
+ 
+    @section GRectSpecial Gauge - Iwasaki, Symanzik, DBW2 actions
+
+    These are defined in a way identical to the Wilson action since the coefficients for the several terms are automatically defined in the code, being respectively:
+
+    - Iwasaki action: \f$c_1 =  3.648\f$, \f$c_2 = -0.331\f$
+    - Symanzik action: \f$c_1 =  5/3\f$, \f$c_2 = -1/12\f$
+    - DBW2 action: \f$c_1 =  12.2704\f$, \f$c_2 = -1.4088\f$
+    
+    So, a construction will look like the following:
+ 
+    @verbatim
+    <Action type="Gauge" name="Iwasaki">
+      <beta>2.25</beta>
+    </Action>@endverbatim
+
 
     @section FActionNf2 Fermion - TwoFlavors
 
@@ -324,11 +367,11 @@
     The 5 dimensional Domain Wall operator is described by several parameters like in the following code snippet:
  
     @verbatim
-    <... name="DiracOptimalDomainWall5d>
+    <... name="DiracOptimalDomainWall5d">
       <Preconditioning>NoPreconditioner</Preconditioning>
-      <Kernel name="DiracWilson">
+      <Kernel5d name="DiracWilson">
         <mass>-1.8</mass>
-      </Kernel>
+      </Kernel5d>
       <N5d>6</N5d>
       <b>2.0</b>
       <c>0.0</c>
