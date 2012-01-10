@@ -192,10 +192,10 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
   //Preconditioned versions
-  const Field mult_prec(const Field&)const {}//empty now
-  const Field mult_dag_prec(const Field&)const{}//empty now
-  const Field left_precond(const Field&)const{}//empty now
-  const Field right_precond(const Field&)const{}//empty now
+  const Field mult_prec(const Field& f)const {return f;}//empty now
+  const Field mult_dag_prec(const Field& f)const{return f;}//empty now
+  const Field left_precond(const Field& f)const{return f;}//empty now
+  const Field right_precond(const Field& f)const{return f;}//empty now
 
   const Field gamma5(const Field&) const;
   const Field proj_p(const Field&) const;

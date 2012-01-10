@@ -13,7 +13,7 @@
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>4</Nsweeps>
-    <Thermalization>0</Thermalization>
+    <Thermalization>2</Thermalization>
     <SaveInterval>0</SaveInterval>
     <SavePrefix>HMCrect_</SavePrefix>
     <RandomNumberGen name="Mersenne Twister">

@@ -25,7 +25,7 @@ const Field Dirac_optimalDomainWall_4D::mult_dag(const Field& f)const{
 #if VERBOSITY > 0
   monitor.print();
 #endif
-  return Dodw_.Bproj(Dodw_.mult_dag_prec(Dpv_.mult(sol5)));
+  return Dodw_.Bproj(Dodw_.mult_dag_prec(Dpv_.mult(sol5)));//Dpv_.mult_prec????
 }
 
 

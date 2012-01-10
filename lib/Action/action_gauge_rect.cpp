@@ -83,10 +83,8 @@ double ActionGaugeRect::calc_H(){
 
   Hgauge *= Params.beta;
     
-#if VERBOSITY>=ACTION_VERB_LEVEL
-    CCIO::cout << "[ActionGaugeRect] H = "<< Hgauge << "\n";
-#endif
-  
+  _Message(ACTION_VERB_LEVEL, "[ActionGaugeRect] H = "<<Hgauge<<"\n");
+
   return Hgauge;
 }
 
@@ -227,9 +225,7 @@ Field ActionGaugeRect::md_force(const void*){
 
   force.U *= 0.5*Params.beta/Nc_;
 
-#if VERBOSITY>=ACTION_VERB_LEVEL
-  monitor_force(force.U, "ActionGaugeRect");
-#endif
+  _MonitorMsg(ACTION_VERB_LEVEL, Action, force.U, "ActionGaugeRect");
 
   return force.U;
 }

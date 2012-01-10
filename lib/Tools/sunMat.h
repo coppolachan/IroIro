@@ -1,5 +1,9 @@
 //---------------------------------------------------------------------
-// sunMat.h
+/*! @file sunMat.h
+  @brief \f$SU(N)\f$ Matrices linear algebra
+
+  Class declarations
+*/ 
 //---------------------------------------------------------------------
 #ifndef SUNMAT_INCLUDED
 #define SUNMAT_INCLUDED
@@ -8,9 +12,7 @@
 #include <iostream>
 #include <valarray>
 
-#ifndef COMMONPRMS_INCLUDED
 #include "include/commonPrms.h"
-#endif
 
 //for utilities
 #include "format_G.h"
@@ -19,8 +21,6 @@
 #ifndef SHIFTFIELD_INCLUDED
 #include "Main/Geometry/shiftField.h"
 #endif
-
-
 
 
 class SUNmat{

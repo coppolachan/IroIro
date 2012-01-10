@@ -102,10 +102,10 @@ public:
   const Field mult_dag(const Field&) const;
 
   //Preconditioning methods
-  const Field mult_prec(const Field&)const{}//empty now preconditioned 
-  const Field mult_dag_prec(const Field&)const{}//empty now preconditioned
-  const Field left_precond(const Field&)const{}//empty now
-  const Field right_precond(const Field&)const{}//empty now
+  const Field mult_prec(const Field& f)const{return f;}//empty now preconditioned 
+  const Field mult_dag_prec(const Field& f)const{return f;}//empty now preconditioned
+  const Field left_precond(const Field& f)const{return f;}//empty now
+  const Field right_precond(const Field& f)const{return f;}//empty now
   //////////////////////////////////////////////////////////////////////
   
   const Field md_force(const Field&,const Field&) const;
