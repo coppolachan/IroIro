@@ -13,8 +13,8 @@
 #endif
 
 //for utilities
-#include "format_G.h"
-#include "field.h"
+#include "include/format_G.h"
+#include "include/field.h"
 #include "include/common_fields.hpp"
 #ifndef SHIFTFIELD_INCLUDED
 #include "Main/Geometry/shiftField.h"

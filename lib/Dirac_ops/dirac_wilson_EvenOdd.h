@@ -27,6 +27,7 @@ namespace Dw{
       return Dirac_Wilson::get_fermionFormat();
     }
 
+    double getKappa() const{return Dirac_Wilson::getKappa();}
     const std::vector<int> get_gsite() const;
 
     const Field mult(const Field&) const;
@@ -39,10 +40,9 @@ namespace Dw{
     const Field right_precond(const Field&)const{}//empty now
     ////////////////////////////////////////////////////////////////////
 
-    const Field gamma5(const Field& f) const{
-      return Dirac_Wilson::gamma5(f);
-    }
-    const Field md_force(const Field& eta,const Field& zeta) const;
+    const Field gamma5(const Field& f) const{return Dirac_Wilson::gamma5(f);}
+    void md_force_p(Field& fce,const Field& eta,const Field& zeta) const;
+    void md_force_m(Field& fce,const Field& eta,const Field& zeta) const;
   };
 
   class OdEv:private Dirac_Wilson{
@@ -60,6 +60,7 @@ namespace Dw{
       return Dirac_Wilson::get_fermionFormat();
     }
 
+    double getKappa() const{return Dirac_Wilson::getKappa();}
     const std::vector<int> get_gsite() const;
 
     const Field mult(const Field&) const;
@@ -72,10 +73,9 @@ namespace Dw{
     const Field right_precond(const Field&)const{}//empty now
     ///////////////////////////////////////////////////////////////////
 
-    const Field gamma5(const Field& f) const{
-      return Dirac_Wilson::gamma5(f);
-    }
-    const Field md_force(const Field& eta,const Field& zeta) const;
+    const Field gamma5(const Field& f) const{ return Dirac_Wilson::gamma5(f);}
+    void md_force_p(Field& fce,const Field& eta,const Field& zeta) const;
+    void md_force_m(Field& fce,const Field& eta,const Field& zeta) const;
   };
 }
 
@@ -83,13 +83,16 @@ class Dirac_Wilson_EvenOdd:public DiracWilsonLike_EvenOdd {
 private:
   const Dw::EvOd Deo_;
   const Dw::OdEv Doe_;
-
+  //const Dirac_Wilson Dw_;
 public:
   Dirac_Wilson_EvenOdd(double mass,const Field* u)
+    //:Deo_(mass,u),Doe_(mass,u),Dw_(mass,u){}
     :Deo_(mass,u),Doe_(mass,u){}
 
   Dirac_Wilson_EvenOdd(const XML::node& node,const Field* u)
-    :Deo_(Dw::read_mass(node),u),Doe_(Dw::read_mass(node),u){
+    :Deo_(Dw::read_mass(node),u),
+     Doe_(Dw::read_mass(node),u){
+     // Dw_(Dw::read_mass(node),u){
     std::cout<<"Dirac_Wilson_EvenOdd created"<<std::endl;
   }
   
@@ -112,24 +115,17 @@ public:
 
   const Field mult_eo(const Field& f) const {return Deo_.mult(f);}
   const Field mult_oe(const Field& f) const {return Doe_.mult(f);}
-  const Field mult_eo_dag(const Field& f) const {
-    return Deo_.mult_dag(f);
-  }
-  const Field mult_oe_dag(const Field& f) const {
-    return Doe_.mult_dag(f);
-  }
+  const Field mult_eo_dag(const Field& f) const {return Deo_.mult_dag(f);}
+  const Field mult_oe_dag(const Field& f) const {return Doe_.mult_dag(f);}
   const Field mult_oo(const Field& f)const {return f;}
   const Field mult_ee(const Field& f)const {return f;}
   const Field mult_oo_inv(const Field& f)const {return f;}
   const Field mult_ee_inv(const Field& f)const {return f;}
 
-  const ffmt_t get_fermionFormat() const {
-    return Deo_.get_fermionFormat();
-  }
-  
-  const std::vector<int> get_gsite() const;
-
+  const ffmt_t get_fermionFormat() const{ return Deo_.get_fermionFormat();}
+  const std::vector<int> get_gsite() const{return Deo_.get_gsite();}
   const Field operator()(int OpType,const Field&)const{}
+  double getKappa()const { return Deo_.getKappa();}
 };
 
 #endif

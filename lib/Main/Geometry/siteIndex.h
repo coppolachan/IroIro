@@ -53,7 +53,7 @@ private:
 	      Ly_(CommonPrms::instance()->Ly()),
 	      Lz_(CommonPrms::instance()->Lz()),
 	      Lt_(CommonPrms::instance()->Lt()),
-	      LxLy_(Lx_*Ly_),LxLyLz_(Nx_*Ny_*Nz_){
+	      LxLy_(Lx_*Ly_),LxLyLz_(Lx_*Ly_*Lz_){
 
     int Bdir[Ndim_max_]= {Nx_-1,Ny_-1,Nz_-1,Nt_-1,};
     int Ndir[Ndim_max_]= {Nx_,Ny_,Nz_,Nt_,};
