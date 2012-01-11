@@ -1,7 +1,8 @@
 //----------------------------------------------------------------------
-// dirac_wilson.cpp shoji-branch
+// dirac_wilson.cpp
 //----------------------------------------------------------------------
 #include "dirac_wilson.h"
+#include "Tools/sunMatUtils.hpp"
 
 using namespace SUNvec_utils;
 using namespace std;
@@ -650,6 +651,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
 
   int Nc = CommonPrms::instance()->Nc();
   int Nd = CommonPrms::instance()->Nd();
+  SUNmat f;
 
   for(int mu=0; mu<Ndim_; ++mu){
     Field xie(fsize_);
@@ -658,7 +660,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
     (this->*mult_p[mu])(xie, sf_up_[mu]);
 
     for(int site=0; site<Nvol_; ++site){
-      SUNmat f;
+      f = 0.0;;
       for(int a=0; a<Nc; ++a){
         for(int b=0; b<Nc; ++b){
           double fre = 0.0;
@@ -689,7 +691,7 @@ void Dirac_Wilson::md_force_m(Field& fce,
 
   int Nc = CommonPrms::instance()->Nc();
   int Nd = CommonPrms::instance()->Nd();
-
+  SUNmat f;
   Field et5 = gamma5(eta);
   Field zt5 = gamma5(zeta);
 
@@ -699,7 +701,7 @@ void Dirac_Wilson::md_force_m(Field& fce,
     (this->*mult_p[mu])(xz5, sf_up_[mu]);
 
     for(int site=0; site<Nvol_; ++site){
-      SUNmat f;
+      f=0.0;
       for(int a=0; a<Nc; ++a){
         for(int b=0; b<Nc; ++b){
           double fre = 0.0;
@@ -735,64 +737,11 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
   return fp;
 }
 
-/*
-const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
-  using namespace SUNmat_utils;
-
-  int Nc = CommonPrms::instance()->Nc();
-  int Nd = CommonPrms::instance()->Nd();
-
-  Field et5 = gamma5(eta);
-  Field zt5 = gamma5(zeta);
-
-  Field fce(gf_->size());
-
-  for(int mu=0; mu<Ndim_; ++mu){
-    Field xie(fsize_), xz5(fsize_);
-  
-    sf_up_[mu]->setf(const_cast<Field&>(eta));
-    (this->*mult_p[mu])(xie, sf_up_[mu]);
-
-    sf_up_[mu]->setf(const_cast<Field&>(zt5));
-    (this->*mult_p[mu])(xz5, sf_up_[mu]);
-
-    for(int site=0; site<Nvol_; ++site){
-      SUNmat f;
-      for(int a=0; a<Nc; ++a){
-        for(int b=0; b<Nc; ++b){
-          double fre = 0.0;
-          double fim = 0.0;
-          for(int s=0; s<Nd; ++s){
-
-	    size_t ra =ff_->index_r(a,s,site);
-	    size_t ia =ff_->index_i(a,s,site);
-
-	    size_t rb =ff_->index_r(b,s,site);
-	    size_t ib =ff_->index_i(b,s,site);
-
-	    fre += zeta[rb]*xie[ra] +zeta[ib]*xie[ia]
- 	           -xz5[rb]*et5[ra]  -xz5[ib]*et5[ia];
-	    
-	    fim += zeta[rb]*xie[ia] -zeta[ib]*xie[ra]
-  	           -xz5[rb]*et5[ia]  +xz5[ib]*et5[ra];
-          }
-          f.set(a,b,fre,fim);
-        }
-      }
-      fce.set(gf_->cslice(0,gauge_site_m(site),mu),anti_hermite(f));
-    }
-  }
-  fce *= -kpp_;
-  return fce;
-}
-*/
-
 const vector<int> Dirac_Wilson::get_gsite() const {
   return SiteIndex::instance()->get_gsite();
 }
 
 namespace Dw{
-  
   double read_mass(const XML::node& node){
     double mass;
     XML::read(node, "mass", mass);

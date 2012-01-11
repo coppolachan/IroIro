@@ -5,6 +5,7 @@
 */
 #include "action_gauge_rect.hpp"
 #include "Communicator/comm_io.hpp"
+#include "Tools/sunMatUtils.hpp"
 
 using namespace std;
 

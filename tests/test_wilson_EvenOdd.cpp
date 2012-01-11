@@ -4,6 +4,9 @@
  * @brief Tests for the propagators 
  *
  */
+
+#include <stdio.h>
+
 #include "test_wilson_EvenOdd.hpp"
 #include "Measurements/FermionicM/fermion_meas_factory.hpp"
 
@@ -15,7 +18,7 @@
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Tools/randNum_MT19937.h"
 #include "Measurements/FermionicM/source_types.hpp"
-#include <stdio.h>
+
 
 using namespace std;
 using namespace Format;

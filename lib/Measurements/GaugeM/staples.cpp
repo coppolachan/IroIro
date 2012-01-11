@@ -2,6 +2,7 @@
 // staples.cpp
 //----------------------------------------------------------------------
 #include "staples.h"
+#include "Tools/sunMatUtils.hpp"
 
 using namespace SUNmat_utils;
 
