@@ -7,56 +7,19 @@
 #define DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
 
 #include "dirac_wilson_DomainWall.h"
-#include "dirac_wilson_EvenOdd.h"
 
 /*!
  * @brief Defines the 5d Domain Wall operator with even/odd site indexing
  */
 class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
-  const Dirac_Wilson_EvenOdd* Dw_;/*!< @brief Dirac Kernel - Wilson operator */ 
+  const Dirac_optimalDomainWall Deo_;
+  const Dirac_optimalDomainWall Doe_;
+
   Dirac_optimalDomainWall_params Params;
   Preconditioner* Precond_;
-
-  size_t N5_;/*!< @brief Length of 5th dimension */
-  size_t f4size_;
-  size_t fsize_;
-  size_t gsize_;
   const double M0_;
 
-  //declaration of concrete preconditioners
-  class NoPrecond: public Preconditioner {
-    Dirac_optimalDomainWall_EvenOdd* DWF_;
-  public: 
-    NoPrecond(Dirac_optimalDomainWall_EvenOdd* DWF): DWF_(DWF){}
-    const Field precondition(const Field&) const;  
-    const Field mult(const Field&) const;  
-    const Field mult_dag(const Field&) const;
-    const Field left(const Field&) const;  
-    const Field right(const Field&) const;  
-  };
-  
-  class LUPrecond : public Preconditioner {
-    Dirac_optimalDomainWall_EvenOdd* DWF_;
-  public: 
-    LUPrecond(Dirac_optimalDomainWall_EvenOdd* DWF): DWF_(DWF){}
-    const Field precondition(const Field&) const;  
-    const Field mult(const Field&) const;  
-    const Field mult_dag(const Field&) const;
-    const Field left(const Field&) const;  
-    const Field right(const Field&) const; 
-  };
-
   Preconditioner* choose_Preconditioner(int PrecondID);
-
-  const Field get4d(const Field& f5,int s) const{
-    return Field(f5[std::slice(s*f4size_,f4size_,1)]);
-  }
-  void set5d(Field& f5,const Field& f4,int s) const{
-    f5.set(std::slice(s*f4size_,f4size_,1),f4.getva());
-  }
-  void add5d(Field& f5,const Field& f4,int s) const{
-    f5.add(std::slice(s*f4size_,f4size_,1),f4.getva());
-  }
 
 public:
   Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,
@@ -75,37 +38,17 @@ public:
   /*! @brief Copy constructor to build the Pauli-Villars operator */
   Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd& Dcopy, 
 				  DWFType Type = Standard)
-    :Params(Dcopy.Params, Type),
-     Dw_(Dcopy.Dw_),
-     N5_(Dcopy.N5_),
-     f4size_(Dcopy.f4size_),
-     fsize_(Dcopy.fsize_),
-     gsize_(Dcopy.gsize_),
-     M0_(Dcopy.M0_),
-     Precond_(choose_Preconditioner(Params.Preconditioning_))//cannot just copy
-  {}
+    :Deo_(Dcopy.Deo_,Type),Doe_(Dcopy.Doe_,Type){}
 
-  ~Dirac_optimalDomainWall_EvenOdd(){
-    #if VERBOSITY>4
-    CCIO::cout << "Deleting Dirac_optimalDomainWall" << std::endl;
-    #endif
-    
-    delete Precond_; 
-  }
+  ~Dirac_optimalDomainWall_EvenOdd(){}
   
-  size_t f4size() const{ return f4size_;}
-  size_t fsize()  const{ 
-    CCIO::cout<<"Dirac_optimalDomainWall::fsize_="
-	      <<fsize_<<std::endl;
-    return fsize_; }
-  size_t gsize()  const{ return gsize_; }
+  size_t f4size()const{ return Deo_.f4size();}
+  size_t fsize() const{ return Deo_.fsize(); }
+  size_t gsize() const{ return Deo_.gsize(); }
   
   const Field operator()(int, const Field&) const{}
-
-  const double getMass() const{return Params.mq_;}
-
-  const Field gamma5_4d(const Field& f4d) const{return Dw_->gamma5(f4d);}
-  
+  const double getMass() const{return Deo_.getMass();}
+  const Field gamma5_4d(const Field& f4d) const{return Deo_->gamma5(f4d);}
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 

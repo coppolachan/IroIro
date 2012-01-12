@@ -33,9 +33,7 @@ End_Enum_String;
 /*!
  * @brief Container for parameter of the 5d Optimal Domain Wall operator
  *
- * Parameters for \f[D_{\rm dwf}(m_q) = \omega D_W(-m_0)(1+cL(m_q))+(1-L(m_q))\f]
- * 
- *
+ * Parameters for \f[D_{\rm dwf}(m_q) =\omega D_W(-m_0)(1+cL(m_q))+(1-L(m_q))\f]
  */
 struct Dirac_optimalDomainWall_params{
   double N5dim_;/*!< @brief the length in the 5th direction (must be even) */
@@ -68,9 +66,10 @@ struct Dirac_optimalDomainWall_params{
  *
  * Kernel is given by
  * \f[H = \frac{\gamma_5 b D_W}{ 2 + c D_W } \f]
- *
  */
 class Dirac_optimalDomainWall : public DiracWilsonLike {
+  friend class Dirac_optimalDomainWall_EvenOdd;
+
   const Dirac_Wilson* Dw_; /*!< @brief Dirac Kernel - Wilson operator */ 
   Dirac_optimalDomainWall_params Params;
   Preconditioner* Precond_;

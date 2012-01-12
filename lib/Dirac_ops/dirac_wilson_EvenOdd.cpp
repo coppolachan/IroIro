@@ -20,11 +20,11 @@ const Field Dirac_Wilson_EvenOdd::mult_oe(const Field& f) const{
 }
 
 const Field Dirac_Wilson_EvenOdd::mult_eo_dag(const Field& f) const{
-  return gamma5(mult_eo(gamma5(f)));
+  return gamma5(mult_oe(gamma5(f)));
 }
 
 const Field Dirac_Wilson_EvenOdd::mult_oe_dag(const Field& f) const{
-  return gamma5(mult_oe(gamma5(f)));
+  return gamma5(mult_eo(gamma5(f)));
 }
 
 const Field Dirac_Wilson_EvenOdd::mult(const Field& f) const{
@@ -34,7 +34,10 @@ const Field Dirac_Wilson_EvenOdd::mult(const Field& f) const{
 }
 
 const Field Dirac_Wilson_EvenOdd::mult_dag(const Field& f) const{
-  return gamma5(mult(gamma5(f)));
+  //return gamma5(mult(gamma5(f)));
+  Field w(f);
+  w -= mult_oe_dag(mult_eo_dag(f));
+  return w;
 }
 
 const vector<int> Dirac_Wilson_EvenOdd::get_gsite() const {
