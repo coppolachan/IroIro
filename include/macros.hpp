@@ -24,7 +24,7 @@
 #define SOLV_MONITOR_VERB_LEVEL 1
 #define DEBUG_VERB_LEVEL 5
 
-
+#define NC_ 3  //Number of colours, now fixed here
 
 
 #define TIMING_START				\

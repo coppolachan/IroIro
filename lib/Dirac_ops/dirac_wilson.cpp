@@ -7,553 +7,397 @@
 using namespace SUNvec_utils;
 using namespace std;
 
-#if 1
 void Dirac_Wilson::mult_xp(Field& fp, ShiftField* sfp) const{
-  int Nc = CommonPrms::instance()->Nc();
-
+  double* utmp;                  //auxiliary matrix
+  const double* vtmp;
+  double* res;
+  double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
+  double v1[NC_][2], v2[NC_][2];       //result
   for(int site = 0; site <Nvol_; ++site){
-    //    int gsite = gauge_site_p(site);
-    int gsite = (this->*gp)(site);
-    double utmp[Nc][Nc][2];
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(site),0));
+    res  = fp.getaddr(ff_->index_r(0,0,site));
+    //assumes matrix and fermion data is contiguous
 
-    for (int c1 = 0; c1 < Nc; ++c1) {
-      for (int c2 = 0; c2 < Nc; ++c2) {
-	utmp[c1][c2][0] = (*u_)[gf_->index_r(c1,c2,gsite,0)];
-	utmp[c1][c2][1] = (*u_)[gf_->index_i(c1,c2,gsite,0)];
-      }
-    }
-    bool on = sfp->on_bdry(site);
-    double v1tmp[Nc][2], v2tmp[Nc][2];
-    if (on) {
-      for (int c = 0; c < Nc; ++c) {
-	v1tmp[c][0] = sfp->re_on_bdry(c,0,site) - sfp->im_on_bdry(c,3,site);
-	v1tmp[c][1] = sfp->im_on_bdry(c,0,site) + sfp->re_on_bdry(c,3,site);
-	v2tmp[c][0] = sfp->re_on_bdry(c,1,site) - sfp->im_on_bdry(c,2,site);
-	v2tmp[c][1] = sfp->im_on_bdry(c,1,site) + sfp->re_on_bdry(c,2,site);
-      } 
-    } else {
-      for (int c = 0; c < Nc; ++c) {
-	v1tmp[c][0] = sfp->re_on_bulk(c,0,site) - sfp->im_on_bulk(c,3,site);
-	v1tmp[c][1] = sfp->im_on_bulk(c,0,site) + sfp->re_on_bulk(c,3,site);
-	v2tmp[c][0] = sfp->re_on_bulk(c,1,site) - sfp->im_on_bulk(c,2,site);
-	v2tmp[c][1] = sfp->im_on_bulk(c,1,site) + sfp->re_on_bulk(c,2,site);
-      }
+ 
+    if (!sfp->on_bdry(site)) {vtmp = sfp->get_bulk_addr(site);}
+    else {vtmp = sfp->get_bdry_addr(site);}
+
+    for (int c = 0; c < NC_; ++c) {
+      v1tmp[c][0] = vtmp[2*c        ] - vtmp[2*c+6*NC_+1 ];
+      v1tmp[c][1] = vtmp[2*c+1      ] + vtmp[2*c+6*NC_   ];
+      v2tmp[c][0] = vtmp[2*c+2*NC_  ] - vtmp[2*c+4*NC_+1 ];
+      v2tmp[c][1] = vtmp[2*c+2*NC_+1] + vtmp[2*c+4*NC_   ];
     }
 
-    double v1[Nc][2], v2[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
-      v1[c][0] = 0.0; v1[c][1] = 0.0; v2[c][0] = 0.0; v2[c][1] = 0.0;
-      for (int c1 = 0; c1 < Nc; ++c1) {
-	v1[c][0] += (utmp[c][c1][0]*v1tmp[c1][0] 
-		   - utmp[c][c1][1]*v1tmp[c1][1]);
-	v1[c][1] += (utmp[c][c1][1]*v1tmp[c1][0] 
-                   + utmp[c][c1][0]*v1tmp[c1][1]);
-	v2[c][0] += (utmp[c][c1][0]*v2tmp[c1][0] 
-                   - utmp[c][c1][1]*v2tmp[c1][1]);
-	v2[c][1] += (utmp[c][c1][1]*v2tmp[c1][0] 
-                   + utmp[c][c1][0]*v2tmp[c1][1]);
+    for (int c = 0; c < NC_; ++c) {
+      v1[c][0] = 0.0; v1[c][1] = 0.0;
+      v2[c][0] = 0.0; v2[c][1] = 0.0;
+   
+      for (int c1 = 0; c1 < NC_; ++c1) {
+
+	v1[c][0] += (utmp[NC_*2*c+2*c1  ]*v1tmp[c1][0] 
+		   - utmp[NC_*2*c+2*c1+1]*v1tmp[c1][1]);
+	v1[c][1] += (utmp[NC_*2*c+2*c1+1]*v1tmp[c1][0] 
+                   + utmp[NC_*2*c+2*c1  ]*v1tmp[c1][1]);
+	v2[c][0] += (utmp[NC_*2*c+2*c1  ]*v2tmp[c1][0] 
+                   - utmp[NC_*2*c+2*c1+1]*v2tmp[c1][1]);
+	v2[c][1] += (utmp[NC_*2*c+2*c1+1]*v2tmp[c1][0] 
+                   + utmp[NC_*2*c+2*c1  ]*v2tmp[c1][1]);
       }
-    }
-    for (int c = 0; c < Nc; ++c) {
-      fp.add(ff_->index_r(c,0,site),  v1[c][0]);
-      fp.add(ff_->index_i(c,0,site),  v1[c][1]);
-      fp.add(ff_->index_r(c,1,site),  v2[c][0]);
-      fp.add(ff_->index_i(c,1,site),  v2[c][1]);
-      fp.add(ff_->index_r(c,2,site),  v2[c][1]);
-      fp.add(ff_->index_i(c,2,site), -v2[c][0]);
-      fp.add(ff_->index_r(c,3,site),  v1[c][1]);
-      fp.add(ff_->index_i(c,3,site), -v1[c][0]);
+
+      res[2*c        ] += v1[c][0];
+      res[2*c+1      ] += v1[c][1];
+      res[2*c+2*NC_  ] += v2[c][0];
+      res[2*c+2*NC_+1] += v2[c][1];
+      res[2*c+4*NC_  ] += v2[c][1];
+      res[2*c+4*NC_+1] -= v2[c][0];
+      res[2*c+6*NC_  ] += v1[c][1];
+      res[2*c+6*NC_+1] -= v1[c][0];
+
     }
   }
 }
 
 void Dirac_Wilson::mult_yp(Field& fp, ShiftField* sfp) const{
-  int Nc = CommonPrms::instance()->Nc();
+  double* utmp;                  //auxiliary matrix
+  const double* vtmp;
+  double* res;
+  double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
+  double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_p(site);
-    int gsite = (this->*gp)(site);
-    double utmp[Nc][Nc][2];
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(site),1));
+    res  = fp.getaddr(ff_->index_r(0,0,site));
+    //assumes matrix and fermion data is contiguous
 
-    for (int c1 = 0; c1 < Nc; ++c1) {
-      for (int c2 = 0; c2 < Nc; ++c2) {
-	utmp[c1][c2][0] = (*u_)[gf_->index_r(c1,c2,gsite,1)];
-	utmp[c1][c2][1] = (*u_)[gf_->index_i(c1,c2,gsite,1)];
-      }
+    //gamma_0
+    if (!sfp->on_bdry(site)) {vtmp = sfp->get_bulk_addr(site);}
+    else {vtmp = sfp->get_bdry_addr(site);}
+
+    for (int c = 0; c < NC_; ++c) {
+      v1tmp[c][0] = vtmp[2*c        ] + vtmp[2*c+6*NC_   ];
+      v1tmp[c][1] = vtmp[2*c+1      ] + vtmp[2*c+6*NC_+1 ];
+      v2tmp[c][0] = vtmp[2*c+2*NC_  ] - vtmp[2*c+4*NC_   ];
+      v2tmp[c][1] = vtmp[2*c+2*NC_+1] - vtmp[2*c+4*NC_+1 ];
     }
 
-    bool on = sfp->on_bdry(site);
-    double v1tmp[Nc][2], v2tmp[Nc][2];
-    if (on) {
-      for (int c = 0; c < Nc; ++c) {
-	v1tmp[c][0] = sfp->re_on_bdry(c,0,site) + sfp->re_on_bdry(c,3,site);
-	v1tmp[c][1] = sfp->im_on_bdry(c,0,site) + sfp->im_on_bdry(c,3,site);
-	v2tmp[c][0] = sfp->re_on_bdry(c,1,site) - sfp->re_on_bdry(c,2,site);
-	v2tmp[c][1] = sfp->im_on_bdry(c,1,site) - sfp->im_on_bdry(c,2,site);
+    for (int c = 0; c < NC_; ++c) {
+      v1[c][0] = 0.0; v1[c][1] = 0.0;
+      v2[c][0] = 0.0; v2[c][1] = 0.0;
+   
+      for (int c1 = 0; c1 < NC_; ++c1) {
+	v1[c][0] += (utmp[NC_*2*c+2*c1  ]*v1tmp[c1][0] 
+		   - utmp[NC_*2*c+2*c1+1]*v1tmp[c1][1]);
+	v1[c][1] += (utmp[NC_*2*c+2*c1+1]*v1tmp[c1][0] 
+                   + utmp[NC_*2*c+2*c1  ]*v1tmp[c1][1]);
+	v2[c][0] += (utmp[NC_*2*c+2*c1  ]*v2tmp[c1][0] 
+                   - utmp[NC_*2*c+2*c1+1]*v2tmp[c1][1]);
+	v2[c][1] += (utmp[NC_*2*c+2*c1+1]*v2tmp[c1][0] 
+                   + utmp[NC_*2*c+2*c1  ]*v2tmp[c1][1]);
       }
-    } else { 
-      for (int c = 0; c < Nc; ++c) {
-	v1tmp[c][0] = sfp->re_on_bulk(c,0,site) + sfp->re_on_bulk(c,3,site);
-	v1tmp[c][1] = sfp->im_on_bulk(c,0,site) + sfp->im_on_bulk(c,3,site);
-	v2tmp[c][0] = sfp->re_on_bulk(c,1,site) - sfp->re_on_bulk(c,2,site);
-	v2tmp[c][1] = sfp->im_on_bulk(c,1,site) - sfp->im_on_bulk(c,2,site);
-      }
+
+      res[2*c        ] += v1[c][0];
+      res[2*c+1      ] += v1[c][1];
+      res[2*c+2*NC_  ] += v2[c][0];
+      res[2*c+2*NC_+1] += v2[c][1];
+      res[2*c+4*NC_  ] -= v2[c][0];
+      res[2*c+4*NC_+1] -= v2[c][1];
+      res[2*c+6*NC_  ] += v1[c][0];
+      res[2*c+6*NC_+1] += v1[c][1];
+
     }
-    double v1[Nc][2], v2[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
-      v1[c][0] = 0.0; v1[c][1] = 0.0; v2[c][0] = 0.0; v2[c][1] = 0.0;
-      for (int c1 = 0; c1 < Nc; ++c1) {
-	v1[c][0] += (utmp[c][c1][0]*v1tmp[c1][0] 
-                   - utmp[c][c1][1]*v1tmp[c1][1]);
-	v1[c][1] += (utmp[c][c1][1]*v1tmp[c1][0] 
-                   + utmp[c][c1][0]*v1tmp[c1][1]);
-	v2[c][0] += (utmp[c][c1][0]*v2tmp[c1][0] 
-                   - utmp[c][c1][1]*v2tmp[c1][1]);
-	v2[c][1] += (utmp[c][c1][1]*v2tmp[c1][0] 
-                   + utmp[c][c1][0]*v2tmp[c1][1]);
-      }
-    }
-    for (int c = 0; c < Nc; ++c) {
-      fp.add(ff_->index_r(c,0,site),  v1[c][0]);
-      fp.add(ff_->index_i(c,0,site),  v1[c][1]);
-      fp.add(ff_->index_r(c,1,site),  v2[c][0]);
-      fp.add(ff_->index_i(c,1,site),  v2[c][1]);
-      fp.add(ff_->index_r(c,2,site), -v2[c][0]);
-      fp.add(ff_->index_i(c,2,site), -v2[c][1]);
-      fp.add(ff_->index_r(c,3,site),  v1[c][0]);
-      fp.add(ff_->index_i(c,3,site),  v1[c][1]);
-    }
+
   }
 }
 
 void Dirac_Wilson::mult_zp(Field& fp, ShiftField* sfp) const{
-  int Nc = CommonPrms::instance()->Nc();
+  double* utmp;                  //auxiliary matrix
+  const double* vtmp;
+  double* res;
+  double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
+  double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_p(site);
-    int gsite = (this->*gp)(site);
-    double utmp[Nc][Nc][2];
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(site),2));
+    res  = fp.getaddr(ff_->index_r(0,0,site));
+    //assumes matrix and fermion data is contiguous
 
-    for (int c1 = 0; c1 < Nc; ++c1) {
-      for (int c2 = 0; c2 < Nc; ++c2) {
-	utmp[c1][c2][0] = (*u_)[gf_->index_r(c1,c2,gsite,2)];
-	utmp[c1][c2][1] = (*u_)[gf_->index_i(c1,c2,gsite,2)];
-      }
-    }
-    bool on = sfp->on_bdry(site);
-    double v1tmp[Nc][2], v2tmp[Nc][2];
-    if (on) {
-      for (int c = 0; c < Nc; ++c) {
-	v1tmp[c][0] = sfp->re_on_bdry(c,0,site) - sfp->im_on_bdry(c,2,site);
-	v1tmp[c][1] = sfp->im_on_bdry(c,0,site) + sfp->re_on_bdry(c,2,site);
-	v2tmp[c][0] = sfp->re_on_bdry(c,1,site) + sfp->im_on_bdry(c,3,site);
-	v2tmp[c][1] = sfp->im_on_bdry(c,1,site) - sfp->re_on_bdry(c,3,site);
-      }
-    } else {
-      for (int c = 0; c < Nc; ++c) {
-	v1tmp[c][0] = sfp->re_on_bulk(c,0,site) - sfp->im_on_bulk(c,2,site);
-	v1tmp[c][1] = sfp->im_on_bulk(c,0,site) + sfp->re_on_bulk(c,2,site);
-	v2tmp[c][0] = sfp->re_on_bulk(c,1,site) + sfp->im_on_bulk(c,3,site);
-	v2tmp[c][1] = sfp->im_on_bulk(c,1,site) - sfp->re_on_bulk(c,3,site);
-      }
+    if (!sfp->on_bdry(site)) {vtmp = sfp->get_bulk_addr(site);}
+    else {vtmp = sfp->get_bdry_addr(site);}
+
+    for (int c = 0; c < NC_; ++c) {
+      v1tmp[c][0] = vtmp[2*c        ] - vtmp[2*c+4*NC_+1 ];
+      v1tmp[c][1] = vtmp[2*c+1      ] + vtmp[2*c+4*NC_   ];
+      v2tmp[c][0] = vtmp[2*c+2*NC_  ] + vtmp[2*c+6*NC_+1 ];
+      v2tmp[c][1] = vtmp[2*c+2*NC_+1] - vtmp[2*c+6*NC_   ];
     }
 
-    double v1[Nc][2], v2[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
-      v1[c][0] = 0.0; v1[c][1] = 0.0; v2[c][0] = 0.0; v2[c][1] = 0.0;
-      for (int c1 = 0; c1 < Nc; ++c1) {
-	v1[c][0] += (utmp[c][c1][0]*v1tmp[c1][0] 
-                   - utmp[c][c1][1]*v1tmp[c1][1]);
-	v1[c][1] += (utmp[c][c1][1]*v1tmp[c1][0] 
-                   + utmp[c][c1][0]*v1tmp[c1][1]);
-	v2[c][0] += (utmp[c][c1][0]*v2tmp[c1][0] 
-                   - utmp[c][c1][1]*v2tmp[c1][1]);
-	v2[c][1] += (utmp[c][c1][1]*v2tmp[c1][0] 
-                   + utmp[c][c1][0]*v2tmp[c1][1]);
+    for (int c = 0; c < NC_; ++c) {
+      v1[c][0] = 0.0; v1[c][1] = 0.0;
+      v2[c][0] = 0.0; v2[c][1] = 0.0;
+   
+      for (int c1 = 0; c1 < NC_; ++c1) {
+	v1[c][0] += (utmp[NC_*2*c+2*c1  ]*v1tmp[c1][0] 
+		   - utmp[NC_*2*c+2*c1+1]*v1tmp[c1][1]);
+	v1[c][1] += (utmp[NC_*2*c+2*c1+1]*v1tmp[c1][0] 
+                   + utmp[NC_*2*c+2*c1  ]*v1tmp[c1][1]);
+	v2[c][0] += (utmp[NC_*2*c+2*c1  ]*v2tmp[c1][0] 
+                   - utmp[NC_*2*c+2*c1+1]*v2tmp[c1][1]);
+	v2[c][1] += (utmp[NC_*2*c+2*c1+1]*v2tmp[c1][0] 
+                   + utmp[NC_*2*c+2*c1  ]*v2tmp[c1][1]);
       }
+
+      res[2*c        ] += v1[c][0];
+      res[2*c+1      ] += v1[c][1];
+      res[2*c+2*NC_  ] += v2[c][0];
+      res[2*c+2*NC_+1] += v2[c][1];
+      res[2*c+4*NC_  ] += v1[c][1];
+      res[2*c+4*NC_+1] -= v1[c][0];
+      res[2*c+6*NC_  ] -= v2[c][1];
+      res[2*c+6*NC_+1] += v2[c][0];
+
     }
 
-    for (int c = 0; c < Nc; ++c) {
-      fp.add(ff_->index_r(c,0,site),  v1[c][0]);
-      fp.add(ff_->index_i(c,0,site),  v1[c][1]);
-      fp.add(ff_->index_r(c,1,site),  v2[c][0]);
-      fp.add(ff_->index_i(c,1,site),  v2[c][1]);
-      fp.add(ff_->index_r(c,2,site),  v1[c][1]);
-      fp.add(ff_->index_i(c,2,site), -v1[c][0]);
-      fp.add(ff_->index_r(c,3,site), -v2[c][1]);
-      fp.add(ff_->index_i(c,3,site),  v2[c][0]);
-    }
   }
 }
 
 void Dirac_Wilson::mult_tp(Field& fp, ShiftField* sfp) const{
-  int Nc = CommonPrms::instance()->Nc();
+  double* utmp;                  //auxiliary matrix
+  const double* vtmp;
+  double* res;
+  double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
+  double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    //    int gsite = gauge_site_p(site);
-    int gsite = (this->*gp)(site);
-    double utmp[Nc][Nc][2];
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(site),3));
+    res  = fp.getaddr(ff_->index_r(0,0,site));
+    //assumes matrix and fermion data is contiguous
 
-    for (int c1 = 0; c1 < Nc; ++c1) {
-      for (int c2 = 0; c2 < Nc; ++c2) {
-	utmp[c1][c2][0] = (*u_)[gf_->index_r(c1,c2,gsite,3)];
-	utmp[c1][c2][1] = (*u_)[gf_->index_i(c1,c2,gsite,3)];
-      }
+    if (!sfp->on_bdry(site)) {vtmp = sfp->get_bulk_addr(site);}
+    else {vtmp = sfp->get_bdry_addr(site);}
+
+    for (int c = 0; c < NC_; ++c) {
+      v1tmp[c][0] = vtmp[2*c+4*NC_  ]*2.0;
+      v1tmp[c][1] = vtmp[2*c+4*NC_+1]*2.0;
+      v2tmp[c][0] = vtmp[2*c+6*NC_  ]*2.0;
+      v2tmp[c][1] = vtmp[2*c+6*NC_+1]*2.0;
     }
 
-    bool on = sfp->on_bdry(site);
-    double v1tmp[Nc][2], v2tmp[Nc][2];
-    if (on) {
-      for (int c = 0; c < Nc; ++c) {
-	v1tmp[c][0] = sfp->re_on_bdry(c,2,site)*2.0;
-	v1tmp[c][1] = sfp->im_on_bdry(c,2,site)*2.0;
-	v2tmp[c][0] = sfp->re_on_bdry(c,3,site)*2.0;
-	v2tmp[c][1] = sfp->im_on_bdry(c,3,site)*2.0;
+    for (int c = 0; c < NC_; ++c) {
+      v1[c][0] = 0.0; v1[c][1] = 0.0;
+      v2[c][0] = 0.0; v2[c][1] = 0.0;
+   
+      for (int c1 = 0; c1 < NC_; ++c1) {
+	v1[c][0] += (utmp[NC_*2*c+2*c1  ]*v1tmp[c1][0] 
+		   - utmp[NC_*2*c+2*c1+1]*v1tmp[c1][1]);
+	v1[c][1] += (utmp[NC_*2*c+2*c1+1]*v1tmp[c1][0] 
+                   + utmp[NC_*2*c+2*c1  ]*v1tmp[c1][1]);
+	v2[c][0] += (utmp[NC_*2*c+2*c1  ]*v2tmp[c1][0] 
+                   - utmp[NC_*2*c+2*c1+1]*v2tmp[c1][1]);
+	v2[c][1] += (utmp[NC_*2*c+2*c1+1]*v2tmp[c1][0] 
+                   + utmp[NC_*2*c+2*c1  ]*v2tmp[c1][1]);
       }
-    } else {
-      for (int c = 0; c < Nc; ++c) {
-	v1tmp[c][0] = sfp->re_on_bulk(c,2,site)*2.0;
-	v1tmp[c][1] = sfp->im_on_bulk(c,2,site)*2.0;
-	v2tmp[c][0] = sfp->re_on_bulk(c,3,site)*2.0;
-	v2tmp[c][1] = sfp->im_on_bulk(c,3,site)*2.0;
-      }
+
+      res[2*c+4*NC_  ] += v1[c][0];
+      res[2*c+4*NC_+1] += v1[c][1];
+      res[2*c+6*NC_  ] += v2[c][0];
+      res[2*c+6*NC_+1] += v2[c][1];
+
     }
-    double v1[Nc][2], v2[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
-      v1[c][0] = 0.0; v1[c][1] = 0.0; v2[c][0] = 0.0; v2[c][1] = 0.0;
-      for (int c1 = 0; c1 < Nc; ++c1) {
-	v1[c][0] += (utmp[c][c1][0]*v1tmp[c1][0] 
-                   - utmp[c][c1][1]*v1tmp[c1][1]);
-	v1[c][1] += (utmp[c][c1][1]*v1tmp[c1][0] 
-                   + utmp[c][c1][0]*v1tmp[c1][1]);
-	v2[c][0] += (utmp[c][c1][0]*v2tmp[c1][0] 
-                   - utmp[c][c1][1]*v2tmp[c1][1]);
-	v2[c][1] += (utmp[c][c1][1]*v2tmp[c1][0] 
-                   + utmp[c][c1][0]*v2tmp[c1][1]);
-      }
-    }
-    for (int c = 0; c < Nc; ++c) {
-      fp.add(ff_->index_r(c,2,site),  v1[c][0]);
-      fp.add(ff_->index_i(c,2,site),  v1[c][1]);
-      fp.add(ff_->index_r(c,3,site),  v2[c][0]);
-      fp.add(ff_->index_i(c,3,site),  v2[c][1]);
-    }
+
   }
 }
 
 void Dirac_Wilson::mult_xm(valarray<double>& w, const Field& f) const{
-  int Nc = CommonPrms::instance()->Nc();
+  double* utmp;                  //auxiliary matrix
+  const double* vtmp;
+  double* res;
+  double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
+  double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_m(site);
-    int gsite = (this->*gm)(site);
-    double utmp[Nc][Nc][2];
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),0));
+    res  = &w[ff_->index_r(0,0,site)];
+    //assumes matrix and fermion data is contiguous
+    vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
+    
+     for (int c = 0; c < NC_; ++c) {
+      v1tmp[c][0] = vtmp[2*c        ] + vtmp[2*c+6*NC_+1 ];
+      v1tmp[c][1] = vtmp[2*c+1      ] - vtmp[2*c+6*NC_   ];
+      v2tmp[c][0] = vtmp[2*c+2*NC_  ] + vtmp[2*c+4*NC_+1 ];
+      v2tmp[c][1] = vtmp[2*c+2*NC_+1] - vtmp[2*c+4*NC_   ];
+    }
 
-    for (int c1 = 0; c1 < Nc; ++c1) {
-      for (int c2 = 0; c2 < Nc; ++c2) {
-	utmp[c2][c1][0] =   (*u_)[gf_->index_r(c1,c2,gsite,0)];
-	utmp[c2][c1][1] = - (*u_)[gf_->index_i(c1,c2,gsite,0)];
-      }
-    }
-    double v1tmp[Nc][2], v2tmp[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
-      v1tmp[c][0] = f[ff_->index_r(c,0,site)] + f[ff_->index_i(c,3,site)];
-      v1tmp[c][1] = f[ff_->index_i(c,0,site)] - f[ff_->index_r(c,3,site)];
-      v2tmp[c][0] = f[ff_->index_r(c,1,site)] + f[ff_->index_i(c,2,site)];
-      v2tmp[c][1] = f[ff_->index_i(c,1,site)] - f[ff_->index_r(c,2,site)];
-    }
-    double v1[Nc][2], v2[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
+    for (int c = 0; c < NC_; ++c) {
       v1[c][0] = 0.0; v1[c][1] = 0.0; v2[c][0] = 0.0; v2[c][1] = 0.0;
-      for (int c1 = 0; c1 < Nc; ++c1) {
-	v1[c][0] += (utmp[c][c1][0]*v1tmp[c1][0] 
-                   - utmp[c][c1][1]*v1tmp[c1][1]);
-	v1[c][1] += (utmp[c][c1][1]*v1tmp[c1][0] 
-                   + utmp[c][c1][0]*v1tmp[c1][1]);
-	v2[c][0] += (utmp[c][c1][0]*v2tmp[c1][0] 
-                   - utmp[c][c1][1]*v2tmp[c1][1]);
-	v2[c][1] += (utmp[c][c1][1]*v2tmp[c1][0] 
-                   + utmp[c][c1][0]*v2tmp[c1][1]);
+      for (int c1 = 0; c1 < NC_; ++c1) {
+	v1[c][0] += ( utmp[NC_*2*c1+2*c  ] *v1tmp[c1][0] 
+	            + utmp[NC_*2*c1+2*c+1] *v1tmp[c1][1]);
+	v1[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v1tmp[c1][0] 
+                    - utmp[NC_*2*c1+2*c  ] *v1tmp[c1][1]);
+	v2[c][0] += ( utmp[NC_*2*c1+2*c  ] *v2tmp[c1][0] 
+                    + utmp[NC_*2*c1+2*c+1] *v2tmp[c1][1]);
+	v2[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v2tmp[c1][0] 
+                    - utmp[NC_*2*c1+2*c  ] *v2tmp[c1][1]);
+
       }
-    }
-    for (int c = 0; c < Nc; ++c) {
-      w[ff_->index_r(c,0,site)] =  v1[c][0];
-      w[ff_->index_i(c,0,site)] =  v1[c][1];
-      w[ff_->index_r(c,1,site)] =  v2[c][0];
-      w[ff_->index_i(c,1,site)] =  v2[c][1];
-      w[ff_->index_r(c,2,site)] = -v2[c][1];
-      w[ff_->index_i(c,2,site)] =  v2[c][0];
-      w[ff_->index_r(c,3,site)] = -v1[c][1];
-      w[ff_->index_i(c,3,site)] =  v1[c][0];
+    
+      res[2*c        ] =  v1[c][0];
+      res[2*c+1      ] =  v1[c][1];
+      res[2*c+2*NC_  ] =  v2[c][0];
+      res[2*c+2*NC_+1] =  v2[c][1];
+      res[2*c+4*NC_  ] = -v2[c][1];
+      res[2*c+4*NC_+1] =  v2[c][0];
+      res[2*c+6*NC_  ] = -v1[c][1];
+      res[2*c+6*NC_+1] =  v1[c][0];
+
     }
   }
 }
 
 void Dirac_Wilson::mult_ym(valarray<double>& w, const Field& f) const{
-  int Nc = CommonPrms::instance()->Nc();
+  double* utmp;                  //auxiliary matrix
+  const double* vtmp;
+  double* res;
+  double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
+  double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_m(site);
-    int gsite = (this->*gm)(site);
-    double utmp[Nc][Nc][2];
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),1));
+    res  = &w[ff_->index_r(0,0,site)];
+    //assumes matrix and fermion data is contiguous
+    vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
+    
+     for (int c = 0; c < NC_; ++c) {
+      v1tmp[c][0] = vtmp[2*c        ] - vtmp[2*c+6*NC_   ];
+      v1tmp[c][1] = vtmp[2*c+1      ] - vtmp[2*c+6*NC_+1 ];
+      v2tmp[c][0] = vtmp[2*c+2*NC_  ] + vtmp[2*c+4*NC_   ];
+      v2tmp[c][1] = vtmp[2*c+2*NC_+1] + vtmp[2*c+4*NC_+1 ];
+    }
 
-    for (int c1 = 0; c1 < Nc; ++c1) {
-      for (int c2 = 0; c2 < Nc; ++c2) {
-	utmp[c2][c1][0] =   (*u_)[gf_->index_r(c1,c2,gsite,1)];
-	utmp[c2][c1][1] = - (*u_)[gf_->index_i(c1,c2,gsite,1)];
-      }
-    }
-    double v1tmp[Nc][2], v2tmp[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
-      v1tmp[c][0] = f[ff_->index_r(c,0,site)] - f[ff_->index_r(c,3,site)];
-      v1tmp[c][1] = f[ff_->index_i(c,0,site)] - f[ff_->index_i(c,3,site)];
-      v2tmp[c][0] = f[ff_->index_r(c,1,site)] + f[ff_->index_r(c,2,site)];
-      v2tmp[c][1] = f[ff_->index_i(c,1,site)] + f[ff_->index_i(c,2,site)];
-    }
-    double v1[Nc][2], v2[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
+    for (int c = 0; c < NC_; ++c) {
       v1[c][0] = 0.0; v1[c][1] = 0.0; v2[c][0] = 0.0; v2[c][1] = 0.0;
-      for (int c1 = 0; c1 < Nc; ++c1) {
-	v1[c][0] += (utmp[c][c1][0]*v1tmp[c1][0] 
-                   - utmp[c][c1][1]*v1tmp[c1][1]);
-	v1[c][1] += (utmp[c][c1][1]*v1tmp[c1][0] 
-                   + utmp[c][c1][0]*v1tmp[c1][1]);
-	v2[c][0] += (utmp[c][c1][0]*v2tmp[c1][0] 
-                   - utmp[c][c1][1]*v2tmp[c1][1]);
-	v2[c][1] += (utmp[c][c1][1]*v2tmp[c1][0] 
-                   + utmp[c][c1][0]*v2tmp[c1][1]);
+      for (int c1 = 0; c1 < NC_; ++c1) {
+	v1[c][0] += ( utmp[NC_*2*c1+2*c  ] *v1tmp[c1][0] 
+	            + utmp[NC_*2*c1+2*c+1] *v1tmp[c1][1]);
+	v1[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v1tmp[c1][0] 
+                    - utmp[NC_*2*c1+2*c  ] *v1tmp[c1][1]);
+	v2[c][0] += ( utmp[NC_*2*c1+2*c  ] *v2tmp[c1][0] 
+                    + utmp[NC_*2*c1+2*c+1] *v2tmp[c1][1]);
+	v2[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v2tmp[c1][0] 
+                    - utmp[NC_*2*c1+2*c  ] *v2tmp[c1][1]);
+
       }
-    }
-    for (int c = 0; c < Nc; ++c) {
-      w[ff_->index_r(c,0,site)] =  v1[c][0];
-      w[ff_->index_i(c,0,site)] =  v1[c][1];
-      w[ff_->index_r(c,1,site)] =  v2[c][0];
-      w[ff_->index_i(c,1,site)] =  v2[c][1];
-      w[ff_->index_r(c,2,site)] =  v2[c][0];
-      w[ff_->index_i(c,2,site)] =  v2[c][1];
-      w[ff_->index_r(c,3,site)] = -v1[c][0];
-      w[ff_->index_i(c,3,site)] = -v1[c][1];
+    
+      res[2*c        ] =  v1[c][0];
+      res[2*c+1      ] =  v1[c][1];
+      res[2*c+2*NC_  ] =  v2[c][0];
+      res[2*c+2*NC_+1] =  v2[c][1];
+      res[2*c+4*NC_  ] =  v2[c][0];
+      res[2*c+4*NC_+1] =  v2[c][1];
+      res[2*c+6*NC_  ] = -v1[c][0];
+      res[2*c+6*NC_+1] = -v1[c][1];
+
     }
   }
 }
 
+
 void Dirac_Wilson::mult_zm(valarray<double>& w, const Field& f) const{
-  int Nc = CommonPrms::instance()->Nc();
+  double* utmp;                  //auxiliary matrix
+  const double* vtmp;
+  double* res;
+
+  double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
+  double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_m(site);
-    int gsite = (this->*gm)(site);
-    double utmp[Nc][Nc][2];
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),2));
+    res  = &w[ff_->index_r(0,0,site)];
+    //assumes matrix and fermion data is contiguous
+    vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
+    
+     for (int c = 0; c < NC_; ++c) {
+      v1tmp[c][0] = vtmp[2*c        ] + vtmp[2*c+4*NC_+1 ];
+      v1tmp[c][1] = vtmp[2*c+1      ] - vtmp[2*c+4*NC_   ];
+      v2tmp[c][0] = vtmp[2*c+2*NC_  ] - vtmp[2*c+6*NC_+1 ];
+      v2tmp[c][1] = vtmp[2*c+2*NC_+1] + vtmp[2*c+6*NC_   ];
+    }
 
-    for (int c1 = 0; c1 < Nc; ++c1) {
-      for (int c2 = 0; c2 < Nc; ++c2) {
-	utmp[c2][c1][0] =   (*u_)[gf_->index_r(c1,c2,gsite,2)];
-	utmp[c2][c1][1] = - (*u_)[gf_->index_i(c1,c2,gsite,2)];
-      }
-    }
-    double v1tmp[Nc][2], v2tmp[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
-      v1tmp[c][0] = f[ff_->index_r(c,0,site)] + f[ff_->index_i(c,2,site)];
-      v1tmp[c][1] = f[ff_->index_i(c,0,site)] - f[ff_->index_r(c,2,site)];
-      v2tmp[c][0] = f[ff_->index_r(c,1,site)] - f[ff_->index_i(c,3,site)];
-      v2tmp[c][1] = f[ff_->index_i(c,1,site)] + f[ff_->index_r(c,3,site)];
-    }
-    double v1[Nc][2], v2[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
+    for (int c = 0; c < NC_; ++c) {
       v1[c][0] = 0.0; v1[c][1] = 0.0; v2[c][0] = 0.0; v2[c][1] = 0.0;
-      for (int c1 = 0; c1 < Nc; ++c1) {
-	v1[c][0] += (utmp[c][c1][0]*v1tmp[c1][0] 
-                   - utmp[c][c1][1]*v1tmp[c1][1]);
-	v1[c][1] += (utmp[c][c1][1]*v1tmp[c1][0] 
-                   + utmp[c][c1][0]*v1tmp[c1][1]);
-	v2[c][0] += (utmp[c][c1][0]*v2tmp[c1][0] 
-                   - utmp[c][c1][1]*v2tmp[c1][1]);
-	v2[c][1] += (utmp[c][c1][1]*v2tmp[c1][0] 
-                   + utmp[c][c1][0]*v2tmp[c1][1]);
+      for (int c1 = 0; c1 < NC_; ++c1) {
+	v1[c][0] += ( utmp[NC_*2*c1+2*c  ] *v1tmp[c1][0] 
+	            + utmp[NC_*2*c1+2*c+1] *v1tmp[c1][1]);
+	v1[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v1tmp[c1][0] 
+                    - utmp[NC_*2*c1+2*c  ] *v1tmp[c1][1]);
+	v2[c][0] += ( utmp[NC_*2*c1+2*c  ] *v2tmp[c1][0] 
+                    + utmp[NC_*2*c1+2*c+1] *v2tmp[c1][1]);
+	v2[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v2tmp[c1][0] 
+                    - utmp[NC_*2*c1+2*c  ] *v2tmp[c1][1]);
+
       }
-    }
-    for (int c = 0; c < Nc; ++c) {
-      w[ff_->index_r(c,0,site)] =  v1[c][0];
-      w[ff_->index_i(c,0,site)] =  v1[c][1];
-      w[ff_->index_r(c,1,site)] =  v2[c][0];
-      w[ff_->index_i(c,1,site)] =  v2[c][1];
-      w[ff_->index_r(c,2,site)] = -v1[c][1];
-      w[ff_->index_i(c,2,site)] =  v1[c][0];
-      w[ff_->index_r(c,3,site)] =  v2[c][1];
-      w[ff_->index_i(c,3,site)] = -v2[c][0];
+    
+      res[2*c        ] =  v1[c][0];
+      res[2*c+1      ] =  v1[c][1];
+      res[2*c+2*NC_  ] =  v2[c][0];
+      res[2*c+2*NC_+1] =  v2[c][1];
+      res[2*c+4*NC_  ] = -v1[c][1];
+      res[2*c+4*NC_+1] =  v1[c][0];
+      res[2*c+6*NC_  ] =  v2[c][1];
+      res[2*c+6*NC_+1] = -v2[c][0];
+
     }
   }
 }
 
 void Dirac_Wilson::mult_tm(valarray<double>& w, const Field& f) const{
-  int Nc = CommonPrms::instance()->Nc();
+  double* utmp;                  //auxiliary matrix
+  const double* vtmp;
+  double* res;
+
+  double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
+  double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_m(site);
-    int gsite = (this->*gm)(site);
-    double utmp[Nc][Nc][2];
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),3));
+    res  = &w[ff_->index_r(0,0,site)];
+    //assumes matrix and fermion data is contiguous
+    vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
+    
+     for (int c = 0; c < NC_; ++c) {
+      v1tmp[c][0] = vtmp[2*c        ]*2.0;
+      v1tmp[c][1] = vtmp[2*c+1      ]*2.0;
+      v2tmp[c][0] = vtmp[2*c+2*NC_  ]*2.0;
+      v2tmp[c][1] = vtmp[2*c+2*NC_+1]*2.0;
+    }
 
-    for (int c1 = 0; c1 < Nc; ++c1) {
-      for (int c2 = 0; c2 < Nc; ++c2) {
-	utmp[c2][c1][0] =   (*u_)[gf_->index_r(c1,c2,gsite,3)];
-	utmp[c2][c1][1] = - (*u_)[gf_->index_i(c1,c2,gsite,3)];
-      }
-    }
-    double v1tmp[Nc][2], v2tmp[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
-      v1tmp[c][0] = f[ff_->index_r(c,0,site)]*2.0;
-      v1tmp[c][1] = f[ff_->index_i(c,0,site)]*2.0;
-      v2tmp[c][0] = f[ff_->index_r(c,1,site)]*2.0;
-      v2tmp[c][1] = f[ff_->index_i(c,1,site)]*2.0;
-    }
-    double v1[Nc][2], v2[Nc][2];
-    for (int c = 0; c < Nc; ++c) {
+    for (int c = 0; c < NC_; ++c) {
       v1[c][0] = 0.0; v1[c][1] = 0.0; v2[c][0] = 0.0; v2[c][1] = 0.0;
-      for (int c1 = 0; c1 < Nc; ++c1) {
-	v1[c][0] += (utmp[c][c1][0]*v1tmp[c1][0] 
-                   - utmp[c][c1][1]*v1tmp[c1][1]);
-	v1[c][1] += (utmp[c][c1][1]*v1tmp[c1][0] 
-                   + utmp[c][c1][0]*v1tmp[c1][1]);
-	v2[c][0] += (utmp[c][c1][0]*v2tmp[c1][0] 
-                   - utmp[c][c1][1]*v2tmp[c1][1]);
-	v2[c][1] += (utmp[c][c1][1]*v2tmp[c1][0] 
-                   + utmp[c][c1][0]*v2tmp[c1][1]);
+      for (int c1 = 0; c1 < NC_; ++c1) {
+	v1[c][0] += ( utmp[NC_*2*c1+2*c  ] *v1tmp[c1][0] 
+	            + utmp[NC_*2*c1+2*c+1] *v1tmp[c1][1]);
+	v1[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v1tmp[c1][0] 
+                    - utmp[NC_*2*c1+2*c  ] *v1tmp[c1][1]);
+	v2[c][0] += ( utmp[NC_*2*c1+2*c  ] *v2tmp[c1][0] 
+                    + utmp[NC_*2*c1+2*c+1] *v2tmp[c1][1]);
+	v2[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v2tmp[c1][0] 
+                    - utmp[NC_*2*c1+2*c  ] *v2tmp[c1][1]);
+
       }
+    
+      res[2*c        ] =  v1[c][0];
+      res[2*c+1      ] =  v1[c][1];
+      res[2*c+2*NC_  ] =  v2[c][0];
+      res[2*c+2*NC_+1] =  v2[c][1];
+      res[2*c+4*NC_  ] =  0.0;
+      res[2*c+4*NC_+1] =  0.0;
+      res[2*c+6*NC_  ] =  0.0;
+      res[2*c+6*NC_+1] =  0.0;
+
     }
-    for (int c = 0; c < Nc; ++c) {
-      w[ff_->index_r(c,0,site)] =  v1[c][0];
-      w[ff_->index_i(c,0,site)] =  v1[c][1];
-      w[ff_->index_r(c,1,site)] =  v2[c][0];
-      w[ff_->index_i(c,1,site)] =  v2[c][1];
-      w[ff_->index_r(c,2,site)] =  0.0;
-      w[ff_->index_i(c,2,site)] =  0.0;
-      w[ff_->index_r(c,3,site)] =  0.0;
-      w[ff_->index_i(c,3,site)] =  0.0;
-    }
   }
 }
-#endif  /*1*/
-
-#if 0
-void Dirac_Wilson::mult_xp(Field& fp, ShiftField* sfp) const{
-  for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_p(site);
-    int gsite = (this->*gp)(site);
-    SUNvec v1 = u(gsite,0)*(v(sfp,0,site) +v_Ix(sfp,3,site));
-    SUNvec v2 = u(gsite,0)*(v(sfp,1,site) +v_Ix(sfp,2,site));
-
-    fp.add(ff_->cslice(0,site), v1.getva()); 
-    fp.add(ff_->cslice(1,site), v2.getva()); 
-    fp.add(ff_->cslice(2,site),-v2.xI().getva());
-    fp.add(ff_->cslice(3,site),-v1.xI().getva());
-  }
-}
-
-void Dirac_Wilson::mult_yp(Field& fp, ShiftField* sfp) const{
-  for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_p(site);
-    int gsite = (this->*gp)(site);
-    /*    
-    CCIO::cout<<" site="<<site<<" gsite="<<gsite
-	      << " umu(1,1)=("<<u(gsite,1).r(4)<<","<<u(gsite,1).i(4)<<")"
-	      << " v(1,1)=("<<v(sfp,1,site).r(1)<<","<<v(sfp,1,site).i(1)<<")"
-	      << " v(2,1)=("<<v(sfp,2,site).r(1)<<","<<v(sfp,2,site).i(1)<<")"
-	      <<std::endl;
-    */
-    SUNvec v1 = u(gsite,1)*(v(sfp,0,site) +v(sfp,3,site));
-    SUNvec v2 = u(gsite,1)*(v(sfp,1,site) -v(sfp,2,site));
-
-    fp.add(ff_->cslice(0,site), v1.getva()); 
-    fp.add(ff_->cslice(1,site), v2.getva()); 
-    fp.add(ff_->cslice(2,site),-v2.getva()); 
-    fp.add(ff_->cslice(3,site), v1.getva()); 
-  }
-}
-
-void Dirac_Wilson::mult_zp(Field& fp, ShiftField* sfp) const{
-  for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_p(site);
-    int gsite = (this->*gp)(site);
-    SUNvec v1 = u(gsite,2)*(v(sfp,0,site) +v_Ix(sfp,2,site));
-    SUNvec v2 = u(gsite,2)*(v(sfp,1,site) -v_Ix(sfp,3,site));
-
-    fp.add(ff_->cslice(0,site), v1.getva());
-    fp.add(ff_->cslice(1,site), v2.getva());
-    fp.add(ff_->cslice(2,site),-v1.xI().getva());
-    fp.add(ff_->cslice(3,site), v2.xI().getva());
-  }
-}
-
-void Dirac_Wilson::mult_tp(Field& fp, ShiftField* sfp) const{
-  for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_p(site);
-    int gsite = (this->*gp)(site);
-    SUNvec v1 = u(gsite,3)*v(sfp,2,site)*2.0;
-    SUNvec v2 = u(gsite,3)*v(sfp,3,site)*2.0;
-
-    fp.add(ff_->cslice(2,site), v1.getva());
-    fp.add(ff_->cslice(3,site), v2.getva());
-  }
-}
-
-void Dirac_Wilson::mult_xm(valarray<double>& w, const Field& f) const{
-  w =0.0;
-  for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_m(site);
-    int gsite = (this->*gm)(site);
-    SUNvec v1 = u_dag(gsite,0)*(v(f,0,site) -v_Ix(f,3,site));
-    SUNvec v2 = u_dag(gsite,0)*(v(f,1,site) -v_Ix(f,2,site));
-
-    w[ff_->cslice(0,site)] = v1.getva();
-    w[ff_->cslice(1,site)] = v2.getva();
-    w[ff_->cslice(2,site)] = v2.xI().getva();
-    w[ff_->cslice(3,site)] = v1.xI().getva();
-  }
-}
-
-void Dirac_Wilson::mult_ym(valarray<double>& w, const Field& f) const{
-  w =0.0;
-  for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_m(site);
-    int gsite = gauge_site_m(site);
-    SUNvec v1 = u_dag(gsite,1)*(v(f,0,site) -v(f,3,site));
-    SUNvec v2 = u_dag(gsite,1)*(v(f,1,site) +v(f,2,site));
-    
-    w[ff_->cslice(0,site)] = v1.getva();
-    w[ff_->cslice(1,site)] = v2.getva();
-    w[ff_->cslice(2,site)] = v2.getva();
-    w[ff_->cslice(3,site)] =-v1.getva(); 
-  }
-}
-
-void Dirac_Wilson::mult_zm(valarray<double>& w, const Field& f) const{
-  w =0.0;
-  for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_m(site);
-    int gsite = (this->*gm)(site);
-    SUNvec v1 = u_dag(gsite,2)*(v(f,0,site) -v_Ix(f,2,site));
-    SUNvec v2 = u_dag(gsite,2)*(v(f,1,site) +v_Ix(f,3,site));
-    
-    w[ff_->cslice(0,site)] = v1.getva();
-    w[ff_->cslice(1,site)] = v2.getva();
-    w[ff_->cslice(2,site)] = v1.xI().getva(); 
-    w[ff_->cslice(3,site)] =-v2.xI().getva();
-  }
-}
-
-void Dirac_Wilson::mult_tm(valarray<double>& w, const Field& f) const{
-  w =0.0;
-  for(int site = 0; site <Nvol_; ++site){
-    //int gsite = gauge_site_m(site);
-    int gsite = (this->*gm)(site);
-    SUNvec v1 = u_dag(gsite,3)*v(f,0,site)*2.0;
-    SUNvec v2 = u_dag(gsite,3)*v(f,1,site)*2.0;
-    
-    w[ff_->cslice(0,site)] = v1.getva();
-    w[ff_->cslice(1,site)] = v2.getva();
-  }
-}
-#endif /*0*/
 
 void (Dirac_Wilson::*Dirac_Wilson::mult_p[])
 (Field&,ShiftField*) const = {&Dirac_Wilson::mult_xp,
@@ -737,7 +581,7 @@ void Dirac_Wilson::md_force_m(Field& fce,
           f.set(a,b,fre,fim);
         }
       }
-      //fce.add(gf_->cslice(0,gauge_site_p(site),mu),anti_hermite(f));
+      
       int gsite = (this->*gp)(site);
       fce.add(gf_->cslice(0,gsite,mu),anti_hermite(f));
     }
