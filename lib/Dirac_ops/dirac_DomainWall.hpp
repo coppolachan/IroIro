@@ -116,6 +116,21 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     f5.add(std::slice(s*f4size_,f4size_,1),f4.getva());
   }
 
+  /*! @brief private constructors to create instances with the e/o indexing */
+  Dirac_optimalDomainWall(const double b,
+			  const double c,
+			  const double mq,
+			  const std::vector<double>& omega,
+			  const Dirac_Wilson* Kernel,
+			  Dw::EOtag,
+			  Preconditioners Precond = NoPreconditioner);
+  Dirac_optimalDomainWall(const double b,
+			  const double c,
+			  const double mq,
+			  const std::vector<double>& omega,
+			  const Dirac_Wilson* Kernel,
+			  Dw::OEtag,
+			  Preconditioners Precond = NoPreconditioner);
 public:
   Dirac_optimalDomainWall(XML::node DWF_node,
 			  const Dirac_Wilson* Kernel);

@@ -32,7 +32,9 @@ namespace Dw{
 }
 
 class Dirac_Wilson: public DiracWilsonLike{
-protected:
+  friend class Dirac_Wilson_EvenOdd;
+
+private:
   const Field* const u_;
   double kpp_;
   int Nvol_;
@@ -70,9 +72,6 @@ protected:
     return SUNmat((*u_)[gf_->cslice(0,site,dir)]).dag();
   }
 
-  virtual int gauge_site_p(int site)const { return site;}
-  virtual int gauge_site_m(int site)const { return site;}
-
   void mult_xp(Field&,ShiftField*)const;
   void mult_yp(Field&,ShiftField*)const;
   void mult_zp(Field&,ShiftField*)const;
@@ -84,17 +83,26 @@ protected:
   void mult_tm(std::valarray<double>&,const Field&)const;
   void mult_core(Field&,Field&)const;
 
-  void md_force_p(Field&,const Field& eta,const Field& zeta)const;
-  void md_force_m(Field&,const Field& eta,const Field& zeta)const;
-
   static void(Dirac_Wilson::*mult_p[])(Field&,ShiftField*)const;
   static void(Dirac_Wilson::*mult_m[])(std::valarray<double>&,
 				       const Field&)const;
+  int gsite(int site)const {return site;}
+  int esec(int site)const {return SiteIndex_eo::instance()->esec(site);}
+  int osec(int site)const {return SiteIndex_eo::instance()->osec(site);}
 
+  int(Dirac_Wilson::*gp)(int)const;
+  int(Dirac_Wilson::*gm)(int)const;
+
+  void md_force_p(Field&,const Field& eta,const Field& zeta)const;
+  void md_force_m(Field&,const Field& eta,const Field& zeta)const;
+
+  /*! @brief private constructor to create instance with e/o site indexing */
   Dirac_Wilson(double mass,const Field* u,Dw::EOtag)
     :kpp_(0.5/(4.0+mass)),u_(u),
      Nvol_(CommonPrms::instance()->Nvol()/2),
      Ndim_(CommonPrms::instance()->Ndim()),
+     gp(&Dirac_Wilson::esec),
+     gm(&Dirac_Wilson::osec),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(2*Nvol_)),
      fsize_(ff_->size()),
@@ -104,12 +112,15 @@ protected:
       sf_up_.push_back(new shift_oup(ff_,d));
       sf_dn_.push_back(new shift_odn(ff_,d));
     }
+    CCIO::cout<<"Dirac_Wilson EO created"<<std::endl;
   }
 
   Dirac_Wilson(double mass,const Field* u,Dw::OEtag)
     :kpp_(0.5/(4.0+mass)),u_(u),
      Nvol_(CommonPrms::instance()->Nvol()/2),
      Ndim_(CommonPrms::instance()->Ndim()),
+     gp(&Dirac_Wilson::osec),
+     gm(&Dirac_Wilson::esec),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(2*Nvol_)),
      fsize_(ff_->size()),
@@ -119,13 +130,18 @@ protected:
       sf_up_.push_back(new shift_eup(ff_,d));
       sf_dn_.push_back(new shift_edn(ff_,d));
     }
+    CCIO::cout<<"Dirac_Wilson EO created"<<std::endl;
   }
 
 public:
+  /*! @brief constructor to create instance with normal site indexing
+   */
   Dirac_Wilson(double mass,const Field* u)
     :kpp_(0.5/(4.0+mass)),u_(u),
      Nvol_(CommonPrms::instance()->Nvol()),
      Ndim_(CommonPrms::instance()->Ndim()),
+     gp(&Dirac_Wilson::gsite),
+     gm(&Dirac_Wilson::gsite),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
      fsize_(ff_->size()),
@@ -141,6 +157,8 @@ public:
     :u_(u),
      Nvol_(CommonPrms::instance()->Nvol()),
      Ndim_(CommonPrms::instance()->Ndim()),
+     gp(&Dirac_Wilson::gsite),
+     gm(&Dirac_Wilson::gsite),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
      fsize_(ff_->size()),
@@ -163,15 +181,14 @@ public:
     for(int d=0;d<sf_dn_.size();++d) delete sf_dn_[d];
   }
   
-  size_t fsize() const{
-    CCIO::cout<<"Dirac_Wilson::fsize_="<<fsize_<<std::endl;
-    return fsize_;}
+  size_t fsize() const{return fsize_;}
   size_t gsize() const{return gsize_;}
 
   const Field operator()(int OpType, const Field&)const{};
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
+
   //Preconditioned versions
   const Field mult_prec(const Field& f)const {return f;}//empty now
   const Field mult_dag_prec(const Field& f)const{return f;}//empty now
@@ -181,6 +198,7 @@ public:
   const Field gamma5(const Field&) const;
   const Field proj_p(const Field&) const;
   const Field proj_m(const Field&) const;
+
   const Field md_force(const Field& eta,const Field& zeta)const;
   
   const double getKappa() const {return kpp_;}  

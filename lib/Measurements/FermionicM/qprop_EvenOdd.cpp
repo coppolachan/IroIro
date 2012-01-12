@@ -51,7 +51,7 @@ void Qprop_EvenOdd::calc(prop_t& xq,Source& src) const{
   }
 }
 
-void Qprop_EvenOdd::calc(prop_t& xq,Source& src, int Nd, int Nc) const{};
+void Qprop_EvenOdd::calc(prop_t& xq,Source& src, int Nd, int Nc) const{}
 
 void Qprop_EvenOdd::calc(prop_t& xq,const prop_t& prp)const{
 

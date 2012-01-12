@@ -8,7 +8,6 @@
 #ifndef SUNMAT_INCLUDED
 #define SUNMAT_INCLUDED
 
-
 #include <iostream>
 #include <valarray>
 #include <assert.h>

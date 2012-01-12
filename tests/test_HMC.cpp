@@ -27,7 +27,8 @@ int Test_HMC::run(XML::node node){
   HMCgeneral hmc_general(node);
 
   ////////////// HMC calculation /////////////////
-  clock_t start_t = clock();
+  double elapsed_time;
+  TIMING_START;
   try{
     CCIO::cout<< "HMC starts"<<std::endl;
     hmc_general.evolve(Gfield_.U);
@@ -36,10 +37,9 @@ int Test_HMC::run(XML::node node){
     return EXIT_FAILURE;
   }
 
-  clock_t end_t = clock();
-  CCIO::cout << (double)(end_t -start_t)/CLOCKS_PER_SEC << std::endl;
+  TIMING_END(elapsed_time);
+  CCIO::cout << "Total elapsed time (s): "<< elapsed_time/1000.0 << "\n";
 
-  //temporary
   CCIO::cout << "Saving configuration on disk in binary format\n";
   CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "final_conf.bin");
   return 0;

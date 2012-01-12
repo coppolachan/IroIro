@@ -13,7 +13,7 @@
 #endif
 
 #include "Communicator/communicator.h"
-
+#include "Communicator/comm_io.hpp"
 #include <cassert>
 
 namespace MPrand{
@@ -48,6 +48,11 @@ namespace MPrand{
 		    const std::vector<int>& gsite,
 		    const FMT& fmt){
     rn=0.0;
+
+    CCIO::cout<<" fmt.Nvol()="<<fmt.Nvol()
+	      <<" gsite.size()="<<gsite.size()
+	      <<std::endl;
+
     assert(rn.size()==fmt.size());
     assert(fmt.Nvol()==gsite.size());
 

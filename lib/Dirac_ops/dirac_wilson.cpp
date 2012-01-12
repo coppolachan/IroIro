@@ -14,11 +14,11 @@ void Dirac_Wilson::mult_xp(Field& fp, ShiftField* sfp) const{
   double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
   double v1[NC_][2], v2[NC_][2];       //result
   for(int site = 0; site <Nvol_; ++site){
-    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,gauge_site_p(site),0));
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(site),0));
     res  = fp.getaddr(ff_->index_r(0,0,site));
     //assumes matrix and fermion data is contiguous
 
-    //gamma_0
+ 
     if (!sfp->on_bdry(site)) {vtmp = sfp->get_bulk_addr(site);}
     else {vtmp = sfp->get_bdry_addr(site);}
 
@@ -65,9 +65,8 @@ void Dirac_Wilson::mult_yp(Field& fp, ShiftField* sfp) const{
   double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
   double v1[NC_][2], v2[NC_][2];       //result
 
-
   for(int site = 0; site <Nvol_; ++site){
-    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,gauge_site_p(site),1));
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(site),1));
     res  = fp.getaddr(ff_->index_r(0,0,site));
     //assumes matrix and fermion data is contiguous
 
@@ -118,13 +117,11 @@ void Dirac_Wilson::mult_zp(Field& fp, ShiftField* sfp) const{
   double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
   double v1[NC_][2], v2[NC_][2];       //result
 
-
   for(int site = 0; site <Nvol_; ++site){
-    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,gauge_site_p(site),2));
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(site),2));
     res  = fp.getaddr(ff_->index_r(0,0,site));
     //assumes matrix and fermion data is contiguous
 
-    //gamma_0
     if (!sfp->on_bdry(site)) {vtmp = sfp->get_bulk_addr(site);}
     else {vtmp = sfp->get_bdry_addr(site);}
 
@@ -171,13 +168,11 @@ void Dirac_Wilson::mult_tp(Field& fp, ShiftField* sfp) const{
   double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
   double v1[NC_][2], v2[NC_][2];       //result
 
-
   for(int site = 0; site <Nvol_; ++site){
-    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,gauge_site_p(site),3));
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(site),3));
     res  = fp.getaddr(ff_->index_r(0,0,site));
     //assumes matrix and fermion data is contiguous
 
-    //gamma_0
     if (!sfp->on_bdry(site)) {vtmp = sfp->get_bulk_addr(site);}
     else {vtmp = sfp->get_bdry_addr(site);}
 
@@ -217,12 +212,11 @@ void Dirac_Wilson::mult_xm(valarray<double>& w, const Field& f) const{
   double* utmp;                  //auxiliary matrix
   const double* vtmp;
   double* res;
-
   double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
   double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,gauge_site_m(site),0));
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),0));
     res  = &w[ff_->index_r(0,0,site)];
     //assumes matrix and fermion data is contiguous
     vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
@@ -265,12 +259,11 @@ void Dirac_Wilson::mult_ym(valarray<double>& w, const Field& f) const{
   double* utmp;                  //auxiliary matrix
   const double* vtmp;
   double* res;
-
   double v1tmp[NC_][2], v2tmp[NC_][2]; //auxiliary vectors
   double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,gauge_site_m(site),1));
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),1));
     res  = &w[ff_->index_r(0,0,site)];
     //assumes matrix and fermion data is contiguous
     vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
@@ -309,6 +302,7 @@ void Dirac_Wilson::mult_ym(valarray<double>& w, const Field& f) const{
   }
 }
 
+
 void Dirac_Wilson::mult_zm(valarray<double>& w, const Field& f) const{
   double* utmp;                  //auxiliary matrix
   const double* vtmp;
@@ -318,7 +312,7 @@ void Dirac_Wilson::mult_zm(valarray<double>& w, const Field& f) const{
   double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,gauge_site_m(site),2));
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),2));
     res  = &w[ff_->index_r(0,0,site)];
     //assumes matrix and fermion data is contiguous
     vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
@@ -366,7 +360,7 @@ void Dirac_Wilson::mult_tm(valarray<double>& w, const Field& f) const{
   double v1[NC_][2], v2[NC_][2];       //result
 
   for(int site = 0; site <Nvol_; ++site){
-    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,gauge_site_m(site),3));
+    utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),3));
     res  = &w[ff_->index_r(0,0,site)];
     //assumes matrix and fermion data is contiguous
     vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
@@ -461,7 +455,6 @@ const Field Dirac_Wilson::proj_p(const Field& f) const{
   return w;
 }
 
-
 const Field Dirac_Wilson::proj_m(const Field& f) const{
   int Nc = CommonPrms::instance()->Nc();
   Field w(fsize_);
@@ -545,10 +538,11 @@ void Dirac_Wilson::md_force_p(Field& fce,
           f.set(a,b,fre,fim);
         }
       }
-      fce.set(gf_->cslice(0,gauge_site_p(site),mu),anti_hermite(f));
+      // fce.add(gf_->cslice(0,gauge_site_p(site),mu),anti_hermite(f));
+      int gsite = (this->*gp)(site);
+      fce.add(gf_->cslice(0,gsite,mu),anti_hermite(f));
     }
   }
-  fce *= -kpp_;
 }
 
 void Dirac_Wilson::md_force_m(Field& fce,
@@ -563,6 +557,7 @@ void Dirac_Wilson::md_force_m(Field& fce,
 
   for(int mu=0; mu<Ndim_; ++mu){
     Field xz5(fsize_);
+
     sf_up_[mu]->setf(const_cast<Field&>(zt5));
     (this->*mult_p[mu])(xz5, sf_up_[mu]);
 
@@ -580,26 +575,26 @@ void Dirac_Wilson::md_force_m(Field& fce,
 	    size_t rb =ff_->index_r(b,s,site);
 	    size_t ib =ff_->index_i(b,s,site);
 
-	    fre += -xz5[rb]*et5[ra] -xz5[ib]*et5[ia];
-	    fim += -xz5[rb]*et5[ia] +xz5[ib]*et5[ra];
+	    fre -= xz5[rb]*et5[ra] +xz5[ib]*et5[ia];
+	    fim -= xz5[rb]*et5[ia] -xz5[ib]*et5[ra];
           }
           f.set(a,b,fre,fim);
         }
       }
-      fce.set(gf_->cslice(0,gauge_site_m(site),mu),anti_hermite(f));
+      
+      int gsite = (this->*gp)(site);
+      fce.add(gf_->cslice(0,gsite,mu),anti_hermite(f));
     }
   }
-  fce *= -kpp_;
 }
 
 const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
+
   Field fp(gf_->size());
   md_force_p(fp,eta,zeta);
+  md_force_m(fp,eta,zeta);
 
-  Field fm(gf_->size());
-  md_force_m(fm,eta,zeta);
-  
-  fp += fm;
+  fp *= -kpp_;
   return fp;
 }
 
