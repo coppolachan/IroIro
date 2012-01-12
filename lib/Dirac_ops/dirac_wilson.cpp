@@ -11,7 +11,8 @@ void Dirac_Wilson::mult_xp(Field& fp, ShiftField* sfp) const{
   int Nc = CommonPrms::instance()->Nc();
 
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_p(site);
+    //    int gsite = gauge_site_p(site);
+    int gsite = (this->*gp)(site);
     double utmp[Nc][Nc][2];
 
     for (int c1 = 0; c1 < Nc; ++c1) {
@@ -69,7 +70,8 @@ void Dirac_Wilson::mult_yp(Field& fp, ShiftField* sfp) const{
   int Nc = CommonPrms::instance()->Nc();
 
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_p(site);
+    //int gsite = gauge_site_p(site);
+    int gsite = (this->*gp)(site);
     double utmp[Nc][Nc][2];
 
     for (int c1 = 0; c1 < Nc; ++c1) {
@@ -127,7 +129,8 @@ void Dirac_Wilson::mult_zp(Field& fp, ShiftField* sfp) const{
   int Nc = CommonPrms::instance()->Nc();
 
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_p(site);
+    //int gsite = gauge_site_p(site);
+    int gsite = (this->*gp)(site);
     double utmp[Nc][Nc][2];
 
     for (int c1 = 0; c1 < Nc; ++c1) {
@@ -186,7 +189,8 @@ void Dirac_Wilson::mult_tp(Field& fp, ShiftField* sfp) const{
   int Nc = CommonPrms::instance()->Nc();
 
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_p(site);
+    //    int gsite = gauge_site_p(site);
+    int gsite = (this->*gp)(site);
     double utmp[Nc][Nc][2];
 
     for (int c1 = 0; c1 < Nc; ++c1) {
@@ -240,7 +244,8 @@ void Dirac_Wilson::mult_xm(valarray<double>& w, const Field& f) const{
   int Nc = CommonPrms::instance()->Nc();
 
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_m(site);
+    //int gsite = gauge_site_m(site);
+    int gsite = (this->*gm)(site);
     double utmp[Nc][Nc][2];
 
     for (int c1 = 0; c1 < Nc; ++c1) {
@@ -287,7 +292,8 @@ void Dirac_Wilson::mult_ym(valarray<double>& w, const Field& f) const{
   int Nc = CommonPrms::instance()->Nc();
 
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_m(site);
+    //int gsite = gauge_site_m(site);
+    int gsite = (this->*gm)(site);
     double utmp[Nc][Nc][2];
 
     for (int c1 = 0; c1 < Nc; ++c1) {
@@ -334,7 +340,8 @@ void Dirac_Wilson::mult_zm(valarray<double>& w, const Field& f) const{
   int Nc = CommonPrms::instance()->Nc();
 
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_m(site);
+    //int gsite = gauge_site_m(site);
+    int gsite = (this->*gm)(site);
     double utmp[Nc][Nc][2];
 
     for (int c1 = 0; c1 < Nc; ++c1) {
@@ -381,7 +388,8 @@ void Dirac_Wilson::mult_tm(valarray<double>& w, const Field& f) const{
   int Nc = CommonPrms::instance()->Nc();
 
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_m(site);
+    //int gsite = gauge_site_m(site);
+    int gsite = (this->*gm)(site);
     double utmp[Nc][Nc][2];
 
     for (int c1 = 0; c1 < Nc; ++c1) {
@@ -428,7 +436,8 @@ void Dirac_Wilson::mult_tm(valarray<double>& w, const Field& f) const{
 #if 0
 void Dirac_Wilson::mult_xp(Field& fp, ShiftField* sfp) const{
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_p(site);
+    //int gsite = gauge_site_p(site);
+    int gsite = (this->*gp)(site);
     SUNvec v1 = u(gsite,0)*(v(sfp,0,site) +v_Ix(sfp,3,site));
     SUNvec v2 = u(gsite,0)*(v(sfp,1,site) +v_Ix(sfp,2,site));
 
@@ -441,7 +450,8 @@ void Dirac_Wilson::mult_xp(Field& fp, ShiftField* sfp) const{
 
 void Dirac_Wilson::mult_yp(Field& fp, ShiftField* sfp) const{
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_p(site);
+    //int gsite = gauge_site_p(site);
+    int gsite = (this->*gp)(site);
     /*    
     CCIO::cout<<" site="<<site<<" gsite="<<gsite
 	      << " umu(1,1)=("<<u(gsite,1).r(4)<<","<<u(gsite,1).i(4)<<")"
@@ -461,7 +471,8 @@ void Dirac_Wilson::mult_yp(Field& fp, ShiftField* sfp) const{
 
 void Dirac_Wilson::mult_zp(Field& fp, ShiftField* sfp) const{
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_p(site);
+    //int gsite = gauge_site_p(site);
+    int gsite = (this->*gp)(site);
     SUNvec v1 = u(gsite,2)*(v(sfp,0,site) +v_Ix(sfp,2,site));
     SUNvec v2 = u(gsite,2)*(v(sfp,1,site) -v_Ix(sfp,3,site));
 
@@ -474,7 +485,8 @@ void Dirac_Wilson::mult_zp(Field& fp, ShiftField* sfp) const{
 
 void Dirac_Wilson::mult_tp(Field& fp, ShiftField* sfp) const{
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_p(site);
+    //int gsite = gauge_site_p(site);
+    int gsite = (this->*gp)(site);
     SUNvec v1 = u(gsite,3)*v(sfp,2,site)*2.0;
     SUNvec v2 = u(gsite,3)*v(sfp,3,site)*2.0;
 
@@ -486,7 +498,8 @@ void Dirac_Wilson::mult_tp(Field& fp, ShiftField* sfp) const{
 void Dirac_Wilson::mult_xm(valarray<double>& w, const Field& f) const{
   w =0.0;
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_m(site);
+    //int gsite = gauge_site_m(site);
+    int gsite = (this->*gm)(site);
     SUNvec v1 = u_dag(gsite,0)*(v(f,0,site) -v_Ix(f,3,site));
     SUNvec v2 = u_dag(gsite,0)*(v(f,1,site) -v_Ix(f,2,site));
 
@@ -500,6 +513,7 @@ void Dirac_Wilson::mult_xm(valarray<double>& w, const Field& f) const{
 void Dirac_Wilson::mult_ym(valarray<double>& w, const Field& f) const{
   w =0.0;
   for(int site = 0; site <Nvol_; ++site){
+    //int gsite = gauge_site_m(site);
     int gsite = gauge_site_m(site);
     SUNvec v1 = u_dag(gsite,1)*(v(f,0,site) -v(f,3,site));
     SUNvec v2 = u_dag(gsite,1)*(v(f,1,site) +v(f,2,site));
@@ -514,7 +528,8 @@ void Dirac_Wilson::mult_ym(valarray<double>& w, const Field& f) const{
 void Dirac_Wilson::mult_zm(valarray<double>& w, const Field& f) const{
   w =0.0;
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_m(site);
+    //int gsite = gauge_site_m(site);
+    int gsite = (this->*gm)(site);
     SUNvec v1 = u_dag(gsite,2)*(v(f,0,site) -v_Ix(f,2,site));
     SUNvec v2 = u_dag(gsite,2)*(v(f,1,site) +v_Ix(f,3,site));
     
@@ -528,7 +543,8 @@ void Dirac_Wilson::mult_zm(valarray<double>& w, const Field& f) const{
 void Dirac_Wilson::mult_tm(valarray<double>& w, const Field& f) const{
   w =0.0;
   for(int site = 0; site <Nvol_; ++site){
-    int gsite = gauge_site_m(site);
+    //int gsite = gauge_site_m(site);
+    int gsite = (this->*gm)(site);
     SUNvec v1 = u_dag(gsite,3)*v(f,0,site)*2.0;
     SUNvec v2 = u_dag(gsite,3)*v(f,1,site)*2.0;
     
@@ -676,7 +692,9 @@ void Dirac_Wilson::md_force_p(Field& fce,
           f.set(a,b,fre,fim);
         }
       }
-      fce.add(gf_->cslice(0,gauge_site_p(site),mu),anti_hermite(f));
+      // fce.add(gf_->cslice(0,gauge_site_p(site),mu),anti_hermite(f));
+      int gsite = (this->*gp)(site);
+      fce.add(gf_->cslice(0,gsite,mu),anti_hermite(f));
     }
   }
 }
@@ -717,7 +735,9 @@ void Dirac_Wilson::md_force_m(Field& fce,
           f.set(a,b,fre,fim);
         }
       }
-      fce.add(gf_->cslice(0,gauge_site_p(site),mu),anti_hermite(f));
+      //fce.add(gf_->cslice(0,gauge_site_p(site),mu),anti_hermite(f));
+      int gsite = (this->*gp)(site);
+      fce.add(gf_->cslice(0,gsite,mu),anti_hermite(f));
     }
   }
 }

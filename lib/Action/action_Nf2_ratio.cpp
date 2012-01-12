@@ -46,8 +46,6 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
   #if VERBOSITY>=DEBUG_VERB_LEVEL
   double phisum= phi_.norm();
   double phinorm= Communicator::instance()->reduce_sum(phisum);
-  for(int i=0; i<ph.size();++i) CCIO::cout<<"phi_["<<i<<"]="
-  					  << phi_[i]<<std::endl;
   #endif
 
   phi_= D2_->mult(DdagD2_inv(phi_));
