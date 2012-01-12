@@ -4,29 +4,12 @@
 #ifndef STAPLES_INCLUDED
 #define STAPLES_INCLUDED
 
-#ifndef COMMONPRMS_INCLUDED
 #include "include/commonPrms.h"
-#endif
-
-#ifndef COMMUNICATOR_INCLUDED
 #include "Communicator/communicator.h"
-#endif
-
-#ifndef FIELD_INCLUDED
 #include "include/field.h"
-#endif
-
-#ifndef FORMAT_G_INCLUDED
 #include "include/format_G.h"
-#endif
-
-#ifndef SHIFTFIELD_INCLUDED
 #include "Main/Geometry/shiftField.h"
-#endif
-
-#ifndef SUNMAT_INCLUDED
 #include "Tools/sunMat.h"
-#endif
 
 class Staples {
 private:

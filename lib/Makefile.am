@@ -69,9 +69,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Main/commandline.cpp			\
 		PugiXML/pugixml.cpp			\
 		PugiXML/pugi_interface.cpp		\
+		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
-		Tools/sunMat.cpp			\
 		Tools/gammaMatrices.cpp			\
 		../tests/test_Gauge.cpp			\
 		../tests/test_EigenModes_IRL.cpp	\
@@ -161,6 +161,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			HMC/mdExec_leapfrog_eigen.h		\
 			HMC/mdExec_Factory.hpp			\
 			Tools/sunMat.h				\
+			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
 			Tools/sunVec.h				\

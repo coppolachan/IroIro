@@ -3,16 +3,11 @@
 //--------------------------------------------------------------------
 #include "mdExec_leapfrog.h"
 #include "include/field.h"
-#include "Tools/sunMat.h"
+#include "Tools/sunMatUtils.hpp"
 #include <iomanip>
 
 using namespace std;
 using namespace Format;
-
-inline SUNmat MDexec_leapfrog::
-u(const Field& g,int site,int dir)const{
-  return SUNmat(g[gf_.cslice(0,site,dir)]);
-}
 
 void MDexec_leapfrog::update_U(double ep){
   using namespace SUNmat_utils;
@@ -21,17 +16,17 @@ void MDexec_leapfrog::update_U(double ep){
   int Nvol = CommonPrms::instance()->Nvol();
 
   const SUNmat I = unity();
-  
+  SUNmat au;
+
   for(int m = 0; m < Ndim; ++m){
     for(int site=0; site<Nvol; ++site){
-      SUNmat au = I;
+      au = I;
       for(int k = Params.Nexp; k > 0; --k){
-        //cout << k << ", " << ep << ", " << ep/k << endl;
-	au *= ep/k;
-	au *= u(P_,site,m);
+ 	au *= ep/k;
+	au *= u(P_,gf_,site,m);
 	au += I;
       }
-      au *= u(*U_,site,m);
+      au *= u(*U_,gf_,site,m);
       U_->set(gf_.islice(site,m),au.reunit().getva());
     }
   }
@@ -139,7 +134,6 @@ integrator(int cl,std::vector<int>& clock){
   // eps : current step size
   
   for(int step=0; step< Params.MDsteps; ++step){   // MD step 
-    //CCIO::cout<<"MDstep = "<< step << endl;
     integrator_step(cl,clock);
   }
 }

@@ -108,8 +108,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Measurements/FermionicM/fermion_meas_factory.cpp \
 	Main/Geometry/siteIndex.cpp Main/Geometry/siteIndex_eo.cpp \
 	Main/gaugeConf.cpp Main/commandline.cpp PugiXML/pugixml.cpp \
-	PugiXML/pugi_interface.cpp Tools/randNum_MT19937.cpp \
-	Tools/randNum_Factory.cpp Tools/sunMat.cpp \
+	PugiXML/pugi_interface.cpp Tools/sunMatUtils.cpp \
+	Tools/randNum_MT19937.cpp Tools/randNum_Factory.cpp \
 	Tools/gammaMatrices.cpp ../tests/test_Gauge.cpp \
 	../tests/test_EigenModes_IRL.cpp \
 	../tests/test_MultiShiftSolver.cpp ../tests/test_overlap.cpp \
@@ -138,8 +138,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	fermion_meas_factory.$(OBJEXT) siteIndex.$(OBJEXT) \
 	siteIndex_eo.$(OBJEXT) gaugeConf.$(OBJEXT) \
 	commandline.$(OBJEXT) pugixml.$(OBJEXT) \
-	pugi_interface.$(OBJEXT) randNum_MT19937.$(OBJEXT) \
-	randNum_Factory.$(OBJEXT) sunMat.$(OBJEXT) \
+	pugi_interface.$(OBJEXT) sunMatUtils.$(OBJEXT) \
+	randNum_MT19937.$(OBJEXT) randNum_Factory.$(OBJEXT) \
 	gammaMatrices.$(OBJEXT) test_Gauge.$(OBJEXT) \
 	test_EigenModes_IRL.$(OBJEXT) test_MultiShiftSolver.$(OBJEXT) \
 	test_overlap.$(OBJEXT) test_wilson_EvenOdd.$(OBJEXT) \
@@ -363,9 +363,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Main/commandline.cpp			\
 		PugiXML/pugixml.cpp			\
 		PugiXML/pugi_interface.cpp		\
+		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
-		Tools/sunMat.cpp			\
 		Tools/gammaMatrices.cpp			\
 		../tests/test_Gauge.cpp			\
 		../tests/test_EigenModes_IRL.cpp	\
@@ -454,6 +454,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			HMC/mdExec_leapfrog_eigen.h		\
 			HMC/mdExec_Factory.hpp			\
 			Tools/sunMat.h				\
+			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
 			Tools/sunVec.h				\
@@ -638,7 +639,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sortEigen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staples.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunMat.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunMatUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModes_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
@@ -1278,6 +1279,20 @@ pugi_interface.obj: PugiXML/pugi_interface.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pugi_interface.obj `if test -f 'PugiXML/pugi_interface.cpp'; then $(CYGPATH_W) 'PugiXML/pugi_interface.cpp'; else $(CYGPATH_W) '$(srcdir)/PugiXML/pugi_interface.cpp'; fi`
 
+sunMatUtils.o: Tools/sunMatUtils.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sunMatUtils.o -MD -MP -MF $(DEPDIR)/sunMatUtils.Tpo -c -o sunMatUtils.o `test -f 'Tools/sunMatUtils.cpp' || echo '$(srcdir)/'`Tools/sunMatUtils.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sunMatUtils.Tpo $(DEPDIR)/sunMatUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/sunMatUtils.cpp' object='sunMatUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sunMatUtils.o `test -f 'Tools/sunMatUtils.cpp' || echo '$(srcdir)/'`Tools/sunMatUtils.cpp
+
+sunMatUtils.obj: Tools/sunMatUtils.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sunMatUtils.obj -MD -MP -MF $(DEPDIR)/sunMatUtils.Tpo -c -o sunMatUtils.obj `if test -f 'Tools/sunMatUtils.cpp'; then $(CYGPATH_W) 'Tools/sunMatUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/sunMatUtils.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sunMatUtils.Tpo $(DEPDIR)/sunMatUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/sunMatUtils.cpp' object='sunMatUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sunMatUtils.obj `if test -f 'Tools/sunMatUtils.cpp'; then $(CYGPATH_W) 'Tools/sunMatUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/sunMatUtils.cpp'; fi`
+
 randNum_MT19937.o: Tools/randNum_MT19937.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_MT19937.o -MD -MP -MF $(DEPDIR)/randNum_MT19937.Tpo -c -o randNum_MT19937.o `test -f 'Tools/randNum_MT19937.cpp' || echo '$(srcdir)/'`Tools/randNum_MT19937.cpp
 @am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/randNum_MT19937.Tpo $(DEPDIR)/randNum_MT19937.Po
@@ -1305,20 +1320,6 @@ randNum_Factory.obj: Tools/randNum_Factory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/randNum_Factory.cpp' object='randNum_Factory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum_Factory.obj `if test -f 'Tools/randNum_Factory.cpp'; then $(CYGPATH_W) 'Tools/randNum_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/randNum_Factory.cpp'; fi`
-
-sunMat.o: Tools/sunMat.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sunMat.o -MD -MP -MF $(DEPDIR)/sunMat.Tpo -c -o sunMat.o `test -f 'Tools/sunMat.cpp' || echo '$(srcdir)/'`Tools/sunMat.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sunMat.Tpo $(DEPDIR)/sunMat.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/sunMat.cpp' object='sunMat.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sunMat.o `test -f 'Tools/sunMat.cpp' || echo '$(srcdir)/'`Tools/sunMat.cpp
-
-sunMat.obj: Tools/sunMat.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sunMat.obj -MD -MP -MF $(DEPDIR)/sunMat.Tpo -c -o sunMat.obj `if test -f 'Tools/sunMat.cpp'; then $(CYGPATH_W) 'Tools/sunMat.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/sunMat.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/sunMat.Tpo $(DEPDIR)/sunMat.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/sunMat.cpp' object='sunMat.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sunMat.obj `if test -f 'Tools/sunMat.cpp'; then $(CYGPATH_W) 'Tools/sunMat.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/sunMat.cpp'; fi`
 
 gammaMatrices.o: Tools/gammaMatrices.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gammaMatrices.o -MD -MP -MF $(DEPDIR)/gammaMatrices.Tpo -c -o gammaMatrices.o `test -f 'Tools/gammaMatrices.cpp' || echo '$(srcdir)/'`Tools/gammaMatrices.cpp

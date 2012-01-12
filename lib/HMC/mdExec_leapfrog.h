@@ -6,25 +6,12 @@
 #ifndef MD_LEAPFROG_INCLUDED
 #define MD_LEAPFROG_INCLUDED
 
-#ifndef MDEXEC_INCLUDED
-#include "mdExec.h"
-#endif
-
-#ifndef ACTION_INCLUDED
-#include "Action/action.h"
-#endif
-
-#include "Measurements/GaugeM/staples.h"
-#include "include/pugi_interface.h"
-
 #include<vector>
 
-class Field;
-class SUNmat;
-class RandNum;
-namespace Format{
-  class Format_G;
-}
+#include "mdExec.h"
+#include "Action/action.h"
+#include "Measurements/GaugeM/staples.h"
+#include "include/pugi_interface.h"
 
 typedef std::vector<Action*> ActionLevel;
 typedef std::vector<ActionLevel> ActionSet;
@@ -53,7 +40,6 @@ private:
   Field* const U_;
   Field P_;
 
-  SUNmat u(const Field& g,int site,int dir) const;
   void update_P(int lv,double ep);
   void update_U(double ep);
   void integrator_step(int level,std::vector<int>& clock);

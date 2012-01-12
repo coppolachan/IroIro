@@ -1,7 +1,8 @@
 //----------------------------------------------------------------------
-// dirac_wilson.cpp shoji-branch
+// dirac_wilson.cpp
 //----------------------------------------------------------------------
 #include "dirac_wilson.h"
+#include "Tools/sunMatUtils.hpp"
 
 using namespace SUNvec_utils;
 using namespace std;
@@ -665,6 +666,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
 
   int Nc = CommonPrms::instance()->Nc();
   int Nd = CommonPrms::instance()->Nd();
+  SUNmat f;
 
   for(int mu=0; mu<Ndim_; ++mu){
     Field xie(fsize_);
@@ -673,7 +675,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
     (this->*mult_p[mu])(xie, sf_up_[mu]);
 
     for(int site=0; site<Nvol_; ++site){
-      SUNmat f;
+      f = 0.0;;
       for(int a=0; a<Nc; ++a){
         for(int b=0; b<Nc; ++b){
           double fre = 0.0;
@@ -705,7 +707,7 @@ void Dirac_Wilson::md_force_m(Field& fce,
 
   int Nc = CommonPrms::instance()->Nc();
   int Nd = CommonPrms::instance()->Nd();
-
+  SUNmat f;
   Field et5 = gamma5(eta);
   Field zt5 = gamma5(zeta);
 
@@ -716,7 +718,7 @@ void Dirac_Wilson::md_force_m(Field& fce,
     (this->*mult_p[mu])(xz5, sf_up_[mu]);
 
     for(int site=0; site<Nvol_; ++site){
-      SUNmat f;
+      f=0.0;
       for(int a=0; a<Nc; ++a){
         for(int b=0; b<Nc; ++b){
           double fre = 0.0;
@@ -757,7 +759,6 @@ const vector<int> Dirac_Wilson::get_gsite() const {
 }
 
 namespace Dw{
-  
   double read_mass(const XML::node& node){
     double mass;
     XML::read(node, "mass", mass);

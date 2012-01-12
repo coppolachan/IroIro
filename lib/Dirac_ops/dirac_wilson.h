@@ -4,33 +4,14 @@
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
 
-#ifndef FORMAT_F_INCLUDED
 #include "include/format_F.h"
-#endif
-
-#ifndef FORMAT_G_INCLUDED
 #include "include/format_G.h"
-#endif
-
-#ifndef SHIFTFIELD_EO_INCLUDED
 #include "Main/Geometry/shiftField_eo.h"
-#endif
-
-#ifndef SUNMAT_INCLUDED
 #include "Tools/sunMat.h"
-#endif
-
-#ifndef SUNVEC_INCLUDED
 #include "Tools/sunVec.h"
-#endif
-
-#ifndef DIRAC_INCLUDED
 #include "dirac.h"
-#endif
-
-#ifndef PUGI_INTERFACE_INCLUDED
 #include "include/pugi_interface.h"
-#endif
+
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
@@ -85,7 +66,7 @@ private:
   }
 
   SUNmat u(int site,int dir) const{
-    return SUNmat((*u_)[gf_->cslice(0,site,dir)]);
+    return SUNmat ((*u_)[gf_->cslice(0,site,dir)]);
   }
   SUNmat u_dag(int site,int dir) const{
     return SUNmat((*u_)[gf_->cslice(0,site,dir)]).dag();
@@ -209,10 +190,10 @@ public:
   const Field mult_dag(const Field&)const;
 
   //Preconditioned versions
-  const Field mult_prec(const Field&)const {}//empty now
-  const Field mult_dag_prec(const Field&)const{}//empty now
-  const Field left_precond(const Field&)const{}//empty now
-  const Field right_precond(const Field&)const{}//empty now
+  const Field mult_prec(const Field& f)const {return f;}//empty now
+  const Field mult_dag_prec(const Field& f)const{return f;}//empty now
+  const Field left_precond(const Field& f)const{return f;}//empty now
+  const Field right_precond(const Field& f)const{return f;}//empty now
 
   const Field gamma5(const Field&) const;
   const Field proj_p(const Field&) const;

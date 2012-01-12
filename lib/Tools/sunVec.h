@@ -1,63 +1,50 @@
 //---------------------------------------------------------------------
-// sunVec.h
+/*! @file sunVec.h
+  @brief \f$SU(N)\f$ vectors linear algebra
+
+  Class declarations
+*/ 
 //---------------------------------------------------------------------
 #ifndef SUNVEC_INCLUDED
 #define SUNVEC_INCLUDED
 
-#ifndef SUNMAT_INCLUDED
 #include "sunMat.h"
-#endif
 
 #include <valarray>
 
-class SUNvec{
+template <size_t COLORS>
+class SUNvector{
 
 private:
-  int Nc_;  
   std::valarray<double> va_;
 public:
-  SUNvec(double r=0.0):Nc_(CommonPrms::instance()->Nc()){
-    va_.resize(2*Nc_,r);
-  }
-  SUNvec(const SUNvec& v):Nc_(CommonPrms::instance()->Nc()){
-    va_.resize(v.size());
-    va_= v.va_;
-  }
-  explicit SUNvec(const std::valarray<double>& va)
-    :Nc_(CommonPrms::instance()->Nc()){
-    va_.resize(va.size());
-    va_= va; 
-  }
+  explicit SUNvector(double r=0.0):va_(2*COLORS,r){}
+
+  explicit SUNvector(const std::valarray<double>& va):va_(va){} 
+  
+  SUNvector(const SUNvector& v):va_(v.va_){}
+  
+
+  
   const std::valarray<double>& getva() const { return va_;}
 
-  double norm();
-  double operator*(const SUNvec&);
-  int nc() const { return Nc_; };
-  SUNvec& dag();
-  SUNvec& zero();
-  SUNvec& xI();
+double norm();
+  double operator*(const SUNvector&);
+  int nc() const { return COLORS; };
+  SUNvector& dag();
+  SUNvector& zero();
+  SUNvector& xI();
 
-  SUNvec& operator-();
+  SUNvector& operator-();
 
-  SUNvec& operator=(const double&);
-  SUNvec& operator=(const std::valarray<double>&);
-  //  SUNvec& operator=(const std::complex<double>&);
+  SUNvector& operator=(const double&);
+  SUNvector& operator=(const std::valarray<double>&);
+  SUNvector& operator+=(const SUNvector&);
+  SUNvector& operator-=(const SUNvector&);
+  SUNvector& operator*=(const double&);
+  SUNvector& operator/=(const double&);
 
-  SUNvec& operator+=(const SUNvec&);
-  SUNvec& operator-=(const SUNvec&);
-  SUNvec& operator*=(const double&);
-  SUNvec& operator/=(const double&);
-  //  SUNvec& operator*=(const std::complex<double>&);
-  //  SUNvec& operator/=(const std::complex<double>&);
-
-  /*
-  SUNvec& operator=(const MVmult& mv){
-    sun_mat_vec(this, mv.m, mv.v);
-    return *this;
-  }
-  */
-
-  int size() const {return va_.size();}
+  int size() const {return 2*COLORS;}
 
   double r(const int c) const {return va_[2*c  ];}
   double i(const int c) const {return va_[2*c+1];}
@@ -70,23 +57,32 @@ public:
   }
 };
 
-inline double SUNvec::norm(){ 
+template <size_t COLORS> 
+inline double SUNvector<COLORS>::norm(){ 
   std::valarray<double> tmp = va_*va_;
   return tmp.sum();
 }
-inline double SUNvec::operator*(const SUNvec& rhs){
+
+template <size_t COLORS> 
+inline double SUNvector<COLORS>::operator*(const SUNvector& rhs){
   std::valarray<double> tmp = va_*rhs.va_;
   return tmp.sum();
 }
-inline SUNvec& SUNvec::dag(){
-  for(int c = 0; c < Nc_; ++c) va_[2*c+1] = -va_[2*c+1];
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::dag(){
+  for(int c = 0; c < COLORS; ++c) va_[2*c+1] = -va_[2*c+1];
   return *this;
 }
-inline SUNvec& SUNvec::zero(){
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::zero(){
   va_= 0.0;
   return *this;
 }
-inline SUNvec& SUNvec::xI(){
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::xI(){
   for(int c = 0; c < va_.size()/2; ++c){
     double tmp = va_[2*c];
     va_[2*c  ] = -va_[2*c+1];
@@ -94,63 +90,56 @@ inline SUNvec& SUNvec::xI(){
   }
   return *this;
 }
-inline SUNvec& SUNvec::operator-(){
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator-(){
   va_= -va_;
   return *this;
 }
-inline SUNvec& SUNvec::operator=(const double& rhs){
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator=(const double& rhs){
   va_= rhs;
   return *this;
 }
-inline SUNvec& SUNvec::operator=(const std::valarray<double>& rhs){
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator=(const std::valarray<double>& rhs){
   va_.resize(rhs.size());
   va_= rhs;
   return *this;
 }
-inline SUNvec& SUNvec::operator+=(const SUNvec& rhs){
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator+=(const SUNvector& rhs){
   va_+= rhs.va_;
   return *this;
 }
-inline SUNvec& SUNvec::operator-=(const SUNvec& rhs){
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator-=(const SUNvector& rhs){
   va_-= rhs.va_;
   return *this;
 }
-inline SUNvec& SUNvec::operator*=(const double& rhs){
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator*=(const double& rhs){
   va_*= rhs;
   return *this;
 }
-/*
-inline SUNvec& SUNvec::operator*=(const std::complex<double>& rhs){
-  std::valarray<double> tmp = va_;
-  for(int c = 0; c < va_.size()/2; ++c){
-    va_[2*c  ] = (tmp[2*c]*rhs.real() -tmp[2*c+1]*rhs.imag());
-    va_[2*c+1] = (tmp[2*c]*rhs.imag() +tmp[2*c+1]*rhs.real());
-  }
-  return *this;
-}
-*/
-inline SUNvec& SUNvec::operator/=(const double& rhs){
+
+template <size_t COLORS> 
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator/=(const double& rhs){
   va_/= rhs;
   return *this;
 }
-/*
-inline SUNvec& SUNvec::operator/=(const std::complex<double>& rhs){
-  std::valarray<double> tmp = va_;
-  for(int c = 0; c < va_.size()/2; ++c){
-    va_[2*c  ] = ( tmp[2*c]*rhs.real() +tmp[2*c+1]*rhs.imag())/abs(rhs);
-    va_[2*c+1] = (-tmp[2*c]*rhs.imag() -tmp[2*c+1]*rhs.real())/abs(rhs);
-  }
-  return *this;
-}
-*/
 
-//using namespace SUNmat_utils;
+typedef SUNvector<NC_> SUNvec;
 
 namespace SUNvec_utils{
   inline const SUNvec Ix(const SUNvec& u){
-    int Nc_ = u.nc();
-    SUNvec tmp(Nc_);
-    for(int c = 0; c < u.size()/2; ++c)
+    SUNvec tmp;
+    for(int c = 0; c < NC_; ++c)
       tmp.set(c, -u.i(c), u.r(c));
     return tmp;
   }
@@ -172,13 +161,12 @@ namespace SUNvec_utils{
   }
 
   inline const SUNvec operator*(const SUNmat& m, const SUNvec& v){
-    int Nc_ = v.size()/2;
-    SUNvec tmp(v.size()); 
+    SUNvec tmp;
     
-    for(int a = 0; a < Nc_; ++a){
+    for(int a = 0; a < NC_; ++a){
       double re = 0.0; 
       double im = 0.0;
-      for(int b = 0; b < Nc_; ++b){
+      for(int b = 0; b < NC_; ++b){
 	re+= m.r(a,b)*v.r(b) -m.i(a,b)*v.i(b);
 	im+= m.r(a,b)*v.i(b) +m.i(a,b)*v.r(b);
       }

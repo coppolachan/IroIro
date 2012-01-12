@@ -1,99 +1,93 @@
 //---------------------------------------------------------------------
-// sunMat.h
+/*! @file sunMat.h
+  @brief \f$SU(N)\f$ Matrices linear algebra
+
+  Class declarations
+*/ 
 //---------------------------------------------------------------------
 #ifndef SUNMAT_INCLUDED
 #define SUNMAT_INCLUDED
 
-
 #include <iostream>
 #include <valarray>
+#include <assert.h>
 
-#ifndef COMMONPRMS_INCLUDED
-#include "include/commonPrms.h"
-#endif
+#define NC_ 3  //Number of colours, now fixed here
 
-//for utilities
-#include "include/format_G.h"
-#include "include/field.h"
-#include "include/common_fields.hpp"
-#ifndef SHIFTFIELD_INCLUDED
-#include "Main/Geometry/shiftField.h"
-#endif
-
-
-
-
-class SUNmat{
+template <size_t COLORS>
+class SUNmatrix{
 private:
-  int Nc_;
   std::valarray<double> va_;
 public:
-  SUNmat(double r=0.0):Nc_(CommonPrms::instance()->Nc()){
-    va_.resize(2*Nc_*Nc_,r);
-  }
-  SUNmat(const SUNmat& m):Nc_(CommonPrms::instance()->Nc()),va_(m.va_){}
+  explicit SUNmatrix(double r=0.0):va_(r, 2*COLORS*COLORS){}
+  explicit SUNmatrix(const std::valarray<double>& va)
+    :va_(va){assert(va.size()==2*COLORS*COLORS);}
 
-  explicit SUNmat(const std::valarray<double>& va)
-    :Nc_(CommonPrms::instance()->Nc()),va_(va){}
+  SUNmatrix(const SUNmatrix& m):va_(m.va_){}
 
   const std::valarray<double>& getva() const {return va_;}
 
-  SUNmat& dag();
-  SUNmat& unity();
-  SUNmat& zero();
-  SUNmat& xI();
-  SUNmat& reunit();
-
-  SUNmat& operator-();
+  SUNmatrix& operator-();
   
-  SUNmat& operator=(const SUNmat&);
-  SUNmat& operator=(const double&);
+  SUNmatrix& operator=(const SUNmatrix&);
+  SUNmatrix& operator=(const double&);
 
-  SUNmat& operator+=(const SUNmat&);
-  SUNmat& operator+=(const double&);
+  SUNmatrix& operator+=(const SUNmatrix&);
+  SUNmatrix& operator+=(const double&);
 
-  SUNmat& operator-=(const SUNmat&);
-  SUNmat& operator-=(const double&);
+  SUNmatrix& operator-=(const SUNmatrix&);
+  SUNmatrix& operator-=(const double&);
 
-  SUNmat& operator*=(const SUNmat&);
-  SUNmat& operator*=(const double&);
+  SUNmatrix& operator*=(const SUNmatrix&);
+  SUNmatrix& operator*=(const double&);
 
-  SUNmat& operator/=(const double&);
+  SUNmatrix& operator/=(const double&);
 
-  int size() const {return va_.size();}
+  SUNmatrix& dag();
+  SUNmatrix& unity();
+  SUNmatrix& zero();
+  SUNmatrix& xI();
+  SUNmatrix& reunit();
+
+  int size() const {return 2*COLORS*COLORS;}
 
   double r(int c) const {return va_[2*c  ];}
   double i(int c) const {return va_[2*c+1];}
 
-  double r(int c1,int c2) const {return r(Nc_*c1+c2);}
-  double i(int c1,int c2) const {return i(Nc_*c1+c2);}
+  double r(int c1,int c2) const {return r(COLORS*c1+c2);}
+  double i(int c1,int c2) const {return i(COLORS*c1+c2);}
 
   void setr(int c, double re){va_[2*c  ] = re;}
   void seti(int c, double im){va_[2*c+1] = im;}
 
-  void setr(int c1,int c2,double re){ setr(Nc_*c1+c2, re);}
-  void seti(int c1,int c2,double im){ seti(Nc_*c1+c2, im);}
+  void setr(int c1,int c2,double re){ setr(COLORS*c1+c2, re);}
+  void seti(int c1,int c2,double im){ seti(COLORS*c1+c2, im);}
 
   void set(int c,double re,double im){
     va_[2*c  ] = re;
     va_[2*c+1] = im;
   }
-  void set(int c1,int c2,double re,double im){set(Nc_*c1+c2,re,im);}
+  void set(int c1,int c2,double re,double im){set(COLORS*c1+c2,re,im);}
 
   void add(int c, double re, double im){
     va_[2*c  ] += re;
     va_[2*c+1] += im;
   }
-  void add(int c1,int c2,double re, double im){ add(Nc_*c1+c2, re, im);}
+  void add(int c1,int c2,double re, double im){ add(COLORS*c1+c2, re, im);}
   
 };
 
-inline SUNmat& SUNmat::dag(){
-  for(int a = 0; a < Nc_; ++a){
-    for(int b = a; b < Nc_; ++b){
+
+typedef SUNmatrix<3> SU3mat;
+typedef SUNmatrix<NC_> SUNmat;
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::dag(){
+  for(int a = 0; a < COLORS; ++a){
+    for(int b = a; b < COLORS; ++b){
       
-      int ab = 2*(Nc_*a+b);
-      int ba = 2*(Nc_*b+a);
+      int ab = 2*(COLORS*a+b);
+      int ba = 2*(COLORS*b+a);
 
       double re = va_[ab];
       double im = va_[ab+1];
@@ -108,7 +102,8 @@ inline SUNmat& SUNmat::dag(){
   return *this;
 }
 
-inline SUNmat& SUNmat::xI(){
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::xI(){
   for(int c = 0; c < va_.size()/2; ++c){
     double tmp = va_[2*c];
     va_[2*c  ] = -va_[2*c+1];
@@ -117,45 +112,59 @@ inline SUNmat& SUNmat::xI(){
   return *this;
 }
 
-inline SUNmat& SUNmat::operator-() {
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator-() {
   va_= -va_;
   return *this;
 }
-inline SUNmat& SUNmat::operator=(const double& rhs){
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator=(const double& rhs){
   va_= rhs; 
   return *this;
 }
-inline SUNmat& SUNmat::operator=(const SUNmat& rhs){
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator=(const SUNmatrix& rhs){
   va_= rhs.va_; 
   return *this;
 }
-inline SUNmat& SUNmat::operator+=(const SUNmat& rhs){
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator+=(const SUNmatrix& rhs){
   va_+= rhs.va_;
   return *this;
 }
-inline SUNmat& SUNmat::operator+=(const double& rhs){
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator+=(const double& rhs){
   va_+= rhs;
   return *this;
 }
-inline SUNmat& SUNmat::operator-=(const SUNmat& rhs){
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator-=(const SUNmatrix& rhs){
   va_-= rhs.va_;
   return *this;
 }
-inline SUNmat& SUNmat::operator-=(const double& rhs){
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator-=(const double& rhs){
   va_-= rhs;
   return *this;
 }
 
-inline SUNmat& SUNmat::operator*=(const SUNmat& rhs){
-  std::valarray<double> tmp(0.0,2*Nc_*Nc_);
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(const SUNmatrix& rhs){
+  std::valarray<double> tmp(0.0,2*COLORS*COLORS);
 
-  for(int a = 0; a < Nc_; ++a){
-    for(int b = 0; b < Nc_; ++b){
-      int ab = 2*(Nc_*a+b);
+  for(int a = 0; a < COLORS; ++a){
+    for(int b = 0; b < COLORS; ++b){
+      int ab = 2*(COLORS*a+b);
 
-      for(int c = 0; c < Nc_; ++c){
-	int ac = 2*(Nc_*a+c);
-	int cb = 2*(Nc_*c+b);
+      for(int c = 0; c < COLORS; ++c){
+	int ac = 2*(COLORS*a+c);
+	int cb = 2*(COLORS*c+b);
 	
 	tmp[ab  ]+= va_[ac  ]*rhs.va_[cb  ];
 	tmp[ab  ]-= va_[ac+1]*rhs.va_[cb+1];
@@ -167,81 +176,146 @@ inline SUNmat& SUNmat::operator*=(const SUNmat& rhs){
   va_= tmp;
   return *this;
 }
-inline SUNmat& SUNmat::operator*=(const double& rhs){
+
+//specialization
+//total loop unrolling
+template <>
+inline SUNmatrix<3>& SUNmatrix<3>::operator*=(const SUNmatrix& rhs){
+  std::valarray<double> matrix(18);
+
+  matrix[0]   = va_[0] * rhs.va_[0] - va_[1] * rhs.va_[1] +
+                va_[2] * rhs.va_[6] - va_[3] * rhs.va_[7] +
+                va_[4] * rhs.va_[12]- va_[5] * rhs.va_[13];
+  matrix[1]   = va_[0] * rhs.va_[1] + va_[1] * rhs.va_[0] +
+                va_[2] * rhs.va_[7] + va_[3] * rhs.va_[6] +
+                va_[4] * rhs.va_[13]+ va_[5] * rhs.va_[12];
+
+  matrix[2]   = va_[0] * rhs.va_[2] - va_[1] * rhs.va_[3] +
+                va_[2] * rhs.va_[8] - va_[3] * rhs.va_[9] +
+                va_[4] * rhs.va_[14]- va_[5] * rhs.va_[15];
+  matrix[3]   = va_[0] * rhs.va_[3] + va_[1] * rhs.va_[2] +
+                va_[2] * rhs.va_[9] + va_[3] * rhs.va_[8] +
+                va_[4] * rhs.va_[15]+ va_[5] * rhs.va_[14];
+
+  matrix[4]   = va_[0] * rhs.va_[4]  - va_[1] * rhs.va_[5] +
+                va_[2] * rhs.va_[10] - va_[3] * rhs.va_[11] +
+                va_[4] * rhs.va_[16] - va_[5] * rhs.va_[17];
+  matrix[5]   = va_[0] * rhs.va_[5]  + va_[1] * rhs.va_[4] +
+                va_[2] * rhs.va_[11] + va_[3] * rhs.va_[10] +
+                va_[4] * rhs.va_[17] + va_[5] * rhs.va_[16];
+
+
+
+  matrix[6]   = va_[6]  * rhs.va_[0]  - va_[7]  * rhs.va_[1] +
+                va_[8]  * rhs.va_[6]  - va_[9]  * rhs.va_[7] +
+                va_[10] * rhs.va_[12] - va_[11] * rhs.va_[13];
+  matrix[7]   = va_[6]  * rhs.va_[1]  + va_[7]  * rhs.va_[0] +
+                va_[8]  * rhs.va_[7]  + va_[9]  * rhs.va_[6] +
+                va_[10] * rhs.va_[13] + va_[11] * rhs.va_[12];
+
+  matrix[8]   = va_[6]  * rhs.va_[2]  - va_[7]  * rhs.va_[3] +
+                va_[8]  * rhs.va_[8]  - va_[9]  * rhs.va_[9] +
+                va_[10] * rhs.va_[14] - va_[11] * rhs.va_[15];
+  matrix[9]   = va_[6]  * rhs.va_[3]  + va_[7]  * rhs.va_[2] +
+                va_[8]  * rhs.va_[9]  + va_[9]  * rhs.va_[8] +
+                va_[10] * rhs.va_[15] + va_[11] * rhs.va_[14];
+
+  matrix[10]  = va_[6]  * rhs.va_[4]  - va_[7]  * rhs.va_[5] +
+                va_[8]  * rhs.va_[10] - va_[9]  * rhs.va_[11] +
+                va_[10] * rhs.va_[16] - va_[11] * rhs.va_[17];
+  matrix[11]  = va_[6]  * rhs.va_[5]  + va_[7]  * rhs.va_[4] +
+                va_[8]  * rhs.va_[11] + va_[9]  * rhs.va_[10] +
+                va_[10] * rhs.va_[17] + va_[11] * rhs.va_[16];
+
+
+
+  matrix[12]  = va_[12] * rhs.va_[0]  - va_[13] * rhs.va_[1] +
+                va_[14] * rhs.va_[6]  - va_[15] * rhs.va_[7] +
+                va_[16] * rhs.va_[12] - va_[17] * rhs.va_[13];
+  matrix[13]  = va_[12] * rhs.va_[1]  + va_[13] * rhs.va_[0] +
+                va_[14] * rhs.va_[7]  + va_[15] * rhs.va_[6] +
+                va_[16] * rhs.va_[13] + va_[17] * rhs.va_[12];
+
+  matrix[14]  = va_[12] * rhs.va_[2]  - va_[13] * rhs.va_[3] +
+                va_[14] * rhs.va_[8]  - va_[15] * rhs.va_[9] +
+                va_[16] * rhs.va_[14] - va_[17] * rhs.va_[15];
+  matrix[15]  = va_[12] * rhs.va_[3]  + va_[13] * rhs.va_[2] +
+                va_[14] * rhs.va_[9]  + va_[15] * rhs.va_[8] +
+                va_[16] * rhs.va_[15] + va_[17] * rhs.va_[14];
+
+  matrix[16]  = va_[12] * rhs.va_[4]  - va_[13] * rhs.va_[5] +
+                va_[14] * rhs.va_[10] - va_[15] * rhs.va_[11] +
+                va_[16] * rhs.va_[16] - va_[17] * rhs.va_[17];
+  matrix[17]  = va_[12] * rhs.va_[5]  + va_[13] * rhs.va_[4] +
+                va_[14] * rhs.va_[11] + va_[15] * rhs.va_[10] +
+                va_[16] * rhs.va_[17] + va_[17] * rhs.va_[16];
+
+
+  va_= matrix;
+  return *this;
+}
+
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(const double& rhs){
   va_*= rhs;
   return *this;
 }
-inline SUNmat& SUNmat::operator/=(const double& rhs){
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator/=(const double& rhs){
   va_ /= rhs;
   return *this;
 }
 
-class Field;
-class ShiftField;
-
-namespace SUNmat_utils{
-  SUNmat unity();
-  SUNmat zero();
-
-  double ReTr(const SUNmat& m);
-  double ImTr(const SUNmat& m);
-
-  const SUNmat dag(const SUNmat& u);
-  const SUNmat xI(const SUNmat& u);
-
-  const SUNmat operator+(const SUNmat& m1, const SUNmat& m2);
-  const SUNmat operator-(const SUNmat& m1, const SUNmat& m2);
-  const SUNmat operator*(const SUNmat& m1, const SUNmat& m2);
-
-  const SUNmat reunit(const SUNmat& m);
-  const std::valarray<double> trace_less(const SUNmat& m);
-  const std::valarray<double> anti_hermite(const SUNmat& m);
-
-
-
-  // for variables with the direction unfixed 
-  inline SUNmat u(const Field& g,const Format::Format_G& gf_, int site,int dir){
-    return SUNmat(g[gf_.cslice(0,site,dir)]);
-  }
-  inline SUNmat u(const GaugeField& g, int site,int dir){
-    return SUNmat(g.U[g.Format.cslice(0,site,dir)]);
-  }
-  inline SUNmat u_dag(const Field& g,const Format::Format_G& gf_,int site,int dir){
-    return SUNmat(g[gf_.cslice(0,site,dir)]).dag();
-  }
-  inline SUNmat u_dag(const GaugeField& g, int site,int dir){
-    return SUNmat(g.U[g.Format.cslice(0,site,dir)]).dag();
-  }
-  
-
-  // for variables with a specific direction
-  inline SUNmat u(const Field& g,const Format::Format_G& sf_,int site){
-    return SUNmat(g[sf_.cslice(0,site)]);
-  }
-  inline SUNmat u(const GaugeField1D& g,int site){
-    return SUNmat(g.U[g.Format.cslice(0,site)]);
+template <size_t COLORS>
+SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
+  double nrm = 0.0;
+  for(int c = 0; c < COLORS; ++c) 
+    nrm += va_[2*c]*va_[2*c] +va_[2*c+1]*va_[2*c+1];
+ 
+  double nrm_i = 1.0/nrm;
+  for(int c = 0; c < COLORS; ++c){
+    va_[2*c  ] *= nrm_i;
+    va_[2*c+1] *= nrm_i;
   }
 
-  inline SUNmat u(const std::valarray<double>& vu,const Format::Format_G& sf_,int site){
-    return SUNmat(vu[sf_.cslice(0,site)]);
-  }
-  inline SUNmat u(const ShiftField& su,int site){
-    return SUNmat(su.cv(0,site));
-  }
-  inline SUNmat u_dag(const Field& g,const Format::Format_G& sf_,int site){
-    return SUNmat(g[sf_.cslice(0,site)]).dag();
-  }
-  inline SUNmat u_dag(const GaugeField1D& g,int site){
-    return SUNmat(g.U[g.Format.cslice(0,site)]).dag();
-  }
-  inline SUNmat u_dag(const std::valarray<double>& vu,const Format::Format_G& sf_,int site){
-    return SUNmat(vu[sf_.cslice(0,site)]).dag();
-  }
-  inline SUNmat u_dag(const ShiftField& su,int site){
-    return SUNmat(su.cv(0,site)).dag();
-  }
+  for(int a = 1; a < COLORS; ++a){
+    double pr = 0.0;
+    double pi = 0.0;
 
-
+    for(int b = 0; b < a; ++b){
+      for(int c = 0; c < COLORS; ++c){
+	int ac = a*COLORS+c;
+	int bc = b*COLORS+c;
+	pr += va_[2*bc]*va_[2*ac  ]+va_[2*bc+1]*va_[2*ac+1];
+	pi += va_[2*bc]*va_[2*ac+1]-va_[2*bc+1]*va_[2*ac  ];
+      }
+      for(int c = 0; c < COLORS; ++c){
+	int ac = a*COLORS+c;
+	int bc = b*COLORS+c;
+	va_[2*ac  ] -= pr*va_[2*bc  ] -pi*va_[2*bc+1];
+	va_[2*ac+1] -= pr*va_[2*bc+1] +pi*va_[2*bc  ];
+      }
+    }
+    double nrm = 0.0;
+    for(int c = 0; c < COLORS; ++c){
+      int ac = a*COLORS+c;
+      nrm += va_[2*ac]*va_[2*ac] +va_[2*ac+1]*va_[2*ac+1];
+    }
+    nrm_i = 1/nrm;
+    
+    for(int c = 0; c < COLORS; ++c){
+      int ac = a*COLORS+c;
+      va_[2*ac  ] *= nrm_i;
+      va_[2*ac+1] *= nrm_i;
+    }
+  }
+  return *this;
 }
+
+
+
+
 
 #endif

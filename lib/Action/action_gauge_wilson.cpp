@@ -5,6 +5,7 @@
 */
 #include "action_gauge_wilson.hpp"
 #include "Communicator/comm_io.hpp"
+#include "Tools/sunMatUtils.hpp"
 
 double ActionGaugeWilson::calc_H(){
   double plaq = stpl_->plaquette(*u_);

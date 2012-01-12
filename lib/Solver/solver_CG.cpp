@@ -101,6 +101,8 @@ SolverOutput Solver_CG_Precondition::solve(Field& xq,
   SolverOutput Out;
   Out.Msg = "CG solver Preconditioned";
   Out.Iterations = -1;
+
+  TIMING_START;
   
   Field x = b;//starting guess
   Field r = b;
@@ -133,6 +135,8 @@ SolverOutput Solver_CG_Precondition::solve(Field& xq,
   Out.diff = p.norm();
 
   xq = x;
+
+  TIMING_END(Out.timing);
   return Out;
 }
 

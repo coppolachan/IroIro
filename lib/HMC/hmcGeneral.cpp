@@ -21,8 +21,13 @@ void HMCgeneral::evolve(Field& Uin)const{
   for(int iter=1; iter <= Params.ThermalizationSteps; ++iter){
     CCIO::cout << "-- # Thermalization step = "<< iter <<  "\n";
 
+    double timer;
+    TIMING_START;
     Hdiff = evolve_step(Uin);
-    CCIO::cout<< "dH = "<<Hdiff << "\n";
+    TIMING_END(timer);
+    
+    CCIO::cout<< "Time for trajectory (s) : "<< timer/1000.0 << "\n";
+    CCIO::cout<< "dH = "<< Hdiff << "\n";
     Uin = md_->get_U();  //accept every time
   }
 
@@ -30,9 +35,11 @@ void HMCgeneral::evolve(Field& Uin)const{
   for(int iter=1; iter <= Params.Nsweeps; ++iter){
     CCIO::cout << "-- # Sweep = "<< iter <<  "\n";
     CCIO::cout << "---------------------------\n";
-
+    double timer;
+    TIMING_START;
     Hdiff = evolve_step(Uin);
-
+    TIMING_END(timer);
+    CCIO::cout<< "Time for trajectory (s) : "<< timer/1000.0 << "\n";
 
     if(metropolis_test(Hdiff)) Uin = md_->get_U();
 
