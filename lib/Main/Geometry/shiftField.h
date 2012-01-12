@@ -4,17 +4,9 @@
 #ifndef SHIFTFIELD_INCLUDED
 #define SHIFTFIELD_INCLUDED
 
-#ifndef COMMOMPRMS_INCLUDED
 #include "include/commonPrms.h"
-#endif
-
-#ifndef SITEINDEX_INCLUDED
 #include "siteIndex.h"
-#endif
-
-#ifndef FIELD_INCLUDED
 #include "include/field.h"
-#endif
 #include "Communicator/comm_io.hpp"
 #include "include/common_fields.hpp"
 
@@ -28,6 +20,10 @@ public:
   virtual double re(int c,int s,int site,int ex=0)const =0;
   virtual double im(int c,int s,int site,int ex=0)const =0;
   virtual bool on_bdry(int site,int ex=0)const =0;
+
+  virtual const double* get_bdry_addr(int site,int ex=0) =0;
+  virtual const double* get_bulk_addr(int site,int ex=0) =0;
+
   virtual double re_on_bdry(int c,int s,int site,int ex=0)const =0;
   virtual double im_on_bdry(int c,int s,int site,int ex=0)const =0;
   virtual double re_on_bulk(int c,int s,int site,int ex=0)const =0;
@@ -118,6 +114,8 @@ public:
   double re(int c,int s,int site,int ex=0) const;
   double im(int c,int s,int site,int ex=0) const;
   bool on_bdry(int site,int ex=0) const;
+  const double* get_bdry_addr(int site,int ex=0) ;
+  const double* get_bulk_addr(int site,int ex=0) ;
   double re_on_bdry(int c,int s,int site,int ex=0) const;
   double im_on_bdry(int c,int s,int site,int ex=0) const;
   double re_on_bulk(int c,int s,int site,int ex=0) const;
@@ -158,6 +156,17 @@ double ShiftField_up<FMT>::im(int c,int s,int site,int ex) const {
     return bdry_[     bdfmt_->index_i(c,s,idx_->x_b(site,dir_),ex)];
   else return (*field_)[fmt_->index_i(c,s,idx_->x_p(site,dir_),ex)];
 }  
+
+template<typename FMT> 
+const double* ShiftField_up<FMT>::get_bdry_addr(int site,int ex) {
+  return &bdry_[bdfmt_->index_r(0,0,idx_->x_b(site,dir_),ex)];
+}
+
+template<typename FMT> 
+const double* ShiftField_up<FMT>::get_bulk_addr(int site,int ex) {
+  return &(*const_cast<std::valarray<double> *>(field_))[fmt_->index_r(0,0,idx_->x_p(site,dir_),ex)];
+}
+
 
 template<typename FMT> 
 double ShiftField_up<FMT>::re_on_bdry(int c,int s,int site,int ex) const {
@@ -272,6 +281,8 @@ public:
   double re(int c,int s,int site,int ex=0) const;
   double im(int c,int s,int site,int ex=0) const;
   bool on_bdry(int site,int ex=0) const;
+  const double* get_bdry_addr(int site,int ex=0);
+  const double* get_bulk_addr(int site,int ex=0);
   double re_on_bdry(int c,int s,int site,int ex=0) const;
   double im_on_bdry(int c,int s,int site,int ex=0) const;
   double re_on_bulk(int c,int s,int site,int ex=0) const;
@@ -312,6 +323,16 @@ template<typename FMT>
 bool ShiftField_dn<FMT>::on_bdry(int site,int ex) const {
   return (idx_->cmp(site,dir_) == 0);
 }  
+
+template<typename FMT> 
+const double* ShiftField_dn<FMT>::get_bdry_addr(int site,int ex) {
+  return &bdry_[bdfmt_->index_r(0,0,idx_->x_b(site,dir_),ex)];
+}
+
+template<typename FMT> 
+const double* ShiftField_dn<FMT>::get_bulk_addr(int site,int ex) {
+  return &(*const_cast<std::valarray<double> *>(field_))[fmt_->index_r(0,0,idx_->x_p(site,dir_),ex)];
+}
 
 template<typename FMT> 
 double ShiftField_dn<FMT>::re_on_bdry(int c,int s,int site,int ex) const {

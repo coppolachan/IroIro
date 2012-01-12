@@ -78,6 +78,9 @@ public:
   double re(int c,int s,int hs,int ex=0) const;
   double im(int c,int s,int hs,int ex=0) const;
   bool on_bdry(int hs,int ex=0) const;
+  const double* get_bdry_addr(int site,int ex=0);
+  const double* get_bulk_addr(int site,int ex=0);
+
   double re_on_bdry(int c,int s,int hs,int ex=0) const;
   double im_on_bdry(int c,int s,int hs,int ex=0) const;
   double re_on_bulk(int c,int s,int hs,int ex=0) const;
@@ -118,6 +121,17 @@ template<typename FMT>
 bool ShiftField_even_up<FMT>::on_bdry(int hs,int ex) const {
   return (idx_->o_cmp(hs,dir_) == idx_->Bdir(dir_));
 }  
+
+template<typename FMT> 
+const double* ShiftField_even_up<FMT>::get_bdry_addr(int hs,int ex){
+  return &bdry_[bdfmt_->index_r(0,0,idx_->obid_up(hs,dir_),ex)];
+}
+
+template<typename FMT> 
+const double* ShiftField_even_up<FMT>::get_bulk_addr(int hs,int ex){
+  return &(*const_cast<std::valarray<double> *>(field_))[fmt_->index_r(0,0,idx_->ox_p(hs,dir_),ex)];
+}
+
 
 template<typename FMT> 
 double ShiftField_even_up<FMT>::re_on_bdry(int c,int s,int hs,int ex) const {
@@ -211,6 +225,9 @@ public:
   double re(int c,int s,int hs,int ex=0) const;
   double im(int c,int s,int hs,int ex=0) const;
   bool on_bdry(int hs,int ex=0) const;
+  const double* get_bdry_addr(int site,int ex=0);
+  const double* get_bulk_addr(int site,int ex=0);
+
   double re_on_bdry(int c,int s,int hs,int ex=0) const;
   double im_on_bdry(int c,int s,int hs,int ex=0) const;
   double re_on_bulk(int c,int s,int hs,int ex=0) const;
@@ -251,6 +268,16 @@ template<typename FMT>
 bool ShiftField_even_dn<FMT>::on_bdry(int hs,int ex) const {
   return (idx_->o_cmp(hs,dir_) == 0);
 }  
+
+template<typename FMT> 
+const double* ShiftField_even_dn<FMT>::get_bdry_addr(int hs,int ex) {
+  return &bdry_[bdfmt_->index_r(0,0,idx_->obid_lw(hs,dir_),ex)];
+}
+
+template<typename FMT> 
+const double* ShiftField_even_dn<FMT>::get_bulk_addr(int hs,int ex) {
+  return &(*const_cast<std::valarray<double> *>(field_))[fmt_->index_r(0,0,idx_->ox_m(hs,dir_),ex)];
+}
 
 template<typename FMT> 
 double ShiftField_even_dn<FMT>::re_on_bdry(int c,int s,int hs,int ex) const {
@@ -346,6 +373,8 @@ public:
   double re(int c,int s,int hs,int ex=0) const;
   double im(int c,int s,int hs,int ex=0) const;
   bool on_bdry(int hs,int ex=0) const;
+  const double* get_bdry_addr(int site,int ex=0);
+  const double* get_bulk_addr(int site,int ex=0);
   double re_on_bdry(int c,int s,int hs,int ex=0) const;
   double im_on_bdry(int c,int s,int hs,int ex=0) const;
   double re_on_bulk(int c,int s,int hs,int ex=0) const;
@@ -386,6 +415,17 @@ template<typename FMT>
 bool ShiftField_odd_up<FMT>::on_bdry(int hs,int ex) const {
   return (idx_->e_cmp(hs,dir_) == idx_->Bdir(dir_));
 }  
+
+template<typename FMT> 
+const double* ShiftField_odd_up<FMT>::get_bdry_addr(int hs,int ex){
+  return &bdry_[bdfmt_->index_r(0,0,idx_->ebid_up(hs,dir_),ex)];
+}
+
+template<typename FMT> 
+const double* ShiftField_odd_up<FMT>::get_bulk_addr(int hs,int ex){
+  return &(*const_cast<std::valarray<double> *>(field_))[fmt_->index_r(0,0,idx_->ex_p(hs,dir_),ex)];
+}
+
 
 template<typename FMT> 
 double ShiftField_odd_up<FMT>::re_on_bdry(int c,int s,int hs,int ex) const {
@@ -479,6 +519,8 @@ public:
   double re(int c,int s,int hs,int ex=0) const;
   double im(int c,int s,int hs,int ex=0) const;
   bool on_bdry(int hs,int ex=0) const;
+  const double* get_bdry_addr(int site,int ex=0);
+  const double* get_bulk_addr(int site,int ex=0);
   double re_on_bdry(int c,int s,int hs,int ex=0) const;
   double im_on_bdry(int c,int s,int hs,int ex=0) const;
   double re_on_bulk(int c,int s,int hs,int ex=0) const;
@@ -520,6 +562,16 @@ template<typename FMT>
 bool ShiftField_odd_dn<FMT>::on_bdry(int hs,int ex) const {
   return (idx_->e_cmp(hs,dir_) == 0);
 }  
+
+template<typename FMT> 
+const double* ShiftField_odd_dn<FMT>::get_bdry_addr(int hs,int ex) {
+  return &bdry_[bdfmt_->index_r(0,0,idx_->ebid_lw(hs,dir_),ex)];
+}
+
+template<typename FMT> 
+const double* ShiftField_odd_dn<FMT>::get_bulk_addr(int hs,int ex) {
+  return &(*const_cast<std::valarray<double> *>(field_))[fmt_->index_r(0,0,idx_->ex_m(hs,dir_),ex)];
+}
 
 template<typename FMT> 
 double ShiftField_odd_dn<FMT>::re_on_bdry(int c,int s,int hs,int ex) const {

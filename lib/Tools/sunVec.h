@@ -24,11 +24,9 @@ public:
   
   SUNvector(const SUNvector& v):va_(v.va_){}
   
-
-  
   const std::valarray<double>& getva() const { return va_;}
 
-double norm();
+  double norm();
   double operator*(const SUNvector&);
   int nc() const { return COLORS; };
   SUNvector& dag();
@@ -43,6 +41,8 @@ double norm();
   SUNvector& operator-=(const SUNvector&);
   SUNvector& operator*=(const double&);
   SUNvector& operator/=(const double&);
+
+
 
   int size() const {return 2*COLORS;}
 
@@ -59,14 +59,13 @@ double norm();
 
 template <size_t COLORS> 
 inline double SUNvector<COLORS>::norm(){ 
-  std::valarray<double> tmp = va_*va_;
-  return tmp.sum();
+  return (va_*va_).sum();
 }
 
 template <size_t COLORS> 
 inline double SUNvector<COLORS>::operator*(const SUNvector& rhs){
-  std::valarray<double> tmp = va_*rhs.va_;
-  return tmp.sum();
+  //std::valarray<double> tmp = va_*rhs.va_;
+  return (va_*rhs.va_).sum();
 }
 
 template <size_t COLORS> 
@@ -135,6 +134,8 @@ inline SUNvector<COLORS>& SUNvector<COLORS>::operator/=(const double& rhs){
 }
 
 typedef SUNvector<NC_> SUNvec;
+
+
 
 namespace SUNvec_utils{
   inline const SUNvec Ix(const SUNvec& u){

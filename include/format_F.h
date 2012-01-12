@@ -1,30 +1,29 @@
 //----------------------------------------------------------------------
-// format_F.h
+/*! @file format_F.h
+
+  @brief Defines the Format_F class
+
+*/
 //----------------------------------------------------------------------
 #ifndef FORMAT_F_INCLUDED
 #define FORMAT_F_INCLUDED
 
-#ifndef SITEINDEX_INCLUDED
-#include "Main/Geometry/siteIndex.h"
-#endif
-
 #include <valarray>
+#include "Main/Geometry/siteIndex.h"
 #include "Communicator/comm_io.hpp"
 
 namespace Format{
 
   class Format_F{
   private:
-    int Nvol_,Nex_,Nc_,Nd_;
+    int Nvol_,Nex_,Nd_;
     int Ndim_;
-    int Nc2_;
     int Nin_;
   public:
     Format_F(int Nvol, int Nex=1):Nvol_(Nvol),Nex_(Nex),
-				  Nc_(CommonPrms::instance()->Nc()),
 				  Nd_(CommonPrms::instance()->Nd()),
 				  Ndim_(CommonPrms::instance()->Ndim()),
-				  Nc2_(2*Nc_),Nin_(Nc2_*Nd_){}
+				  Nin_(2*NC_*Nd_){}
 
     int Nin() const {return Nin_;}
     int Nvol() const {return Nvol_;}
@@ -32,14 +31,16 @@ namespace Format{
     int size() const {return Nin_*Nvol_*Nex_;}
     
     // get indices
-    int index(int i, int site, int ex=0) const {
+    inline int index(int i, int site, int ex=0) const {
       return i +Nin_*(site +Nex_*ex);
     }
-    int index_r(int c, int s, int site, int ex=0) const { 
-      return 2*(c +Nc_*s) +Nin_*(site +Nex_*ex); 
+
+    inline int index_r(int c, int s, int site, int ex=0) const { 
+      return 2*(c +NC_*s) +Nin_*(site +Nex_*ex); 
     }
-    int index_i(int c, int s, int site, int ex=0) const { 
-      return 1+2*(c +Nc_*s) +Nin_*(site +Nex_*ex); 
+
+    inline int index_i(int c, int s, int site, int ex=0) const { 
+      return 1+2*(c +NC_*s) +Nin_*(site +Nex_*ex); 
     }
     // get slices
     std::slice cplx_slice(int c, int s, int site, int ex=0) const {
@@ -49,13 +50,13 @@ namespace Format{
       return std::slice(index(0,site), Nin_,1);
     }
     std::slice cslice(int s,int site,int ex=0) const {
-      return std::slice(index_r(0,s,site), Nc2_,1);
+      return std::slice(index_r(0,s,site), 2*NC_,1);
     }
     std::gslice sslice(int c,int site,int ex=0) const {
       std::valarray<size_t> vsz_(2);
       std::valarray<size_t> vstr_(2);
       vsz_[0] = Nd_; vsz_[1] = 2;
-      vstr_[0] = Nc2_; vstr_[1] = 1;
+      vstr_[0] = 2*NC_; vstr_[1] = 1;
 
       return std::gslice(index_r(c,0,site), vsz_, vstr_);
     }

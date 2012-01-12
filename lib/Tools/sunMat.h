@@ -13,7 +13,7 @@
 #include <valarray>
 #include <assert.h>
 
-#define NC_ 3  //Number of colours, now fixed here
+#include "include/macros.hpp"
 
 template <size_t COLORS>
 class SUNmatrix{
@@ -314,9 +314,5 @@ SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
   }
   return *this;
 }
-
-
-
-
 
 #endif
