@@ -32,7 +32,6 @@ namespace Dw{
 }
 
 class Dirac_Wilson: public DiracWilsonLike{
-  friend class Dirac_Wilson_EvenOdd;
 
 private:
   const Field* const u_;
@@ -81,21 +80,22 @@ private:
   void mult_ym(std::valarray<double>&,const Field&)const;
   void mult_zm(std::valarray<double>&,const Field&)const;
   void mult_tm(std::valarray<double>&,const Field&)const;
-  void mult_core(Field&,Field&)const;
-
+  
   static void(Dirac_Wilson::*mult_p[])(Field&,ShiftField*)const;
   static void(Dirac_Wilson::*mult_m[])(std::valarray<double>&,
 				       const Field&)const;
+  void mult_a0(Field&,Field&)const;
+  void mult_a1(Field&,Field&)const;
+
   int gsite(int site)const {return site;}
   int esec(int site)const {return SiteIndex_eo::instance()->esec(site);}
   int osec(int site)const {return SiteIndex_eo::instance()->osec(site);}
 
   int(Dirac_Wilson::*gp)(int)const;
   int(Dirac_Wilson::*gm)(int)const;
+  void(Dirac_Wilson::*mult_core)(Field&,Field&)const;
 
-  void md_force_p(Field&,const Field& eta,const Field& zeta)const;
-  void md_force_m(Field&,const Field& eta,const Field& zeta)const;
-
+public:
   /*! @brief private constructor to create instance with e/o site indexing */
   Dirac_Wilson(double mass,const Field* u,Dw::EOtag)
     :kpp_(0.5/(4.0+mass)),u_(u),
@@ -103,6 +103,7 @@ private:
      Ndim_(CommonPrms::instance()->Ndim()),
      gp(&Dirac_Wilson::esec),
      gm(&Dirac_Wilson::osec),
+     mult_core(&Dirac_Wilson::mult_a0),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(2*Nvol_)),
      fsize_(ff_->size()),
@@ -121,6 +122,7 @@ private:
      Ndim_(CommonPrms::instance()->Ndim()),
      gp(&Dirac_Wilson::osec),
      gm(&Dirac_Wilson::esec),
+     mult_core(&Dirac_Wilson::mult_a0),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(2*Nvol_)),
      fsize_(ff_->size()),
@@ -132,8 +134,6 @@ private:
     }
     CCIO::cout<<"Dirac_Wilson EO created"<<std::endl;
   }
-
-public:
   /*! @brief constructor to create instance with normal site indexing
    */
   Dirac_Wilson(double mass,const Field* u)
@@ -142,6 +142,7 @@ public:
      Ndim_(CommonPrms::instance()->Ndim()),
      gp(&Dirac_Wilson::gsite),
      gm(&Dirac_Wilson::gsite),
+     mult_core(&Dirac_Wilson::mult_a1),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
      fsize_(ff_->size()),
@@ -159,6 +160,7 @@ public:
      Ndim_(CommonPrms::instance()->Ndim()),
      gp(&Dirac_Wilson::gsite),
      gm(&Dirac_Wilson::gsite),
+     mult_core(&Dirac_Wilson::mult_a1),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
      fsize_(ff_->size()),
@@ -199,6 +201,8 @@ public:
   const Field proj_p(const Field&) const;
   const Field proj_m(const Field&) const;
 
+  void md_force_p(Field&,const Field& eta,const Field& zeta)const;
+  void md_force_m(Field&,const Field& eta,const Field& zeta)const;
   const Field md_force(const Field& eta,const Field& zeta)const;
   
   const double getKappa() const {return kpp_;}  

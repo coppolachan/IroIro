@@ -41,7 +41,11 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
   CCIO::cout<<"ph.norm="<<sqrt(phnorm)<<std::endl;
   #endif 
 
+  CCIO::cout<<"D1_->mult_dag(ph) is doing"<<std::endl;
+  
   phi_= D1_->mult_dag(Field(ph));
+
+  CCIO::cout<<"D1_->mult_dag(ph) is done"<<std::endl;
 
   #if VERBOSITY>=DEBUG_VERB_LEVEL
   double phisum= phi_.norm();
@@ -49,6 +53,8 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
   #endif
 
   phi_= D2_->mult(DdagD2_inv(phi_));
+
+  CCIO::cout<<"D2_->mult(DdagD2_inv(phi_)) is done"<<std::endl;
 }
 
 double Action_Nf2_ratio::calc_H(){

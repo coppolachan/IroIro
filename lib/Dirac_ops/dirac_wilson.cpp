@@ -476,6 +476,7 @@ const Field Dirac_Wilson::proj_m(const Field& f) const{
   }
   return w;
 }
+/*
 void Dirac_Wilson::mult_core(Field& w,Field& f) const{
 
   valarray<double> wt(fsize_);
@@ -489,11 +490,29 @@ void Dirac_Wilson::mult_core(Field& w,Field& f) const{
   }
   w *= -kpp_;
 }
+*/
+
+void Dirac_Wilson::mult_a0(Field& w,Field& f) const{
+  valarray<double> wt(fsize_);
+
+  for(int d=0; d <Ndim_; ++d){
+    sf_up_[d]->setf(f);
+    (this->*mult_p[d])(w,sf_up_[d]);
+    (this->*mult_m[d])(wt,f);
+    sf_dn_[d]->setf(wt);
+    w += sf_dn_[d]->getva();
+  }
+  w *= -kpp_;
+}
+
+void Dirac_Wilson::mult_a1(Field& w,Field& f) const{
+  mult_a0(w,f);
+  w += f;
+}
 
 const Field Dirac_Wilson::mult(const Field& f) const{
   Field w(fsize_);
-  mult_core(w,const_cast<Field&>(f));
-  w += f;
+  (this->*mult_core)(w,const_cast<Field&>(f));
   return w;
 }
 

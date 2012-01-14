@@ -8,15 +8,11 @@
 using namespace std;
 
 const Field Dirac_Wilson_EvenOdd::mult_eo(const Field& f) const{ 
-  Field w(f.size());
-  Deo_.mult_core(w,const_cast<Field&>(f));
-  return w;
+  return Deo_.mult(f);
 }
 
 const Field Dirac_Wilson_EvenOdd::mult_oe(const Field& f) const{
-  Field w(f.size());
-  Doe_.mult_core(w,const_cast<Field&>(f));
-  return w;
+  return Doe_.mult(f);
 }
 
 const Field Dirac_Wilson_EvenOdd::mult_eo_dag(const Field& f) const{
