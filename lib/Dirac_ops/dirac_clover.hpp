@@ -73,7 +73,6 @@ private:
   // Ex = -iF(4,0), Ey = -iF(4,1), Ez = -iF(4,2)
 
   //auxiliary, eventually moved outside
-  void mat_mult(std::valarray<double>&, const SUNmat&, const SUNvec&)const;
   void external_prod(Field& res, const Field& A, const Field& B) const;
 
 public:

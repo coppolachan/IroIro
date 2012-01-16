@@ -35,26 +35,6 @@ const std::valarray<double> Dirac_Clover::anti_herm(const SUNmat& m){
   return va;
 }
 
-
-inline void Dirac_Clover::mat_mult(std::valarray<double>& out,
-				   const SUNmat& m,
-				   const SUNvec& vec)const{
-  for(int a = 0; a < NC_; ++a){
-    double re = 0.0; 
-    double im = 0.0;
-    
-    for(int b = 0; b < NC_; ++b){
-      re+= m.r(a,b)*vec.r(b) -m.i(a,b)*vec.i(b);
-      im+= m.r(a,b)*vec.i(b) +m.i(a,b)*vec.r(b);
-    }
-
-    out[2*a  ] = re;
-    out[2*a+1] = im;
-  }
-
-
-}
-
 //=================================================================
 
 void Dirac_Clover::mult_isigma(Field& v, const Field& w,
@@ -148,15 +128,15 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
       v1 = u(d_Bz,site) * v(wt,s,site);
-      v_out.add(ff_->cslice(s,site),v1);
+      v_out.add(ff_->cslice(s,site),v1.getva());
     }
   }
   
   mult_isigma41(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
-      mat_mult(v1,u(d_Ex,site),v(wt,s,site));
-      v_out.add(ff_->cslice(s,site), v1);
+      v1 = u(d_Ex,site) * v(wt,s,site);
+      v_out.add(ff_->cslice(s,site), v1.getva());
     }
   }
 
@@ -164,8 +144,8 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
   mult_isigma42(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
-      mat_mult(v1,u(d_Ey,site),v(wt,s,site));
-      v_out.add(ff_->cslice(s,site),v1);
+      v1 = u(d_Ey,site) * v(wt,s,site);
+      v_out.add(ff_->cslice(s,site),v1.getva());
     }
   }
   
@@ -173,8 +153,8 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
   mult_isigma43(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
-      mat_mult(v1,u(d_Ez,site),v(wt,s,site));
-      v_out.add(ff_->cslice(s,site), v1);
+      v1 = u(d_Ez,site) * v(wt,s,site);
+      v_out.add(ff_->cslice(s,site), v1.getva());
     }
   }
  
@@ -607,7 +587,7 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
       fce_tmp2.U -= fce_tmp1.U;   
      
       fce_tmp2.U *= - Dw->getKappa() * csw_ / 8.0; 
-      //fce_tmp2.U *= -Dw->getKappa()*csw_/8.0;
+
       for(int site = 0; site<Nvol_; ++site){
 	force.U.add(force.Format.cslice(0,site,mu), 
 		    anti_hermite(u(fce_tmp2.U,site)));
