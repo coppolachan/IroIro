@@ -1,15 +1,16 @@
-//----------------------------------------------------------------------
-/*! @file dirac_clover.cpp
+/*! 
+  @file dirac_clover.cpp
 
-  @brief Dirac Clover operator
-
+  @brief Dirac Clover operator class. Functions definition
 */
-//----------------------------------------------------------------------
+
 #include "dirac_clover.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Tools/sunMatUtils.hpp"
 
 using namespace std;
+
+//======== Auxiliary routines
 
 const std::valarray<double> Dirac_Clover::anti_herm(const SUNmat& m){
   
@@ -53,6 +54,7 @@ inline void Dirac_Clover::mat_mult(std::valarray<double>& out,
 
 
 }
+
 //=================================================================
 
 void Dirac_Clover::mult_isigma(Field& v, const Field& w,
@@ -121,33 +123,31 @@ void Dirac_Clover::mult_isigma(Field& v, const Field& w,
 void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
   using namespace SUNmat_utils;
   using namespace SUNvec_utils;
-  typedef std::valarray<double> vect;
-
-  int Nc = CommonPrms::Nc();
-
-  vect v1(2*Nc);
+  //  typedef std::valarray<double> vect;
+  //vect v1(2*Nc);
+  SUNvec v1;
   Field wt(fsize_);
 
   mult_isigma23(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
-      mat_mult(v1,u(d_Bx,site),v(wt,s,site));
-      v_out.add(ff_->cslice(s,site), v1);
+      v1 = u(d_Bx,site) * v(wt,s,site);
+      v_out.add(ff_->cslice(s,site), v1.getva());
     }
   }
 
   mult_isigma31(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
-      mat_mult(v1,u(d_By,site),v(wt,s,site));
-      v_out.add(ff_->cslice(s,site), v1);
+      v1 = u(d_By,site) * v(wt,s,site);
+      v_out.add(ff_->cslice(s,site), v1.getva());
     }
   }
 
   mult_isigma12(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
-      mat_mult(v1,u(d_Bz,site),v(wt,s,site));
+      v1 = u(d_Bz,site) * v(wt,s,site);
       v_out.add(ff_->cslice(s,site),v1);
     }
   }
@@ -457,7 +457,7 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
   GaugeField1D Cmu_up, Cnu_up;
 
   SUNvec vect;
- 
+  //valarray<double> vect(2*NC_);
   
   //Wilson term
   force.U = Dw->md_force(eta,zeta);
@@ -478,8 +478,8 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
       Cmu_up.U -= stpl_->lower(*u_, mu,nu); //V_+mu - V_-mu 
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u_dag(Cmu_up,site))* v(eta2,s,site);
-	  vect = (u(U_mu,site))*vect;
+	  vect = u_dag(Cmu_up,site) * v(eta2,s,site);
+	  vect = u(U_mu,site) * vect;
 	  vright.set(ff_->cslice(s,site), vect.getva());
 	} 
       }
@@ -611,7 +611,8 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
       for(int site = 0; site<Nvol_; ++site){
 	force.U.add(force.Format.cslice(0,site,mu), 
 		    anti_hermite(u(fce_tmp2.U,site)));
-      } 
+
+      }
     }
   }
 

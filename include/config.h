@@ -63,25 +63,25 @@
 /* #undef HITACHISR16K */
 
 /* Name of package */
-#define PACKAGE "commoncode--"
+#define PACKAGE "iroiro"
 
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "cossu@post.kek.jp"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "CommonCode++"
+#define PACKAGE_NAME "IroIro"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "CommonCode++ 0.7"
+#define PACKAGE_STRING "IroIro 0.8"
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "commoncode--"
+#define PACKAGE_TARNAME "iroiro"
 
 /* Define to the home page for this package. */
 #define PACKAGE_URL ""
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.7"
+#define PACKAGE_VERSION "0.8"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
@@ -90,7 +90,7 @@
 #define VERBOSITY 1
 
 /* Version number of package */
-#define VERSION "0.7"
+#define VERSION "0.8"
 
 /* Define to `__inline__' or `__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */

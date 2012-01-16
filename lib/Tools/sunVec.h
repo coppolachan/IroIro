@@ -18,7 +18,7 @@ class SUNvector{
 private:
   std::valarray<double> va_;
 public:
-  explicit SUNvector(double r=0.0):va_(2*COLORS,r){}
+  explicit SUNvector(double r=0.0):va_(r,2*COLORS){}
 
   explicit SUNvector(const std::valarray<double>& va):va_(va){} 
   

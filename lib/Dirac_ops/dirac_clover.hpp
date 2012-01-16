@@ -1,10 +1,10 @@
-//----------------------------------------------------------------------
-/*! @file dirac_clover.hpp
+/*! 
+  @file dirac_clover.hpp
 
-  @brief Dirac clover operator
+  @brief Dirac clover operator class. Class declaration
 
 */
-//----------------------------------------------------------------------
+
 #ifndef DIRAC_CLOVER_INCLUDED
 #define DIRAC_CLOVER_INCLUDED
 
@@ -16,7 +16,6 @@
 #include "Tools/sunMat.h"
 #include "Tools/sunVec.h"
 #include "dirac.h"
-#include "include/pugi_interface.h"
 
 
 typedef Format::Format_F ffmt_t;
@@ -37,7 +36,6 @@ private:
   mutable gfmt_t* gf_;
   mutable ffmt_t* ff_;
   const Staples* stpl_;
-
 
   std::vector<ShiftField*> sf_up_; 
   std::vector<ShiftField*> sf_dn_; 
@@ -69,14 +67,12 @@ private:
   void mult_isigma41(Field&, const Field&)const;
   void mult_isigma42(Field&, const Field&)const;
   void mult_isigma43(Field&, const Field&)const;
- 
-
 
   GaugeField1D d_Bx, d_By, d_Bz, d_Ex, d_Ey, d_Ez;
   // Bx = -iF(1,2), By = -iF(2,1), -iBz = F(0,1)
   // Ex = -iF(4,0), Ey = -iF(4,1), Ez = -iF(4,2)
 
-  //auxiliary;
+  //auxiliary, eventually moved outside
   void mat_mult(std::valarray<double>&, const SUNmat&, const SUNvec&)const;
   void external_prod(Field& res, const Field& A, const Field& B) const;
 

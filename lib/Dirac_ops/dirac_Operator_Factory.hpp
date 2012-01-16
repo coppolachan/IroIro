@@ -11,6 +11,7 @@
 #include "Tools/RAIIFactory.hpp"
 #include "dirac_wilson.h"
 #include "dirac_wilson_EvenOdd.h"
+#include "dirac_clover.hpp"
 #include "dirac_DomainWall_4D.hpp"
 #include "dirac_DomainWall.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -40,9 +41,9 @@ public:
     return new Dirac_Wilson(Dirac_node,GaugeField);
   }
 };
-
+/////////////////////////////////////////////////////////
 /*!
- * @brief Concrete class for creating Dirac Wilson operators
+ * @brief Concrete class for creating Dirac Wilson EvenOdd operators
  *
  */
 class DiracWilsonEvenOddFactory : public DiracWilsonLikeOperatorFactory {
@@ -55,7 +56,22 @@ public:
     return new Dirac_Wilson_EvenOdd(Dirac_node,GaugeField);
   }
 };
+/////////////////////////////////////////////////////////
+/*!
+ * @brief Concrete class for creating Dirac Clover operators
+ *
+ */
+class DiracCloverFactory : public DiracWilsonLikeOperatorFactory {
+  const XML::node Dirac_node;
 
+public:
+  DiracCloverFactory(const XML::node node):Dirac_node(node){}
+
+  Dirac_Clover* getDiracOperator(Field* const GaugeField){
+    return new Dirac_Clover(Dirac_node,GaugeField);
+  }
+};
+/////////////////////////////////////////////////////////
 /*!
  * @brief Concrete class for creating Dirac Optimal DWF-5d operators
  *
@@ -78,7 +94,7 @@ public:
   }
   ~DiracDWF5dFactory(){}
 };
-
+/////////////////////////////////////////////////////////
 /*!
  * @brief Concrete class for creating Dirac Optimal DWF-4d operators
  *
