@@ -152,6 +152,12 @@ public:
     U.set(Format.cslice(0,site),matrix.getva());
   }
 
+  inline GaugeField1D& operator=(const GaugeField1D& rhs){
+    U = rhs.U;
+    return *this;
+  }
+
+
 };
 
 #endif //COMMON_FIELDS_H_
