@@ -369,7 +369,7 @@ void Dirac_Clover::mult_isigma43(Field& v, const Field& w) const {
   
 
 }
-
+//====================================================================
 
 const Field Dirac_Clover::gamma5(const Field& f) const{
   return Dw->gamma5(f);
@@ -384,7 +384,6 @@ const Field Dirac_Clover::mult(const Field& f) const{
   w  = Dw->mult(f);
   mult_csw(w2,f);
   w -= w2;
-
   return w;
 }
 

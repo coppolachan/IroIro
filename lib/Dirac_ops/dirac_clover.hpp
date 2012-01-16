@@ -13,7 +13,6 @@
 #include "Main/Geometry/shiftField.h"
 #include "Measurements/GaugeM/staples.h"
 #include "Dirac_ops/dirac_wilson.h"
-#include "Tools/sunMat.h"
 #include "Tools/sunVec.h"
 #include "dirac.h"
 
@@ -28,8 +27,8 @@ class Dirac_Clover: public DiracWilsonLike{
  
 private:
   double csw_;
-  int Nvol_;
-  int Ndim_;
+  const int Nvol_;
+  const int Ndim_;
 
   const Field* const u_;
   const Dirac_Wilson* Dw;
@@ -41,7 +40,7 @@ private:
   std::vector<ShiftField*> sf_dn_; 
 
   const size_t fsize_;
-  size_t gsize_;
+  const size_t gsize_;
 
   SUNvec v(const Field& f,int spin,int site) const{
     return SUNvec(f[ff_->cslice(spin,site)]);
@@ -49,8 +48,6 @@ private:
   SUNvec v(const ShiftField* sf,int spin,int site) const{
     return SUNvec(sf->cv(spin,site));
   }
-
-  const std::valarray<double> anti_herm(const SUNmat& m);
 
   int gsite(int site)const {return site;}
 
@@ -73,6 +70,7 @@ private:
   // Ex = -iF(4,0), Ey = -iF(4,1), Ez = -iF(4,2)
 
   //auxiliary, eventually moved outside
+  const std::valarray<double> anti_herm(const SUNmat& m);
   void external_prod(Field& res, const Field& A, const Field& B) const;
 
 public:
