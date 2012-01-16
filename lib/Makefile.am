@@ -38,6 +38,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Communicator/comm_io.cpp		\
 		Communicator/fields_io.cpp		\
 		Dirac_ops/dirac_wilson.cpp		\
+		Dirac_ops/dirac_clover.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
@@ -144,6 +145,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_overlap_Zolotarev.h	\
 			Dirac_ops/dirac_wilson.h		\
+			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_wilson_EvenOdd.h	\
 			Dirac_ops/dirac.h			\
 			Dirac_ops/dirac_DomainWall.hpp   	\

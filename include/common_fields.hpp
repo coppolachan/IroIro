@@ -12,6 +12,7 @@
 #include "include/geometry.hpp"
 #include "include/field.h"
 #include "include/format_G.h"
+#include "lib/Tools/sunMat.h"
 
 typedef Format::Format_G GaugeFieldFormat;/**< Format of gauge field
 					     at compilation time */
@@ -146,6 +147,10 @@ public:
   GaugeField1D(std::valarray<double> f): 
     Format(GaugeFieldFormat(CommonPrms::instance()->Nvol(),1)),
     U(Field(f)){}
+
+  void set_matrix(int site, SUNmat matrix) {
+    U.set(Format.cslice(0,site),matrix.getva());
+  }
 
 };
 
