@@ -18,6 +18,9 @@
       <Kernel4d>
 	<Kernel5d>
 	  <Preconditioning>LUPreconditioner</Preconditioning>
+	  <Kernel5d name="DiracWilson">
+	    <mass>-1.6</mass>
+	  </Kernel5d>
 	  <N5d>8</N5d>
 	  <b>1.0</b>
 	  <c>1.0</c>
@@ -26,9 +29,9 @@
 	    <lambda_min>0.1</lambda_min>
 	    <lambda_max>1.5</lambda_max>
 	  </approximation>
-	  <Kernel name="DiracWilson">
+	  <Kernel5d name="DiracWilson">
 	    <mass>-1.6</mass>
-	  </Kernel>
+	  </Kernel5d>
 	</Kernel5d>
 	<SolverDWF type="Solver_CG_Precondition">
 	  <MaxIter>10000</MaxIter>
