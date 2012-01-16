@@ -54,6 +54,7 @@ public:
   const Field right_precond(const Field&)const{}//empty now
 
   const Field md_force(const Field& eta,const Field& zeta) const;
+  void update_internal_state(){};
   const Field gamma5(const Field& f) const;
   const Format::Format_F get_fermionFormat() const{
     return Fopr_signH->get_fermionFormat();

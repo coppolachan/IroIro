@@ -142,7 +142,7 @@ public:
 
   const Field md_force(const Field& eta,const Field& zeta)const;
 
-  void update_csw() {set_csw();}
+  void update_internal_state() {set_csw();}
   
   const std::vector<int> get_gsite() const;
   const ffmt_t get_fermionFormat() const {return *ff_;}

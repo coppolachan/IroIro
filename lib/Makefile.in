@@ -402,6 +402,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/typeDefs.h		\
 			$(top_srcdir)/include/pugi_interface.h		\
 			$(top_srcdir)/include/singleton.h		\
+			$(top_srcdir)/include/observer.hpp		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\

@@ -50,5 +50,8 @@ public:
 #endif
     return force;
   }
+
+   void observer_update(){};
+
 };
 #endif

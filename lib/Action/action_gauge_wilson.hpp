@@ -41,6 +41,7 @@ public:
   }
   double calc_H();
   Field  md_force(const void* = 0);
+  void observer_update(){}; 
 
   ActionGaugeWilson(const double beta, 
 		    const Format::Format_G& gf, 

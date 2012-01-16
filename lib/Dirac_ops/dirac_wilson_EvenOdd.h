@@ -43,6 +43,7 @@ public:
   //////////////////////////////////////////////////////////////////////
   
   const Field md_force(const Field&,const Field&) const;
+  void update_internal_state(){};
 
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 

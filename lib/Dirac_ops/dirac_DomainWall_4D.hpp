@@ -86,6 +86,7 @@ public:
 
   const std::vector<int> get_gsite() const{ return Dodw_.get_gsite();}
   const Field md_force( const Field& eta,const Field& zeta) const{}
+  void update_internal_state(){};
 };
 
 #endif

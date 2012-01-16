@@ -171,6 +171,8 @@ public:
   const Field right_precond(const Field& f)const{return Precond_->right(f);}
   //////////////////////////////////////////////////////////////////////
 
+  void update_internal_state(){};
+
   const Field Dminus(const Field&)const;
   const Field gamma5(const Field&) const;
 

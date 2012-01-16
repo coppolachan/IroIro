@@ -5,6 +5,13 @@
 #include "action_Nf2.h"
 #include "include/format_F.h"
 
+//::::::::::::::::::::::::::::::::Observer
+void Action_Nf2::observer_update() {
+  D_->update_internal_state();  
+}
+
+
+
 Field Action_Nf2::DdagD_inv(const Field& src){
   Field sol(fsize_);
   SolverOutput monitor = slv_->solve(sol,src);

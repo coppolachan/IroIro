@@ -37,6 +37,7 @@ public:
   virtual const Field right_precond(const Field&)const = 0;
 
   virtual const Field md_force(const Field& eta,const Field& zeta)const = 0;
+  virtual void update_internal_state() = 0;
 };
 
 /*

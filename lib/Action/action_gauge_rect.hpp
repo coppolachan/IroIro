@@ -74,6 +74,7 @@ public:
   void  init(const RandNum&,const void* = 0){};
   double calc_H();
   Field  md_force(const void* = 0);
+  void observer_update(){};
   
   ActionGaugeRect(const double beta, 
 		  const double c_plaq_,

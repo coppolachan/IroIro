@@ -47,6 +47,7 @@ private:
   void init(const RandNum& rand,const void* = 0);  
   Field md_force(const void* = 0);
   double calc_H();
+  void observer_update(){};
 };
 
 #endif

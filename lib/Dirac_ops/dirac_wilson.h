@@ -204,6 +204,8 @@ public:
   void md_force_p(Field&,const Field& eta,const Field& zeta)const;
   void md_force_m(Field&,const Field& eta,const Field& zeta)const;
   const Field md_force(const Field& eta,const Field& zeta)const;
+
+  void update_internal_state(){};
   
   const double getKappa() const {return kpp_;}  
   const ffmt_t get_fermionFormat() const {return *ff_;}
