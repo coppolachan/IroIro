@@ -8,23 +8,19 @@
 using namespace std;
 
 const Field Dirac_Wilson_EvenOdd::mult_eo(const Field& f) const{ 
-  Field w(f.size());
-  Deo_.mult_core(w,const_cast<Field&>(f));
-  return w;
+  return Deo_.mult(f);
 }
 
 const Field Dirac_Wilson_EvenOdd::mult_oe(const Field& f) const{
-  Field w(f.size());
-  Doe_.mult_core(w,const_cast<Field&>(f));
-  return w;
+  return Doe_.mult(f);
 }
 
 const Field Dirac_Wilson_EvenOdd::mult_eo_dag(const Field& f) const{
-  return gamma5(mult_eo(gamma5(f)));
+  return gamma5(mult_oe(gamma5(f)));
 }
 
 const Field Dirac_Wilson_EvenOdd::mult_oe_dag(const Field& f) const{
-  return gamma5(mult_oe(gamma5(f)));
+  return gamma5(mult_eo(gamma5(f)));
 }
 
 const Field Dirac_Wilson_EvenOdd::mult(const Field& f) const{
@@ -34,7 +30,10 @@ const Field Dirac_Wilson_EvenOdd::mult(const Field& f) const{
 }
 
 const Field Dirac_Wilson_EvenOdd::mult_dag(const Field& f) const{
-  return gamma5(mult(gamma5(f)));
+  //return gamma5(mult(gamma5(f)));
+  Field w(f);
+  w -= mult_oe_dag(mult_eo_dag(f));
+  return w;
 }
 
 const vector<int> Dirac_Wilson_EvenOdd::get_gsite() const {

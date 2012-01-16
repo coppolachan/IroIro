@@ -33,9 +33,7 @@ End_Enum_String;
 /*!
  * @brief Container for parameter of the 5d Optimal Domain Wall operator
  *
- * Parameters for \f[D_{\rm dwf}(m_q) = \omega D_W(-m_0)(1+cL(m_q))+(1-L(m_q))\f]
- * 
- *
+ * Parameters for \f[D_{\rm dwf}(m_q) =\omega D_W(-m_0)(1+cL(m_q))+(1-L(m_q))\f]
  */
 struct Dirac_optimalDomainWall_params{
   double N5dim_;/*!< @brief the length in the 5th direction (must be even) */
@@ -68,7 +66,6 @@ struct Dirac_optimalDomainWall_params{
  *
  * Kernel is given by
  * \f[H = \frac{\gamma_5 b D_W}{ 2 + c D_W } \f]
- *
  */
 class Dirac_optimalDomainWall : public DiracWilsonLike {
   const Dirac_Wilson* Dw_; /*!< @brief Dirac Kernel - Wilson operator */ 
@@ -116,21 +113,6 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     f5.add(std::slice(s*f4size_,f4size_,1),f4.getva());
   }
 
-  /*! @brief private constructors to create instances with the e/o indexing */
-  Dirac_optimalDomainWall(const double b,
-			  const double c,
-			  const double mq,
-			  const std::vector<double>& omega,
-			  const Dirac_Wilson* Kernel,
-			  Dw::EOtag,
-			  Preconditioners Precond = NoPreconditioner);
-  Dirac_optimalDomainWall(const double b,
-			  const double c,
-			  const double mq,
-			  const std::vector<double>& omega,
-			  const Dirac_Wilson* Kernel,
-			  Dw::OEtag,
-			  Preconditioners Precond = NoPreconditioner);
 public:
   Dirac_optimalDomainWall(XML::node DWF_node,
 			  const Dirac_Wilson* Kernel);
@@ -183,10 +165,10 @@ public:
   const Field mult_dag(const Field&)const;
 
   //Preconditioning methods
-  const Field mult_prec    (const Field& in)const{return Precond_->mult(in);}
-  const Field mult_dag_prec(const Field& in)const{return Precond_->mult_dag(in);}
-  const Field left_precond (const Field& in)const{return Precond_->left(in);}
-  const Field right_precond(const Field& in)const{return Precond_->right(in);}
+  const Field mult_prec    (const Field& f)const{return Precond_->mult(f);}
+  const Field mult_dag_prec(const Field& f)const{return Precond_->mult_dag(f);}
+  const Field left_precond (const Field& f)const{return Precond_->left(f);}
+  const Field right_precond(const Field& f)const{return Precond_->right(f);}
   //////////////////////////////////////////////////////////////////////
 
   const Field Dminus(const Field&)const;
