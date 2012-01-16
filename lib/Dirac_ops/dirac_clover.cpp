@@ -464,6 +464,8 @@ void Dirac_Clover::external_prod(Field& res,
 const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
   using namespace SUNmat_utils;
   using namespace SUNvec_utils;
+
+  //.................... Temporary variables declaration
   int Nd = CommonPrms::instance()->Nd();
 
   GaugeField force;
@@ -472,9 +474,8 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
   Field shifted(fsize_);
   GaugeField1D U_mu, U_nu;
   GaugeField1D Cmu_up, Cnu_up;
-
   SUNvec vect;
-  //valarray<double> vect(2*NC_);
+  //...................................................
   
   //Wilson term
   force.U = Dw->md_force(eta,zeta);
@@ -483,7 +484,7 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
 
   for(int mu = 0; mu < Ndim_; ++mu){
     for(int nu = 0; nu < Ndim_; ++nu){
-      if(nu==mu) continue;
+      if(nu == mu) continue;
 
       mult_isigma(eta2, eta, mu, nu); //sigma_{mu,nu} mult
 
@@ -625,11 +626,9 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
      
       fce_tmp2.U *= - Dw->getKappa() * csw_ / 8.0; 
 
-      for(int site = 0; site<Nvol_; ++site){
-	force.U.add(force.Format.cslice(0,site,mu), 
-		    anti_hermite(u(fce_tmp2.U,site)));
+      for(int site = 0; site<Nvol_; ++site)
+	force.U.add(force.Format.cslice(0,site,mu),anti_hermite(u(fce_tmp2.U,site))); 
 
-      }
     }
   }
 

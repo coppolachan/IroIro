@@ -8,14 +8,13 @@
 #ifndef DIRAC_CLOVER_INCLUDED
 #define DIRAC_CLOVER_INCLUDED
 
+#include "dirac.h"
 #include "include/format_F.h"
 #include "include/format_G.h"
+#include "Tools/sunVec.h"
 #include "Main/Geometry/shiftField.h"
 #include "Measurements/GaugeM/staples.h"
 #include "Dirac_ops/dirac_wilson.h"
-#include "Tools/sunVec.h"
-#include "dirac.h"
-
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
@@ -23,6 +22,11 @@ typedef Format::Format_G gfmt_t;
 typedef ShiftField_up<ffmt_t> shift_up;
 typedef ShiftField_dn<ffmt_t> shift_dn;
 
+
+
+/*! 
+  @ brief Class for the Clover %Dirac operator 
+*/
 class Dirac_Clover: public DiracWilsonLike{
  
 private:
@@ -102,7 +106,6 @@ public:
      stpl_(new Staples(*gf_)),
      fsize_(ff_->size()),
      gsize_(gf_->size()){
-     
 
     XML::read(node, "Csw", csw_,MANDATORY);
 
@@ -130,9 +133,9 @@ public:
   const Field mult_dag(const Field&)const;
 
   //Preconditioned versions
-  const Field mult_prec(const Field& f)const {return f;}//empty now
+  const Field mult_prec(const Field& f)    const{return f;}//empty now
   const Field mult_dag_prec(const Field& f)const{return f;}//empty now
-  const Field left_precond(const Field& f)const{return f;}//empty now
+  const Field left_precond(const Field& f) const{return f;}//empty now
   const Field right_precond(const Field& f)const{return f;}//empty now
 
   const Field gamma5(const Field&) const;
