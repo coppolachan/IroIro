@@ -2,14 +2,14 @@
  * @file action_Nf2.cpp
  * @brief Definition of methods of Action_Nf2 class
  */
-#include "action_Nf2.h"
+#include "action_Nf2.hpp"
 #include "include/format_F.h"
 
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2::observer_update() {
   D_->update_internal_state();  
 }
-
+//::::::::::::::::::::::::::::::::
 
 
 Field Action_Nf2::DdagD_inv(const Field& src){

@@ -11,10 +11,9 @@
 #include "Tools/RAIIFactory.hpp"
 
 #include "action_Factory.hpp"
-#include "Action/action_Nf2.h"
-//#include "Action/action_Nf2_EvenOdd.h"
-#include "Action/action_Nf2_ratio.h"
-#include "Action/action_Nf2_DomainWall.h"
+#include "Action/action_Nf2.hpp"
+#include "Action/action_Nf2_ratio.hpp"
+#include "Action/action_Nf2_DomainWall.hpp"
 #include "Solver/solver_CG.h"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"

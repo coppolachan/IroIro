@@ -4,7 +4,7 @@
  * @brief Definition of methods of Action_Nf2_ratio class
  *
  */
-#include "action_Nf2_ratio.h"
+#include "action_Nf2_ratio.hpp"
 #include "include/format_F.h"
 #include "Communicator/comm_io.hpp"
 #include "include/macros.hpp"

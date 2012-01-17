@@ -5,7 +5,7 @@
 
  */
 
-#include "action.h"
+#include "action.hpp"
 #include "Communicator/comm_io.hpp"
 #include "include/field.h"
 

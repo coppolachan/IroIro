@@ -341,6 +341,7 @@
 
     - \b DiracWilson (Wilson fermions Dirac operator, class Dirac_Wilson)
     - \b DiracWilson_EvenOdd (Wilson fermions Dirac operator with even-odd preconditioning, class Dirac_Wilson_EvenOdd)
+    - \b DiracClover (Clover type Fermions, class Dirac_Clover) 
     - \b DiracOptimalDomainWall4d (4 dimensional Domain Wall operator, class Dirac_optimalDomainWall_4D - uses the 5 dimensional operator as a member)
     - \b DiracOptimalDomainWall5d (5 dimensional representation of Domain Wall operator, class Dirac_optimalDomainWall)
 

@@ -1,7 +1,7 @@
 #ifndef ACTION_FACT_
 #define ACTION_FACT_
 
-#include "action.h"
+#include "action.hpp"
 #include "include/format_G.h"
 
 /*!

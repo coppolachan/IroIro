@@ -6,7 +6,7 @@
 #ifndef ACTION_GAUGE_CLOVER_INCLUDED
 #define ACTION_GAUGE_CLOVER_INCLUDED
 
-#include "action.h"
+#include "action.hpp"
 #include "include/common_fields.hpp"
 #include "Measurements/GaugeM/staples.h"
 #include "include/pugi_interface.h"

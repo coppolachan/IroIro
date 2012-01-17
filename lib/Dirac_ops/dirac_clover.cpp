@@ -27,18 +27,6 @@ const std::valarray<double> Dirac_Clover::anti_herm(const SUNmat& m){
       va[2*(NC_*b+a)  ] = -0.5 * re;
       va[2*(NC_*b+a)+1] =  0.5 * im;
 
-      /*
-      int ab = 2*(NC_*a+b);
-      int ba = 2*(NC_*b+a);
-      
-      va[ab]-= va[ba];
-      va[ab] *= 0.5;
-      va[ba] =-va[ab];
-      
-      va[ab+1]+= va[ba+1];
-      va[ab+1] *= 0.5;
-      va[ba+1] = va[ab+1];
-      */
     }
   }
   return va;

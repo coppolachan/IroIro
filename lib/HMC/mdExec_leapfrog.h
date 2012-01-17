@@ -9,7 +9,7 @@
 #include<vector>
 
 #include "mdExec.h"
-#include "Action/action.h"
+#include "Action/action.hpp"
 #include "Measurements/GaugeM/staples.h"
 #include "include/pugi_interface.h"
 
