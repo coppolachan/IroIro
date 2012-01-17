@@ -9,6 +9,32 @@
 using namespace std;
 using namespace Format;
 
+void MDexec_leapfrog::register_observers(){
+  // Register actions 
+  for(int level = 0; level < as_.size(); ++level){
+    for(int id = 0; id < as_.at(level).size(); ++id){
+      _Message(DEBUG_VERB_LEVEL, "Registering Observers - Action level = "
+	       << level <<" Action# = "<< id<<"\n");
+      attach_observer(as_[level].at(id));
+    }
+  }
+  
+  // Register other observers
+  // .....
+  CCIO::cout << "[MDexec_leapfrog] Registered "<<ObserverSet.size()<<" observers\n";
+}
+
+void MDexec_leapfrog::attach_observer(Observer* Obs){
+  ObserverSet.push_back(Obs);
+}
+
+void MDexec_leapfrog::notify_observers() {
+  for(int element; element < ObserverSet.size(); ++element) {
+    ObserverSet[element]->observer_update();
+  }
+}
+
+
 void MDexec_leapfrog::update_U(double ep){
   using namespace SUNmat_utils;
 
@@ -30,6 +56,8 @@ void MDexec_leapfrog::update_U(double ep){
       U_->set(gf_.islice(site,m),au.reunit().getva());
     }
   }
+
+  notify_observers();
 }
 
 void MDexec_leapfrog::update_P(int lv,double ep){
@@ -48,11 +76,11 @@ init(vector<int>& clock,const Field& U,const RandNum& rand){
   MDutils::md_mom(P_,rand,gf_); // initialize P_ 
 
   double pnorm = P_.norm();
-  CCIO::cout<<"P_->norm()= "<<pnorm<<endl;
 
   for(int lv = 0; lv< as_.size(); ++lv){
     for(int id = 0; id < as_.at(lv).size(); ++id){
-      CCIO::cout<<"initializing MD steps level= "<< lv <<" id= "<< id<<endl;
+      _Message(DEBUG_VERB_LEVEL, "Initialization of MD steps level = "<< 
+	       lv <<" Action# = "<< id<<"\n");
       as_[lv].at(id)->init(rand);
     }
   }

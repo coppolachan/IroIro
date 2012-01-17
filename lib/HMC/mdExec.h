@@ -9,9 +9,11 @@
 class Action;
 class Field;
 class RandNum;
+class Observer;
 
 typedef std::vector<Action*> ActionLevel;
 typedef std::vector<ActionLevel> ActionSet;
+typedef std::vector<Observer*> GaugeObservers;
 
 /*! 
  * @brief Abstract base class for Molecular Dynamics management
@@ -19,8 +21,14 @@ typedef std::vector<ActionLevel> ActionSet;
  */
 class MDexec{
 private:
-  virtual void update_P(int lv,double ep)=0;
-  virtual void update_U(double ep)=0;
+  virtual void update_P(int lv,double ep) = 0;
+  virtual void update_U(double ep) = 0;
+
+  virtual void register_observers() = 0;
+  virtual void attach_observer(Observer*) = 0;
+  virtual void detach_observer(Observer*) = 0;  
+  virtual void notify_observers() = 0;
+
 public:
   virtual ~MDexec(){}
   virtual void init(std::vector<int>& clock,const Field& U,

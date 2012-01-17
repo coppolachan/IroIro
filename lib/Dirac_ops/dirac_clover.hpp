@@ -69,6 +69,8 @@ private:
   void mult_isigma42(Field&, const Field&)const;
   void mult_isigma43(Field&, const Field&)const;
 
+  const Field md_force_block(const Field&,const Field&)const;
+
   GaugeField1D d_Bx, d_By, d_Bz, d_Ex, d_Ey, d_Ez;
   // Bx = -iF(1,2), By = -iF(2,1), -iBz = F(0,1)
   // Ex = -iF(4,0), Ey = -iF(4,1), Ez = -iF(4,2)

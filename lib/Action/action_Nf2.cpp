@@ -22,7 +22,6 @@ Field Action_Nf2::DdagD_inv(const Field& src){
 }
 
 void Action_Nf2::init(const RandNum& rand,const void*){
-  CCIO::cout<<"Action_Nf2::init"<<std::endl;
   std::valarray<double> ph(fsize_);
   MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
   phi_= D_->mult_dag(Field(ph));

@@ -136,7 +136,6 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
   SUNvec v1;
   Field wt(fsize_);
 
-
   //Actual calculation - START
   v_out = 0.0;
 
@@ -197,6 +196,8 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
 
 //====================================================================
 void Dirac_Clover::set_csw() {
+
+  _Message(1, "[DiracClover] Setting Field Strenght\n");
 
   set_fieldstrength(d_Bx, 1, 2);
   set_fieldstrength(d_By, 2, 0);
@@ -462,6 +463,26 @@ void Dirac_Clover::external_prod(Field& res,
 
 //====================================================================
 const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
+
+  Field force(gsize_);
+
+  //Wilson term
+  force = Dw->md_force(eta,zeta);
+
+
+  force += md_force_block(eta, zeta);
+  force += md_force_block(zeta, eta);
+  
+  //  force *= -2.0;  
+
+  return force;
+
+
+}
+
+
+//====================================================================
+const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)const{
   using namespace SUNmat_utils;
   using namespace SUNvec_utils;
 
@@ -477,8 +498,6 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
   SUNvec vect;
   //...................................................
   
-  //Wilson term
-  force.U = Dw->md_force(eta,zeta);
 
   //Clover term: 8 terms, see Matsufuru-san's note
 
@@ -627,7 +646,7 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
       fce_tmp2.U *= - Dw->getKappa() * csw_ / 8.0; 
 
       for(int site = 0; site<Nvol_; ++site)
-	force.U.add(force.Format.cslice(0,site,mu),anti_hermite(u(fce_tmp2.U,site))); 
+	force.U.set(force.Format.cslice(0,site,mu),anti_hermite(u(fce_tmp2.U,site))); 
 
     }
   }
