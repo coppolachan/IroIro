@@ -113,13 +113,13 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
 			Action/action_gauge_rect.hpp			\
-			Action/action.h					\
+			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\
 			Action/action_fermiontype_factory.hpp		\
 			Action/action_Factory.hpp			\
-			Action/action_Nf2.h				\
-			Action/action_Nf2_ratio.h			\
-			Action/action_Nf2_DomainWall.h			\
+			Action/action_Nf2.hpp				\
+			Action/action_Nf2_ratio.hpp			\
+			Action/action_Nf2_DomainWall.hpp		\
 			EigenModes/eigenModes_IRL.h			\
 			EigenModes/sortEigen.h				\
 			EigenModes/eigenProc_Zolotarev.h		\
@@ -160,7 +160,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Solver/multiShiftSolver.hpp		\
 			HMC/hmcGeneral.hpp			\
 			HMC/mdExec.h				\
-			HMC/mdExec_leapfrog.h			\
+			HMC/mdExec_leapfrog.hpp			\
 			HMC/mdExec_leapfrog_eigen.h		\
 			HMC/mdExec_Factory.hpp			\
 			Tools/sunMat.h				\

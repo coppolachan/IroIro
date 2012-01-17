@@ -1,9 +1,12 @@
-//--------------------------------------------------------------------
-// mdExec_leapfrog.cpp
-//--------------------------------------------------------------------
-#include "mdExec_leapfrog.h"
+/*
+ * @file mdExec_leapfrog.cpp
+ *
+ * @brief Definition of MDexec_leapfrog class and Parameters 
+ */
+#include "mdExec_leapfrog.hpp"
 #include "include/field.h"
 #include "Tools/sunMatUtils.hpp"
+
 #include <iomanip>
 
 using namespace std;
@@ -15,22 +18,23 @@ void MDexec_leapfrog::register_observers(){
     for(int id = 0; id < as_.at(level).size(); ++id){
       _Message(DEBUG_VERB_LEVEL, "Registering Observers - Action level = "
 	       << level <<" Action# = "<< id<<"\n");
-      attach_observer(as_[level].at(id));
+      attach_observer(GaugeObservers, as_[level].at(id));
     }
   }
   
   // Register other observers
   // .....
-  CCIO::cout << "[MDexec_leapfrog] Registered "<<ObserverSet.size()<<" observers\n";
+  CCIO::cout << "[MDexec_leapfrog] Registered "<<GaugeObservers.size()<<" Gauge observers\n";
 }
 
-void MDexec_leapfrog::attach_observer(Observer* Obs){
-  ObserverSet.push_back(Obs);
+void MDexec_leapfrog::attach_observer(ObserverList& OList,
+				      Observer* Obs){
+  OList.push_back(Obs);
 }
 
-void MDexec_leapfrog::notify_observers() {
-  for(int element; element < ObserverSet.size(); ++element) {
-    ObserverSet[element]->observer_update();
+void MDexec_leapfrog::notify_observers(ObserverList& OList) {
+  for(int element; element < OList.size(); ++element) {
+    OList[element]->observer_update();
   }
 }
 
@@ -57,7 +61,7 @@ void MDexec_leapfrog::update_U(double ep){
     }
   }
 
-  notify_observers();
+  notify_observers(GaugeObservers);
 }
 
 void MDexec_leapfrog::update_P(int lv,double ep){
@@ -73,7 +77,7 @@ init(vector<int>& clock,const Field& U,const RandNum& rand){
   clock.resize(as_.size(),0.0);  
 
   *U_= U;                       // initialize U_ (common to actions) to U
-  notify_observers();
+  notify_observers(GaugeObservers);
   MDutils::md_mom(P_,rand,gf_); // initialize P_ 
 
   for(int lv = 0; lv< as_.size(); ++lv){

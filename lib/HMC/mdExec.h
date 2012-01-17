@@ -13,7 +13,7 @@ class Observer;
 
 typedef std::vector<Action*> ActionLevel;
 typedef std::vector<ActionLevel> ActionSet;
-typedef std::vector<Observer*> GaugeObservers;
+typedef std::vector<Observer*> ObserverList;
 
 /*! 
  * @brief Abstract base class for Molecular Dynamics management
@@ -25,9 +25,10 @@ private:
   virtual void update_U(double ep) = 0;
 
   virtual void register_observers() = 0;
-  virtual void attach_observer(Observer*) = 0;
-  virtual void detach_observer(Observer*) = 0;  
-  virtual void notify_observers() = 0;
+  virtual void attach_observer(ObserverList&, Observer*) = 0;
+  virtual void detach_observer(ObserverList&, Observer*) = 0;  
+  virtual void notify_observers(ObserverList&) = 0;
+  
 
 public:
   virtual ~MDexec(){}

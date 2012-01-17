@@ -22,8 +22,6 @@ typedef Format::Format_G gfmt_t;
 typedef ShiftField_up<ffmt_t> shift_up;
 typedef ShiftField_dn<ffmt_t> shift_dn;
 
-
-
 /*! 
   @ brief Class for the Clover %Dirac operator 
 */
@@ -96,6 +94,7 @@ public:
       sf_up_.push_back(new shift_up(ff_,d));
       sf_dn_.push_back(new shift_dn(ff_,d));
     }
+    set_csw();
   }
 
   Dirac_Clover(const XML::node& node,const Field* u)
@@ -115,7 +114,6 @@ public:
       sf_up_.push_back(new shift_up(ff_,d));
       sf_dn_.push_back(new shift_dn(ff_,d));
     }
-
     set_csw();
   }
 

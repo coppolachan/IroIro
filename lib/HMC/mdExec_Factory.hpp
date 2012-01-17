@@ -17,7 +17,7 @@
 #include "Action/action_gaugetype_factory.hpp"
 #include "Action/action_fermiontype_factory.hpp"
 #include "Communicator/comm_io.hpp"
-#include "HMC/mdExec_leapfrog.h"
+#include "HMC/mdExec_leapfrog.hpp"
 /*!
  *@class IntegratorFactory
  *@brief Abstract Factory class for Molecular Dynamics Integrator
