@@ -10,26 +10,35 @@
 
 using namespace std;
 
+typedef ShiftField_up<GaugeFieldFormat> FieldUP;//shifter up   for matrices
+typedef ShiftField_dn<GaugeFieldFormat> FieldDN;//shifter down for matrices
+
 //======== Auxiliary routines
 
 const std::valarray<double> Dirac_Clover::anti_herm(const SUNmat& m){
   
   std::valarray<double> va(m.getva());
   for(int a=0; a<NC_; ++a){
-    va[2*(NC_*a+a)  ]= 0.0;
-    va[2*(NC_*a+a)+1]= 0.0;
-    
-    for(int b=0; b<a; ++b){
+    for(int b=a; b<NC_; ++b){
+      double re = va[2*(NC_*a+b)  ] - va[2*(NC_*b+a)  ];
+      double im = va[2*(NC_*a+b)+1] + va[2*(NC_*b+a)+1];
+      va[2*(NC_*a+b)  ] =  0.5 * re;
+      va[2*(NC_*a+b)+1] =  0.5 * im;
+      va[2*(NC_*b+a)  ] = -0.5 * re;
+      va[2*(NC_*b+a)+1] =  0.5 * im;
+
+      /*
       int ab = 2*(NC_*a+b);
       int ba = 2*(NC_*b+a);
       
       va[ab]-= va[ba];
-      va[ab]/= 2.0;
+      va[ab] *= 0.5;
       va[ba] =-va[ab];
       
       va[ab+1]+= va[ba+1];
-      va[ab+1]/= 2.0;
+      va[ab+1] *= 0.5;
       va[ba+1] = va[ab+1];
+      */
     }
   }
   return va;
@@ -137,16 +146,14 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
   Field wt(fsize_);
 
   //Actual calculation - START
-  v_out = 0.0;
-
   mult_isigma23(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
       v1 = u(d_Bx,site) * v(wt,s,site);
-      v_out.add(ff_->cslice(s,site), v1.getva());
+      v_out.set(ff_->cslice(s,site), v1.getva());
     }
   }
-
+  
   mult_isigma31(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
@@ -189,7 +196,7 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
     }
   }
  
-
+  
   v_out *= Dw->getKappa() * csw_;
 }
 
@@ -197,7 +204,7 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
 //====================================================================
 void Dirac_Clover::set_csw() {
 
-  _Message(1, "[DiracClover] Setting Field Strenght\n");
+  _Message(DEBUG_VERB_LEVEL, "[DiracClover] Setting Field Strenght\n");
 
   set_fieldstrength(d_Bx, 1, 2);
   set_fieldstrength(d_By, 2, 0);
@@ -218,6 +225,7 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   GaugeField1D Cup, Cdn;
   GaugeField1D U_mu((*u_)[gf_->dir_slice(mu)]);  /*< @brief \f$U_\mu(x)\f$ */
   GaugeField1D w1, w2, v1, v2;
+
   //.......................................
   
   Cup.U = stpl_->upper(*u_,mu,nu); // Upper staple V_+mu
@@ -240,9 +248,10 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   //    |     | w2
   //    +--<--+  
 
-  v1.U -= v2.U;  
-  sf_dn_[mu]->setf(v1.U);  //v1(x-mu)
-
+  v1.U -= v2.U; 
+ 
+  FieldDN DnMu(v1, mu);
+ 
   //    +--<--+ 
   //    |     | v1
   //    |     |
@@ -252,7 +261,7 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   //    +--<--+  
 
   //Sum up the four terms
-  w1.U += sf_dn_[mu]->getva();
+  w1.U += DnMu.getva();
 
   for(int site = 0; site < Nvol_; ++site){
     field_strength.U.set(field_strength.Format.cslice(0,site,0),
@@ -468,12 +477,9 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
 
   //Wilson term
   force = Dw->md_force(eta,zeta);
-
-
+ 
   force += md_force_block(eta, zeta);
   force += md_force_block(zeta, eta);
-  
-  //  force *= -2.0;  
 
   return force;
 
@@ -498,7 +504,6 @@ const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)cons
   SUNvec vect;
   //...................................................
   
-
   //Clover term: 8 terms, see Matsufuru-san's note
 
   for(int mu = 0; mu < Ndim_; ++mu){
@@ -522,7 +527,9 @@ const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)cons
       }
       external_prod(fce_tmp1.U, zeta, vright);
       fce_tmp2.U = fce_tmp1.U;
-
+ 
+  
+ 
       //term 2 --------------------------------------
       Cnu_up.U = stpl_->upper(*u_, nu, mu);
       sf_up_[nu]->setf(eta2);
@@ -538,9 +545,11 @@ const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)cons
 	  vect = (u(U_nu.U,site))* v(sf_up_[nu],s,site);
 	  vleft.set(ff_->cslice(s,site), vect.getva());
 	}
-      }
+      }// U_nu(x)*zeta(x+nu)
       external_prod(fce_tmp1.U, vleft, vright);
       fce_tmp2.U += fce_tmp1.U;
+
+   
 
       //term 4 and 8 --------------------------------------
       sf_up_[mu]->setf(eta2);
@@ -549,17 +558,19 @@ const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)cons
 	  vect = (u(U_mu.U,site))* v(sf_up_[mu],s,site);
 	  vright.set(ff_->cslice(s,site), vect.getva());
 	}
-      }    
+      } // U_mu (x) * eta2(x+mu)   
       sf_up_[mu]->setf(zeta);
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
 	  vect = (u(Cmu_up.U,site))* v(sf_up_[mu],s,site);
 	  vleft.set(ff_->cslice(s,site), vect.getva());
 	}
-      }    
+      } //  (V_+mu + V_-mu) * zeta(x+mu)
       external_prod(fce_tmp1.U, vleft, vright);
       fce_tmp2.U += fce_tmp1.U;
-   
+
+  
+
       //term 3 --------------------------------------
       sf_up_[nu]->setf(eta2);
       for(int site = 0; site<Nvol_; ++site){
@@ -567,7 +578,7 @@ const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)cons
 	  vect = (u(U_nu.U,site))* v(sf_up_[nu],s,site);
 	  vright.set(ff_->cslice(s,site), vect.getva());
 	}
-      }        
+      }       
       sf_up_[mu]->setf(vright); //U_nu(x+mu)*eta2(x+mu+nu)
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
@@ -593,6 +604,7 @@ const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)cons
       external_prod(fce_tmp1.U, vleft, vright);
       fce_tmp2.U += fce_tmp1.U;
 
+ 
       //term 6 --------------------------------------
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
@@ -639,14 +651,14 @@ const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)cons
 	  vleft.set(ff_->cslice(s,site), vect.getva());
 	}
       }       
-      sf_dn_[nu]->setf(vleft);
+      sf_dn_[nu]->setf(vleft);//sf_dn_[nu] = Udag_nu(x-nu)*U_mu(x-nu)*zeta(x+mu-nu)
       external_prod(fce_tmp1.U, (Field)(sf_dn_[nu]->getva()), vright);
       fce_tmp2.U -= fce_tmp1.U;   
      
-      fce_tmp2.U *= - Dw->getKappa() * csw_ / 8.0; 
+      fce_tmp2.U *=  Dw->getKappa() * csw_ / 4.0; 
 
       for(int site = 0; site<Nvol_; ++site)
-	force.U.set(force.Format.cslice(0,site,mu),anti_hermite(u(fce_tmp2.U,site))); 
+	force.U.add(force.Format.cslice(0,site,mu),anti_hermite(u(fce_tmp2.U,site))); 
 
     }
   }

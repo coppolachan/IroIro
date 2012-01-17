@@ -110,11 +110,13 @@ public:
      gsize_(gf_->size()){
 
     XML::read(node, "Csw", csw_,MANDATORY);
-
+    
     for(int d=0;d<Ndim_;++d){
       sf_up_.push_back(new shift_up(ff_,d));
       sf_dn_.push_back(new shift_dn(ff_,d));
     }
+
+    set_csw();
   }
 
   virtual ~Dirac_Clover(){

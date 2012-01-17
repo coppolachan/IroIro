@@ -34,15 +34,6 @@ double Action_Nf2::calc_H(){
 }
 
 Field Action_Nf2::md_force(const void*){
-  /* 
-  Field chi = D_->mult(DdagD_inv(phi_));
-  double cnorm = chi.norm();
-  int Nvol = CommonPrms::instance()->Nvol();
-  int Nc = CommonPrms::instance()->Nc();
-  int Nd = CommonPrms::instance()->Nd();
-  int dof = Nvol*Nc*Nd;
-  CCIO::cout<< "|chi|/dof="<<cnorm*cnorm/dof<<std::endl;
-  */
   Field eta = DdagD_inv(phi_);
   Field force = D_->md_force(eta,D_->mult(eta));
 #if VERBOSITY>=ACTION_VERB_LEVEL
