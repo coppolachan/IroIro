@@ -73,9 +73,8 @@ init(vector<int>& clock,const Field& U,const RandNum& rand){
   clock.resize(as_.size(),0.0);  
 
   *U_= U;                       // initialize U_ (common to actions) to U
+  notify_observers();
   MDutils::md_mom(P_,rand,gf_); // initialize P_ 
-
-  double pnorm = P_.norm();
 
   for(int lv = 0; lv< as_.size(); ++lv){
     for(int id = 0; id < as_.at(lv).size(); ++id){
@@ -84,6 +83,9 @@ init(vector<int>& clock,const Field& U,const RandNum& rand){
       as_[lv].at(id)->init(rand);
     }
   }
+
+
+
 }
 
 double MDexec_leapfrog::calc_H()const{

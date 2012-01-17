@@ -25,6 +25,7 @@ void Action_Nf2::init(const RandNum& rand,const void*){
   std::valarray<double> ph(fsize_);
   MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
   phi_= D_->mult_dag(Field(ph));
+ 
 }
 
 double Action_Nf2::calc_H(){ 

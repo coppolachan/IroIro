@@ -153,7 +153,7 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
       v_out.set(ff_->cslice(s,site), v1.getva());
     }
   }
-  
+   
   mult_isigma31(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < Ndim_; ++s){
@@ -195,7 +195,7 @@ void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
       v_out.add(ff_->cslice(s,site), v1.getva());
     }
   }
- 
+  
   
   v_out *= Dw->getKappa() * csw_;
 }
@@ -227,7 +227,7 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   GaugeField1D w1, w2, v1, v2;
 
   //.......................................
-  
+
   Cup.U = stpl_->upper(*u_,mu,nu); // Upper staple V_+mu
   Cdn.U = stpl_->lower(*u_,mu,nu); // Lower staple V_-mu
 
@@ -269,6 +269,7 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   }
 
   field_strength.U *= 0.25;
+
 }
 //====================================================================
 /*! @brief Calculates the product \f$\sigma_{\mu,\nu} v\f$, 
@@ -488,7 +489,8 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
 
 
 //====================================================================
-const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)const{
+const Field Dirac_Clover::md_force_block(const Field& eta,
+					 const Field& zeta)const{
   using namespace SUNmat_utils;
   using namespace SUNvec_utils;
 
@@ -655,7 +657,7 @@ const Field Dirac_Clover::md_force_block(const Field& eta,const Field& zeta)cons
       external_prod(fce_tmp1.U, (Field)(sf_dn_[nu]->getva()), vright);
       fce_tmp2.U -= fce_tmp1.U;   
      
-      fce_tmp2.U *=  Dw->getKappa() * csw_ / 4.0; 
+      fce_tmp2.U *= - Dw->getKappa() * csw_ / 8.0; 
 
       for(int site = 0; site<Nvol_; ++site)
 	force.U.add(force.Format.cslice(0,site,mu),anti_hermite(u(fce_tmp2.U,site))); 

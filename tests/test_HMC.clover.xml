@@ -12,7 +12,7 @@
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>1</Nsweeps>
-    <Thermalization>0</Thermalization>
+    <Thermalization>5</Thermalization>
     <SaveInterval>0</SaveInterval>
     <SavePrefix>HMCrect_</SavePrefix>
 
@@ -22,19 +22,19 @@
     </RandomNumberGen>
     
     <Integrator name="leapfrog_multistep">
-      <MDsteps>5</MDsteps>
+      <MDsteps>25</MDsteps>
       <step_size>0.02</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
 	<Action type="Fermion" name="TwoFlavors">
 	  <Kernel name="DiracClover">
-	    <mass>0.12</mass>
+	    <mass>0.166666666666</mass>
 	    <Csw>1.0</Csw>
 	  </Kernel>
 	  <Solver type="Solver_CG">
 	    <MaxIter>1000</MaxIter>
-	    <Precision>1e-24</Precision>
+	    <Precision>1e-20</Precision>
 	  </Solver>
 	</Action>
 	  <Action type="Gauge" name="Iwasaki">
