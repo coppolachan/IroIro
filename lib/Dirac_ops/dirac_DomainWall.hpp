@@ -88,6 +88,8 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     const Field mult_dag(const Field&) const;
     const Field left(const Field&) const;  
     const Field right(const Field&) const;  
+    const Field left_dag(const Field&) const;  
+    const Field right_dag(const Field&) const;  
   };
   
   class LUPrecond : public Preconditioner {
@@ -99,6 +101,8 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     const Field mult_dag(const Field&) const;
     const Field left(const Field&) const;  
     const Field right(const Field&) const; 
+    const Field left_dag(const Field&) const;  
+    const Field right_dag(const Field&) const;
   };
 
   Preconditioner* choose_Preconditioner(int PrecondID);

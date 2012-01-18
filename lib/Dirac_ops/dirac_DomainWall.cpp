@@ -177,6 +177,12 @@ const Field Dirac_optimalDomainWall::NoPrecond::left(const Field& f5) const{
 const Field Dirac_optimalDomainWall::NoPrecond::right(const Field& f5) const{
   return f5;
 }
+const Field Dirac_optimalDomainWall::NoPrecond::left_dag(const Field& f5) const{
+  return f5;
+}
+const Field Dirac_optimalDomainWall::NoPrecond::right_dag(const Field& f5) const{
+  return f5;
+}
 //-----------------------------------------------------------------------------
 const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
    
@@ -260,6 +266,10 @@ left(const Field& f5) const{
 
 const Field Dirac_optimalDomainWall::LUPrecond::
 right(const Field& f5) const{ return f5;}
+const Field Dirac_optimalDomainWall::LUPrecond::
+left_dag(const Field& f5) const{ return f5;}
+const Field Dirac_optimalDomainWall::LUPrecond::
+right_dag(const Field& f5) const{ return f5;}
 //--------------------------------------------------------------------------
 
 const Field Dirac_optimalDomainWall::mult(const Field& f5) const{ 
