@@ -121,6 +121,11 @@ public:
     }
   }
 
+  inline GaugeField& operator=(const GaugeField& rhs){
+    U = rhs.U;
+    return *this;
+  }
+
 
 };
 
@@ -155,6 +160,7 @@ public:
   inline GaugeField1D& operator=(const GaugeField1D& rhs){
     U = rhs.U;
     return *this;
+
   }
 
 

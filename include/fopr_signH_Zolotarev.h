@@ -4,28 +4,15 @@
 #ifndef FOPR_SIGN_ZOLOTAREV_INCLUDED
 #define FOPR_SIGN_ZOLOTAREV_INCLUDED
 
-#ifndef FOPR_INCLUDED
-#include "include/fopr.h"
-#endif
-
-#ifndef FIELD_INCLUDED
-#include "include/field.h"
-#endif
-
-#ifndef MULTISHIFTSOLVER_CG_INCLUDED
-#include "Solver/multiShiftSolver_CG.hpp"
-#endif
-
-#ifndef EIGENMODES_IRL_INCLUDED
-#include "EigenModes/eigenModes_IRL.h"
-#endif
-
-#ifndef SORTEIGEN_INCLUDED
-#include "EigenModes/sortEigen.h"
-#endif
-
-#include "include/format_F.h"
 #include <vector>
+
+#include "include/fopr.h"
+#include "include/field.h"
+#include "Solver/multiShiftSolver_CG.hpp"
+#include "EigenModes/eigenModes_IRL.hpp"
+#include "EigenModes/sortEigen.h"
+#include "include/format_F.h"
+
 
 struct EigenData{
   

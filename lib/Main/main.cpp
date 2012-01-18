@@ -10,8 +10,8 @@
  *
  * Current implementation:
  * - Actions (Gauge: Wilson, Rectangle, Fermion: 2 flavors, 2 flavors Ratio, Overlap)
- * - %Dirac operators (Wilson, Overlap, Even-odd preconditioned Wilson, Generalized Domain Wall (4d - 5d) )
- * - Linear Solvers (Conjugate Gradient Unpreconditioned, Conjuigate Gradient Preconditioned, BiConjugate Gradient)
+ * - %Dirac operators (Wilson, Clover, Overlap, Even-odd preconditioned Wilson, Generalized Domain Wall (4d - 5d) )
+ * - Linear Solvers (Conjugate Gradient Unpreconditioned, Conjugate Gradient Preconditioned, BiConjugate Gradient)
  * - Measurements (Quark Propagator [Wilson, Domain Wall], Gauge Quantities)
  * - Random Number Generators (Mersenne Twister)
  * - %XML control of program behavior

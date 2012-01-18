@@ -76,7 +76,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
 		../tests/test_Gauge.cpp			\
-		../tests/test_EigenModes_IRL.cpp	\
 		../tests/test_MultiShiftSolver.cpp	\
 		../tests/test_overlap.cpp		\
 		../tests/test_wilson_EvenOdd.cpp	\
@@ -121,7 +120,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Action/action_Nf2.hpp				\
 			Action/action_Nf2_ratio.hpp			\
 			Action/action_Nf2_DomainWall.hpp		\
-			EigenModes/eigenModes_IRL.h			\
+			EigenModes/eigenModes_IRL.hpp			\
 			EigenModes/sortEigen.h				\
 			EigenModes/eigenProc_Zolotarev.h		\
 			Measurements/GaugeM/staples.h				\
@@ -153,6 +152,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
 			Dirac_ops/dirac_DomainWall_4D.hpp	\
 			Dirac_ops/dirac_Preconditioners.hpp	\
+			Fields/field_expressions.hpp		\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.h		\
 			Solver/solver.hpp			\
@@ -176,7 +176,6 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/byteswap.hpp			\
 			Tools/gammaMatrices.hpp			\
 			../tests/tests_all.hpp			\
-			../tests/test_EigenModes_IRL.h		\
 			../tests/test_MultiShiftSolver.h	\
 			../tests/test_overlap.hpp		\
 			../tests/test_wilson_EvenOdd.hpp	\

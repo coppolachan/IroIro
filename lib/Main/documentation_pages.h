@@ -358,6 +358,21 @@
 
     Only the \c \<%mass\> section is necessary. The mass is related to \f$\kappa\f$ by the relation
     \f[ \kappa = \frac{1}{2(4+m)}\f]
+    
+    @section DClover DiracClover operator
+    
+    The structure that defines this operator is 
+
+    @verbatim
+    <... name="DiracClover">
+       <mass>0.1</mass>
+       <Csw>1.0</Csw>
+    </...>@endverbatim
+
+    Dots are used because the section name requesting the operator depends on the upper level in xml file (see for examples the \ref actionPage ). 
+
+    Besides the \c \<%mass\> section common to the Wilson operator the \c \<%Csw\> section defines the value of \f$c_{\rm sw}\f$
+
 
     @section DWilsonEO DiracWilson_EvenOdd operator
 

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [0.8], [cossu@post.kek.jp])
+AC_INIT([IroIro], [0.8.1], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 AC_CONFIG_HEADERS([include/config.h])
