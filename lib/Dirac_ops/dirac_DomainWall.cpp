@@ -5,6 +5,7 @@
  *
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall.hpp"
+#include "Fields/field_expressions.hpp"
 #include "Communicator/comm_io.hpp"
 #include<stdlib.h>
 #include<stdio.h>

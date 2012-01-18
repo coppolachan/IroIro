@@ -6,6 +6,7 @@
  */
 
 #include "include/fopr_chebyshev_DdagD.h"
+#include "Fields/field_expressions.hpp"
 
 const Field Fopr_Chebyshev_DdagD::mult(const Field& f) const{
 

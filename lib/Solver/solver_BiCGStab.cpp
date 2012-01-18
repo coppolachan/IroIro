@@ -5,6 +5,7 @@
  *
  */
 #include "solver_BiCGStab.h"
+#include "Fields/field_expressions.hpp"
 #include "Communicator/communicator.h"
 
 using CommunicatorItems::pprintf;

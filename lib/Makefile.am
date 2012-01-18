@@ -23,7 +23,8 @@ lib_LIBRARIES = libcommcode.a
 
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		../tests/test_HMC_noFactories.cpp \
-		Main/documentation_pages.h
+		Main/documentation_pages.h\
+		Fields/field.inl
 
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
@@ -43,8 +44,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
-		Dirac_ops/dirac_DomainWall.cpp   \
-		Dirac_ops/dirac_DomainWall_4D.cpp\
+		Dirac_ops/dirac_DomainWall.cpp   	\
+		Dirac_ops/dirac_DomainWall_4D.cpp	\
 		EigenModes/eigenModes_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/sortEigen.cpp		\

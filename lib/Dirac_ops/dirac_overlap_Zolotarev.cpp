@@ -2,6 +2,7 @@
 // dirac_overlap_Zolotarev.cpp
 //--------------------------------------------------------------------
 #include "dirac_overlap_Zolotarev.h"
+#include "Fields/field_expressions.hpp"
 using namespace std;
 
 const Field Dirac_overlap_Zolotarev::mult(const Field& f) const{

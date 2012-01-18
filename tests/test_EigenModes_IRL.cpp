@@ -3,6 +3,7 @@
 //------------------------------------------------------------------------
 #include "test_EigenModes_IRL.h"
 #include "EigenModes/eigenModes_IRL.h"
+#include "Fields/field_expressions.hpp"
 #include "EigenModes/sortEigen.h"
 #include "include/fopr.h"
 #include "include/fopr_chebyshev_DdagD.h"

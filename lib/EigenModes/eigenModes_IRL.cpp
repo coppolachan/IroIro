@@ -4,6 +4,7 @@
 #include "eigenModes_IRL.h"
 #include "sortEigen.h"
 #include "include/fopr.h"
+#include "Fields/field_expressions.hpp"
 #include <cassert>
 #include <iostream>
 #include <iomanip>
