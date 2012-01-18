@@ -17,7 +17,7 @@ AM_CPPFLAGS=-I$(top_srcdir)
 AM_CFLAGS  =-I$(top_srcdir)
 AM_LDFLAGS =
 
-bin_PROGRAMS = mainprog
+bin_PROGRAMS = main_hmc
 
 lib_LIBRARIES = libcommcode.a
 
@@ -83,8 +83,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		../tests/test_HMC_DomainWall.cpp	\
                 ../tests/test_HMC_EvenOdd.cpp
 
-mainprog_SOURCES = Main/main.cpp 				
-mainprog_LDADD   = libcommcode.a
+main_hmc_SOURCES = Main/main_hmc.cpp 				
+main_hmc_LDADD   = libcommcode.a
 
 include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
                         $(top_srcdir)/include/commandline.hpp           \

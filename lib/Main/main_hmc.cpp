@@ -1,0 +1,95 @@
+/*!
+ * @mainpage KEK common code for %Lattice QCD simulations
+ *
+ * \image html keklogo-c.jpg 
+ * \image html JICFUSsymbolmark170px.jpg 
+ *
+ * JLQCD branch of the code for lattice simulations of QCD  
+ *
+ * \section Features
+ *
+ * Current implementation:
+ * - Actions (Gauge: Wilson, Rectangle, Fermion: 2 flavors, 2 flavors Ratio, Overlap)
+ * - %Dirac operators (Wilson, Clover, Overlap, Even-odd preconditioned Wilson, Generalized Domain Wall (4d - 5d) )
+ * - Linear Solvers (Conjugate Gradient Unpreconditioned, Conjugate Gradient Preconditioned, BiConjugate Gradient)
+ * - Measurements (Quark Propagator [Wilson, Domain Wall], Gauge Quantities)
+ * - Random Number Generators (Mersenne Twister)
+ * - %XML control of program behavior
+ *
+ * \authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>,  Shoji Hashimoto, Jun-Ichi Noaki}
+ *
+ */
+#include "documentation_pages.h"
+//------------------------------------------------------------------------
+/*!
+ * @file main.cpp 
+ * @brief Main source code for running HMC updates
+ *
+ * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
+ */
+//------------------------------------------------------------------------
+
+
+
+#include "include/common_code.hpp"
+#include "include/commandline.hpp"
+#include "HMC/hmcGeneral.hpp"
+
+using namespace XML;
+
+int run(GaugeField, node);
+
+int main(int argc, char* argv[]){
+  int status;
+  CommandOptions Options = ReadCmdLine(argc, argv);
+  
+  //Reading input file
+  node top_node = getInputXML(Options.filename);  
+
+  //Initializing geometry using XML input
+  Geometry geom(top_node);
+
+  //Initialize GaugeField using XML input
+  GaugeField GaugeF(geom);
+  GaugeF.initialize(top_node);
+
+  node HMC_node = top_node;
+  descend(HMC_node, "HMC");
+  
+  status = run(GaugeF, HMC_node);
+
+  return status;
+}
+
+
+int run(GaugeField Gfield_, node HMC_node) {
+  CCIO::header("Starting HMC updater");
+
+  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
+  Integrators::Integr = 
+    Integrators::createIntegratorFactory(HMC_node, Gfield_.Format);
+
+  //Initialization of class
+  HMCgeneral hmc_general(HMC_node);
+
+  ////////////// HMC calculation /////////////////
+  double elapsed_time;
+  TIMING_START;
+  try{
+    CCIO::cout<< "-----  HMC starts\n"<<std::endl;
+    hmc_general.evolve(Gfield_.U);
+  }catch(const char* error){
+    CCIO::cerr << error << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  TIMING_END(elapsed_time);
+  ////////////// HMC calculation end /////////////////
+
+  CCIO::cout << "Total elapsed time (s): "<< elapsed_time/1000.0 << "\n";
+
+  CCIO::cout << "Saving configuration on disk in binary format\n";
+  CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "final_conf.bin");
+  return 0;
+}
+
