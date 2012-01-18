@@ -5,7 +5,6 @@
 
 */
 #include "dirac_DomainWall.hpp"
-#include "Fields/field_expressions.hpp"
 #include "include/field.h"
 
 //---------------------------------------------------------------------------
@@ -29,10 +28,9 @@ const Field Dirac_optimalDomainWall::NoPrecond::left_dag(const Field& f5) const{
 const Field Dirac_optimalDomainWall::NoPrecond::right_dag(const Field& f5) const{
   return f5;
 }
-
 //-----------------------------------------------------------------------------
 const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
-  using namespace FieldExpression;
+  
   assert(f5.size()==DWF_->fsize_);
   Field w5(DWF_->fsize_);
   w5 = DWF_->mult(f5);
@@ -63,8 +61,6 @@ const Field Dirac_optimalDomainWall::LUPrecond::mult_dag(const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::LUPrecond::LU(const Field& f5) const{
- using namespace FieldExpression;
-  
   assert(f5.size()==DWF_->fsize_);
   Field w5(DWF_->fsize_);
 
@@ -96,8 +92,6 @@ const Field Dirac_optimalDomainWall::LUPrecond::LU(const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::LUPrecond::LU_dag(const Field& f5) const{
- using namespace FieldExpression;
-  
   assert(f5.size()==DWF_->fsize_);
   Field w5(DWF_->fsize_);
 
@@ -129,10 +123,7 @@ const Field Dirac_optimalDomainWall::LUPrecond::LU_dag(const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::LUPrecond::LU_inv(const Field& f5) const{
- using namespace FieldExpression;
-  
   assert(f5.size()==DWF_->fsize_);
-  //  Field w5(DWF_->fsize_);
   Field w5(f5);
 
   for (int s=1; s<DWF_->N5_; ++s) {

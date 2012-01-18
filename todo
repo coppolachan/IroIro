@@ -16,4 +16,5 @@ Add new Mersenne Twister (should be faster)
 Add new exponential calculation (exact)
 
 Create XML by using a web interface
+Report useful information in the output about generating XML
 Use ggplot2 for automatic generation of graphs
