@@ -191,24 +191,28 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
-  //Preconditioned versions
-  const Field mult_prec(const Field& f)const {return f;}//empty now
-  const Field mult_dag_prec(const Field& f)const{return f;}//empty now
-  const Field left_precond(const Field& f)const{return f;}//empty now
-  const Field right_precond(const Field& f)const{return f;}//empty now
+  ////////////////////////////////////////Preconditioned versions
+  // Wilson operator has no defined preconditioner now 
+  const Field mult_prec     (const Field&f)const{return f;}
+  const Field mult_dag_prec (const Field&f)const{return f;}
+  const Field left_prec     (const Field&f)const{return f;}
+  const Field right_prec    (const Field&f)const{return f;}
+  const Field left_dag_prec (const Field&f)const{return f;}
+  const Field right_dag_prec(const Field&f)const{return f;}
+  //////////////////////////////////////////////////////////////
 
   const Field gamma5(const Field&) const;
   const Field proj_p(const Field&) const;
   const Field proj_m(const Field&) const;
 
-  void md_force_p(Field&,const Field& eta,const Field& zeta)const;
-  void md_force_m(Field&,const Field& eta,const Field& zeta)const;
-  const Field md_force(const Field& eta,const Field& zeta)const;
-
-  void update_internal_state(){};
+  const Field md_force(const Field& , const Field&)const;
+  void md_force_p(Field&,const Field&,const Field&)const;
+  void md_force_m(Field&,const Field&,const Field&)const;
   
   const double getKappa() const {return kpp_;}  
   const ffmt_t get_fermionFormat() const {return *ff_;}
   const std::vector<int> get_gsite() const;
+
+  void update_internal_state(){};
 };
 #endif

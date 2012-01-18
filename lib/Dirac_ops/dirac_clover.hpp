@@ -134,11 +134,15 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
-  //Preconditioned versions
-  const Field mult_prec(const Field& f)    const{return f;}//empty now
-  const Field mult_dag_prec(const Field& f)const{return f;}//empty now
-  const Field left_precond(const Field& f) const{return f;}//empty now
-  const Field right_precond(const Field& f)const{return f;}//empty now
+  ////////////////////////////////////////Preconditioned versions
+  // Clover operator has no preconditioner now 
+  const Field mult_prec     (const Field&f)const{return f;}
+  const Field mult_dag_prec (const Field&f)const{return f;}
+  const Field left_prec     (const Field&f)const{return f;}
+  const Field right_prec    (const Field&f)const{return f;}
+  const Field left_dag_prec (const Field&f)const{return f;}
+  const Field right_dag_prec(const Field&f)const{return f;}
+  //////////////////////////////////////////////////////////////
 
   const Field gamma5(const Field&) const;
 

@@ -27,16 +27,22 @@ public:
   virtual const std::vector<int> get_gsite() const = 0;
   virtual const Field operator()(int OpType, const Field&)const = 0;
 
-  virtual const Field mult(const Field&)const = 0;
+  virtual const Field mult    (const Field&)const = 0;
   virtual const Field mult_dag(const Field&)const = 0;
-  //Preconditioned versions
-  virtual const Field mult_prec(const Field&)const = 0;
+
+  /////////////////////////////////Preconditioned versions
+  virtual const Field mult_prec    (const Field&)const = 0;
   virtual const Field mult_dag_prec(const Field&)const = 0;
 
-  virtual const Field left_precond(const Field&)const = 0;
-  virtual const Field right_precond(const Field&)const = 0;
+  virtual const Field left_prec     (const Field&)const = 0;
+  virtual const Field right_prec    (const Field&)const = 0;
+  virtual const Field left_dag_prec (const Field&)const = 0;
+  virtual const Field right_dag_prec(const Field&)const = 0;
+  ////////////////////////////////////////////
 
-  virtual const Field md_force(const Field& eta,const Field& zeta)const = 0;
+  virtual const Field md_force(const Field& eta,
+			       const Field& zeta)const = 0;
+
   virtual void update_internal_state() = 0;
 };
 
