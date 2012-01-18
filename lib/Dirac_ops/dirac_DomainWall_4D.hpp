@@ -60,15 +60,14 @@ public:
   ~Dirac_optimalDomainWall_4D(){}
   
   size_t fsize() const {return Dodw_.f4size();}
-  size_t gsize() const {return Dodw_.gsize();}
+  size_t gsize() const {return Dodw_.gsize(); }
 
   const Field operator()(int, const Field&) const{}
 
-  const Field gamma5(const Field& f) const{ return Dodw_.gamma5_4d(f);}
-  const double getMass() const {return Dodw_.getMass();}
-
   const Field mult    (const Field&)const;
   const Field mult_dag(const Field&)const;
+  const Field gamma5  (const Field&f)const{ 
+    return Dodw_.gamma5_4d(f);}
 
   const Field mult_inv    (const Field&)const;
   const Field mult_dag_inv(const Field&)const;
@@ -88,7 +87,7 @@ public:
   const Format::Format_F get_fermionFormat() const {
     return Dodw_.get_fermionFormat();
   }
-
+  const double getMass() const {return Dodw_.getMass();}
   const std::vector<int> get_gsite() const{ return Dodw_.get_gsite();}
   const Field md_force(const Field& eta,
 		       const Field& zeta) const{}

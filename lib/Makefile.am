@@ -45,6 +45,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac_DomainWall.cpp   	\
+		Dirac_ops/dirac_DomainWall_Preconditioners.cpp   	\
 		Dirac_ops/dirac_DomainWall_4D.cpp	\
 		EigenModes/eigenModes_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
