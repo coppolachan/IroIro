@@ -341,6 +341,7 @@
 
     - \b DiracWilson (Wilson fermions Dirac operator, class Dirac_Wilson)
     - \b DiracWilson_EvenOdd (Wilson fermions Dirac operator with even-odd preconditioning, class Dirac_Wilson_EvenOdd)
+    - \b DiracClover (Clover type Fermions, class Dirac_Clover) 
     - \b DiracOptimalDomainWall4d (4 dimensional Domain Wall operator, class Dirac_optimalDomainWall_4D - uses the 5 dimensional operator as a member)
     - \b DiracOptimalDomainWall5d (5 dimensional representation of Domain Wall operator, class Dirac_optimalDomainWall)
 
@@ -357,6 +358,21 @@
 
     Only the \c \<%mass\> section is necessary. The mass is related to \f$\kappa\f$ by the relation
     \f[ \kappa = \frac{1}{2(4+m)}\f]
+    
+    @section DClover DiracClover operator
+    
+    The structure that defines this operator is 
+
+    @verbatim
+    <... name="DiracClover">
+       <mass>0.1</mass>
+       <Csw>1.0</Csw>
+    </...>@endverbatim
+
+    Dots are used because the section name requesting the operator depends on the upper level in xml file (see for examples the \ref actionPage ). 
+
+    Besides the \c \<%mass\> section common to the Wilson operator the \c \<%Csw\> section defines the value of \f$c_{\rm sw}\f$
+
 
     @section DWilsonEO DiracWilson_EvenOdd operator
 

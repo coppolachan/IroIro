@@ -9,12 +9,9 @@
 #include<vector>
 
 #include "mdExec.h"
-#include "Action/action.h"
+#include "Action/action.hpp"
 #include "Measurements/GaugeM/staples.h"
 #include "include/pugi_interface.h"
-
-typedef std::vector<Action*> ActionLevel;
-typedef std::vector<ActionLevel> ActionSet;
 
 struct MDexec_leapfrogParams{
   int Nexp;
@@ -37,13 +34,20 @@ private:
   const std::vector<int> Nrel_;
   const ActionSet as_;
   const Format::Format_G& gf_;
+  GaugeObservers ObserverSet;
   Field* const U_;
   Field P_;
 
   void update_P(int lv,double ep);
   void update_U(double ep);
   void integrator_step(int level,std::vector<int>& clock);
-  
+
+  // Observers controls
+  void register_observers();
+  void attach_observer(Observer*);
+  void detach_observer(Observer*){};
+  void notify_observers(); 
+
 public:
   MDexec_leapfrog(int Nexp, int MDiter, double step,
 		  const ActionSet as,
@@ -53,7 +57,10 @@ public:
     :as_(as),gf_(gf),
      Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
      Nrel_(multipliers),
-     U_(CommonF),P_(CommonF->size()){}
+     U_(CommonF),P_(CommonF->size())
+  {
+    register_observers();
+  }
   
   MDexec_leapfrog(XML::node node,
 		  const ActionSet as,
@@ -63,7 +70,10 @@ public:
     :as_(as),gf_(gf),
      Params(MDexec_leapfrogParams(node)),
      Nrel_(multipliers),
-     U_(CommonF),P_(CommonF->size()){}
+     U_(CommonF),P_(CommonF->size())
+  {
+    register_observers();
+  }
   
   void init(std::vector<int>& clock,const Field& U,const RandNum& rand);
   void integrator(int level,std::vector<int>& clock);

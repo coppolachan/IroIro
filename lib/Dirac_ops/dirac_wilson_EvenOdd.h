@@ -38,14 +38,18 @@ public:
   const Field mult(const Field&) const;
   const Field mult_dag(const Field&) const;
 
-  //Preconditioning methods
-  const Field mult_prec(const Field& f)const{return f;}//empty now 
-  const Field mult_dag_prec(const Field& f)const{return f;}//empty now 
-  const Field left_precond(const Field& f)const{return f;}//empty now
-  const Field right_precond(const Field& f)const{return f;}//empty now
-  //////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////Preconditioned versions
+  // EvenOdd operator has no preconditioner now 
+  const Field mult_prec     (const Field&f)const{return f;}
+  const Field mult_dag_prec (const Field&f)const{return f;}
+  const Field left_prec     (const Field&f)const{return f;}
+  const Field right_prec    (const Field&f)const{return f;}
+  const Field left_dag_prec (const Field&f)const{return f;}
+  const Field right_dag_prec(const Field&f)const{return f;}
+  //////////////////////////////////////////////////////////////
   
   const Field md_force(const Field&,const Field&) const;
+  void update_internal_state(){};
 
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 

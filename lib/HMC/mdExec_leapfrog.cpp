@@ -1,13 +1,43 @@
-//--------------------------------------------------------------------
-// mdExec_leapfrog.cpp
-//--------------------------------------------------------------------
-#include "mdExec_leapfrog.h"
+/*
+ * @file mdExec_leapfrog.cpp
+ *
+ * @brief Definition of MDexec_leapfrog class and Parameters 
+ */
+#include "mdExec_leapfrog.hpp"
 #include "include/field.h"
 #include "Tools/sunMatUtils.hpp"
+
 #include <iomanip>
 
 using namespace std;
 using namespace Format;
+
+void MDexec_leapfrog::register_observers(){
+  // Register actions 
+  for(int level = 0; level < as_.size(); ++level){
+    for(int id = 0; id < as_.at(level).size(); ++id){
+      _Message(DEBUG_VERB_LEVEL, "Registering Observers - Action level = "
+	       << level <<" Action# = "<< id<<"\n");
+      attach_observer(GaugeObservers, as_[level].at(id));
+    }
+  }
+  
+  // Register other observers
+  // .....
+  CCIO::cout << "[MDexec_leapfrog] Registered "<<GaugeObservers.size()<<" Gauge observers\n";
+}
+
+void MDexec_leapfrog::attach_observer(ObserverList& OList,
+				      Observer* Obs){
+  OList.push_back(Obs);
+}
+
+void MDexec_leapfrog::notify_observers(ObserverList& OList) {
+  for(int element; element < OList.size(); ++element) {
+    OList[element]->observer_update();
+  }
+}
+
 
 void MDexec_leapfrog::update_U(double ep){
   using namespace SUNmat_utils;
@@ -30,6 +60,8 @@ void MDexec_leapfrog::update_U(double ep){
       U_->set(gf_.islice(site,m),au.reunit().getva());
     }
   }
+
+  notify_observers(GaugeObservers);
 }
 
 void MDexec_leapfrog::update_P(int lv,double ep){
@@ -45,17 +77,19 @@ init(vector<int>& clock,const Field& U,const RandNum& rand){
   clock.resize(as_.size(),0.0);  
 
   *U_= U;                       // initialize U_ (common to actions) to U
+  notify_observers(GaugeObservers);
   MDutils::md_mom(P_,rand,gf_); // initialize P_ 
-
-  double pnorm = P_.norm();
-  CCIO::cout<<"P_->norm()= "<<pnorm<<endl;
 
   for(int lv = 0; lv< as_.size(); ++lv){
     for(int id = 0; id < as_.at(lv).size(); ++id){
-      CCIO::cout<<"initializing MD steps level= "<< lv <<" id= "<< id<<endl;
+      _Message(DEBUG_VERB_LEVEL, "Initialization of MD steps level = "<< 
+	       lv <<" Action# = "<< id<<"\n");
       as_[lv].at(id)->init(rand);
     }
   }
+
+
+
 }
 
 double MDexec_leapfrog::calc_H()const{

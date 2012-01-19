@@ -6,7 +6,7 @@
 #ifndef ACTION_GAUGE_CLOVER_INCLUDED
 #define ACTION_GAUGE_CLOVER_INCLUDED
 
-#include "action.h"
+#include "action.hpp"
 #include "include/common_fields.hpp"
 #include "Measurements/GaugeM/staples.h"
 #include "include/pugi_interface.h"
@@ -74,6 +74,7 @@ public:
   void  init(const RandNum&,const void* = 0){};
   double calc_H();
   Field  md_force(const void* = 0);
+  void observer_update(){};
   
   ActionGaugeRect(const double beta, 
 		  const double c_plaq_,

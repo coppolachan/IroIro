@@ -4,21 +4,21 @@
  * @brief Definition of class methods for Dirac_optimalDomainWall (5d operator)
  *
  *-------------------------------------------------------------------------*/
+#include <stdlib.h>
+#include <stdio.h>
+#include <cassert>
+#include <math.h>
+#include <gsl/gsl_sf_ellint.h>
+#include <gsl/gsl_sf_elljac.h>
+
 #include "dirac_DomainWall.hpp"
 #include "Communicator/comm_io.hpp"
-#include<stdlib.h>
-#include<stdio.h>
-#include <cassert>
-
-#include<math.h>
-
-#include<gsl/gsl_sf_ellint.h>
-#include<gsl/gsl_sf_elljac.h>
+#include "Fields/field_expressions.hpp"
 
 using namespace std;
 
-// Constructors
-//----------------------------------------------------------------------------
+// Constructors for DomainWall Parameters classes
+//======================================================================
 Dirac_optimalDomainWall_params::
 Dirac_optimalDomainWall_params(XML::node DWF_node){
   std::string Precond_string;
@@ -44,8 +44,7 @@ Dirac_optimalDomainWall_params(XML::node DWF_node){
     if (!strcmp(Approx_name, "Tanh")) 
       for (int s=0; s<N5dim_; ++s) omega_[s] = 1.0;
   }else{
-    CCIO::cout << "Error: missing [approximation] node or wrong entry" 
-	       <<std::endl;
+    CCIO::cout << "Error: missing [approximation] node or wrong entry\n";
     abort();
   }
   bs_.resize(N5dim_);
@@ -103,8 +102,8 @@ Dirac_optimalDomainWall_params(const Dirac_optimalDomainWall_params& Par,
     CCIO::cout<<"PauliVillars operator created"<<std::endl;
     mq_ = 1.0;
     break;
-    default:
-      abort();
+  default:
+    abort();
   }
 }
 
@@ -135,14 +134,12 @@ choose_Preconditioner(int PrecondID){
     return new NoPrecond(this);
   }
 }
-
 //-----------------------------------------------------------------------------
 const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
   using namespace FieldExpression;
   assert(f5.size()==DWF_->fsize_);
   Field w5(DWF_->fsize_);
   w5 = DWF_->mult(f5);
-
   //  Field t5(DWF_->fsize_);
   //  t5 = LU_inv(w5);
   //  Field u5(DWF_->fsize_);
@@ -150,7 +147,6 @@ const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
   //  CCIO::cout << "LU before " << w5.norm() << std::endl;
   //  CCIO::cout << "LUinv     " << t5.norm() << std::endl;
   //  CCIO::cout << "LU LUinv  " << u5.norm() << std::endl;
-
   return LU_inv(w5);
 }
 
@@ -372,8 +368,8 @@ void Dirac_optimalDomainWall::mult_dag_a0(Field& w5,const Field& f5) const{
     if(s==N5_-1)     lpf *= -Params.mq_;
     Field lmf = proj_m(get4d(f5,(s+1)%N5_));
     if(s==0) lmf *= -Params.mq_;
-
     Field v = get4d(f5,s);
+
     v *= Params.bs_[s];
     v += Params.cs_[s]*(lpf +lmf);
 
@@ -442,9 +438,12 @@ const Field Dirac_optimalDomainWall::R5(const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::R5g5(const Field& f5) const{
-  return R5(gamma5(f5)); 
+  //return R5(gamma5(f5)); 
+  Field w5(fsize_);
+  for(int s=0; s<N5_; ++s) set5d(w5,gamma5_4d(get4d(f5,s)),N5_-s-1);
+  return w5;
 }
-
+//======================================================================
 const Field Dirac_optimalDomainWall::Bproj( const Field& f5) const{ 
   Field f4 = proj_p(get4d(f5,N5_-1));
   f4 += proj_m(get4d(f5,0));
@@ -452,7 +451,7 @@ const Field Dirac_optimalDomainWall::Bproj( const Field& f5) const{
   //  f4 += proj_m(get4d(f5,N5_-1));
   return f4;
 }
-
+//======================================================================
 const Field Dirac_optimalDomainWall::Bproj_dag(const Field& f4) const{
   Field f5(fsize_);
   set5d(f5,proj_p(f4),N5_-1);
@@ -461,12 +460,12 @@ const Field Dirac_optimalDomainWall::Bproj_dag(const Field& f4) const{
   //  set5d(f5,proj_m(f4),N5_-1);
   return f5;
 }
-
+//======================================================================
 const Field Dirac_optimalDomainWall::proj_p(const Field& f4) const{
   Field w4 = Dw_->proj_p(f4);
   return w4;
 }
-
+//======================================================================
 const Field Dirac_optimalDomainWall::proj_m(const Field& f4) const{
   Field w4 = Dw_->proj_m(f4);
   return w4;
@@ -539,7 +538,10 @@ md_force(const Field& phi,const Field& psi) const{
   return force;
   */
 }
-
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+/*
+  @brief Namespace definining useful functions for DomainWallFermions
+*/
 namespace DomainWallFermions {
 
   inline double set_vs( int is, int ns, double kprime ){

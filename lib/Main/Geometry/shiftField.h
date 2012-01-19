@@ -268,6 +268,7 @@ public:
   void setf(const Field& field){ 
     field_= &(field.getva());
     com_->transfer_bk(bdry_,(*field_)[bd_],dir_);
+
   }
 
   void setf(const std::valarray<double>& field){

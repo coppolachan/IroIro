@@ -60,32 +60,39 @@ public:
   ~Dirac_optimalDomainWall_4D(){}
   
   size_t fsize() const {return Dodw_.f4size();}
-  size_t gsize() const {return Dodw_.gsize();}
+  size_t gsize() const {return Dodw_.gsize(); }
 
   const Field operator()(int, const Field&) const{}
 
-  const Field gamma5(const Field& f) const{ return Dodw_.gamma5_4d(f);}
-  const double getMass() const {return Dodw_.getMass();}
-
-  const Field mult(const Field&)const;
+  const Field mult    (const Field&)const;
   const Field mult_dag(const Field&)const;
-  //Preconditioned versions
-  const Field mult_prec(const Field&)const{}//empty now
-  const Field mult_dag_prec(const Field&)const{}//empty now
-  const Field left_precond(const Field&)const{}//empty now
-  const Field right_precond(const Field&)const{}//empty now
+  const Field gamma5  (const Field&f)const{ 
+    return Dodw_.gamma5_4d(f);}
 
-  const Field mult_inv(const Field&)const;
+  const Field mult_inv    (const Field&)const;
   const Field mult_dag_inv(const Field&)const;
+
+  ////////////////////////////////////////Preconditioned versions
+  // 4d operator has no preconditioner now 
+  const Field mult_prec     (const Field&f)const{return f;}
+  const Field mult_dag_prec (const Field&f)const{return f;}
+  const Field left_prec     (const Field&f)const{return f;}
+  const Field right_prec    (const Field&f)const{return f;}
+  const Field left_dag_prec (const Field&f)const{return f;}
+  const Field right_dag_prec(const Field&f)const{return f;}
+  //////////////////////////////////////////////////////////////
 
   const Field signKernel(const Field&)const;
 
   const Format::Format_F get_fermionFormat() const {
     return Dodw_.get_fermionFormat();
   }
-
+  const double getMass() const {return Dodw_.getMass();}
   const std::vector<int> get_gsite() const{ return Dodw_.get_gsite();}
-  const Field md_force( const Field& eta,const Field& zeta) const{}
+  const Field md_force(const Field& eta,
+		       const Field& zeta) const{}
+  
+  void update_internal_state(){};
 };
 
 #endif

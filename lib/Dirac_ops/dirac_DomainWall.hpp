@@ -91,6 +91,8 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     const Field mult_dag(const Field& f5) const{return DWF_->mult_dag(f5);}
     const Field left(const Field& f5) const{ return f5;}
     const Field right(const Field& f5) const{ return f5;}
+    const Field left_dag(const Field&) const;  
+    const Field right_dag(const Field&) const;  
   };
   
   class LUPrecond : public Preconditioner {
@@ -105,6 +107,8 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     const Field mult_dag(const Field&) const;
     const Field left(const Field& f5) const{return LU_inv(f5);}
     const Field right(const Field& f5) const{ return f5;}
+    const Field left_dag(const Field&) const;  
+    const Field right_dag(const Field&) const; 
   };
 
   void set_arrays();
@@ -296,10 +300,14 @@ public:
   const Field mult_hq_dinv(const Field& f5) const;
 
   //Preconditioning methods
-  const Field mult_prec    (const Field& f)const{return Precond_->mult(f);}
-  const Field mult_dag_prec(const Field& f)const{return Precond_->mult_dag(f);}
-  const Field left_precond (const Field& f)const{return Precond_->left(f);}
-  const Field right_precond(const Field& f)const{return Precond_->right(f);}
+  const Field mult_prec    (const Field& in)const{return Precond_->mult(in);}
+  const Field mult_dag_prec(const Field& in)const{return Precond_->mult_dag(in);}
+  const Field left_prec (const Field& in)const{return Precond_->left(in);}
+  const Field right_prec(const Field& in)const{return Precond_->right(in);}
+  const Field left_dag_prec (const Field& in)const{
+    return Precond_->left_dag(in);}
+  const Field right_dag_prec(const Field& in)const{
+    return Precond_->right_dag(in);}
   //////////////////////////////////////////////////////////////////////
 
   const Field Dminus(const Field&)const;
@@ -325,6 +333,10 @@ public:
     return Format::Format_F(ff.Nvol(),N5_);
   }
   const std::vector<int> get_gsite() const { return Dw_->get_gsite();}
+
+
+  void update_internal_state(){};
+
 };
 
 

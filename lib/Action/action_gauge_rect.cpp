@@ -4,7 +4,6 @@
   @brief Definition of the ActionGaugeRect class
 */
 #include "action_gauge_rect.hpp"
-#include "Communicator/comm_io.hpp"
 #include "Tools/sunMatUtils.hpp"
 
 using namespace std;
@@ -77,15 +76,15 @@ double ActionGaugeRect::calc_H(){
   double plaq = plaqF/Nc_;
   double rect = rectF/Nc_;
   
-  CCIO::cout<<" -- Plaquette = "<< plaq/(Nvol_*NP*Ndim_*(Ndim_-1.0)/2.0) << "\n";
+
 
   double Hgauge = Params.c_plaq*(Nvol_*NP*Ndim_*(Ndim_-1.0)/2.0 - plaq)
                 + Params.c_rect*(Nvol_*NP*Ndim_*(Ndim_-1.0)     - rect);
 
   Hgauge *= Params.beta;
     
-  _Message(ACTION_VERB_LEVEL, "[ActionGaugeRect] H = "<<Hgauge<<"\n");
-
+  _Message(ACTION_VERB_LEVEL, "    [ActionGaugeRect] H = "<<Hgauge<<"\n");
+  _Message(1,"    -- Plaquette = "<< plaq/(Nvol_*NP*Ndim_*(Ndim_-1.0)/2.0) << "\n");
   return Hgauge;
 }
 

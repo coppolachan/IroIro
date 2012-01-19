@@ -12,13 +12,11 @@ double ActionGaugeWilson::calc_H(){
   //Number of plaquettes
   int Nplaq = CommonPrms::instance()->NP()*Nvol_*Ndim_*(Ndim_-1)/2.0;
 
-  CCIO::cout<<" -- Plaquette = "<< plaq <<"\n";
- 
   double Hgauge = Params.beta*Nplaq*(1.0-plaq);
 
-#if VERBOSITY>=ACTION_VERB_LEVEL
-  CCIO::cout << "[ActionGaugeWilson] H = "<< Hgauge <<"\n";
-#endif
+  _Message(ACTION_VERB_LEVEL,"    [ActionGaugeWilson] H = "<< Hgauge <<"\n");
+  CCIO::cout<<"    -- Plaquette = "<< plaq <<"\n";
+  
   return Hgauge;
 }
 
@@ -45,9 +43,7 @@ Field ActionGaugeWilson::md_force(const void*){
 
   force.U *= 0.5*Params.beta/CommonPrms::instance()->Nc();
 
-#if VERBOSITY>=ACTION_VERB_LEVEL
-  monitor_force(force.U, "ActionGaugeWilson");
-#endif
+  _MonitorMsg(ACTION_VERB_LEVEL, Action, force.U, "ActionGaugeWilson");
 
   return force.U;
 }

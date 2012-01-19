@@ -8,14 +8,13 @@
 #ifndef DIRAC_CLOVER_INCLUDED
 #define DIRAC_CLOVER_INCLUDED
 
+#include "dirac.h"
 #include "include/format_F.h"
 #include "include/format_G.h"
+#include "Tools/sunVec.h"
 #include "Main/Geometry/shiftField.h"
 #include "Measurements/GaugeM/staples.h"
 #include "Dirac_ops/dirac_wilson.h"
-#include "Tools/sunVec.h"
-#include "dirac.h"
-
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
@@ -23,6 +22,9 @@ typedef Format::Format_G gfmt_t;
 typedef ShiftField_up<ffmt_t> shift_up;
 typedef ShiftField_dn<ffmt_t> shift_dn;
 
+/*! 
+  @ brief Class for the Clover %Dirac operator 
+*/
 class Dirac_Clover: public DiracWilsonLike{
  
 private:
@@ -65,6 +67,8 @@ private:
   void mult_isigma42(Field&, const Field&)const;
   void mult_isigma43(Field&, const Field&)const;
 
+  const Field md_force_block(const Field&,const Field&)const;
+
   GaugeField1D d_Bx, d_By, d_Bz, d_Ex, d_Ey, d_Ez;
   // Bx = -iF(1,2), By = -iF(2,1), -iBz = F(0,1)
   // Ex = -iF(4,0), Ey = -iF(4,1), Ez = -iF(4,2)
@@ -90,6 +94,7 @@ public:
       sf_up_.push_back(new shift_up(ff_,d));
       sf_dn_.push_back(new shift_dn(ff_,d));
     }
+    set_csw();
   }
 
   Dirac_Clover(const XML::node& node,const Field* u)
@@ -102,14 +107,14 @@ public:
      stpl_(new Staples(*gf_)),
      fsize_(ff_->size()),
      gsize_(gf_->size()){
-     
 
     XML::read(node, "Csw", csw_,MANDATORY);
-
+    
     for(int d=0;d<Ndim_;++d){
       sf_up_.push_back(new shift_up(ff_,d));
       sf_dn_.push_back(new shift_dn(ff_,d));
     }
+    set_csw();
   }
 
   virtual ~Dirac_Clover(){
@@ -129,17 +134,21 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
-  //Preconditioned versions
-  const Field mult_prec(const Field& f)const {return f;}//empty now
-  const Field mult_dag_prec(const Field& f)const{return f;}//empty now
-  const Field left_precond(const Field& f)const{return f;}//empty now
-  const Field right_precond(const Field& f)const{return f;}//empty now
+  ////////////////////////////////////////Preconditioned versions
+  // Clover operator has no preconditioner now 
+  const Field mult_prec     (const Field&f)const{return f;}
+  const Field mult_dag_prec (const Field&f)const{return f;}
+  const Field left_prec     (const Field&f)const{return f;}
+  const Field right_prec    (const Field&f)const{return f;}
+  const Field left_dag_prec (const Field&f)const{return f;}
+  const Field right_dag_prec(const Field&f)const{return f;}
+  //////////////////////////////////////////////////////////////
 
   const Field gamma5(const Field&) const;
 
   const Field md_force(const Field& eta,const Field& zeta)const;
 
-  void update_csw() {set_csw();}
+  void update_internal_state() {set_csw();}
   
   const std::vector<int> get_gsite() const;
   const ffmt_t get_fermionFormat() const {return *ff_;}

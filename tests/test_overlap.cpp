@@ -9,6 +9,7 @@
 #include "Measurements/FermionicM/qprop.h"
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
+#include "Fields/field_expressions.hpp"
 
 #include <stdio.h>
 

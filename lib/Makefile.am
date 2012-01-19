@@ -17,13 +17,14 @@ AM_CPPFLAGS=-I$(top_srcdir)
 AM_CFLAGS  =-I$(top_srcdir)
 AM_LDFLAGS =
 
-bin_PROGRAMS = mainprog
+bin_PROGRAMS = main_hmc
 
 lib_LIBRARIES = libcommcode.a
 
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		../tests/test_HMC_noFactories.cpp \
-		Main/documentation_pages.h
+		Main/documentation_pages.h\
+		Fields/field.inl
 
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
@@ -43,8 +44,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
-		Dirac_ops/dirac_DomainWall.cpp   \
-		Dirac_ops/dirac_DomainWall_4D.cpp\
+		Dirac_ops/dirac_DomainWall.cpp   	\
+		Dirac_ops/dirac_DomainWall_Preconditioners.cpp   	\
+		Dirac_ops/dirac_DomainWall_4D.cpp	\
 		EigenModes/eigenModes_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/sortEigen.cpp		\
@@ -75,7 +77,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
 		../tests/test_Gauge.cpp			\
-		../tests/test_EigenModes_IRL.cpp	\
 		../tests/test_MultiShiftSolver.cpp	\
 		../tests/test_overlap.cpp		\
 		../tests/test_wilson_EvenOdd.cpp	\
@@ -83,8 +84,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		../tests/test_HMC_DomainWall.cpp	\
                 ../tests/test_HMC_EvenOdd.cpp
 
-mainprog_SOURCES = Main/main.cpp 				
-mainprog_LDADD   = libcommcode.a
+main_hmc_SOURCES = Main/main_hmc.cpp 				
+main_hmc_LDADD   = libcommcode.a
 
 include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
                         $(top_srcdir)/include/commandline.hpp           \
@@ -108,18 +109,19 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/typeDefs.h		\
 			$(top_srcdir)/include/pugi_interface.h		\
 			$(top_srcdir)/include/singleton.h		\
+			$(top_srcdir)/include/observer.hpp		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
 			Action/action_gauge_rect.hpp			\
-			Action/action.h					\
+			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\
 			Action/action_fermiontype_factory.hpp		\
 			Action/action_Factory.hpp			\
-			Action/action_Nf2.h				\
-			Action/action_Nf2_ratio.h			\
-			Action/action_Nf2_DomainWall.h			\
-			EigenModes/eigenModes_IRL.h			\
+			Action/action_Nf2.hpp				\
+			Action/action_Nf2_ratio.hpp			\
+			Action/action_Nf2_DomainWall.hpp		\
+			EigenModes/eigenModes_IRL.hpp			\
 			EigenModes/sortEigen.h				\
 			EigenModes/eigenProc_Zolotarev.h		\
 			Measurements/GaugeM/staples.h				\
@@ -151,6 +153,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
 			Dirac_ops/dirac_DomainWall_4D.hpp	\
 			Dirac_ops/dirac_Preconditioners.hpp	\
+			Fields/field_expressions.hpp		\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.h		\
 			Solver/solver.hpp			\
@@ -159,7 +162,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Solver/multiShiftSolver.hpp		\
 			HMC/hmcGeneral.hpp			\
 			HMC/mdExec.h				\
-			HMC/mdExec_leapfrog.h			\
+			HMC/mdExec_leapfrog.hpp			\
 			HMC/mdExec_leapfrog_eigen.h		\
 			HMC/mdExec_Factory.hpp			\
 			Tools/sunMat.h				\
@@ -174,7 +177,6 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/byteswap.hpp			\
 			Tools/gammaMatrices.hpp			\
 			../tests/tests_all.hpp			\
-			../tests/test_EigenModes_IRL.h		\
 			../tests/test_MultiShiftSolver.h	\
 			../tests/test_overlap.hpp		\
 			../tests/test_wilson_EvenOdd.hpp	\

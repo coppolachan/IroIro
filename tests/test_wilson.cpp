@@ -26,6 +26,10 @@ int Test_Wilson::run(){
   QuarkPropagator* QP;
   XML::descend(Wilson_node_, "QuarkPropagator");
 
+  Staples Staple(conf_.Format);
+  CCIO::cout << "Plaquette : " << Staple.plaquette(conf_.U) << std::endl;
+
+
   QuarkPropagatorFactory* QP_Factory = 
     QuarkPropagators::createQuarkPropagatorFactory(Wilson_node_);
   //////////////////////////////////////
@@ -45,39 +49,51 @@ int Test_Wilson::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
+  // Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
+  Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
+  Kernel->update_internal_state();
 
   // Solver definition
-    int    Niter= 1000;
-    double stop_cond = 1.0e-24;
+  int    Niter= 1000;
+  double stop_cond = 1.0e-24;
   //Solver* SolverBiCGstab = new Solver_BiCGStab(stop_cond,
   //   					       Niter,
   //   					       new Fopr_DdagD(Kernel));
-
-  Solver_CG* SolverCG = new Solver_CG(stop_cond,
-  				       Niter,
-  				       new Fopr_DdagD(Kernel));
   
-   // quark propagator
-   // we force a type check on the Kernel (must be DdagD type).
-   Qprop QuarkPropagator(Kernel,SolverCG);
-   QuarkPropagator.calc(sq,src);
-  //---------------------------------------------------------------------------
+  Solver_CG* SolverCG = new Solver_CG(stop_cond,
+				      Niter,
+				      new Fopr_DdagD(Kernel));
 
+  for(int s = 0; s < 4; ++s){
+    for(int c = 0; c < 3; ++c){
+      std::cout << "Force ["<<s<<","<<c<<"] "
+		<<(Kernel->md_force(src.mksrc(s,c), Kernel->mult(src.mksrc(s,c))))[1]
+		<< std::endl;
+    }
+  }
+  // quark propagator
+  // we force a type check on the Kernel (must be DdagD type).
+ 
+  
+
+  Qprop QuarkPropagator(Kernel,SolverCG);
+  QuarkPropagator.calc(sq,src);
+  //---------------------------------------------------------------------------
+  
   //  QP = QP_Factory->getQuarkProp(conf_);
   //  QP->calc(sq,src);
-
+  
   CCIO::cout<<"quark propagator obtained"<<std::endl;
   
   // meson correlators
-  
+  /*
   GammaMatrices::Unit Gamma;//pion
   MesonCorrelator meson(Gamma,Gamma);
   vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
   while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);
-  
+  */
 
   return 0;
 }

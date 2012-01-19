@@ -8,7 +8,10 @@
 #define ACTION_INCLUDED
 
 #include <string>
+
 #include "include/macros.hpp"
+#include "include/observer.hpp"
+
 
 class Field;
 class RandNum;
@@ -19,7 +22,7 @@ class RandNum;
  * 
  * Action class is defined 
  */
-class Action{
+class Action : public Observer {
 public:
   /*!
     Initializes the Action class

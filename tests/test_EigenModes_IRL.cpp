@@ -1,8 +1,9 @@
 //------------------------------------------------------------------------
 // test_EigenModes_IRL.cpp
 //------------------------------------------------------------------------
-#include "test_EigenModes_IRL.h"
-#include "EigenModes/eigenModes_IRL.h"
+#include "test_EigenModes_IRL.hpp"
+#include "EigenModes/eigenModes_IRL.hpp"
+#include "Fields/field_expressions.hpp"
 #include "EigenModes/sortEigen.h"
 #include "include/fopr.h"
 #include "include/fopr_chebyshev_DdagD.h"
@@ -13,7 +14,7 @@ using CommunicatorItems::pprintf;
 using namespace std;
 using namespace FieldExpression;
 
-int Test_EigenModes_IRL::run() {
+int Test_EigenModes_IRL::run(XML::node node) {
   lowlying();
   highest();
   chebyshev();
@@ -26,7 +27,7 @@ int Test_EigenModes_IRL::lowlying(){
   double M0  = 1.6;
   double CKs  = 0.5/(4.0-M0);
     
-  Fopr_H Hw(new Dirac_Wilson(CKs, &u_));
+  Fopr_H Hw(new Dirac_Wilson(CKs, &(u_.U)));
   SortEigen_low sort;
   int    Nk = 20;
   int    Np = 50;
@@ -63,7 +64,7 @@ int Test_EigenModes_IRL::highest(){
   double CKs  = 0.5/(4.0-M0);
 
   
-  Fopr_H Hw(new Dirac_Wilson(CKs,&u_));
+  Fopr_H Hw(new Dirac_Wilson(CKs,&(u_.U)));
   SortEigen_high sort;
   int    Nk = 20;
   int    Np = 20;
@@ -105,7 +106,7 @@ int Test_EigenModes_IRL::chebyshev()
   double M0  = 1.6;
   double CKs  = 0.5/(4.0-M0);
 
-  DiracWilsonLike* Kernel = new Dirac_Wilson(CKs, &u_);
+  DiracWilsonLike* Kernel = new Dirac_Wilson(CKs, &(u_.U));
 
   Fopr_Chebyshev_DdagD Tn_DdagD(Npoly,
 				vthrs,

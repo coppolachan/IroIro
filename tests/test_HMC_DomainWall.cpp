@@ -15,13 +15,8 @@
 
 #include "HMC/hmcGeneral.hpp"
 #include "test_HMC_DomainWall.hpp"
-//<<<<<<< HEAD
-//#include "Action/action_gauge_wilson.hpp"
-//#include "Action/action_Nf2_DomainWall.h"
-//=======
 #include "Action/action_gauge_wilson.hpp"
-#include "Action/action_Nf2_ratio.h"
-//>>>>>>> origin/master
+#include "Action/action_Nf2_ratio.hpp"
 #include "Communicator/comm_io.hpp"
 
 using namespace std;

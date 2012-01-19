@@ -121,6 +121,11 @@ public:
     }
   }
 
+  inline GaugeField& operator=(const GaugeField& rhs){
+    U = rhs.U;
+    return *this;
+  }
+
 
 };
 
@@ -151,6 +156,13 @@ public:
   void set_matrix(int site, SUNmat matrix) {
     U.set(Format.cslice(0,site),matrix.getva());
   }
+
+  inline GaugeField1D& operator=(const GaugeField1D& rhs){
+    U = rhs.U;
+    return *this;
+
+  }
+
 
 };
 

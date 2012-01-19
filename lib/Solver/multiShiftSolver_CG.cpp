@@ -5,6 +5,7 @@
  *
  */
 #include "multiShiftSolver_CG.hpp"
+#include "Fields/field_expressions.hpp"
 #include <stdio.h>
 
 using namespace std;

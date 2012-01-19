@@ -16,8 +16,8 @@
 #include "HMC/hmcGeneral.hpp"
 #include "test_HMC_EvenOdd.hpp"
 #include "Action/action_gauge_wilson.hpp"
-#include "Action/action_Nf2.h"
-#include "Action/action_Nf2_ratio.h"
+#include "Action/action_Nf2.hpp"
+#include "Action/action_Nf2_ratio.hpp"
 #include "Communicator/comm_io.hpp"
 
 using namespace std;

@@ -44,23 +44,30 @@ public:
 
   const Field operator()(int, const Field&) const{}//temporary
 
-  const Field mult(const Field& f) const;
+  const Field mult    (const Field& f) const;
   const Field mult_dag(const Field& f) const;
+  const Field gamma5  (const Field& f) const;
 
-  //Preconditioned versions
-  const Field mult_prec(const Field& f) const {}//empty now
-  const Field mult_dag_prec(const Field& f) const{}//empty now
-  const Field left_precond(const Field&)const{}//empty now
-  const Field right_precond(const Field&)const{}//empty now
+  ////////////////////////////////////////Preconditioned versions
+  // 4d operator has no preconditioner now 
+  const Field mult_prec     (const Field&f)const{return f;}
+  const Field mult_dag_prec (const Field&f)const{return f;}
+  const Field left_prec     (const Field&f)const{return f;}
+  const Field right_prec    (const Field&f)const{return f;}
+  const Field left_dag_prec (const Field&f)const{return f;}
+  const Field right_dag_prec(const Field&f)const{return f;}
+  //////////////////////////////////////////////////////////////
 
   const Field md_force(const Field& eta,const Field& zeta) const;
-  const Field gamma5(const Field& f) const;
+
   const Format::Format_F get_fermionFormat() const{
     return Fopr_signH->get_fermionFormat();
   }
   const std::vector<int> get_gsite() const {
     return Fopr_signH->get_gsite();
   }
+
+  void update_internal_state(){};
 };
 
 #endif

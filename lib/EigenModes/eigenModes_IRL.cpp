@@ -1,9 +1,10 @@
 //---------------------------------------------------------------------
 // eigenModes_IRL.cpp
 //---------------------------------------------------------------------
-#include "eigenModes_IRL.h"
+#include "eigenModes_IRL.hpp"
 #include "sortEigen.h"
 #include "include/fopr.h"
+#include "Fields/field_expressions.hpp"
 #include <cassert>
 #include <iostream>
 #include <iomanip>
