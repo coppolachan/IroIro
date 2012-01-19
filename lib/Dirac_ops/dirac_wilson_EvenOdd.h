@@ -14,6 +14,9 @@ private:
   const Dirac_Wilson Deo_;
   const Dirac_Wilson Doe_;
   //const Dirac_Wilson Dw_;
+
+  void md_force_eo(Field&,const Field&,const Field&)const;
+  void md_force_oe(Field&,const Field&,const Field&)const;
 public:
   Dirac_Wilson_EvenOdd(double mass,const Field* u)
   //:Deo_(mass,u,Dw::EOtag()),Doe_(mass,u,Dw::OEtag()),Dw_(mass,u){}
@@ -36,8 +39,8 @@ public:
   const Field mult_dag(const Field&) const;
 
   //Preconditioning methods
-  const Field mult_prec(const Field& f)const{return f;}//empty now preconditioned 
-  const Field mult_dag_prec(const Field& f)const{return f;}//empty now preconditioned
+  const Field mult_prec(const Field& f)const{return f;}//empty now 
+  const Field mult_dag_prec(const Field& f)const{return f;}//empty now 
   const Field left_precond(const Field& f)const{return f;}//empty now
   const Field right_precond(const Field& f)const{return f;}//empty now
   //////////////////////////////////////////////////////////////////////

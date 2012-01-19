@@ -307,7 +307,7 @@ namespace FieldExpression{
     AdSbMc(const Field& Lhs,const R& Rhs):lhs(Lhs),rhs(Rhs){}
     Field eval() const{return Op::calc(lhs,rhs.eval());}
   };
-  
+
   template<typename L>
   class AdSbMc<L,Mul,double>{
   private:  
@@ -317,7 +317,7 @@ namespace FieldExpression{
     AdSbMc(const L& Lhs,const double& Rhs):lhs(Lhs),rhs(Rhs){}
     Field eval() const{return Mul::calc(lhs.eval(),rhs);}
   };
-  
+
   template<>
   class AdSbMc<Field,Mul,double>{
   private:  
