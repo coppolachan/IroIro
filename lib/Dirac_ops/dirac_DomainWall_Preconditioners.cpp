@@ -30,34 +30,21 @@ const Field Dirac_optimalDomainWall::NoPrecond::right_dag(const Field& f5) const
 }
 //-----------------------------------------------------------------------------
 const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
-  
   assert(f5.size()==DWF_->fsize_);
+  Field t5(DWF_->fsize_);
   Field w5(DWF_->fsize_);
-  w5 = DWF_->mult(f5);
-
-  //  Field t5(DWF_->fsize_);
-  //  t5 = LU_inv(w5);
-  //  Field u5(DWF_->fsize_);
-  //  u5 = LU(t5);
-  //  CCIO::cout << "LU before " << w5.norm() << std::endl;
-  //  CCIO::cout << "LUinv     " << t5.norm() << std::endl;
-  //  CCIO::cout << "LU LUinv  " << u5.norm() << std::endl;
-
-  return LU_inv(w5);
+  t5 = right(f5);
+  w5 = DWF_->mult(t5);
+  return left(w5);
 }
 
 const Field Dirac_optimalDomainWall::LUPrecond::mult_dag(const Field& f5) const{
   assert(f5.size()==DWF_->fsize_);
   Field t5(DWF_->fsize_);
-  t5 = LU_dag_inv(f5);
-
-  //  Field u5(DWF_->fsize_);
-  //  u5 = LU_dag(t5);
-  //  CCIO::cout << "LUdag before    " << f5.norm() << std::endl;
-  //  CCIO::cout << "LUdaginv        " << t5.norm() << std::endl;
-  //  CCIO::cout << "LUdag LUdaginv  " << u5.norm() << std::endl;
-
-  return DWF_->mult_dag(t5); 
+  Field w5(DWF_->fsize_);
+  t5 = left_dag(f5);
+  w5 = DWF_->mult_dag(t5);
+  return right_dag(w5); 
 }
 
 const Field Dirac_optimalDomainWall::LUPrecond::LU(const Field& f5) const{
@@ -204,19 +191,19 @@ const Field Dirac_optimalDomainWall::LUPrecond::LU_dag_inv(const Field& f5) cons
 }
 
 const Field Dirac_optimalDomainWall::LUPrecond::left(const Field& f5) const{
-  return LU_inv(f5);
-  //  return f5;
+  //  return LU_inv(f5);
+  return f5;
 }
 const Field Dirac_optimalDomainWall::LUPrecond::right(const Field& f5) const{
-  return f5;
-  //  return LU_inv(f5);
+  //  return f5;
+  return LU_inv(f5);
 }
 const Field Dirac_optimalDomainWall::LUPrecond::left_dag(const Field& f5) const{
-  return LU_dag_inv(f5);
-  //  return f5;
+  //  return LU_dag_inv(f5);
+  return f5;
 }
 const Field Dirac_optimalDomainWall::LUPrecond::right_dag(const Field& f5) const{
-  return f5;
-  //  return LU_dag_inv(f5);
+  //  return f5;
+  return LU_dag_inv(f5);
 }
 //-------------------------------------------------------------------------

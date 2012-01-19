@@ -63,18 +63,19 @@ int Test_ResMass::run(XML::node node) {
       //Contracting 
       mres_numerator += sq[c+3*s]*Delta;          // Re(sq[],Delta)    sq[]=D^-1*source
       im_check       += sq[c+3*s].im_prod(Delta); //should be always zero (just a check)
-      CCIO::cout << "Numerator = ("<<mres_numerator<<","<<im_check<<")\n";
       
       //Denominator
       Denom = sq[c+3*s];
       Denom -= SourceObj->mksrc(s,c); // (D^-1 - 1)*src
       Denom /= (1.0 - (QuarkPropDW->getKernel()->getMass()) );
       mres_denominator += Denom*Denom;
-      CCIO::cout << "Denominator = " << mres_denominator << std::endl;
-      CCIO::cout << "Residual mass = " << mres_numerator/mres_denominator << std::endl;
     }
   }
-  
+
+  CCIO::cout << "Numerator = ("<<mres_numerator<<","<<im_check<<")\n";
+  CCIO::cout << "Denominator = " << mres_denominator << std::endl;
+  CCIO::cout << "Residual mass = " << mres_numerator/mres_denominator << std::endl;
+
 
   return 0;
 }
