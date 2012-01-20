@@ -47,7 +47,6 @@ Dirac_optimalDomainWall_params(XML::node DWF_node){
     CCIO::cout << "Error: missing [approximation] node or wrong entry\n";
     abort();
   }
-  
   bs_.resize(N5dim_);
   cs_.resize(N5dim_);
   dp_.resize(N5dim_);
@@ -107,18 +106,9 @@ Dirac_optimalDomainWall_params(const Dirac_optimalDomainWall_params& Par,
     abort();
   }
 }
-//======================================================================
-Dirac_optimalDomainWall::Dirac_optimalDomainWall(XML::node DWF_node,
-						 const Dirac_Wilson* Kernel)
-  :Params(Dirac_optimalDomainWall_params(DWF_node)),
-   Dw_(Kernel),
-   N5_(Params.omega_.size()),
-   f4size_(Dw_->fsize()),
-   fsize_(f4size_*N5_),
-   gsize_(Dw_->gsize()),
-   M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
-   Precond_(choose_Preconditioner(Params.Preconditioning_)){
-  
+
+//-----------------------------------------------------------------------------
+void Dirac_optimalDomainWall::set_arrays(){
   for (int s = 0; s < N5_; ++s) {
     Params.bs_[s] = (Params.b_*Params.omega_[s]+Params.c_)/2.0;
     Params.cs_[s] = (Params.b_*Params.omega_[s]-Params.c_)/2.0;
@@ -131,52 +121,8 @@ Dirac_optimalDomainWall::Dirac_optimalDomainWall(XML::node DWF_node,
     Params.es_[s] = Params.es_[s-1]*(Params.dm_[s-1]/Params.dp_[s]);
     Params.fs_[s] = Params.fs_[s-1]*(Params.dm_[s]/Params.dp_[s-1]);
   }
-
-  _Message(DEBUG_VERB_LEVEL, "Created Dirac_optimalDomainWall");
-
 }
-//======================================================================
-Dirac_optimalDomainWall::
-Dirac_optimalDomainWall(Dirac_optimalDomainWall_params Prm,
-			const Dirac_Wilson* Kernel)
-  :Params(Prm),
-   Dw_(Kernel),
-   N5_(Params.omega_.size()),
-   f4size_(Dw_->fsize()),
-   fsize_(f4size_*N5_),
-   gsize_(Dw_->gsize()),
-   M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
-   Precond_(choose_Preconditioner(Params.Preconditioning_)){} 
-//======================================================================
-Dirac_optimalDomainWall::
-Dirac_optimalDomainWall(const double b,
-			const double c,
-			const double mq,
-			const std::vector<double>& omega,
-			const Dirac_Wilson* Kernel,
-			Preconditioners Precond)
-  :Params(b,c,mq,omega),
-   Dw_(Kernel),
-   N5_(Params.omega_.size()),
-   f4size_(Dw_->fsize()),
-   fsize_(f4size_*N5_),
-   gsize_(Dw_->gsize()),
-   M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
-   Precond_(choose_Preconditioner(Precond)){
-  for (int s = 0; s < omega.size(); ++s) {
-    Params.bs_[s] = (b*omega[s]+c)/2.0;
-    Params.cs_[s] = (b*omega[s]-c)/2.0;
-    Params.dp_[s] = Params.bs_[s]*(4.0+M0_)+1.0;
-    Params.dm_[s] = 1.0-Params.cs_[s]*(4.0+M0_);
-  }
-  Params.es_[0] = Params.dm_[N5_-1]/Params.dp_[0];
-  Params.fs_[0] = Params.dm_[0];
-  for (int s = 1; s < N5_-1; ++s) {
-    Params.es_[s] = Params.es_[s-1]*(Params.dm_[s-1]/Params.dp_[s]);
-    Params.fs_[s] = Params.fs_[s-1]*(Params.dm_[s]/Params.dp_[s-1]);
-  }
-}
-//======================================================================
+
 Preconditioner* Dirac_optimalDomainWall::
 choose_Preconditioner(int PrecondID){
   switch (PrecondID){
@@ -188,47 +134,258 @@ choose_Preconditioner(int PrecondID){
     return new NoPrecond(this);
   }
 }
-//======================================================================
-const Field Dirac_optimalDomainWall::mult(const Field& f5) const{ 
+//-----------------------------------------------------------------------------
+const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
   using namespace FieldExpression;
+  assert(f5.size()==DWF_->fsize_);
+  Field w5(DWF_->fsize_);
+  w5 = DWF_->mult(f5);
+  //  Field t5(DWF_->fsize_);
+  //  t5 = LU_inv(w5);
+  //  Field u5(DWF_->fsize_);
+  //  u5 = LU(t5);
+  //  CCIO::cout << "LU before " << w5.norm() << std::endl;
+  //  CCIO::cout << "LUinv     " << t5.norm() << std::endl;
+  //  CCIO::cout << "LU LUinv  " << u5.norm() << std::endl;
+  return LU_inv(w5);
+}
+
+const Field Dirac_optimalDomainWall::LUPrecond::mult_dag(const Field& f5) const{
+  assert(f5.size()==DWF_->fsize_);
+  Field t5(DWF_->fsize_);
+  t5 = LU_dinv(f5);
+  //  Field u5(DWF_->fsize_);
+  //  u5 = LU_dag(t5);
+  //  CCIO::cout << "LUdag before    " << f5.norm() << std::endl;
+  //  CCIO::cout << "LUdaginv        " << t5.norm() << std::endl;
+  //  CCIO::cout << "LUdag LUdaginv  " << u5.norm() << std::endl;
+  return DWF_->mult_dag(t5); 
+}
+
+const Field Dirac_optimalDomainWall::mult_hq(const Field& f5) const{
+  using namespace FieldExpression;
+
   assert(f5.size()==fsize_);
-  
   Field w5(fsize_);
 
   for(int s=0; s<N5_; ++s) {
-    Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
-    if(s == 0)     lpf *= -Params.mq_;
-    Field lmf = proj_m(get4d(f5,(s+1)%N5_));
-    if(s == N5_-1) lmf *= -Params.mq_;
-      
-    Field w = get4d(f5,s);
-    w -= lpf + lmf;
-    // w -= lpf;
-    // w -= lmf;
+    Field v = get4d(f5,s);
+    v *= Params.dp_[s];
+    set5d(w5,v,s);
+  }
+  for(int s=0; s<N5_-1; ++s) {
+    Field v = proj_m(get4d(f5,s+1));
+    v *= -Params.dm_[s];
+    add5d(w5,v,s);
+  }
+  for(int s=1; s<N5_; ++s) {
+    Field v = proj_p(get4d(f5,s-1));
+    v *= -Params.dm_[s];
+    add5d(w5,v,s);
+  }
 
+  Field v = proj_p(get4d(f5,N5_-1));
+  v *= Params.mq_*Params.dm_[0];
+  add5d(w5,v,0);
+
+  v = proj_m(get4d(f5,0));
+  v *= Params.mq_*Params.dm_[N5_-1];
+  add5d(w5,v,N5_-1);
+
+  return w5;
+}
+
+const Field Dirac_optimalDomainWall::mult_hq_dag(const Field& f5) const{
+  return R5(mult_hq(R5(f5)));
+  /*
+  using namespace FieldExpression;
+
+  assert(f5.size()==fsize_);
+  Field w5(fsize_);
+
+  for(int s=0; s<N5_; ++s){
+    Field v = get4d(f5,s);
+    v *= Params.dp_[s];
+    set5d(w5,v,s);
+  }
+  for(int s=0; s<N5_-1; ++s){
+    Field v = proj_p(get4d(f5,s+1));
+    v *= -Params.dm_[s+1];
+    add5d(w5,v,s);
+  }
+  for(int s=1; s<N5_; ++s){
+    Field v = proj_m(get4d(f5,s-1));
+    v *= -Params.dm_[s-1];
+    add5d(w5,v,s);
+  }
+  Field v = proj_m(get4d(f5,N5_-1));
+  v *= Params.mq_*Params.dm_[N5_-1];
+  add5d(w5,v,0);
+
+  v = proj_p(get4d(f5,0));
+  v *= Params.mq_*Params.dm_[0];
+  add5d(w5,v,N5_-1);
+
+  return w5;
+  */
+}
+
+const Field Dirac_optimalDomainWall::mult_hq_inv(const Field& f5) const{
+ using namespace FieldExpression;
+
+  assert(f5.size()==fsize_);
+  Field w5(f5);
+
+  for (int s=1; s<N5_; ++s) {
+    Field lpf =  proj_p(get4d(w5,s-1));
+    lpf *= (Params.dm_[s]/Params.dp_[s-1]);
+    add5d(w5,lpf,s);
+  }
+  for (int s=0; s< N5_-1; ++s) {
+    Field ey = proj_m(get4d(w5,s));
+    ey *= -Params.mq_* Params.es_[s];
+    add5d(w5,ey,N5_-1);
+  }
+
+  Field v =  get4d(w5,N5_-1);
+  v *= 1.0/(Params.dp_[N5_-1]
+            +Params.mq_*Params.dm_[N5_-2]*Params.es_[N5_-2]);
+  set5d(w5,v,N5_-1);
+  for(int s=N5_-2; s>=0; --s) {
+    Field lmf = proj_m(get4d(w5,s+1));
+    lmf *= Params.dm_[s];
+    add5d(w5,lmf,s);
+    Field fy = proj_p(get4d(w5,N5_-1));
+    fy *= -Params.mq_*Params.fs_[s];
+    add5d(w5,fy,s);
+    v = get4d(w5,s);
+    v*= 1.0/ Params.dp_[s];
+    set5d(w5,v,s);
+  }
+  return w5;
+}
+
+const Field Dirac_optimalDomainWall::mult_hq_dinv(const Field& f5) const{
+  return R5(mult_hq_inv(R5(f5)));
+  /*
+  assert(f5.size()==fsize_);   
+  Field t5(fsize_);
+  t5 = f5;
+  
+  // LU preconditioning : ((LU)^T)^-1 = (U^T L^T)^-1 = (L^T)^-1 (U^T)^-1
+  Field v = get4d(t5,0);
+  v *= 1.0/Params.dp_[0];
+  set5d(t5,v,0);
+
+  for(int s=1; s<N5_-1; ++s){
+    Field lmf = proj_m(get4d(t5,s-1));                                         
+    lmf *= Params.dm_[s-1];                                                     
+    add5d(t5,lmf,s);                                                            
+    v = get4d(t5,s);                                                            
+    v*= 1.0/Params.dp_[s];                                                      
+    set5d(t5,v,s);                                                              
+  }                                                                             
+  v = proj_m(get4d(t5,N5_-2));                                                  
+  v*= Params.dm_[N5_-2];                                                        
+  add5d(t5,v,N5_-1);                                                            
+  for(int s=0; s<N5_-1; ++s) {                                                  
+    Field fy = proj_p(get4d(t5,s));                                             
+    fy *= -Params.mq_*Params.fs_[s];                                            
+    add5d(t5,fy,N5_-1);                                                         
+  }                                                                             
+  v = get4d(t5,N5_-1);                                                          
+  v*= 1.0/(Params.dp_[N5_-1]                                                    
+           +Params.mq_*Params.dm_[N5_-2]*Params.es_[N5_-2]);                    
+  set5d(t5,v,N5_-1);                                                            
+                                                                                
+  for(int s=N5_-2; s>=0; --s){                                                  
+    Field lpf = proj_p(get4d(t5,s+1));                                          
+    lpf *= (Params.dm_[s+1]/Params.dp_[s]);                                     
+    add5d(t5,lpf,s);                                                            
+    Field ey = proj_m(get4d(t5,N5_-1));                                         
+    ey *= -Params.mq_*Params.es_[s];                                            
+    add5d(t5,ey,s);                                                             
+  }                                                                             
+  return t5;                                                                    
+  */
+}
+
+//-------------------------------------------------------------------------
+
+void Dirac_optimalDomainWall::mult_a0(Field& w5, const Field& f5) const{ 
+  using namespace FieldExpression;
+  assert(w5.size()==f5.size());
+
+  for(int s=0; s<N5_; ++s) {
+    Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
+    if(s==0)     lpf *= -Params.mq_;
+    Field lmf = proj_m(get4d(f5,(s+1)%N5_));
+    if(s==N5_-1) lmf *= -Params.mq_;
+
+    Field v = get4d(f5,s);
+    v *= Params.bs_[s];
+    v += Params.cs_[s]*(lpf +lmf);
+
+    Field w = Dw_->mult(v);
+    w *= 4.0+M0_;
+    set5d(w5,w,s);
+  }
+}
+
+void Dirac_optimalDomainWall::mult_a1(Field& w5, const Field& f5) const{ 
+  using namespace FieldExpression;
+  assert(w5.size()==f5.size());
+  
+  for(int s=0; s<N5_; ++s) {
+    Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
+    if(s==0)     lpf *= -Params.mq_;
+    Field lmf = proj_m(get4d(f5,(s+1)%N5_));
+    if(s==N5_-1) lmf *= -Params.mq_;
+
+    Field v = get4d(f5,s);
+    v *= Params.bs_[s];
+    v += Params.cs_[s]*(lpf +lmf);
+
+    Field w = Dw_->mult(v);          
+    w *= 4.0+M0_;
+    w += get4d(f5,s) -lpf -lmf;
+    set5d(w5,w,s);
+  }
+}
+
+const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
+  Field w5(fsize_);
+  (this->*mult_core)(w5,f5);
+  return w5;
+}
+
+void Dirac_optimalDomainWall::mult_dag_a0(Field& w5,const Field& f5) const{
+  using namespace FieldExpression;
+  assert(w5.size()==f5.size());
+  
+  for(int s=0; s<N5_; ++s) {
+    Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
+    if(s==N5_-1)     lpf *= -Params.mq_;
+    Field lmf = proj_m(get4d(f5,(s+1)%N5_));
+    if(s==0) lmf *= -Params.mq_;
     Field v = get4d(f5,s);
 
     v *= Params.bs_[s];
     v += Params.cs_[s]*(lpf +lmf);
 
-    //v += Params.cs_[s]*lpf;
-    //v += Params.cs_[s]*lmf;
-    
-    w += (4.0+M0_)*Dw_->mult(v);          
-    //w += (4.0+M0_)*Params.bs_[s]*Dw_->mult(v);      
+    Field w = Dw_->mult_dag(v);          
+    w *= 4.0+M0_;
     set5d(w5,w,s);
   }
-  return w5;
 }
-//======================================================================
-const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
+
+void Dirac_optimalDomainWall::mult_dag_a1(Field& w5,const Field& f5) const{
+  using namespace FieldExpression;
   assert(f5.size()==fsize_);
   Field v5(fsize_);
-  Field w5(fsize_);
-
   Field t5(fsize_);
   t5 = f5;
-  
+   
   for(int s=0; s<N5_; ++s){
     Field dv = Dw_->mult_dag(get4d(t5,s));
     dv *= (4.0+M0_)*Params.bs_[s];
@@ -238,7 +395,7 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
   }
   w5 += t5;
   v5 -= t5;
-
+ 
   for(int s = 0; s < N5_; ++s){
     Field lpf = proj_p(get4d(v5,(s+1)%N5_));
     if(s == N5_-1) lpf *= -Params.mq_;
@@ -247,10 +404,15 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
     add5d(w5,lpf,s);
     add5d(w5,lmf,s);
   }
+}
 
+const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
+  //  return R5g5(mult(R5g5(f5)));
+  Field w5(fsize_);
+  (this->*mult_dag_core)(w5,f5);
   return w5;
 }
-//======================================================================
+
 const Field Dirac_optimalDomainWall::Dminus(const Field& f5) const{
   //1-c_s * D_w(-M)
   Field w5(fsize_);
@@ -262,7 +424,7 @@ const Field Dirac_optimalDomainWall::Dminus(const Field& f5) const{
   }
   return w5;
 }
-//======================================================================
+
 const Field Dirac_optimalDomainWall::gamma5(const Field& f5) const{
   Field w5(fsize_); 
   for(int s = 0; s < N5_; ++s) set5d(w5,gamma5_4d(get4d(f5,s)),s);
@@ -274,9 +436,12 @@ const Field Dirac_optimalDomainWall::R5(const Field& f5) const{
   for(int s = 0; s < N5_; ++s) set5d(w5,get4d(f5,s),N5_-s-1);
   return w5; 
 }
-//======================================================================
+
 const Field Dirac_optimalDomainWall::R5g5(const Field& f5) const{
-  return R5(gamma5(f5)); 
+  //return R5(gamma5(f5)); 
+  Field w5(fsize_);
+  for(int s=0; s<N5_; ++s) set5d(w5,gamma5_4d(get4d(f5,s)),N5_-s-1);
+  return w5;
 }
 //======================================================================
 const Field Dirac_optimalDomainWall::Bproj( const Field& f5) const{ 
@@ -305,12 +470,56 @@ const Field Dirac_optimalDomainWall::proj_m(const Field& f4) const{
   Field w4 = Dw_->proj_m(f4);
   return w4;
 }
-//======================================================================
-const Field Dirac_optimalDomainWall::
-md_force(const Field& phi,const Field& psi) const{
+
+void Dirac_optimalDomainWall::
+md_force_p(Field& fce,const Field& phi,const Field& psi)const{
   using namespace FieldExpression;
 
-  Field w5(fsize_);
+  for(int s=0; s<N5_; ++s){
+    Field lpf = proj_p(get4d(phi,(s+N5_-1)%N5_));
+    if(s == 0)     lpf *= -Params.mq_;
+    Field lmf = proj_m(get4d(phi,(s+1    )%N5_));
+    if(s == N5_-1) lmf *= -Params.mq_;
+
+    Field w = get4d(phi,s); 
+
+    w *= Params.bs_[s];
+    w += Params.cs_[s]*(lpf +lmf);
+
+    Dw_->md_force_p(fce,w,get4d(psi,s));
+  }
+}  
+
+void Dirac_optimalDomainWall::
+md_force_m(Field& fce,const Field& phi,const Field& psi)const{
+  using namespace FieldExpression;
+
+  for(int s=0; s<N5_; ++s){
+    Field lpf = proj_p(get4d(phi,(s+N5_-1)%N5_));
+    if(s == 0)     lpf *= -Params.mq_;
+    Field lmf = proj_m(get4d(phi,(s+1    )%N5_));
+    if(s == N5_-1) lmf *= -Params.mq_;
+
+    Field w = get4d(phi,s); 
+
+    w *= Params.bs_[s];
+    w += Params.cs_[s]*(lpf +lmf);
+
+    Dw_->md_force_m(fce,w,get4d(psi,s));
+  }
+}  
+
+const Field Dirac_optimalDomainWall::
+md_force(const Field& phi,const Field& psi) const{
+  Field fce(gsize_);
+  md_force_p(fce,phi,psi);
+  md_force_m(fce,phi,psi);
+  fce *= -0.5;
+
+  return fce;
+
+  /*
+  using namespace FieldExpression;
   Field force(gsize_);
 
   for(int s=0; s<N5_; ++s){
@@ -327,11 +536,11 @@ md_force(const Field& phi,const Field& psi) const{
     force += (4.0+M0_)*Dw_->md_force(w,get4d(psi,s));
   }
   return force;
+  */
 }
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 /*
   @brief Namespace definining useful functions for DomainWallFermions
-
 */
 namespace DomainWallFermions {
 

@@ -14,6 +14,9 @@ private:
   const Dirac_Wilson Deo_;
   const Dirac_Wilson Doe_;
   //const Dirac_Wilson Dw_;
+
+  void md_force_eo(Field&,const Field&,const Field&)const;
+  void md_force_oe(Field&,const Field&,const Field&)const;
 public:
   Dirac_Wilson_EvenOdd(double mass,const Field* u)
   //:Deo_(mass,u,Dw::EOtag()),Doe_(mass,u,Dw::OEtag()),Dw_(mass,u){}

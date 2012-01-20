@@ -1,17 +1,13 @@
 /*!
   @file field.h
-
   @brief Definition of a general class storing a field
-
 */
 #ifndef FIELD_INCLUDED
 #define FIELD_INCLUDED
-
+#include "Communicator/communicator.h"
 #include <valarray>
 #include <vector>
 #include <iostream>
-
-#include "Communicator/communicator.h"
 #include <fstream>
 
 class Field{
@@ -176,9 +172,5 @@ public:
   }
 };
 
-
 #include "Fields/field.inl"  //definition of inlined functions
-
-
-
 #endif
