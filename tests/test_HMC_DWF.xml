@@ -32,9 +32,7 @@
           <Action type="Fermion" name="TwoFlavorsDomainWall">
             <Kernel5D>
               <Preconditioning>NoPreconditioner</Preconditioning>
-              <Kernel5d name="DiracWilson">
-                <mass>-1.8</mass>
-              </Kernel5d>
+              <wilson_mass>-1.8</wilson_mass>
               <N5d>8</N5d>
               <b>1.0</b>
               <c>1.0</c>
