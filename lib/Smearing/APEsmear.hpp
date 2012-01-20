@@ -19,6 +19,9 @@ class Smear_APE: public Smear{
   const Format::Format_G& Gformat;
   const std::valarray<double> rho;/*!< Array of weights */
 
+  //This member must be private - we do not want to control from outside 
+  std::valarray<double> set_rho(const double)const ;
+
  public:
   Smear_APE(const std::valarray<double>& rho_, 
 	    const Format::Format_G& gf):
@@ -26,10 +29,14 @@ class Smear_APE: public Smear{
     Gformat(gf),
     rho(rho_){}
 
+  Smear_APE(const Format::Format_G& gf):
+    Ndim(CommonPrms::Ndim()),
+    Gformat(gf),
+    rho(set_rho(1.0)){}
+
 
   ~Smear_APE(){};
 
-  //void set_weights(const std::valarray<double>&);
   void smear(Field&, const Field&);
 
 };

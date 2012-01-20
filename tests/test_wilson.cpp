@@ -38,9 +38,8 @@ int Test_Wilson::run(){
   int length=4;
   RandNum_MT19937 rand(init, length);
 
-  // source ????
+  // source 
   vector<int> spos(4,0); 
-  //vector<int> spos(4,1); 
 
   Source_local<Format::Format_F> src(spos,CommonPrms::instance()->Nvol());
   //Source_wnoise<Format_F> src(rand,CommonPrms::instance()->Nvol());
@@ -49,9 +48,9 @@ int Test_Wilson::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  // Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
-  Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
-  Kernel->update_internal_state();
+   Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
+   //Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
+   //Kernel->update_internal_state();
 
   // Solver definition
   int    Niter= 1000;
@@ -64,18 +63,8 @@ int Test_Wilson::run(){
 				      Niter,
 				      new Fopr_DdagD(Kernel));
 
-  for(int s = 0; s < 4; ++s){
-    for(int c = 0; c < 3; ++c){
-      std::cout << "Force ["<<s<<","<<c<<"] "
-		<<(Kernel->md_force(src.mksrc(s,c), Kernel->mult(src.mksrc(s,c))))[1]
-		<< std::endl;
-    }
-  }
   // quark propagator
   // we force a type check on the Kernel (must be DdagD type).
- 
-  
-
   Qprop QuarkPropagator(Kernel,SolverCG);
   QuarkPropagator.calc(sq,src);
   //---------------------------------------------------------------------------
@@ -86,14 +75,13 @@ int Test_Wilson::run(){
   CCIO::cout<<"quark propagator obtained"<<std::endl;
   
   // meson correlators
-  /*
-  GammaMatrices::Unit Gamma;//pion
-  MesonCorrelator meson(Gamma,Gamma);
+  
+  MesonCorrelator meson(Pion);
   vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
-  while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);
-  */
+  while(it!=mcorr.end()) CCIO::cout << t++ << "  "<< *it++ << "\n";
+  
 
   return 0;
 }

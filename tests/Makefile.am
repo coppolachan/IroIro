@@ -17,7 +17,8 @@ test_PROGRAMS = test_HMC 	\
 		test_ODWF 	\
 		test_ResMass 	\
 		test_IO   	\
-		test_EigenModes
+		test_EigenModes	\
+		test_Smearing
 
 test_HMC_SOURCES = 	test_HMC.cpp \
 		  	testerHMC.cpp
@@ -39,9 +40,13 @@ test_IO_SOURCES = test_IO.cpp 	\
 test_EigenModes_SOURCES = test_EigenModes_IRL.cpp\
 			testerEigenModes.cpp
 
+test_Smearing_SOURCES = test_smear.cpp	\
+			testerSmear.cpp
+
 include_HEADERS =	test_HMC.hpp 		\
 			test_wilson.hpp 	\
 			test_DomainWall.hpp 	\
 			test_ResidualMass.hpp 	\
 			test_IO.hpp		\
-			test_EigenModes_IRL.hpp
+			test_EigenModes_IRL.hpp	\
+			test_smear.hpp

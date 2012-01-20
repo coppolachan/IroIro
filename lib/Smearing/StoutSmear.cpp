@@ -25,7 +25,11 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in){
   GaugeField1D U_mu;
   SUNmat ut;
 
+  _Message(1, "Stout smearing started\n");
+
   APEbase.smear(u_tmp1.U,u_in);
+
+
 
   for(int mu = 0; mu < Ndim; ++mu){
     U_mu = u_in[Gformat.dir_slice(mu)];
@@ -34,8 +38,9 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in){
       q_mu.U.set(q_mu.Format.cslice(0,site,mu), anti_hermite(ut));
     }
   }
-  
+
   exponentiate_iQ(u_tmp1, q_mu);
+
   
   for(int mu = 0; mu < Ndim; ++mu){
     for(int site = 0; site < Nvol; ++site){
@@ -43,6 +48,10 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in){
       u_smr.set(Gformat.cslice(0,site,mu), ut.getva());
     }
   }
+
+  CCIO::cout << " Smr norm : "<< u_smr.norm() << "\n";   
+
+  _Message(1, "Stout smearing completed \n");
   
 }
 //====================================================================
@@ -52,9 +61,8 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ){
   int Nvol = e_iQ.Format.Nvol();
   int Nex  = e_iQ.Format.Nex();
 
-
   SUNmat iQ0, iQ1, iQ2, iQ3;
-  iQ0.unity();
+  iQ0 = unity();
 
   double c0, c1, c0max, u_val, w, theta, xi0, u2, w2, cosw, fden;
   dcomplex f0, f1, f2, h0, h1, h2, e2iu, emiu, ixi0, qt;
@@ -63,9 +71,10 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ){
     for(int site = 0; site < Nvol; ++site){
 
       iQ1 = iQ.matrix(site,ex);
+  
       iQ2 = iQ1 * iQ1;
       iQ3 = iQ1 * iQ2;
-     
+   
       c0 = 0.0;
       c1 = 0.0;
       for(int cc = 0; cc < NC_; ++cc){
@@ -75,6 +84,7 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ){
       c0 = -c0/3.0;
       c1 = -c1/2.0;
       c0max = 2.0 * pow(c1/3.0,1.5);
+  
 
       theta = acos(c0/c0max);
       u_val = sqrt(c1/3.0) * cos(theta/3.0);
@@ -102,18 +112,19 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ){
       f1 = h1 * dcomplex(fden,0.0);
       f2 = h2 * dcomplex(fden,0.0);
 
-      for(int cc = 0; cc < NC_*NC_; ++cc){
-	qt =  f0 * dcomplex(iQ0.r(cc), iQ0.i(cc))
-          + f1 * dcomplex(iQ1.i(cc),-iQ1.r(cc))
-          - f2 * dcomplex(iQ2.r(cc), iQ2.i(cc));
-	e_iQ.U.set(e_iQ.Format.index_r(cc,site,ex),qt.real());
-	e_iQ.U.set(e_iQ.Format.index_i(cc,site,ex),qt.imag());
+      for(int c1 = 0; c1 < NC_; ++c1){
+	for(int c2 = 0; c2 < NC_; ++c2){
+	  int cc = c1*NC_+c2;
+	  
+	  qt =  f0 * dcomplex(iQ0.r(cc), iQ0.i(cc))
+	    + f1 * dcomplex(iQ1.i(cc),-iQ1.r(cc))
+	    - f2 * dcomplex(iQ2.r(cc), iQ2.i(cc));
+	  e_iQ.U.set(e_iQ.Format.index_r(c1,c2,site,ex),qt.real());
+	  e_iQ.U.set(e_iQ.Format.index_i(c1,c2,site,ex),qt.imag());
+	}
       }
-
     }
   }
-
- 
 }
 
 //====================================================================

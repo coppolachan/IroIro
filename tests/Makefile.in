@@ -38,7 +38,8 @@ host_triplet = @host@
 target_triplet = @target@
 test_PROGRAMS = test_HMC$(EXEEXT) test_RNG$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_ODWF$(EXEEXT) test_ResMass$(EXEEXT) \
-	test_IO$(EXEEXT) test_EigenModes$(EXEEXT)
+	test_IO$(EXEEXT) test_EigenModes$(EXEEXT) \
+	test_Smearing$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -78,6 +79,10 @@ am_test_ResMass_OBJECTS = test_ResidualMass.$(OBJEXT) \
 test_ResMass_OBJECTS = $(am_test_ResMass_OBJECTS)
 test_ResMass_LDADD = $(LDADD)
 test_ResMass_DEPENDENCIES =
+am_test_Smearing_OBJECTS = test_smear.$(OBJEXT) testerSmear.$(OBJEXT)
+test_Smearing_OBJECTS = $(am_test_Smearing_OBJECTS)
+test_Smearing_LDADD = $(LDADD)
+test_Smearing_DEPENDENCIES =
 am_test_Wilson_OBJECTS = test_wilson.$(OBJEXT) testerWilson.$(OBJEXT)
 test_Wilson_OBJECTS = $(am_test_Wilson_OBJECTS)
 test_Wilson_LDADD = $(LDADD)
@@ -93,10 +98,12 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(test_EigenModes_SOURCES) $(test_HMC_SOURCES) \
 	$(test_IO_SOURCES) $(test_ODWF_SOURCES) $(test_RNG_SOURCES) \
-	$(test_ResMass_SOURCES) $(test_Wilson_SOURCES)
+	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
+	$(test_Wilson_SOURCES)
 DIST_SOURCES = $(test_EigenModes_SOURCES) $(test_HMC_SOURCES) \
 	$(test_IO_SOURCES) $(test_ODWF_SOURCES) $(test_RNG_SOURCES) \
-	$(test_ResMass_SOURCES) $(test_Wilson_SOURCES)
+	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
+	$(test_Wilson_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -258,12 +265,16 @@ test_IO_SOURCES = test_IO.cpp 	\
 test_EigenModes_SOURCES = test_EigenModes_IRL.cpp\
 			testerEigenModes.cpp
 
+test_Smearing_SOURCES = test_smear.cpp	\
+			testerSmear.cpp
+
 include_HEADERS = test_HMC.hpp 		\
 			test_wilson.hpp 	\
 			test_DomainWall.hpp 	\
 			test_ResidualMass.hpp 	\
 			test_IO.hpp		\
-			test_EigenModes_IRL.hpp
+			test_EigenModes_IRL.hpp	\
+			test_smear.hpp
 
 all: all-am
 
@@ -354,6 +365,9 @@ test_RNG$(EXEEXT): $(test_RNG_OBJECTS) $(test_RNG_DEPENDENCIES)
 test_ResMass$(EXEEXT): $(test_ResMass_OBJECTS) $(test_ResMass_DEPENDENCIES) 
 	@rm -f test_ResMass$(EXEEXT)
 	$(CXXLINK) $(test_ResMass_OBJECTS) $(test_ResMass_LDADD) $(LIBS)
+test_Smearing$(EXEEXT): $(test_Smearing_OBJECTS) $(test_Smearing_DEPENDENCIES) 
+	@rm -f test_Smearing$(EXEEXT)
+	$(CXXLINK) $(test_Smearing_OBJECTS) $(test_Smearing_LDADD) $(LIBS)
 test_Wilson$(EXEEXT): $(test_Wilson_OBJECTS) $(test_Wilson_DEPENDENCIES) 
 	@rm -f test_Wilson$(EXEEXT)
 	$(CXXLINK) $(test_Wilson_OBJECTS) $(test_Wilson_LDADD) $(LIBS)
@@ -370,12 +384,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RNG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ResidualMass.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerEigenModes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerODWF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerResMass.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson.Po@am__quote@
 
 .cpp.o:
