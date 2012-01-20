@@ -76,6 +76,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
+		Smearing/APEsmear.cpp			\
+		Smearing/StoutSmear.cpp			\
 		../tests/test_Gauge.cpp			\
 		../tests/test_MultiShiftSolver.cpp	\
 		../tests/test_overlap.cpp		\
@@ -177,6 +179,9 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
 			Tools/gammaMatrices.hpp			\
+			Smearing/APEsmear.hpp			\
+			Smearing/BaseSmear.hpp			\
+			Smearing/StoutSmear.hpp			\
 			../tests/tests_all.hpp			\
 			../tests/test_MultiShiftSolver.h	\
 			../tests/test_overlap.hpp		\
