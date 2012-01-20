@@ -134,33 +134,6 @@ choose_Preconditioner(int PrecondID){
     return new NoPrecond(this);
   }
 }
-//-----------------------------------------------------------------------------
-const Field Dirac_optimalDomainWall::LUPrecond::mult(const Field& f5) const{
-  using namespace FieldExpression;
-  assert(f5.size()==DWF_->fsize_);
-  Field w5(DWF_->fsize_);
-  w5 = DWF_->mult(f5);
-  //  Field t5(DWF_->fsize_);
-  //  t5 = LU_inv(w5);
-  //  Field u5(DWF_->fsize_);
-  //  u5 = LU(t5);
-  //  CCIO::cout << "LU before " << w5.norm() << std::endl;
-  //  CCIO::cout << "LUinv     " << t5.norm() << std::endl;
-  //  CCIO::cout << "LU LUinv  " << u5.norm() << std::endl;
-  return LU_inv(w5);
-}
-
-const Field Dirac_optimalDomainWall::LUPrecond::mult_dag(const Field& f5) const{
-  assert(f5.size()==DWF_->fsize_);
-  Field t5(DWF_->fsize_);
-  t5 = LU_dinv(f5);
-  //  Field u5(DWF_->fsize_);
-  //  u5 = LU_dag(t5);
-  //  CCIO::cout << "LUdag before    " << f5.norm() << std::endl;
-  //  CCIO::cout << "LUdaginv        " << t5.norm() << std::endl;
-  //  CCIO::cout << "LUdag LUdaginv  " << u5.norm() << std::endl;
-  return DWF_->mult_dag(t5); 
-}
 
 const Field Dirac_optimalDomainWall::mult_hq(const Field& f5) const{
   using namespace FieldExpression;

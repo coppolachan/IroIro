@@ -87,28 +87,31 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     Dirac_optimalDomainWall* DWF_;
   public: 
     NoPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){}
-    const Field mult(const Field& f5) const{return DWF_->mult(f5);}
-    const Field mult_dag(const Field& f5) const{return DWF_->mult_dag(f5);}
-    const Field left(const Field& f5) const{ return f5;}
-    const Field right(const Field& f5) const{ return f5;}
-    const Field left_dag(const Field&) const;  
-    const Field right_dag(const Field&) const;  
+    const Field mult     (const Field& f5)const{return DWF_->mult(f5);}
+    const Field mult_dag (const Field& f5)const{return DWF_->mult_dag(f5);}
+    const Field left     (const Field& f5)const{return f5;}
+    const Field right    (const Field& f5)const{return f5;}
+    const Field left_dag (const Field& f5)const{return f5;}  
+    const Field right_dag(const Field& f5)const{return f5;}  
   };
   
   class LUPrecond : public Preconditioner {
     Dirac_optimalDomainWall* DWF_;
-    const Field LU(const Field& f5) const{return DWF_->mult_hq(f5);}
-    const Field LU_inv(const Field& f5) const{return DWF_->mult_hq_inv(f5);}
-    const Field LU_dag(const Field& f5) const{return DWF_->mult_hq_dag(f5);}
+    const Field LU     (const Field& f5)const{return DWF_->mult_hq(f5);}
+    const Field LU_inv (const Field& f5)const{return DWF_->mult_hq_inv(f5);}
+    const Field LU_dag (const Field& f5)const{return DWF_->mult_hq_dag(f5);}
     const Field LU_dinv(const Field& f5)const{return DWF_->mult_hq_dinv(f5);}
   public: 
     LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){}
-    const Field mult(const Field&) const;  
-    const Field mult_dag(const Field&) const;
-    const Field left(const Field& f5) const{return LU_inv(f5);}
-    const Field right(const Field& f5) const{ return f5;}
-    const Field left_dag(const Field&) const;  
-    const Field right_dag(const Field&) const; 
+    const Field mult    (const Field& f5)const{
+      return left(DWF_->mult(right(f5)));}  
+    const Field mult_dag(const Field& f5)const{
+      return right_dag(DWF_->mult_dag(left_dag(f5)));
+    }
+    const Field left     (const Field& f5)const{return f5;}
+    const Field right    (const Field& f5)const{return LU_inv(f5);}
+    const Field left_dag (const Field& f5)const{return f5;}  
+    const Field right_dag(const Field& f5)const{return LU_dinv(f5);} 
   };
 
   void set_arrays();
