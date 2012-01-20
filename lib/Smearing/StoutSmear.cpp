@@ -40,16 +40,14 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in){
   }
 
   exponentiate_iQ(u_tmp1, q_mu);
-
   
   for(int mu = 0; mu < Ndim; ++mu){
+    U_mu = u_in[Gformat.dir_slice(mu)];
     for(int site = 0; site < Nvol; ++site){
       ut = u(u_tmp1,site,mu) * u(U_mu,site);//New smeared matrix
       u_smr.set(Gformat.cslice(0,site,mu), ut.getva());
     }
   }
-
-  CCIO::cout << " Smr norm : "<< u_smr.norm() << "\n";   
 
   _Message(1, "Stout smearing completed \n");
   
@@ -112,17 +110,14 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ){
       f1 = h1 * dcomplex(fden,0.0);
       f2 = h2 * dcomplex(fden,0.0);
 
-      for(int c1 = 0; c1 < NC_; ++c1){
-	for(int c2 = 0; c2 < NC_; ++c2){
-	  int cc = c1*NC_+c2;
-	  
-	  qt =  f0 * dcomplex(iQ0.r(cc), iQ0.i(cc))
-	    + f1 * dcomplex(iQ1.i(cc),-iQ1.r(cc))
-	    - f2 * dcomplex(iQ2.r(cc), iQ2.i(cc));
-	  e_iQ.U.set(e_iQ.Format.index_r(c1,c2,site,ex),qt.real());
-	  e_iQ.U.set(e_iQ.Format.index_i(c1,c2,site,ex),qt.imag());
-	}
+      for(int cc = 0; cc < NC_*NC_; ++cc){
+	qt =  f0 * dcomplex(iQ0.r(cc), iQ0.i(cc))
+	  + f1 * dcomplex(iQ1.i(cc),-iQ1.r(cc))
+	  - f2 * dcomplex(iQ2.r(cc), iQ2.i(cc));
+	e_iQ.U.set(e_iQ.Format.index(2*cc,site,ex),  qt.real());
+	e_iQ.U.set(e_iQ.Format.index(2*cc+1,site,ex),qt.imag());
       }
+      
     }
   }
 }

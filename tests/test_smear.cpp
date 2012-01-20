@@ -71,9 +71,10 @@ int Test_Smear::run(){
       previous_u_ = smeared_u_;
       AnalyticSmear.smear(smeared_u_.U, previous_u_.U);
     }
-    CCIO::cout << "Plaquette : " << Staple.plaquette(smeared_u_.U) << std::endl;
+    
  
-  
+    CCIO::cout << "Plaquette : " << Staple.plaquette(smeared_u_.U) << std::endl;
+   
     QuarkPropagator.calc(sq,src);
     
     
