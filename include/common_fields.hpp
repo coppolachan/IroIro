@@ -126,6 +126,9 @@ public:
     return *this;
   }
 
+  inline SUNmat matrix(int site, int ex) const {
+    return SUNmat(U[Format.cslice(0,site,ex)]);    
+  }
 
 };
 
@@ -163,6 +166,9 @@ public:
 
   }
 
+  inline SUNmat matrix(int site, int ex){
+    return SUNmat(U[Format.cslice(0,site,ex)]);    
+  }
 
 };
 
