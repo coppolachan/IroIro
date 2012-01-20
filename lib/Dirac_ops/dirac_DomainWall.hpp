@@ -18,11 +18,13 @@
 #include "dirac_Preconditioners.hpp"
 
 namespace DomainWallFermions {
-
   struct EvenOdd_tag{};
+  struct PauliVillars_tag{};
 
   const std::vector<double> 
   getOmega(int Ns,double lambda_min,double lambda_max);
+  
+  double read_wilson_mass(const XML::node& node);
 }
 
 enum DWFType {Standard, PauliVillars};
@@ -38,50 +40,49 @@ End_Enum_String;
  * Parameters for \f[D_{\rm dwf}(m_q) =\omega D_W(-m_0)(1+cL(m_q))+(1-L(m_q))\f]
  */
 struct Dirac_optimalDomainWall_params{
-  double N5dim_;/*!< @brief the length in the 5th direction (must be even) */
-  double b_;    /*!< @brief scale factor (b!=1 for scaled Shamir H_T) */
-  double c_;    /*!< @brief the kernel (H_W (c=0) or H_T (c=1)) */
-  double mq_;   /*!< @brief Bare quark mass \f$m_q\f$ */
+  double N5_;/*!< @brief the length in the 5th direction (must be even) */
+  double b_; /*!< @brief scale factor (b!=1 for scaled Shamir H_T) */
+  double c_; /*!< @brief the kernel (H_W (c=0) or H_T (c=1)) */
+  double M0_;/*!< @brief wilson mass (must be negative) */
+  double mq_;/*!< @brief Bare quark mass \f$m_q\f$ */
   Preconditioners Preconditioning_; /*!< @brief Name of the preconditioner */
   std::vector<double> omega_;/*!< @brief Weights defining the approximation */
   std::vector<double> bs_, cs_;
   std::vector<double> dp_, dm_;
   std::vector<double> es_, fs_;
 
+  void set_arrays();
+
   Dirac_optimalDomainWall_params(XML::node DWF_node);
-
-  Dirac_optimalDomainWall_params(const double b,
-				 const double c,
-				 const double mass,
-				 const std::vector<double> omega);
-
-  Dirac_optimalDomainWall_params(const Dirac_optimalDomainWall_params& Par,
-				 DWFType Type = Standard);
+  Dirac_optimalDomainWall_params(double b,double c,double M0,double mq,
+				 const std::vector<double>& omega,
+				 Preconditioners Preconditioning);
 };
 
-/*!
- * @brief Defines the 5d Domain Wall operator
+////////////////////////////////////////////////////////////////////////////
+/*! @brief Defines the 5d Domain Wall operator
  *
  * Defines \f[D_{\rm dwf}(m_q) = \omega D_W(-m_0)(1+cL(m_q))+(1-L(m_q))\f]
- * with:
- * \f[L(m) = P_+ L_+(m) + P_- L_-(m)\f]
+ * with: \f[L(m) = P_+ L_+(m) + P_- L_-(m)\f]
  * using proj_p() e proj_m() methods
  *
- * Kernel is given by
- * \f[H = \frac{\gamma_5 b D_W}{ 2 + c D_W } \f]
- *
+ * Kernel is given by \f[H = \frac{\gamma_5 b D_W}{ 2 + c D_W } \f]
  */
 class Dirac_optimalDomainWall : public DiracWilsonLike {
-  const Dirac_Wilson* Dw_; /*!< @brief Dirac Kernel - Wilson operator */ 
+private:
   Dirac_optimalDomainWall_params Params;
-  Preconditioner* Precond_;
-
   size_t N5_;/*!< @brief Length of 5th dimension */
+  double M0_;
+  double mq_;
+  const Field* const u_;
+  Dirac_Wilson Dw_; /*!< @brief Dirac Kernel - Wilson operator */ 
+
   size_t f4size_;
   size_t fsize_;
   size_t gsize_;
-  const double M0_;
 
+  Preconditioner* Precond_;
+  
   //declaration of concrete preconditioners
   class NoPrecond: public Preconditioner {
     Dirac_optimalDomainWall* DWF_;
@@ -89,10 +90,11 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     NoPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){}
     const Field mult(const Field& f5) const{return DWF_->mult(f5);}
     const Field mult_dag(const Field& f5) const{return DWF_->mult_dag(f5);}
+
     const Field left(const Field& f5) const{ return f5;}
     const Field right(const Field& f5) const{ return f5;}
-    const Field left_dag(const Field&) const;  
-    const Field right_dag(const Field&) const;  
+    const Field left_dag(const Field& f5) const{ return f5;}
+    const Field right_dag(const Field& f5) const{ return f5;}  
   };
   
   class LUPrecond : public Preconditioner {
@@ -103,15 +105,18 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
     const Field LU_dinv(const Field& f5)const{return DWF_->mult_hq_dinv(f5);}
   public: 
     LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){}
-    const Field mult(const Field&) const;  
-    const Field mult_dag(const Field&) const;
-    const Field left(const Field& f5) const{return LU_inv(f5);}
-    const Field right(const Field& f5) const{ return f5;}
-    const Field left_dag(const Field&) const;  
-    const Field right_dag(const Field&) const; 
+    const Field mult(const Field& f5) const{
+      return left(DWF_->mult(right(f5)));
+    }  
+    const Field mult_dag(const Field& f5) const{
+      return right_dag(DWF_->mult_dag(left_dag(f5)));
+    }
+    const Field left(const Field& f5) const{return f5;}
+    const Field right(const Field& f5) const{ return LU_inv(f5);}
+    const Field left_dag(const Field& f5) const{ return f5;}
+    const Field right_dag(const Field& f5) const{ return LU_dinv(f5);}
   };
 
-  void set_arrays();
   Preconditioner* choose_Preconditioner(int PrecondID);
 
   const Field get4d(const Field& f5,int s) const{
@@ -134,142 +139,131 @@ class Dirac_optimalDomainWall : public DiracWilsonLike {
   void(Dirac_optimalDomainWall::*mult_dag_core)(Field&,const Field&)const;
 
 public:
-
   /*! @brief constructors to create an instance with normal indexing */
-  Dirac_optimalDomainWall(XML::node DWF_node,
-			  const Dirac_Wilson* Kernel)
+  Dirac_optimalDomainWall(XML::node DWF_node,const Field* u)
     :Params(Dirac_optimalDomainWall_params(DWF_node)),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
-     f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
-     gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
+     N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
+     Dw_(M0_,u_),
+     f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
      mult_core(&Dirac_optimalDomainWall::mult_a1),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){
-    set_arrays();
     CCIO::cout << "Dirac_optimalDomainWall::N5_="<<N5_<<std::endl;
 #if VERBOSITY>4
     CCIO::cout << "Created Dirac_optimalDomainWall" << std::endl;
 #endif
   }
   
-  Dirac_optimalDomainWall(Dirac_optimalDomainWall_params Prm,
-			  const Dirac_Wilson* Kernel)
-    :Params(Prm),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
-     f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
-     gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
-     mult_core(&Dirac_optimalDomainWall::mult_a1),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
-     Precond_(choose_Preconditioner(Params.Preconditioning_)){
-    set_arrays();
-  } 
- 
-  Dirac_optimalDomainWall(const double b,
-			  const double c,
-			  const double mq,
-			  const std::vector<double>& omega,
-			  const Dirac_Wilson* Kernel,
-			  Preconditioners Precond = NoPreconditioner)
-    :Params(b,c,mq,omega),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
-     f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
-     gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
-     mult_core(&Dirac_optimalDomainWall::mult_a1),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
-     Precond_(choose_Preconditioner(Precond)){
-    set_arrays();
-  }
-
-  /*! @brief constructors to create an instance with the e/o indexing */
-  Dirac_optimalDomainWall(XML::node DWF_node,
-			  const Dirac_Wilson* Kernel,
-			  DomainWallFermions::EvenOdd_tag)
-    :Params(Dirac_optimalDomainWall_params(DWF_node)),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
-     f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
-     gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
-     mult_core(&Dirac_optimalDomainWall::mult_a0),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
-     Precond_(NULL){
-    set_arrays();
-  }
-
-  Dirac_optimalDomainWall(Dirac_optimalDomainWall_params Prm,
-			  const Dirac_Wilson* Kernel,
-			  DomainWallFermions::EvenOdd_tag)
-    :Params(Prm),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
-     f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
-     gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
-     mult_core(&Dirac_optimalDomainWall::mult_a0),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
-     Precond_(NULL){
-    set_arrays();
-  } 
- 
-  Dirac_optimalDomainWall(const double b,
-			  const double c,
-			  const double mq,
-			  const std::vector<double>& omega,
-			  const Dirac_Wilson* Kernel,
-			  DomainWallFermions::EvenOdd_tag)
-    :Params(b,c,mq,omega),
-     Dw_(Kernel),
-     N5_(Params.omega_.size()),
-     f4size_(Dw_->fsize()),
-     fsize_(f4size_*N5_),
-     gsize_(Dw_->gsize()),
-     M0_(1.0/(2.0*(Dw_->getKappa()))-4.0),
-     mult_core(&Dirac_optimalDomainWall::mult_a0),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
-     Precond_(NULL){
-    set_arrays();
-  }
-
-  /*! @brief Copy constructor to build the Pauli-Villars operator */
-  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dcopy, 
-			  DWFType Type = Standard)
-    :Params(Dcopy.Params, Type),
-     Dw_(Dcopy.Dw_),
-     N5_(Dcopy.N5_),
-     f4size_(Dcopy.f4size_),
-     fsize_(Dcopy.fsize_),
-     gsize_(Dcopy.gsize_),
-     M0_(Dcopy.M0_),
+  Dirac_optimalDomainWall(Dirac_optimalDomainWall_params Prms,const Field* u)
+    :Params(Prms),
+     N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
+     Dw_(M0_,u_),
+     f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
      mult_core(&Dirac_optimalDomainWall::mult_a1),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){}
+ 
+  Dirac_optimalDomainWall(double b,double c,double M0,double mq,
+			  const std::vector<double>& omega,
+			  const Field* u,
+			  Preconditioners Precond = NoPreconditioner)
+    :Params(b,c,M0,mq,omega,Precond),
+     N5_(Params.N5_),M0_(M0),mq_(mq),u_(u),
+     Dw_(M0_,u_),
+     f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
+     mult_core(&Dirac_optimalDomainWall::mult_a1),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
+     Precond_(choose_Preconditioner(Precond)){}
+  
+  /*! @brief copy constructor */
+  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc)
+    :Params(Dc.Params),
+     N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(Dc.u_),
+     Dw_(M0_,u_),
+     f4size_(Dc.f4size_),fsize_(Dc.fsize_),gsize_(Dc.gsize_),
+     mult_core(&Dirac_optimalDomainWall::mult_a1),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
+     Precond_(choose_Preconditioner(Params.Preconditioning_)){}
+    
+  /*! @brief Copy constructor fore the Pauli-Villars operator */
+    Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc, 
+			    DomainWallFermions::PauliVillars_tag)
+      :Params(Dc.Params),
+      N5_(Params.N5_),M0_(Params.M0_),mq_(1.0),u_(Dc.u_),
+      Dw_(M0_,u_),
+      f4size_(Dc.f4size_),fsize_(Dc.fsize_),gsize_(Dc.gsize_),
+      mult_core(&Dirac_optimalDomainWall::mult_a1),
+      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
+     Precond_(choose_Preconditioner(Params.Preconditioning_)){
+      Params.mq_= mq_;
+    }
 
-  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dcopy, 
-			  DomainWallFermions::EvenOdd_tag,
-			  DWFType Type = Standard)
-    :Params(Dcopy.Params, Type),
-     Dw_(Dcopy.Dw_),
-     N5_(Dcopy.N5_),
-     f4size_(Dcopy.f4size_),
-     fsize_(Dcopy.fsize_),
-     gsize_(Dcopy.gsize_),
-     M0_(Dcopy.M0_),
+  /*! @brief constructor of Deo  */
+  Dirac_optimalDomainWall(XML::node DWF_node,const Field* u,Dw::EOtag)
+    :Params(Dirac_optimalDomainWall_params(DWF_node)),
+     N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
+     Dw_(M0_,u_,Dw::EOtag()),
+     f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
      mult_core(&Dirac_optimalDomainWall::mult_a0),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
      Precond_(NULL){}
-  
-  //////////////////////////////////////////
+
+  Dirac_optimalDomainWall(double b,double c,double M0,double mq,
+			  const std::vector<double>& omega,
+			  const Field* u,Dw::EOtag)
+    :Params(b,c,M0,mq,omega,NoPreconditioner),
+     N5_(Params.N5_),M0_(M0),mq_(mq),u_(u),
+     Dw_(M0_,u_,Dw::EOtag()),
+     f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
+     mult_core(&Dirac_optimalDomainWall::mult_a0),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
+     Precond_(NULL){}
+
+  /*! @brief constructor of Doe  */
+  Dirac_optimalDomainWall(XML::node DWF_node,const Field* u,Dw::OEtag)
+    :Params(Dirac_optimalDomainWall_params(DWF_node)),
+     N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
+     Dw_(M0_,u_,Dw::OEtag()),
+     f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
+     mult_core(&Dirac_optimalDomainWall::mult_a0),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
+     Precond_(NULL){}
+
+  Dirac_optimalDomainWall(double b,double c,double M0,double mq,
+			  const std::vector<double>& omega,
+			  const Field* u,Dw::OEtag)
+    :Params(b,c,M0,mq,omega,NoPreconditioner),
+     N5_(Params.omega_.size()),M0_(M0),mq_(mq),u_(u),
+     Dw_(M0_,u_,Dw::OEtag()),
+     f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
+     mult_core(&Dirac_optimalDomainWall::mult_a0),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
+     Precond_(NULL){}
+
+  /*!@brief copy constructors for e/o + PauliVillars  */
+  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc,
+			  DomainWallFermions::PauliVillars_tag,
+			  Dw::EOtag)
+    :Params(Dc.Params),
+     N5_(Params.N5_),M0_(Params.M0_),mq_(1.0),u_(Dc.u_),
+     Dw_(M0_,u_,Dw::EOtag()),
+     f4size_(Dc.f4size_),fsize_(Dc.fsize_),gsize_(Dc.gsize_),
+     mult_core(&Dirac_optimalDomainWall::mult_a0),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
+     Precond_(NULL){ Params.mq_=mq_;}
+
+  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc,
+			  DomainWallFermions::PauliVillars_tag,
+			  Dw::OEtag)
+    :Params(Dc.Params),
+     N5_(Params.N5_),M0_(Params.M0_),mq_(1.0),u_(Dc.u_),
+     Dw_(M0_,u_,Dw::OEtag()),
+     f4size_(Dc.f4size_),fsize_(Dc.fsize_),gsize_(Dc.gsize_),
+     mult_core(&Dirac_optimalDomainWall::mult_a0),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
+     Precond_(NULL){ Params.mq_=mq_;}
+
+  ///////////////////////////
   ~Dirac_optimalDomainWall(){
     #if VERBOSITY>4
     CCIO::cout << "Deleting Dirac_optimalDomainWall" << std::endl;
@@ -288,7 +282,7 @@ public:
 
   const double getMass() const{return Params.mq_;}
 
-  const Field gamma5_4d(const Field& f4d) const{return Dw_->gamma5(f4d);}
+  const Field gamma5_4d(const Field& f4) const{return Dw_.gamma5(f4);}
   
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
@@ -300,14 +294,14 @@ public:
   const Field mult_hq_dinv(const Field& f5) const;
 
   //Preconditioning methods
-  const Field mult_prec    (const Field& in)const{return Precond_->mult(in);}
-  const Field mult_dag_prec(const Field& in)const{return Precond_->mult_dag(in);}
-  const Field left_prec (const Field& in)const{return Precond_->left(in);}
-  const Field right_prec(const Field& in)const{return Precond_->right(in);}
-  const Field left_dag_prec (const Field& in)const{
-    return Precond_->left_dag(in);}
-  const Field right_dag_prec(const Field& in)const{
-    return Precond_->right_dag(in);}
+  const Field mult_prec    (const Field& f)const{return Precond_->mult(f);}
+  const Field mult_dag_prec(const Field& f)const{return Precond_->mult_dag(f);}
+  const Field left_prec (const Field& f)const{return Precond_->left(f);}
+  const Field right_prec(const Field& f)const{return Precond_->right(f);}
+  const Field left_dag_prec (const Field& f)const{
+    return Precond_->left_dag(f);}
+  const Field right_dag_prec(const Field& f)const{
+    return Precond_->right_dag(f);}
   //////////////////////////////////////////////////////////////////////
 
   const Field Dminus(const Field&)const;
@@ -328,15 +322,13 @@ public:
   void md_force_m(Field&,const Field&,const Field&) const;
 
   const Field md_force( const Field& eta,const Field& zeta) const;
-  const Format::Format_F get_fermionFormat() const{
-    Format::Format_F ff = Dw_->get_fermionFormat();
-    return Format::Format_F(ff.Nvol(),N5_);
-  }
-  const std::vector<int> get_gsite() const { return Dw_->get_gsite();}
 
+  const ffmt_t get_fermionFormat() const{
+    return ffmt_t(Dw_.get_fermionFormat().Nvol(),N5_); }
 
-  void update_internal_state(){};
+  const std::vector<int> get_gsite() const { return Dw_.get_gsite();}
 
+  void update_internal_state(){}
 };
 
 

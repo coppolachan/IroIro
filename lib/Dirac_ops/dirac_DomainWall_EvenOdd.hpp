@@ -6,7 +6,7 @@
 #ifndef DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
 
-#include "dirac_wilson_DomainWall.h"
+#include "dirac_DomainWall.hpp"
 
 /*!
  * @brief Defines the 5d Domain Wall operator with even/odd site indexing
@@ -17,27 +17,25 @@ class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
 
   void md_force_eo(Field&,const Field&,const Field&)const;
   void md_force_oe(Field&,const Field&,const Field&)const;
-public:
-  Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,
-				  const Dirac_Wilson* Kernel_eo,
-				  const Dirac_Wilson* Kernel_oe)
-    :Deo_(DWF_node,Kernel_eo,DomainWallFermions::EvenOdd_tag()),
-     Doe_(DWF_node,Kernel_oe,DomainWallFermions::EvenOdd_tag()){}
   
-  Dirac_optimalDomainWall_EvenOdd(const double b,
-				  const double c,
-				  const double mq,
+  Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd&);
+  /*!< simple copy is prohibited */
+public:
+  Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,const Field* u)
+    :Deo_(DWF_node,u,Dw::EOtag()),
+     Doe_(DWF_node,u,Dw::OEtag()){}
+  
+  Dirac_optimalDomainWall_EvenOdd(double b,double c,double M0,double mq,
 				  const std::vector<double>& omega,
-				  const Dirac_Wilson* Kernel_eo,
-				  const Dirac_Wilson* Kernel_oe)
-    :Deo_(b,c,mq,omega,Kernel_eo,DomainWallFermions::EvenOdd_tag()),
-     Doe_(b,c,mq,omega,Kernel_oe,DomainWallFermions::EvenOdd_tag()){}
+				  const Field* u)
+    :Deo_(b,c,M0,mq,omega,u,Dw::EOtag()),
+     Doe_(b,c,M0,mq,omega,u,Dw::OEtag()){}
 
   /*! @brief Copy constructor to build the Pauli-Villars operator */
-  Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd& Dcopy, 
-				  DWFType Type = Standard)
-    :Deo_(Dcopy.Deo_,DomainWallFermions::EvenOdd_tag(),Type),
-     Doe_(Dcopy.Doe_,DomainWallFermions::EvenOdd_tag(),Type){}
+  Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd& Dc, 
+				  DomainWallFermions::PauliVillars_tag)
+    :Deo_(Dc.Deo_,DomainWallFermions::PauliVillars_tag(),Dw::EOtag()),
+     Doe_(Dc.Doe_,DomainWallFermions::PauliVillars_tag(),Dw::OEtag()){}
   
   ~Dirac_optimalDomainWall_EvenOdd(){}
   
@@ -45,6 +43,8 @@ public:
   size_t fsize() const{ return Deo_.fsize(); }
   size_t gsize() const{ return Deo_.gsize(); }
   
+  const Field gamma5(const Field& f5) const{ return Deo_.gamma5(f5);}
+
   const Field operator()(int, const Field&) const{}
   const double getMass() const{return Deo_.getMass();}
   const Field mult(const Field&)const;
@@ -53,11 +53,12 @@ public:
   //Preconditioning methods
   const Field mult_prec    (const Field& f)const{return f;}//empty now
   const Field mult_dag_prec(const Field& f)const{return f;}//empty now
-  const Field left_precond (const Field& f)const{return f;}//empty now
-  const Field right_precond(const Field& f)const{return f;}//empty now
+  const Field left_prec     (const Field& f)const{return f;}//empty now
+  const Field left_dag_prec (const Field& f)const{return f;}//empty now
+  const Field right_prec    (const Field& f)const{return f;}//empty now
+  const Field right_dag_prec(const Field& f)const{return f;}//empty now
   //////////////////////////////////////////////////////////////////////
 
-  const Field gamma5(const Field&) const;
   const Field md_force( const Field& eta,const Field& zeta) const;
 
   const Field mult_eo(const Field& f) const; 
@@ -73,12 +74,11 @@ public:
   const Field mult_ee_inv(const Field& f)const;
   const Field mult_ee_dinv(const Field& f)const;
 
-  
-  const Format::Format_F get_fermionFormat() const{
-    Format::Format_F ff = Deo_->get_fermionFormat();
-    return Format::Format_F(ff.Nvol(),N5_);
-  }
-  const std::vector<int> get_gsite() const { return Deo_.get_gsite();}
+  const ffmt_t get_fermionFormat() const{return  Deo_.get_fermionFormat();}
+  const std::vector<int> get_gsite() const { 
+    return SiteIndex_eo::instance()->get_gsite();}
+
+  void update_internal_state(){} 
 };
 
 

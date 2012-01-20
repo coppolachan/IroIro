@@ -14,6 +14,7 @@
 #include "dirac_clover.hpp"
 #include "dirac_DomainWall_4D.hpp"
 #include "dirac_DomainWall.hpp"
+#include "dirac_DomainWall_EvenOdd.hpp"
 #include "Solver/solver_Factory.hpp"
 
 /*!
@@ -24,7 +25,6 @@ class DiracWilsonLikeOperatorFactory {
 public:
   virtual DiracWilsonLike* getDiracOperator(Field* const) = 0;
 };
-
 
 /////////////////////////////////////////////////////////
 /*!
@@ -74,30 +74,34 @@ public:
 /////////////////////////////////////////////////////////
 /*!
  * @brief Concrete class for creating Dirac Optimal DWF-5d operators
- *
  */
 class DiracDWF5dFactory : public DiracWilsonLikeOperatorFactory {
-  RaiiFactoryObj<DiracWilsonFactory> DiracObj;
-  RaiiFactoryObj<Dirac_Wilson> Kernel;
-
   const XML::node Dirac_node;
-
 public:
-  DiracDWF5dFactory(XML::node node):Dirac_node(node){
-    XML::descend(node, "Kernel5d", MANDATORY);
-    DiracObj.save(new DiracWilsonFactory(node)); 
-  }
+  DiracDWF5dFactory(XML::node node):Dirac_node(node){}
 
   Dirac_optimalDomainWall* getDiracOperator(Field* const GaugeField){
-    Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
-    return new Dirac_optimalDomainWall(Dirac_node,Kernel.get());
+    return new Dirac_optimalDomainWall(Dirac_node,GaugeField);
   }
   ~DiracDWF5dFactory(){}
 };
 /////////////////////////////////////////////////////////
 /*!
+ * @brief Concrete class for creating Dirac Optimal DWF-5d e/o operators
+ */
+class DiracDWF5dEvenOddFactory : public DiracWilsonLikeOperatorFactory {
+  const XML::node Dirac_node;
+public:
+  DiracDWF5dEvenOddFactory(XML::node node):Dirac_node(node){}
+
+  Dirac_optimalDomainWall_EvenOdd* getDiracOperator(Field* const GaugeField){
+    return new Dirac_optimalDomainWall_EvenOdd(Dirac_node,GaugeField);
+  }
+  ~DiracDWF5dEvenOddFactory(){}
+};
+/////////////////////////////////////////////////////////
+/*!
  * @brief Concrete class for creating Dirac Optimal DWF-4d operators
- *
  */
 class DiracDWF4dFactory : public DiracWilsonLikeOperatorFactory {
   RaiiFactoryObj<DiracDWF5dFactory> DiracObj;
@@ -125,7 +129,8 @@ public:
     DWF5D_Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
     OprODWF.save(new Fopr_DdagD_Precondition(DWF5D_Kernel.get()));
     SolverODWF.save(SolverDWF_Obj.get()->getSolver(OprODWF.get()));
-    DPV.save(new Dirac_optimalDomainWall(*DWF5D_Kernel.get(), PauliVillars));
+    DPV.save(new Dirac_optimalDomainWall(*DWF5D_Kernel.get(), 
+					 DomainWallFermions::PauliVillars_tag()));
     OprPV.save(new Fopr_DdagD_Precondition(DPV.get()));
     SolverPV.save(SolverDWF_Obj.get()->getSolver(OprPV.get()));
 

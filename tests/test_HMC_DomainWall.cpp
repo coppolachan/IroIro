@@ -34,17 +34,16 @@ int Test_HMC_DomainWall::run(XML::node node){
   Field CommonField(Gfield_.Format.size());
 
   int N5d = 6;
-  double mzero = -1.8;
+  double M0 = -1.8;
   double b = 2.0;
   double c = 0.0;
   double mq1 = 0.05;
   double mq2 = 0.10;
   vector<double> omega(N5d,1.0);
-  Dirac_Wilson Kernel(mzero,&CommonField);
   
-  Dirac_optimalDomainWall Ddwf1(b,c,mq1,omega,&Kernel);
-  Dirac_optimalDomainWall DdwfPV(b,c,1.0,omega,&Kernel);
-  Dirac_optimalDomainWall Ddwf2(b,c,mq2,omega,&Kernel);
+  Dirac_optimalDomainWall Ddwf1( b,c,M0,mq1,omega,&CommonField);
+  Dirac_optimalDomainWall DdwfPV(b,c,M0,1.0,omega,&CommonField);
+  Dirac_optimalDomainWall Ddwf2( b,c,M0,mq2,omega,&CommonField);
 
   // gauge term
   ActionLevel al_1, al_2, al_3;

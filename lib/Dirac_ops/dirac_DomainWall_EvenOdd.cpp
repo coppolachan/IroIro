@@ -23,13 +23,13 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_ee_inv(const Field& f)const{
   return Deo_.mult_hq_inv(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_ee_dinv(const Field& f)const{
-  return Deo_.mult_hq_dinv()));
+  return Deo_.mult_hq_dinv(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_oo_inv(const Field& f)const{
   return Deo_.mult_hq_inv(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_oo_dinv(const Field& f)const{
-  return Deo_.mult_hq_dinv()));
+  return Deo_.mult_hq_dinv(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_eo(const Field& f)const{
   return Deo_.mult_hq_inv(Deo_.mult(f));
@@ -72,5 +72,6 @@ md_force(const Field& eta,const Field& zeta) const{
   Field fce(gsize());
   md_force_eo(fce,mult_oe(eta),zeta);
   md_force_oe(fce,eta,mult_eo_dag(zeta));
-  return -fce;
+  fce *= 0.5;
+  return fce;
 }

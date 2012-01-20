@@ -95,8 +95,10 @@ private:
   int(Dirac_Wilson::*gm)(int)const;
   void(Dirac_Wilson::*mult_core)(Field&,const Field&)const;
 
+  Dirac_Wilson(const Dirac_Wilson&); /*!< @brief simple copy is prohibited.*/
+
 public:
-  /*! @brief private constructor to create instance with e/o site indexing */
+  /*! @brief constructor to create instance with e/o site indexing */
   Dirac_Wilson(double mass,const Field* u,Dw::EOtag)
     :kpp_(0.5/(4.0+mass)),u_(u),
      Nvol_(CommonPrms::instance()->Nvol()/2),

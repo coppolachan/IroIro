@@ -45,7 +45,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac_DomainWall.cpp   	\
-		Dirac_ops/dirac_DomainWall_Preconditioners.cpp   	\
+		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  \
 		Dirac_ops/dirac_DomainWall_4D.cpp	\
 		EigenModes/eigenModes_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
@@ -151,6 +151,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_wilson_EvenOdd.h	\
 			Dirac_ops/dirac.h			\
 			Dirac_ops/dirac_DomainWall.hpp   	\
+			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D.hpp	\
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Fields/field_expressions.hpp		\

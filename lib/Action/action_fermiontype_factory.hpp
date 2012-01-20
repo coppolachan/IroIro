@@ -3,7 +3,6 @@
  *
  * @brief Declaration of FermionType action factories
  */
-
 #ifndef ACTION_FERMION_FACT_
 #define ACTION_FERMION_FACT_
 
@@ -136,7 +135,7 @@ private:
 				     Field* const GaugeField){
     DWF5d_Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
     DWF5d_KernelPV.save(new Dirac_optimalDomainWall(*DWF5d_Kernel.get(),
-						    PauliVillars));
+	      		         DomainWallFermions::PauliVillars_tag()));
     HermitianOp.save(new Fopr_DdagD_Precondition(DWF5d_Kernel.get()));
     HermitianOpPV.save(new Fopr_DdagD_Precondition(DWF5d_KernelPV.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));

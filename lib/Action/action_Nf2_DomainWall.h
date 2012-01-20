@@ -13,7 +13,7 @@
 #include "include/format_G.h"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
-#include "Dirac_ops/dirac_DomainWall.hpp"
+//#include "Dirac_ops/dirac_DomainWall.hpp"
 
 /*!
  * @class Action_Nf2_DomainWall
@@ -29,8 +29,8 @@ public:
    * @brief Standard constructor 
    */
   Action_Nf2_DomainWall(Field* const GField,
-			const Dirac_optimalDomainWall* D,
-			const Dirac_optimalDomainWall* Dpv,
+			const DiracWilsonLike* D,
+			const DiracWilsonLike* Dpv,
 			const Solver* Solv,
 			const Solver* SolvPv)
     :action_(GField,D,Dpv,Solv,SolvPv){}
