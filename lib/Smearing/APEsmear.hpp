@@ -34,11 +34,10 @@ class Smear_APE: public Smear{
     Gformat(gf),
     rho(set_rho(1.0)){}
 
+   ~Smear_APE(){};
 
-  ~Smear_APE(){};
-
-  void smear(Field&, const Field&);
-
+  void smear(Field&, const Field&) const;
+  void derivative(Field&,const Field&, const Field&) const;
 };
 
 #endif  

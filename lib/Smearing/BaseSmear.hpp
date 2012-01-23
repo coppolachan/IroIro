@@ -14,7 +14,7 @@ class Smear {
 public:
   virtual ~Smear(){}
   
-  virtual void smear(Field&, const Field&) = 0;
+  virtual void smear(Field&, const Field&) const = 0;
 };
 
 
