@@ -167,7 +167,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Smearing/APEsmear.hpp			\
 			Smearing/BaseSmear.hpp			\
 			Smearing/StoutSmear.hpp			\
-			Smearing/SmartConf.cpp			\
+			Smearing/SmartConf.hpp			\
 			HMC/hmcGeneral.hpp			\
 			HMC/mdExec.h				\
 			HMC/mdExec_leapfrog.hpp			\
