@@ -13,8 +13,7 @@
 
 typedef std::vector<Field> prop_t;
 
-class QpropDWF : public QuarkPropagator
-{
+class QpropDWF : public QuarkPropagator{
   const Dirac_optimalDomainWall_4D Dgw_;
   int Nc_;
   int Nd_;
@@ -22,15 +21,15 @@ class QpropDWF : public QuarkPropagator
 public:
   QpropDWF(Dirac_optimalDomainWall_4D& DWF_Kernel)
     :Dgw_(DWF_Kernel),
-     Nc_(   CommonPrms::instance()->Nc()),
-     Nd_(   CommonPrms::instance()->Nd()){}
+     Nc_(CommonPrms::instance()->Nc()),
+     Nd_(CommonPrms::instance()->Nd()){}
   
   QpropDWF(const Dirac_optimalDomainWall& DWF_5dKernel,
 	   double scnd = 1.0e-14,
 	   int Niter =500)
     :Dgw_(DWF_5dKernel,scnd,scnd,Niter),
-     Nc_(   CommonPrms::instance()->Nc()),
-     Nd_(   CommonPrms::instance()->Nd()){}
+     Nc_(CommonPrms::instance()->Nc()),
+     Nd_(CommonPrms::instance()->Nd()){}
 
   ~QpropDWF(){}
   

@@ -12,15 +12,15 @@ namespace FermionAction {
 	std::cerr << "No name provided for Action. Check your xml file\n";
 	abort();
       }
-
       if (!strcmp(Action_name, "TwoFlavors")) 
 	return new TwoFlavorActionFactory(node);
       if (!strcmp(Action_name, "TwoFlavorsRatio")) 
 	return new TwoFlavorRatioActionFactory(node);
-      if (!strcmp(Action_name, "TwoFlavorsDomainWall")) 
-	return new TwoFlavorDomainWallActionFactory(node);
-      if (!strcmp(Action_name, "TwoFlavorsEvenOdd")) 
-	return new TwoFlavorDomainWallActionFactory(node);
+
+      if (!strcmp(Action_name, "TwoFlavorsDomainWall_4D")) 
+	return new TwoFlavorActionFactory(node);
+      if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D")) 
+	return new TwoFlavorDomainWall5dActionFactory(node);
 
       std::cerr << "No Fermion Action available with name ["
 		<< Action_name << "]. Request by <" << node.name() << ">\n";

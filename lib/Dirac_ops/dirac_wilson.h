@@ -70,7 +70,7 @@ private:
   SUNmat u_dag(int site,int dir) const{
     return SUNmat((*u_)[gf_->cslice(0,site,dir)]).dag();
   }
-
+#if 0
   void mult_xp(Field&,const Field&)const;
   void mult_yp(Field&,const Field&)const;
   void mult_zp(Field&,const Field&)const;
@@ -81,11 +81,27 @@ private:
   void mult_zm(Field&,const Field&)const;
   void mult_tm(Field&,const Field&)const;
 
-  void mult_a0(Field&,const Field&)const ;
-  void mult_a1(Field&,const Field&)const ;
-
   static void(Dirac_Wilson::*mult_p[])(Field&,const Field&)const;
   static void(Dirac_Wilson::*mult_m[])(Field&,const Field&)const;
+#endif
+
+#if 1
+  void mult_xp(Field&,ShiftField*)const;
+  void mult_yp(Field&,ShiftField*)const;
+  void mult_zp(Field&,ShiftField*)const;
+  void mult_tp(Field&,ShiftField*)const;
+
+  void mult_xm(std::valarray<double>&,const Field&)const;
+  void mult_ym(std::valarray<double>&,const Field&)const;
+  void mult_zm(std::valarray<double>&,const Field&)const;
+  void mult_tm(std::valarray<double>&,const Field&)const;
+
+  static void(Dirac_Wilson::*mult_p[])(Field&,ShiftField*)const;
+  static void(Dirac_Wilson::*mult_m[])(std::valarray<double>&,
+				       const Field&)const;
+#endif 
+  void mult_a0(Field&,const Field&)const ;
+  void mult_a1(Field&,const Field&)const ;
 
   int gsite(int site)const {return site;}
   int esec(int site)const {return SiteIndex_eo::instance()->esec(site);}

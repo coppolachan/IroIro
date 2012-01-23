@@ -33,22 +33,20 @@ public:
 			     const double stp_cnd_odw, 
 			     const double stp_cnd_pv, 
 			     const int Niter)
-    :Dodw_(D),
+    :Dodw_(D),Dpv_(D,PauliVillars),
      slv_odw_(new Solver_BiCGStab(stp_cnd_odw,Niter,
 				  new Fopr_DdagD_Precondition(&Dodw_))),
-     Dpv_(Dodw_,DomainWallFermions::PauliVillars_tag()),
      slv_pv_(new Solver_BiCGStab(stp_cnd_pv,Niter,
 				 new Fopr_DdagD_Precondition(&Dpv_))){}
+
    /*!
    * @brief Constructor using external solvers (mostly used by factories)
    */
   Dirac_optimalDomainWall_4D(const Dirac_optimalDomainWall& D,
 			     const Solver* SolverODWF, 
 			     const Solver* SolverPV)
-    :Dodw_(D),
-     slv_odw_(SolverODWF),
-     Dpv_(Dodw_,DomainWallFermions::PauliVillars_tag()),
-     slv_pv_(SolverPV){}
+    :Dodw_(D),Dpv_(D,PauliVillars),
+     slv_odw_(SolverODWF),slv_pv_(SolverPV){}
 
   ~Dirac_optimalDomainWall_4D(){}
   

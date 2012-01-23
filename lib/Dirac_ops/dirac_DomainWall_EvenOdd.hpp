@@ -21,21 +21,20 @@ class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
   Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd&);
   /*!< simple copy is prohibited */
 public:
-  Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,const Field* u)
-    :Deo_(DWF_node,u,Dw::EOtag()),
-     Doe_(DWF_node,u,Dw::OEtag()){}
+  Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,const Field* u,
+				  DWFType Type=Standard)
+    :Deo_(DWF_node,u,Dw::EOtag(),Type),
+     Doe_(DWF_node,u,Dw::OEtag(),Type){
+#if VERBOSITY>4
+    CCIO::cout<<"Dirac_optimalDomainWall_Evenodd created"<<std::endl;
+#endif
+  }
   
   Dirac_optimalDomainWall_EvenOdd(double b,double c,double M0,double mq,
 				  const std::vector<double>& omega,
 				  const Field* u)
     :Deo_(b,c,M0,mq,omega,u,Dw::EOtag()),
      Doe_(b,c,M0,mq,omega,u,Dw::OEtag()){}
-
-  /*! @brief Copy constructor to build the Pauli-Villars operator */
-  Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd& Dc, 
-				  DomainWallFermions::PauliVillars_tag)
-    :Deo_(Dc.Deo_,DomainWallFermions::PauliVillars_tag(),Dw::EOtag()),
-     Doe_(Dc.Doe_,DomainWallFermions::PauliVillars_tag(),Dw::OEtag()){}
   
   ~Dirac_optimalDomainWall_EvenOdd(){}
   

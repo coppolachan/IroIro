@@ -19,8 +19,6 @@
 
 namespace DomainWallFermions {
   struct EvenOdd_tag{};
-  struct PauliVillars_tag{};
-
   const std::vector<double> 
   getOmega(int Ns,double lambda_min,double lambda_max);
   
@@ -53,7 +51,7 @@ struct Dirac_optimalDomainWall_params{
 
   void set_arrays();
 
-  Dirac_optimalDomainWall_params(XML::node DWF_node);
+  Dirac_optimalDomainWall_params(XML::node DWF_node,DWFType Type);
   Dirac_optimalDomainWall_params(double b,double c,double M0,double mq,
 				 const std::vector<double>& omega,
 				 Preconditioners Preconditioning);
@@ -138,20 +136,20 @@ private:
 
 public:
   /*! @brief constructors to create an instance with normal indexing */
-  Dirac_optimalDomainWall(XML::node DWF_node,const Field* u)
-    :Params(Dirac_optimalDomainWall_params(DWF_node)),
+  Dirac_optimalDomainWall(XML::node DWF_node,const Field* u,
+			  DWFType Type= Standard)
+    :Params(DWF_node,Type),
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
      Dw_(M0_,u_),
      f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
      mult_core(&Dirac_optimalDomainWall::mult_a1),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){
-    CCIO::cout << "Dirac_optimalDomainWall::N5_="<<N5_<<std::endl;
 #if VERBOSITY>4
     CCIO::cout << "Created Dirac_optimalDomainWall" << std::endl;
 #endif
   }
-  
+  /*  
   Dirac_optimalDomainWall(Dirac_optimalDomainWall_params Prms,const Field* u)
     :Params(Prms),
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
@@ -160,7 +158,7 @@ public:
      mult_core(&Dirac_optimalDomainWall::mult_a1),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){}
- 
+  */
   Dirac_optimalDomainWall(double b,double c,double M0,double mq,
 			  const std::vector<double>& omega,
 			  const Field* u,
@@ -174,92 +172,44 @@ public:
      Precond_(choose_Preconditioner(Precond)){}
   
   /*! @brief copy constructor */
-  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc)
+  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc, 
+			  DWFType Type=Standard)
     :Params(Dc.Params),
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(Dc.u_),
      Dw_(M0_,u_),
      f4size_(Dc.f4size_),fsize_(Dc.fsize_),gsize_(Dc.gsize_),
      mult_core(&Dirac_optimalDomainWall::mult_a1),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
-     Precond_(choose_Preconditioner(Params.Preconditioning_)){}
-    
-  /*! @brief Copy constructor fore the Pauli-Villars operator */
-    Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc, 
-			    DomainWallFermions::PauliVillars_tag)
-      :Params(Dc.Params),
-      N5_(Params.N5_),M0_(Params.M0_),mq_(1.0),u_(Dc.u_),
-      Dw_(M0_,u_),
-      f4size_(Dc.f4size_),fsize_(Dc.fsize_),gsize_(Dc.gsize_),
-      mult_core(&Dirac_optimalDomainWall::mult_a1),
-      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){
-      Params.mq_= mq_;
+    if(Type==Standard) {
+      mq_=1.0; 
+      Params.mq_=1.0;
     }
+  }
 
-  /*! @brief constructor of Deo  */
-  Dirac_optimalDomainWall(XML::node DWF_node,const Field* u,Dw::EOtag)
-    :Params(Dirac_optimalDomainWall_params(DWF_node)),
+  /*! @brief constructor of Deo and Doe, TAG = Dw::EOtag or Dw::OEtag */
+  template<typename TAG>
+  Dirac_optimalDomainWall(XML::node DWF_node,const Field* u,TAG,
+			  DWFType Type= Standard)
+    :Params(DWF_node,Type),
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
-     Dw_(M0_,u_,Dw::EOtag()),
+     Dw_(M0_,u_,TAG()),
      f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
      mult_core(&Dirac_optimalDomainWall::mult_a0),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
      Precond_(NULL){}
 
+  template<typename TAG>
   Dirac_optimalDomainWall(double b,double c,double M0,double mq,
 			  const std::vector<double>& omega,
-			  const Field* u,Dw::EOtag)
+			  const Field* u,TAG)
     :Params(b,c,M0,mq,omega,NoPreconditioner),
      N5_(Params.N5_),M0_(M0),mq_(mq),u_(u),
-     Dw_(M0_,u_,Dw::EOtag()),
+     Dw_(M0_,u_,TAG()),
      f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
      mult_core(&Dirac_optimalDomainWall::mult_a0),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
      Precond_(NULL){}
-
-  /*! @brief constructor of Doe  */
-  Dirac_optimalDomainWall(XML::node DWF_node,const Field* u,Dw::OEtag)
-    :Params(Dirac_optimalDomainWall_params(DWF_node)),
-     N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
-     Dw_(M0_,u_,Dw::OEtag()),
-     f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
-     mult_core(&Dirac_optimalDomainWall::mult_a0),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
-     Precond_(NULL){}
-
-  Dirac_optimalDomainWall(double b,double c,double M0,double mq,
-			  const std::vector<double>& omega,
-			  const Field* u,Dw::OEtag)
-    :Params(b,c,M0,mq,omega,NoPreconditioner),
-     N5_(Params.omega_.size()),M0_(M0),mq_(mq),u_(u),
-     Dw_(M0_,u_,Dw::OEtag()),
-     f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
-     mult_core(&Dirac_optimalDomainWall::mult_a0),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
-     Precond_(NULL){}
-
-  /*!@brief copy constructors for e/o + PauliVillars  */
-  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc,
-			  DomainWallFermions::PauliVillars_tag,
-			  Dw::EOtag)
-    :Params(Dc.Params),
-     N5_(Params.N5_),M0_(Params.M0_),mq_(1.0),u_(Dc.u_),
-     Dw_(M0_,u_,Dw::EOtag()),
-     f4size_(Dc.f4size_),fsize_(Dc.fsize_),gsize_(Dc.gsize_),
-     mult_core(&Dirac_optimalDomainWall::mult_a0),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
-     Precond_(NULL){ Params.mq_=mq_;}
-
-  Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc,
-			  DomainWallFermions::PauliVillars_tag,
-			  Dw::OEtag)
-    :Params(Dc.Params),
-     N5_(Params.N5_),M0_(Params.M0_),mq_(1.0),u_(Dc.u_),
-     Dw_(M0_,u_,Dw::OEtag()),
-     f4size_(Dc.f4size_),fsize_(Dc.fsize_),gsize_(Dc.gsize_),
-     mult_core(&Dirac_optimalDomainWall::mult_a0),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
-     Precond_(NULL){ Params.mq_=mq_;}
 
   ///////////////////////////
   ~Dirac_optimalDomainWall(){
@@ -270,10 +220,7 @@ public:
   }
   
   size_t f4size() const{ return f4size_;}
-  size_t fsize()  const{ 
-    CCIO::cout<<"Dirac_optimalDomainWall::fsize_="
-	      <<fsize_<<std::endl;
-    return fsize_; }
+  size_t fsize()  const{ return fsize_; }
   size_t gsize()  const{ return gsize_; }
   
   const Field operator()(int, const Field&) const{}

@@ -35,10 +35,10 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_eo(const Field& f)const{
   return Deo_.mult_hq_inv(Deo_.mult(f));
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_oe(const Field& f)const{
-  return Deo_.mult_hq_inv(Doe_.mult(f));
+  return Doe_.mult_hq_inv(Doe_.mult(f));
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_eo_dag(const Field& f)const{
-  return Doe_.mult_dag(Doe_.mult_hq_dinv(f));
+  return Doe_.mult_dag(Deo_.mult_hq_dinv(f));
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_oe_dag(const Field& f)const{
   return Deo_.mult_dag(Doe_.mult_hq_dinv(f));
@@ -57,14 +57,14 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
 
 void Dirac_optimalDomainWall_EvenOdd::
 md_force_eo(Field& fce, const Field& eta,const Field& zeta) const{
-  Deo_.md_force_p(fce,eta,zeta);
-  Doe_.md_force_m(fce,eta,zeta);
+  Deo_.md_force_p(fce,eta,mult_ee_dinv(zeta));
+  Doe_.md_force_m(fce,eta,mult_ee_dinv(zeta));
 }
 
 void Dirac_optimalDomainWall_EvenOdd::
 md_force_oe(Field& fce, const Field& eta,const Field& zeta) const{
-  Doe_.md_force_p(fce,eta,zeta);
-  Deo_.md_force_m(fce,eta,zeta);
+  Doe_.md_force_p(fce,eta,mult_oo_dinv(zeta));
+  Deo_.md_force_m(fce,eta,mult_oo_dinv(zeta));
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::

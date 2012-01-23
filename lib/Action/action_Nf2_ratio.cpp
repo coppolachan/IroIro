@@ -33,6 +33,7 @@ void Action_Nf2_ratio::init(const RandNum& rand,const void*){
   #if VERBOSITY>=DEBUG_VERB_LEVEL
   double phsum= (ph*ph).sum();
   double phnorm= Communicator::instance()->reduce_sum(phsum);
+  CCIO::cout<<"fsize_="<<fsize_<<std::endl;
   CCIO::cout<<"ph.norm="<<sqrt(phnorm)<<std::endl;
   #endif 
   phi_= D1_->mult_dag(Field(ph));

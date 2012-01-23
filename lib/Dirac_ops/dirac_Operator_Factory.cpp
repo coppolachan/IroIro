@@ -7,7 +7,6 @@ namespace DiracOperators {
   DiracWilsonLikeOperatorFactory* 
   createDiracWilsonLikeOperatorFactory(const XML::node node){
     if (node !=NULL) {
-      
       const char* Dirac_name = node.attribute("name").value();
 
       if (!strcmp(Dirac_name, "")) {
@@ -15,7 +14,6 @@ namespace DiracOperators {
 		  << node.name() << ">\n";
 	abort();
       }
-      
       if (!strcmp(Dirac_name, "DiracWilson"))  
 	return new DiracWilsonFactory(node);
       if (!strcmp(Dirac_name, "DiracWilson_EvenOdd")) 
@@ -24,17 +22,35 @@ namespace DiracOperators {
 	return new DiracCloverFactory(node);
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
 	return new DiracDWF4dFactory(node);
+      std::cerr<<"No Dirac Operator available with name ["
+	       << Dirac_name << "]. Request by <" << node.name() << ">\n";
+      abort();
+    }else{
+      std::cout<<"Mandatory node is missing in input file (Dirac Object)\n";
+      abort();
+    }
+  }
+
+  DiracDWF5dOperatorFactory* 
+  createDiracDWF5dOperatorFactory(const XML::node node){
+    if (node !=NULL) {
+      const char* Dirac_name = node.attribute("name").value();
+
+      if (!strcmp(Dirac_name, "")) {
+	std::cerr << "No name provided for DWF Dirac Operator. Request by <"
+		  << node.name() << ">\n";
+	abort();
+      }
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
 	return new DiracDWF5dFactory(node);
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
 	return new DiracDWF5dEvenOddFactory(node);
       
-      std::cerr << "No Dirac Operator available with name ["
+      std::cerr <<"No Dirac Operator available with name ["
 		<< Dirac_name << "]. Request by <" << node.name() << ">\n";
       abort();
-      
-    } else {
-      std::cout << "Mandatory node is missing in input file (Dirac Object)\n";
+    }else{
+      std::cout<<"Mandatory node is missing in input file (DWF Dirac Object)\n";
       abort();
     }
   }

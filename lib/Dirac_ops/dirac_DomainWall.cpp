@@ -20,7 +20,7 @@ using namespace std;
 // Constructors for DomainWall Parameters classes
 //======================================================================
 Dirac_optimalDomainWall_params::
-Dirac_optimalDomainWall_params(XML::node DWF_node){
+Dirac_optimalDomainWall_params(XML::node DWF_node,DWFType Type){
   std::string Precond_string;
   XML::read(DWF_node, "Preconditioning", Precond_string, MANDATORY);
   XML::read(DWF_node, "N5d", N5_, MANDATORY);
@@ -28,9 +28,10 @@ Dirac_optimalDomainWall_params(XML::node DWF_node){
   XML::read(DWF_node, "b", b_, MANDATORY);
   XML::read(DWF_node, "c", c_, MANDATORY);
   XML::read(DWF_node, "mass", mq_, MANDATORY);
-
-  CCIO::cout<<"mass="<<mq_<<std::endl;
-  CCIO::cout<<"Dirac_optimalDomainWall_params::N5_="<<N5_<<std::endl;
+  if(Type == PauliVillars) mq_= 1.0;
+  
+  //CCIO::cout<<"mass="<<mq_<<std::endl;
+  //CCIO::cout<<"Dirac_optimalDomainWall_params::N5_="<<N5_<<std::endl;
 
   XML::node ApproxNode = DWF_node.child("approximation");
   if(ApproxNode !=NULL) {
@@ -157,7 +158,6 @@ const Field Dirac_optimalDomainWall::mult_hq_dag(const Field& f5) const{
 
 const Field Dirac_optimalDomainWall::mult_hq_inv(const Field& f5) const{
  using namespace FieldExpression;
-
   assert(f5.size()==fsize_);
   Field w5(f5);
 
@@ -236,26 +236,6 @@ const Field Dirac_optimalDomainWall::mult_hq_dinv(const Field& f5) const{
 }
 
 /*! @brief definitions of D_dwf */
-void Dirac_optimalDomainWall::mult_a0(Field& w5, const Field& f5) const{ 
-  using namespace FieldExpression;
-  assert(w5.size()==f5.size());
-
-  for(int s=0; s<N5_; ++s) {
-    Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
-    if(s==0)     lpf *= -mq_;
-    Field lmf = proj_m(get4d(f5,(s+1)%N5_));
-    if(s==N5_-1) lmf *= -mq_;
-
-    Field v = get4d(f5,s);
-    v *= Params.bs_[s];
-    v += Params.cs_[s]*(lpf +lmf);
-
-    Field w = Dw_.mult(v);
-    w *= 4.0+M0_;
-    set5d(w5,w,s);
-  }
-}
-
 void Dirac_optimalDomainWall::mult_a1(Field& w5, const Field& f5) const{ 
   using namespace FieldExpression;
   assert(w5.size()==f5.size());
@@ -277,23 +257,59 @@ void Dirac_optimalDomainWall::mult_a1(Field& w5, const Field& f5) const{
   }
 }
 
-const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
-  Field w5(fsize_);
-  (this->*mult_core)(w5,f5);
-  return w5;
+void Dirac_optimalDomainWall::mult_dag_a1(Field& w5,const Field& f5) const{
+  using namespace FieldExpression;
+  assert(w5.size()==f5.size());
+
+  for(int s=0; s<N5_; ++s) {
+    Field lpf = proj_p(get4d(f5,(s+1)%N5_));
+    if(s==N5_-1) lpf *= -mq_;
+    Field lmf = proj_m(get4d(f5,(s+N5_-1)%N5_));
+    if(s==0)     lmf *= -mq_;
+
+    Field v = get4d(f5,s);
+    v *= Params.bs_[s];
+    v += Params.cs_[s]*(lpf +lmf);
+
+    Field w = Dw_.mult_dag(v);          
+    w *= 4.0+M0_;
+    w += get4d(f5,s) -lpf -lmf;
+    set5d(w5,w,s);
+  }
+}
+
+void Dirac_optimalDomainWall::mult_a0(Field& w5, const Field& f5) const{ 
+  using namespace FieldExpression;
+  assert(w5.size()==f5.size());
+
+  for(int s=0; s<N5_; ++s) {
+    Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
+    if(s==0)     lpf *= -mq_;
+    Field lmf = proj_m(get4d(f5,(s+1)%N5_));
+    if(s==N5_-1) lmf *= -mq_;
+
+    Field v = get4d(f5,s);
+    v *= Params.bs_[s];
+    v += Params.cs_[s]*(lpf +lmf);
+
+    Field w = Dw_.mult(v);
+    w *= 4.0+M0_;
+    set5d(w5,w,s);
+  }
 }
 
 void Dirac_optimalDomainWall::mult_dag_a0(Field& w5,const Field& f5) const{
   using namespace FieldExpression;
   assert(w5.size()==f5.size());
-  
-  for(int s=0; s<N5_; ++s) {
-    Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
-    if(s==N5_-1)     lpf *= -mq_;
-    Field lmf = proj_m(get4d(f5,(s+1)%N5_));
-    if(s==0) lmf *= -mq_;
-    Field v = get4d(f5,s);
+  assert(w5.size()==fsize_);
 
+  for(int s=0; s<N5_; ++s) {
+    Field lpf = proj_p(get4d(f5,(s+1)%N5_));
+    if(s==N5_-1) lpf *= -mq_;
+    Field lmf = proj_m(get4d(f5,(s+N5_-1)%N5_));
+    if(s==0)     lmf *= -mq_;
+
+    Field v = get4d(f5,s);
     v *= Params.bs_[s];
     v += Params.cs_[s]*(lpf +lmf);
 
@@ -303,34 +319,12 @@ void Dirac_optimalDomainWall::mult_dag_a0(Field& w5,const Field& f5) const{
   }
 }
 
-void Dirac_optimalDomainWall::mult_dag_a1(Field& w5,const Field& f5) const{
-  using namespace FieldExpression;
-  assert(f5.size()==fsize_);
-  Field v5(fsize_);
-  Field t5(fsize_);
-  t5 = f5;
-   
-  for(int s=0; s<N5_; ++s){
-    Field dv = Dw_.mult_dag(get4d(t5,s));
-    dv *= (4.0+M0_)*Params.bs_[s];
-    set5d(w5,dv,s);
-    dv *= (Params.cs_[s]/Params.bs_[s]);
-    set5d(v5,dv,s);
-  }
-  w5 += t5;
-  v5 -= t5;
- 
-  for(int s = 0; s < N5_; ++s){
-    Field lpf = proj_p(get4d(v5,(s+1)%N5_));
-    if(s == N5_-1) lpf *= -mq_;
-    Field lmf = proj_m(get4d(v5,(s+N5_-1)%N5_));
-    if(s == 0)     lmf *= -mq_;
-    add5d(w5,lpf,s);
-    add5d(w5,lmf,s);
-  }
+const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
+  Field w5(fsize_);
+  (this->*mult_core)(w5,f5);
+  return w5;
 }
 
-/////// related useful functions  //////
 const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
   //  return R5g5(mult(R5g5(f5)));
   Field w5(fsize_);
@@ -338,11 +332,12 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
   return w5;
 }
 
+/////// related useful functions  //////
 const Field Dirac_optimalDomainWall::Dminus(const Field& f5) const{
   //1-c_s * D_w(-M)
   Field w5(fsize_);
   w5 = f5;
-  for(int s = 0; s < N5_; ++s) {
+  for(int s=0; s<N5_; ++s) {
     Field temp =  Dw_.mult(get4d(f5,s));
     temp *= -Params.cs_[s]; // = [-c_s * D_w(-M)]f5
     add5d(w5, temp, s); //= [1-c_s * D_w(-M)]f5
@@ -352,13 +347,13 @@ const Field Dirac_optimalDomainWall::Dminus(const Field& f5) const{
 
 const Field Dirac_optimalDomainWall::gamma5(const Field& f5) const{
   Field w5(fsize_); 
-  for(int s = 0; s < N5_; ++s) set5d(w5,gamma5_4d(get4d(f5,s)),s);
+  for(int s=0; s<N5_; ++s) set5d(w5,gamma5_4d(get4d(f5,s)),s);
   return w5; 
 }
 
 const Field Dirac_optimalDomainWall::R5(const Field& f5) const{
   Field w5(fsize_); 
-  for(int s = 0; s < N5_; ++s) set5d(w5,get4d(f5,s),N5_-s-1);
+  for(int s=0; s<N5_; ++s) set5d(w5,get4d(f5,s),N5_-s-1);
   return w5; 
 }
 
