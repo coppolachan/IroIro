@@ -70,7 +70,7 @@ private:
   SUNmat u_dag(int site,int dir) const{
     return SUNmat((*u_)[gf_->cslice(0,site,dir)]).dag();
   }
-#if 0
+#if 1
   void mult_xp(Field&,const Field&)const;
   void mult_yp(Field&,const Field&)const;
   void mult_zp(Field&,const Field&)const;
@@ -85,7 +85,7 @@ private:
   static void(Dirac_Wilson::*mult_m[])(Field&,const Field&)const;
 #endif
 
-#if 1
+#if 0
   void mult_xp(Field&,ShiftField*)const;
   void mult_yp(Field&,ShiftField*)const;
   void mult_zp(Field&,ShiftField*)const;
