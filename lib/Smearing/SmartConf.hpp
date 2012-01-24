@@ -62,14 +62,14 @@ public:
   //SmartConf(XML::node node, Field* Config, Smear_Stout& Stout)
 
   /*! @brief Standard constructor */
-  SmartConf(int Nsmear, Smear_Stout& Stout,
-	    const Format::Format_G& gf ):
+  SmartConf(int Nsmear, Smear_Stout& Stout):
     smearingLevels(Nsmear),
     StoutSmearing(Stout){
-    ThinLinks = new Field(gf.size());
+    ThinLinks = new Field(StoutSmearing.getFieldSize());
     for (int i=0; i< smearingLevels; ++i){
       SmearedSet.push_back(*(new GaugeField));
     }
+    std::cout << "Field size "<< ThinLinks->size()<<"\n";
   }
 
   /*! For just thin links */
@@ -77,7 +77,7 @@ public:
     smearingLevels(0),
     StoutSmearing(),
     SmearedSet(0){
-    ThinLinks = new Field(CommonPrms::Nvol());
+    ThinLinks = new Field(StoutSmearing.getFieldSize());
   }
 
   void set_GaugeField(){
