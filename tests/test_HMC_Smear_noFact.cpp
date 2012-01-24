@@ -15,8 +15,7 @@
 #include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"
 
-#include "Action/action_gauge_wilson.hpp"
-
+#include "Smearing/SmartConf.hpp"
 
 int Test_HMC::run(XML::node node){
   std::cout << "Starting HMCrun" << std::endl;
@@ -27,44 +26,62 @@ int Test_HMC::run(XML::node node){
   
   std::vector<int> multip(2);
   multip[0]= 1;
-  multip[1]= 2;
+  multip[1]= 1;
   
   Field* CommonField = new Field(Gfield_.Format.size());
+  // --------------------------------- Smearing
+  Smear_APE BaseAPE(0.1,Gfield_.Format);
+  Smear_Stout AnalyticSmear(BaseAPE, Gfield_.Format);
+  int Nsmear = 1; // Smearing levels
+  const bool nosmear = false;
+  const bool dosmear = true;
 
-  DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
-  
+  SmartConf ThinField(Gfield_.Format);//empty for thin links
+  SmartConf FatField(Nsmear, AnalyticSmear, Gfield_.Format);
+
+  /////////////////////////////////////////////
+
+
   ActionLevel al_1, al_2;
-  Action* Gauge = new ActionGaugeWilson(5.0, 
+  // Gauge action
+  Action* Gauge = new ActionGaugeWilson(6.2, 
 					Gfield_.Format, 
-					CommonField);
+					FatField.select_conf(nosmear));
   al_1.push_back(Gauge);
+
+  // Fermionic action
+  //  DiracWilsonLike* OpNf2    = new Dirac_Clover(1.0/6.0,1.0,FatField.select_conf(dosmear));
+  DiracWilsonLike* OpNf2    = new Dirac_Wilson(1.0/6.0,FatField.select_conf(dosmear));
  
   Solver* SolvNf2 = new Solver_CG(1e-14,
 				  1000,
 				  new Fopr_DdagD(OpNf2));
   
-  
-  Action* Nf2Action = new Action_Nf2(CommonField,
+  Action* Nf2Action = new Action_Nf2(FatField.select_conf(dosmear),
 				     OpNf2,
-				     SolvNf2);
-  
+				     SolvNf2,
+				     true,
+				     &FatField);
   al_2.push_back(Nf2Action);
-
 
   ActionSet ASet;
   ASet.push_back(al_2);
   ASet.push_back(al_1);
   
   MDexec* Integrator = new MDexec_leapfrog(8,
-					   10,
+					   5,
 					   0.02,
 					   ASet,
 					   multip,
 					   Gfield_.Format,
-					   CommonField);
+					   &FatField);
 
 				      
   HMCgeneral hmc_general(node, *Integrator);  
+
+  // Note:
+  // The line *U_=U in mdExec_leapfrog.cpp (init)
+  // must be substituted by a call to SmartConf::set_GaugeField()
 
 
   //Initialization

@@ -15,7 +15,7 @@ typedef complex<double> dcomplex;
 
 //====================================================================
 Field* SmartConf::get_current_conf() const{
-  return const_cast<Field*>(&(SmearedSet[smearingLevels].U));
+  return const_cast<Field*>(&(SmearedSet[smearingLevels-1].U));
   
 }
 //====================================================================
@@ -25,24 +25,46 @@ const Field& SmartConf::get_smeared_conf(int Level) const{
 //====================================================================
 void SmartConf::fill_smearedSet(){
   GaugeField previous_u;
-  
+ 
+  _Message(DEBUG_VERB_LEVEL, "[SmartConf] Filling SmearedSet\n");
+ 
   previous_u.U = *ThinLinks;
   for(int smearLvl = 0; smearLvl < smearingLevels; ++smearLvl){
     StoutSmearing.smear(SmearedSet[smearLvl].U,previous_u.U);
     previous_u = SmearedSet[smearLvl];
   }
-
 }
 //====================================================================
 Field SmartConf::smeared_force(const Field& SigmaTilde)const {
   GaugeField force, force1;
+  GaugeField1D U_mu;
+  SUNmat ut;
+  using namespace SUNmat_utils;
+  int Nvol = CommonPrms::Nvol();
+  int Ndim = CommonPrms::Ndim();
+  
+  force1.U = SigmaTilde;//actually = U*SigmaTilde
 
-  force1.U = SigmaTilde;
+  for(int mu = 0; mu < Ndim; ++mu){
+    U_mu = (SmearedSet[smearingLevels-1].U)[force.Format.dir_slice(mu)];
+    for (int site = 0; site < Nvol; ++site){
+      ut = u_dag(U_mu,site) * u(force1,site,mu);
+      force1.U.set(force1.Format.cslice(0,site,mu),ut.getva());
+    }
+  } 
+
   for(int ismr = smearingLevels - 1; ismr > 0; --ismr){
     force = AnalyticSmearedForce(force1,get_smeared_conf(ismr));
     force1 = force;
   }
   force = AnalyticSmearedForce(force1,*ThinLinks);
+  
+  for(int mu = 0; mu < Ndim; ++mu){
+    for (int site = 0; site < Nvol; ++site){
+      ut = u(*ThinLinks,force.Format,site,mu) * u(force,site,mu);
+       force.U.set(force.Format.cslice(0,site,mu),anti_hermite(ut));
+    }
+  }  
   
   return force.U;
 }
@@ -50,10 +72,10 @@ Field SmartConf::smeared_force(const Field& SigmaTilde)const {
 GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
 					    const Field& GaugeK) const{
   using namespace SUNmat_utils;
-  
+
   int Nvol = CommonPrms::Nvol();
   int Ndim = CommonPrms::Ndim();
-   
+  
   GaugeField iQ, e_iQ;
   GaugeField C, iLambda;
   GaugeField SigmaK;
@@ -67,24 +89,24 @@ GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
   for(int mu = 0; mu < Ndim; ++mu){
     U_mu = GaugeK[C.Format.dir_slice(mu)];
     for(int site = 0; site < Nvol; ++site){
-      ut = u(C.U,site,mu) * u_dag(U_mu,site);//Omega_mu
+      ut = u(C,site,mu) * u_dag(U_mu,site);//Omega_mu
       iQ.U.set(iQ.Format.cslice(0,site,mu), anti_hermite(ut));
     }
   }// created iQ
-   
-  set_iLambda(iLambda, e_iQ, iQ, SigmaKPrime, GaugeK);
   
+  set_iLambda(iLambda, e_iQ, iQ, SigmaKPrime, GaugeK);
+
   for(int mu = 0; mu < Ndim; ++mu){
     for (int site = 0; site < Nvol; ++site){
       ut = u(SigmaKPrime,site,mu) * u(e_iQ,site,mu);
       SigmaK.U.set(SigmaK.Format.cslice(0,site,mu),ut.getva());
-      ut = u(C,site,mu) * u(iLambda,site,mu);
+      ut = u_dag(C,site,mu) * u(iLambda,site,mu);
       SigmaK.U.add(SigmaK.Format.cslice(0,site,mu),ut.getva());
     }
   }
-  
-  StoutSmearing.BaseDerivative(SigmaK.U, iLambda.U, GaugeK);
 
+  StoutSmearing.BaseDerivative(SigmaK.U, iLambda.U, GaugeK);
+  
   return SigmaK;
 }
 //====================================================================

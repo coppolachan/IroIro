@@ -59,6 +59,7 @@ public:
   //////////////////////////////////////////////////////////////////////
 
   const Field md_force( const Field& eta,const Field& zeta) const;
+  const Field md_force_core( const Field& eta,const Field& zeta) const{};
 
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 

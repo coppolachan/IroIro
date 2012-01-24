@@ -11,6 +11,7 @@
 #include "Action/action.hpp"
 #include "Dirac_ops/dirac.h"
 #include "Solver/solver.hpp"
+#include "Smearing/SmartConf.hpp"
 
 /*!
  * @class Action_Nf2
@@ -25,9 +26,15 @@ private:
   const Solver* slv_;  /*!< Linear solver operator */
   size_t fsize_;
   Field phi_;
+
+  bool smeared;
+  SmartConf* SmartField;
+
   
   Field DdagD_inv(const Field& src);
   
+  void attach_smearing(SmartConf*);
+
 public:
   /*!
    * @brief Standard constructor 
@@ -36,9 +43,17 @@ public:
    */
   Action_Nf2(Field* const GField,
 	     DiracWilsonLike* const D, 
-	     const Solver* Solv)
+	     const Solver* Solv,
+	     bool smear = false,
+	     SmartConf* SmearObj = NULL)
     :u_(GField),D_(D),slv_(Solv),
-     fsize_(D_->fsize()),phi_(fsize_){}
+     fsize_(D_->fsize()),phi_(fsize_),
+     smeared(smear){
+    if (smeared && SmearObj !=NULL)
+      attach_smearing(SmearObj);
+  }
+
+
 
   ~Action_Nf2(){}
 
