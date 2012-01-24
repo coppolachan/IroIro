@@ -1486,7 +1486,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
         }
       }
       int gsite = (this->*gp)(site);
-      fce.add(gf_->cslice(0,gsite,mu),anti_hermite(f));
+      fce.add(gf_->cslice(0,gsite,mu),f.getva());
     }
   }
 }
@@ -1531,12 +1531,12 @@ void Dirac_Wilson::md_force_m(Field& fce,
       }
       
       int gsite = (this->*gp)(site);
-      fce.add(gf_->cslice(0,gsite,mu),anti_hermite(f));
+      fce.add(gf_->cslice(0,gsite,mu),f.getva());
     }
   }
 }
 
-const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
+const Field Dirac_Wilson::md_force_core(const Field& eta,const Field& zeta)const{
 
   Field fp(gf_->size());
   md_force_p(fp,eta,zeta);
@@ -1544,6 +1544,26 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
 
   fp *= -kpp_;
   return fp;
+}
+
+const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
+  using namespace SUNmat_utils;
+  GaugeField fp;
+  
+  SUNmat a_h;
+  int gsite;
+
+  fp.U = md_force_core(eta,zeta);
+  
+  for (int mu = 0; mu < Ndim_; ++mu){
+    for (int site = 0; site < Nvol_; ++site){
+      gsite = (this->*gp)(site);
+      a_h = u(fp, gsite, mu);
+      fp.U.set(gf_->cslice(0,gsite,mu),anti_hermite(a_h));
+    }
+  }
+   
+  return fp.U;
 }
 
 const vector<int> Dirac_Wilson::get_gsite() const {

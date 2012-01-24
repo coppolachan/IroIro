@@ -12,6 +12,7 @@
 #include "Action/action.hpp"
 #include "include/pugi_interface.h"
 #include "include/field.h"
+#include "Smearing/SmartConf.hpp"
 
 struct MDexec_leapfrogParams{
   int Nexp;
@@ -50,18 +51,33 @@ private:
   void notify_observers(ObserverList&); 
 
 public:
+   MDexec_leapfrog(int Nexp, int MDiter, double step,
+   		  const ActionSet as,
+   		  const std::vector<int> multipliers,
+   		  const Format::Format_G& gf,
+   		  Field* const CommonF)
+     :as_(as),gf_(gf),
+      Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
+      Nrel_(multipliers),
+      U_(CommonF),P_(CommonF->size())
+   {
+     register_observers();
+   }
+
   MDexec_leapfrog(int Nexp, int MDiter, double step,
 		  const ActionSet as,
 		  const std::vector<int> multipliers,
 		  const Format::Format_G& gf,
-		  Field* const CommonF)
+		  SmartConf* const CommonF)
     :as_(as),gf_(gf),
      Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
      Nrel_(multipliers),
-     U_(CommonF),P_(CommonF->size())
+     U_(CommonF->ThinLinks),P_(CommonF->ThinLinks->size())
   {
+    attach_observer(GaugeObservers, CommonF);//Attach smearing as 1st observer
     register_observers();
   }
+
   
   MDexec_leapfrog(XML::node node,
 		  const ActionSet as,

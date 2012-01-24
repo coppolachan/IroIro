@@ -29,6 +29,12 @@ class Smear_APE: public Smear{
     Gformat(gf),
     rho(rho_){}
 
+  Smear_APE(double rho_val, 
+	    const Format::Format_G& gf):
+    Ndim(CommonPrms::Ndim()),
+    Gformat(gf),
+    rho(set_rho(rho_val)){}
+
   Smear_APE(const Format::Format_G& gf):
     Ndim(CommonPrms::Ndim()),
     Gformat(gf),

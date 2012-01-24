@@ -29,8 +29,8 @@
       <exp_approx>8</exp_approx>
       <step>
         <multiplier>1</multiplier>
-          <Action type="Fermion" name="TwoFlavorsDomainWall_5D">
-            <Kernel5D name="DiracOptimalDomainWall5d">
+          <Action type="Fermion" name="TwoFlavorsDomainWall">
+            <Kernel5D>
               <Preconditioning>NoPreconditioner</Preconditioning>
               <wilson_mass>-1.8</wilson_mass>
               <N5d>8</N5d>

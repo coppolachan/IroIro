@@ -64,12 +64,6 @@ private:
     return SUNvec(sf->cv(spin,site)).xI();
   }
 
-  SUNmat u(int site,int dir) const{
-    return SUNmat ((*u_)[gf_->cslice(0,site,dir)]);
-  }
-  SUNmat u_dag(int site,int dir) const{
-    return SUNmat((*u_)[gf_->cslice(0,site,dir)]).dag();
-  }
 #if 0
   void mult_xp(Field&,const Field&)const;
   void mult_yp(Field&,const Field&)const;
@@ -224,6 +218,7 @@ public:
   const Field proj_m(const Field&) const;
 
   const Field md_force(const Field& , const Field&)const;
+  const Field md_force_core(const Field& , const Field&)const;
   void md_force_p(Field&,const Field&,const Field&)const;
   void md_force_m(Field&,const Field&,const Field&)const;
   

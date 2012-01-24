@@ -12,6 +12,8 @@ EXTRA_DIST = 	test_HMC.xml	 \
 		test_IO.xml	
 
 test_PROGRAMS = test_HMC 	\
+		test_HMC_nofact \
+		test_HMC_smear_noF\
 		test_RNG 	\
 		test_Wilson 	\
 		test_ODWF 	\
@@ -22,6 +24,12 @@ test_PROGRAMS = test_HMC 	\
 
 test_HMC_SOURCES = 	test_HMC.cpp \
 		  	testerHMC.cpp
+
+test_HMC_nofact_SOURCES = 	test_HMC_noFactories.cpp \
+			  	testerHMC.cpp
+
+test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp \
+			  	testerHMC.cpp
 
 test_RNG_SOURCES = test_RNG.cpp
 

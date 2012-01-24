@@ -25,7 +25,7 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in) const{
   GaugeField1D U_mu;
   SUNmat ut;
 
-  _Message(1, "Stout smearing started\n");
+  _Message(DEBUG_VERB_LEVEL, "Stout smearing started\n");
 
   APEbase.smear(u_tmp1.U,u_in);
 
@@ -47,7 +47,7 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in) const{
     }
   }
 
-  _Message(1, "Stout smearing completed \n");
+  _Message(DEBUG_VERB_LEVEL, "Stout smearing completed \n");
   
 }
 //====================================================================

@@ -36,7 +36,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-test_PROGRAMS = test_HMC$(EXEEXT) test_RNG$(EXEEXT) \
+test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_nofact$(EXEEXT) \
+	test_HMC_smear_noF$(EXEEXT) test_RNG$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_ODWF$(EXEEXT) test_ResMass$(EXEEXT) \
 	test_IO$(EXEEXT) test_EigenModes$(EXEEXT) \
 	test_Smearing$(EXEEXT)
@@ -62,6 +63,16 @@ am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
 test_HMC_DEPENDENCIES =
+am_test_HMC_nofact_OBJECTS = test_HMC_noFactories.$(OBJEXT) \
+	testerHMC.$(OBJEXT)
+test_HMC_nofact_OBJECTS = $(am_test_HMC_nofact_OBJECTS)
+test_HMC_nofact_LDADD = $(LDADD)
+test_HMC_nofact_DEPENDENCIES =
+am_test_HMC_smear_noF_OBJECTS = test_HMC_Smear_noFact.$(OBJEXT) \
+	testerHMC.$(OBJEXT)
+test_HMC_smear_noF_OBJECTS = $(am_test_HMC_smear_noF_OBJECTS)
+test_HMC_smear_noF_LDADD = $(LDADD)
+test_HMC_smear_noF_DEPENDENCIES =
 am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
 test_IO_LDADD = $(LDADD)
@@ -97,10 +108,12 @@ CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
 SOURCES = $(test_EigenModes_SOURCES) $(test_HMC_SOURCES) \
+	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_IO_SOURCES) $(test_ODWF_SOURCES) $(test_RNG_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
 	$(test_Wilson_SOURCES)
 DIST_SOURCES = $(test_EigenModes_SOURCES) $(test_HMC_SOURCES) \
+	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_IO_SOURCES) $(test_ODWF_SOURCES) $(test_RNG_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
 	$(test_Wilson_SOURCES)
@@ -249,6 +262,12 @@ EXTRA_DIST = test_HMC.xml	 \
 test_HMC_SOURCES = test_HMC.cpp \
 		  	testerHMC.cpp
 
+test_HMC_nofact_SOURCES = test_HMC_noFactories.cpp \
+			  	testerHMC.cpp
+
+test_HMC_smear_noF_SOURCES = test_HMC_Smear_noFact.cpp \
+			  	testerHMC.cpp
+
 test_RNG_SOURCES = test_RNG.cpp
 test_Wilson_SOURCES = test_wilson.cpp \
 			testerWilson.cpp
@@ -353,6 +372,12 @@ test_EigenModes$(EXEEXT): $(test_EigenModes_OBJECTS) $(test_EigenModes_DEPENDENC
 test_HMC$(EXEEXT): $(test_HMC_OBJECTS) $(test_HMC_DEPENDENCIES) 
 	@rm -f test_HMC$(EXEEXT)
 	$(CXXLINK) $(test_HMC_OBJECTS) $(test_HMC_LDADD) $(LIBS)
+test_HMC_nofact$(EXEEXT): $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_DEPENDENCIES) 
+	@rm -f test_HMC_nofact$(EXEEXT)
+	$(CXXLINK) $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_LDADD) $(LIBS)
+test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_DEPENDENCIES) 
+	@rm -f test_HMC_smear_noF$(EXEEXT)
+	$(CXXLINK) $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_LDADD) $(LIBS)
 test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES) 
 	@rm -f test_IO$(EXEEXT)
 	$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
@@ -381,6 +406,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModes_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_Smear_noFact.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RNG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ResidualMass.Po@am__quote@

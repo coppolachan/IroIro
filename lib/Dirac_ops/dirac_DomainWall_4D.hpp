@@ -80,6 +80,7 @@ public:
   const double getMass() const {return Dodw_.getMass();}
   const std::vector<int> get_gsite() const{ return Dodw_.get_gsite();}
   const Field md_force(const Field& eta,const Field& zeta) const{}
+  const Field md_force_core(const Field& eta,const Field& zeta) const{}
   
   void update_internal_state(){}
 };

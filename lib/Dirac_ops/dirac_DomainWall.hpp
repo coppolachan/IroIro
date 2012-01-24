@@ -267,6 +267,7 @@ public:
   void md_force_m(Field&,const Field&,const Field&) const;
 
   const Field md_force( const Field& eta,const Field& zeta) const;
+  const Field md_force_core( const Field& eta,const Field& zeta) const{};
 
   const ffmt_t get_fermionFormat() const{
     return ffmt_t(Dw_.get_fermionFormat().Nvol(),N5_); }

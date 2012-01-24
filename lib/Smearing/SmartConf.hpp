@@ -10,6 +10,7 @@
 
 #include <complex>
 #include "StoutSmear.hpp"
+#include "include/observer.hpp"
 
 class Field;
 class Action;
@@ -25,14 +26,13 @@ class Action;
 
   It stores a list of smeared configurations.
 */
-class SmartConf {
+class SmartConf : public Observer {
   // Private members
   const int smearingLevels;
   Smear_Stout StoutSmearing;
   std::vector<GaugeField> SmearedSet;
-  Field* CurrentConfPtr; /*! @brief Pointer to the current 
-			   smeared configuration */
-  
+
+
   // Member functions
   void fill_smearedSet();
   GaugeField AnalyticSmearedForce(const GaugeField&, 
@@ -57,22 +57,30 @@ class SmartConf {
 public:
   Field* ThinLinks;      /*!< @brief Pointer to the thin 
 			   links configuration */
+
   /*! @brief XML constructor */
   //SmartConf(XML::node node, Field* Config, Smear_Stout& Stout)
 
   /*! @brief Standard constructor */
-  SmartConf(int Nsmear, Smear_Stout& Stout):
+  SmartConf(int Nsmear, Smear_Stout& Stout,
+	    const Format::Format_G& gf ):
     smearingLevels(Nsmear),
-    StoutSmearing(Stout),
-    SmearedSet(smearingLevels){}
+    StoutSmearing(Stout){
+    ThinLinks = new Field(gf.size());
+    for (int i=0; i< smearingLevels; ++i){
+      SmearedSet.push_back(*(new GaugeField));
+    }
+  }
 
+  /*! For just thin links */
   SmartConf(const Format::Format_G& gf):
     smearingLevels(0),
     StoutSmearing(gf),
-    SmearedSet(0){}
+    SmearedSet(0){
+    ThinLinks = new Field(gf.size());
+  }
 
-  void set_GaugeField(Field& Gauge){
-    ThinLinks = &Gauge;
+  void set_GaugeField(){
     fill_smearedSet();
   }
 
@@ -91,6 +99,7 @@ public:
       return ThinLinks;
   }
   
+  void observer_update() { fill_smearedSet();}
 
 };
 

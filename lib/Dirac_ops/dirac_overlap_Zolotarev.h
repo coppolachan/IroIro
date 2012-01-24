@@ -59,6 +59,7 @@ public:
   //////////////////////////////////////////////////////////////
 
   const Field md_force(const Field& eta,const Field& zeta) const;
+  const Field md_force_core(const Field& eta,const Field& zeta) const{};
 
   const Format::Format_F get_fermionFormat() const{
     return Fopr_signH->get_fermionFormat();
