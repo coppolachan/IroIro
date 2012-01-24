@@ -23,21 +23,19 @@ class Smear_APE: public Smear{
   std::valarray<double> set_rho(const double)const ;
 
  public:
-  Smear_APE(const std::valarray<double>& rho_, 
-	    const Format::Format_G& gf):
+  Smear_APE(const std::valarray<double>& rho_):
     Ndim(CommonPrms::Ndim()),
-    Gformat(gf),
+    Gformat(CommonPrms::Nvol()),
     rho(rho_){}
 
-  Smear_APE(double rho_val, 
-	    const Format::Format_G& gf):
+  Smear_APE(double rho_val):
     Ndim(CommonPrms::Ndim()),
-    Gformat(gf),
+    Gformat(CommonPrms::Nvol()),
     rho(set_rho(rho_val)){}
-
-  Smear_APE(const Format::Format_G& gf):
+  
+  Smear_APE():
     Ndim(CommonPrms::Ndim()),
-    Gformat(gf),
+    Gformat(CommonPrms::Nvol()),
     rho(set_rho(1.0)){}
 
    ~Smear_APE(){};

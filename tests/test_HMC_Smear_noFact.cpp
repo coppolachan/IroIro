@@ -30,14 +30,14 @@ int Test_HMC::run(XML::node node){
   
   Field* CommonField = new Field(Gfield_.Format.size());
   // --------------------------------- Smearing
-  Smear_APE BaseAPE(0.1,Gfield_.Format);
-  Smear_Stout AnalyticSmear(BaseAPE, Gfield_.Format);
+  Smear_APE BaseAPE(0.1);
+  Smear_Stout AnalyticSmear(BaseAPE);
   int Nsmear = 1; // Smearing levels
   const bool nosmear = false;
   const bool dosmear = true;
 
-  SmartConf ThinField(Gfield_.Format);//empty for thin links
-  SmartConf FatField(Nsmear, AnalyticSmear, Gfield_.Format);
+  SmartConf ThinField;//empty for thin links
+  SmartConf FatField(Nsmear, AnalyticSmear,Gfield_.Format );
 
   /////////////////////////////////////////////
 

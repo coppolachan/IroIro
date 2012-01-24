@@ -42,8 +42,8 @@ int Test_Smear::run(){
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
   // Create smearing objects
-  Smear_APE BaseAPE(conf_.Format);
-  Smear_Stout AnalyticSmear(BaseAPE, conf_.Format);
+  Smear_APE BaseAPE;
+  Smear_Stout AnalyticSmear(BaseAPE);
   smeared_u_ = conf_; // Copy thin links to the initial smearing
   int Nsmear = 2;
 

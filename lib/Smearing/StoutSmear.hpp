@@ -32,16 +32,15 @@ class Smear_Stout: public Smear {
 
   double func_xi0(double w) const;
  public:
-  Smear_Stout(Smear_APE& base,
-	      const Format::Format_G& gf):
+  Smear_Stout(Smear_APE& base):
     APEbase(base),
     Ndim(CommonPrms::Ndim()),
-    Gformat(gf){};
+    Gformat(CommonPrms::Nvol()){};
 
-  Smear_Stout(const Format::Format_G& gf):
-    APEbase(gf),
+  Smear_Stout():
+    APEbase(),
     Ndim(CommonPrms::Ndim()),
-    Gformat(gf){};
+    Gformat(CommonPrms::Nvol()){};
 
   
 
