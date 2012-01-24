@@ -12,6 +12,7 @@
 #include "dirac.h"
 #include "include/pugi_interface.h"
 
+#define IMPROVED_WILSON
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
@@ -64,7 +65,7 @@ private:
     return SUNvec(sf->cv(spin,site)).xI();
   }
 
-#if 0
+#ifdef IMPROVED_WILSON
   void mult_xp(Field&,const Field&)const;
   void mult_yp(Field&,const Field&)const;
   void mult_zp(Field&,const Field&)const;
@@ -79,7 +80,7 @@ private:
   static void(Dirac_Wilson::*mult_m[])(Field&,const Field&)const;
 #endif
 
-#if 1
+#ifndef IMPROVED_WILSON
   void mult_xp(Field&,ShiftField*)const;
   void mult_yp(Field&,ShiftField*)const;
   void mult_zp(Field&,ShiftField*)const;

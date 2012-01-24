@@ -405,7 +405,7 @@ on `(hostname || uname -n) 2>/dev/null | sed 1q`
 "
 
 # Files that config.status was made for.
-config_files=" Makefile lib/Makefile tests/Makefile docs/Makefile"
+config_files=" docs/doxy.cfg Makefile lib/Makefile tests/Makefile docs/Makefile"
 config_headers=" include/config.h"
 config_commands=" depfiles"
 
@@ -449,7 +449,7 @@ Copyright (C) 2010 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/noaki/work/common_code/CommonCode'
+ac_pwd='/home/neo/Codes/C-Codes/KEK_Code/Current'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -635,9 +635,9 @@ S["am__EXEEXT_TRUE"]="#"
 S["LTLIBOBJS"]=""
 S["ARFLAGS"]="cru"
 S["code_verbosity"]=""
-S["HAVE_DOXYGEN_FALSE"]=""
-S["HAVE_DOXYGEN_TRUE"]="#"
-S["DOXYGEN"]=""
+S["HAVE_DOXYGEN_FALSE"]="#"
+S["HAVE_DOXYGEN_TRUE"]=""
+S["DOXYGEN"]="doxygen"
 S["HITACHI_FALSE"]=""
 S["HITACHI_TRUE"]="#"
 S["USE_MPI_FALSE"]=""
@@ -671,7 +671,7 @@ S["CXX"]="g++"
 S["RANLIB"]="ranlib"
 S["am__untar"]="${AMTAR} xf -"
 S["am__tar"]="${AMTAR} chof - \"$$tardir\""
-S["AMTAR"]="${SHELL} /home/noaki/work/common_code/CommonCode/missing --run tar"
+S["AMTAR"]="${SHELL} /home/neo/Codes/C-Codes/KEK_Code/Current/missing --run tar"
 S["am__leading_dot"]="."
 S["SET_MAKE"]=""
 S["AWK"]="gawk"
@@ -679,12 +679,12 @@ S["mkdir_p"]="/bin/mkdir -p"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]=""
-S["install_sh"]="${SHELL} /home/noaki/work/common_code/CommonCode/install-sh"
-S["MAKEINFO"]="${SHELL} /home/noaki/work/common_code/CommonCode/missing --run makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/noaki/work/common_code/CommonCode/missing --run autoheader"
-S["AUTOMAKE"]="${SHELL} /home/noaki/work/common_code/CommonCode/missing --run automake-1.11"
-S["AUTOCONF"]="${SHELL} /home/noaki/work/common_code/CommonCode/missing --run autoconf"
-S["ACLOCAL"]="${SHELL} /home/noaki/work/common_code/CommonCode/missing --run aclocal-1.11"
+S["install_sh"]="${SHELL} /home/neo/Codes/C-Codes/KEK_Code/Current/install-sh"
+S["MAKEINFO"]="${SHELL} /home/neo/Codes/C-Codes/KEK_Code/Current/missing --run makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/neo/Codes/C-Codes/KEK_Code/Current/missing --run autoheader"
+S["AUTOMAKE"]="${SHELL} /home/neo/Codes/C-Codes/KEK_Code/Current/missing --run automake-1.11"
+S["AUTOCONF"]="${SHELL} /home/neo/Codes/C-Codes/KEK_Code/Current/missing --run autoconf"
+S["ACLOCAL"]="${SHELL} /home/neo/Codes/C-Codes/KEK_Code/Current/missing --run aclocal-1.11"
 S["VERSION"]="0.8.1"
 S["PACKAGE"]="iroiro"
 S["CYGPATH_W"]="echo"
