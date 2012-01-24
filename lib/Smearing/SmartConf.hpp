@@ -73,11 +73,11 @@ public:
   }
 
   /*! For just thin links */
-  SmartConf(const Format::Format_G& gf):
+  SmartConf():
     smearingLevels(0),
-    StoutSmearing(gf),
+    StoutSmearing(),
     SmearedSet(0){
-    ThinLinks = new Field(gf.size());
+    ThinLinks = new Field(CommonPrms::Nvol());
   }
 
   void set_GaugeField(){

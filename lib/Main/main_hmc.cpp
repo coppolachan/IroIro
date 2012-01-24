@@ -13,6 +13,7 @@
  * - %Dirac operators (Wilson, Clover, Overlap, Even-odd preconditioned Wilson, Generalized Domain Wall (4d - 5d) )
  * - Linear Solvers (Conjugate Gradient Unpreconditioned, Conjugate Gradient Preconditioned, BiConjugate Gradient)
  * - Measurements (Quark Propagator [Wilson, Domain Wall], Gauge Quantities)
+ * - Smearing (APE, Stout analytic), HMC Smeared runs
  * - Random Number Generators (Mersenne Twister)
  * - %XML control of program behavior
  *
