@@ -37,7 +37,7 @@ int Test_HMC::run(XML::node node){
   const bool dosmear = true;
 
   SmartConf ThinField;//empty for thin links
-  SmartConf FatField(Nsmear, AnalyticSmear,Gfield_.Format );
+  SmartConf FatField(Nsmear, AnalyticSmear);
 
   /////////////////////////////////////////////
 

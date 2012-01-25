@@ -46,6 +46,8 @@ class Smear_Stout: public Smear {
 
   ~Smear_Stout(){};
 
+  size_t getFieldSize(){return Gformat.size();}
+
   void smear(Field&,const Field&) const;
   void BaseSmear(Field&, const Field&) const;
   void BaseDerivative(Field&, const Field&, const Field&) const;
