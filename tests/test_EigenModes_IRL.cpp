@@ -16,10 +16,9 @@ using namespace FieldExpression;
 
 int Test_EigenModes_IRL::run(XML::node node) {
   lowlying();
-  highest();
-  chebyshev();
-  
-}
+  //highest();
+  //chebyshev();
+ }
 
 int Test_EigenModes_IRL::lowlying(){
 

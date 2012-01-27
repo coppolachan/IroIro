@@ -4,7 +4,7 @@
  */
 #include "action_Nf2.hpp"
 #include "include/format_F.h"
-
+#include "include/common_fields.hpp"
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2::observer_update() {
   D_->update_internal_state();  
@@ -15,16 +15,14 @@ void Action_Nf2::attach_smearing(SmartConf* SmearObj) {
   // points correctly to the smeared configuration
   // otherwise falls back to standard update
   if (u_ == SmearObj->get_current_conf()) {
-    SmartField = SmearObj; //set the configuration
+    SmartField_= SmearObj; //set the configuration
     CCIO::cout << "Succesfully attached smearing routines\n";
-  }
-  else {
+  }else{
     CCIO::cout << "Pointers disagree - Smearing not allowed\n";
-    smeared = false;
+    smeared_ = false;
   }
 }
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
 
 Field Action_Nf2::DdagD_inv(const Field& src){
   Field sol(fsize_);
@@ -49,17 +47,12 @@ double Action_Nf2::calc_H(){
 
 Field Action_Nf2::md_force(const void*){
   Field eta = DdagD_inv(phi_);
-  Field force;
+  Field fce = D_->md_force(eta,D_->mult(eta));
+  // [fce] is [U*SigmaTilde] in smearing language
+  
+  if(smeared_) SmartField_->smeared_force(fce);
 
-  if (smeared) {
-    // Now [force] is [U*SigmaTilde] in smearing language
-    force = D_->md_force_core(eta,D_->mult(eta));
-    Field sm_force = SmartField->smeared_force(force);
-    force = sm_force;
-  } else {
-    force = D_->md_force(eta,D_->mult(eta));
-  }
-
+  Field force = FieldUtils::TracelessAntihermite(GaugeField(fce));
   _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "Action_Nf2");
   return force;
 }

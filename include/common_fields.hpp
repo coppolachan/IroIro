@@ -2,7 +2,6 @@
  * @file common_fields.hpp
  *
  * @brief Code for general fields initializations
- *
  */
 
 #ifndef COMMON_FIELDS_H_
@@ -50,7 +49,16 @@ public:
   GaugeField(): 
     Format(GaugeFieldFormat( CommonPrms::instance()->Nvol() )),
     U(Field(Format.size())){}
-  
+
+  /*! 
+   * Constructor\n 
+   * to contain given Field data
+   */
+  explicit GaugeField(Field& Uin): 
+    Format(GaugeFieldFormat( CommonPrms::instance()->Nvol())),
+    U(Uin){ 
+    assert(U.size()==Format.size());
+  }
 
   /*!
    * Initializes the gauge field with an \n
@@ -129,9 +137,7 @@ public:
   inline SUNmat matrix(int site, int ex) const {
     return SUNmat(U[Format.cslice(0,site,ex)]);    
   }
-
 };
-
 
 class GaugeField1D {
 
@@ -169,7 +175,10 @@ public:
   inline SUNmat matrix(int site, int ex){
     return SUNmat(U[Format.cslice(0,site,ex)]);    
   }
-
 };
+
+namespace FieldUtils{
+  const Field TracelessAntihermite(const GaugeField&);
+}
 
 #endif //COMMON_FIELDS_H_

@@ -435,12 +435,14 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
 /*! @brief total MD-force */
 const Field Dirac_optimalDomainWall::
 md_force(const Field& phi,const Field& psi) const{
+
   Field fce(gsize_);
   md_force_p(fce,phi,psi);
   md_force_m(fce,phi,psi);
   fce *= -0.5;
   return fce;
 }
+
 //
 Preconditioner* Dirac_optimalDomainWall::
 choose_Preconditioner(int PrecondID){

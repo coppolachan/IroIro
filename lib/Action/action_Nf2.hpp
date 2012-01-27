@@ -2,7 +2,6 @@
  * @file action_Nf2.h
  *
  * @brief Declaration of Action_Nf2 class
- *
  */
 #ifndef ACTION_NF2_INCLUDED
 #define ACTION_NF2_INCLUDED
@@ -12,12 +11,10 @@
 #include "Dirac_ops/dirac.h"
 #include "Solver/solver.hpp"
 #include "Smearing/SmartConf.hpp"
-
 /*!
  * @class Action_Nf2
  *
  * @brief Class to calculate TwoFlavors HMC action term
- *
  */
 class Action_Nf2 :public Action{
 private:
@@ -26,34 +23,26 @@ private:
   const Solver* slv_;  /*!< Linear solver operator */
   size_t fsize_;
   Field phi_;
-
-  bool smeared;
-  SmartConf* SmartField;
-
+  bool smeared_;
+  SmartConf* SmartField_;
   
   Field DdagD_inv(const Field& src);
-  
   void attach_smearing(SmartConf*);
-
 public:
   /*!
    * @brief Standard constructor 
-   * 
    * CG solver is assumed
    */
   Action_Nf2(Field* const GField,
 	     DiracWilsonLike* const D, 
 	     const Solver* Solv,
-	     bool smear = false,
+	     bool smeared = false,
 	     SmartConf* SmearObj = NULL)
     :u_(GField),D_(D),slv_(Solv),
      fsize_(D_->fsize()),phi_(fsize_),
-     smeared(smear){
-    if (smeared && SmearObj !=NULL)
-      attach_smearing(SmearObj);
+     smeared_(smeared){
+    if (smeared_ && SmearObj !=NULL) attach_smearing(SmearObj);
   }
-
-
 
   ~Action_Nf2(){}
 

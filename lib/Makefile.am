@@ -85,7 +85,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		../tests/test_wilson_EvenOdd.cpp	\
 		../tests/test_DomainWall.cpp		\
 		../tests/test_HMC_DomainWall.cpp	\
-                ../tests/test_HMC_EvenOdd.cpp
+                ../tests/test_HMC_EvenOdd.cpp           \
+		$(top_srcdir)/include/common_fields.cpp
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD   = libcommcode.a

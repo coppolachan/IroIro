@@ -116,7 +116,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/gammaMatrices.cpp ../tests/test_Gauge.cpp \
 	../tests/test_MultiShiftSolver.cpp ../tests/test_overlap.cpp \
 	../tests/test_wilson_EvenOdd.cpp ../tests/test_DomainWall.cpp \
-	../tests/test_HMC_DomainWall.cpp ../tests/test_HMC_EvenOdd.cpp
+	../tests/test_HMC_DomainWall.cpp ../tests/test_HMC_EvenOdd.cpp \
+	$(top_srcdir)/include/common_fields.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
@@ -148,7 +149,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	gammaMatrices.$(OBJEXT) test_Gauge.$(OBJEXT) \
 	test_MultiShiftSolver.$(OBJEXT) test_overlap.$(OBJEXT) \
 	test_wilson_EvenOdd.$(OBJEXT) test_DomainWall.$(OBJEXT) \
-	test_HMC_DomainWall.$(OBJEXT) test_HMC_EvenOdd.$(OBJEXT)
+	test_HMC_DomainWall.$(OBJEXT) test_HMC_EvenOdd.$(OBJEXT) \
+	common_fields.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -383,7 +385,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		../tests/test_wilson_EvenOdd.cpp	\
 		../tests/test_DomainWall.cpp		\
 		../tests/test_HMC_DomainWall.cpp	\
-                ../tests/test_HMC_EvenOdd.cpp
+                ../tests/test_HMC_EvenOdd.cpp           \
+		$(top_srcdir)/include/common_fields.cpp
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD = libcommcode.a
@@ -620,6 +623,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/comm_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commandline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commonPrms.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/common_fields.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_mpi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall.Po@am__quote@
@@ -1522,6 +1526,20 @@ test_HMC_EvenOdd.obj: ../tests/test_HMC_EvenOdd.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_HMC_EvenOdd.cpp' object='test_HMC_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_HMC_EvenOdd.obj `if test -f '../tests/test_HMC_EvenOdd.cpp'; then $(CYGPATH_W) '../tests/test_HMC_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_HMC_EvenOdd.cpp'; fi`
+
+common_fields.o: $(top_srcdir)/include/common_fields.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT common_fields.o -MD -MP -MF $(DEPDIR)/common_fields.Tpo -c -o common_fields.o `test -f '$(top_srcdir)/include/common_fields.cpp' || echo '$(srcdir)/'`$(top_srcdir)/include/common_fields.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/common_fields.Tpo $(DEPDIR)/common_fields.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(top_srcdir)/include/common_fields.cpp' object='common_fields.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o common_fields.o `test -f '$(top_srcdir)/include/common_fields.cpp' || echo '$(srcdir)/'`$(top_srcdir)/include/common_fields.cpp
+
+common_fields.obj: $(top_srcdir)/include/common_fields.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT common_fields.obj -MD -MP -MF $(DEPDIR)/common_fields.Tpo -c -o common_fields.obj `if test -f '$(top_srcdir)/include/common_fields.cpp'; then $(CYGPATH_W) '$(top_srcdir)/include/common_fields.cpp'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/include/common_fields.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/common_fields.Tpo $(DEPDIR)/common_fields.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(top_srcdir)/include/common_fields.cpp' object='common_fields.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o common_fields.obj `if test -f '$(top_srcdir)/include/common_fields.cpp'; then $(CYGPATH_W) '$(top_srcdir)/include/common_fields.cpp'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/include/common_fields.cpp'; fi`
 
 main_hmc.o: Main/main_hmc.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hmc.o -MD -MP -MF $(DEPDIR)/main_hmc.Tpo -c -o main_hmc.o `test -f 'Main/main_hmc.cpp' || echo '$(srcdir)/'`Main/main_hmc.cpp

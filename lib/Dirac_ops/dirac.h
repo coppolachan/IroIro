@@ -2,7 +2,6 @@
  * @file dirac.h
  *
  * @brief Defines the abstract base classs for Dirac operators
- *
  */
 
 #ifndef DIRAC_H_
@@ -40,12 +39,7 @@ public:
   virtual const Field right_dag_prec(const Field&)const = 0;
   ////////////////////////////////////////////
 
-  virtual const Field md_force(const Field& eta,
-			       const Field& zeta)const = 0;
-  virtual const Field md_force_core(const Field& eta,
-				    const Field& zeta)const = 0;
-
-
+  virtual const Field md_force(const Field& eta,const Field& zeta)const = 0;
   virtual void update_internal_state() = 0;
 };
 

@@ -145,9 +145,7 @@ public:
   //////////////////////////////////////////////////////////////
 
   const Field gamma5(const Field&) const;
-
   const Field md_force(const Field& eta,const Field& zeta)const;
-  const Field md_force_core(const Field& eta,const Field& zeta)const{};
 
   void update_internal_state() {set_csw();}
   

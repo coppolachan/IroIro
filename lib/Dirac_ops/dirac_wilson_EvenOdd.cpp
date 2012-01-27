@@ -61,27 +61,3 @@ md_force(const Field& eta,const Field& zeta) const{
   return fce;
 }
 
-/*
-const Field Dirac_Wilson_EvenOdd::
-md_force(const Field& eta,const Field& zeta) const{
-
-  Format::Format_F ff(fsize()*2);
-  Field fe(ff.size());
-  Field fz(ff.size());
-  
-  SiteIndex_eo* idx = SiteIndex_eo::instance();
-  
-  valarray<size_t> esec(ff.get_sub(idx->esec()));
-  fe.set(esec,eta.getva());
-  fz.set(esec,zeta.getva());
-
-  valarray<size_t> osec(ff.get_sub(idx->osec()));
-  fe.set(osec,mult_oe(eta).getva());
-  fz.set(osec,mult_eo_dag(zeta).getva());
-
-  Field fce(Dw_.md_force(fe,fz));
-  return -fce;
-}
-*/
-
-

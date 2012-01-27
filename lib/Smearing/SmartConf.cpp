@@ -35,7 +35,7 @@ void SmartConf::fill_smearedSet(){
   }
 }
 //====================================================================
-Field SmartConf::smeared_force(const Field& SigmaTilde)const {
+void SmartConf::smeared_force(Field& SigmaTilde)const {
   GaugeField force, force1;
   GaugeField1D U_mu;
   SUNmat ut;
@@ -58,15 +58,17 @@ Field SmartConf::smeared_force(const Field& SigmaTilde)const {
     force1 = force;
   }
   force = AnalyticSmearedForce(force1,*ThinLinks);
-  
+
+  SigmaTilde = force.U;
+  /*
   for(int mu = 0; mu < Ndim; ++mu){
     for (int site = 0; site < Nvol; ++site){
       ut = u(*ThinLinks,force.Format,site,mu) * u(force,site,mu);
        force.U.set(force.Format.cslice(0,site,mu),anti_hermite(ut));
     }
   }  
-  
-  return force.U;
+  */
+  //return force.U;
 }
 //====================================================================
 GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,

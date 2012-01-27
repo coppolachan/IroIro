@@ -64,43 +64,34 @@ public:
   /*! @brief Standard constructor */
   SmartConf(int Nsmear, Smear_Stout& Stout):
     smearingLevels(Nsmear),
-    StoutSmearing(Stout){
-    ThinLinks = new Field(StoutSmearing.getFieldSize());
-    for (int i=0; i< smearingLevels; ++i){
+    StoutSmearing(Stout),
+    ThinLinks(new Field(StoutSmearing.getFieldSize())){
+    for (int i=0; i< smearingLevels; ++i)
       SmearedSet.push_back(*(new GaugeField));
-    }
     std::cout << "Field size "<< ThinLinks->size()<<"\n";
   }
 
   /*! For just thin links */
-  SmartConf():
-    smearingLevels(0),
-    StoutSmearing(),
-    SmearedSet(0){
-    ThinLinks = new Field(StoutSmearing.getFieldSize());
-  }
+  SmartConf():smearingLevels(0),
+	      StoutSmearing(),
+	      SmearedSet(0),
+	      ThinLinks(new Field(StoutSmearing.getFieldSize())){}
 
-  void set_GaugeField(){
-    fill_smearedSet();
-  }
+  void set_GaugeField(){ fill_smearedSet(); }
 
-  Field smeared_force(const Field&) const;
+  void smeared_force(Field&) const;
 
   Field* get_current_conf() const;
 
   Field* select_conf(bool smeared) const {
     if (smeared){
-      if (smearingLevels)
-	return get_current_conf();
-      else
-	return ThinLinks;
+      if (smearingLevels) return get_current_conf();
+      else           	  return ThinLinks;
     }
-    else
-      return ThinLinks;
+    else return ThinLinks;
   }
   
   void observer_update() { fill_smearedSet();}
-
 };
 
 
