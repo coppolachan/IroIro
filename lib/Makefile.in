@@ -101,9 +101,9 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Solver/solver_CG.cpp Solver/solver_Factory.cpp \
 	Solver/multiShiftSolver_CG.cpp Solver/solver.cpp \
 	Smearing/APEsmear.cpp Smearing/StoutSmear.cpp \
-	Smearing/SmartConf.cpp HMC/hmcGeneral.cpp HMC/mdExec.cpp \
-	HMC/mdExec_leapfrog.cpp HMC/mdExec_Factory.cpp \
-	Measurements/GaugeM/staples.cpp \
+	Smearing/SmartConf.cpp Smearing/Smearing_Factories.cpp \
+	HMC/hmcGeneral.cpp HMC/mdExec.cpp HMC/mdExec_leapfrog.cpp \
+	HMC/mdExec_Factory.cpp Measurements/GaugeM/staples.cpp \
 	Measurements/FermionicM/qprop_MultiShift.cpp \
 	Measurements/FermionicM/qprop.cpp \
 	Measurements/FermionicM/qprop_EvenOdd.cpp \
@@ -136,9 +136,10 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	solver_CG.$(OBJEXT) solver_Factory.$(OBJEXT) \
 	multiShiftSolver_CG.$(OBJEXT) solver.$(OBJEXT) \
 	APEsmear.$(OBJEXT) StoutSmear.$(OBJEXT) SmartConf.$(OBJEXT) \
-	hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
-	mdExec_leapfrog.$(OBJEXT) mdExec_Factory.$(OBJEXT) \
-	staples.$(OBJEXT) qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
+	Smearing_Factories.$(OBJEXT) hmcGeneral.$(OBJEXT) \
+	mdExec.$(OBJEXT) mdExec_leapfrog.$(OBJEXT) \
+	mdExec_Factory.$(OBJEXT) staples.$(OBJEXT) \
+	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
 	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
 	fermion_meas_factory.$(OBJEXT) siteIndex.$(OBJEXT) \
 	siteIndex_eo.$(OBJEXT) gaugeConf.$(OBJEXT) \
@@ -357,6 +358,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/APEsmear.cpp			\
 		Smearing/StoutSmear.cpp			\
 		Smearing/SmartConf.cpp			\
+		Smearing/Smearing_Factories.cpp		\
 		HMC/hmcGeneral.cpp			\
 		HMC/mdExec.cpp		        	\
 		HMC/mdExec_leapfrog.cpp			\
@@ -465,6 +467,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Smearing/BaseSmear.hpp			\
 			Smearing/StoutSmear.hpp			\
 			Smearing/SmartConf.hpp			\
+			Smearing/Smearing_Factories.hpp		\
 			HMC/hmcGeneral.hpp			\
 			HMC/mdExec.h				\
 			HMC/mdExec_leapfrog.hpp			\
@@ -609,6 +612,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SmartConf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Smearing_Factories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StoutSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2.Po@am__quote@
@@ -1144,6 +1148,20 @@ SmartConf.obj: Smearing/SmartConf.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/SmartConf.cpp' object='SmartConf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SmartConf.obj `if test -f 'Smearing/SmartConf.cpp'; then $(CYGPATH_W) 'Smearing/SmartConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/SmartConf.cpp'; fi`
+
+Smearing_Factories.o: Smearing/Smearing_Factories.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Smearing_Factories.o -MD -MP -MF $(DEPDIR)/Smearing_Factories.Tpo -c -o Smearing_Factories.o `test -f 'Smearing/Smearing_Factories.cpp' || echo '$(srcdir)/'`Smearing/Smearing_Factories.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Smearing_Factories.Tpo $(DEPDIR)/Smearing_Factories.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/Smearing_Factories.cpp' object='Smearing_Factories.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Smearing_Factories.o `test -f 'Smearing/Smearing_Factories.cpp' || echo '$(srcdir)/'`Smearing/Smearing_Factories.cpp
+
+Smearing_Factories.obj: Smearing/Smearing_Factories.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Smearing_Factories.obj -MD -MP -MF $(DEPDIR)/Smearing_Factories.Tpo -c -o Smearing_Factories.obj `if test -f 'Smearing/Smearing_Factories.cpp'; then $(CYGPATH_W) 'Smearing/Smearing_Factories.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/Smearing_Factories.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/Smearing_Factories.Tpo $(DEPDIR)/Smearing_Factories.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/Smearing_Factories.cpp' object='Smearing_Factories.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Smearing_Factories.obj `if test -f 'Smearing/Smearing_Factories.cpp'; then $(CYGPATH_W) 'Smearing/Smearing_Factories.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/Smearing_Factories.cpp'; fi`
 
 hmcGeneral.o: HMC/hmcGeneral.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hmcGeneral.o -MD -MP -MF $(DEPDIR)/hmcGeneral.Tpo -c -o hmcGeneral.o `test -f 'HMC/hmcGeneral.cpp' || echo '$(srcdir)/'`HMC/hmcGeneral.cpp

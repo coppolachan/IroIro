@@ -14,7 +14,8 @@ class Smear {
 public:
   virtual ~Smear(){}
   
-  virtual void smear(Field&, const Field&) const = 0;
+  virtual void smear     (Field&, const Field&) const = 0;
+  virtual void derivative(Field&, const Field&, const Field&) const = 0;
 };
 
 

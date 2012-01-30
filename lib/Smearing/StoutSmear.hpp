@@ -26,23 +26,22 @@ class Smear_Stout: public Smear {
  private:
   const int Ndim;
   const std::valarray<double> d_rho;
-  const Format::Format_G& Gformat;
-  Smear_APE APEbase;
+  const Format::Format_G Gformat;
+  const Smear* SmearBase;
 
 
   double func_xi0(double w) const;
  public:
-  Smear_Stout(Smear_APE& base):
-    APEbase(base),
+  Smear_Stout(Smear* base):
+    SmearBase(base),
     Ndim(CommonPrms::Ndim()),
     Gformat(CommonPrms::Nvol()){};
 
+  /*! Default constructor */
   Smear_Stout():
-    APEbase(),
+    SmearBase(new Smear_APE()),
     Ndim(CommonPrms::Ndim()),
     Gformat(CommonPrms::Nvol()){};
-
-  
 
   ~Smear_Stout(){};
 
@@ -50,7 +49,7 @@ class Smear_Stout: public Smear {
 
   void smear(Field&,const Field&) const;
   void BaseSmear(Field&, const Field&) const;
-  void BaseDerivative(Field&, const Field&, const Field&) const;
+  void derivative(Field&, const Field&, const Field&) const;
   void exponentiate_iQ(GaugeField&, const GaugeField&) const;
 };
 

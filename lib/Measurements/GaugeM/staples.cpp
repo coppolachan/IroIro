@@ -104,8 +104,8 @@ Field Staples::lower(const Field& g, int mu, int nu) const{
   //     site+-->--+ 
   //           mu,v              
 
-  field1d v(g[gf_.dir_slice(mu)]);
-  field1d w(g[gf_.dir_slice(nu)]);
+  field1d v = g[gf_.dir_slice(mu)];
+  field1d w = g[gf_.dir_slice(nu)];
 
   FieldUP um(w,format1d_,mu);
 

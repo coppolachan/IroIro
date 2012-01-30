@@ -59,6 +59,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/APEsmear.cpp			\
 		Smearing/StoutSmear.cpp			\
 		Smearing/SmartConf.cpp			\
+		Smearing/Smearing_Factories.cpp		\
 		HMC/hmcGeneral.cpp			\
 		HMC/mdExec.cpp		        	\
 		HMC/mdExec_leapfrog.cpp			\
@@ -168,6 +169,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Smearing/BaseSmear.hpp			\
 			Smearing/StoutSmear.hpp			\
 			Smearing/SmartConf.hpp			\
+			Smearing/Smearing_Factories.hpp		\
 			HMC/hmcGeneral.hpp			\
 			HMC/mdExec.h				\
 			HMC/mdExec_leapfrog.hpp			\

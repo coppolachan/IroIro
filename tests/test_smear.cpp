@@ -15,6 +15,7 @@
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Smearing/StoutSmear.hpp"
+#include "Smearing/Smearing_Factories.hpp"
 #include <stdio.h>
 
 using namespace std;
@@ -24,29 +25,37 @@ int Test_Smear::run(){
   prop_t sq;// propagator
   // Use factories to construct the propagator
   QuarkPropagator* QP;
+  Smear* SmearingObj;
+  XML::node SmearObjNode = Smear_node_;
+  
+  XML::descend(SmearObjNode, "Smearing");
+  
+  SmearingOperatorFactory* Sm_Factory = 
+    SmearingOperators::createSmearingOperatorFactory(SmearObjNode);
+  
   XML::descend(Smear_node_, "QuarkPropagator");
   QuarkPropagatorFactory* QP_Factory = 
     QuarkPropagators::createQuarkPropagatorFactory(Smear_node_);
   /////////////////////////////////////////////
-
+  
   // Just a check on configuration
   Staples Staple(conf_.Format);
   CCIO::cout << "Plaquette : " << Staple.plaquette(conf_.U) << std::endl;
   //////////////////////////////////////
   // source 
   vector<int> source_pos(4,0); 
-
+  
   Source_local<Format::Format_F> src(source_pos,
 				     CommonPrms::instance()->Nvol());
-
+  
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
   // Create smearing objects
-  Smear_APE BaseAPE;
-  Smear_Stout AnalyticSmear(BaseAPE);
+  SmearingObj = Sm_Factory->getSmearingOperator();
+ 
   smeared_u_ = conf_; // Copy thin links to the initial smearing
   int Nsmear = 2;
-
+  
   gauge_pointer = &(smeared_u_.U);
   Dirac* Kernel = new Dirac_Wilson(1.0/6.0, gauge_pointer);
   
@@ -56,25 +65,24 @@ int Test_Smear::run(){
   Solver_CG* SolverCG = new Solver_CG(stop_cond,
 				      Niter,
 				      new Fopr_DdagD(Kernel));
-
-
+  
   Qprop QuarkPropagator(Kernel,SolverCG);
   MesonCorrelator meson(Pion);
-
+  
   // Smearing and quark propagator
-
+  
   for(int smear_step = 0; smear_step <= Nsmear; ++smear_step){
     
     CCIO::cout << "Smearing step #"<<smear_step<<"\n";
     
     if ( smear_step > 0) {
       previous_u_ = smeared_u_;
-      AnalyticSmear.smear(smeared_u_.U, previous_u_.U);
+      SmearingObj->smear(smeared_u_.U, previous_u_.U);
     }
     
- 
+    
     CCIO::cout << "Plaquette : " << Staple.plaquette(smeared_u_.U) << std::endl;
-   
+    
     QuarkPropagator.calc(sq,src);
     
     

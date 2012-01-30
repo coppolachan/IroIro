@@ -10,9 +10,9 @@ typedef ShiftField_up<GaugeFieldFormat> FieldUP;
 typedef ShiftField_dn<GaugeFieldFormat> FieldDN;
 
 //====================================================================
-std::valarray<double> Smear_APE::set_rho(const double common_rho)const{
+std::vector<double> Smear_APE::set_rho(const double common_rho)const{
 
-  std::valarray<double> res(Ndim*Ndim);
+  std::vector<double> res(Ndim*Ndim);
 
   for(int mu = 0; mu < Ndim; ++mu){
    for(int nu = 0; nu < Ndim; ++nu){
@@ -37,17 +37,14 @@ void Smear_APE::smear(Field& u_smr, const Field& u) const{
 
   for(int mu = 0; mu < Ndim; ++mu){
    for(int nu = 0; nu < Ndim; ++nu){
-
      Cup.U = stpl.upper(u,mu,nu);
      Cdn.U = stpl.lower(u,mu,nu);
 
      d_rho = rho[mu + Ndim * nu];
 
-
      Cup.U += Cdn.U;
      Cup.U *= d_rho;
      u_smr.add(Gformat.dir_slice(mu),Cup.U.getva());
- 
    }
   }
 }

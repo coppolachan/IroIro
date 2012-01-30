@@ -8,10 +8,15 @@
 
   </Geometry>
   <!-- Input configuration -->
-  <!-- Input configuration -->
   <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
 
   <TestSmear>
+    <Smearing type="Stout">
+      <Base type="APE">
+	<rho>1.0</rho>
+      </Base>
+    </Smearing>
+
     <QuarkPropagator name="Qprop">
      <Kernel name="DiracWilson">
        <mass>0.1666666666666666666</mass>

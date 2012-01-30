@@ -27,7 +27,7 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in) const{
 
   _Message(DEBUG_VERB_LEVEL, "Stout smearing started\n");
 
-  APEbase.smear(u_tmp1.U,u_in);
+  SmearBase->smear(u_tmp1.U,u_in);
 
   for(int mu = 0; mu < Ndim; ++mu){
     U_mu = u_in[Gformat.dir_slice(mu)];
@@ -52,14 +52,14 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in) const{
 }
 //====================================================================
 void Smear_Stout::BaseSmear(Field& C, const Field& u_in) const{
-  APEbase.smear(C, u_in);
+  SmearBase->smear(C, u_in);
 }
 //====================================================================
-void Smear_Stout::BaseDerivative(Field& SigmaTerm, 
+void Smear_Stout::derivative(Field& SigmaTerm, 
 		    const Field& iLambda,
 		    const Field& Gauge) const{
 
-  APEbase.derivative(SigmaTerm, iLambda, Gauge);
+  SmearBase->derivative(SigmaTerm, iLambda, Gauge);
 }
 //====================================================================
 void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ) const{

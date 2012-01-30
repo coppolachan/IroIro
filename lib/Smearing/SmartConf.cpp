@@ -105,7 +105,7 @@ GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
     }
   }
 
-  StoutSmearing.BaseDerivative(SigmaK.U, iLambda.U, GaugeK);
+  StoutSmearing.derivative(SigmaK.U, iLambda.U, GaugeK);
   
   return SigmaK;
 }
