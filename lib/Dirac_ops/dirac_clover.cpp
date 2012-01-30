@@ -460,6 +460,7 @@ void Dirac_Clover::external_prod(Field& res,
 }
 
 //====================================================================
+/*
 const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
 
   Field force(gsize_);
@@ -471,10 +472,17 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
   force += md_force_block(zeta, eta);
 
   return force;
-
-
 }
+*/
+const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
+  //Wilson term
+  Field force = Dw->md_force(eta,zeta);
+ 
+  force += md_force_block(eta, zeta);
+  force += md_force_block(zeta, eta);
 
+  return force;
+}
 
 //====================================================================
 const Field Dirac_Clover::md_force_block(const Field& eta,

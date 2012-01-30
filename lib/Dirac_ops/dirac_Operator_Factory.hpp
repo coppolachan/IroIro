@@ -81,7 +81,6 @@ public:
   Dirac_optimalDomainWall* getDiracOperator(Field* const GaugeField){
     return new Dirac_optimalDomainWall(Dirac_node,GaugeField);
   }
-  
   Dirac_optimalDomainWall* getDiracOperatorPV(Field* const GaugeField){
     return new Dirac_optimalDomainWall(Dirac_node,GaugeField,PauliVillars);
   }

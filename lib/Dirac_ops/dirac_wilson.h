@@ -219,7 +219,6 @@ public:
   const Field proj_m(const Field&) const;
 
   const Field md_force(const Field& , const Field&)const;
-  const Field md_force_core(const Field& , const Field&)const;
   void md_force_p(Field&,const Field&,const Field&)const;
   void md_force_m(Field&,const Field&,const Field&)const;
   
@@ -227,6 +226,6 @@ public:
   const ffmt_t get_fermionFormat() const {return *ff_;}
   const std::vector<int> get_gsite() const;
 
-  void update_internal_state(){};
+  void update_internal_state(){}
 };
 #endif

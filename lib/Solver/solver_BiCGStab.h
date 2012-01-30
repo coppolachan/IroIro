@@ -46,20 +46,14 @@ public:
 		  int MaxIterations,
 		  const Fopr* fopr)
     :opr_(fopr),
-     Params(Solver_BiCGStabParams(precision, MaxIterations)){
-    rh_.resize(opr_->fsize());
-    s_.resize(opr_->fsize());
-    t_.resize(opr_->fsize());
-  }
-  
+     Params(Solver_BiCGStabParams(precision, MaxIterations)),
+     rh_(opr_->fsize()),s_(opr_->fsize()),t_(opr_->fsize()){}
+
   Solver_BiCGStab(XML::node Solver_node,
 		  const Fopr* fopr)
     :opr_(fopr),
-     Params(Solver_BiCGStabParams(Solver_node)){
-    rh_.resize(opr_->fsize());
-    s_.resize(opr_->fsize());
-    t_.resize(opr_->fsize());
-  }  
+     Params(Solver_BiCGStabParams(Solver_node)),
+     rh_(opr_->fsize()),s_(opr_->fsize()),t_(opr_->fsize()){}
   
   ~Solver_BiCGStab(){}
   
@@ -67,8 +61,7 @@ public:
     return  (typeid(*opr_) == typeid(Fopr_DdagD));
   }
 
-  SolverOutput solve(Field& solution, 
-		     const Field& source) const;
+  SolverOutput solve(Field& solution,  const Field& source) const;
 };
 
 #endif    

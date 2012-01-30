@@ -44,19 +44,16 @@ class Geometry {
 		      Node[1],
 		      Node[2],
 		      Node[3]};
-		      
     latt = t_latt;
-    #ifndef HAVE_MPI
+#ifndef HAVE_MPI
     // Check on number of cores - should be 1,1,1,1
     // for single core compilation
     if (latt.NPEx!=1 || latt.NPEy!=1  || latt.NPEz!=1  || latt.NPEt!=1 ) {
       std::cerr << "Number of nodes uncorrect for a single core" << std::endl;
       exit(1);
     }
-     #endif
-
+#endif
     parameters = CommonPrms::instance(latt);
-
     idx = SiteIndex::instance();
   }
 
@@ -65,15 +62,12 @@ class Geometry {
 		 * and MPI nodes distribution on 4 dimensions */ 
   SiteIndex* idx;  /*!< Singleton containing the geometry (nearest neighbors...) */
   CommonPrms* parameters; /*!< Singleton handling the global lattice parameters */
-
   /*!
    * @brief Constructor - Initialized geometry object
   */
   Geometry(XML::node node) {
      initialize(node.child("Geometry"));
-  };
-  
-  
+  }  
 };
 
 

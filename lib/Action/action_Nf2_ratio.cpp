@@ -2,10 +2,9 @@
  * @file action_Nf2_ratio.cpp
  *
  * @brief Definition of methods of Action_Nf2_ratio class
- *
  */
-
 #include "action_Nf2_ratio.hpp"
+#include "include/common_fields.hpp"
 
 Field Action_Nf2_ratio::DdagD1_inv(const Field& src){
   Field sol(fsize_);
@@ -56,8 +55,11 @@ Field Action_Nf2_ratio::md_force(const void*){
   Field eta = DdagD1_inv(D2_->mult_dag(phi_));
   Field force= D1_->md_force(eta,D1_->mult(eta));
   force -= D2_->md_force(eta,phi_);
-  _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "Action_Nf2_ratio");
-  return force;
+
+  Field force_ta= FieldUtils::TracelessAntihermite(GaugeField(force)); 
+
+  _MonitorMsg(ACTION_VERB_LEVEL, Action, force_ta, "Action_Nf2_ratio");
+  return force_ta;
 }
 
 Action_Nf2_ratio::~Action_Nf2_ratio(){}

@@ -7,19 +7,17 @@
 using namespace SUNvec_utils;
 using namespace std;
 
-
-
-
 #ifdef IMPROVED_WILSON
+
 void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 
   int Nd = CommonPrms::instance()->Nd();   /*!< @brief spinor dof */
-  int Ndh = CommonPrms::instance()->Nd()/2;/*!< @brief half spionor dof */
+  int Ndh = CommonPrms::instance()->Nd()/2;/*!< @brief half spinor elements */
   int Ndd = CommonPrms::instance()->Nd();  /*!< @brief Ndh*2 */
-  int Nih = Ndd*NC_;          /*!< @brief internal dof of a half spinor */
+  int Nih = Ndd*NC_;                /*!< @brief internal dof of half spinor */
 
-  double* utmp;                  //auxiliary matrix
-  const double* vtmp;
+  double* ut;                  //auxiliary matrix
+  const double* vt;
   double* res;                   //result
   double v[NC_*Nd];              //auxiliary vectors
   double v1[NC_][Ndh], v2[NC_][Ndh];     
@@ -27,37 +25,38 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   //boundary part
   int Nx = CommonPrms::instance()->Nx();
   int Vsl = SiteIndex::instance()->Vdir(0);  /*!< @brief Ny*Nz*Nt */
-  int current_idx;
-  int Xbdry;
 
-  // boundary part
-  double vbdry[Nih*Vsl]; 
-  Xbdry = 0;
+  double vbd[Nih*Vsl]; 
+
+  int Xbdry = 0;
   for(int bsite=0; bsite<Vsl; ++bsite) {
     //write func in SiteIndex
     int site = Xbdry +Nx*bsite;
     int is = Nih*bsite;
 
-    vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
+    vt = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
     
-    for(int c=0; c<NC_; ++c) {
-      vbdry[is +2*c        ] = vtmp[2*c        ] -vtmp[2*(3*NC_+c)+1];
-      vbdry[is +2*c+1      ] = vtmp[2*c+1      ] +vtmp[2*(3*NC_+c)  ];
-      vbdry[is +2*(NC_+c)  ] = vtmp[2*(NC_+c)  ] -vtmp[2*(2*NC_+c)+1];
-      vbdry[is +2*(NC_+c)+1] = vtmp[2*(NC_+c)+1] +vtmp[2*(2*NC_+c)  ];
+    for(int c=0; c<NC_; ++c){
+      int r0= 2*c;         int i0= 2*c+1;
+      int r1= 2*(NC_+c);   int i1= 2*(NC_+c)+1;
+      int r2= 2*(2*NC_+c); int i2= 2*(2*NC_+c)+1;
+      int r3= 2*(3*NC_+c); int i3= 2*(3*NC_+c)+1;
+
+      vbd[is +r0] = vt[r0] -vt[i3]; vbd[is +i0] = vt[i0] +vt[r3];
+      vbd[is +r1] = vt[r1] -vt[i2]; vbd[is +i1] = vt[i1] +vt[r2];
     }
   }
 
   //Copy v1 from backward processor
-  double vbcpy[Nih*Vsl];
-  Communicator::instance()->transfer_fw(vbcpy,vbdry, Nih*Vsl,0);
+  double vbc[Nih*Vsl];
+  Communicator::instance()->transfer_fw(vbc,vbd, Nih*Vsl,0);
 
   Xbdry = Nx-1;
   for(int bsite=0; bsite<Vsl; ++bsite){
     //write func in SiteIndex
     int site = Xbdry + Nx*bsite;
     int is = Nih*bsite;
-    utmp=const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),0));
+    ut  =const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site),0));
     res =const_cast<Field*>(&fp)->getaddr(ff_->index_r(0,0,site));
     
     for(int c=0; c<NC_; ++c){
@@ -65,68 +64,71 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
       v2[c][0] = 0.0; v2[c][1] = 0.0;
       
       for(int c1=0; c1<NC_; ++c1){
-	v1[c][0]+=(utmp[2*(NC_*c+c1)  ]*vbcpy[is+2*c1      ] 
-		  -utmp[2*(NC_*c+c1)+1]*vbcpy[is+2*c1+1    ]);
-	v1[c][1]+=(utmp[2*(NC_*c+c1)+1]*vbcpy[is+2*c1      ] 
-		  +utmp[2*(NC_*c+c1)  ]*vbcpy[is+2*c1 +1   ]);
-	v2[c][0]+=(utmp[2*(NC_*c+c1)  ]*vbcpy[is+2*(NC_+c1)] 
-		  -utmp[2*(NC_*c+c1)+1]*vbcpy[is+2*(NC_+c1)+1]);
-	v2[c][1]+=(utmp[2*(NC_*c+c1)+1]*vbcpy[is+2*(NC_+c1)] 
-		  +utmp[2*(NC_*c+c1)  ]*vbcpy[is+2*(NC_+c1)+1]);
+	int r0= 2*c1;         int i0= 2*c1+1;
+	int r1= 2*(NC_+c1);   int i1= 2*(NC_+c1)+1;
+	int rc= 2*(NC_*c+c1); int ic= 2*(NC_*c+c1)+1;
+
+	v1[c][0]+= ut[rc]*vbc[is+r0] -ut[ic]*vbc[is+i0];
+	v1[c][1]+= ut[ic]*vbc[is+r0] +ut[rc]*vbc[is+i0];
+	v2[c][0]+= ut[rc]*vbc[is+r1] -ut[ic]*vbc[is+i1];
+	v2[c][1]+= ut[ic]*vbc[is+r1] +ut[rc]*vbc[is+i1];
       }
-      res[        2*c  ] += v1[c][0];
-      res[        2*c+1] += v1[c][1];
-      res[2*(  NC_+c)  ] += v2[c][0];
-      res[2*(  NC_+c)+1] += v2[c][1];
-      res[2*(2*NC_+c)  ] += v2[c][1];
-      res[2*(2*NC_+c)+1] -= v2[c][0];
-      res[2*(3*NC_+c)  ] += v1[c][1];
-      res[2*(3*NC_+c)+1] -= v1[c][0];
+      int r0= 2*c;         int i0= 2*c+1;
+      int r1= 2*(NC_+c);   int i1= 2*(NC_+c)+1;
+      int r2= 2*(2*NC_+c); int i2= 2*(2*NC_+c)+1;
+      int r3= 2*(3*NC_+c); int i3= 2*(3*NC_+c)+1;
+
+      res[r0] += v1[c][0];   res[i0] += v1[c][1];
+      res[r1] += v2[c][0];   res[i1] += v2[c][1];
+      res[r2] += v2[c][1];   res[i2] -= v2[c][0];
+      res[r3] += v1[c][1];   res[i3] -= v1[c][0];
     }
   }
   
   //bulk part
-  for(int bulk_site = 0; bulk_site < Vsl; ++bulk_site) {
-    for(int ix = 0; ix < Nx-1; ++ix){
+  for(int bsite = 0; bsite < Vsl; ++bsite) {
+    for(int x = 0; x < Nx-1; ++x){
       //write func in SiteIndex
-      int site = ix+1 + Nx*bulk_site;
-      int current_idx = ix   + Nx*bulk_site;
+      int site = x + Nx*bsite;
+      int xp = x+1 + Nx*bsite;
       
-      utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(current_idx),0));
-      vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site));
-      res  = fp.getaddr(ff_->index_r(0,0,current_idx));
+      ut = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gp)(site),0));
+      vt = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,xp));
+      res = fp.getaddr(ff_->index_r(0,0,site));
       //assumes matrix and fermion data are contiguous
       
-      for (int c = 0; c < NC_; ++c) {
-	v[2*c        ] = vtmp[2*c        ] - vtmp[2*c+6*NC_+1 ];
-	v[2*c+1      ] = vtmp[2*c+1      ] + vtmp[2*c+6*NC_   ];
-	v[2*c+NC_*2  ] = vtmp[2*c+2*NC_  ] - vtmp[2*c+4*NC_+1 ];
-	v[2*c+NC_*2+1] = vtmp[2*c+2*NC_+1] + vtmp[2*c+4*NC_   ];
+      for(int c=0; c<NC_; ++c){
+	int r0= 2*c;         int i0= 2*c+1;
+	int r1= 2*(NC_+c);   int i1= 2*(NC_+c)+1;
+	int r2= 2*(2*NC_+c); int i2= 2*(2*NC_+c)+1;
+	int r3= 2*(3*NC_+c); int i3= 2*(3*NC_+c)+1;
+	
+	v[r0] = vt[r0] -vt[i3];  v[i0] = vt[i0] +vt[r3];
+	v[r1] = vt[r1] -vt[i2];  v[i1] = vt[i1] +vt[r2];
       }
-      
-      for (int c = 0; c < NC_; ++c) {
+      for(int c=0; c<NC_; ++c){
 	v1[c][0] = 0.0; v1[c][1] = 0.0;
 	v2[c][0] = 0.0; v2[c][1] = 0.0;
 	
-	for (int c1 = 0; c1 < NC_; ++c1) {
-	  
-	  v1[c][0] += (utmp[NC_*2*c+2*c1  ]*v[2*c1      ] 
-		     - utmp[NC_*2*c+2*c1+1]*v[2*c1+1    ]);
-	  v1[c][1] += (utmp[NC_*2*c+2*c1+1]*v[2*c1      ] 
-		     + utmp[NC_*2*c+2*c1  ]*v[2*c1 +1   ]);
-	  v2[c][0] += (utmp[NC_*2*c+2*c1  ]*v[2*c1+NC_*2] 
-		     - utmp[NC_*2*c+2*c1+1]*v[2*c1+NC_*2+1]);
-	  v2[c][1] += (utmp[NC_*2*c+2*c1+1]*v[2*c1+NC_*2] 
-		     + utmp[NC_*2*c+2*c1  ]*v[2*c1+NC_*2+1]);
+	for(int c1=0; c1<NC_; ++c1){
+	  int r0= 2*c1;         int i0= 2*c1+1;
+	  int r1= 2*(NC_+c1);   int i1= 2*(NC_+c1)+1;
+	  int rc= 2*(NC_*c+c1); int ic= 2*(NC_*c+c1)+1;
+
+	  v1[c][0] += ut[rc]*v[r0] -ut[ic]*v[i0];
+	  v1[c][1] += ut[ic]*v[r0] +ut[rc]*v[i0];
+	  v2[c][0] += ut[rc]*v[r1] -ut[ic]*v[i1];
+	  v2[c][1] += ut[ic]*v[r1] +ut[rc]*v[i1];
 	}
-	res[2*c        ] += v1[c][0];
-	res[2*c+1      ] += v1[c][1];
-	res[2*c+2*NC_  ] += v2[c][0];
-	res[2*c+2*NC_+1] += v2[c][1];
-	res[2*c+4*NC_  ] += v2[c][1];
-	res[2*c+4*NC_+1] -= v2[c][0];
-	res[2*c+6*NC_  ] += v1[c][1];
-	res[2*c+6*NC_+1] -= v1[c][0];
+	int r0= 2*c;         int i0= 2*c+1;
+	int r1= 2*(NC_+c);   int i1= 2*(NC_+c)+1;
+	int r2= 2*(2*NC_+c); int i2= 2*(2*NC_+c)+1;
+	int r3= 2*(3*NC_+c); int i3= 2*(3*NC_+c)+1;
+
+	res[r0] += v1[c][0];	res[i0] += v1[c][1];
+	res[r1] += v2[c][0];	res[i1] += v2[c][1];
+	res[r2] += v2[c][1];	res[i2] -= v2[c][0];
+	res[r3] += v1[c][1];	res[i3] -= v1[c][0];
       }
     }
   }
@@ -802,10 +804,10 @@ void Dirac_Wilson::mult_a1(Field& w, const Field& f) const{
   mult_a0(w,f);
   w += f;
 }
-
 #endif /*IMPROVED_WILSON*/
 
 #ifndef IMPROVED_WILSON
+
 void Dirac_Wilson::mult_xp(Field& fp, ShiftField* sfp) const{
   int Nc = CommonPrms::instance()->Nc();
 
@@ -1244,11 +1246,9 @@ void Dirac_Wilson::mult_a1(Field& w, const Field& f) const{
   mult_a0(w,f);
   w += f;
 }
-
 #endif  /*no IMPROVED_WILSON*/
 
 ///////////////////////////////////////////////////////////////////////////////
-
 
 const Field Dirac_Wilson::gamma5(const Field& f) const{
   int Nc = CommonPrms::instance()->Nc();
@@ -1330,7 +1330,6 @@ const Field Dirac_Wilson::mult_dag(const Field& f)const{
 /*!
  *  @brief MD-force contribution: \f$\zeta^\dagger\frac{dH_W}{d\tau}\eta\f$
  */
-#ifdef IMPROVED_WILSON
 void Dirac_Wilson::md_force_p(Field& fce,
 			      const Field& eta,const Field& zeta)const{
   using namespace SUNmat_utils;
@@ -1341,96 +1340,15 @@ void Dirac_Wilson::md_force_p(Field& fce,
 
   for(int mu=0; mu<Ndim_; ++mu){
     Field xie(fsize_);
-  
+
+#ifdef IMPROVED_WILSON  
     (this->*mult_p[mu])(xie, eta);
-
-    for(int site=0; site<Nvol_; ++site){
-      f = 0.0;;
-      for(int a=0; a<Nc; ++a){
-        for(int b=0; b<Nc; ++b){
-          double fre = 0.0;
-          double fim = 0.0;
-          for(int s=0; s<Nd; ++s){
-
-	    size_t ra =ff_->index_r(a,s,site);
-	    size_t ia =ff_->index_i(a,s,site);
-
-	    size_t rb =ff_->index_r(b,s,site);
-	    size_t ib =ff_->index_i(b,s,site);
-
-	    fre += zeta[rb]*xie[ra] +zeta[ib]*xie[ia];
-	    fim += zeta[rb]*xie[ia] -zeta[ib]*xie[ra];
-          }
-          f.set(a,b,fre,fim);
-        }
-      }
-      int gsite = (this->*gp)(site);
-      fce.add(gf_->cslice(0,gsite,mu),f.getva());
-    }
-  }
-}
-
-void Dirac_Wilson::md_force_m(Field& fce,
-			      const Field& eta,const Field& zeta)const{
-  using namespace SUNmat_utils;
-
-  int Nc = CommonPrms::instance()->Nc();
-  int Nd = CommonPrms::instance()->Nd();
-  SUNmat f;
-  Field et5 = gamma5(eta);
-  Field zt5 = gamma5(zeta);
-
-  for(int mu=0; mu<Ndim_; ++mu){
-    Field xz5(fsize_);
-
-    (this->*mult_p[mu])(xz5, zt5);
-    
-    for(int site=0; site<Nvol_; ++site){
-      f=0.0;
-      for(int a=0; a<Nc; ++a){
-        for(int b=0; b<Nc; ++b){
-          double fre = 0.0;
-          double fim = 0.0;
-          for(int s=0; s<Nd; ++s){
-
-	    size_t ra =ff_->index_r(a,s,site);
-	    size_t ia =ff_->index_i(a,s,site);
-
-	    size_t rb =ff_->index_r(b,s,site);
-	    size_t ib =ff_->index_i(b,s,site);
-
-	    fre -= xz5[rb]*et5[ra] +xz5[ib]*et5[ia];
-	    fim -= xz5[rb]*et5[ia] -xz5[ib]*et5[ra];
-          }
-          f.set(a,b,fre,fim);
-        }
-      }
-      
-      int gsite = (this->*gp)(site);
-      fce.add(gf_->cslice(0,gsite,mu),f.getva());
-    }
-  }
-}
-#endif
-
-#ifndef IMPROVED_WILSON
-void Dirac_Wilson::md_force_p(Field& fce,
-			      const Field& eta,const Field& zeta)const{
-  using namespace SUNmat_utils;
-
-  int Nc = CommonPrms::instance()->Nc();
-  int Nd = CommonPrms::instance()->Nd();
-  SUNmat f;
-
-  for(int mu=0; mu<Ndim_; ++mu){
-    Field xie(fsize_);
-  
-    //(this->*mult_p[mu])(xie, eta);
+#else
     sf_up_[mu]->setf(const_cast<Field&>(eta));
     (this->*mult_p[mu])(xie, sf_up_[mu]);
-
+#endif
     for(int site=0; site<Nvol_; ++site){
-      f = 0.0;;
+      f = 0.0;
       for(int a=0; a<Nc; ++a){
         for(int b=0; b<Nc; ++b){
           double fre = 0.0;
@@ -1468,11 +1386,12 @@ void Dirac_Wilson::md_force_m(Field& fce,
   for(int mu=0; mu<Ndim_; ++mu){
     Field xz5(fsize_);
 
-    //(this->*mult_p[mu])(xz5, zt5);
-    
+#ifdef IMPROVED_WILSON  
+    (this->*mult_p[mu])(xz5, zt5);
+#else    
     sf_up_[mu]->setf(const_cast<Field&>(zt5));
     (this->*mult_p[mu])(xz5, sf_up_[mu]);
-
+#endif
     for(int site=0; site<Nvol_; ++site){
       f=0.0;
       for(int a=0; a<Nc; ++a){
@@ -1493,43 +1412,20 @@ void Dirac_Wilson::md_force_m(Field& fce,
           f.set(a,b,fre,fim);
         }
       }
-      
       int gsite = (this->*gp)(site);
       fce.add(gf_->cslice(0,gsite,mu),f.getva());
     }
   }
 }
-#endif
 
-
-const Field Dirac_Wilson::md_force_core(const Field& eta,const Field& zeta)const{
-
+const Field Dirac_Wilson::
+md_force(const Field& eta,const Field& zeta)const{
+  
   Field fp(gf_->size());
   md_force_p(fp,eta,zeta);
   md_force_m(fp,eta,zeta);
-
   fp *= -kpp_;
   return fp;
-}
-
-const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
-  using namespace SUNmat_utils;
-  GaugeField fp;
-  
-  SUNmat a_h;
-  int gsite;
-
-  fp.U = md_force_core(eta,zeta);
-  
-  for (int mu = 0; mu < Ndim_; ++mu){
-    for (int site = 0; site < Nvol_; ++site){
-      gsite = (this->*gp)(site);
-      a_h = u(fp, gsite, mu);
-      fp.U.set(gf_->cslice(0,gsite,mu),anti_hermite(a_h));
-    }
-  }
-   
-  return fp.U;
 }
 
 const vector<int> Dirac_Wilson::get_gsite() const {
