@@ -30,9 +30,6 @@ Dirac_optimalDomainWall_params(XML::node DWF_node,DWFType Type){
   XML::read(DWF_node, "mass", mq_, MANDATORY);
   if(Type == PauliVillars) mq_= 1.0;
   
-  //CCIO::cout<<"mass="<<mq_<<std::endl;
-  //CCIO::cout<<"Dirac_optimalDomainWall_params::N5_="<<N5_<<std::endl;
-
   XML::node ApproxNode = DWF_node.child("approximation");
   if(ApproxNode !=NULL) {
     const char* Approx_name = ApproxNode.attribute("name").value();
@@ -466,12 +463,6 @@ namespace DomainWallFermions {
     double ekprime = gsl_sf_ellint_Kcomp( kprime , 0 ); 
     double vs = is * ekprime / ns; 
     return vs;
-  }
-
-  double read_wilson_mass(const XML::node& node){
-    double M0;
-    XML::read(node,"wilson_mass", M0);
-    return M0;
   }
 
   const vector<double> getOmega(int Ns,double lambda_min,double lambda_max){

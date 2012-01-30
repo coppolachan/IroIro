@@ -26,33 +26,35 @@ int Test_Smear::run(){
   // Use factories to construct the propagator
   QuarkPropagator* QP;
   Smear* SmearingObj;
-  XML::node SmearObjNode = Smear_node_;
+
   
+  // Smearing 
+  XML::node SmearObjNode = Smear_node_; /* because descend updates the node object and 
+					   and we want to generate propagator too (it lives on the same 
+					   level). So we just copy Smear_node_ into a new object
+					*/
   XML::descend(SmearObjNode, "Smearing");
-  
   SmearingOperatorFactory* Sm_Factory = 
     SmearingOperators::createSmearingOperatorFactory(SmearObjNode);
+  // Create smearing objects
+  SmearingObj = Sm_Factory->getSmearingOperator();
+  
   
   XML::descend(Smear_node_, "QuarkPropagator");
   QuarkPropagatorFactory* QP_Factory = 
     QuarkPropagators::createQuarkPropagatorFactory(Smear_node_);
   /////////////////////////////////////////////
-  
   // Just a check on configuration
   Staples Staple(conf_.Format);
   CCIO::cout << "Plaquette : " << Staple.plaquette(conf_.U) << std::endl;
   //////////////////////////////////////
   // source 
   vector<int> source_pos(4,0); 
-  
   Source_local<Format::Format_F> src(source_pos,
 				     CommonPrms::instance()->Nvol());
   
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  // Create smearing objects
-  SmearingObj = Sm_Factory->getSmearingOperator();
- 
   smeared_u_ = conf_; // Copy thin links to the initial smearing
   int Nsmear = 2;
   

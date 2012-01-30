@@ -385,10 +385,8 @@
     @verbatim
     <... name="DiracOptimalDomainWall5d">
       <Preconditioning>NoPreconditioner</Preconditioning>
-      <Kernel5d name="DiracWilson">
-        <mass>-1.8</mass>
-      </Kernel5d>
       <N5d>6</N5d>
+      <wilson_mass>-1.8</wilson_mass>
       <b>2.0</b>
       <c>0.0</c>
       <mass>0.10</mass>
@@ -403,9 +401,7 @@
      - \b NoPreconditioner (no preconditioner is applied before matrix inversion)
      - \b LUPreconditioner (LU preconditioner is applied - \b must be used in conjunction with a preconditioned linear solver, otherwise wrong results will be obtained).
 
-     The \c \<%Kernel\> section refers to the Dirac kernel to be used inside the Domain Wall operator, in this case a Wilson operator with mass = -1.8 .
-     
-     Sections \c \<%N5d\> \c \<%b\> \c \<%c\> and \c \<%mass\> provide respectively the length of the fifth dimension, the \f$b\f$ and \f$c\f$ parameters and the mass \f$m\f$ like in the following equation
+     Sections \c \<%N5d\> \c \<%wilson_mass> \c \<%b\> \c \<%c\> and \c \<%mass\> provide respectively the length of the fifth dimension, the mass of Wilson Kernel operator, the \f$b\f$ and \f$c\f$ parameters and the mass \f$m\f$ like in the following equation
 
      \f[ insert-equation \f]
 
@@ -440,7 +436,7 @@
 
   Name of solver section is dependent on caller (upper level of xml file).
 
-  \MaxIter and \Precision respectively provide the maximum number of iterations for the solver (program aborts if iterations go beyond this limit) and the precision goal for the residual, the stopping condition.
+  \c MaxIter and \c Precision respectively provide the maximum number of iterations for the solver (program aborts if iterations go beyond this limit) and the precision goal for the residual, the stopping condition.
   
  
   @section SolvCGPrec Solver_CG_Precondition
@@ -452,6 +448,62 @@
   Refer to the Solver_CG for details, parameters to be declared are the same.
 
 
+*/
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+/*!
 
- */
+  @page smearingPage Smearing Routines
 
+  Currently the XML support is limited to just Stout smearing on a single configuration. No HMC support yet (although it is coded and working).
+
+  We have two basic choices in smearing routines
+  - \b APE for APE-like smearing of links (class Smear_APE)
+  - \b Stout for stout smearing of links using a specific kernel (explained later, class Smear_Stout)
+
+  @section APEsm APE
+  
+  This is quite simple and described by this equation where \f$C_\mu(x) \f$ is the new link:
+
+  \f[  C_\mu(x) = \sum_{\nu\neq \mu}\rho_{\mu\nu}\biggl( U_\nu(x) U_\mu(x\!+\!\hat{\nu}) U_\nu^\dagger(x\!+\!\hat{\mu})
+  + U^\dagger_\nu(x\!-\!\hat{\nu}) U_\mu(x\!-\!\hat{\nu})  U_\nu(x\!-\!\hat{\nu}\!+\!\hat{\mu})\biggr) \f]
+  
+  The XML snippet for creating the object is:
+  @verbatim
+  <... type="APE">
+    <rho>1.0</rho>
+  </...>@endverbatim
+
+  Again, the dots are used because the object can have different names, for example see the stout call.
+  The \c rho parameter can be a list of \f$\rho_{\mu\nu}\f$ values (fastest running index, \f$\nu\f$) or just one value like in the
+  example, where is assumed that all coefficients (\f$ \mu \neq \nu\f$) are identical. 
+
+  @section StoutSM Stout
+
+  Stout links are automatically in the \f$SU(N)\f$ gauge group (current implementation only supports \f$N=3\f$).
+
+  Assuming that \f$C_\mu(x) \f$ is the smeared link using some base smearer (like APE) the new link \f$\Omega_\mu(x)\f$ is 
+  defined in the following way:
+
+  
+  \f[
+  Q_\mu(x) =  \frac{i}{2}\biggl( \Omega^\dagger_\mu(x) - \Omega_\mu(x) \biggr)
+  - \frac{i}{2N} \rm{tr}\biggl(\Omega^\dagger_\mu(x) -\Omega_\mu(x)\biggr)\f]
+  \f[
+  \Omega_\mu(x) = C_\mu(x)\ U_\mu^\dagger(x), \quad\mbox{(no summation over $\mu$)} 
+  \f]
+
+  The xml code to generate stout smearing is 
+
+  @verbatim
+  <.. type="Stout">
+    <Base type="APE">
+      <rho>1.0</rho>
+    </Base>
+  </...>
+  @endverbatim
+
+
+  The \c Base object defines how the  \f$C_\mu(x) \f$ link must be obtained. No other parameters are necessary.
+
+
+*/
