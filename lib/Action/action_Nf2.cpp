@@ -53,6 +53,7 @@ Field Action_Nf2::md_force(const void*){
   if(smeared_) SmartField_->smeared_force(fce);
 
   Field force = FieldUtils::TracelessAntihermite(GaugeField(fce));
+
   _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "Action_Nf2");
   return force;
 }
