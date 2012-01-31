@@ -6,7 +6,8 @@
  *
  * JLQCD branch of the code for lattice simulations of QCD  
  *
- * \section Features
+ *
+ * \section feat Features
  *
  * Current implementation:
  * - Actions (Gauge: Wilson, Rectangle, Fermion: 2 flavors, 2 flavors Ratio, Overlap)
@@ -16,6 +17,14 @@
  * - Smearing (APE, Stout analytic), HMC Smeared runs
  * - Random Number Generators (Mersenne Twister)
  * - %XML control of program behavior
+ *
+ *
+ * \section Plat Supported platforms
+ * 
+ * - <a href="http://gcc.gnu.org/">GNU compiler</a> (tested with g++ version 4.6.1)
+ * - Multicore version tested with <a href="http://www.open-mpi.org/">openMPI</a> (version 1.4.4)  
+ * - <a href="http://software.intel.com/en-us/articles/c-compilers/">INTEL compiler</a> (tested with icpc version 12.1.2)
+ * - <a href="http://www-01.ibm.com/software/awdtools/xlcpp/">IBM XLC compiler</a> (tested with xlC version 11.1, cross platform compilation)
  *
  * \authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>,  Shoji Hashimoto, Jun-Ichi Noaki}
  *
@@ -43,7 +52,9 @@ int run(GaugeField, node);
 int main(int argc, char* argv[]){
   int status;
   CommandOptions Options = ReadCmdLine(argc, argv);
-  
+ 
+  CCIO::header(PACKAGE_STRING);
+ 
   //Reading input file
   node top_node = getInputXML(Options.filename);  
 

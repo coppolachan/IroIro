@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [0.8.5], [cossu@post.kek.jp])
+AC_INIT([IroIro], [0.8.8], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 AC_CONFIG_HEADERS([include/config.h])
@@ -10,13 +10,13 @@ AC_PROG_RANLIB
 
 
 # Checks for programs.
-AC_PROG_CXX
+AC_PROG_CXX([icpc g++])
 
 case $host in 
 rs6000-*-aix*) AC_PROG_CXX(mpCC);;
 esac
 
-AC_PROG_CC
+AC_PROG_CC([icc gcc])
 AC_LANG(C++)
 
 # Checks for libraries.

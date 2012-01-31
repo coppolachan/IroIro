@@ -6,13 +6,14 @@
 #include <vector>
 #include <algorithm>
 
-#ifndef FOPR_INCLUDED
 #include "include/fopr.h"
-#endif
 
 class Field;
 class SortEigen;
 
+/*
+  @brief Class to calculate EigenModes using Implicit restarted Lanzcos method
+*/
 class EigenModes_IRL{
 private:
   const Fopr* opr_;
@@ -38,15 +39,24 @@ private:
 		int kmin,
 		int kmax)const;
 
-  void diagonalize(std::vector<double>& lmda,std::vector<double>& lmdb, 
-		   int Nm2,int Nm,std::vector<double>& Qt)const;
+  void diagonalize(std::vector<double>& lmda,
+		   std::vector<double>& lmdb, 
+		   int Nm2,
+		   int Nm,
+		   std::vector<double>& Qt)const;
 
-  void orthogonalize(Field& w,const std::vector<Field>& evec,
+  void orthogonalize(Field& w,
+		     const std::vector<Field>& evec,
 		     int k)const;
 
 public:
-  EigenModes_IRL(const Fopr* fopr,const SortEigen* sort,
-		 int Nk,int Np,double enorm,double vthrs,int Niter)
+  EigenModes_IRL(const Fopr* fopr,
+		 const SortEigen* sort,
+		 int Nk,
+		 int Np,
+		 double enorm,
+		 double vthrs,
+		 int Niter)
     :opr_(fopr),sort_(sort),
      Nk_(Nk),
      Np_(Np),
@@ -54,11 +64,11 @@ public:
      vthrs_(vthrs),
      Niter_(Niter){}
 
-  //void set_gconf(const Field& g)const {opr_->set_gconf(g);}
-  //void set_mq(double mq)const {opr_->set_mq(mq);}
-
-  void calc(std::vector<double>& lmd,std::vector<Field>& evec,
-	    const Field& b,int& Nsbt,int& Nconv) const;
+  void calc(std::vector<double>& lmd,
+	    std::vector<Field>& evec,
+	    const Field& b,
+	    int& Nsbt,
+	    int& Nconv) const;
 };
 
 #endif

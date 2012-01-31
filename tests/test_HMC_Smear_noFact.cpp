@@ -30,7 +30,7 @@ int Test_HMC::run(XML::node node){
   
   Field* CommonField = new Field(Gfield_.Format.size());
   // --------------------------------- Smearing
-  Smear_APE BaseAPE(0.1);
+  Smear_APE* BaseAPE = new Smear_APE(0.1);
   Smear_Stout AnalyticSmear(BaseAPE);
   int Nsmear = 1; // Smearing levels
   const bool nosmear = false;

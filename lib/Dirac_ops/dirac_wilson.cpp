@@ -611,7 +611,7 @@ void Dirac_Wilson::mult_zm(Field& w, const Field& f) const{
 	
 	utmp = const_cast<Field*>(u_)->getaddr(gf_->index_r(0,0,(this->*gm)(site_index),2));
 	vtmp = const_cast<Field*>(&f)->getaddr(ff_->index_r(0,0,site_index));
-	res = const_cast<Field*>(&w)->getaddr(ff_->index_r(0,0,current_idx));
+	res  = const_cast<Field*>(&w)->getaddr(ff_->index_r(0,0,current_idx));
 	//	res  = &w[ff_->index_r(0,0,current_idx)];
 	
 	for (int c = 0; c < NC_; ++c) {

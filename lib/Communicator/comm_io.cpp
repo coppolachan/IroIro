@@ -201,6 +201,21 @@ StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Setprecision f
   
   return obj;
 }
+
+StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Setiosflags f) {
+  if (Communicator::instance()->primaryNode()) 
+    obj.getOstream() << f;
+  
+  return obj;
+}
+
+StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Resetiosflags f) {
+  if (Communicator::instance()->primaryNode()) 
+    obj.getOstream() << f;
+  
+  return obj;
+}
+
 #endif
 #ifdef HITACHISR16K
   StandardOutputStream& operator<<(StandardOutputStream& obj, std::_Smanip<int> op){

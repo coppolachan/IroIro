@@ -460,20 +460,6 @@ void Dirac_Clover::external_prod(Field& res,
 }
 
 //====================================================================
-/*
-const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
-
-  Field force(gsize_);
-
-  //Wilson term
-  force = Dw->md_force(eta,zeta);
- 
-  force += md_force_block(eta, zeta);
-  force += md_force_block(zeta, eta);
-
-  return force;
-}
-*/
 const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
   //Wilson term
   Field force = Dw->md_force(eta,zeta);
@@ -483,7 +469,6 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
 
   return force;
 }
-
 //====================================================================
 const Field Dirac_Clover::md_force_block(const Field& eta,
 					 const Field& zeta)const{
@@ -655,8 +640,12 @@ const Field Dirac_Clover::md_force_block(const Field& eta,
      
       fce_tmp2.U *= - Dw->getKappa() * csw_ / 8.0; 
 
-      for(int site = 0; site<Nvol_; ++site)
-	force.U.add(force.Format.cslice(0,site,mu),anti_hermite(u(fce_tmp2.U,site))); 
+      SUNmat force_mat;
+      for(int site = 0; site<Nvol_; ++site){
+	force_mat = u(fce_tmp2.U,site);
+	force.U.add(force.Format.cslice(0,site,mu), force_mat.getva() ); 
+      }
+
 
     }
   }
