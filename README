@@ -23,6 +23,15 @@ In order to override the default optimization level just add the
 
 option inside the CXXFLAGS (where # in between 1 - 5)
 
+Compilation with INTEL compiler (icpc)
+===================================================
+
+The configure will automatically look for INTEL compiler.
+If it is found in the path, icpc will be used in compilation.
+
+Use CXXFLAGS="..." during configure to setup your preferred flags.
+
+
 Use this line to compile on MPI general machine
 ===============================================
 ./configure --enable-mpi CXX=mpicxx.openmpi

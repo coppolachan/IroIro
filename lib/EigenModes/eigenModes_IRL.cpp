@@ -16,8 +16,11 @@ using namespace std;
 
 class Field;
 
-void EigenModes_IRL::calc(vector<double>& lmd, vector<Field>& evec,
-			  const Field& b, int& Nsbt, int& Nconv)const{
+void EigenModes_IRL::calc(vector<double>& lmd, 
+			  vector<Field>& evec,
+			  const Field& b, 
+			  int& Nsbt, 
+			  int& Nconv)const{
   using namespace FieldExpression;
   size_t fsize = evec[0].size();
   
@@ -25,10 +28,10 @@ void EigenModes_IRL::calc(vector<double>& lmd, vector<Field>& evec,
   Nsbt = 0;
   int Nm = Nk_+Np_;
 
-  CCIO::cout << "Nk = " << Nk_ << " Np = "<< Np_ << endl;
-  CCIO::cout << "Nm = " << Nm << endl;
-  CCIO::cout << "size of lmd   = " << lmd.size() << endl;
-  CCIO::cout << "size of evec  = " << evec.size() << endl;
+  CCIO::cout << " -- Nk = " << Nk_ << " Np = "<< Np_ << endl;
+  CCIO::cout << " -- Nm = " << Nm << endl;
+  CCIO::cout << " -- size of lmd   = " << lmd.size() << endl;
+  CCIO::cout << " -- size of evec  = " << evec.size() << endl;
   
   assert(Nm < evec.size() && Nm < lmd.size());
   
@@ -65,7 +68,7 @@ void EigenModes_IRL::calc(vector<double>& lmd, vector<Field>& evec,
 
   // Restarting loop begins
   for(int iter = 0; iter<Niter_; ++iter){
-    CCIO::cout<<"\n iter= "<< iter << endl;
+    CCIO::cout<<"\n iteration = "<< iter << endl;
 
     int Nm2 = Nm - kconv;
     for(int k=k2; k<Nm; ++k) step(lmd,lme,evec,f,Nm,k);
@@ -124,6 +127,7 @@ void EigenModes_IRL::calc(vector<double>& lmd, vector<Field>& evec,
     Kdis = 0;
     Kthrs = 0;
 
+    CCIO::cout << setiosflags(ios_base::scientific);
     for(int i=0; i<Nk_; ++i){
       v = opr_->mult(B[i]);
       double vnum = B[i] * v;
@@ -131,13 +135,19 @@ void EigenModes_IRL::calc(vector<double>& lmd, vector<Field>& evec,
       lmd2[i] = vnum/vden;
       v -= lmd2[i] * B[i];
       double vv = v * v;
-      CCIO::cout<<"  ["<<i<<"]  "<<lmd2[i]<<"  "<<vv<< endl;
+
+      CCIO::cout << " [" << setw(3)<< setiosflags(ios_base::right) <<i<<"] ";
+      CCIO::cout << setw(25)<< setiosflags(ios_base::left)<< lmd2[i];
+      CCIO::cout <<"  "<< setw(25)<< setiosflags(ios_base::right)<< vv<< endl;
+ 
       if(vv<enorm_){
         Iconv[Kdis] = i;
         ++Kdis;
         if(sort_->saturated(lmd2[i],vthrs_)) ++Kthrs;
       }
     }  // i-loop end
+    CCIO::cout << resetiosflags(ios_base::scientific);
+
 
     CCIO::cout<<" #modes converged: "<<Kdis<<endl;
 
@@ -163,11 +173,11 @@ converged:
   sort_->push(lmd,evec,Kdis);
   Nsbt = Kdis - Kthrs;
 
-  printf("\n Converged:\n");
-  printf("  Nconv   = %d\n",Nconv);
-  printf("  beta(k) = %20.14e\n",beta_k);
-  printf("  Kdis    = %d\n",Kdis);
-  printf("  Nsbt    = %d\n",Nsbt);
+  CCIO::cout << "\n Converged\n Summary :\n";
+  CCIO::cout << " -- Iterations  = "<< Nconv  << "\n";
+  CCIO::cout << " -- beta(k)     = "<< beta_k << "\n";
+  CCIO::cout << " -- Kdis        = "<< Kdis   << "\n";
+  CCIO::cout << " -- Nsbt        = "<< Nsbt   << "\n";
 }
 
 /* ====================================================== */
@@ -179,7 +189,6 @@ step(vector<double>& lmd,
   using namespace FieldExpression;
 
   if(k>=Nm){
-    // printf("k larger than Nm: irlegal.\n");
     abort();
   }else if(k==0){  // Initial step
     w = opr_->mult(evec[k]);
@@ -213,29 +222,6 @@ step(vector<double>& lmd,
     if(k < Nm-1) evec[k+1] = w;
   }
 }
-
-/*
-void EigenModes_IRL::orthogonalize(Field& w,const vector<Field>& evec,int k){
-  // Schmidt orthogonalization                                   
-                                                
-  size_t size = w.size();
-  assert(size%2 ==0);
-
-  std::slice re(0,size/2,2);
-  std::slice im(1,size/2,2);
-
-  for(int j=0; j<k; ++j){
-    double prdr = evec[j]*w;
-    double prdi = evec[j].im_prod(w);
-
-    valarray<double> evr(evec[j][re]);
-    valarray<double> evi(evec[j][im]);
-
-    w.add(re, -prdr*evr +prdi*evi);
-    w.add(im, -prdr*evi -prdi*evr);
-  }
-}
-*/
 
 void EigenModes_IRL::
 orthogonalize(Field& w,const vector<Field>& vk, int k)const{
@@ -306,7 +292,6 @@ diagonalize(vector<double>& lmd, vector<double>& lme,
       }
     }
     Niter = iter;
-    //    printf("  converged at iter = %d\n",Niter);
     return;
 
   continued:
@@ -318,7 +303,7 @@ diagonalize(vector<double>& lmd, vector<double>& lme,
       }
     }
   }
-  printf("QL method too many iteration: %d\n",Niter);
+  CCIO::cout << "[QL method] Error - Too many iteration: "<<Niter<<"\n";
   abort();
 }
 

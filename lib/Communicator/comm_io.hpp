@@ -119,6 +119,8 @@ public:
 #ifndef HITACHISR16K
   friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Setw f);
   friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Setprecision f);
+  friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Setiosflags f);
+  friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Resetiosflags f);
 #endif
 #ifdef HITACHISR16K //Hitachi hack
   friend StandardOutputStream& operator<<(StandardOutputStream&, std::_Smanip<int>);

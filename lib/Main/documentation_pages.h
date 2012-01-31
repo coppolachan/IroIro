@@ -28,6 +28,13 @@
   
   option inside the \c CXXFLAGS (where # in between 1 - 5)
  
+  @section INTEL_comp Compilation with INTEL compiler (icpc)
+  
+  The configure will automatically look for INTEL compiler. If it is found in the path, icpc will be used in compilation, no further specification is needed.
+  
+  Use \c CXXFLAGS="..." during configure to setup your preferred flags.
+
+  \b Note: The compiler must be at least version 12.0.5
 
   @section openMPI Compilation on MPI capable general machine
  

@@ -10,13 +10,13 @@ AC_PROG_RANLIB
 
 
 # Checks for programs.
-AC_PROG_CXX
+AC_PROG_CXX([icpc g++])
 
 case $host in 
 rs6000-*-aix*) AC_PROG_CXX(mpCC);;
 esac
 
-AC_PROG_CC
+AC_PROG_CC([icc gcc])
 AC_LANG(C++)
 
 # Checks for libraries.
