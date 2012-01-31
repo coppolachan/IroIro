@@ -50,7 +50,6 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   //Copy v1 from backward processor
   double vbc[Nih*Vsl];
   Communicator::instance()->transfer_fw(vbc,vbd, Nih*Vsl,0);
-
   Xbdry = Nx-1;
   for(int bsite=0; bsite<Vsl; ++bsite){
     //write func in SiteIndex
@@ -87,7 +86,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   
   //bulk part
   for(int bsite = 0; bsite < Vsl; ++bsite) {
-    for(int x = 0; x < Nx-1; ++x){
+    for(int x=0; x<Nx-1; ++x){
       //write func in SiteIndex
       int site = x + Nx*bsite;
       int xp = x+1 + Nx*bsite;
@@ -231,9 +230,7 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
       res[2*c+4*NC_+1] -= v1[c][0];
       res[2*c+6*NC_  ] -= v2[c][1];
       res[2*c+6*NC_+1] += v2[c][0];
-
     }
-
   }
 }
 
@@ -276,14 +273,11 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
 	v2[c][1] += (utmp[NC_*2*c+2*c1+1]*v[2*c1+NC_*2] 
                    + utmp[NC_*2*c+2*c1  ]*v[2*c1+NC_*2+1]);
       }
-
       res[2*c+4*NC_  ] += v1[c][0];
       res[2*c+4*NC_+1] += v1[c][1];
       res[2*c+6*NC_  ] += v2[c][0];
       res[2*c+6*NC_+1] += v2[c][1];
-
     }
-
   }
 }
 
@@ -358,10 +352,8 @@ void Dirac_Wilson::mult_xm(Field& w, const Field& f) const{
       res[2*c+6*NC_+1] +=  vbdry_copy[4*NC_*bdry_site + 2*c          ];
     }
   }
-   
 
   //bulk part
-
   for(int bulk_site = 0; bulk_site <Ny*Nz*Nt; ++bulk_site){
     for (int ix = 1; ix < Nx; ++ix){
       //write func in SiteIndex
@@ -391,7 +383,6 @@ void Dirac_Wilson::mult_xm(Field& w, const Field& f) const{
 			+ utmp[NC_*2*c1+2*c+1] *v2tmp[c1][1]);
 	  v2[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v2tmp[c1][0] 
 			- utmp[NC_*2*c1+2*c  ] *v2tmp[c1][1]);
-	  
 	}
 	
 	res[2*c        ] +=  v1[c][0];
@@ -486,9 +477,7 @@ void Dirac_Wilson::mult_ym(Field& w, const Field& f) const{
     }
   }
   
-  
   //bulk part
-  
   for(int bulk_site = 0; bulk_site <Nz*Nt; ++bulk_site){
     for (int iy = 1; iy < Ny; ++iy){
       for (int ix = 0; ix < Nx; ++ix){
@@ -519,7 +508,6 @@ void Dirac_Wilson::mult_ym(Field& w, const Field& f) const{
 			  + utmp[NC_*2*c1+2*c+1] *v2tmp[c1][1]);
 	    v2[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v2tmp[c1][0] 
 			  - utmp[NC_*2*c1+2*c  ] *v2tmp[c1][1]);
-	    
 	  }
 
 	  res[2*c        ] +=  v1[c][0];
@@ -530,13 +518,11 @@ void Dirac_Wilson::mult_ym(Field& w, const Field& f) const{
 	  res[2*c+4*NC_+1] +=  v2[c][1];
 	  res[2*c+6*NC_  ] += -v1[c][0];
 	  res[2*c+6*NC_+1] += -v1[c][1];
-	  
 	}
       }
     }
   }
 }
-    
 
 void Dirac_Wilson::mult_zm(Field& w, const Field& f) const{
   double* utmp;                        // auxiliary matrix
@@ -615,9 +601,7 @@ void Dirac_Wilson::mult_zm(Field& w, const Field& f) const{
     }
   }
   
-  
   //bulk part
-  
   for(int it = 0; it <Nt; ++it){
     for (int iz = 1; iz < Nz; ++iz){
       for (int ixy = 0; ixy < Nx*Ny; ++ixy){
@@ -635,7 +619,6 @@ void Dirac_Wilson::mult_zm(Field& w, const Field& f) const{
 	  v1tmp[c][1] = vtmp[2*c+1      ] - vtmp[2*c+4*NC_   ];
 	  v2tmp[c][0] = vtmp[2*c+2*NC_  ] - vtmp[2*c+6*NC_+1 ];
 	  v2tmp[c][1] = vtmp[2*c+2*NC_+1] + vtmp[2*c+6*NC_   ];
-	  
 	}
 	
 	for (int c = 0; c < NC_; ++c) {
@@ -649,7 +632,6 @@ void Dirac_Wilson::mult_zm(Field& w, const Field& f) const{
 			  + utmp[NC_*2*c1+2*c+1] *v2tmp[c1][1]);
 	    v2[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v2tmp[c1][0] 
 			  - utmp[NC_*2*c1+2*c  ] *v2tmp[c1][1]);
-	    
 	  }
 	  
 	  res[2*c        ] +=  v1[c][0];
@@ -660,8 +642,6 @@ void Dirac_Wilson::mult_zm(Field& w, const Field& f) const{
 	  res[2*c+4*NC_+1] +=  v1[c][0];
 	  res[2*c+6*NC_  ] +=  v2[c][1];
 	  res[2*c+6*NC_+1] += -v2[c][0];
-	  
-	  
 	}
       }
     }
@@ -722,7 +702,11 @@ void Dirac_Wilson::mult_tm(Field& w, const Field& f) const{
   
   //Copy v1 from backward processor
   Communicator::instance()->transfer_bk(vbdry_copy,vbdry, NC_*4*Nx*Ny*Nz,3);
-  
+  /*
+  double norm=0.0;
+  for(int i=0;i<NC_*4*Nx*Ny*Nz;++i)norm+= vbdry_copy[i]*vbdry_copy[i];
+  CCIO::cout<<"bdry_norm="<<norm<<std::endl;
+  */
   Tbdry = 0;
   for (int ixyz = 0; ixyz < Nx*Ny*Nz; ++ixyz) {
     //write func in SiteIndex
@@ -767,14 +751,12 @@ void Dirac_Wilson::mult_tm(Field& w, const Field& f) const{
 			+ utmp[NC_*2*c1+2*c+1] *v2tmp[c1][1]);
 	  v2[c][1] -= ( utmp[NC_*2*c1+2*c+1] *v2tmp[c1][0] 
 			- utmp[NC_*2*c1+2*c  ] *v2tmp[c1][1]);
-	  
 	}
 	
 	res[2*c        ] +=  v1[c][0];
 	res[2*c+1      ] +=  v1[c][1];
 	res[2*c+2*NC_  ] +=  v2[c][0];
 	res[2*c+2*NC_+1] +=  v2[c][1];
-	
       }
     }
   }
@@ -793,7 +775,8 @@ void (Dirac_Wilson::*Dirac_Wilson::mult_m[])
 			       &Dirac_Wilson::mult_tm,};
 
 void Dirac_Wilson::mult_a0(Field& w,const Field& f) const{
-  for(int d=0; d <Ndim_; ++d){
+
+  for(int d=0; d<Ndim_; ++d){
     (this->*mult_p[d])(w,f);
     (this->*mult_m[d])(w,f);
   }
@@ -1232,7 +1215,6 @@ void (Dirac_Wilson::*Dirac_Wilson::mult_m[])
 void Dirac_Wilson::mult_a0(Field& w, const Field& f) const{
 
   valarray<double> wt(fsize_);
-
   for(int d=0; d <Ndim_; ++d){
     sf_up_[d]->setf(f);
     (this->*mult_p[d])(w,sf_up_[d]);
@@ -1315,7 +1297,6 @@ const Field Dirac_Wilson::proj_m(const Field& f) const{
   }
   return w;
 }
-
 
 const Field Dirac_Wilson::mult(const Field& f) const{
   Field w(fsize_);

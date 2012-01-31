@@ -183,6 +183,9 @@ step(vector<double>& lmd,
     abort();
   }else if(k==0){  // Initial step
     w = opr_->mult(evec[k]);
+    
+    double wnorm= w*w;
+    CCIO::cout<<"wnorm="<<wnorm<<std::endl;
 
     double alph = evec[k] * w;
     w -= alph * evec[k];
@@ -214,8 +217,7 @@ step(vector<double>& lmd,
   }
 }
 
-/*
-void EigenModes_IRL::orthogonalize(Field& w,const vector<Field>& evec,int k){
+void EigenModes_IRL::orthogonalize(Field& w,const vector<Field>& evec,int k)const{
   // Schmidt orthogonalization                                   
                                                 
   size_t size = w.size();
@@ -235,10 +237,9 @@ void EigenModes_IRL::orthogonalize(Field& w,const vector<Field>& evec,int k){
     w.add(im, -prdr*evi -prdi*evr);
   }
 }
-*/
 
-void EigenModes_IRL::
-orthogonalize(Field& w,const vector<Field>& vk, int k)const{
+/*
+void EigenModes_IRL::orthogonalize(Field& w,const vector<Field>& vk, int k)const{
   // Schmidt orthogonalization
 
   if( (w.size()%2)!=0 ) abort();
@@ -268,7 +269,7 @@ orthogonalize(Field& w,const vector<Field>& vk, int k)const{
     }
   }
 }
-
+*/
 
 
 void EigenModes_IRL::

@@ -71,7 +71,7 @@ private:
 public:
   Fopr_H(const DiracWilsonLike* D):D_(D){}
   
-  const Field mult(const Field& f) const{ return D_->gamma5(D_->mult(f));}
+  const Field mult(const Field& f) const{return D_->gamma5(D_->mult(f));}
   const Field mult_dag(const Field& f) const{return mult(f);}
   const Field gamma5(const Field&f) const { return D_->gamma5(f); }
 
