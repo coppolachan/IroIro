@@ -125,11 +125,11 @@ private:
     f5.add(std::slice(s*f4size_,f4size_,1),f4.getva());
   }
 
-  void mult_a0(Field&,const Field&)const;
-  void mult_a1(Field&,const Field&)const;
+  void mult_a0(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
+  void mult_a1(Field&,const Field&)const;/*! @brief it returns (1-kpp*D)*f */
 
-  void mult_dag_a0(Field&,const Field&)const;
-  void mult_dag_a1(Field&,const Field&)const;
+  void mult_dag_a0(Field&,const Field&)const; /*! @brief it returns -kpp*D^dag*f */
+  void mult_dag_a1(Field&,const Field&)const; /*! @brief it returns (1-kpp*D^dag)*f */
 
   void(Dirac_optimalDomainWall::*mult_core)(Field&,const Field&)const;
   void(Dirac_optimalDomainWall::*mult_dag_core)(Field&,const Field&)const;
@@ -233,10 +233,10 @@ public:
   const Field mult_dag(const Field&)const;
 
   // mult in the heavy quark limit
-  const Field mult_hq(const Field& f5) const;
-  const Field mult_hq_inv(const Field& f5) const;
-  const Field mult_hq_dag(const Field& f5) const;
-  const Field mult_hq_dinv(const Field& f5) const;
+  const Field mult_hq(const Field& f5) const;    /*! @brief mult in the heavy M0 limit*/
+  const Field mult_hq_inv(const Field& f5) const;/*! @brief mult_inv in the heavy M0 limit*/
+  const Field mult_hq_dag(const Field& f5) const;/*! @brief mult_dag in the heavy M0 limit*/
+  const Field mult_hq_dinv(const Field& f5) const;/*! @brief mult in the heavy M0 limit*/
 
   //Preconditioning methods
   const Field mult_prec    (const Field& f)const{return Precond_->mult(f);}

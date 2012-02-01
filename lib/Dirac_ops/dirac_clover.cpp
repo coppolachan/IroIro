@@ -34,15 +34,15 @@ const std::valarray<double> Dirac_Clover::anti_herm(const SUNmat& m){
 
 //=================================================================
 
-void Dirac_Clover::mult_isigma(Field& v, const Field& w,
-			       const int mu, const int nu) const {
+//void (Dirac_Clover::*Dirac_Clover::mult_isigma[])(Field&,const Field&)const 
+//= {&Dirac_Clover::i_sigma};
+  
+void Dirac_Clover::mult_isigma(Field& v, const Field& w,int mu,int nu) const {
   
   if(mu==nu) {
     CCIO::cout << "Illegal value of (mu,nu) in Dirac_Clover::mult_isigma.\n";
     abort();
   }
-
-
 
   if(mu == 0){
     switch(nu) {

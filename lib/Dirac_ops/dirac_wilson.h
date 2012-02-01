@@ -12,7 +12,7 @@
 #include "dirac.h"
 #include "include/pugi_interface.h"
 
-#define IMPROVED_WILSON
+//#define IMPROVED_WILSON
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
@@ -95,8 +95,8 @@ private:
   static void(Dirac_Wilson::*mult_m[])(std::valarray<double>&,
 				       const Field&)const;
 #endif 
-  void mult_a0(Field&,const Field&)const ;
-  void mult_a1(Field&,const Field&)const ;
+  void mult_a0(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
+  void mult_a1(Field&,const Field&)const;/*! @brief it returns (1-kpp*D)*f */
 
   int gsite(int site)const {return site;}
   int esec(int site)const {return SiteIndex_eo::instance()->esec(site);}

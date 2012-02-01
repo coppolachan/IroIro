@@ -53,8 +53,9 @@ private:
 
   int gsite(int site)const {return site;}
 
-  void mult_isigma(Field&, const Field&,
-		   const int mu, const int nu) const;
+  //void (Dirac_Clover::*mult_isigma[])(Field&,const Field&) const;
+
+  void mult_isigma(Field&, const Field&,int mu,int nu) const;
   
   void mult_csw(Field&, const Field&) const ;
   void set_csw() ;
