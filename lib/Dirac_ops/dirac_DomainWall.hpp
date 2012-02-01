@@ -181,7 +181,7 @@ public:
      mult_core(&Dirac_optimalDomainWall::mult_a1),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){
-    if(Type==Standard) {
+    if(Type==PauliVillars) {
       mq_=1.0; 
       Params.mq_=1.0;
     }

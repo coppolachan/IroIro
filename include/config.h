@@ -87,7 +87,7 @@
 #define STDC_HEADERS 1
 
 /* Code Verbosity level */
-#define VERBOSITY 1
+#define VERBOSITY 5
 
 /* Version number of package */
 #define VERSION "0.8.8"

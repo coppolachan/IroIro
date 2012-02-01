@@ -5,41 +5,43 @@
   <Geometry>
     <Lattice>4 4 4 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
-
   </Geometry>
-  <!-- Input configuration -->
   <!-- Input configuration -->
   <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   
   <TestOptimalDomainWall>
     <DomainWall name="DiracOptimalDomainWall5d">
       <Preconditioning>NoPreconditioner</Preconditioning>
-      <wilson_mass>-1.8</wilson_mass>
-      <N5d>6</N5d>
+      <wilson_mass>-1.6</wilson_mass>
+      <N5d>8</N5d>
       <b>1.0</b>
       <c>1.0</c>
-      <mass>0.1</mass>
+      <mass>0.02</mass>
       <approximation name="Tanh">
-	<lambda_min>0.2</lambda_min>
-	<lambda_max>6.2</lambda_max>
+	<lambda_min>0.1</lambda_min>
+	<lambda_max>1.5</lambda_max>
       </approximation>
     </DomainWall> 
 
-    <QuarkPropagator name="QpropDWF">
-      <Kernel4d name="DiracOptimalDomainWall4d">
-	<Kernel5d name="DiracOptimalDomainWall5d">
-	  <c>0.0</c>
-	  <mass>0.0</mass>
-	  <omega>1.0 1.0 1.0 1.0 1.0 1.0</omega>
-	  <Kernel name="DiracWilson">
-	    <mass>-1.8</mass>
-	  </Kernel>
-	</Kernel5d> 
-	<SolverDWF type="Solver_CG">
-	  <MaxIter>1000</MaxIter>
+    <QuarkPropagator>
+      <Kernel4d>
+	<Kernel5d>
+	  <Preconditioning>NoPreconditioner</Preconditioning>
+	  <wilson_mass>-1.6</wilson_mass>
+	  <N5d>8</N5d>
+	  <b>1.0</b>
+	  <c>1.0</c>
+	  <mass>0.02</mass>
+	  <approximation name="Zolotarev">
+	    <lambda_min>0.1</lambda_min>
+	    <lambda_max>1.5</lambda_max>
+	  </approximation>
+	</Kernel5d>
+	<SolverDWF type="Solver_CG_Precondition">
+	  <MaxIter>10000</MaxIter>
 	  <Precision>1e-20</Precision>
 	</SolverDWF>
-      </Kernel4d> 
+      </Kernel4d>
     </QuarkPropagator>
   </TestOptimalDomainWall>
 </Parameters>

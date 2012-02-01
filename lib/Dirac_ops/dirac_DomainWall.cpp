@@ -258,21 +258,24 @@ void Dirac_optimalDomainWall::mult_dag_a1(Field& w5,const Field& f5) const{
   assert(w5.size()==f5.size());
   Field v5(fsize_);
   
-  for(int s=0; s<N5_; ++s){
-    Field dv = Dw_.mult_dag(get4d(f5,s));
-    dv *= (4.0+M0_)*Params.bs_[s];
-    set5d(w5,dv,s);
-    dv *= Params.cs_[s]/Params.bs_[s];
-    set5d(v5,dv,s);
+  for(int s=0; s< N5_; ++s){
+    Field w = Dw_.mult_dag(get4d(f5,s));
+    w *= (4.0+M0_);
+    Field v(w);
+    w *= Params.bs_[s];
+    v *= Params.cs_[s];
+
+    set5d(w5,w,s);
+    set5d(v5,v,s);
   }
   w5 += f5;
   v5 -= f5;
   
   for(int s = 0; s < N5_; ++s){
     Field lpf = proj_p(get4d(v5,(s+1)%N5_));
-    if(s == N5_-1) lpf *= -Params.mq_;
+    if(s == N5_-1) lpf *= -mq_;
     Field lmf = proj_m(get4d(v5,(s+N5_-1)%N5_));
-    if(s == 0)     lmf *= -Params.mq_;
+    if(s == 0)     lmf *= -mq_;
     add5d(w5,lpf,s);
     add5d(w5,lmf,s);
   }

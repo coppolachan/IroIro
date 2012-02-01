@@ -76,20 +76,27 @@ int Test_optimalDomainWall::run(XML::node node){
   Dirac_optimalDomainWall* DiracODWF;
 
   // operator without factories
-  int N5d = 6;
-  double M0 = -1.8;
+  int N5d = 8;
+  double M0 = -1.6;
   double c = 1.0;
   double b = 1.0;
-  double mq = 0.0;
+  double mq = 0.02;
   vector<double> omega(N5d,1.0);
 
   Dirac_optimalDomainWall Ddwf_5d(b,c,M0,mq,omega,&(conf_.U));
   /////////////////////////////
-
+  XML::node QuarkProp_node = node;
   // operator using factories
   XML::descend(node, "DomainWall");
   DiracDWF5dFactory DWF_Factory(node);
   DiracODWF = DWF_Factory.getDiracOperator(&(conf_.U));
+
+  
+  XML::descend(QuarkProp_node, "QuarkPropagator");
+  QPropDWFFactory  QP_DomainWallFact(QuarkProp_node);//uses specific factory (this is a test program specific for DWF)
+  QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(conf_));
+  // the prevoius static_cast is absolutely safe since we know exaclty what class we are creating
+  
   ///////////////////////////////////////
 
   // prepare pf field
@@ -158,19 +165,18 @@ int Test_optimalDomainWall::run(XML::node node){
   
   // quark propagator
   double stop_cond = 1.0e-24;
-  int    Niter= 1000;
+  int    Niter= 10000;
 
   // It follows a standard construction (factories will use a similar one)
-  //  Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
+  //Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
   Dirac_optimalDomainWall Ddwf_PV(*DiracODWF, PauliVillars);
   // Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
-  Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(DiracODWF));
-  Solver* SolvPV = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_PV));
-  Dirac_optimalDomainWall_4D DiracDWF_4d(*DiracODWF,SolvDWF, SolvPV);
+  Solver* SolvDWF = new Solver_CG(stop_cond,Niter , new Fopr_DdagD(DiracODWF));
+  Solver* SolvPV  = new Solver_CG(stop_cond,Niter , new Fopr_DdagD(&Ddwf_PV ));
+  Dirac_optimalDomainWall_4D DiracDWF_4d(*DiracODWF, SolvDWF, SolvPV);
   QpropDWF QuarkPropagator(DiracDWF_4d);
   //////////////////////////////////// 
-  
-
+ 
   CCIO::cout << ".::: Test Dirac_optimalDomainWall meson correlator" 
 	     <<std::endl;
   // Here uses the default constructor with default solver
@@ -180,8 +186,8 @@ int Test_optimalDomainWall::run(XML::node node){
   Source_local<Format::Format_F> src(spos,CommonPrms::instance()->Nvol());
   
   prop_t sq;
-  QuarkPropagator.calc(sq,src);
-
+  //QuarkPropagator.calc(sq,src);
+  QuarkPropDW->calc(sq,src);
 
   
   GammaMatrices::Unit Gamma;
