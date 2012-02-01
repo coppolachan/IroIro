@@ -38,9 +38,9 @@ host_triplet = @host@
 target_triplet = @target@
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_nofact$(EXEEXT) \
 	test_HMC_smear_noF$(EXEEXT) test_RNG$(EXEEXT) \
-	test_Wilson$(EXEEXT) test_ODWF$(EXEEXT) test_ResMass$(EXEEXT) \
-	test_IO$(EXEEXT) test_EigenModes$(EXEEXT) \
-	test_Smearing$(EXEEXT)
+	test_Wilson$(EXEEXT) test_DomainWall$(EXEEXT) \
+	test_ResMass$(EXEEXT) test_IO$(EXEEXT) \
+	test_EigenModes$(EXEEXT) test_Smearing$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -54,6 +54,11 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(testdir)" "$(DESTDIR)$(includedir)"
 PROGRAMS = $(test_PROGRAMS)
+am_test_DomainWall_OBJECTS = test_DomainWall.$(OBJEXT) \
+	testerODWF.$(OBJEXT)
+test_DomainWall_OBJECTS = $(am_test_DomainWall_OBJECTS)
+test_DomainWall_LDADD = $(LDADD)
+test_DomainWall_DEPENDENCIES =
 am_test_EigenModes_OBJECTS = test_EigenModes_IRL.$(OBJEXT) \
 	testerEigenModes.$(OBJEXT)
 test_EigenModes_OBJECTS = $(am_test_EigenModes_OBJECTS)
@@ -77,10 +82,6 @@ am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
 test_IO_LDADD = $(LDADD)
 test_IO_DEPENDENCIES =
-am_test_ODWF_OBJECTS = test_DomainWall.$(OBJEXT) testerODWF.$(OBJEXT)
-test_ODWF_OBJECTS = $(am_test_ODWF_OBJECTS)
-test_ODWF_LDADD = $(LDADD)
-test_ODWF_DEPENDENCIES =
 am_test_RNG_OBJECTS = test_RNG.$(OBJEXT)
 test_RNG_OBJECTS = $(am_test_RNG_OBJECTS)
 test_RNG_LDADD = $(LDADD)
@@ -107,16 +108,16 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(test_EigenModes_SOURCES) $(test_HMC_SOURCES) \
-	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
-	$(test_IO_SOURCES) $(test_ODWF_SOURCES) $(test_RNG_SOURCES) \
-	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
-	$(test_Wilson_SOURCES)
-DIST_SOURCES = $(test_EigenModes_SOURCES) $(test_HMC_SOURCES) \
-	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
-	$(test_IO_SOURCES) $(test_ODWF_SOURCES) $(test_RNG_SOURCES) \
-	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
-	$(test_Wilson_SOURCES)
+SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
+	$(test_HMC_SOURCES) $(test_HMC_nofact_SOURCES) \
+	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
+	$(test_RNG_SOURCES) $(test_ResMass_SOURCES) \
+	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES)
+DIST_SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
+	$(test_HMC_SOURCES) $(test_HMC_nofact_SOURCES) \
+	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
+	$(test_RNG_SOURCES) $(test_ResMass_SOURCES) \
+	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -255,7 +256,7 @@ AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 EXTRA_DIST = test_HMC.xml	 \
 		test_RNG.xml	 \
 		test_Wilson.xml	 \
-		test_ODWF.xml 	\
+		test_DomainWall.xml \
 		test_ResMass.xml \
 		test_IO.xml	
 
@@ -272,7 +273,7 @@ test_RNG_SOURCES = test_RNG.cpp
 test_Wilson_SOURCES = test_wilson.cpp \
 			testerWilson.cpp
 
-test_ODWF_SOURCES = test_DomainWall.cpp \
+test_DomainWall_SOURCES = test_DomainWall.cpp \
 			testerODWF.cpp
 
 test_ResMass_SOURCES = test_ResidualMass.cpp \
@@ -366,6 +367,9 @@ uninstall-testPROGRAMS:
 
 clean-testPROGRAMS:
 	-test -z "$(test_PROGRAMS)" || rm -f $(test_PROGRAMS)
+test_DomainWall$(EXEEXT): $(test_DomainWall_OBJECTS) $(test_DomainWall_DEPENDENCIES) 
+	@rm -f test_DomainWall$(EXEEXT)
+	$(CXXLINK) $(test_DomainWall_OBJECTS) $(test_DomainWall_LDADD) $(LIBS)
 test_EigenModes$(EXEEXT): $(test_EigenModes_OBJECTS) $(test_EigenModes_DEPENDENCIES) 
 	@rm -f test_EigenModes$(EXEEXT)
 	$(CXXLINK) $(test_EigenModes_OBJECTS) $(test_EigenModes_LDADD) $(LIBS)
@@ -381,9 +385,6 @@ test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_
 test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES) 
 	@rm -f test_IO$(EXEEXT)
 	$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
-test_ODWF$(EXEEXT): $(test_ODWF_OBJECTS) $(test_ODWF_DEPENDENCIES) 
-	@rm -f test_ODWF$(EXEEXT)
-	$(CXXLINK) $(test_ODWF_OBJECTS) $(test_ODWF_LDADD) $(LIBS)
 test_RNG$(EXEEXT): $(test_RNG_OBJECTS) $(test_RNG_DEPENDENCIES) 
 	@rm -f test_RNG$(EXEEXT)
 	$(CXXLINK) $(test_RNG_OBJECTS) $(test_RNG_LDADD) $(LIBS)

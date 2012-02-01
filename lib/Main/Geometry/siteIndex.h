@@ -68,8 +68,8 @@ private:
     setup_global();
   }
 
-  SiteIndex(const SiteIndex&){}
-  SiteIndex& operator=(const SiteIndex&){}
+  SiteIndex(const SiteIndex&){};
+  SiteIndex& operator=(const SiteIndex&);
   void setup_bdry();
   void setup_global();
 public:

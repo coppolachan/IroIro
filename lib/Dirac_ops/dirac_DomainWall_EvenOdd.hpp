@@ -45,7 +45,7 @@ public:
   const Field gamma5(const Field& f5) const{ return Deo_.gamma5(f5);}
 
   const Field operator()(int, const Field&) const{}
-  const double getMass() const{return Deo_.getMass();}
+  double getMass() const{return Deo_.getMass();}
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 

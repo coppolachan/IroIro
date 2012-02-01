@@ -225,7 +225,7 @@ public:
   
   const Field operator()(int, const Field&) const{}
 
-  const double getMass() const{return Params.mq_;}
+  double getMass() const{return Params.mq_;}
 
   const Field gamma5_4d(const Field& f4) const{return Dw_.gamma5(f4);}
   

@@ -76,7 +76,7 @@ int Test_optimalDomainWall::run(XML::node node){
   Dirac_optimalDomainWall* DiracODWF;
 
   // operator without factories
-  int N5d = 8;
+  int N5d = 6;
   double M0 = -1.6;
   double c = 1.0;
   double b = 1.0;

@@ -43,7 +43,7 @@ private:
 		 idx_(SiteIndex::instance()){ setup_eo();}
   
   SiteIndex_eo(const SiteIndex_eo&){}
-  SiteIndex_eo& operator=(const SiteIndex_eo&){}
+  SiteIndex_eo& operator=(const SiteIndex_eo&);
   void setup_eo();
 
 public:

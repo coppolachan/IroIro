@@ -96,7 +96,7 @@ public:
   
   // Converts from a string to an enumerator.
   // Returns true if the conversion is successful; false otherwise.
-  static const bool To(EnumType &e, const std::string &str);
+  static bool To(EnumType &e, const std::string &str);
 };
   
 // The EnumString class
@@ -171,7 +171,7 @@ const std::string &EnumStringBase<D,E>::From(const E e)
 }
   
 template <class D, class E>
-const bool EnumStringBase<D,E>::To(E &e, const std::string &str)
+bool EnumStringBase<D,E>::To(E &e, const std::string &str)
 {
   // Search for the string in our map.
   const typename AssocMap::const_iterator itr( GetMap().find( str ) );

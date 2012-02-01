@@ -28,9 +28,8 @@ CommonPrms* CommonPrms::instance(const Lattice& latt){
   if(instance_ == NULL){ 
     instance_ = new CommonPrms;
     setup(latt);
-  }else{
-    return instance_;
   }
+  return instance_;
 }
 
 CommonPrms* CommonPrms::instance(){

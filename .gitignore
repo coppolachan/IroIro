@@ -13,4 +13,5 @@ stats/
 .*
 tests/conf_*
 tests/Perf*
+lib/main_hmc
 #*#
