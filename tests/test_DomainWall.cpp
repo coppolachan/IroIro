@@ -160,19 +160,21 @@ int Test_optimalDomainWall::run(XML::node node){
   double stop_cond = 1.0e-24;
   int    Niter= 1000;
 
-  /* It follows a standard construction (factories will use a similar one)
-  Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
-  Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
+  // It follows a standard construction (factories will use a similar one)
+  //  Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
+  Dirac_optimalDomainWall Ddwf_PV(*DiracODWF, PauliVillars);
+  // Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
+  Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(DiracODWF));
   Solver* SolvPV = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_PV));
-  Dirac_optimalDomainWall_4D DiracDWF_4d(Ddwf_5d,*SolvDWF, *SolvPV);
+  Dirac_optimalDomainWall_4D DiracDWF_4d(*DiracODWF,SolvDWF, SolvPV);
   QpropDWF QuarkPropagator(DiracDWF_4d);
   //////////////////////////////////// 
-  */
+  
 
   CCIO::cout << ".::: Test Dirac_optimalDomainWall meson correlator" 
 	     <<std::endl;
   // Here uses the default constructor with default solver
-  QpropDWF QuarkPropagator(Ddwf_5d,stop_cond,Niter);
+  //QpropDWF QuarkPropagator(Ddwf_5d,stop_cond,Niter);
   
   vector<int> spos(4,0); 
   Source_local<Format::Format_F> src(spos,CommonPrms::instance()->Nvol());
@@ -183,7 +185,7 @@ int Test_optimalDomainWall::run(XML::node node){
 
   
   GammaMatrices::Unit Gamma;
-  MesonCorrelator meson(Gamma,Gamma);
+  MesonCorrelator meson(Pion);
   vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
