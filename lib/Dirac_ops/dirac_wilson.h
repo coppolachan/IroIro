@@ -95,8 +95,8 @@ private:
   static void(Dirac_Wilson::*mult_m[])(std::valarray<double>&,
 				       const Field&)const;
 #endif 
-  void mult_a0(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
-  void mult_a1(Field&,const Field&)const;/*! @brief it returns (1-kpp*D)*f */
+  void mult_full(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
+  void mult_offdiag(Field&,const Field&)const;/*! @brief it returns (1-kpp*D)*f */
 
   int gsite(int site)const {return site;}
   int esec(int site)const {return SiteIndex_eo::instance()->esec(site);}
@@ -116,7 +116,7 @@ public:
      Ndim_(CommonPrms::instance()->Ndim()),
      gp(&Dirac_Wilson::esec),
      gm(&Dirac_Wilson::osec),
-     mult_core(&Dirac_Wilson::mult_a0),
+     mult_core(&Dirac_Wilson::mult_offdiag),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(2*Nvol_)),
      fsize_(ff_->size()),
@@ -135,7 +135,7 @@ public:
      Ndim_(CommonPrms::instance()->Ndim()),
      gp(&Dirac_Wilson::osec),
      gm(&Dirac_Wilson::esec),
-     mult_core(&Dirac_Wilson::mult_a0),
+     mult_core(&Dirac_Wilson::mult_offdiag),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(2*Nvol_)),
      fsize_(ff_->size()),
@@ -155,7 +155,7 @@ public:
      Ndim_(CommonPrms::instance()->Ndim()),
      gp(&Dirac_Wilson::gsite),
      gm(&Dirac_Wilson::gsite),
-     mult_core(&Dirac_Wilson::mult_a1),
+     mult_core(&Dirac_Wilson::mult_full),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
      fsize_(ff_->size()),
@@ -173,7 +173,7 @@ public:
      Ndim_(CommonPrms::instance()->Ndim()),
      gp(&Dirac_Wilson::gsite),
      gm(&Dirac_Wilson::gsite),
-     mult_core(&Dirac_Wilson::mult_a1),
+     mult_core(&Dirac_Wilson::mult_full),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
      fsize_(ff_->size()),

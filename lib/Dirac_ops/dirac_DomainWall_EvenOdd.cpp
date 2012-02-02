@@ -14,34 +14,34 @@ using namespace std;
 
 //-----------------------------------------------------------------------------
 const Field Dirac_optimalDomainWall_EvenOdd::mult_ee(const Field& f)const{
-  return Deo_.mult_hq(f);
+  return Deo_.mult_hop5(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_oo(const Field& f)const{
-  return Deo_.mult_hq(f);
+  return Deo_.mult_hop5(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_ee_inv(const Field& f)const{
-  return Deo_.mult_hq_inv(f);
+  return Deo_.mult_hop5_inv(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_ee_dinv(const Field& f)const{
-  return Deo_.mult_hq_dinv(f);
+  return Deo_.mult_hop5_dinv(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_oo_inv(const Field& f)const{
-  return Deo_.mult_hq_inv(f);
+  return Deo_.mult_hop5_inv(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_oo_dinv(const Field& f)const{
-  return Deo_.mult_hq_dinv(f);
+  return Deo_.mult_hop5_dinv(f);
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_eo(const Field& f)const{
-  return Deo_.mult_hq_inv(Deo_.mult(f));
+  return Deo_.mult_hop5_inv(Deo_.mult(f));
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_oe(const Field& f)const{
-  return Doe_.mult_hq_inv(Doe_.mult(f));
+  return Doe_.mult_hop5_inv(Doe_.mult(f));
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_eo_dag(const Field& f)const{
-  return Doe_.mult_dag(Deo_.mult_hq_dinv(f));
+  return Doe_.mult_dag(Deo_.mult_hop5_dinv(f));
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_oe_dag(const Field& f)const{
-  return Deo_.mult_dag(Doe_.mult_hq_dinv(f));
+  return Deo_.mult_dag(Doe_.mult_hop5_dinv(f));
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{

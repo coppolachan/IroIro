@@ -774,7 +774,7 @@ void (Dirac_Wilson::*Dirac_Wilson::mult_m[])
 			       &Dirac_Wilson::mult_zm,
 			       &Dirac_Wilson::mult_tm,};
 
-void Dirac_Wilson::mult_a0(Field& w,const Field& f) const{
+void Dirac_Wilson::mult_offdiag(Field& w,const Field& f) const{
 
   for(int d=0; d<Ndim_; ++d){
     (this->*mult_p[d])(w,f);
@@ -783,8 +783,8 @@ void Dirac_Wilson::mult_a0(Field& w,const Field& f) const{
   w *= -kpp_;
 }
 
-void Dirac_Wilson::mult_a1(Field& w, const Field& f) const{
-  mult_a0(w,f);
+void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
+  mult_offdiag(w,f);
   w += f;
 }
 #endif /*IMPROVED_WILSON*/
@@ -1212,7 +1212,7 @@ void (Dirac_Wilson::*Dirac_Wilson::mult_m[])
 					  &Dirac_Wilson::mult_zm,
 					  &Dirac_Wilson::mult_tm,};
 
-void Dirac_Wilson::mult_a0(Field& w, const Field& f) const{
+void Dirac_Wilson::mult_offdiag(Field& w, const Field& f) const{
 
   valarray<double> wt(fsize_);
   for(int d=0; d <Ndim_; ++d){
@@ -1224,8 +1224,8 @@ void Dirac_Wilson::mult_a0(Field& w, const Field& f) const{
   }
   w *= -kpp_;
 }
-void Dirac_Wilson::mult_a1(Field& w, const Field& f) const{
-  mult_a0(w,f);
+void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
+  mult_offdiag(w,f);
   w += f;
 }
 #endif  /*no IMPROVED_WILSON*/
