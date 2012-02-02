@@ -96,10 +96,10 @@ private:
   
   class LUPrecond : public Preconditioner {
     Dirac_optimalDomainWall* DWF_;
-    const Field LU     (const Field& f5)const{return DWF_->mult_hq(f5);}
-    const Field LU_inv (const Field& f5)const{return DWF_->mult_hq_inv(f5);}
-    const Field LU_dag (const Field& f5)const{return DWF_->mult_hq_dag(f5);}
-    const Field LU_dinv(const Field& f5)const{return DWF_->mult_hq_dinv(f5);}
+    const Field LU     (const Field& f5)const{return DWF_->mult_hop5(f5);}
+    const Field LU_inv (const Field& f5)const{return DWF_->mult_hop5_inv(f5);}
+    const Field LU_dag (const Field& f5)const{return DWF_->mult_hop5_dag(f5);}
+    const Field LU_dinv(const Field& f5)const{return DWF_->mult_hop5_dinv(f5);}
   public: 
     LUPrecond(Dirac_optimalDomainWall* DWF): DWF_(DWF){}
     const Field mult    (const Field& f5)const{
@@ -125,11 +125,11 @@ private:
     f5.add(std::slice(s*f4size_,f4size_,1),f4.getva());
   }
 
-  void mult_a0(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
-  void mult_a1(Field&,const Field&)const;/*! @brief it returns (1-kpp*D)*f */
+  void mult_offdiag(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
+  void mult_full(Field&,const Field&)const;/*! @brief it returns (1-kpp*D)*f */
 
-  void mult_dag_a0(Field&,const Field&)const; /*! @brief it returns -kpp*D^dag*f */
-  void mult_dag_a1(Field&,const Field&)const; /*! @brief it returns (1-kpp*D^dag)*f */
+  void mult_dag_offdiag(Field&,const Field&)const; /*! @brief it returns -kpp*D^dag*f */
+  void mult_dag_full(Field&,const Field&)const; /*! @brief it returns (1-kpp*D^dag)*f */
 
   void(Dirac_optimalDomainWall::*mult_core)(Field&,const Field&)const;
   void(Dirac_optimalDomainWall::*mult_dag_core)(Field&,const Field&)const;
@@ -142,8 +142,8 @@ public:
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
      Dw_(M0_,u_),
      f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
-     mult_core(&Dirac_optimalDomainWall::mult_a1),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
+     mult_core(&Dirac_optimalDomainWall::mult_full),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_full),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){
 #if VERBOSITY>4
     CCIO::cout << "Created Dirac_optimalDomainWall" << std::endl;
@@ -155,8 +155,8 @@ public:
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
      Dw_(M0_,u_),
      f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
-     mult_core(&Dirac_optimalDomainWall::mult_a1),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
+     mult_core(&Dirac_optimalDomainWall::mult_full),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_full),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){}
   */
   Dirac_optimalDomainWall(double b,double c,double M0,double mq,
@@ -167,8 +167,8 @@ public:
      N5_(Params.N5_),M0_(M0),mq_(mq),u_(u),
      Dw_(M0_,u_),
      f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
-     mult_core(&Dirac_optimalDomainWall::mult_a1),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
+     mult_core(&Dirac_optimalDomainWall::mult_full),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_full),
      Precond_(choose_Preconditioner(Precond)){}
   
   /*! @brief copy constructor */
@@ -178,8 +178,8 @@ public:
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(Dc.u_),
      Dw_(M0_,u_),
      f4size_(Dc.f4size_),fsize_(Dc.fsize_),gsize_(Dc.gsize_),
-     mult_core(&Dirac_optimalDomainWall::mult_a1),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a1),
+     mult_core(&Dirac_optimalDomainWall::mult_full),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_full),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){
     if(Type==PauliVillars) {
       mq_=1.0; 
@@ -195,8 +195,8 @@ public:
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),u_(u),
      Dw_(M0_,u_,TAG()),
      f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
-     mult_core(&Dirac_optimalDomainWall::mult_a0),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
+     mult_core(&Dirac_optimalDomainWall::mult_offdiag),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag),
      Precond_(NULL){}
 
   template<typename TAG>
@@ -207,8 +207,8 @@ public:
      N5_(Params.N5_),M0_(M0),mq_(mq),u_(u),
      Dw_(M0_,u_,TAG()),
      f4size_(Dw_.fsize()),fsize_(f4size_*N5_),gsize_(Dw_.gsize()),
-     mult_core(&Dirac_optimalDomainWall::mult_a0),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_a0),
+     mult_core(&Dirac_optimalDomainWall::mult_offdiag),
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag),
      Precond_(NULL){}
 
   ///////////////////////////
@@ -233,10 +233,10 @@ public:
   const Field mult_dag(const Field&)const;
 
   // mult in the heavy quark limit
-  const Field mult_hq(const Field& f5) const;    /*! @brief mult in the heavy M0 limit*/
-  const Field mult_hq_inv(const Field& f5) const;/*! @brief mult_inv in the heavy M0 limit*/
-  const Field mult_hq_dag(const Field& f5) const;/*! @brief mult_dag in the heavy M0 limit*/
-  const Field mult_hq_dinv(const Field& f5) const;/*! @brief mult in the heavy M0 limit*/
+  const Field mult_hop5(const Field& f5) const;    /*! @brief mult in the heavy M0 limit*/
+  const Field mult_hop5_inv(const Field& f5) const;/*! @brief mult_inv in the heavy M0 limit*/
+  const Field mult_hop5_dag(const Field& f5) const;/*! @brief mult_dag in the heavy M0 limit*/
+  const Field mult_hop5_dinv(const Field& f5) const;/*! @brief mult in the heavy M0 limit*/
 
   //Preconditioning methods
   const Field mult_prec    (const Field& f)const{return Precond_->mult(f);}
