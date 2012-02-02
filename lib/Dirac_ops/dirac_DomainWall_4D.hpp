@@ -77,7 +77,7 @@ public:
   const Format::Format_F get_fermionFormat() const {
     return Dodw_.get_fermionFormat();
   }
-  const double getMass() const {return Dodw_.getMass();}
+  double getMass() const {return Dodw_.getMass();}
   const std::vector<int> get_gsite() const{ return Dodw_.get_gsite();}
   const Field md_force(const Field& eta,const Field& zeta) const{}
   void update_internal_state(){}

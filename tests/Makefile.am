@@ -7,7 +7,7 @@ AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 EXTRA_DIST = 	test_HMC.xml	 \
 		test_RNG.xml	 \
 		test_Wilson.xml	 \
-		test_ODWF.xml 	\
+		test_DomainWall.xml \
 		test_ResMass.xml \
 		test_IO.xml	
 
@@ -16,7 +16,7 @@ test_PROGRAMS = test_HMC 	\
 		test_HMC_smear_noF\
 		test_RNG 	\
 		test_Wilson 	\
-		test_ODWF 	\
+		test_DomainWall	\
 		test_ResMass 	\
 		test_IO   	\
 		test_EigenModes	\
@@ -36,7 +36,7 @@ test_RNG_SOURCES = test_RNG.cpp
 test_Wilson_SOURCES =	test_wilson.cpp \
 			testerWilson.cpp
 
-test_ODWF_SOURCES = test_DomainWall.cpp \
+test_DomainWall_SOURCES = test_DomainWall.cpp \
 			testerODWF.cpp
 
 test_ResMass_SOURCES = test_ResidualMass.cpp \

@@ -127,6 +127,8 @@ public:
     } catch(...) {
       std::cout << "Error in initialization of gauge field "<< std::endl;
     }
+
+    return 0;
   }
 
   inline GaugeField& operator=(const GaugeField& rhs){

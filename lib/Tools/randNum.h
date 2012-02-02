@@ -13,7 +13,7 @@
 
 class RandNum{
 private:
-  virtual double do_rand() const{}
+  virtual double do_rand() const{return 0;};
 public:
   RandNum(){ srand(static_cast<unsigned>(time(NULL)));}
   virtual ~RandNum(){}

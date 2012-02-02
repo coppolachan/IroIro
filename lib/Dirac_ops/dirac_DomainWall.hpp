@@ -181,7 +181,7 @@ public:
      mult_core(&Dirac_optimalDomainWall::mult_full),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_full),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){
-    if(Type==Standard) {
+    if(Type==PauliVillars) {
       mq_=1.0; 
       Params.mq_=1.0;
     }
@@ -225,7 +225,7 @@ public:
   
   const Field operator()(int, const Field&) const{}
 
-  const double getMass() const{return Params.mq_;}
+  double getMass() const{return Params.mq_;}
 
   const Field gamma5_4d(const Field& f4) const{return Dw_.gamma5(f4);}
   
