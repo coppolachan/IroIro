@@ -8,20 +8,22 @@ For a single core run just compile with
 ./configure
 make 
 
+Default optimization level is \c -O3 .
+
+To override compiler flags just use the CXXFLAGS="..." command,
+remembering that the following flags are necessary for correct configuration:
+
+-q64 -qlanglvl=stdc99 -qrtti=type
+
 
 Compilation on AIX Hitachi SR16000 machine
 ===================================================
 
 Use the following lines
  
-./configure --enable-mpi-hitachi CXX=mpCC -host=rs6000-ibm-aix CXXFLAGS="-I/srhome/scqcd/cossu/gsl/include -qlanglvl=stdc99 -qrtti=type" LDFLAGS="-L/srhome/scqcd/cossu/gsl/lib"
-gmake
+./configure --enable-mpi-hitachi 
+make
 
-In order to override the default optimization level just add the 
-
-"-qoptimize=#" 
-
-option inside the CXXFLAGS (where # in between 1 - 5)
 
 Compilation with INTEL compiler (icpc)
 ===================================================
@@ -29,12 +31,14 @@ Compilation with INTEL compiler (icpc)
 The configure will automatically look for INTEL compiler.
 If it is found in the path, icpc will be used in compilation.
 
-Use CXXFLAGS="..." during configure to setup your preferred flags.
+Use CXXFLAGS="..." during configure to setup your preferred flags
+(this will override every default flag).
 
+Note: The compiler must be at least version 12.0.5
 
 Use this line to compile on MPI general machine
 ===============================================
-./configure --enable-mpi CXX=mpicxx.openmpi
+./configure --enable-mpi 
 
 Run with mpirun -np #nodes #executable
 
@@ -53,3 +57,30 @@ Example
 ./configure code_verbosity=5
 
 set maximum verbosity. Allowed values from 0 to 5. Default is 1.
+
+
+Installing GSL
+==============
+
+The Gnu Scientific Library (GSL) is required during compilation 
+of Domain Wall routines. 
+  
+On AIX the default development environment is in 32 bit mode, 
+but IroIro compilation forces 64 bit mode. 
+In this case please check that GLS library is installed in 64 bit 
+version otherwise clash on libraries names could occur. 
+
+If you are compiling the library in a custom installation 
+with XLC on AIX please setup the environment variable 
+
+  OBJECT_MODE=64
+  
+(use 'export OBJECT_MODE=64' in bash shell), or use
+
+ -q64
+
+among compilation flags (CFLAGS="-q64").
+
+For non standard installation configure assumes that GSL can also reside in
+~/gsl/ directory, so that you can just create a symbolic link 
+to your preferred build. 

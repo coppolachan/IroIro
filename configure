@@ -609,10 +609,6 @@ code_verbosity
 HAVE_DOXYGEN_FALSE
 HAVE_DOXYGEN_TRUE
 DOXYGEN
-HITACHI_FALSE
-HITACHI_TRUE
-USE_MPI_FALSE
-USE_MPI_TRUE
 LIBOBJS
 EGREP
 GREP
@@ -633,6 +629,10 @@ CPPFLAGS
 LDFLAGS
 CXXFLAGS
 CXX
+HITACHI_FALSE
+HITACHI_TRUE
+USE_MPI_FALSE
+USE_MPI_TRUE
 RANLIB
 am__untar
 am__tar
@@ -710,9 +710,9 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-enable_dependency_tracking
 enable_mpi
 enable_mpi_hitachi
+enable_dependency_tracking
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1346,10 +1346,10 @@ Optional Features:
   --disable-option-checking  ignore unrecognized --enable/--with options
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --disable-dependency-tracking  speeds up one-time build
-  --enable-dependency-tracking   do not reject slow dependency extractors
   --enable-mpi    Turn on mpi communicator routines
   --enable-mpi-hitachi   Turn on mpi communicator routines on Hitachi SR16K
+  --disable-dependency-tracking  speeds up one-time build
+  --enable-dependency-tracking   do not reject slow dependency extractors
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -1526,6 +1526,73 @@ fi
   as_fn_set_status $ac_retval
 
 } # ac_fn_cxx_try_link
+
+# ac_fn_cxx_check_func LINENO FUNC VAR
+# ------------------------------------
+# Tests whether FUNC exists, setting the cache variable VAR accordingly
+ac_fn_cxx_check_func ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+$as_echo_n "checking for $2... " >&6; }
+if eval \${$3+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+/* Define $2 to an innocuous variant, in case <limits.h> declares $2.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $2 innocuous_$2
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $2 (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $2
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char $2 ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_$2 || defined __stub___$2
+choke me
+#endif
+
+int
+main ()
+{
+return $2 ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  eval "$3=yes"
+else
+  eval "$3=no"
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+eval ac_res=\$$3
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+
+} # ac_fn_cxx_check_func
 
 # ac_fn_cxx_try_cpp LINENO
 # ------------------------
@@ -1781,73 +1848,6 @@ $as_echo "$ac_res" >&6; }
   eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
 
 } # ac_fn_cxx_check_type
-
-# ac_fn_cxx_check_func LINENO FUNC VAR
-# ------------------------------------
-# Tests whether FUNC exists, setting the cache variable VAR accordingly
-ac_fn_cxx_check_func ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
-$as_echo_n "checking for $2... " >&6; }
-if eval \${$3+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-/* Define $2 to an innocuous variant, in case <limits.h> declares $2.
-   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
-#define $2 innocuous_$2
-
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $2 (); below.
-    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
-    <limits.h> exists even on freestanding compilers.  */
-
-#ifdef __STDC__
-# include <limits.h>
-#else
-# include <assert.h>
-#endif
-
-#undef $2
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char $2 ();
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined __stub_$2 || defined __stub___$2
-choke me
-#endif
-
-int
-main ()
-{
-return $2 ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  eval "$3=yes"
-else
-  eval "$3=no"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_cxx_check_func
 cat >config.log <<_ACEOF
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
@@ -2913,7 +2913,7 @@ else
 fi
 
 
-# Setup code language
+# Declares code language
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2921,11 +2921,12 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
+#####################################################################
 # Save some environment variables
 cpp=$CPP
 cpp_flags=$CPPFLAGS
 ld_flags=$LDFLAGS
-
+#####################################################################
 # identify architecture
 if test "$arch" = ""
 then
@@ -2936,10 +2937,59 @@ then
         *-ibm-aix* )            arch=aix     ;;
         powerpc-apple-darwin* ) arch=macppc  ;;
         i686-apple-darwin* )    arch=mac686  ;;
+	* )
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unsupported architecture. Setting defaults..." >&5
+$as_echo "$as_me: WARNING: unsupported architecture. Setting defaults..." >&2;}
+	cpp="g++"
+	cpp_flags="-g"
+	ld_flags=""
+	;;
 esac
 fi
 echo checking architecture... $arch
+###################################################################
+# MPI communicator flags
+     # Check whether --enable-mpi was given.
+if test "${enable_mpi+set}" = set; then :
+  enableval=$enable_mpi; case "${enableval}" in
+       yes) mpi=true ;;
+       no)  mpi=false ;;
+       *) as_fn_error $? "bad value ${enableval} for --enable-mpi" "$LINENO" 5 ;;
+     esac
+else
+  mpi=false
+fi
 
+
+
+     # Check whether --enable-mpi-hitachi was given.
+if test "${enable_mpi_hitachi+set}" = set; then :
+  enableval=$enable_mpi_hitachi; case "${enableval}" in
+       yes) mpihitachi=true ;;
+       no)  mpihitachi=false ;;
+       *) as_fn_error $? "bad value ${enableval} for --enable-mpi-hitachi" "$LINENO" 5 ;;
+     esac
+else
+  mpihitachi=false
+fi
+
+      if (test x$mpihitachi = xtrue)||(test x$mpi = xtrue); then
+  USE_MPI_TRUE=
+  USE_MPI_FALSE='#'
+else
+  USE_MPI_TRUE='#'
+  USE_MPI_FALSE=
+fi
+
+      if test x$mpihitachi = xtrue; then
+  HITACHI_TRUE=
+  HITACHI_FALSE='#'
+else
+  HITACHI_TRUE='#'
+  HITACHI_FALSE=
+fi
+
+######################################################################
 # many HPC systems are configured so that running parallel programs
 # interactively is disabled: on those systems, AC_PROG_F77 and AC_PROG_CC
 # would fail because they can't run the compiled executables.
@@ -2950,19 +3000,24 @@ echo checking architecture... $arch
 
 case "$arch" in
 ia64 | amd64 | ia32 | macppc | mac686 )
-    use_cpp="icpc g++";
+    if  $mpi
+    then
+      use_cpp="mpicxx.openmpi mpicxx.mpich2 mpicc mpic++"; # list of possible MPI compilers
+    else
+      use_cpp="icpc g++";
+    fi
     use_cpp_flags="-O3"
     ;;
 aix )
      host=$build ;
-     cross_compiling=yes ;
+     cross_compiling=yes ; # this will do the trick
      echo forcing cross compilation on AIX
      use_cpp="mpCC";
-     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${HOME}/gsl/include"
+     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${HOME}/gsl/include -qflag=i:s"
      ld_flags="-L${HOME}/gsl/lib"
      ;;
 esac
-
+###################################################################
 # Checks for programs.
 if test "$cpp" = "" ; then cpp="$use_cpp" ; fi
 ac_ext=cpp
@@ -3669,8 +3724,7 @@ CXXFLAGS=$cpp_flags
 echo setting c++ compiler flags... $CXXFLAGS
 LDFLAGS=$ld_flags
 echo setting linker flags... $LDFLAGS
-
-
+###################################################################
 # Checks for libraries.
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for pow in -lm" >&5
@@ -3767,9 +3821,9 @@ Please install or provide the correct path to your installation
 Info at: http://www.gnu.org/s/gsl/" "$LINENO" 5
 fi
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl_blas_dgemm in -lgsl" >&5
-$as_echo_n "checking for gsl_blas_dgemm in -lgsl... " >&6; }
-if ${ac_cv_lib_gsl_gsl_blas_dgemm+:} false; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl_sf_elljac_e in -lgsl" >&5
+$as_echo_n "checking for gsl_sf_elljac_e in -lgsl... " >&6; }
+if ${ac_cv_lib_gsl_gsl_sf_elljac_e+:} false; then :
   $as_echo_n "(cached) " >&6
 else
   ac_check_lib_save_LIBS=$LIBS
@@ -3783,27 +3837,27 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 #ifdef __cplusplus
 extern "C"
 #endif
-char gsl_blas_dgemm ();
+char gsl_sf_elljac_e ();
 int
 main ()
 {
-return gsl_blas_dgemm ();
+return gsl_sf_elljac_e ();
   ;
   return 0;
 }
 _ACEOF
 if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_gsl_gsl_blas_dgemm=yes
+  ac_cv_lib_gsl_gsl_sf_elljac_e=yes
 else
-  ac_cv_lib_gsl_gsl_blas_dgemm=no
+  ac_cv_lib_gsl_gsl_sf_elljac_e=no
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
 LIBS=$ac_check_lib_save_LIBS
 fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gsl_gsl_blas_dgemm" >&5
-$as_echo "$ac_cv_lib_gsl_gsl_blas_dgemm" >&6; }
-if test "x$ac_cv_lib_gsl_gsl_blas_dgemm" = xyes; then :
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gsl_gsl_sf_elljac_e" >&5
+$as_echo "$ac_cv_lib_gsl_gsl_sf_elljac_e" >&6; }
+if test "x$ac_cv_lib_gsl_gsl_sf_elljac_e" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_LIBGSL 1
 _ACEOF
@@ -3816,7 +3870,15 @@ Please install or provide the correct path to your installation
 Info at: http://www.gnu.org/s/gsl/" "$LINENO" 5
 fi
 
+ac_fn_cxx_check_func "$LINENO" "gsl_sf_ellint_Kcomp" "ac_cv_func_gsl_sf_ellint_Kcomp"
+if test "x$ac_cv_func_gsl_sf_ellint_Kcomp" = xyes; then :
 
+else
+  as_fn_error $? "Missing function in GNU Scientific Library" "$LINENO" 5
+fi
+
+
+###################################################################
 # Checks for header files.
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -4451,54 +4513,10 @@ fi
 done
 
 
-###################################################################
-# MPI communicator flags
-     # Check whether --enable-mpi was given.
-if test "${enable_mpi+set}" = set; then :
-  enableval=$enable_mpi; case "${enableval}" in
-       yes) mpi=true ;;
-       no)  mpi=false ;;
-       *) as_fn_error $? "bad value ${enableval} for --enable-mpi" "$LINENO" 5 ;;
-     esac
-else
-  mpi=false
-fi
-
-
-
-     # Check whether --enable-mpi-hitachi was given.
-if test "${enable_mpi_hitachi+set}" = set; then :
-  enableval=$enable_mpi_hitachi; case "${enableval}" in
-       yes) mpihitachi=true ;;
-       no)  mpihitachi=false ;;
-       *) as_fn_error $? "bad value ${enableval} for --enable-mpi-hitachi" "$LINENO" 5 ;;
-     esac
-else
-  mpihitachi=false
-fi
-
-      if (test x$mpihitachi = xtrue)||(test x$mpi = xtrue); then
-  USE_MPI_TRUE=
-  USE_MPI_FALSE='#'
-else
-  USE_MPI_TRUE='#'
-  USE_MPI_FALSE=
-fi
-
-      if test x$mpihitachi = xtrue; then
-  HITACHI_TRUE=
-  HITACHI_FALSE='#'
-else
-  HITACHI_TRUE='#'
-  HITACHI_FALSE=
-fi
-
-
-
-
+##################################################################
+# Make decisions on MPI flags
 if  $mpi || $mpihitachi
 then
-
 for ac_header in /usr/include/mpich2/mpi.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "/usr/include/mpich2/mpi.h" "ac_cv_header__usr_include_mpich2_mpi_h" "$ac_includes_default"
@@ -4526,7 +4544,16 @@ $as_echo "#define HITACHISR16K /**/" >>confdefs.h
 
 fi
 ###################################################################
+# Linker flags
+if  $mpihitachi
+then
+ARFLAGS="-X64 -c -ru"
+else
+ARFLAGS="cru"
+fi
+###################################################################
 # Checks for doxygen support
+# if present enables the "make doxyfile" command
 for ac_prog in doxygen
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
@@ -4588,14 +4615,6 @@ then
 ac_config_files="$ac_config_files docs/doxy.cfg"
 
 fi
-###################################################################
-
-if  $mpihitachi
-then
-ARFLAGS="-X64 -c -ru"
-else
-ARFLAGS="cru"
-fi
 
 # Verbosity level - default level is 1
 
@@ -4607,11 +4626,7 @@ _ACEOF
 ###################################################################
 
 
-
-
-
 ac_config_files="$ac_config_files Makefile lib/Makefile tests/Makefile docs/Makefile"
-
 
 
 cat >confcache <<\_ACEOF
@@ -4731,20 +4746,20 @@ else
   am__EXEEXT_FALSE=
 fi
 
-if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
-  as_fn_error $? "conditional \"AMDEP\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
-  as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${USE_MPI_TRUE}" && test -z "${USE_MPI_FALSE}"; then
   as_fn_error $? "conditional \"USE_MPI\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${HITACHI_TRUE}" && test -z "${HITACHI_FALSE}"; then
   as_fn_error $? "conditional \"HITACHI\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
+  as_fn_error $? "conditional \"AMDEP\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
+  as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${HAVE_DOXYGEN_TRUE}" && test -z "${HAVE_DOXYGEN_FALSE}"; then

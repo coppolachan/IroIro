@@ -41,16 +41,9 @@
   Use this on a general multicore machine with openMPI installed
 
   @verbatim
-  ./configure --enable-mpi CXX=mpicxx.openmpi
-  @endverbatim
+  ./configure --enable-mpi@endverbatim
 
   Run with <tt>mpirun -np #nodes #executable</tt>
-  
-  @section testing Testing and debugging
-
-  @verbatim
-  valgrind --leak-check=yes --log-file=valgrind.log #executable@endverbatim
-  
   
   @section verbosity Verbosity control 
   
@@ -62,11 +55,9 @@
   
   sets maximum verbosity. Allowed values from 0 to 5. Default is 1.
   
+  @section GSL_lib Installing and linking GSL
 
-
-  @section GSL_lib Installing GSL
-
-  The <a href="http://www.gnu.org/software/gsl/">Gnu Scientific Library (GSL)</a> is required during compilation of Domain Wall routines. 
+  The <a href="http://www.gnu.org/software/gsl/">Gnu Scientific Library (GSL)</a> is required during compilation of Domain Wall routines. Configuration will fail if this is not found in your build system.
   
   On AIX the default development environment is in 32 bit mode, but IroIro compilation forces 64 bit mode. In this case please check that GLS library
   is installed in 64 bit version otherwise clash on libraries names could occur. 
@@ -82,6 +73,15 @@
   -q64@endverbatim  
 
   among compilation flags (<tt>CFLAGS="-q64"</tt>).
+
+  For non standard installation \c configure assumes that GSL can also reside in \c ~/gsl/ directory, so that you can just create a symbolic link to your preferred build. 
+
+  
+  @section testing Testing and debugging
+
+  @verbatim
+  valgrind --leak-check=yes --log-file=valgrind.log #executable@endverbatim
+  
 
 
 */
