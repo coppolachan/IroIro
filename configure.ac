@@ -16,6 +16,7 @@ AC_LANG(C++)
 cpp=$CPP
 cpp_flags=$CPPFLAGS
 ld_flags=$LDFLAGS
+ar_flags=$ARFLAGS
 #####################################################################
 # identify architecture
 if test "$arch" = ""
@@ -69,11 +70,12 @@ case "$arch" in
 ia64 | amd64 | ia32 | macppc | mac686 )
     if [ $mpi ]
     then
-      use_cpp="mpicxx.openmpi mpicxx.mpich2 mpicc mpic++"; # list of possible MPI compilers
+      use_cpp="mpicxx mpic++" # list of possible MPI compilers
     else
       use_cpp="icpc g++"; 
     fi
     use_cpp_flags="-O3"
+    use_ar_flags="cru"
     ;;
 aix )
      host=$build ;
@@ -81,7 +83,9 @@ aix )
      echo forcing cross compilation on AIX
      use_cpp="mpCC";
      use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${HOME}/gsl/include -qflag=i:s"
-     ld_flags="-L${HOME}/gsl/lib"
+     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib"
+     use_ar_flags="-X64 -c -ru"
+     AC_DEFINE([BIG_ENDIAN],[],[Using Big Endian machine type])
      ;;
 esac
 ###################################################################
@@ -90,12 +94,17 @@ if test "$cpp" = "" ; then cpp="$use_cpp" ; fi
 AC_PROG_CXX($cpp)
 cpp=$CXX
 
-# Setting up compiler flags
+# Setting up compiler and linker flags
 if test "$cpp_flags" = "" ; then cpp_flags="$use_cpp_flags" ; fi
 CXXFLAGS=$cpp_flags
-echo setting c++ compiler flags... $CXXFLAGS
+echo configure: setting c++ compiler flags... $CXXFLAGS
+
 LDFLAGS=$ld_flags
-echo setting linker flags... $LDFLAGS
+echo configure: setting library flags... $LDFLAGS
+
+if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
+ARFLAGS=$ar_flags
+echo configure: setting linker flags... $ARFLAGS
 ###################################################################
 # Checks for libraries.
 AC_CHECK_LIB([m], [pow])
@@ -134,16 +143,7 @@ fi
 
 if [ $mpihitachi ]
 then
-AC_DEFINE([BIG_ENDIAN],[],[Using Big Endian machine type])
 AC_DEFINE([HITACHISR16K],[],[Specific tweaks for Hitachi SR16K])
-fi
-###################################################################
-# Linker flags
-if [ $mpihitachi ] 
-then
-ARFLAGS="-X64 -c -ru"
-else
-ARFLAGS="cru"
 fi
 ###################################################################
 # Checks for doxygen support
