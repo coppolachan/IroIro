@@ -20,7 +20,6 @@
 
 /*!
  * @brief Abstract base class for creating QuarkPropagators
- *
  */
 class QuarkPropagatorFactory {
 public:
@@ -69,10 +68,10 @@ public:
  @brief Concrete class for creating Quark Propagator Qprop_EvenOdd operator
 */
 class QPropFactory_EvenOdd : public QuarkPropagatorFactory {
-  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracObj;
+  RaiiFactoryObj<DiracWilsonEvenOddFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverObj;
 
-  RaiiFactoryObj<DiracWilsonLike> Kernel;
+  RaiiFactoryObj<DiracWilsonLike_EvenOdd> Kernel;
   RaiiFactoryObj<Solver> Solv;
   const XML::node Qprop_node;
 
@@ -80,7 +79,7 @@ public:
   QPropFactory_EvenOdd(XML::node node):Qprop_node(node){
     //some leaking expected - check!
     XML::descend(node,"Kernel");
-    DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
+    DiracObj.save(new DiracWilsonEvenOddFactory(node));
     XML::next_sibling(node,"Solver");
     SolverObj.save(SolverOperators::createSolverOperatorFactory(node));
   }
@@ -95,7 +94,7 @@ public:
     //std::cout<<"&Solv="<<Solv.get() <<std::endl;    
 
     //std::cout<<"Qprop being created "<<std::endl;
-    return new Qprop(Kernel.get(), Solv.get());
+    return new Qprop_EvenOdd(Kernel.get(), Solv.get());
   }
 };
 

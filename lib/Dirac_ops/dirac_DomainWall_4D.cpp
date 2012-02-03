@@ -2,9 +2,7 @@
  * @file dirac_DomainWall_4D.cpp
  *
  * @brief Declaration of Dirac_optimalDomainWall_4D class
- *
  */
-
 #include "dirac_DomainWall_4D.hpp"
 
 const Field Dirac_optimalDomainWall_4D::mult(const Field& f)const{

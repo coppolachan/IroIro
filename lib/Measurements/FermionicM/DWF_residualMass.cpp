@@ -2,10 +2,7 @@
  * @file DWF_residualMass.cpp
  *
  * @brief Definition of class to calculate the Residual Mass
- * 
- *
  */
-
 #include "DWF_residualMass.hpp"
 
 double DWFresidualMass::calc() {
@@ -13,8 +10,8 @@ double DWFresidualMass::calc() {
   XML::descend(node, "DiracOperator");
   // operator
   // here using a specific factory since we are testing the DWF-4d operator
-  DiracDWF4dFactory* DWF_4d_Factory = new DiracDWF4dFactory(node);
-  Dirac_DomainWall_4D* DiracDWF_4d = DWF_4d_Factory->getDiracOperator(&(conf_.U));
+  DiracDWF4dFactory DWF_4d_Factory(node);
+  Dirac_DomainWall_4D* DiracDWF_4d = DWF_4d_Factory.getDiracOperator(&(conf_.U));
 
   //Propagator
   QpropDWF QuarkPropagator(*DiracDWF_4d);
@@ -34,25 +31,25 @@ double DWFresidualMass::calc() {
   double mres_denominator = 0;
   Field Delta, Denom;
 
-  for (int s = 0; s < 4; ++s) {
-    for (int c = 0; c < 3; ++c) {
-      Delta = delta(DiracDWF_4d,sq[c+3*s]); // (Delta * D^-1)*source
+  int Nd = CommonPrms::instance()->Nd();
+  int Nc = CommonPrms::instance()->Nc();
+
+  for(int s =0; s<Nd; ++s){
+    for(int c=0; c<Nc; ++c){
+      Delta = delta(DiracDWF_4d,sq[c+Nc*s]); // (Delta * D^-1)*source
       //Contracting 
-      mres_numerator += sq[c+3*s]*Delta;          // Re(sq[],Delta)    sq[]=D^-1*source
-      im_check       += sq[c+3*s].im_prod(Delta); //should be always zero (just a check)
-      CCIO::cout << "Numerator = ("<<mres_numerator<<","<<im_check<<")\n";
+      mres_numerator += sq[c+Nc*s]*Delta;         //Re(sq[],Delta)    sq[]=D^-1*source
+      im_check       += sq[c+Nc*s].im_prod(Delta);//should be always zero (just a check)
+      CCIO::cout<< "Numerator = ("<<mres_numerator<<","<<im_check<<")\n";
       
       //Denominator
-      Denom = sq[c+3*s];
+      Denom = sq[c+Nc*s];
       Denom -= src.mksrc(s,c); // (D^-1 - 1)*src
-      Denom /= (1.0 - DiracDWF_4d->getMass());
+      Denom /= (1.0 -DiracDWF_4d->getMass());
       mres_denominator += Denom*Denom;
       CCIO::cout << "Denominator = " << mres_denominator << endl;
       CCIO::cout << "Residual mass = " << mres_numerator/mres_denominator << endl;
     }
   }
-
   return 0;
-
-
 }

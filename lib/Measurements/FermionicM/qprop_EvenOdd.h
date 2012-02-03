@@ -1,9 +1,6 @@
 /*!
- *
  * @file qprop_EvenOdd.h
- *
  * @brief Declaration of Quark propagator class Qprop
- *
  */
 #ifndef QPROP_EVENODD_INCLUDED
 #define QPROP_EVENODD_INCLUDED
@@ -25,7 +22,6 @@ class Source;
  * \f$D^\dagger \psi\f$
  * 
  * \f[ \chi = D^{-1} \psi = (D^\dagger D)^{-1} D^\dagger \psi \f]
- *
  */
 class Qprop_EvenOdd : public QuarkPropagator{
 private:
