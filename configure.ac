@@ -8,6 +8,12 @@ AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 AC_CONFIG_HEADERS([include/config.h])
 AC_PROG_RANLIB
 
+AC_MSG_NOTICE([
+
+Configuring $PACKAGE_STRING for $target
+---------------------------------------------
+])
+
 # Declares code language
 AC_LANG(C++)
 

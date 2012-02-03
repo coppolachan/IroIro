@@ -2913,6 +2913,17 @@ else
 fi
 
 
+{ $as_echo "$as_me:${as_lineno-$LINENO}:
+
+Configuring $PACKAGE_STRING for $target
+---------------------------------------------
+" >&5
+$as_echo "$as_me:
+
+Configuring $PACKAGE_STRING for $target
+---------------------------------------------
+" >&6;}
+
 # Declares code language
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
