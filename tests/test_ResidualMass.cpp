@@ -10,7 +10,7 @@
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include <ctime>
 
-const Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D* DWF, const Field& phi){
+Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D* DWF, const Field& phi){
   //Delta function = 1/4 * (1- sign^2(Hw))
   Field sign = DWF->signKernel(phi);
   Field delta = DWF->signKernel(sign); //sign^2(Hw)

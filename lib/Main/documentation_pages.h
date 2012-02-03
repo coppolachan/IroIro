@@ -63,6 +63,27 @@
   sets maximum verbosity. Allowed values from 0 to 5. Default is 1.
   
 
+
+  @section GSL_lib Installing GSL
+
+  The <a href="http://www.gnu.org/software/gsl/">Gnu Scientific Library (GSL)</a> is required during compilation of Domain Wall routines. 
+  
+  On AIX the default development environment is in 32 bit mode, but IroIro compilation forces 64 bit mode. In this case please check that GLS library
+  is installed in 64 bit version otherwise clash on libraries names could occur. 
+
+  If you are compiling the library in a custom installation with XLC on AIX please setup the environment variable 
+
+  @verbatim
+  OBJECT_MODE=64@endverbatim
+  
+  (use <tt>export OBJECT_MODE=64</tt> in bash shell), or use
+
+  @verbatim
+  -q64@endverbatim  
+
+  among compilation flags (<tt>CFLAGS="-q64"</tt>).
+
+
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*!

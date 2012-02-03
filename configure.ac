@@ -8,16 +8,62 @@ AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 AC_CONFIG_HEADERS([include/config.h])
 AC_PROG_RANLIB
 
+# Setup code language
+AC_LANG(C++)
 
-# Checks for programs.
-AC_PROG_CXX([icpc g++])
+# Save some environment variables
+cpp=$CPP
+cpp_flags=$CPPFLAGS
+ld_flags=$LDFLAGS
 
-case $host in 
-rs6000-*-aix*) AC_PROG_CXX(mpCC);;
+# identify architecture
+if test "$arch" = ""
+then
+        case $host in
+        ia64-*-linux-gnu )      arch=ia64    ;;
+        x86_64-*-linux-gnu )    arch=amd64   ;;
+        *-pc-linux-gnu )        arch=ia32    ;;
+        *-ibm-aix* )            arch=aix     ;;
+        powerpc-apple-darwin* ) arch=macppc  ;;
+        i686-apple-darwin* )    arch=mac686  ;;
+esac
+fi
+echo checking architecture... $arch
+
+# many HPC systems are configured so that running parallel programs
+# interactively is disabled: on those systems, AC_PROG_F77 and AC_PROG_CC
+# would fail because they can't run the compiled executables.
+# to work around that, let's pretend we are cross-compiling even if we aren't
+# !!! this relies on undocumented Autoconf behavior !!!
+#
+# default flags are also defined
+
+case "$arch" in
+ia64 | amd64 | ia32 | macppc | mac686 ) 
+    use_cpp="g++";
+    use_cpp_flags="-O3"
+    ;;
+aix )
+     host=$build ;
+     cross_compiling=yes ;
+     echo forcing cross compilation on AIX
+     use_cpp="mpCC";
+     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type"
+     ;;
 esac
 
-AC_PROG_CC([icc gcc])
-AC_LANG(C++)
+# Checks for programs.
+if test "$cpp" = "" ; then cpp="$use_cpp" ; fi
+AC_PROG_CXX($cpp)
+cpp=$CXX
+
+# Setting up compiler flags
+if test "$cpp_flags" = "" ; then cpp_flags="$use_cpp_flags" ; fi
+CXXFLAGS=$cpp_flags
+echo setting c++ compiler flags... $CXXFLAGS
+LDFLAGS=$ld_flags
+echo setting linker flags... $LDFLAGS
+
 
 # Checks for libraries.
 AC_CHECK_LIB([m], [pow])
@@ -85,8 +131,12 @@ if test -z "$DOXYGEN";
    then AC_MSG_WARN([Doxygen not found - continuing without Doxygen support])
 fi
 
-AM_CONDITIONAL([HAVE_DOXYGEN],
-[test -n "$DOXYGEN"])AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([docs/doxy.cfg])])
+AM_CONDITIONAL([HAVE_DOXYGEN],[test -n "$DOXYGEN"])
+
+if test -n "$DOXYGEN"
+then
+AC_CONFIG_FILES([docs/doxy.cfg])
+fi
 ###################################################################
 
 if [ $mpihitachi ] 

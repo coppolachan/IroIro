@@ -17,7 +17,7 @@
     <QuarkDWFProp>
       <Kernel4d>
 	<Kernel5d>
-	  <Preconditioning>NoPreconditioner</Preconditioning>
+	  <Preconditioning>LUPreconditioner</Preconditioning>
 	  <wilson_mass>-1.6</wilson_mass>
 	  <N5d>8</N5d>
 	  <b>1.0</b>

@@ -16,7 +16,7 @@ class Test_ResMass: public TestGeneral{
 private:
   GaugeField& conf_;
 
-  const Field delta(const Dirac_optimalDomainWall_4D*,const Field&);
+  Field delta(const Dirac_optimalDomainWall_4D*,const Field&);
 public:
   Test_ResMass(GaugeField& conf):conf_(conf){}
   int run(XML::node);
