@@ -29,6 +29,10 @@ public:
     CCIO::cout<<"Dirac_optimalDomainWall_Evenodd created"<<std::endl;
 #endif
   }
+  /*! @brief copy constractor to create Pauli-Villars operator */
+  Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd& D, 
+				  DWFType Type=Standard)
+    :Deo_(D.Deo_,Type), Doe_(D.Doe_,Type){}
   
   Dirac_optimalDomainWall_EvenOdd(double b,double c,double M0,double mq,
 				  const std::vector<double>& omega,
@@ -43,6 +47,7 @@ public:
   size_t gsize() const{ return Deo_.gsize(); }
   
   const Field gamma5(const Field& f5) const{ return Deo_.gamma5(f5);}
+  const Field gamma5_4d(const Field& f4) const{ return Deo_.gamma5_4d(f4);}
 
   const Field operator()(int, const Field&) const{}
   double getMass() const{return Deo_.getMass();}
