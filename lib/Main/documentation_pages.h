@@ -18,21 +18,16 @@
   Use the following lines
   
   @verbatim
-  ./configure --enable-mpi-hitachi CXX=mpCC -host=rs6000-ibm-aix CXXFLAGS="-I/srhome/scqcd/cossu/gsl/include -qlanglvl=stdc99 -qrtti=type" LDFLAGS="-L/srhome/scqcd/cossu/gsl/lib"
-  gmake@endverbatim
+  ./configure --enable-mpi-hitachi
+  make@endverbatim
   
-  In order to override the default optimization level just add the 
-  
-  @verbatim
-  "-qoptimize=#"@endverbatim 
-  
-  option inside the \c CXXFLAGS (where # in between 1 - 5)
+  Default optimization level is \c -O3 .
  
   @section INTEL_comp Compilation with INTEL compiler (icpc)
   
   The configure will automatically look for INTEL compiler. If it is found in the path, icpc will be used in compilation, no further specification is needed.
   
-  Use \c CXXFLAGS="..." during configure to setup your preferred flags.
+  Use \c CXXFLAGS="..." during configure to setup your preferred flags (this will override every default flag).
 
   \b Note: The compiler must be at least version 12.0.5
 

@@ -40,7 +40,7 @@ echo checking architecture... $arch
 
 case "$arch" in
 ia64 | amd64 | ia32 | macppc | mac686 ) 
-    use_cpp="g++";
+    use_cpp="icpc g++";
     use_cpp_flags="-O3"
     ;;
 aix )
@@ -48,7 +48,8 @@ aix )
      cross_compiling=yes ;
      echo forcing cross compilation on AIX
      use_cpp="mpCC";
-     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type"
+     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${HOME}/gsl/include"
+     ld_flags="-L${HOME}/gsl/lib"
      ;;
 esac
 
