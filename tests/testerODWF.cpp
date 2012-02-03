@@ -15,7 +15,7 @@ int main(){
 
   
   //Reading input file
-  node top_node = getInputXML("test_ODWF.xml");  
+  node top_node = getInputXML("test_DomainWall.xml");  
 
   //Initializing geometry using XML input
   Geometry geom(top_node);

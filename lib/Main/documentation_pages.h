@@ -18,21 +18,21 @@
   Use the following lines
   
   @verbatim
-  ./configure --enable-mpi-hitachi CXX=mpCC -host=rs6000-ibm-aix CXXFLAGS="-I/srhome/scqcd/cossu/gsl/include -qlanglvl=stdc99 -qrtti=type" LDFLAGS="-L/srhome/scqcd/cossu/gsl/lib"
-  gmake@endverbatim
+  ./configure --enable-mpi-hitachi
+  make@endverbatim
   
-  In order to override the default optimization level just add the 
-  
+  Default optimization level is \c -O3 .
+
+  To override compiler flags just use the \c CXXFLAGS="..." command, remembering that the following flags are necessary for correct configuration:
+
   @verbatim
-  "-qoptimize=#"@endverbatim 
+  -q64 -qlanglvl=stdc99 -qrtti=type@endverbatim
   
-  option inside the \c CXXFLAGS (where # in between 1 - 5)
- 
   @section INTEL_comp Compilation with INTEL compiler (icpc)
   
   The configure will automatically look for INTEL compiler. If it is found in the path, icpc will be used in compilation, no further specification is needed.
   
-  Use \c CXXFLAGS="..." during configure to setup your preferred flags.
+  Use \c CXXFLAGS="..." during configure to setup your preferred flags (this will override every default flag).
 
   \b Note: The compiler must be at least version 12.0.5
 
@@ -41,16 +41,9 @@
   Use this on a general multicore machine with openMPI installed
 
   @verbatim
-  ./configure --enable-mpi CXX=mpicxx.openmpi
-  @endverbatim
+  ./configure --enable-mpi@endverbatim
 
   Run with <tt>mpirun -np #nodes #executable</tt>
-  
-  @section testing Testing and debugging
-
-  @verbatim
-  valgrind --leak-check=yes --log-file=valgrind.log #executable@endverbatim
-  
   
   @section verbosity Verbosity control 
   
@@ -62,6 +55,34 @@
   
   sets maximum verbosity. Allowed values from 0 to 5. Default is 1.
   
+  @section GSL_lib Installing and linking GSL
+
+  The <a href="http://www.gnu.org/software/gsl/">Gnu Scientific Library (GSL)</a> is required during compilation of Domain Wall routines. Configuration will fail if this is not found in your build system.
+  
+  On AIX the default development environment is in 32 bit mode, but IroIro compilation forces 64 bit mode. In this case please check that GLS library
+  is installed in 64 bit version otherwise clash on libraries names could occur. 
+
+  If you are compiling the library in a custom installation with XLC on AIX please setup the environment variable 
+
+  @verbatim
+  OBJECT_MODE=64@endverbatim
+  
+  (use <tt>export OBJECT_MODE=64</tt> in bash shell), or use
+
+  @verbatim
+  -q64@endverbatim  
+
+  among compilation flags (<tt>CFLAGS="-q64"</tt>).
+
+  For non standard installation \c configure assumes that GSL can also reside in \c ~/gsl/ directory, so that you can just create a symbolic link to your preferred build. 
+
+  
+  @section testing Testing and debugging
+
+  @verbatim
+  valgrind --leak-check=yes --log-file=valgrind.log #executable@endverbatim
+  
+
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

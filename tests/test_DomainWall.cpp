@@ -9,8 +9,6 @@
 #include "Measurements/FermionicM/fermion_meas_factory.hpp"
 #include "include/fopr.h"
 #include "Tools/randNum_MT19937.h"
-//#include "Solver/solver_CG.h"
-#include "Solver/solver_BiCGStab.h"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
@@ -195,7 +193,7 @@ int Test_optimalDomainWall::run(XML::node node){
   vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
-  while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);
+  while(it!=mcorr.end()) CCIO::cout << t++ << " " << *it++ << "\n";
   
 
   return 0;
