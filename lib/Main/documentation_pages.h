@@ -22,7 +22,12 @@
   make@endverbatim
   
   Default optimization level is \c -O3 .
- 
+
+  To override compiler flags just use the \c CXXFLAGS="..." command, remembering that the following flags are necessary for correct configuration:
+
+  @verbatim
+  -q64 -qlanglvl=stdc99 -qrtti=type@endverbatim
+  
   @section INTEL_comp Compilation with INTEL compiler (icpc)
   
   The configure will automatically look for INTEL compiler. If it is found in the path, icpc will be used in compilation, no further specification is needed.
