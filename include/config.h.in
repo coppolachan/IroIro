@@ -55,9 +55,6 @@
 /* Define to 1 if the system has the type `_Bool'. */
 #undef HAVE__BOOL
 
-/* Define to 1 if you have the </usr/include/mpich2/mpi.h> header file. */
-#undef HAVE__USR_INCLUDE_MPICH2_MPI_H
-
 /* Specific tweaks for Hitachi SR16K */
 #undef HITACHISR16K
 

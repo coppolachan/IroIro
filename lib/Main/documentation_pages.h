@@ -29,7 +29,7 @@
   Use the following lines
   
   @verbatim
-  ./configure --enable-mpi-hitachi
+  ./configure 
   make@endverbatim
   
   Default optimization level is \c -O3 .
@@ -53,6 +53,8 @@
 
   @verbatim
   ./configure --enable-mpi@endverbatim
+
+  The configuration program will look for most common mpi compilers in your system.
 
   Run with <tt>mpirun -np #nodes #executable</tt>
   
