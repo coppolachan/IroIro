@@ -6,7 +6,7 @@ EXTRA_DIST = README 		\
 	docs/keklogo-c.jpg 	\
 	docs/Makefile.am
 
-if HAVE_DOXYGEN
+if DOXYGEN_DOC
 directory = $(top_srcdir)/docs/
 
 doxyfile:

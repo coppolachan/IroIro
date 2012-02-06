@@ -606,8 +606,12 @@ am__EXEEXT_TRUE
 LTLIBOBJS
 ARFLAGS
 code_verbosity
-HAVE_DOXYGEN_FALSE
-HAVE_DOXYGEN_TRUE
+enable_latex_docs
+enable_html_docs
+enable_dot
+DOXYGEN_DOC_FALSE
+DOXYGEN_DOC_TRUE
+DOT
 DOXYGEN
 LIBOBJS
 EGREP
@@ -716,6 +720,10 @@ enable_silent_rules
 enable_mpi
 enable_mpi_hitachi
 enable_dependency_tracking
+enable_doxygen
+enable_dot
+enable_html_docs
+enable_latex_docs
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1355,6 +1363,11 @@ Optional Features:
   --enable-mpi-hitachi   Turn on mpi communicator routines on Hitachi SR16K
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
+  --enable-doxygen        enable documentation generation with doxygen (auto)
+  --enable-dot            use 'dot' to generate graphs in doxygen (auto)
+  --enable-html-docs      enable HTML generation with doxygen (yes)
+  --enable-latex-docs     enable LaTeX documentation generation with doxygen
+                          (no)
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -3046,7 +3059,7 @@ ia64 | amd64 | ia32 | macppc | mac686 )
     then
       use_cpp="mpicxx mpic++" # list of possible MPI compilers
     else
-      use_cpp="icpc g++";
+      use_cpp="g++ icpc";
     fi
     use_cpp_flags="-O3"
     use_ar_flags="cru"
@@ -4595,10 +4608,38 @@ fi
 ###################################################################
 # Checks for doxygen support
 # if present enables the "make doxyfile" command
-for ac_prog in doxygen
-do
-  # Extract the first word of "$ac_prog", so it can be a program name with args.
-set dummy $ac_prog; ac_word=$2
+
+# Check whether --enable-doxygen was given.
+if test "${enable_doxygen+set}" = set; then :
+  enableval=$enable_doxygen;
+fi
+
+
+# Check whether --enable-dot was given.
+if test "${enable_dot+set}" = set; then :
+  enableval=$enable_dot;
+fi
+
+# Check whether --enable-html-docs was given.
+if test "${enable_html_docs+set}" = set; then :
+  enableval=$enable_html_docs;
+else
+   enable_html_docs=yes
+fi
+
+# Check whether --enable-latex-docs was given.
+if test "${enable_latex_docs+set}" = set; then :
+  enableval=$enable_latex_docs;
+else
+  enable_latex_docs=no
+fi
+
+
+if test "x$enable_doxygen" = xno; then
+ enable_doc=no
+else
+ # Extract the first word of "doxygen", so it can be a program name with args.
+set dummy doxygen; ac_word=$2
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 $as_echo_n "checking for $ac_word... " >&6; }
 if ${ac_cv_prog_DOXYGEN+:} false; then :
@@ -4614,7 +4655,7 @@ do
   test -z "$as_dir" && as_dir=.
     for ac_exec_ext in '' $ac_executable_extensions; do
   if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_prog_DOXYGEN="$ac_prog"
+    ac_cv_prog_DOXYGEN="doxygen"
     $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
     break 2
   fi
@@ -4634,21 +4675,83 @@ $as_echo "no" >&6; }
 fi
 
 
-  test -n "$DOXYGEN" && break
-done
-
-if test -z "$DOXYGEN";
-   then { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Doxygen not found - continuing without Doxygen support" >&5
-$as_echo "$as_me: WARNING: Doxygen not found - continuing without Doxygen support" >&2;}
-fi
-
- if test -n "$DOXYGEN"; then
-  HAVE_DOXYGEN_TRUE=
-  HAVE_DOXYGEN_FALSE='#'
+ if test x$DOXYGEN = x; then
+  if test "x$enable_doxygen" = xyes; then
+   as_fn_error $? "could not find doxygen" "$LINENO" 5
+  fi
+  enable_doc=no
+ else
+  doxy_ver=`doxygen --version`
+  doxy_major=`expr "$doxy_ver" : '\([0-9]\)\..*'`
+  doxy_minor=`expr "$doxy_ver" : '[0-9]\.\([0-9]\).*'`
+  if test $doxy_major -eq "1" -a $doxy_minor -ge "3" ; then
+   enable_doc=yes
+   # Extract the first word of "dot", so it can be a program name with args.
+set dummy dot; ac_word=$2
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+$as_echo_n "checking for $ac_word... " >&6; }
+if ${ac_cv_prog_DOT+:} false; then :
+  $as_echo_n "(cached) " >&6
 else
-  HAVE_DOXYGEN_TRUE='#'
-  HAVE_DOXYGEN_FALSE=
+  if test -n "$DOT"; then
+  ac_cv_prog_DOT="$DOT" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_prog_DOT="dot"
+    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
 fi
+fi
+DOT=$ac_cv_prog_DOT
+if test -n "$DOT"; then
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $DOT" >&5
+$as_echo "$DOT" >&6; }
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+$as_echo "no" >&6; }
+fi
+
+
+  else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: doxygen version $doxy_ver too old, doxygen will not be used." >&5
+$as_echo "$as_me: WARNING: doxygen version $doxy_ver too old, doxygen will not be used." >&2;}
+   enable_doc=no
+  fi
+ fi
+fi
+
+ if test x$enable_doc = xyes; then
+  DOXYGEN_DOC_TRUE=
+  DOXYGEN_DOC_FALSE='#'
+else
+  DOXYGEN_DOC_TRUE='#'
+  DOXYGEN_DOC_FALSE=
+fi
+
+
+if test x$DOT = x; then
+ if test "x$enable_dot" = xyes; then
+  as_fn_error $? "could not find dot" "$LINENO" 5
+ fi
+ enable_dot=no
+else
+ enable_dot=yes
+fi
+
+
+
+
 
 
 if test -n "$DOXYGEN"
@@ -4803,8 +4906,8 @@ if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
   as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${HAVE_DOXYGEN_TRUE}" && test -z "${HAVE_DOXYGEN_FALSE}"; then
-  as_fn_error $? "conditional \"HAVE_DOXYGEN\" was never defined.
+if test -z "${DOXYGEN_DOC_TRUE}" && test -z "${DOXYGEN_DOC_FALSE}"; then
+  as_fn_error $? "conditional \"DOXYGEN_DOC\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

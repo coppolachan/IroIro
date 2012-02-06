@@ -81,7 +81,7 @@ ia64 | amd64 | ia32 | macppc | mac686 )
     then
       use_cpp="mpicxx mpic++" # list of possible MPI compilers
     else
-      use_cpp="icpc g++"; 
+      use_cpp="g++ icpc"; 
     fi
     use_cpp_flags="-O3"
     use_ar_flags="cru"
@@ -157,12 +157,7 @@ fi
 ###################################################################
 # Checks for doxygen support
 # if present enables the "make doxyfile" command
-AC_CHECK_PROGS([DOXYGEN], [doxygen])
-if test -z "$DOXYGEN";
-   then AC_MSG_WARN([Doxygen not found - continuing without Doxygen support])
-fi
-
-AM_CONDITIONAL([HAVE_DOXYGEN],[test -n "$DOXYGEN"])
+AC_PROG_DOXYGEN
 
 if test -n "$DOXYGEN"
 then
