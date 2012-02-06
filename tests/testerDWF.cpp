@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------
 /*!
- * @file testerODWF.cpp 
+ * @file testerDWF.cpp 
  * @brief Main source code for testing the DomainWall classes
  *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>

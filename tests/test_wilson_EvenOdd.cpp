@@ -145,12 +145,12 @@ int Test_Wilson_EvenOdd::run(){
   vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
-  while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);
+  while(it!=mcorr.end()) CCIO::cout << t++ << "  "<< *it++ << "\n";
 
   mcorr = meson.calculate<Format::Format_F>(sq_full,sq_full);  
   it=mcorr.begin();
   t=0;
-  while(it!=mcorr.end()) CommunicatorItems::pprintf ("%d %.8e\n",t++, *it++);
+  while(it!=mcorr.end()) CCIO::cout << t++ << "  "<< *it++ << "\n";
   return 0;
 }
 

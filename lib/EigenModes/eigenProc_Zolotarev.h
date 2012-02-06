@@ -1,5 +1,5 @@
 /*!
- * @file eigenProc_Zorotarev.h
+ * @file eigenProc_Zolotarev.h
  *
  * @brief Declaration of EigenProc_Zolotarev class
  *

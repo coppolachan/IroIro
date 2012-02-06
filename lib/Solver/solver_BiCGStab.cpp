@@ -8,20 +8,20 @@
 #include "Fields/field_expressions.hpp"
 #include "Communicator/communicator.h"
 
-using CommunicatorItems::pprintf;
 using namespace std;
 
 SolverOutput Solver_BiCGStab::
 solve(Field& xq, const Field& b)const{ 
   using namespace FieldExpression;
 
-#if VERBOSITY > 1
+#if VERBOSITYY>=SOLV_ITER_VERB_LEVEL
   CCIO::header("BiCGStab solver start");
 #endif
   SolverOutput Out;
   Out.Msg = "BiCGStab solver";
   Out.Iterations = -1;
 
+  TIMING_START;
 
   double bnorm = b.norm();
   double snorm = 1.0/bnorm;
@@ -63,6 +63,8 @@ solve(Field& xq, const Field& b)const{
   p = opr_->mult(x) -b;
   Out.diff = p.norm();
   xq = x;
+
+  TIMING_END(Out.timing);
   
   return Out;
 }

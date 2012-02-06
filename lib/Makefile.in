@@ -120,9 +120,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	PugiXML/pugi_interface.cpp Tools/sunMatUtils.cpp \
 	Tools/randNum_MT19937.cpp Tools/randNum_Factory.cpp \
 	Tools/gammaMatrices.cpp ../tests/test_MultiShiftSolver.cpp \
-	../tests/test_overlap.cpp ../tests/test_wilson_EvenOdd.cpp \
-	../tests/test_DomainWall.cpp ../tests/test_HMC_DomainWall.cpp \
-	../tests/test_HMC_EvenOdd.cpp \
+	../tests/test_overlap.cpp ../tests/test_DomainWall.cpp \
+	../tests/test_HMC_DomainWall.cpp ../tests/test_HMC_EvenOdd.cpp \
 	$(top_srcdir)/include/common_fields.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
@@ -154,9 +153,9 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	pugi_interface.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	randNum_MT19937.$(OBJEXT) randNum_Factory.$(OBJEXT) \
 	gammaMatrices.$(OBJEXT) test_MultiShiftSolver.$(OBJEXT) \
-	test_overlap.$(OBJEXT) test_wilson_EvenOdd.$(OBJEXT) \
-	test_DomainWall.$(OBJEXT) test_HMC_DomainWall.$(OBJEXT) \
-	test_HMC_EvenOdd.$(OBJEXT) common_fields.$(OBJEXT)
+	test_overlap.$(OBJEXT) test_DomainWall.$(OBJEXT) \
+	test_HMC_DomainWall.$(OBJEXT) test_HMC_EvenOdd.$(OBJEXT) \
+	common_fields.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -397,7 +396,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/gammaMatrices.cpp			\
 		../tests/test_MultiShiftSolver.cpp	\
 		../tests/test_overlap.cpp		\
-		../tests/test_wilson_EvenOdd.cpp	\
 		../tests/test_DomainWall.cpp		\
 		../tests/test_HMC_DomainWall.cpp	\
                 ../tests/test_HMC_EvenOdd.cpp           \
@@ -503,7 +501,6 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			../tests/tests_all.hpp			\
 			../tests/test_MultiShiftSolver.h	\
 			../tests/test_overlap.hpp		\
-			../tests/test_wilson_EvenOdd.hpp	\
                         ../tests/test_HMC_DomainWall.hpp        \
                         ../tests/test_HMC_EvenOdd.hpp           \
 			../tests/tests.hpp                      
@@ -686,7 +683,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_overlap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1599,22 +1595,6 @@ test_overlap.obj: ../tests/test_overlap.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_overlap.cpp' object='test_overlap.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_overlap.obj `if test -f '../tests/test_overlap.cpp'; then $(CYGPATH_W) '../tests/test_overlap.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_overlap.cpp'; fi`
-
-test_wilson_EvenOdd.o: ../tests/test_wilson_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_wilson_EvenOdd.o -MD -MP -MF $(DEPDIR)/test_wilson_EvenOdd.Tpo -c -o test_wilson_EvenOdd.o `test -f '../tests/test_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`../tests/test_wilson_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_wilson_EvenOdd.Tpo $(DEPDIR)/test_wilson_EvenOdd.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_wilson_EvenOdd.cpp' object='test_wilson_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_wilson_EvenOdd.o `test -f '../tests/test_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`../tests/test_wilson_EvenOdd.cpp
-
-test_wilson_EvenOdd.obj: ../tests/test_wilson_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_wilson_EvenOdd.obj -MD -MP -MF $(DEPDIR)/test_wilson_EvenOdd.Tpo -c -o test_wilson_EvenOdd.obj `if test -f '../tests/test_wilson_EvenOdd.cpp'; then $(CYGPATH_W) '../tests/test_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_wilson_EvenOdd.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/test_wilson_EvenOdd.Tpo $(DEPDIR)/test_wilson_EvenOdd.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../tests/test_wilson_EvenOdd.cpp' object='test_wilson_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o test_wilson_EvenOdd.obj `if test -f '../tests/test_wilson_EvenOdd.cpp'; then $(CYGPATH_W) '../tests/test_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/../tests/test_wilson_EvenOdd.cpp'; fi`
 
 test_DomainWall.o: ../tests/test_DomainWall.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT test_DomainWall.o -MD -MP -MF $(DEPDIR)/test_DomainWall.Tpo -c -o test_DomainWall.o `test -f '../tests/test_DomainWall.cpp' || echo '$(srcdir)/'`../tests/test_DomainWall.cpp

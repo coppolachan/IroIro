@@ -82,7 +82,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/gammaMatrices.cpp			\
 		../tests/test_MultiShiftSolver.cpp	\
 		../tests/test_overlap.cpp		\
-		../tests/test_wilson_EvenOdd.cpp	\
 		../tests/test_DomainWall.cpp		\
 		../tests/test_HMC_DomainWall.cpp	\
                 ../tests/test_HMC_EvenOdd.cpp           \
@@ -189,7 +188,6 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			../tests/tests_all.hpp			\
 			../tests/test_MultiShiftSolver.h	\
 			../tests/test_overlap.hpp		\
-			../tests/test_wilson_EvenOdd.hpp	\
                         ../tests/test_HMC_DomainWall.hpp        \
                         ../tests/test_HMC_EvenOdd.hpp           \
 			../tests/tests.hpp                      

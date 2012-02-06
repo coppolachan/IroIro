@@ -1,5 +1,5 @@
 /*!
-  @file action.h
+  @file action.hpp
   
   @brief Declaration of abstract Action class
 
@@ -17,7 +17,6 @@ class Field;
 class RandNum;
 
 /*!
- * @class Action class
  * @brief Definition of virtual Action class
  * 
  * Action class is defined 

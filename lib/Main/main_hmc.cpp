@@ -32,7 +32,7 @@
 #include "documentation_pages.h"
 //------------------------------------------------------------------------
 /*!
- * @file main.cpp 
+ * @file main_hmc.cpp 
  * @brief Main source code for running HMC updates
  *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>

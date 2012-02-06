@@ -1,5 +1,5 @@
 /*!
- * @file geometry.h
+ * @file geometry.hpp
  * @brief Defines the Geometry class
  */
 

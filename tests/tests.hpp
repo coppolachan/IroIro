@@ -1,5 +1,7 @@
 /*!
- * @file Test abstract classes
+ * @file tests.hpp
+ *
+ * @brief Abstract class for tests
  *
  */
 

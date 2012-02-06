@@ -1,5 +1,5 @@
 /*!
- * @file test_optimalDomainWall.hpp
+ * @file test_DomainWall.hpp
  *
  * @brief Declaration of classes for testing the Dirac_optimalDomainWall class
  *
