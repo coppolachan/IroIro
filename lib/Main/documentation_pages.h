@@ -2,7 +2,18 @@
 
   @page configure Configuration and compilation
  
- 
+  @section help Options help
+
+  The output of 
+
+  @verbatim
+  ./configure --help@endverbatim
+  
+  shows the various options that can be passed at configuration time.
+  
+  Anyway, in most cases, the configuration command line is very simple as explained in the following sections.
+
+
   @section simple Simple compilation
  
   
@@ -83,6 +94,14 @@
   valgrind --leak-check=yes --log-file=valgrind.log #executable@endverbatim
   
 
+  @section Silent Silent compilation
+
+  By default now the compilation verbosity is set to the minimum. In order to disable the silent rules use the command 
+
+  @verbatim
+  --disable-silent-rules@endverbatim  
+
+  at configure time. See the output of <tt>./configure --help</tt> for further informations.
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

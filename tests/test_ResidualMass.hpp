@@ -14,12 +14,14 @@
 
 class Test_ResMass: public TestGeneral{
 private:
+  XML::node ResMassNode;
   GaugeField& conf_;
 
   Field delta(const Dirac_optimalDomainWall_4D*,const Field&);
 public:
-  Test_ResMass(GaugeField& conf):conf_(conf){}
-  int run(XML::node);
+  Test_ResMass(XML::node node, GaugeField& conf):ResMassNode(node),
+						 conf_(conf){}
+  int run();
 };
 
 #endif

@@ -18,11 +18,13 @@
 
 class Test_HMC: TestGeneral{
 private:
+  XML::node HMC_node;
   GaugeField& Gfield_;
 public:
-  Test_HMC(GaugeField& Gfield):Gfield_(Gfield){}
+  Test_HMC(XML::node node,GaugeField& Gfield):HMC_node(node),
+					      Gfield_(Gfield){}
 
-  int run(XML::node);  
+  int run();  
 };
 
 

@@ -41,7 +41,7 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_nofact$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_Wilson_EvenOdd$(EXEEXT) \
 	test_DomainWall$(EXEEXT) test_ResMass$(EXEEXT) \
 	test_IO$(EXEEXT) test_EigenModes$(EXEEXT) \
-	test_Smearing$(EXEEXT)
+	test_Smearing$(EXEEXT) test_Gauge$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -56,7 +56,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(testdir)" "$(DESTDIR)$(includedir)"
 PROGRAMS = $(test_PROGRAMS)
 am_test_DomainWall_OBJECTS = test_DomainWall.$(OBJEXT) \
-	testerODWF.$(OBJEXT)
+	testerDWF.$(OBJEXT)
 test_DomainWall_OBJECTS = $(am_test_DomainWall_OBJECTS)
 test_DomainWall_LDADD = $(LDADD)
 test_DomainWall_DEPENDENCIES =
@@ -65,6 +65,10 @@ am_test_EigenModes_OBJECTS = test_EigenModes_IRL.$(OBJEXT) \
 test_EigenModes_OBJECTS = $(am_test_EigenModes_OBJECTS)
 test_EigenModes_LDADD = $(LDADD)
 test_EigenModes_DEPENDENCIES =
+am_test_Gauge_OBJECTS = test_Gauge.$(OBJEXT) testerGauge.$(OBJEXT)
+test_Gauge_OBJECTS = $(am_test_Gauge_OBJECTS)
+test_Gauge_LDADD = $(LDADD)
+test_Gauge_DEPENDENCIES =
 am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
@@ -111,19 +115,31 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+AM_V_CXX = $(am__v_CXX_$(V))
+am__v_CXX_ = $(am__v_CXX_$(AM_DEFAULT_VERBOSITY))
+am__v_CXX_0 = @echo "  CXX   " $@;
+AM_V_at = $(am__v_at_$(V))
+am__v_at_ = $(am__v_at_$(AM_DEFAULT_VERBOSITY))
+am__v_at_0 = @
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
+AM_V_CXXLD = $(am__v_CXXLD_$(V))
+am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CXXLD_0 = @echo "  CXXLD " $@;
+AM_V_GEN = $(am__v_GEN_$(V))
+am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
+am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
-	$(test_HMC_SOURCES) $(test_HMC_nofact_SOURCES) \
-	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
-	$(test_RNG_SOURCES) $(test_ResMass_SOURCES) \
+	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
+	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
+	$(test_IO_SOURCES) $(test_RNG_SOURCES) $(test_ResMass_SOURCES) \
 	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
-	$(test_HMC_SOURCES) $(test_HMC_nofact_SOURCES) \
-	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
-	$(test_RNG_SOURCES) $(test_ResMass_SOURCES) \
+	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
+	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
+	$(test_IO_SOURCES) $(test_RNG_SOURCES) $(test_ResMass_SOURCES) \
 	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -153,6 +169,7 @@ CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_DEFAULT_VERBOSITY = @AM_DEFAULT_VERBOSITY@
 ARFLAGS = @ARFLAGS@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
@@ -263,7 +280,11 @@ EXTRA_DIST = test_HMC.xml	 \
 		test_Wilson_EvenOdd.xml	 \
 		test_DomainWall.xml \
 		test_ResMass.xml \
-		test_IO.xml	
+		test_IO.xml	\
+		test_Gauge.xml
+
+test_Gauge_SOURCES = test_Gauge.cpp	\
+			testerGauge.cpp
 
 test_HMC_SOURCES = test_HMC.cpp \
 		  	testerHMC.cpp
@@ -282,7 +303,7 @@ test_Wilson_EvenOdd_SOURCES = test_wilson_EvenOdd.cpp \
 		        	testerWilson_EvenOdd.cpp
 
 test_DomainWall_SOURCES = test_DomainWall.cpp \
-			testerODWF.cpp
+			testerDWF.cpp
 
 test_ResMass_SOURCES = test_ResidualMass.cpp \
 			testerResMass.cpp
@@ -303,7 +324,8 @@ include_HEADERS = test_HMC.hpp 		\
 			test_ResidualMass.hpp 	\
 			test_IO.hpp		\
 			test_EigenModes_IRL.hpp	\
-			test_smear.hpp
+			test_smear.hpp		\
+			test_Gauge.hpp
 
 all: all-am
 
@@ -378,37 +400,40 @@ clean-testPROGRAMS:
 	-test -z "$(test_PROGRAMS)" || rm -f $(test_PROGRAMS)
 test_DomainWall$(EXEEXT): $(test_DomainWall_OBJECTS) $(test_DomainWall_DEPENDENCIES) 
 	@rm -f test_DomainWall$(EXEEXT)
-	$(CXXLINK) $(test_DomainWall_OBJECTS) $(test_DomainWall_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_DomainWall_OBJECTS) $(test_DomainWall_LDADD) $(LIBS)
 test_EigenModes$(EXEEXT): $(test_EigenModes_OBJECTS) $(test_EigenModes_DEPENDENCIES) 
 	@rm -f test_EigenModes$(EXEEXT)
-	$(CXXLINK) $(test_EigenModes_OBJECTS) $(test_EigenModes_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModes_OBJECTS) $(test_EigenModes_LDADD) $(LIBS)
+test_Gauge$(EXEEXT): $(test_Gauge_OBJECTS) $(test_Gauge_DEPENDENCIES) 
+	@rm -f test_Gauge$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Gauge_OBJECTS) $(test_Gauge_LDADD) $(LIBS)
 test_HMC$(EXEEXT): $(test_HMC_OBJECTS) $(test_HMC_DEPENDENCIES) 
 	@rm -f test_HMC$(EXEEXT)
-	$(CXXLINK) $(test_HMC_OBJECTS) $(test_HMC_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_OBJECTS) $(test_HMC_LDADD) $(LIBS)
 test_HMC_nofact$(EXEEXT): $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_DEPENDENCIES) 
 	@rm -f test_HMC_nofact$(EXEEXT)
-	$(CXXLINK) $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_LDADD) $(LIBS)
 test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_DEPENDENCIES) 
 	@rm -f test_HMC_smear_noF$(EXEEXT)
-	$(CXXLINK) $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_LDADD) $(LIBS)
 test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES) 
 	@rm -f test_IO$(EXEEXT)
-	$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
 test_RNG$(EXEEXT): $(test_RNG_OBJECTS) $(test_RNG_DEPENDENCIES) 
 	@rm -f test_RNG$(EXEEXT)
-	$(CXXLINK) $(test_RNG_OBJECTS) $(test_RNG_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_RNG_OBJECTS) $(test_RNG_LDADD) $(LIBS)
 test_ResMass$(EXEEXT): $(test_ResMass_OBJECTS) $(test_ResMass_DEPENDENCIES) 
 	@rm -f test_ResMass$(EXEEXT)
-	$(CXXLINK) $(test_ResMass_OBJECTS) $(test_ResMass_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_ResMass_OBJECTS) $(test_ResMass_LDADD) $(LIBS)
 test_Smearing$(EXEEXT): $(test_Smearing_OBJECTS) $(test_Smearing_DEPENDENCIES) 
 	@rm -f test_Smearing$(EXEEXT)
-	$(CXXLINK) $(test_Smearing_OBJECTS) $(test_Smearing_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Smearing_OBJECTS) $(test_Smearing_LDADD) $(LIBS)
 test_Wilson$(EXEEXT): $(test_Wilson_OBJECTS) $(test_Wilson_DEPENDENCIES) 
 	@rm -f test_Wilson$(EXEEXT)
-	$(CXXLINK) $(test_Wilson_OBJECTS) $(test_Wilson_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Wilson_OBJECTS) $(test_Wilson_LDADD) $(LIBS)
 test_Wilson_EvenOdd$(EXEEXT): $(test_Wilson_EvenOdd_OBJECTS) $(test_Wilson_EvenOdd_DEPENDENCIES) 
 	@rm -f test_Wilson_EvenOdd$(EXEEXT)
-	$(CXXLINK) $(test_Wilson_EvenOdd_OBJECTS) $(test_Wilson_EvenOdd_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Wilson_EvenOdd_OBJECTS) $(test_Wilson_EvenOdd_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -418,6 +443,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModes_IRL.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_Smear_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
@@ -427,25 +453,28 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerDWF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerEigenModes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerGauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerODWF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerResMass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson_EvenOdd.Po@am__quote@
 
 .cpp.o:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`

@@ -1,13 +1,13 @@
 //------------------------------------------------------------------------
 /*!
- * @file testerHMC.cpp 
- * @brief Main source code for testing the %HMC class
+ * @file testerGauge.cpp 
+ * @brief Main source code for testing the Gauge configuration classes
  *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
 
-#include "test_HMC.hpp"
+#include "test_Gauge.hpp"
 #include "include/commandline.hpp"
 
 using namespace XML;
@@ -28,12 +28,12 @@ int main(int argc, char* argv[]){
 
   /////////////
   
-  node HMC_node = top_node;
-  descend(HMC_node, "HMC");
+  node Gauge_node = top_node;
+  descend(Gauge_node, "Gauge");
   
   
-  Test_HMC HMCTest(HMC_node,GaugeF);
-  HMCTest.run();
+  Test_Gauge GaugeTest(Gauge_node,GaugeF);
+  GaugeTest.run();
 
   return 0;
 }

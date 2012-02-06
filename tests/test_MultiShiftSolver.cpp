@@ -19,6 +19,7 @@ using namespace std;
 
 int Test_MultiShiftSolver::run(){
   test1();
+  return 0;
 }
 
 

@@ -10,7 +10,8 @@ EXTRA_DIST = 	test_HMC.xml	 \
 		test_Wilson_EvenOdd.xml	 \
 		test_DomainWall.xml \
 		test_ResMass.xml \
-		test_IO.xml	
+		test_IO.xml	\
+		test_Gauge.xml
 
 test_PROGRAMS = test_HMC 	\
 		test_HMC_nofact \
@@ -22,7 +23,11 @@ test_PROGRAMS = test_HMC 	\
 		test_ResMass 	\
 		test_IO   	\
 		test_EigenModes	\
-		test_Smearing
+		test_Smearing	\
+		test_Gauge
+
+test_Gauge_SOURCES = test_Gauge.cpp	\
+			testerGauge.cpp
 
 test_HMC_SOURCES = 	test_HMC.cpp \
 		  	testerHMC.cpp
@@ -42,7 +47,7 @@ test_Wilson_EvenOdd_SOURCES =	test_wilson_EvenOdd.cpp \
 		        	testerWilson_EvenOdd.cpp
 
 test_DomainWall_SOURCES = test_DomainWall.cpp \
-			testerODWF.cpp
+			testerDWF.cpp
 
 test_ResMass_SOURCES = test_ResidualMass.cpp \
 			testerResMass.cpp
@@ -63,4 +68,5 @@ include_HEADERS =	test_HMC.hpp 		\
 			test_ResidualMass.hpp 	\
 			test_IO.hpp		\
 			test_EigenModes_IRL.hpp	\
-			test_smear.hpp
+			test_smear.hpp		\
+			test_Gauge.hpp

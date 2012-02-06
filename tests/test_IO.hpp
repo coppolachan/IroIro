@@ -16,11 +16,14 @@
 
 class Test_IO: public TestGeneral{
 private:
+  XML::node IOnode;
   GaugeField& Gfield_;
 public:
-  Test_IO(GaugeField& Gfield):Gfield_(Gfield){}
+  Test_IO(XML::node node,
+	  GaugeField& Gfield):IOnode(node),
+			      Gfield_(Gfield){}
 
-  int run(XML::node);  
+  int run();  
 };
 
 

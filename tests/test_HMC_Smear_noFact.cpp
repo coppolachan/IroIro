@@ -17,12 +17,12 @@
 
 #include "Smearing/SmartConf.hpp"
 
-int Test_HMC::run(XML::node node){
-  std::cout << "Starting HMCrun" << std::endl;
+int Test_HMC::run(){
+  CCIO::cout << "Starting HMCrun\n";
   
   //Using factories just for RNG
   
-  RNG_Env::RNG = RNG_Env::createRNGfactory(node);
+  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
   
   std::vector<int> multip(2);
   multip[0]= 1;
@@ -77,7 +77,7 @@ int Test_HMC::run(XML::node node){
 					   &FatField);
 
 				      
-  HMCgeneral hmc_general(node, *Integrator);  
+  HMCgeneral hmc_general(HMC_node, *Integrator);  
 
   // Note:
   // The line *U_=U in mdExec_leapfrog.cpp (init)
@@ -89,19 +89,17 @@ int Test_HMC::run(XML::node node){
 
   ////////////// HMC calculation /////////////////
   clock_t start_t = clock();
-  int nodeid = Communicator::instance()->nodeid();
 
   try{
-    if(nodeid==0) std::cout<< "HMC starts"<<std::endl;
+    CCIO::cout<< "HMC starts\n";
     hmc_general.evolve(Gfield_.U);
   }catch(const char* error){
-    if(nodeid==0) std::cerr << error << std::endl;
+    CCIO::cerr << error << std::endl;
     return EXIT_FAILURE;
   }
 
   clock_t end_t = clock();
-  if(nodeid==0) 
-    std::cout << (double)(end_t -start_t)/CLOCKS_PER_SEC << std::endl;
+  CCIO::cout << (double)(end_t -start_t)/CLOCKS_PER_SEC << std::endl;
   
   return 0;
 }

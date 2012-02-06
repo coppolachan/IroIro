@@ -306,7 +306,7 @@ public:
    */
   ~Source_Z2noise(){ delete ff_;}
 
-  const void setup_source(){
+  void setup_source(){
     std::valarray<double> white_noise(ff_->size());
     double cosine;
     source_.resize(ff_->size());

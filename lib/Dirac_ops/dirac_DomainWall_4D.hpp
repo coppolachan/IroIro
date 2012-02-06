@@ -53,8 +53,6 @@ public:
   size_t fsize() const {return Dodw_.f4size();}
   size_t gsize() const {return Dodw_.gsize(); }
 
-  const Field operator()(int, const Field&) const{}
-
   const Field mult    (const Field&)const;
   const Field mult_dag(const Field&)const;
   const Field gamma5  (const Field&f)const{return Dodw_.gamma5_4d(f);}
@@ -79,7 +77,7 @@ public:
   }
   double getMass() const {return Dodw_.getMass();}
   const std::vector<int> get_gsite() const{ return Dodw_.get_gsite();}
-  const Field md_force(const Field& eta,const Field& zeta) const{}
+  const Field md_force(const Field& eta,const Field& zeta) const{return Field(0);} //never used
   void update_internal_state(){}
 };
 

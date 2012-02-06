@@ -30,7 +30,9 @@ mult5d_test(const Dirac_optimalDomainWall& DWF5d,
   for(int i=0; i<times; ++i) Dphi = DWF5d.mult(phi);
 
   double Dphi_norm = Dphi.norm();    // Dphi= Ddwf*phi
-  CCIO::cout << "Dphi.norm: " << Dphi_norm << endl;   
+  CCIO::cout << "Dphi.norm: " << Dphi_norm << endl;  
+
+  return 0;
 }
 
 int Test_optimalDomainWall::
@@ -41,7 +43,9 @@ mult5d_dag_test(const Dirac_optimalDomainWall& DWF5d,
   for(int i=0; i<times; ++i) Dphi = DWF5d.mult_dag(phi);
 
   double Dphi_norm = Dphi.norm();    // Dphi= Ddwf*phi
-  CCIO::cout << "Dphi.norm: " << Dphi_norm << endl;   
+  CCIO::cout << "Dphi.norm: " << Dphi_norm << endl;  
+
+  return 0;
 }
 
 int Test_optimalDomainWall::
@@ -68,9 +72,11 @@ mult5d_gamma5_test(const Dirac_optimalDomainWall& DWF5d,
   CCIO::cout << "||g5*D*g5*v||: " << g5Dg5psi_norm << std::endl;
   CCIO::cout << "||Ddag*v||: "    << Ddagphi.norm() << std::endl;
   CCIO::cout << "||Difference||: "<< vdiff_norm << std::endl;
+
+  return 0;
 }
 
-int Test_optimalDomainWall::run(XML::node node){
+int Test_optimalDomainWall::run(){
   Dirac_optimalDomainWall* DiracODWF;
 
   // operator without factories
@@ -83,10 +89,10 @@ int Test_optimalDomainWall::run(XML::node node){
 
   Dirac_optimalDomainWall Ddwf_5d(b,c,M0,mq,omega,&(conf_.U));
   /////////////////////////////
-  XML::node QuarkProp_node = node;
+  XML::node QuarkProp_node = DWFnode;
   // operator using factories
-  XML::descend(node, "DomainWall");
-  DiracDWF5dFactory DWF_Factory(node);
+  XML::descend(DWFnode, "DomainWall");
+  DiracDWF5dFactory DWF_Factory(DWFnode);
   DiracODWF = DWF_Factory.getDiracOperator(&(conf_.U));
 
   

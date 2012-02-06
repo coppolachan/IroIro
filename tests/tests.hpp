@@ -8,7 +8,7 @@
 
 class TestGeneral {
 public:
-  virtual int run(){};
+  virtual int run() = 0;
 };
 
 

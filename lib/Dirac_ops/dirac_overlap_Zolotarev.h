@@ -42,8 +42,6 @@ public:
   size_t fsize()const {return Fopr_signH->fsize();}
   size_t gsize()const {return Fopr_signH->gsize();}
 
-  const Field operator()(int, const Field&) const{}//temporary
-
   const Field mult    (const Field& f) const;
   const Field mult_dag(const Field& f) const;
   const Field gamma5  (const Field& f) const;

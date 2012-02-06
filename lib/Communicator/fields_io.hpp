@@ -116,10 +116,13 @@ namespace CCIO {
    */
   template <typename T>
   int SaveOnDisk(const std::vector<Field>& f, const char* filename) {
+    int result;
     for (int field_num = 0; field_num < f.size(); ++field_num) {
-      SaveOnDisk<T>(f[field_num], filename, CCIO_FILE_APPEND_MODE);
+      result = SaveOnDisk<T>(f[field_num], filename, CCIO_FILE_APPEND_MODE);
     }
+    return result;
   }
+
   
   /*!
    * @brief Reads a Field from the disk 

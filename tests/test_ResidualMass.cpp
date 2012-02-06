@@ -21,20 +21,20 @@ Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D* DWF, const Field& ph
   return delta;
 }
 
-int Test_ResMass::run(XML::node node) {
-  RNG_Env::RNG = RNG_Env::createRNGfactory(node); //create the factory for Rand Numbers Gen
+int Test_ResMass::run() {
+  RNG_Env::RNG = RNG_Env::createRNGfactory(ResMassNode); //create the factory for Rand Numbers Gen
 
   Staples Staple(conf_.Format);
   CCIO::cout << "Plaquette : " << Staple.plaquette(conf_.U) << std::endl;
 
   
-  XML::descend(node, "QuarkDWFProp");
-  QPropDWFFactory QP_DomainWallFact(node);//uses specific factory (this is a test program)
+  XML::descend(ResMassNode, "QuarkDWFProp");
+  QPropDWFFactory QP_DomainWallFact(ResMassNode);//uses specific factory (this is a test program)
   QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(conf_));
   // the prevoius static_cast is absolutely safe since we know exaclty what class we are creating
 
-  XML::next_sibling(node, "Source");
-  SourceFactory* Source_Factory = Sources::createSourceFactory<SiteIndex,Format::Format_F>(node);
+  XML::next_sibling(ResMassNode, "Source");
+  SourceFactory* Source_Factory = Sources::createSourceFactory<SiteIndex,Format::Format_F>(ResMassNode);
   Source* SourceObj =  Source_Factory->getSource();
 
   prop_t sq;  //Defines a vector of fields

@@ -1,23 +1,21 @@
 //------------------------------------------------------------------------
 /*!
- * @file testerHMC.cpp 
- * @brief Main source code for testing the %HMC class
+ * @file testerODWF.cpp 
+ * @brief Main source code for testing the DomainWall classes
  *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
 
-#include "test_HMC.hpp"
-#include "include/commandline.hpp"
+#include "test_DomainWall.hpp"
 
 using namespace XML;
 
-int main(int argc, char* argv[]){
+int main(){
 
-  CommandOptions Options = ReadCmdLine(argc, argv);
   
   //Reading input file
-  node top_node = getInputXML(Options.filename);  
+  node top_node = getInputXML("test_DomainWall.xml");  
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
@@ -28,12 +26,12 @@ int main(int argc, char* argv[]){
 
   /////////////
   
-  node HMC_node = top_node;
-  descend(HMC_node, "HMC");
+  node DWF_node = top_node;
+  descend(DWF_node, "TestOptimalDomainWall");
   
   
-  Test_HMC HMCTest(HMC_node,GaugeF);
-  HMCTest.run();
+  Test_optimalDomainWall DomWallTest(DWF_node,GaugeF);
+  DomWallTest.run();
 
   return 0;
 }

@@ -30,8 +30,8 @@ int main(){
   descend(Mres_node, "TestResMass");
   
   
-  Test_ResMass ResMassTest(GaugeF);
-  ResMassTest.run(Mres_node);
+  Test_ResMass ResMassTest(Mres_node, GaugeF);
+  ResMassTest.run();
 
   return 0;
 }

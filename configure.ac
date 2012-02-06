@@ -5,12 +5,15 @@ AC_PREREQ([2.59])
 AC_INIT([IroIro], [0.9], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES]) ##backward compatibility
+AM_SILENT_RULES([yes]) ##compile silently
+
 AC_CONFIG_HEADERS([include/config.h])
 AC_PROG_RANLIB
 
 AC_MSG_NOTICE([
 
-Configuring $PACKAGE_STRING for $target
+Configuring $PACKAGE_STRING for $host
 ---------------------------------------------
 ])
 

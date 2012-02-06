@@ -30,8 +30,8 @@ int main(){
   descend(IO_node, "IOtest");
   
   
-  Test_IO IOTest(GaugeF);
-  IOTest.run(IO_node);
+  Test_IO IOTest(IO_node,GaugeF);
+  IOTest.run();
   
 
 
