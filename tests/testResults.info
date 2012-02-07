@@ -1,0 +1,33 @@
+Time-stamp: <2012-02-07 15:32:06 neo>
+
+Summary of test results
+=================================================================
+legend:
+ok	test passed
+*	test wrong (see notes) (severity depends on number of *)
+-	test not performed yet
+=================================================================
+input configuration: conf_04040408.txt
+
+
+test name		g++	icpc	mpicxx.openmpi		test file			note
+-------------------------------------------------------------------------------------------------------------------
+test_Gauge		ok	ok	-		test_Gauge.xml	
+test_HMC		ok	ok	-		test_HMC.wilson.xml		wilson fermions
+test_HMC		ok	ok	ok		test_HMC.gauge.xml		wilson gauge
+test_HMC		ok 	ok	-		test_HMC.rect.xml		rectangular gauge
+test_HMC		ok	ok	-		test_HMC.clover.xml		clover fermions
+test_DomainWall		ok	ok	-		test_DomainWall.xml	
+test_RNG		ok	ok	-		test_RNG.xml
+test_Smearing		ok	ok	-		test_Smearing.xml	
+test_HMC_noFact		ok	ok	-		test_HMC.wilson.xml		
+test_MultiShiftSolver	ok	ok	-		test_MultiShiftSolver.xml	
+test_ResMass		ok 	ok	-		test_ResMass.xml		
+test_Wilson		ok	ok	-						
+test_Overlap		***	***	-		test_Overlap.xml		Assertion failed
+test_HMC_DomainWall	*	*	-		test_HMC_DomainWall.xml		bad pointer at the end	(free)
+test_HMC_EvenOdd	* 	-	-		test_HMC_EvenOdd.xml		bad pointer at the end	(free)
+test_Wilson_EvenOdd	* 	*	-						bad pointer at the end	(free)
+test_HMC_smear_noF	*****	-	-		test_HMC_Smear.noFact.xml	action not conserved
+test_EigenModes		***	-	*****		test_EigenModes.xml		chebyshev not converged
+test_IO			-	-	-						missing Legacy8x8.bin

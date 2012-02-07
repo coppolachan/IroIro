@@ -84,15 +84,15 @@ void GaugeConf_txt::init_conf(Field& u){
         }   
       }
     }
-    comm->sync();
-    for(int id = 0; id < NP; ++id)
-      comm->send_1to1(u_tmp, *(u_all[id]), u_tmp.size(), id, 0, id);
-    comm->sync();
-    
-    u = Field(u_tmp);
-    for(int id = 0; id < NP; ++id) delete u_all[id];
-    
   }
+  comm->sync();
+  for(int id = 0; id < NP; ++id)
+    comm->send_1to1(u_tmp, *(u_all[id]), u_tmp.size(), id, 0, id);
+  comm->sync();
+  
+  u = Field(u_tmp);
+  for(int id = 0; id < NP; ++id) delete u_all[id];
+    
 }
     
 void GaugeConf_unit::init_conf(Field& u){

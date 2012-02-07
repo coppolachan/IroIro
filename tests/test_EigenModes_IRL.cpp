@@ -13,10 +13,13 @@
 using namespace std;
 using namespace FieldExpression;
 
-int Test_EigenModes_IRL::run(XML::node node) {
+int Test_EigenModes_IRL::run() {
+  
+  CCIO::header("Test EigenModes");
+  
   lowlying();
-  //  highest();
-  //  chebyshev();
+  //highest();
+  //chebyshev();
 
   return 0;
  }

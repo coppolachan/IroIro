@@ -32,8 +32,8 @@ int main(int argc, char* argv[]){
   descend(Eigen_node, "EigenTest");
   
   
-  Test_EigenModes_IRL EigenTest(GaugeF);
-  EigenTest.run(Eigen_node);
+  Test_EigenModes_IRL EigenTest(Eigen_node,GaugeF);
+  EigenTest.run();
 
   return 0;
 }

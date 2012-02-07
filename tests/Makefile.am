@@ -1,10 +1,13 @@
+# Time-stamp: <2012-02-07 12:22:37 neo>
+
 testdir = $(bindir)/Test
 
 LDADD = -L../lib/ -lcommcode
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
-EXTRA_DIST = 	test_HMC.xml	 	\
+EXTRA_DIST = 	testResults.info	\
+		test_HMC.xml	 	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\

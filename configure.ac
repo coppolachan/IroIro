@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [0.9], [cossu@post.kek.jp])
+AC_INIT([IroIro], [0.9.1], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES]) ##backward compatibility
@@ -70,8 +70,8 @@ case "$arch" in
 ia64 | amd64 | ia32 | macppc | mac686 )
    if [ $mpi ]
     then
-      # list of possible MPI compilers	
-      use_cpp="mpic++ mpicxx mpiCC sxmpic++ hcp mpxlC_r mpxlC mpixlcxx_r mpixlcxx mpg++ mpc++ mpCC cmpic++ mpiFCC CCicpc pgCC pathCC sxc++ xlC_r xlC bgxlC_r bgxlC openCC sunCC crayCC" 
+      # list of tested MPI compilers	
+      use_cpp="mpicxx.openmpi" 
     else
      # list of tested compilers
       use_cpp="g++ icpc"; 

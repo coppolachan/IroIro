@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- sample input file for configuration generator -->
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
@@ -7,6 +6,7 @@
     <Nodes>1 1 1 1</Nodes>
   </Geometry>
   <!-- Input configuration -->
+
   <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   
   <TestOptimalDomainWall>
@@ -24,6 +24,7 @@
     </DomainWall> 
 
     <QuarkPropagator>
+
       <Kernel4d>
 	<Kernel5d>
 	  <Preconditioning>NoPreconditioner</Preconditioning>
@@ -31,6 +32,7 @@
 	  <N5d>6</N5d>
 	  <b>1.0</b>
 	  <c>1.0</c>
+
 	  <mass>0.02</mass>
 	  <approximation name="Zolotarev">
 	    <lambda_min>0.1</lambda_min>
@@ -38,6 +40,7 @@
 	  </approximation>
 	</Kernel5d>
 	<SolverDWF type="Solver_CG_Precondition">
+
 	  <MaxIter>10000</MaxIter>
 	  <Precision>1e-20</Precision>
 	</SolverDWF>
