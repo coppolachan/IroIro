@@ -32,32 +32,36 @@ int Test_HMC_EvenOdd::run(){
   multip[1]= 2;
   multip[2]= 2;
   
-  Field CommonField(Gfield_.Format.size());
+  Field* CommonField = new Field(Gfield_.Format.size());
 
   double mq1 = 0.10;
   double mq2 = 0.20;
 
-  Dirac_Wilson_EvenOdd D1(mq1,&CommonField);
-  Dirac_Wilson_EvenOdd D2(mq2,&CommonField);
-  
+  DiracWilsonLike* D1 = new Dirac_Wilson_EvenOdd(mq1,CommonField);
+  DiracWilsonLike* D2 = new Dirac_Wilson_EvenOdd(mq2,CommonField);
+   
   // gauge term
   ActionLevel al_1, al_2, al_3;
+
   Action* Gauge 
-    = new ActionGaugeWilson(6.0,Gfield_.Format,&CommonField);
+    = new ActionGaugeWilson(6.0,Gfield_.Format,CommonField);
   al_1.push_back(Gauge);
 
   // pf1 term
-  Fopr_DdagD DdagD2(&D2);
-  Solver_CG SolvNf2(10e-12,1000,&DdagD2);
-  Action* Nf2Action = new Action_Nf2(&CommonField,&D2,&SolvNf2);
+  Solver* SolvNf2 = new Solver_CG(10e-12,1000, new Fopr_DdagD(D2));
+
+  Action* Nf2Action = new Action_Nf2(CommonField,D2,SolvNf2);
   al_2.push_back(Nf2Action);
 
   // pf2 term
-  Fopr_DdagD DdagD1(&D1);
-  Solver_CG SolvR1(10e-12,1000,&DdagD1);
-  Solver_CG SolvR2(10e-12,1000,&DdagD2);
-  Action* RatioAction 
-    = new Action_Nf2_ratio(&CommonField,&D1,&D2,&SolvR1,&SolvR2);
+  Solver* SolvR1 = new Solver_CG(10e-12,1000,new Fopr_DdagD(D1));
+  Solver* SolvR2 = new Solver_CG(10e-12,1000,new Fopr_DdagD(D2));
+
+  Action* RatioAction = new Action_Nf2_ratio(CommonField,
+					     D1,
+					     D2,
+					     SolvR1,
+					     SolvR2);
   al_3.push_back(RatioAction);
 
   ActionSet ASet;
@@ -65,9 +69,15 @@ int Test_HMC_EvenOdd::run(){
   ASet.push_back(al_2);
   ASet.push_back(al_1);
   
-  MDexec_leapfrog Integrator(8,3,0.01,ASet,multip,Gfield_.Format,&CommonField);
+  MDexec* Integrator = new MDexec_leapfrog(8,
+					   3,
+					   0.01,
+					   ASet,
+					   multip,
+					   Gfield_.Format,
+					   CommonField);
 
-  HMCgeneral hmc_general(HMC_node,Integrator);  
+  HMCgeneral hmc_general(HMC_node, *Integrator);  
 
   ////////////// HMC calculation /////////////////
   clock_t start_t = clock();

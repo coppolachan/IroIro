@@ -73,10 +73,16 @@ int Test_HMC_DomainWall::run(){
   ASet.push_back(al_2);
   ASet.push_back(al_1);
   
-  MDexec_leapfrog Integrator(8,3,0.00004,ASet,multip,
-			     Gfield_.Format,&CommonField);
+  MDexec* Integrator = new MDexec_leapfrog(8,
+					   3,
+					   0.01,
+					   ASet,
+					   multip,
+					   Gfield_.Format,
+					   &CommonField);
+  
 
-  HMCgeneral hmc_general(HMC_DW_node,Integrator);  
+  HMCgeneral hmc_general(HMC_DW_node,*Integrator);  
 
   ////////////// HMC calculation /////////////////
   clock_t start_t = clock();

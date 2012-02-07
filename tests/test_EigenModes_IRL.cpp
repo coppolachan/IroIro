@@ -18,7 +18,7 @@ int Test_EigenModes_IRL::run() {
   CCIO::header("Test EigenModes");
   
   lowlying();
-  //highest();
+  highest();
   //chebyshev();
 
   return 0;

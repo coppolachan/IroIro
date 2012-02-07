@@ -248,40 +248,6 @@ void EigenModes_IRL::orthogonalize(Field& w,const vector<Field>& evec,int k)cons
   }
 }
 
-/*
-void EigenModes_IRL::orthogonalize(Field& w,const vector<Field>& vk, int k)const{
-  // Schmidt orthogonalization
-
-  if( (w.size()%2)!=0 ) abort();
-
-  double prdr, prdi;
-  double vr, vi;
-
-  for(int j=0; j<k; ++j){
-    prdr = 0.0;
-    prdi = 0.0;
-    for(int i=0; i<w.size(); i+=2){
-      prdr += vk[j][i]*w[i]  +vk[j][i+1]*w[i+1];
-      prdi += vk[j][i]*w[i+1]-vk[j][i+1]*w[i];
-    }
-
-    for(int i=0; i<w.size(); i+=2){
-
-      vr = w[i]  -prdr*vk[j][i]  +prdi*vk[j][i+1];
-      vi = w[i+1]-prdr*vk[j][i+1]-prdi*vk[j][i];
-      w.set(i  ,vr);
-      w.set(i+1,vi);
-
-      //vr = -prdr*vk[j][i]  +prdi*vk[j][i+1];
-      //vi = -prdr*vk[j][i+1]-prdi*vk[j][i];
-      //w.add(i  ,vr);
-      //w.add(i+1,vi);
-    }
-  }
-}
-*/
-
-
 void EigenModes_IRL::
 setUnit_Qt(int Nm, vector<double>& Qt)const{
   for(int i=0; i<Qt.size(); ++i) Qt[i] = 0.0;
