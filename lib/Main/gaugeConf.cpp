@@ -7,6 +7,7 @@
 #include "include/field.h"
 #include "Communicator/communicator.h"
 #include "Communicator/fields_io.hpp"
+#include "Communicator/comm_io.hpp"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ void GaugeConf_JLQCDLegacy::init_conf(Field& U){
 
 
 void GaugeConf_txt::init_conf(Field& u){
-
+  
   int Lx = CommonPrms::instance()->Lx();
   int Ly = CommonPrms::instance()->Ly();
   int Lz = CommonPrms::instance()->Lz();
@@ -39,17 +40,17 @@ void GaugeConf_txt::init_conf(Field& u){
   int NPEz = CommonPrms::instance()->NPEz();
   int NPEt = CommonPrms::instance()->NPEt();
   int NP  = CommonPrms::instance()->NP();
-
+  
   Communicator* comm = Communicator::instance();
   int nodeid = comm->nodeid();
-
+  
   vector<valarray<double>*> u_all;
   for(int id = 0; id < NP; ++id) 
     u_all.push_back(new valarray<double>(fg_.size()));
   valarray<double> cplx(2);  
-
+  
   valarray<double> u_tmp(fg_.size());
-
+  
   if(nodeid==0){
     fstream config; 
     try {
@@ -62,12 +63,12 @@ void GaugeConf_txt::init_conf(Field& u){
       abort();
     }
     
-    cout<< "Reading gauge configuration from " << file.c_str() << endl;
+    CCIO::cout<< "Reading gauge configuration from " << file.c_str() << endl;
     for(int t = 0; t < Lt; ++t){
       for(int z = 0; z < Lz; ++z){
         for(int y = 0; y < Ly; ++y){
           for(int x = 0; x < Lx; ++x){
-
+	    
 	    int id = getid(x,y,z,t);
             int site = idx_->site(x%Nx_,y%Ny_,z%Nz_,t%Nt_);
             for(int dir = 0; dir < Ndim_; ++dir){
@@ -83,26 +84,17 @@ void GaugeConf_txt::init_conf(Field& u){
         }   
       }
     }
-    cout << "U[0]=" << (*(u_all[0]))[0] <<"+I"<< (*(u_all[0]))[1] << endl;
-    cout << "read successful" << endl;
-  
-    //for(int i = 0; i< u_all.size(); ++i)
-    //for(int j = 0; j< u_all[i]->size(); ++j)
-    //  cout<<"(*(u_all["<<i<<"]))["<<j<<"]="<<(*(u_all[i]))[j]<<endl;
+    comm->sync();
+    for(int id = 0; id < NP; ++id)
+      comm->send_1to1(u_tmp, *(u_all[id]), u_tmp.size(), id, 0, id);
+    comm->sync();
+    
+    u = Field(u_tmp);
+    for(int id = 0; id < NP; ++id) delete u_all[id];
+    
   }
-
-
-  comm->sync();
-  for(int id = 0; id < NP; ++id)
-    comm->send_1to1(u_tmp, *(u_all[id]), u_tmp.size(), id, 0, id);
-  comm->sync();
-
-  u = Field(u_tmp);
-
-  //  for(int i = 0; i< u.size(); ++i) cout <<"u["<<i<<"]="<<u[i]<<endl;
-  for(int id = 0; id < NP; ++id) delete u_all[id];
 }
-
+    
 void GaugeConf_unit::init_conf(Field& u){
   for(int t = 0; t < Nt_; ++t){
     for(int z = 0; z < Nz_; ++z){

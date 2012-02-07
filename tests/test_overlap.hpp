@@ -13,6 +13,7 @@
 
 class Test_Overlap : public TestGeneral {
  private:
+  XML::node OverlapNode;
   GaugeField& Gauge;
 
   int sign_subt();
@@ -22,7 +23,9 @@ class Test_Overlap : public TestGeneral {
   // test of overlap solver
 
  public:
-  Test_Overlap(GaugeField& u):Gauge(u){}
+  Test_Overlap(XML::node node,
+	       GaugeField& u):OverlapNode(node),
+			      Gauge(u){}
   
   int run();
     

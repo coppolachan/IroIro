@@ -17,11 +17,14 @@
 
 class Test_HMC_EvenOdd: TestGeneral{
 private:
+  XML::node HMC_node;
   GaugeField& Gfield_;
 public:
-  Test_HMC_EvenOdd(GaugeField& Gfield):Gfield_(Gfield){}
+  Test_HMC_EvenOdd(XML::node node,
+		   GaugeField& Gfield):HMC_node(node),
+				       Gfield_(Gfield){}
 
-  int run(XML::node);  
+  int run();  
 };
 
 

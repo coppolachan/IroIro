@@ -2,7 +2,7 @@
 /*!
  * @file test_HMC_EvenOdd.cpp
  *
- * @brief run() function for HMCgeneral class test
+ * @brief run() function for HMC EvenOdd class test
  *
  * @author Jun-Ichi Noaki
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
@@ -22,10 +22,10 @@
 
 using namespace std;
 
-int Test_HMC_EvenOdd::run(XML::node node){
+int Test_HMC_EvenOdd::run(){
   CCIO::cout << "Starting HMCrun" << std::endl;
  
-  RNG_Env::RNG = RNG_Env::createRNGfactory(node);
+  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
   
   std::vector<int> multip(3);
   multip[0]= 1;
@@ -67,7 +67,7 @@ int Test_HMC_EvenOdd::run(XML::node node){
   
   MDexec_leapfrog Integrator(8,3,0.01,ASet,multip,Gfield_.Format,&CommonField);
 
-  HMCgeneral hmc_general(node,Integrator);  
+  HMCgeneral hmc_general(HMC_node,Integrator);  
 
   ////////////// HMC calculation /////////////////
   clock_t start_t = clock();

@@ -17,12 +17,14 @@
 
 class Test_HMC_DomainWall: TestGeneral{
 private:
+  XML::node HMC_DW_node;
   GaugeField& Gfield_;
 public:
-  Test_HMC_DomainWall(GaugeField& Gfield)
-    :Gfield_(Gfield){}
-
-  int run(XML::node);  
+  Test_HMC_DomainWall(XML::node node,
+		      GaugeField& Gfield):HMC_DW_node(node),
+					  Gfield_(Gfield){}
+  
+  int run();  
 };
 
 

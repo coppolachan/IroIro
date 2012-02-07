@@ -80,11 +80,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
-		../tests/test_MultiShiftSolver.cpp	\
-		../tests/test_overlap.cpp		\
-		../tests/test_DomainWall.cpp		\
-		../tests/test_HMC_DomainWall.cpp	\
-                ../tests/test_HMC_EvenOdd.cpp           \
 		$(top_srcdir)/include/common_fields.cpp
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
@@ -184,13 +179,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
-			Tools/gammaMatrices.hpp			\
-			../tests/tests_all.hpp			\
-			../tests/test_MultiShiftSolver.h	\
-			../tests/test_overlap.hpp		\
-                        ../tests/test_HMC_DomainWall.hpp        \
-                        ../tests/test_HMC_EvenOdd.hpp           \
-			../tests/tests.hpp                      
+			Tools/gammaMatrices.hpp			
+
 
 
 

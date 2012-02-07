@@ -21,10 +21,10 @@
 
 using namespace std;
 
-int Test_HMC_DomainWall::run(XML::node node){
+int Test_HMC_DomainWall::run(){
   CCIO::cout << "Starting HMCrun" << std::endl;
  
-  RNG_Env::RNG = RNG_Env::createRNGfactory(node);
+  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_DW_node);
   
   std::vector<int> multip(3);
   multip[0]= 1;
@@ -76,7 +76,7 @@ int Test_HMC_DomainWall::run(XML::node node){
   MDexec_leapfrog Integrator(8,3,0.00004,ASet,multip,
 			     Gfield_.Format,&CommonField);
 
-  HMCgeneral hmc_general(node,Integrator);  
+  HMCgeneral hmc_general(HMC_DW_node,Integrator);  
 
   ////////////// HMC calculation /////////////////
   clock_t start_t = clock();

@@ -1,3 +1,9 @@
+/*! 
+  @file gaugeConf.hpp
+
+  @brief Declaration of classes to manage gauge configurations
+*/
+
 #ifndef GAUGECONF_INCLUDED
 #define GAUGECONF_INCLUDED
 

@@ -37,11 +37,13 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_nofact$(EXEEXT) \
-	test_HMC_smear_noF$(EXEEXT) test_RNG$(EXEEXT) \
+	test_HMC_smear_noF$(EXEEXT) test_HMC_EvenOdd$(EXEEXT) \
+	test_HMC_DomainWall$(EXEEXT) test_RNG$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_Wilson_EvenOdd$(EXEEXT) \
 	test_DomainWall$(EXEEXT) test_ResMass$(EXEEXT) \
 	test_IO$(EXEEXT) test_EigenModes$(EXEEXT) \
-	test_Smearing$(EXEEXT) test_Gauge$(EXEEXT)
+	test_Smearing$(EXEEXT) test_Gauge$(EXEEXT) \
+	test_Overlap$(EXEEXT) test_MultiShiftSolver$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -74,6 +76,16 @@ am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
 test_HMC_DEPENDENCIES =
+am_test_HMC_DomainWall_OBJECTS = test_HMC_DomainWall.$(OBJEXT) \
+	testerHMC_DomainWall.$(OBJEXT)
+test_HMC_DomainWall_OBJECTS = $(am_test_HMC_DomainWall_OBJECTS)
+test_HMC_DomainWall_LDADD = $(LDADD)
+test_HMC_DomainWall_DEPENDENCIES =
+am_test_HMC_EvenOdd_OBJECTS = test_HMC_EvenOdd.$(OBJEXT) \
+	testerHMCeven-odd.$(OBJEXT)
+test_HMC_EvenOdd_OBJECTS = $(am_test_HMC_EvenOdd_OBJECTS)
+test_HMC_EvenOdd_LDADD = $(LDADD)
+test_HMC_EvenOdd_DEPENDENCIES =
 am_test_HMC_nofact_OBJECTS = test_HMC_noFactories.$(OBJEXT) \
 	testerHMC.$(OBJEXT)
 test_HMC_nofact_OBJECTS = $(am_test_HMC_nofact_OBJECTS)
@@ -88,6 +100,16 @@ am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
 test_IO_LDADD = $(LDADD)
 test_IO_DEPENDENCIES =
+am_test_MultiShiftSolver_OBJECTS = test_MultiShiftSolver.$(OBJEXT) \
+	testerMultiShiftSolver.$(OBJEXT)
+test_MultiShiftSolver_OBJECTS = $(am_test_MultiShiftSolver_OBJECTS)
+test_MultiShiftSolver_LDADD = $(LDADD)
+test_MultiShiftSolver_DEPENDENCIES =
+am_test_Overlap_OBJECTS = test_overlap.$(OBJEXT) \
+	testerOverlap.$(OBJEXT)
+test_Overlap_OBJECTS = $(am_test_Overlap_OBJECTS)
+test_Overlap_LDADD = $(LDADD)
+test_Overlap_DEPENDENCIES =
 am_test_RNG_OBJECTS = test_RNG.$(OBJEXT)
 test_RNG_OBJECTS = $(am_test_RNG_OBJECTS)
 test_RNG_LDADD = $(LDADD)
@@ -133,16 +155,20 @@ am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
+	$(test_HMC_DomainWall_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
 	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
-	$(test_IO_SOURCES) $(test_RNG_SOURCES) $(test_ResMass_SOURCES) \
-	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES) \
-	$(test_Wilson_EvenOdd_SOURCES)
+	$(test_IO_SOURCES) $(test_MultiShiftSolver_SOURCES) \
+	$(test_Overlap_SOURCES) $(test_RNG_SOURCES) \
+	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
+	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
+	$(test_HMC_DomainWall_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
 	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
-	$(test_IO_SOURCES) $(test_RNG_SOURCES) $(test_ResMass_SOURCES) \
-	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES) \
-	$(test_Wilson_EvenOdd_SOURCES)
+	$(test_IO_SOURCES) $(test_MultiShiftSolver_SOURCES) \
+	$(test_Overlap_SOURCES) $(test_RNG_SOURCES) \
+	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
+	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -279,58 +305,78 @@ testdir = $(bindir)/Test
 LDADD = -L../lib/ -lcommcode
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
-EXTRA_DIST = test_HMC.xml	 \
-		test_RNG.xml	 \
-		test_Wilson.xml	 \
-		test_Wilson_EvenOdd.xml	 \
-		test_DomainWall.xml \
-		test_ResMass.xml \
-		test_IO.xml	\
-		test_Gauge.xml
+EXTRA_DIST = test_HMC.xml	 	\
+		test_RNG.xml	 	\
+		test_Wilson.xml	 	\
+		test_Wilson_EvenOdd.xml	\
+		test_DomainWall.xml 	\
+		test_ResMass.xml 	\
+		test_IO.xml		\
+		test_Gauge.xml		\
+		test_Overlap.xml	\
+		test_HMC_EvenOdd.xml	\
+		test_HMC_DomainWall.xml	\
+		test_MultiShiftSolver.xml
 
-test_Gauge_SOURCES = test_Gauge.cpp	\
-			testerGauge.cpp
+test_Gauge_SOURCES = test_Gauge.cpp			\
+				testerGauge.cpp
 
-test_HMC_SOURCES = test_HMC.cpp \
-		  	testerHMC.cpp
+test_HMC_SOURCES = test_HMC.cpp 			\
+		  		testerHMC.cpp
 
-test_HMC_nofact_SOURCES = test_HMC_noFactories.cpp \
+test_HMC_nofact_SOURCES = test_HMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
-test_HMC_smear_noF_SOURCES = test_HMC_Smear_noFact.cpp \
+test_HMC_smear_noF_SOURCES = test_HMC_Smear_noFact.cpp 	\
 			  	testerHMC.cpp
+
+test_HMC_EvenOdd_SOURCES = test_HMC_EvenOdd.cpp		\
+				testerHMCeven-odd.cpp
+
+test_HMC_DomainWall_SOURCES = test_HMC_DomainWall.cpp		\
+				testerHMC_DomainWall.cpp
 
 test_RNG_SOURCES = test_RNG.cpp
-test_Wilson_SOURCES = test_wilson.cpp \
-			testerWilson.cpp
+test_Wilson_SOURCES = test_wilson.cpp 		\
+				testerWilson.cpp
 
-test_Wilson_EvenOdd_SOURCES = test_wilson_EvenOdd.cpp \
+test_Wilson_EvenOdd_SOURCES = test_wilson_EvenOdd.cpp 	\
 		        	testerWilson_EvenOdd.cpp
 
-test_DomainWall_SOURCES = test_DomainWall.cpp \
-			testerDWF.cpp
+test_DomainWall_SOURCES = test_DomainWall.cpp 		\
+				testerDWF.cpp
 
-test_ResMass_SOURCES = test_ResidualMass.cpp \
-			testerResMass.cpp
+test_ResMass_SOURCES = test_ResidualMass.cpp 		\
+				testerResMass.cpp
 
-test_IO_SOURCES = test_IO.cpp 	\
-		testerIO.cpp
+test_IO_SOURCES = test_IO.cpp 			\
+				testerIO.cpp
 
-test_EigenModes_SOURCES = test_EigenModes_IRL.cpp\
-			testerEigenModes.cpp
+test_EigenModes_SOURCES = test_EigenModes_IRL.cpp		\
+				testerEigenModes.cpp
 
-test_Smearing_SOURCES = test_smear.cpp	\
-			testerSmear.cpp
+test_Smearing_SOURCES = test_smear.cpp			\
+				testerSmear.cpp
 
-include_HEADERS = test_HMC.hpp 		\
-			test_wilson.hpp 	\
-                        test_wilson_EvenOdd.hpp \
-			test_DomainWall.hpp 	\
-			test_ResidualMass.hpp 	\
-			test_IO.hpp		\
-			test_EigenModes_IRL.hpp	\
-			test_smear.hpp		\
-			test_Gauge.hpp
+test_Overlap_SOURCES = test_overlap.cpp		\
+				testerOverlap.cpp
+
+test_MultiShiftSolver_SOURCES = test_MultiShiftSolver.cpp	\
+				testerMultiShiftSolver.cpp
+
+include_HEADERS = tests.hpp			\
+				tests_all.hpp			\
+				test_HMC.hpp 			\
+				test_wilson.hpp 		\
+				test_wilson_EvenOdd.hpp 	\
+				test_DomainWall.hpp 		\
+				test_ResidualMass.hpp 		\
+				test_IO.hpp			\
+				test_EigenModes_IRL.hpp		\
+				test_smear.hpp			\
+				test_Gauge.hpp			\
+				test_overlap.hpp		\
+				test_MultiShiftSolver.hpp
 
 all: all-am
 
@@ -415,6 +461,12 @@ test_Gauge$(EXEEXT): $(test_Gauge_OBJECTS) $(test_Gauge_DEPENDENCIES)
 test_HMC$(EXEEXT): $(test_HMC_OBJECTS) $(test_HMC_DEPENDENCIES) 
 	@rm -f test_HMC$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_OBJECTS) $(test_HMC_LDADD) $(LIBS)
+test_HMC_DomainWall$(EXEEXT): $(test_HMC_DomainWall_OBJECTS) $(test_HMC_DomainWall_DEPENDENCIES) 
+	@rm -f test_HMC_DomainWall$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_DomainWall_OBJECTS) $(test_HMC_DomainWall_LDADD) $(LIBS)
+test_HMC_EvenOdd$(EXEEXT): $(test_HMC_EvenOdd_OBJECTS) $(test_HMC_EvenOdd_DEPENDENCIES) 
+	@rm -f test_HMC_EvenOdd$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_EvenOdd_OBJECTS) $(test_HMC_EvenOdd_LDADD) $(LIBS)
 test_HMC_nofact$(EXEEXT): $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_DEPENDENCIES) 
 	@rm -f test_HMC_nofact$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_LDADD) $(LIBS)
@@ -424,6 +476,12 @@ test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_
 test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES) 
 	@rm -f test_IO$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
+test_MultiShiftSolver$(EXEEXT): $(test_MultiShiftSolver_OBJECTS) $(test_MultiShiftSolver_DEPENDENCIES) 
+	@rm -f test_MultiShiftSolver$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_MultiShiftSolver_OBJECTS) $(test_MultiShiftSolver_LDADD) $(LIBS)
+test_Overlap$(EXEEXT): $(test_Overlap_OBJECTS) $(test_Overlap_DEPENDENCIES) 
+	@rm -f test_Overlap$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Overlap_OBJECTS) $(test_Overlap_LDADD) $(LIBS)
 test_RNG$(EXEEXT): $(test_RNG_OBJECTS) $(test_RNG_DEPENDENCIES) 
 	@rm -f test_RNG$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_RNG_OBJECTS) $(test_RNG_LDADD) $(LIBS)
@@ -450,11 +508,15 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModes_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_DomainWall.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_Smear_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RNG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ResidualMass.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_overlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@
@@ -462,7 +524,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerEigenModes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerGauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC_DomainWall.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMCeven-odd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMultiShiftSolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerOverlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerResMass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson.Po@am__quote@
