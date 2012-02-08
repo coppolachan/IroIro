@@ -1,4 +1,4 @@
-# Time-stamp: <2012-02-07 12:22:37 neo>
+# Time-stamp: <2012-02-08 10:25:11 neo>
 
 testdir = $(bindir)/Test
 
@@ -88,6 +88,8 @@ test_MultiShiftSolver_SOURCES =	test_MultiShiftSolver.cpp	\
 include_HEADERS 	=	tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
+				test_HMC_EvenOdd.hpp		\
+				test_HMC_DomainWall.hpp		\
 				test_wilson.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
 				test_DomainWall.hpp 		\

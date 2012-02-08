@@ -22,8 +22,8 @@ AC_LANG(C++)
 
 #####################################################################
 # Save some environment variables
-cpp=$CPP
-cpp_flags=$CPPFLAGS
+cpp=$CXX
+cpp_flags=$CXXFLAGS
 ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value 
@@ -89,8 +89,8 @@ macppc | mac686 | mac86_64 )
      # list of tested compilers
       use_cpp="g++ icpc"; 
     fi
-    use_cpp_flags="-O3 -I/opt/local/"
-    ld_flags="${LDFLAGS} -L/opt/local"
+    use_cpp_flags="-O3 -I/opt/local/include"
+    ld_flags="${LDFLAGS} -L/opt/local/lib"
     use_ar_flags="cru"
     ;;
 aix )
