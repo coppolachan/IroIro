@@ -38,7 +38,7 @@ then
         *-ibm-aix* )            arch=aix      ;;
         powerpc-apple-darwin* ) arch=macppc   ;;
         i686-apple-darwin* )    arch=mac686   ;;
-	x84_64-apple-darwin* )  arch=mac86_64 ;;
+	x86_64-apple-darwin* )  arch=mac86_64 ;;
 	* )
 	AC_MSG_WARN(unsupported architecture. Setting defaults...)
 	use_cpp="g++"
