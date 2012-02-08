@@ -218,10 +218,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = lib tests docs
 EXTRA_DIST = README 		\
-	docs/doxy.cfg.in 	\
-	docs/doxy.cfg.jp	\
-	docs/keklogo-c.jpg 	\
-	docs/Makefile.am
+		todo
 
 @DOXYGEN_DOC_TRUE@directory = $(top_srcdir)/docs/
 all: all-recursive

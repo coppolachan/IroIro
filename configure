@@ -2991,7 +2991,7 @@ then
         *-ibm-aix* )            arch=aix      ;;
         powerpc-apple-darwin* ) arch=macppc   ;;
         i686-apple-darwin* )    arch=mac686   ;;
-	x84_64-apple-darwin* )  arch=mac86_64 ;;
+	x86_64-apple-darwin* )  arch=mac86_64 ;;
 	* )
 	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: unsupported architecture. Setting defaults..." >&5
 $as_echo "$as_me: WARNING: unsupported architecture. Setting defaults..." >&2;}

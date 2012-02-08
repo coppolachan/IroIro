@@ -162,6 +162,15 @@ target_vendor = @target_vendor@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+EXTRA_DIST = doxy.cfg.in 	\
+		doxy.cfg.jp	\
+		keklogo-c.jpg 	\
+		Makefile.am	\
+		footer.html	\
+		header.html	\
+		IroIroCodeBanner250.png \
+		JICFUSsymbolmark170px.png
+
 all: all-am
 
 .SUFFIXES:
@@ -340,6 +349,8 @@ uninstall-am:
 	install-strip installcheck installcheck-am installdirs \
 	maintainer-clean maintainer-clean-generic mostlyclean \
 	mostlyclean-generic pdf pdf-am ps ps-am uninstall uninstall-am
+
+		customdoxygen.css
 
 doxyfile:
 	echo Timestamp > doxyfile.stamp

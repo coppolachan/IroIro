@@ -16,6 +16,8 @@ class Test_ResMass: public TestGeneral{
 private:
   XML::node ResMassNode;
   GaugeField& conf_;
+  GaugeField smeared_u_;
+  GaugeField previous_u_;
 
   Field delta(const Dirac_optimalDomainWall_4D*,const Field&);
 public:

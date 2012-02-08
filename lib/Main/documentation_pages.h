@@ -2,6 +2,22 @@
 
   @page configure Configuration and compilation
  
+
+  Configuration and compilation was tested in the following systems:
+
+  * - <a href="http://gcc.gnu.org/">GNU compiler</a> (tested with g++ version 4.6.1) (Linux and Apple), refer to section \ref simple
+  * - <a href="http://www.open-mpi.org/">openMPI</a> (tested with version 1.4.4) for multicore version  (Linux), refer to section \ref openMPI
+  * - <a href="http://software.intel.com/en-us/articles/c-compilers/">INTEL compiler</a> (tested with icpc version 12.1.2) (Linux), refer to section \ref INTEL_comp
+  * - <a href="http://www-01.ibm.com/software/awdtools/xlcpp/">IBM XLC compiler</a> (tested with xlC version 11.1, cross platform compilation) (AIX), refer to section \ref AIX-XLC
+  
+  for bug reports and requests please send an email to \b cossu(AT)post(DOT)kek(DOT)jp 
+
+  Other topics in this page:
+  * - \ref verbosity
+  * - \ref GSL_lib
+  * - \ref testing
+  * - \ref Silent
+
   @section help Options help
 
   The output of 
@@ -23,6 +39,10 @@
   ./configure
   make @endverbatim
   
+  This is valid on x86_64 Linux systems as well as apple-darwin Unix environments.
+
+  To override the compiler flags use the environment variables in the <tt>./configure</tt> command line. See <tt>./configure --help</tt> for more informations.  
+
 
   @section AIX-XLC Compilation on AIX with XLC
   
@@ -39,15 +59,15 @@
   @verbatim
   -q64 -qlanglvl=stdc99 -qrtti=type@endverbatim
   
-  @section INTEL_comp Compilation with INTEL compiler (icpc)
+  @section INTEL_comp Compilation with INTEL compiler
   
-  The configure will automatically look for INTEL compiler. If it is found in the path, icpc will be used in compilation, no further specification is needed.
+  The configure will automatically look for INTEL compiler. If it is found in the path, \c icpc will be used in compilation, no further specification is needed.
   
   Use \c CXXFLAGS="..." during configure to setup your preferred flags (this will override every default flag).
 
   \b Note: The compiler must be at least version 12.0.5
 
-  @section openMPI Compilation on MPI capable general machine
+  @section openMPI Compilation on MPI capable general architecture
  
   Use this on a general multicore machine with openMPI installed
 
