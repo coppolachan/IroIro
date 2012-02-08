@@ -32,16 +32,17 @@ hitachi=false  # default value
 if test "$arch" = ""
 then
         case $host in
-        ia64-*-linux-gnu )      arch=ia64    ;;
-        x86_64-*-linux-gnu )    arch=amd64   ;;
-        *-pc-linux-gnu )        arch=ia32    ;;
-        *-ibm-aix* )            arch=aix     ;;
-        powerpc-apple-darwin* ) arch=macppc  ;;
-        i686-apple-darwin* )    arch=mac686  ;;
+        ia64-*-linux-gnu )      arch=ia64     ;;
+        x86_64-*-linux-gnu )    arch=amd64    ;;
+        *-pc-linux-gnu )        arch=ia32     ;;
+        *-ibm-aix* )            arch=aix      ;;
+        powerpc-apple-darwin* ) arch=macppc   ;;
+        i686-apple-darwin* )    arch=mac686   ;;
+	x84_64-apple-darwin* )  arch=mac86_64 ;;
 	* )
 	AC_MSG_WARN(unsupported architecture. Setting defaults...)
-	cpp="g++"
-	cpp_flags="-g"
+	use_cpp="g++"
+	use_cpp_flags="-g"
 	ld_flags=""
 	;;
 esac
@@ -67,7 +68,7 @@ AC_ARG_ENABLE(mpi,
 # default flags are also defined
 
 case "$arch" in
-ia64 | amd64 | ia32 | macppc | mac686 )
+ia64 | amd64 | ia32 )
    if [ $mpi ]
     then
       # list of tested MPI compilers	
@@ -77,6 +78,19 @@ ia64 | amd64 | ia32 | macppc | mac686 )
       use_cpp="g++ icpc"; 
     fi
     use_cpp_flags="-O3"
+    use_ar_flags="cru"
+    ;;
+macppc | mac686 | mac86_64 )
+   if [ $mpi ]
+    then
+      # list of tested MPI compilers	
+      use_cpp="mpicxx.openmpi" 
+    else
+     # list of tested compilers
+      use_cpp="g++ icpc"; 
+    fi
+    use_cpp_flags="-O3 -I/opt/local/"
+    ld_flags="${LDFLAGS} -L/opt/local"
     use_ar_flags="cru"
     ;;
 aix )
