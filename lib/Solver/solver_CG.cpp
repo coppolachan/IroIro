@@ -10,7 +10,6 @@
 #include "Communicator/communicator.h"
 #include "Fields/field_expressions.hpp"
 #include "solver_CG.h"
-using CommunicatorItems::pprintf;
 
 using namespace std;
 

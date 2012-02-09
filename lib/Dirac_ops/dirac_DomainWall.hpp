@@ -223,8 +223,6 @@ public:
   size_t fsize()  const{ return fsize_; }
   size_t gsize()  const{ return gsize_; }
   
-  const Field operator()(int, const Field&) const{}
-
   double getMass() const{return Params.mq_;}
 
   const Field gamma5_4d(const Field& f4) const{return Dw_.gamma5(f4);}

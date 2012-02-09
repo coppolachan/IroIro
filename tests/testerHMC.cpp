@@ -32,8 +32,8 @@ int main(int argc, char* argv[]){
   descend(HMC_node, "HMC");
   
   
-  Test_HMC HMCTest(GaugeF);
-  HMCTest.run(HMC_node);
+  Test_HMC HMCTest(HMC_node,GaugeF);
+  HMCTest.run();
 
   return 0;
 }

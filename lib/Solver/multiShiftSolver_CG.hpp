@@ -1,5 +1,5 @@
 /*!
- * @file multiShiftSolver_CG.h
+ * @file multiShiftSolver_CG.hpp
  *
  * @brief Definition of the MultiShiftSolver_CG class
  *

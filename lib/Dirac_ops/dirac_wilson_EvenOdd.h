@@ -65,7 +65,6 @@ public:
 
   const ffmt_t get_fermionFormat() const{ return Deo_.get_fermionFormat();}
   const std::vector<int> get_gsite() const;
-  const Field operator()(int OpType,const Field&)const{}
   double getKappa()const { return Deo_.getKappa();}
 };
 

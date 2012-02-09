@@ -39,7 +39,7 @@ double Staples::plaq_s(const Field& g) const{
 //------------------------------------------------------------
 double Staples::plaq_s(const ShiftField& gs) const{
   Field g(gs.getva());
-  plaq_s(g);
+  return plaq_s(g);
 }
 //------------------------------------------------------------
 double Staples::plaq_t(const Field& g)const{
@@ -57,7 +57,7 @@ double Staples::plaq_t(const Field& g)const{
 //------------------------------------------------------------
 double Staples::plaq_t(const ShiftField& gs)const{
   Field g(gs.getva());
-  plaq_t(g);
+  return plaq_t(g);
 }
 //------------------------------------------------------------
 void Staples::staple(Field& W, const Field& g, int mu) const{

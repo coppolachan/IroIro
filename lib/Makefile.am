@@ -71,6 +71,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
+		Measurements/FermionicM/DWF_residualMass.cpp		\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
 		Measurements/FermionicM/utils_DWF4d.cpp	\
 		Main/Geometry/siteIndex.cpp		\
@@ -83,13 +84,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
-		../tests/test_Gauge.cpp			\
-		../tests/test_MultiShiftSolver.cpp	\
-		../tests/test_overlap.cpp		\
-		../tests/test_wilson_EvenOdd.cpp	\
-		../tests/test_DomainWall.cpp		\
-		../tests/test_HMC_DomainWall.cpp	\
-                ../tests/test_HMC_EvenOdd.cpp           \
 		$(top_srcdir)/include/common_fields.cpp
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
@@ -139,6 +133,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/qprop.h				\
 			Measurements/FermionicM/qprop_EvenOdd.h			\
 			Measurements/FermionicM/qprop_DomainWall.hpp 		\
+			Measurements/FermionicM/DWF_residualMass.hpp		\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp		\
 			Measurements/FermionicM/sources_factory.hpp		\
@@ -192,15 +187,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
-			Tools/gammaMatrices.hpp			\
-			../tests/tests_all.hpp			\
-			../tests/test_MultiShiftSolver.h	\
-			../tests/test_overlap.hpp		\
-			../tests/test_wilson_EvenOdd.hpp	\
-			../tests/test_Gauge.hpp			\
-                        ../tests/test_HMC_DomainWall.hpp        \
-                        ../tests/test_HMC_EvenOdd.hpp           \
-			../tests/tests.hpp                      
+			Tools/gammaMatrices.hpp			
+
 
 
 

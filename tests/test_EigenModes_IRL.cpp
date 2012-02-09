@@ -10,14 +10,18 @@
 #include "Dirac_ops/dirac_wilson.h"
 #include <stdio.h>
 
-using CommunicatorItems::pprintf;
 using namespace std;
 using namespace FieldExpression;
 
-int Test_EigenModes_IRL::run(XML::node node) {
+int Test_EigenModes_IRL::run() {
+  
+  CCIO::header("Test EigenModes");
+  
   lowlying();
-  //  highest();
-  //  chebyshev();
+  highest();
+  //chebyshev();
+
+  return 0;
  }
 
 int Test_EigenModes_IRL::lowlying(){
@@ -51,7 +55,7 @@ int Test_EigenModes_IRL::lowlying(){
   for(int i=0; i<Nsbt+1; ++i){
     v = Hw.mult(evec[i]);
     v -= lmd[i]*evec[i];
-    printf(" %4d %20.14f %20.15e \n",i,lmd[i],v*v);
+    CCIO::cout << "["<<i<<"] "<< lmd[i] << "  "<<v*v<<std::endl;
   }
   return 0;
 }
@@ -86,7 +90,7 @@ int Test_EigenModes_IRL::highest(){
   for(int i=0; i<Nsbt+1; ++i){
     v = Hw.mult(evec[i]);
     v -= lmd[i]*evec[i];
-    printf(" %4d %20.14f %20.15e \n",i,lmd[i],v*v);
+    CCIO::cout << "["<<i<<"] "<< lmd[i] << "  "<<v*v<<std::endl;
   }
   
   return 0;
@@ -115,7 +119,7 @@ int Test_EigenModes_IRL::chebyshev()
   int    Niter_eigen = 500;
   double vthrs_eigen = 0.15;
   double Tn_vthrs = Tn_DdagD.mult(vthrs_eigen);
-  printf("Tn_vthrs = %.25e\n",Tn_vthrs);
+  CCIO::cout << "Tn_vthrs = "<<Tn_vthrs<<std::endl;
 
   SortEigen_high sort;
 

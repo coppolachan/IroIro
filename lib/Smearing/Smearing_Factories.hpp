@@ -1,5 +1,5 @@
 /*!
- * @file Smearing_Factory.hpp 
+ * @file Smearing_Factories.hpp 
  *
  * @brief Declaration of Smearing Operators factories
  */

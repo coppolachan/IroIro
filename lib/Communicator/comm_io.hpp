@@ -185,8 +185,6 @@ namespace CCIO{
   
 class Field;
 
-class NullType{};
-
 template< bool Condition, typename T >
 class IF_VERB {
 public:

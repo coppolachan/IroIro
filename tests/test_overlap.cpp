@@ -1,6 +1,8 @@
-//-------------------------------------------------------------------------
-// test_overlap.cpp
-//-------------------------------------------------------------------------
+/*!
+ * @file test_overlap.hpp
+ *
+ * @brief Definition of functions to test the overlap functions
+ */
 #include "test_overlap.hpp"
 #include "Dirac_ops/dirac_wilson.h"
 #include "Dirac_ops/dirac_overlap_Zolotarev.h"
@@ -113,7 +115,7 @@ int Test_Overlap::ovsolver_subt(){
   
 
   GammaMatrices::Unit Gamma;//pion
-  MesonCorrelator meson(Gamma,Gamma);
+  MesonCorrelator meson(Pion);
   std::vector<double> mcorr = meson.calculate< Format::Format_F >(sq,sq);
   for(int t = 0; t < mcorr.size(); ++t)
     std::cout << t << "  "<< mcorr[t] << std::endl;

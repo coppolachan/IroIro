@@ -4,17 +4,17 @@
   <!-- Geometry parameters here -->
   <Geometry>
     <Lattice>4 4 4 8</Lattice>
-    <Nodes>1 1 1 1</Nodes>
+    <Nodes>1 1 1 2</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>20</Nsweeps>
-    <Thermalization>5</Thermalization>
+    <Nsweeps>1</Nsweeps>
+    <Thermalization>0</Thermalization>
     <SaveInterval>0</SaveInterval>
-    <SavePrefix>HMCrect_</SavePrefix>
+    <SavePrefix>HMCclover_</SavePrefix>
 
     <RandomNumberGen name="Mersenne Twister">
       <!-- <seedFile>seed_file</seedFile> -->

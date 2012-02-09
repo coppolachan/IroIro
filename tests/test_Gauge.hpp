@@ -17,6 +17,7 @@
  */
 class Test_Gauge: public TestGeneral{
  private:
+  const XML::node Gauge_node;
   const GaugeField& d_conf;
 
   int shift();
@@ -24,7 +25,8 @@ class Test_Gauge: public TestGeneral{
   //  int evenodd();
 
  public:
-  Test_Gauge(GaugeField& conf):d_conf(conf){}
+  Test_Gauge(XML::node node, GaugeField& conf):Gauge_node(node),
+					       d_conf(conf){}
   int run();
 };
 

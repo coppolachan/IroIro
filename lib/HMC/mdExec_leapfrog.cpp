@@ -33,7 +33,7 @@ void MDexec_leapfrog::attach_observer(ObserverList& OList,
 }
 
 void MDexec_leapfrog::notify_observers(ObserverList& OList) {
-  for(int element; element < OList.size(); ++element) {
+  for(int element = 0; element < OList.size(); ++element) {
     OList[element]->observer_update();
   }
 }

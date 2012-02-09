@@ -1,5 +1,5 @@
 /*!
- * @file test_optimalDomainWall.hpp
+ * @file test_DomainWall.hpp
  *
  * @brief Declaration of classes for testing the Dirac_optimalDomainWall class
  *
@@ -14,6 +14,7 @@
 
 class Test_optimalDomainWall: public TestGeneral{
 private:
+  XML::node DWFnode;
   GaugeField& conf_;
 
   int mult5d_test(const Dirac_optimalDomainWall&,const Field&,int);
@@ -21,8 +22,9 @@ private:
   int mult5d_gamma5_test(const Dirac_optimalDomainWall&,const Field&,int);
 
 public:
-  Test_optimalDomainWall(GaugeField& conf):conf_(conf){}
-  int run(XML::node ODWFnode);
+  Test_optimalDomainWall(XML::node node,GaugeField& conf):DWFnode(node),
+							  conf_(conf){}
+  int run();
 };
 
 #endif

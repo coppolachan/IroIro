@@ -3,7 +3,7 @@
  *
  * @brief Declaration of functions to test MultiShiftSolver_CG 
  */
-#include "test_MultiShiftSolver.h"
+#include "test_MultiShiftSolver.hpp"
 #include "Solver/multiShiftSolver_CG.hpp"
 #include "include/format_F.h"
 #include "include/fopr.h"
@@ -19,6 +19,7 @@ using namespace std;
 
 int Test_MultiShiftSolver::run(){
   test1();
+  return 0;
 }
 
 

@@ -1,5 +1,5 @@
 /*!
- * @file dirac_Factory.hpp 
+ * @file dirac_Operator_Factory.hpp 
  *
  * @brief Declaration of Dirac operators factories
  */

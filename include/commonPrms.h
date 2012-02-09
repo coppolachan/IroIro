@@ -58,6 +58,8 @@ private:
 
   static void setup(const Lattice& latt);
   static CommonPrms* instance_;
+
+  ~CommonPrms(){delete instance_;}
 public:
   static CommonPrms* instance(const Lattice & latt);
   static CommonPrms* instance();

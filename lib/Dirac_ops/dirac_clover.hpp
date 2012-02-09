@@ -130,8 +130,6 @@ public:
   size_t fsize() const{return fsize_;}
   size_t gsize() const{return gsize_;}
 
-  const Field operator()(int OpType, const Field&)const{};
-
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 

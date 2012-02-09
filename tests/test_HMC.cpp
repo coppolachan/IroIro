@@ -16,15 +16,15 @@
 #include "test_HMC.hpp"
 
 
-int Test_HMC::run(XML::node node){
+int Test_HMC::run(){
   CCIO::cout << "Starting HMCrun" << std::endl;
   
-  RNG_Env::RNG = RNG_Env::createRNGfactory(node);
+  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
   Integrators::Integr = 
-    Integrators::createIntegratorFactory(node, Gfield_.Format);
+    Integrators::createIntegratorFactory(HMC_node, Gfield_.Format);
 
   //Initialization
-  HMCgeneral hmc_general(node);
+  HMCgeneral hmc_general(HMC_node);
 
   ////////////// HMC calculation /////////////////
   double elapsed_time;

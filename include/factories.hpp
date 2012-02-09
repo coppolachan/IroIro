@@ -11,3 +11,4 @@
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Measurements/FermionicM/fermion_meas_factory.hpp"
 #include "Measurements/FermionicM/sources_factory.hpp"
+#include "Smearing/Smearing_Factories.hpp"

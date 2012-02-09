@@ -1,5 +1,7 @@
 /*!
- * @file Test abstract classes
+ * @file tests.hpp
+ *
+ * @brief Abstract class for tests
  *
  */
 
@@ -8,7 +10,7 @@
 
 class TestGeneral {
 public:
-  virtual int run(){};
+  virtual int run() = 0;
 };
 
 

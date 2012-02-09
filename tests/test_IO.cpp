@@ -13,7 +13,7 @@
 #include "test_IO.hpp"
 #include "Measurements/GaugeM/staples.h"
 
-int Test_IO::run(XML::node node){
+int Test_IO::run(){
   CCIO::cout << "Test IO Starts ------------------------\n";
   CCIO::cout << "Running on "<<Communicator::instance()->size() << " nodes\n";
   
@@ -25,4 +25,6 @@ int Test_IO::run(XML::node node){
   CCIO::ReadFromDisk< Format::Format_G >(Gfield_.U, "temp_out");
   Staples Staple2(Gfield_.Format);
   CCIO::cout << "Plaquette : " << Staple2.plaquette(Gfield_.U) << std::endl;
+
+  return 0;
 }

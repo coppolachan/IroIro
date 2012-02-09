@@ -4,12 +4,12 @@
   <!-- Geometry parameters here -->
   <Geometry>
     <Lattice>4 4 4 8</Lattice>
-    <Nodes>1 1 1 1</Nodes>
+    <Nodes>1 1 1 2</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Unit">final_conf.bin</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>10</Nsweeps>

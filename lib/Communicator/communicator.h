@@ -84,19 +84,5 @@ public:
   static bool primaryNode();
 };
 
-namespace CommunicatorItems{
 
- inline int pprintf(const char* format ...){
-
-  va_list ap;
-  int ret = 0;
-
-  va_start(ap,format);
-  if(Communicator::nodeid()==0) ret = vfprintf(stdout, format, ap);
-  va_end(ap);
-
-  return ret;
- }
-
-}
 #endif

@@ -1,5 +1,5 @@
 /*!
-  @file mdExec_Factory.h
+  @file mdExec_Factory.hpp
   @brief Defines the Factories for Molecular Dynamics Integrator
 */
 

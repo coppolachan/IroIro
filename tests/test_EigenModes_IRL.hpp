@@ -10,16 +10,19 @@
 class SortEigen_low;
 class SortEigen_high;
 
-class Test_EigenModes_IRL{
+class Test_EigenModes_IRL: public TestGeneral{
  private:
+  XML::node Eigen_node;
   GaugeField& u_;
  public:
-  Test_EigenModes_IRL(GaugeField& conf):u_(conf){}
+  Test_EigenModes_IRL(XML::node node,
+		      GaugeField& conf):Eigen_node(node),
+					u_(conf){}
   int lowlying();
   int highest();
   int chebyshev();
 
-  int run(XML::node);
+  int run();
 };
 
 #endif
