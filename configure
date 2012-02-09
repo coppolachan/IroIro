@@ -2997,7 +2997,6 @@ then
 $as_echo "$as_me: WARNING: unsupported architecture. Setting defaults..." >&2;}
 	use_cpp="g++"
 	use_cpp_flags="-g"
-	ld_flags=""
 	;;
 esac
 fi

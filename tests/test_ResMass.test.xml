@@ -15,6 +15,7 @@
       <init>0x123 0x234 0x345 0x456</init>
     </RandomNumberGen>
     <Smearing type="Stout">
+      <Nsmear>2</Nsmear>
       <Base type="APE">
 	<rho>0.05</rho>
       </Base>

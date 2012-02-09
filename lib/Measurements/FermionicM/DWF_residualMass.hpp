@@ -5,13 +5,21 @@
  * 
  *
  */
+#ifndef DWF_RESMASS_HPP_
+#define DWF_RESMASS_HPP_
 
+#include "include/common_fields.hpp"
+#include "Dirac_ops/dirac_DomainWall_4D.hpp"
 
 class DWFresidualMass {
+  GaugeField& conf_;
   //Currently defined only on DomainWallFermions
-  const Field delta(const Dirac_DomainWall_4D* DWF, Field& phi);
+  Field delta(const Dirac_optimalDomainWall_4D* DWF, const Field& phi);
 
 public:
   double calc();
 
-}
+};
+
+
+#endif

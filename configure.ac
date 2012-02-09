@@ -43,7 +43,6 @@ then
 	AC_MSG_WARN(unsupported architecture. Setting defaults...)
 	use_cpp="g++"
 	use_cpp_flags="-g"
-	ld_flags=""
 	;;
 esac
 fi

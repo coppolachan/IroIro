@@ -10,8 +10,11 @@
 #include "Main/gaugeConf.hpp"
 #include "include/geometry.hpp"
 #include "include/field.h"
+#include "include/format_A.h"
 #include "include/format_G.h"
+#include "include/format_F.h"
 #include "lib/Tools/sunMat.h"
+#include "include/macros.hpp"
 
 typedef Format::Format_G GaugeFieldFormat;/**< Format of gauge field
 					     at compilation time */
@@ -182,5 +185,142 @@ public:
 namespace FieldUtils{
   const Field TracelessAntihermite(const GaugeField&);
 }
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////
+struct ExtraDimTag {};
+struct OneDimTag {};
+
+
+template < class DATA, class FORMAT, typename TAG = NullType> 
+class GeneralField {
+  FORMAT format;
+  DATA data;
+  GeneralField(const GeneralField& rhs); //hide copy constructor
+public:
+  GeneralField();
+  GeneralField(int);
+
+  /*! 
+   * Constructor\n 
+   * to store given data
+   */
+  explicit GeneralField(DATA&);
+
+
+  GeneralField& operator=(const GeneralField& rhs);
+  GeneralField& operator+=(const GeneralField& rhs);
+  GeneralField& operator-=(const GeneralField& rhs);
+
+
+
+};
+
+template < class DATA, class FORMAT, typename TAG> 
+GeneralField<DATA,FORMAT,TAG>:: 
+GeneralField():format(FORMAT( CommonPrms::instance()->Nvol())),
+	       data(format.size()){}
+
+// Specialization for one dimension gauge field
+template <> 
+inline GeneralField< Field, Format::Format_G, OneDimTag>:: 
+GeneralField():format(Format::Format_G( CommonPrms::instance()->Nvol(),1)),
+	       data(format.size()){}
+
+template < class DATA, class FORMAT, typename TAG> 
+GeneralField<DATA,FORMAT,TAG>:: 
+GeneralField(int LocalVol):format(FORMAT( LocalVol)),
+			   data(format.size()){}
+
+// Specialization for one dimension gauge field
+template <> 
+inline GeneralField< Field, Format::Format_G, OneDimTag>:: 
+GeneralField(int LocalVol):format(Format::Format_G( LocalVol,1)),
+			   data(format.size()){}
+
+
+template < class DATA, class FORMAT, typename TAG> 
+GeneralField<DATA,FORMAT,TAG>:: 
+GeneralField(DATA& FieldIn):format(FORMAT( CommonPrms::instance()->Nvol()))
+{
+  assert(FieldIn.size()== format.size());
+  data = FieldIn;
+}
+
+// Specialization for one dimension gauge field
+template <> 
+inline GeneralField< Field, Format::Format_G, OneDimTag>::
+GeneralField(Field& FieldIn):format(Format::Format_G( CommonPrms::instance()->Nvol(),1))
+{
+  assert(FieldIn.size()== format.size());
+  data = FieldIn;
+}
+
+template < class DATA, class FORMAT, typename TAG> 
+inline GeneralField<DATA,FORMAT,TAG>& 
+GeneralField<DATA,FORMAT,TAG>::operator=(const GeneralField& rhs)
+{
+  data = rhs.data;
+  return *this;
+}
+
+template < class DATA, class FORMAT, typename TAG>
+inline GeneralField<DATA,FORMAT,TAG>&
+GeneralField<DATA,FORMAT,TAG>::operator+=(const GeneralField& rhs) 
+{
+  data += rhs.data;
+  return *this;
+}
+
+template < class DATA, class FORMAT, typename TAG> 
+inline GeneralField<DATA,FORMAT,TAG>&
+GeneralField<DATA,FORMAT,TAG>::operator-=(const GeneralField& rhs) 
+{
+  data -= rhs.data;
+  return *this;
+}
+////////////////////////////////////////////////////////////////
+// Specialization for extradimension
+
+template < class DATA, class FORMAT> 
+class GeneralField<DATA, FORMAT, ExtraDimTag> {
+  FORMAT format;
+  DATA data;
+  GeneralField(){}; //hide default constructor
+  GeneralField(const GeneralField& rhs); //hide copy constructor
+public:
+  GeneralField(int Ls):format(FORMAT( CommonPrms::instance()->Nvol()*Ls)),
+		       data(format.size()){}
+  
+  GeneralField(int Ls, int LocalVol):format(FORMAT( LocalVol*Ls)),
+				     data(format.size()){}
+
+  /*! 
+   * Constructor\n 
+   * to store given data
+   */
+  explicit GeneralField(DATA&);
+  GeneralField& operator=(const GeneralField& rhs);
+  GeneralField& operator+=(const GeneralField& rhs);
+  GeneralField& operator-=(const GeneralField& rhs);
+
+};
+
+//////////////////////////////////////////////////////////////////////////////
+typedef GeneralField< Field, Format::Format_A >              AdjGaugeField;
+typedef GeneralField< Field, Format::Format_G >              GaugeFieldType;
+typedef GeneralField< Field, Format::Format_G, OneDimTag >   GaugeField1DType;
+typedef GeneralField< Field, Format::Format_F >              FermionField;
+typedef GeneralField< Field, Format::Format_F, ExtraDimTag > FermionFieldExtraDim;
+typedef GeneralField< std::vector<Field>, Format::Format_F > PropagatorField;
+
 
 #endif //COMMON_FIELDS_H_

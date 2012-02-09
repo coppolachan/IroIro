@@ -36,6 +36,6 @@
   var = (end.tv_sec - start.tv_sec) * 1000.0;				\
   var = var + (end.tv_usec - start.tv_usec) / 1000.0   // us to ms
 
-
+class NullType{};
 
 #endif

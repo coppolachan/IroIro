@@ -69,6 +69,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
+		Measurements/FermionicM/DWF_residualMass.cpp		\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
 		Main/Geometry/siteIndex.cpp		\
 		Main/Geometry/siteIndex_eo.cpp		\
@@ -129,6 +130,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/qprop.h				\
 			Measurements/FermionicM/qprop_EvenOdd.h			\
 			Measurements/FermionicM/qprop_DomainWall.hpp 		\
+			Measurements/FermionicM/DWF_residualMass.cpp		\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp		\
 			Measurements/FermionicM/sources_factory.hpp		\
