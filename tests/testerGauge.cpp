@@ -23,8 +23,11 @@ int main(int argc, char* argv[]){
   Geometry geom(top_node);
 
   //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
-  GaugeF.initialize(top_node);
+  GaugeGlobal G_Global(geom);
+  G_Global.initialize(top_node);
+
+  //GaugeField GaugeF(geom);
+  //GaugeF.initialize(top_node);
 
   /////////////
   
@@ -32,7 +35,7 @@ int main(int argc, char* argv[]){
   descend(Gauge_node, "Gauge");
   
   
-  Test_Gauge GaugeTest(Gauge_node,GaugeF);
+  Test_Gauge GaugeTest(Gauge_node,G_Global);
   GaugeTest.run();
 
   return 0;

@@ -187,8 +187,10 @@ struct ExtraDimTag {};
 struct OneDimTag {};
 
 
+
 template < class DATA, class FORMAT, typename TAG = NullType> 
 class GeneralField {
+protected:
   FORMAT format;
   GeneralField(const GeneralField& rhs); //hide copy constructor
 public:
@@ -196,20 +198,19 @@ public:
   GeneralField();
   GeneralField(int);
 
-  FORMAT get_Format(){ return format;}
+  const FORMAT get_Format() const{ return format;}
 
   /*! 
    * Constructor\n 
    * to store given data
    */
-  explicit GeneralField(DATA&);
-
+  explicit GeneralField(const DATA&);
 
   GeneralField& operator=(const GeneralField& rhs);
   GeneralField& operator+=(const GeneralField& rhs);
   GeneralField& operator-=(const GeneralField& rhs);
 
-
+  double norm();
 
 };
 
@@ -238,7 +239,7 @@ GeneralField(int LocalVol):format(Format::Format_G( LocalVol,1)),
 
 template < class DATA, class FORMAT, typename TAG> 
 GeneralField<DATA,FORMAT,TAG>:: 
-GeneralField(DATA& FieldIn):format(FORMAT( CommonPrms::instance()->Nvol()))
+GeneralField(const DATA& FieldIn):format(FORMAT( CommonPrms::instance()->Nvol()))
 {
   assert(FieldIn.size()== format.size());
   data = FieldIn;
@@ -247,7 +248,7 @@ GeneralField(DATA& FieldIn):format(FORMAT( CommonPrms::instance()->Nvol()))
 // Specialization for one dimension gauge field
 template <> 
 inline GeneralField< Field, Format::Format_G, OneDimTag>::
-GeneralField(Field& FieldIn):format(Format::Format_G( CommonPrms::instance()->Nvol(),1))
+GeneralField(const Field& FieldIn):format(Format::Format_G( CommonPrms::instance()->Nvol(),1))
 {
   assert(FieldIn.size()== format.size());
   data = FieldIn;
@@ -277,7 +278,11 @@ GeneralField<DATA,FORMAT,TAG>::operator-=(const GeneralField& rhs)
   return *this;
 }
 
-
+template < class DATA, class FORMAT, typename TAG> 
+double GeneralField<DATA,FORMAT,TAG>::norm() 
+{
+  return data.norm();
+}
 
 ////////////////////////////////////////////////////////////////
 // Specialization for extradimension
@@ -308,13 +313,103 @@ public:
 
 };
 
+
+
 //////////////////////////////////////////////////////////////////////////////
+// Notes
+// GaugeFieldType shoud contain also methods to create from geometry and initialize
 typedef GeneralField< Field, Format::Format_A >              AdjGaugeField;
 typedef GeneralField< Field, Format::Format_G >              GaugeFieldType;
 typedef GeneralField< Field, Format::Format_G, OneDimTag >   GaugeField1DType;
 typedef GeneralField< Field, Format::Format_F >              FermionField;
 typedef GeneralField< Field, Format::Format_F, ExtraDimTag > FermionFieldExtraDim;
 typedef GeneralField< std::vector<Field>, Format::Format_F > PropagatorField;
+
+
+struct GaugeGlobal: public GaugeFieldType{
+  GaugeGlobal(Geometry geom){std::cout<< "prova!!!!!\n"; }
+ 
+  GaugeFieldType& operator=(GaugeGlobal& Source){
+    assert (format.size() == Source.format.size());
+    data = Source.data;
+    return *this;
+  }
+ /*!
+   * Initializes the gauge field with an \n
+   * external configuration in file <Filename>
+   *
+   * Configuration type in XML: TextFile
+   * @param Filename String containing the filename
+   */
+  void initializeTxt(const std::string &Filename) {
+    GaugeConf_txt gconf(format,Filename);
+    gconf.init_conf(data);
+  }
+
+  /*!
+   * Initializes the gauge field with an \n
+   * external configuration in binary format
+   * contained in file <Filename>
+   *
+   * Configuration type in XML: Binary
+   * @param Filename String containing the filename
+   */
+  void initializeBin(const std::string &Filename) {
+    GaugeConf_bin gconf(format,Filename);
+    gconf.init_conf(data);
+  }
+
+  void initializeJLQCDlegacy(const std::string &Filename) {
+    GaugeConf_JLQCDLegacy gconf(format,Filename);
+    gconf.init_conf(data);
+  }
+
+ /*!
+   * @brief Initializes the gauge field with \n
+   * unit matrices
+   *
+   * Configuration type in XML: Unit
+   */
+  void initializeUnit(){
+    GaugeConf_unit gconf(format);
+    gconf.init_conf(data);
+  }
+
+
+  int initialize(XML::node node) {
+    try {
+      XML::descend(node, "Configuration");
+      if (!XML::attribute_compare(node,"Type","TextFile")){
+	std::string filename(node.child_value());
+	initializeTxt(filename);
+	return 0;
+      }
+      if (!XML::attribute_compare(node,"Type","Unit")){
+	initializeUnit();
+	return 0;
+      }
+      if (!XML::attribute_compare(node,"Type","Binary")){
+	std::string filename(node.child_value());
+	initializeBin(filename);
+	return 0;
+      }
+      if (!XML::attribute_compare(node,"Type","JLQCDlegacy")){
+	std::string filename(node.child_value());
+	initializeJLQCDlegacy(filename);
+	return 0;
+      }
+    } catch(...) {
+      std::cout << "Error in initialization of gauge field "<< std::endl;
+    }
+
+    return 0;
+  }
+
+private:
+  GaugeGlobal(const GaugeGlobal&);
+};
+
+
 
 
 

@@ -1,6 +1,7 @@
 SUBDIRS = lib tests docs
 
-EXTRA_DIST = 	README 		\
+EXTRA_DIST = 	m4	\
+		README 	\
 		todo
 
 #if DOXYGEN_DOC
