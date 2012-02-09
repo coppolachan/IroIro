@@ -217,7 +217,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = lib tests docs
-EXTRA_DIST = README 		\
+EXTRA_DIST = m4	\
+		README 	\
 		todo
 
 @DOXYGEN_DOC_TRUE@directory = $(top_srcdir)/docs/

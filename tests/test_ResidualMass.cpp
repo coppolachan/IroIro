@@ -51,7 +51,6 @@ int Test_ResMass::run() {
   // smeared_u_ will be passed to the operators
   smeared_u_ = conf_;
 
-  GaugeFieldType test_u;
 
   // Do the actual smearing 
   for (int i = 0; i < Nsmear; i++) {
