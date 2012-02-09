@@ -1,11 +1,7 @@
 /*!
  * @file DWF_residualMass.hpp
- *
  * @brief Declaration of class to calculate the Residual Mass
- * 
- *
  */
-
 
 class DWFresidualMass {
   //Currently defined only on DomainWallFermions
@@ -13,5 +9,4 @@ class DWFresidualMass {
 
 public:
   double calc();
-
-}
+};

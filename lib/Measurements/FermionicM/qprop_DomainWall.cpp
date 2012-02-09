@@ -1,21 +1,18 @@
 /*!
  * @file qprop_optimalDomainWall.cpp
- *
  * @brief Declaration of Qprop optimal domain wall fermions QpropDWF
- *
  */
-
 #include "qprop_DomainWall.hpp"
 #include "Communicator/comm_io.hpp"
 
 void QpropDWF::calc(prop_t& xq,Source& src) const{
   xq.clear();
 
-  for(int s=0; s<Nd_;++s) {
-     for(int c=0; c<Nc_;++c) {
-       CCIO::cout << "Dirac = " << s << " Color = " << c << std::endl;
-       xq.push_back(Dgw_.mult_inv(src.mksrc(s,c)));
-     }
+  for(int s=0; s<Nd_;++s){
+    for(int c=0; c<Nc_;++c){
+      CCIO::cout << "Dirac = " << s << " Color = " << c << std::endl;
+      xq.push_back(Dgw_.mult_inv(src.mksrc(s,c)));
+    }
   }
 }
 

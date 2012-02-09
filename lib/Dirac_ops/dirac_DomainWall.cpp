@@ -284,7 +284,6 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{
     Field v = get4d(f5,s);
     v *= Params.bs_[s];
     v += Params.cs_[s]*(lpf +lmf);
-
     Field w = Dw_.mult(v);
     w *= 4.0+M0_;
     set5d(w5,w,s);

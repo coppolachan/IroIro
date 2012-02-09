@@ -1,9 +1,6 @@
 /*!
  * @file meson_correlator.hpp
- *
- *
  * @brief Class for calculation of generic meson correlator
- *
  */
 
 #include "meson_correlator.hpp"
@@ -12,7 +9,8 @@
 
 //assuming gamma5 hermiticity
 template <typename F>
-const std::vector<double> MesonCorrelator::calculate(const prop_t& q1, const prop_t& q2) {
+const std::vector<double> MesonCorrelator::calculate(const prop_t& q1, 
+						     const prop_t& q2) {
   CCIO::cout <<" Contraction to make up pp-correlator\n";
   F fmt;
   int Nt = CommonPrms::instance()->Nt();

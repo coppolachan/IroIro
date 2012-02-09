@@ -5,7 +5,7 @@
   <Geometry>
     <Lattice>4 4 4 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
-
+    <Boundary_cond>1 1 1 1</Boundary_cond>
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
@@ -15,12 +15,10 @@
       <init>0x123 0x234 0x345 0x456</init>
     </RandomNumberGen>
     <QuarkDWFProp>
-      <Kernel4d>
+      <Kernel4d name="DiracOptimalDomainWall4d">
 	<Kernel5d>
 	  <Preconditioning>LUPreconditioner</Preconditioning>
-	  <Kernel5d name="DiracWilson">
-	    <mass>-1.6</mass>
-	  </Kernel5d>
+	  <wilson_mass>-1.6</wilson_mass>
 	  <N5d>8</N5d>
 	  <b>1.0</b>
 	  <c>1.0</c>
@@ -29,9 +27,6 @@
 	    <lambda_min>0.1</lambda_min>
 	    <lambda_max>1.5</lambda_max>
 	  </approximation>
-	  <Kernel5d name="DiracWilson">
-	    <mass>-1.6</mass>
-	  </Kernel5d>
 	</Kernel5d>
 	<SolverDWF type="Solver_CG_Precondition">
 	  <MaxIter>10000</MaxIter>

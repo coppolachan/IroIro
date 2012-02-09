@@ -46,7 +46,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac_DomainWall.cpp   	\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  \
-		Dirac_ops/dirac_DomainWall_4D.cpp	\
+		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
+		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
+		Dirac_ops/eoUtils.cpp           	\
 		EigenModes/eigenModes_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/sortEigen.cpp		\
@@ -70,6 +72,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
+		Measurements/FermionicM/utils_DWF4d.cpp	\
 		Main/Geometry/siteIndex.cpp		\
 		Main/Geometry/siteIndex_eo.cpp		\
 		Main/gaugeConf.cpp			\
@@ -140,6 +143,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/quark_propagators.hpp		\
 			Measurements/FermionicM/sources_factory.hpp		\
 			Measurements/FermionicM/meson_correlator.hpp		\
+                        Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
@@ -157,8 +161,10 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac.h			\
 			Dirac_ops/dirac_DomainWall.hpp   	\
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
-			Dirac_ops/dirac_DomainWall_4D.hpp	\
+			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
+			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
 			Dirac_ops/dirac_Preconditioners.hpp	\
+			Dirac_ops/eoUtils.hpp            	\
 			Fields/field_expressions.hpp		\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.h		\

@@ -1,11 +1,7 @@
 /*!
- *
  * @file qprop.cpp
- *
  * @brief Definition of Qprop member functions
- *
  */
-
 #include "qprop.h"
 
 void Qprop::calc(prop_t& xq,Source& src) const{

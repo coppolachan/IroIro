@@ -24,8 +24,8 @@ int Test_EigenModes_IRL::lowlying(){
 
   Format::Format_F ff(CommonPrms::instance()->Nvol());
 
-  double mq  = 0.1666666666666;
-  //double mq  = -1.6;
+  //double mq  = 0.1666666666666;
+  double mq  = -1.6;
   Fopr_H Hw(new Dirac_Wilson(mq, &(u_.U)));
   SortEigen_low sort;
   int    Nk = 20;

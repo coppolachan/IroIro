@@ -30,12 +30,10 @@ public:
 
 /////////////////////////////////////////////////
 /*!
- @brief Concrete class for creating Conjugate Gradient Solver
- operator
+ @brief Concrete class for creating Conjugate Gradient Solver operator
 */
 class SolverCGFactory : public SolverOperatorFactory {
   const XML::node Solver_node;
-
 public:
   SolverCGFactory(const XML::node node):Solver_node(node){}
 
@@ -55,13 +53,10 @@ public:
 };
 
 /*!
- @brief Concrete class for creating Conjugate Gradient Solver
- operator
- 
- */
+ @brief Concrete class for creating Conjugate Gradient Solver operator
+*/
 class SolverCGPrecFactory : public SolverOperatorFactory {
   const XML::node Solver_node;
-
 public:
   SolverCGPrecFactory(const XML::node node):Solver_node(node){}
 
@@ -70,7 +65,7 @@ public:
   }
 
   Solver_CG_Precondition* getSolver(const Fopr_Herm* HermitianOperator){
-     std::cerr<< "getSolver Error: Solver_CG_Precondition requires Hermitian Preconditioned Operator" 
+    std::cerr<< "getSolver Error: Solver_CG_Precondition requires Hermitian Preconditioned Operator" 
 	     << std::endl;
     abort();
   }
@@ -84,8 +79,7 @@ public:
 
 /*!
  @brief Concrete class for creating BiConjugate Gradient Stabilized Solver
- operator
- 
+ operator 
  */
 class SolverBiCGStabFactory : public SolverOperatorFactory {
   const XML::node Solver_node;

@@ -1,9 +1,7 @@
 /*!
  * @file fermion_meas_factory.hpp 
- *
  * @brief Fermionic measurements operators factories
  */
-
 #ifndef FERMION_MEAS_FACT_
 #define FERMION_MEAS_FACT_
 
@@ -92,7 +90,6 @@ public:
     Solv.save(SolverObj.get()->getSolver(new Fopr_DdagD(Kernel.get())));
 
     //std::cout<<"&Solv="<<Solv.get() <<std::endl;    
-
     //std::cout<<"Qprop being created "<<std::endl;
     return new Qprop_EvenOdd(Kernel.get(), Solv.get());
   }
@@ -102,26 +99,24 @@ public:
  @brief Concrete class for creating Quark Propagator QpropDWF operator
 */
 class QPropDWFFactory : public QuarkPropagatorFactory {
-  RaiiFactoryObj<DiracDWF4dFactory> DiracObj; //very specific
-  
-  RaiiFactoryObj<Dirac_optimalDomainWall_4D> Kernel_DWF4D;
-  const XML::node Qprop_node;
+  RaiiFactoryObj<DiracDWF4dOperatorFactory> DiracFactory_;
+  RaiiFactoryObj<Dirac_optimalDomainWall_4D> DWF4D_;
+  const XML::node Qprop_node_;
 
 public:
-  QPropDWFFactory(XML::node node):Qprop_node(node){
+  QPropDWFFactory(XML::node node):Qprop_node_(node){
     XML::descend(node,"Kernel4d");
-    DiracObj.save(new DiracDWF4dFactory(node));
+    DiracFactory_.save(DiracOperators::createDiracDWF4dOperatorFactory(node));
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
-    Kernel_DWF4D.save(DiracObj.get()->getDiracOperator(&(Field.U)));
-    
-    return new QpropDWF(*Kernel_DWF4D.get());
+    return getQuarkPropDW(Field);}
+
+  QpropDWF* getQuarkPropDW(GaugeField& Field){
+    DWF4D_.save(DiracFactory_.get()->getDiracOperator4D(&(Field.U)));
+    return new QpropDWF(*DWF4D_.get());
   }
 };
-
-
-
 
 ///////////////////////////////////////////////////
 

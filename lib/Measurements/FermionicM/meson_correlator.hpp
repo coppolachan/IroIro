@@ -1,11 +1,7 @@
 /*!
  * @file meson_correlator.hpp
- *
- *
  * @brief Class for calculation of generic meson correlator
- *
  * It uses the GammaMatrices namespace
- *
  */
 
 #ifndef MESON_CORRELATOR_HPP_

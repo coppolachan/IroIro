@@ -1,6 +1,5 @@
 /*!
  * @file DWF_residualMass.cpp
- *
  * @brief Definition of class to calculate the Residual Mass
  */
 #include "DWF_residualMass.hpp"
@@ -10,7 +9,7 @@ double DWFresidualMass::calc() {
   XML::descend(node, "DiracOperator");
   // operator
   // here using a specific factory since we are testing the DWF-4d operator
-  DiracDWF4dFactory DWF_4d_Factory(node);
+  DiracDWF4DfullFactory DWF_4d_Factory(node);
   Dirac_DomainWall_4D* DiracDWF_4d = DWF_4d_Factory.getDiracOperator(&(conf_.U));
 
   //Propagator

@@ -171,8 +171,8 @@ int Test_optimalDomainWall::run(XML::node node){
   // Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
   Solver* SolvDWF = new Solver_CG(stop_cond,Niter , new Fopr_DdagD(DiracODWF));
   Solver* SolvPV  = new Solver_CG(stop_cond,Niter , new Fopr_DdagD(&Ddwf_PV ));
-  Dirac_optimalDomainWall_4D DiracDWF_4d(*DiracODWF, SolvDWF, SolvPV);
-  QpropDWF QuarkPropagator(DiracDWF_4d);
+  Dirac_optimalDomainWall_4D_fullSolv Ddwf4(DiracODWF,&Ddwf_PV,SolvDWF, SolvPV);
+  QpropDWF QuarkPropagator(Ddwf4);
   //////////////////////////////////// 
  
   CCIO::cout << ".::: Test Dirac_optimalDomainWall meson correlator" 

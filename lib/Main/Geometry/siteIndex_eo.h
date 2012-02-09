@@ -79,8 +79,8 @@ public:
 
   int Bdir(int d){return idx_->Bdir(d);}
 
-  const std::vector<int>& esec(){return esec_;}
-  const std::vector<int>& osec(){return osec_;}
+  static const std::vector<int>& esec(){return esec_;}
+  static const std::vector<int>& osec(){return osec_;}
   static int esec(int site){return esec_[site];}
   static int osec(int site){return osec_[site];}
 

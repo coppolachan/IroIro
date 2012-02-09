@@ -1,9 +1,7 @@
 /*
  * @file dirac.h
- *
  * @brief Defines the abstract base classs for Dirac operators
  */
-
 #ifndef DIRAC_H_
 #define DIRAC_H_
 
@@ -15,7 +13,6 @@ enum {Op, Dag};
 
 /*
  * @class Dirac
- *
  * @brief Declaration of abstract base class for Dirac operators
  */
 class Dirac {
@@ -73,20 +70,27 @@ public:
   virtual const Field mult_oo_inv(const Field&) const =0;
 };
 
+/*
+ * @class Dirac_OptimalDomainWall_4D
+ * @brief Declaration of abstract base class for 4D-reducted Domain-Wall fermions
+ */
+class Dirac_optimalDomainWall_4D : public DiracWilsonLike {
+public:
+  virtual ~Dirac_optimalDomainWall_4D(){}
+
+  virtual double getMass()const =0;
+  virtual const Field mult_inv(const Field&) const =0;
+  virtual const Field mult_dag_inv(const Field&) const =0;
+};
 
 /*
  * @class DiracStaggeredLike
- *
  * @brief Declaration of abstract base class for Dirac operators of Staggered type
  */
 class DiracStaggeredLike : public Dirac {
  public:
     virtual ~DiracStaggeredLike(){}
-
 };
-
-
-
 
 #endif
 
