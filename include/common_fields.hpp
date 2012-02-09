@@ -182,19 +182,6 @@ public:
   }
 };
 
-namespace FieldUtils{
-  const Field TracelessAntihermite(const GaugeField&);
-}
-
-
-
-
-
-
-
-
-
-
 //////////////////////////////////////////////////////////////////////
 struct ExtraDimTag {};
 struct OneDimTag {};
@@ -203,11 +190,13 @@ struct OneDimTag {};
 template < class DATA, class FORMAT, typename TAG = NullType> 
 class GeneralField {
   FORMAT format;
-  DATA data;
   GeneralField(const GeneralField& rhs); //hide copy constructor
 public:
+  DATA data;
   GeneralField();
   GeneralField(int);
+
+  FORMAT get_Format(){ return format;}
 
   /*! 
    * Constructor\n 
@@ -287,22 +276,27 @@ GeneralField<DATA,FORMAT,TAG>::operator-=(const GeneralField& rhs)
   data -= rhs.data;
   return *this;
 }
+
+
+
 ////////////////////////////////////////////////////////////////
 // Specialization for extradimension
 
 template < class DATA, class FORMAT> 
 class GeneralField<DATA, FORMAT, ExtraDimTag> {
   FORMAT format;
-  DATA data;
   GeneralField(){}; //hide default constructor
   GeneralField(const GeneralField& rhs); //hide copy constructor
 public:
+  DATA data;
   GeneralField(int Ls):format(FORMAT( CommonPrms::instance()->Nvol()*Ls)),
 		       data(format.size()){}
   
   GeneralField(int Ls, int LocalVol):format(FORMAT( LocalVol*Ls)),
 				     data(format.size()){}
 
+
+  FORMAT get_Format(){ return format;}
   /*! 
    * Constructor\n 
    * to store given data
@@ -321,6 +315,19 @@ typedef GeneralField< Field, Format::Format_G, OneDimTag >   GaugeField1DType;
 typedef GeneralField< Field, Format::Format_F >              FermionField;
 typedef GeneralField< Field, Format::Format_F, ExtraDimTag > FermionFieldExtraDim;
 typedef GeneralField< std::vector<Field>, Format::Format_F > PropagatorField;
+
+
+
+namespace FieldUtils{
+  const Field TracelessAntihermite(const GaugeField&);
+
+  SUNmat matrix(GaugeFieldType, int site, int ex);
+  SUNmat matrix(GaugeField1DType, int site, int ex);
+
+
+
+}
+
 
 
 #endif //COMMON_FIELDS_H_

@@ -51,6 +51,8 @@ int Test_ResMass::run() {
   // smeared_u_ will be passed to the operators
   smeared_u_ = conf_;
 
+  GaugeFieldType test_u;
+
   // Do the actual smearing 
   for (int i = 0; i < Nsmear; i++) {
     previous_u_ = smeared_u_;
@@ -77,6 +79,7 @@ int Test_ResMass::run() {
 
   std::vector<double> lmd(Nmm);
   std::vector<Field>  evec(Nmm);
+  
   for(int k = 0; k < Nmm; ++k) evec[k].resize(ff.size());
   eigen.calc(lmd,evec,b,Nsbt,Nconv);
 
