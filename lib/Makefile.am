@@ -130,7 +130,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/qprop.h				\
 			Measurements/FermionicM/qprop_EvenOdd.h			\
 			Measurements/FermionicM/qprop_DomainWall.hpp 		\
-			Measurements/FermionicM/DWF_residualMass.cpp		\
+			Measurements/FermionicM/DWF_residualMass.hpp		\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp		\
 			Measurements/FermionicM/sources_factory.hpp		\

@@ -37,7 +37,7 @@ then
         *-pc-linux-gnu )        arch=ia32     ;;
         *-ibm-aix* )            arch=aix      ;;
         powerpc-apple-darwin* ) arch=macppc   ;;
-        i686-apple-darwin* )    arch=mac686   ;;
+        i*86-apple-darwin* )    arch=macx86   ;;
 	x86_64-apple-darwin* )  arch=mac86_64 ;;
 	* )
 	AC_MSG_WARN(unsupported architecture. Setting defaults...)
@@ -79,7 +79,7 @@ ia64 | amd64 | ia32 )
     use_cpp_flags="-O3"
     use_ar_flags="cru"
     ;;
-macppc | mac686 | mac86_64 )
+macppc | macx86 | mac86_64 )
    if [ $mpi ]
     then
       # list of tested MPI compilers	
