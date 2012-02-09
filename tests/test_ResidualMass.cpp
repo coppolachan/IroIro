@@ -25,8 +25,8 @@ int Test_ResMass::run() {
   // Smearing objects
   Smear* SmearingObj;         // Empty pointer
   int Nsmear;                 // Number of smearing steps
-  XML::node SmearObjNode = ResMassNode;     // Copy the node ("descend" function updates it)
-                                            // and we want to use again for QuarkPropagator
+  XML::node SmearObjNode = node_;  // Copy the node ("descend" function updates it)
+                                   // and we want to use again for QuarkPropagator
   XML::descend(SmearObjNode, "Smearing");   // SmearObjNode now points to <Smearing> node
   XML::read(SmearObjNode, "Nsmear", Nsmear, MANDATORY);  // Reads in <Nsmear>
 
@@ -85,7 +85,7 @@ int Test_ResMass::run() {
   //////////////////////////////////////////////////////////////////////////////////////
 
   // Quark Propagator and source creation 
-  XML::descend(ResMassNode, "QuarkDWFProp");
+  XML::descend(node_, "QuarkDWFProp");
   QPropDWFFactory QP_DomainWallFact(node_);
   QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(smeared_u_));
 
@@ -112,8 +112,9 @@ int Test_ResMass::run() {
 
   // Cycle among Dirac and color indexes and contract
   // D^-1 * Delta * D^-1
-  double mres_numerator = 0, mres_denominator = 0;
-  double im_check = 0;
+  double mres_numerator = 0.0;
+  double mres_denominator = 0.0;
+  double im_check = 0.0;
   int Nc = CommonPrms::instance()->Nc();
   int Nd = CommonPrms::instance()->Nd();
 
@@ -136,7 +137,8 @@ int Test_ResMass::run() {
   CCIO::cout << "\nNumerator = ("<<mres_numerator<<","<<im_check<<")";
   CCIO::cout << "\nDenominator = " << mres_denominator;
   CCIO::cout << "\nResidual mass = " << mres_numerator/mres_denominator;
-  CCIO::cout << "---------------------------------------------------------";
+  CCIO::cout << "---------------------------------------------------------"
+	     <<std::endl;
   ////////////////////////////////////////////////////////////////////////////////////////
   return 0;
 }

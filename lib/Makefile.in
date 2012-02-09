@@ -46,8 +46,7 @@ subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_doxygen.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -116,7 +115,6 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Measurements/FermionicM/qprop.cpp \
 	Measurements/FermionicM/qprop_EvenOdd.cpp \
 	Measurements/FermionicM/qprop_DomainWall.cpp \
-	Measurements/FermionicM/DWF_residualMass.cpp \
 	Measurements/FermionicM/fermion_meas_factory.cpp \
 	Measurements/FermionicM/utils_DWF4d.cpp \
 	Main/Geometry/siteIndex.cpp Main/Geometry/siteIndex_eo.cpp \
@@ -150,11 +148,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	mdExec_leapfrog.$(OBJEXT) mdExec_Factory.$(OBJEXT) \
 	staples.$(OBJEXT) qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
 	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
-<<<<<<< HEAD
 	fermion_meas_factory.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
-=======
-	DWF_residualMass.$(OBJEXT) fermion_meas_factory.$(OBJEXT) \
->>>>>>> origin/master
 	siteIndex.$(OBJEXT) siteIndex_eo.$(OBJEXT) gaugeConf.$(OBJEXT) \
 	commandline.$(OBJEXT) pugixml.$(OBJEXT) \
 	pugi_interface.$(OBJEXT) sunMatUtils.$(OBJEXT) \
@@ -246,8 +240,6 @@ CXXFLAGS = @CXXFLAGS@ $(am__append_1) $(am__append_3)
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DOT = @DOT@
-DOXYGEN = @DOXYGEN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -301,9 +293,6 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
-enable_dot = @enable_dot@
-enable_html_docs = @enable_html_docs@
-enable_latex_docs = @enable_latex_docs@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -393,7 +382,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
-		Measurements/FermionicM/DWF_residualMass.cpp		\
 		Measurements/FermionicM/fermion_meas_factory.cpp 	\
 		Measurements/FermionicM/utils_DWF4d.cpp	\
 		Main/Geometry/siteIndex.cpp		\
@@ -454,7 +442,6 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/qprop.h				\
 			Measurements/FermionicM/qprop_EvenOdd.h			\
 			Measurements/FermionicM/qprop_DomainWall.hpp 		\
-			Measurements/FermionicM/DWF_residualMass.hpp		\
 			Measurements/FermionicM/fermion_meas_factory.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp		\
 			Measurements/FermionicM/sources_factory.hpp		\
@@ -628,7 +615,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/DWF_residualMass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SmartConf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Smearing_Factories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StoutSmear.Po@am__quote@
@@ -686,17 +672,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sortEigen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staples.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunMatUtils.Po@am__quote@
-<<<<<<< HEAD
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DomainWall.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_DomainWall.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_EvenOdd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_overlap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
-=======
->>>>>>> origin/master
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1034,60 +1010,50 @@ dirac_DomainWall_EvenOdd.obj: Dirac_ops/dirac_DomainWall_EvenOdd.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_EvenOdd.obj `if test -f 'Dirac_ops/dirac_DomainWall_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_EvenOdd.cpp'; fi`
 
-<<<<<<< HEAD
 dirac_DomainWall_4D_fullSolv.o: Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D_fullSolv.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Tpo -c -o dirac_DomainWall_4D_fullSolv.o `test -f 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Tpo $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp' object='dirac_DomainWall_4D_fullSolv.o' libtool=no @AMDEPBACKSLASH@
-=======
-dirac_DomainWall_4D.o: Dirac_ops/dirac_DomainWall_4D.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D.Tpo -c -o dirac_DomainWall_4D.o `test -f 'Dirac_ops/dirac_DomainWall_4D.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_4D.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall_4D.Tpo $(DEPDIR)/dirac_DomainWall_4D.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D_fullSolv.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Tpo -c -o dirac_DomainWall_4D_fullSolv.o `test -f 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Tpo $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_DomainWall_4D.cpp' object='dirac_DomainWall_4D.o' libtool=no @AMDEPBACKSLASH@
->>>>>>> origin/master
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp' object='dirac_DomainWall_4D_fullSolv.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_4D_fullSolv.o `test -f 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp
 
-<<<<<<< HEAD
 dirac_DomainWall_4D_fullSolv.obj: Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D_fullSolv.obj -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Tpo -c -o dirac_DomainWall_4D_fullSolv.obj `if test -f 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Tpo $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp' object='dirac_DomainWall_4D_fullSolv.obj' libtool=no @AMDEPBACKSLASH@
-=======
-dirac_DomainWall_4D.obj: Dirac_ops/dirac_DomainWall_4D.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D.obj -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D.Tpo -c -o dirac_DomainWall_4D.obj `if test -f 'Dirac_ops/dirac_DomainWall_4D.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_4D.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_4D.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall_4D.Tpo $(DEPDIR)/dirac_DomainWall_4D.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D_fullSolv.obj -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Tpo -c -o dirac_DomainWall_4D_fullSolv.obj `if test -f 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Tpo $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_DomainWall_4D.cpp' object='dirac_DomainWall_4D.obj' libtool=no @AMDEPBACKSLASH@
->>>>>>> origin/master
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp' object='dirac_DomainWall_4D_fullSolv.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_4D_fullSolv.obj `if test -f 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp'; fi`
 
 dirac_DomainWall_4D_eoSolv.o: Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D_eoSolv.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Tpo -c -o dirac_DomainWall_4D_eoSolv.o `test -f 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Tpo $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D_eoSolv.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Tpo -c -o dirac_DomainWall_4D_eoSolv.o `test -f 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Tpo $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp' object='dirac_DomainWall_4D_eoSolv.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_4D_eoSolv.o `test -f 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp
 
 dirac_DomainWall_4D_eoSolv.obj: Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D_eoSolv.obj -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Tpo -c -o dirac_DomainWall_4D_eoSolv.obj `if test -f 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Tpo $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D_eoSolv.obj -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Tpo -c -o dirac_DomainWall_4D_eoSolv.obj `if test -f 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Tpo $(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp' object='dirac_DomainWall_4D_eoSolv.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_4D_eoSolv.obj `if test -f 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; fi`
 
 eoUtils.o: Dirac_ops/eoUtils.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eoUtils.o -MD -MP -MF $(DEPDIR)/eoUtils.Tpo -c -o eoUtils.o `test -f 'Dirac_ops/eoUtils.cpp' || echo '$(srcdir)/'`Dirac_ops/eoUtils.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/eoUtils.Tpo $(DEPDIR)/eoUtils.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eoUtils.o -MD -MP -MF $(DEPDIR)/eoUtils.Tpo -c -o eoUtils.o `test -f 'Dirac_ops/eoUtils.cpp' || echo '$(srcdir)/'`Dirac_ops/eoUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eoUtils.Tpo $(DEPDIR)/eoUtils.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/eoUtils.cpp' object='eoUtils.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eoUtils.o `test -f 'Dirac_ops/eoUtils.cpp' || echo '$(srcdir)/'`Dirac_ops/eoUtils.cpp
 
 eoUtils.obj: Dirac_ops/eoUtils.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eoUtils.obj -MD -MP -MF $(DEPDIR)/eoUtils.Tpo -c -o eoUtils.obj `if test -f 'Dirac_ops/eoUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/eoUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/eoUtils.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/eoUtils.Tpo $(DEPDIR)/eoUtils.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eoUtils.obj -MD -MP -MF $(DEPDIR)/eoUtils.Tpo -c -o eoUtils.obj `if test -f 'Dirac_ops/eoUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/eoUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/eoUtils.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eoUtils.Tpo $(DEPDIR)/eoUtils.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/eoUtils.cpp' object='eoUtils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eoUtils.obj `if test -f 'Dirac_ops/eoUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/eoUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/eoUtils.cpp'; fi`
@@ -1444,22 +1410,6 @@ qprop_DomainWall.obj: Measurements/FermionicM/qprop_DomainWall.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_DomainWall.obj `if test -f 'Measurements/FermionicM/qprop_DomainWall.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_DomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_DomainWall.cpp'; fi`
 
-DWF_residualMass.o: Measurements/FermionicM/DWF_residualMass.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DWF_residualMass.o -MD -MP -MF $(DEPDIR)/DWF_residualMass.Tpo -c -o DWF_residualMass.o `test -f 'Measurements/FermionicM/DWF_residualMass.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/DWF_residualMass.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/DWF_residualMass.Tpo $(DEPDIR)/DWF_residualMass.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/DWF_residualMass.cpp' object='DWF_residualMass.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DWF_residualMass.o `test -f 'Measurements/FermionicM/DWF_residualMass.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/DWF_residualMass.cpp
-
-DWF_residualMass.obj: Measurements/FermionicM/DWF_residualMass.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT DWF_residualMass.obj -MD -MP -MF $(DEPDIR)/DWF_residualMass.Tpo -c -o DWF_residualMass.obj `if test -f 'Measurements/FermionicM/DWF_residualMass.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/DWF_residualMass.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/DWF_residualMass.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/DWF_residualMass.Tpo $(DEPDIR)/DWF_residualMass.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/DWF_residualMass.cpp' object='DWF_residualMass.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o DWF_residualMass.obj `if test -f 'Measurements/FermionicM/DWF_residualMass.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/DWF_residualMass.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/DWF_residualMass.cpp'; fi`
-
 fermion_meas_factory.o: Measurements/FermionicM/fermion_meas_factory.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fermion_meas_factory.o -MD -MP -MF $(DEPDIR)/fermion_meas_factory.Tpo -c -o fermion_meas_factory.o `test -f 'Measurements/FermionicM/fermion_meas_factory.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/fermion_meas_factory.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fermion_meas_factory.Tpo $(DEPDIR)/fermion_meas_factory.Po
@@ -1477,15 +1427,17 @@ fermion_meas_factory.obj: Measurements/FermionicM/fermion_meas_factory.cpp
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o fermion_meas_factory.obj `if test -f 'Measurements/FermionicM/fermion_meas_factory.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/fermion_meas_factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/fermion_meas_factory.cpp'; fi`
 
 utils_DWF4d.o: Measurements/FermionicM/utils_DWF4d.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_DWF4d.o -MD -MP -MF $(DEPDIR)/utils_DWF4d.Tpo -c -o utils_DWF4d.o `test -f 'Measurements/FermionicM/utils_DWF4d.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/utils_DWF4d.cpp
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/utils_DWF4d.Tpo $(DEPDIR)/utils_DWF4d.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_DWF4d.o -MD -MP -MF $(DEPDIR)/utils_DWF4d.Tpo -c -o utils_DWF4d.o `test -f 'Measurements/FermionicM/utils_DWF4d.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/utils_DWF4d.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utils_DWF4d.Tpo $(DEPDIR)/utils_DWF4d.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/utils_DWF4d.cpp' object='utils_DWF4d.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o utils_DWF4d.o `test -f 'Measurements/FermionicM/utils_DWF4d.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/utils_DWF4d.cpp
 
 utils_DWF4d.obj: Measurements/FermionicM/utils_DWF4d.cpp
-@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_DWF4d.obj -MD -MP -MF $(DEPDIR)/utils_DWF4d.Tpo -c -o utils_DWF4d.obj `if test -f 'Measurements/FermionicM/utils_DWF4d.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/utils_DWF4d.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/utils_DWF4d.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/utils_DWF4d.Tpo $(DEPDIR)/utils_DWF4d.Po
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_DWF4d.obj -MD -MP -MF $(DEPDIR)/utils_DWF4d.Tpo -c -o utils_DWF4d.obj `if test -f 'Measurements/FermionicM/utils_DWF4d.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/utils_DWF4d.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/utils_DWF4d.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utils_DWF4d.Tpo $(DEPDIR)/utils_DWF4d.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/utils_DWF4d.cpp' object='utils_DWF4d.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o utils_DWF4d.obj `if test -f 'Measurements/FermionicM/utils_DWF4d.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/utils_DWF4d.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/utils_DWF4d.cpp'; fi`

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Input file for Residual Mass test -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  
+  <TestResMass>
+    <RandomNumberGen name="Mersenne Twister">
+      <init>0x123 0x234 0x345 0x456</init>
+    </RandomNumberGen>
+    <Smearing type="Stout">
+      <Nsmear>0</Nsmear>
+      <Base type="APE">
+        <rho>0.05</rho>
+      </Base>
+    </Smearing>
+    <QuarkDWFProp>
+      <Kernel4d name="DiracOptimalDomainWall4d_eo">
+	<Kernel5d>
+	  <Preconditioning>NoPreconditioner</Preconditioning>
+	  <wilson_mass>-1.6</wilson_mass>
+	  <N5d>8</N5d>
+	  <b>1.0</b>
+	  <c>1.0</c>
+	  <mass>0.02</mass>
+	  <approximation name="Zolotarev">
+	    <lambda_min>0.1</lambda_min>
+	    <lambda_max>1.5</lambda_max>
+	  </approximation>
+	</Kernel5d>
+	<SolverDWF type="Solver_CG">
+	  <MaxIter>10000</MaxIter>
+	  <Precision>1e-10</Precision>
+	</SolverDWF>
+      </Kernel4d>
+    </QuarkDWFProp>
+    <Source type="Local">
+      <position>0 0 0 0</position>
+    </Source>
+  </TestResMass>
+</Parameters>
+
