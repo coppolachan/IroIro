@@ -132,10 +132,9 @@ int Test_ResMass::run() {
       mres_denominator += Denom*Denom;
     }
   }
-  CCIO::cout<<"---------------------------------------------------------"
-	    <<std::endl;
-  CCIO::cout<<"Numerator = ("   << mres_numerator<<","<<im_check     <<")\n";
-  CCIO::cout<<"Denominator = "  << mres_denominator           	     <<"\n";
+  CCIO::cout<<"---------------------------------------------------------\n";
+  CCIO::cout<<"Numerator     = ("   << mres_numerator<<","<<im_check     <<")\n";
+  CCIO::cout<<"Denominator   = "  << mres_denominator         	     <<"\n";
   CCIO::cout<<"Residual mass = "<< mres_numerator/mres_denominator   <<"\n";
   CCIO::cout<<"---------------------------------------------------------\n";
   ////////////////////////////////////////////////////////////////////////////////////////

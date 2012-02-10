@@ -11,7 +11,7 @@
 #include <time.h>
 
 #include "test_IO.hpp"
-#include "Measurements/GaugeM/staples.h"
+#include "Measurements/GaugeM/staples.hpp"
 
 int Test_IO::run(){
   CCIO::cout << "Test IO Starts ------------------------\n";

@@ -7,7 +7,7 @@
 #define ACTION_GAUGE_WILSON_INCLUDED
 
 #include "action.hpp"
-#include "Measurements/GaugeM/staples.h"
+#include "Measurements/GaugeM/staples.hpp"
 #include "include/pugi_interface.h"
 
 /*!

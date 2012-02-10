@@ -6,7 +6,7 @@
  */
 
 #include "test_Gauge.hpp"
-#include "Measurements/GaugeM/staples.h"
+#include "Measurements/GaugeM/staples.hpp"
 #include "Communicator/comm_io.hpp"
 #include "include/common_fields.hpp"
 

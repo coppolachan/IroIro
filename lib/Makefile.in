@@ -441,7 +441,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			EigenModes/eigenModes_IRL.hpp			\
 			EigenModes/sortEigen.h				\
 			EigenModes/eigenProc_Zolotarev.h		\
-			Measurements/GaugeM/staples.h				\
+			Measurements/GaugeM/staples.hpp				\
 			Measurements/FermionicM/source.hpp			\
 			Measurements/FermionicM/source_types.hpp		\
 			Measurements/FermionicM/qprop_MultiShift.hpp 		\

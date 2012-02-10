@@ -13,7 +13,7 @@
 #include "include/format_G.h"
 #include "Tools/sunVec.h"
 #include "Main/Geometry/shiftField.h"
-#include "Measurements/GaugeM/staples.h"
+#include "Measurements/GaugeM/staples.hpp"
 #include "Dirac_ops/dirac_wilson.h"
 
 typedef Format::Format_F ffmt_t;
