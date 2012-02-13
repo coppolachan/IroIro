@@ -48,9 +48,9 @@ int Test_Wilson::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-   Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
-   //Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
-   //Kernel->update_internal_state();
+  Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
+  //Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
+  //Kernel->update_internal_state();
 
   // Solver definition
   int    Niter= 1000;

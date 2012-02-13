@@ -41,9 +41,8 @@ public:
 
   const std::valarray<double>& getva()const{ return field;}
   
-  //temporary
   //direct address access
-  double* getaddr(const size_t i) {return &field[i];} 
+  const double* getaddr(const size_t i)const{return &field[i];} 
 
   void set(const std::size_t i, double val){field[i]= val;}
   void set(const std::slice& sl, const std::valarray<double>& va){ 

@@ -24,10 +24,10 @@ public:
   virtual const double* get_bdry_addr(int site,int ex=0) =0;
   virtual const double* get_bulk_addr(int site,int ex=0) =0;
 
-  virtual double re_on_bdry(int c,int s,int site,int ex=0)const =0;
-  virtual double im_on_bdry(int c,int s,int site,int ex=0)const =0;
-  virtual double re_on_bulk(int c,int s,int site,int ex=0)const =0;
-  virtual double im_on_bulk(int c,int s,int site,int ex=0)const =0;
+  virtual double re_bdry(int c,int s,int site,int ex=0)const =0;
+  virtual double im_bdry(int c,int s,int site,int ex=0)const =0;
+  virtual double re_bulk(int c,int s,int site,int ex=0)const =0;
+  virtual double im_bulk(int c,int s,int site,int ex=0)const =0;
   virtual void setf(const Field& field) =0; 
   virtual void setf(const std::valarray<double>& field) =0; 
 };
@@ -116,10 +116,10 @@ public:
   bool on_bdry(int site,int ex=0) const;
   const double* get_bdry_addr(int site,int ex=0) ;
   const double* get_bulk_addr(int site,int ex=0) ;
-  double re_on_bdry(int c,int s,int site,int ex=0) const;
-  double im_on_bdry(int c,int s,int site,int ex=0) const;
-  double re_on_bulk(int c,int s,int site,int ex=0) const;
-  double im_on_bulk(int c,int s,int site,int ex=0) const;
+  double re_bdry(int c,int s,int site,int ex=0) const;
+  double im_bdry(int c,int s,int site,int ex=0) const;
+  double re_bulk(int c,int s,int site,int ex=0) const;
+  double im_bulk(int c,int s,int site,int ex=0) const;
 };
 
 template<typename FMT> 
@@ -169,22 +169,22 @@ const double* ShiftField_up<FMT>::get_bulk_addr(int site,int ex) {
 
 
 template<typename FMT> 
-double ShiftField_up<FMT>::re_on_bdry(int c,int s,int site,int ex) const {
+double ShiftField_up<FMT>::re_bdry(int c,int s,int site,int ex) const {
   return bdry_[bdfmt_->index_r(c,s,idx_->x_b(site,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_up<FMT>::im_on_bdry(int c,int s,int site,int ex) const {
+double ShiftField_up<FMT>::im_bdry(int c,int s,int site,int ex) const {
   return bdry_[bdfmt_->index_i(c,s,idx_->x_b(site,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_up<FMT>::re_on_bulk(int c,int s,int site,int ex) const {
+double ShiftField_up<FMT>::re_bulk(int c,int s,int site,int ex) const {
   return (*field_)[fmt_->index_r(c,s,idx_->x_p(site,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_up<FMT>::im_on_bulk(int c,int s,int site,int ex) const {
+double ShiftField_up<FMT>::im_bulk(int c,int s,int site,int ex) const {
   return (*field_)[fmt_->index_i(c,s,idx_->x_p(site,dir_),ex)];
 }  
 
@@ -284,10 +284,10 @@ public:
   bool on_bdry(int site,int ex=0) const;
   const double* get_bdry_addr(int site,int ex=0);
   const double* get_bulk_addr(int site,int ex=0);
-  double re_on_bdry(int c,int s,int site,int ex=0) const;
-  double im_on_bdry(int c,int s,int site,int ex=0) const;
-  double re_on_bulk(int c,int s,int site,int ex=0) const;
-  double im_on_bulk(int c,int s,int site,int ex=0) const;
+  double re_bdry(int c,int s,int site,int ex=0) const;
+  double im_bdry(int c,int s,int site,int ex=0) const;
+  double re_bulk(int c,int s,int site,int ex=0) const;
+  double im_bulk(int c,int s,int site,int ex=0) const;
 };
 
 template<typename FMT>
@@ -336,22 +336,22 @@ const double* ShiftField_dn<FMT>::get_bulk_addr(int site,int ex) {
 }
 
 template<typename FMT> 
-double ShiftField_dn<FMT>::re_on_bdry(int c,int s,int site,int ex) const {
+double ShiftField_dn<FMT>::re_bdry(int c,int s,int site,int ex) const {
   return bdry_[bdfmt_->index_r(c,s,idx_->x_b(site,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_dn<FMT>::im_on_bdry(int c,int s,int site,int ex) const {
+double ShiftField_dn<FMT>::im_bdry(int c,int s,int site,int ex) const {
   return bdry_[bdfmt_->index_i(c,s,idx_->x_b(site,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_dn<FMT>::re_on_bulk(int c,int s,int site,int ex) const {
+double ShiftField_dn<FMT>::re_bulk(int c,int s,int site,int ex) const {
   return (*field_)[fmt_->index_r(c,s,idx_->x_m(site,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_dn<FMT>::im_on_bulk(int c,int s,int site,int ex) const {
+double ShiftField_dn<FMT>::im_bulk(int c,int s,int site,int ex) const {
   return (*field_)[fmt_->index_i(c,s,idx_->x_m(site,dir_),ex)];
 }  
 
