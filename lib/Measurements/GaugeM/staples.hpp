@@ -1,5 +1,9 @@
 //----------------------------------------------------------------------
-// staples.h
+/*! @file staples.hpp
+  
+  @brief Defines the staples measurement classes
+
+*/
 //----------------------------------------------------------------------
 #ifndef STAPLES_INCLUDED
 #define STAPLES_INCLUDED
@@ -12,7 +16,6 @@
 #include "Tools/sunMat.h"
 
 class Staples {
-private:
   int Nc_;
   int Ndim_;
   int Nvol_, Lvol_;

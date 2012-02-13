@@ -2,7 +2,7 @@
 
 using namespace std;
 
-#include "Measurements/GaugeM/staples.h"
+#include "Measurements/GaugeM/staples.hpp"
 #include "include/common_fields.hpp"
 #include "Tools/sunMatUtils.hpp"
 

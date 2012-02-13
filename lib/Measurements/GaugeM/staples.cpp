@@ -1,7 +1,11 @@
 //----------------------------------------------------------------------
-// staples.cpp
+/*! @file staples.hpp
+  
+  @brief Defines the staples measurement classes
+
+*/
 //----------------------------------------------------------------------
-#include "staples.h"
+#include "staples.hpp"
 #include "Tools/sunMatUtils.hpp"
 
 using namespace SUNmat_utils;

@@ -8,7 +8,7 @@
 
 #include "action.hpp"
 #include "include/common_fields.hpp"
-#include "Measurements/GaugeM/staples.h"
+#include "Measurements/GaugeM/staples.hpp"
 #include "include/pugi_interface.h"
 
 
