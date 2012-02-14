@@ -20,6 +20,7 @@ private:
   std::vector<int> Bdir_;
   std::vector<int> Ndir_;
   std::vector<int> Vdir_;
+  std::vector<int> Cdir_;
   static std::vector<int> gsite_;
   static std::vector<std::vector<int> > bdup_;
   static std::vector<std::vector<int> > bdlw_;
@@ -58,11 +59,13 @@ private:
     int Bdir[Ndim_max_]= {Nx_-1,Ny_-1,Nz_-1,Nt_-1,};
     int Ndir[Ndim_max_]= {Nx_,Ny_,Nz_,Nt_,};
     int Vdir[Ndim_max_]= {Nvol_/Nx_,Nvol_/Ny_,Nvol_/Nz_,Nvol_/Nt_,};
+    int Cdir[Ndim_max_]= {1,Nx_,NxNy_,NxNyNz_,};
 
     for(int i=0; i< Ndim_max_;++i){
       Bdir_.push_back(Bdir[i]);
       Ndir_.push_back(Ndir[i]);
       Vdir_.push_back(Vdir[i]);
+      Cdir_.push_back(Cdir[i]);
     }
     setup_bdry();
     setup_global();
@@ -84,6 +87,7 @@ public:
   int gy(int site) const{ return (site/Lx_)%Ly_;}
   int gz(int site) const{ return (site/LxLy_)%Lz_;}
   int gt(int site) const{ return site/LxLyLz_;}
+
 
   int site(int x,int y,int z,int t) const{
     return x +Nx_*y +NxNy_*z +NxNyNz_*t; 
@@ -110,6 +114,9 @@ public:
   const std::vector<int> bdup(int d)const{return bdup_[d];}
   const std::vector<int> bdlw(int d)const{return bdlw_[d];}
 
+  int bdsite(int bsite,int x,int d)const{
+    return bdlw_[d][bsite] +x*Cdir_[d];}
+  
   const std::vector<int> get_gsite() const{ return gsite_;}
   int get_gsite(int site) const{ return gsite_[site];}
 };

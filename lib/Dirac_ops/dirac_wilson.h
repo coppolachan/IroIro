@@ -12,7 +12,7 @@
 #include "dirac.h"
 #include "include/pugi_interface.h"
 
-//#define IMPROVED_WILSON
+#define IMPROVED_WILSON
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
@@ -39,6 +39,7 @@ private:
   double kpp_;
   int Nvol_;
   int Ndim_;
+  int Nd_;
   //int boundary[Ndim];
   // this is temporary setting.
 
@@ -49,23 +50,8 @@ private:
   std::vector<ShiftField*> sf_dn_; 
 
   const size_t fsize_;
-  size_t gsize_;
+  const size_t gsize_;
 
-  SUNvec v(const Field& f,int spin,int site) const{
-    return SUNvec(f[ff_->cslice(spin,site)]);
-  }
-  SUNvec v(const ShiftField* sf,int spin,int site) const{
-    return SUNvec(sf->cv(spin,site));
-  }
-
-  SUNvec v_Ix(const Field& f,int spin,int site) const{
-    return SUNvec(f[ff_->cslice(spin,site)]).xI();
-  }
-  SUNvec v_Ix(const ShiftField* sf,int spin,int site) const{
-    return SUNvec(sf->cv(spin,site)).xI();
-  }
-
-#ifdef IMPROVED_WILSON
   void mult_xp(Field&,const Field&)const;
   void mult_yp(Field&,const Field&)const;
   void mult_zp(Field&,const Field&)const;
@@ -78,25 +64,24 @@ private:
 
   static void(Dirac_Wilson::*mult_p[])(Field&,const Field&)const;
   static void(Dirac_Wilson::*mult_m[])(Field&,const Field&)const;
+
+#ifdef IMPROVED_WILSON
+  int r0(int c)const{return 2*c;}
+  int r1(int c)const{return 2*(NC_+c);}
+  int r2(int c)const{return 2*(2*NC_+c);}
+  int r3(int c)const{return 2*(3*NC_+c);} 
+
+  int i0(int c)const{return 2*c+1;}
+  int i1(int c)const{return 2*(NC_+c)+1;}
+  int i2(int c)const{return 2*(2*NC_+c)+1;}
+  int i3(int c)const{return 2*(3*NC_+c)+1;} 
 #endif
 
-#ifndef IMPROVED_WILSON
-  void mult_xp(Field&,ShiftField*)const;
-  void mult_yp(Field&,ShiftField*)const;
-  void mult_zp(Field&,ShiftField*)const;
-  void mult_tp(Field&,ShiftField*)const;
+  int r(int c1,int c2)const{return 2*(NC_*c1+c2);}
+  int i(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
 
-  void mult_xm(std::valarray<double>&,const Field&)const;
-  void mult_ym(std::valarray<double>&,const Field&)const;
-  void mult_zm(std::valarray<double>&,const Field&)const;
-  void mult_tm(std::valarray<double>&,const Field&)const;
-
-  static void(Dirac_Wilson::*mult_p[])(Field&,ShiftField*)const;
-  static void(Dirac_Wilson::*mult_m[])(std::valarray<double>&,
-				       const Field&)const;
-#endif 
-  void mult_full(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
-  void mult_offdiag(Field&,const Field&)const;/*! @brief it returns (1-kpp*D)*f */
+  void mult_full(Field&,const Field&)const;   /*! @brief  -kpp*D*f */
+  void mult_offdiag(Field&,const Field&)const;/*! @brief  (1-kpp*D)*f */
 
   int gsite(int site)const {return site;}
   int esec(int site)const {return SiteIndex_eo::instance()->esec(site);}
@@ -114,6 +99,7 @@ public:
     :kpp_(0.5/(4.0+mass)),u_(u),
      Nvol_(CommonPrms::instance()->Nvol()/2),
      Ndim_(CommonPrms::instance()->Ndim()),
+     Nd_(CommonPrms::instance()->Nd()),
      gp(&Dirac_Wilson::esec),
      gm(&Dirac_Wilson::osec),
      mult_core(&Dirac_Wilson::mult_offdiag),
@@ -133,6 +119,7 @@ public:
     :kpp_(0.5/(4.0+mass)),u_(u),
      Nvol_(CommonPrms::instance()->Nvol()/2),
      Ndim_(CommonPrms::instance()->Ndim()),
+     Nd_(CommonPrms::instance()->Nd()),
      gp(&Dirac_Wilson::osec),
      gm(&Dirac_Wilson::esec),
      mult_core(&Dirac_Wilson::mult_offdiag),
@@ -153,6 +140,7 @@ public:
     :kpp_(0.5/(4.0+mass)),u_(u),
      Nvol_(CommonPrms::instance()->Nvol()),
      Ndim_(CommonPrms::instance()->Ndim()),
+     Nd_(CommonPrms::instance()->Nd()),
      gp(&Dirac_Wilson::gsite),
      gm(&Dirac_Wilson::gsite),
      mult_core(&Dirac_Wilson::mult_full),
@@ -171,6 +159,7 @@ public:
     :u_(u),
      Nvol_(CommonPrms::instance()->Nvol()),
      Ndim_(CommonPrms::instance()->Ndim()),
+     Nd_(CommonPrms::instance()->Nd()),
      gp(&Dirac_Wilson::gsite),
      gm(&Dirac_Wilson::gsite),
      mult_core(&Dirac_Wilson::mult_full),

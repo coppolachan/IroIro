@@ -49,6 +49,7 @@ int Test_ResMass::run() {
   }
   CCIO::cout << "Plaquette (smeared): " << Staple.plaquette(smeared_u_.U) << std::endl;
   //////////////////////////////////////////////////////////////////////////////////////
+  /*
   // Eigenvalue calculation
   Format::Format_F ff(CommonPrms::instance()->Nvol());
   double mq  = -1.6;
@@ -81,6 +82,7 @@ int Test_ResMass::run() {
     CCIO::cout << "["<<i<<"] "<< lmd[i] << "  "<< v*v << "\n";
   }
   CCIO::cout << "\n";
+  */
   //////////////////////////////////////////////////////////////////////////////////////
 
   // Quark Propagator and source creation 
@@ -132,11 +134,13 @@ int Test_ResMass::run() {
       mres_denominator += Denom*Denom;
     }
   }
-  CCIO::cout<<"---------------------------------------------------------\n";
-  CCIO::cout<<"Numerator     = ("   << mres_numerator<<","<<im_check     <<")\n";
-  CCIO::cout<<"Denominator   = "  << mres_denominator         	     <<"\n";
-  CCIO::cout<<"Residual mass = "<< mres_numerator/mres_denominator   <<"\n";
-  CCIO::cout<<"---------------------------------------------------------\n";
-  ////////////////////////////////////////////////////////////////////////////////////////
+  CCIO::cout<<"---------------------------------------------------------"
+	    <<std::endl;
+  CCIO::cout<<"Numerator = ("   <<mres_numerator<<","<<im_check<<")"<<std::endl;
+  CCIO::cout<<"Denominator = "  <<mres_denominator           	    <<std::endl;
+  CCIO::cout<<"Residual mass = "<<mres_numerator/mres_denominator   <<std::endl;
+  CCIO::cout<<"---------------------------------------------------------"
+	    <<std::endl;
+////////////////////////////////////////////////////////////////////////////////
   return 0;
 }

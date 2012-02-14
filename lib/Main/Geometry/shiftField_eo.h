@@ -81,10 +81,10 @@ public:
   const double* get_bdry_addr(int site,int ex=0);
   const double* get_bulk_addr(int site,int ex=0);
 
-  double re_on_bdry(int c,int s,int hs,int ex=0) const;
-  double im_on_bdry(int c,int s,int hs,int ex=0) const;
-  double re_on_bulk(int c,int s,int hs,int ex=0) const;
-  double im_on_bulk(int c,int s,int hs,int ex=0) const;
+  double re_bdry(int c,int s,int hs,int ex=0) const;
+  double im_bdry(int c,int s,int hs,int ex=0) const;
+  double re_bulk(int c,int s,int hs,int ex=0) const;
+  double im_bulk(int c,int s,int hs,int ex=0) const;
 };
 
 template<typename FMT> 
@@ -134,22 +134,22 @@ const double* ShiftField_even_up<FMT>::get_bulk_addr(int hs,int ex){
 
 
 template<typename FMT> 
-double ShiftField_even_up<FMT>::re_on_bdry(int c,int s,int hs,int ex) const {
+double ShiftField_even_up<FMT>::re_bdry(int c,int s,int hs,int ex) const {
   return bdry_[bdfmt_->index_r(c,s,idx_->obid_up(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_even_up<FMT>::im_on_bdry(int c,int s,int hs,int ex) const {
+double ShiftField_even_up<FMT>::im_bdry(int c,int s,int hs,int ex) const {
   return bdry_[bdfmt_->index_i(c,s,idx_->obid_up(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_even_up<FMT>::re_on_bulk(int c,int s,int hs,int ex) const {
+double ShiftField_even_up<FMT>::re_bulk(int c,int s,int hs,int ex) const {
   return (*field_)[fmt_->index_r(c,s,idx_->ox_p(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_even_up<FMT>::im_on_bulk(int c,int s,int hs,int ex) const {
+double ShiftField_even_up<FMT>::im_bulk(int c,int s,int hs,int ex) const {
   return (*field_)[fmt_->index_i(c,s,idx_->ox_p(hs,dir_),ex)];
 }  
 
@@ -228,10 +228,10 @@ public:
   const double* get_bdry_addr(int site,int ex=0);
   const double* get_bulk_addr(int site,int ex=0);
 
-  double re_on_bdry(int c,int s,int hs,int ex=0) const;
-  double im_on_bdry(int c,int s,int hs,int ex=0) const;
-  double re_on_bulk(int c,int s,int hs,int ex=0) const;
-  double im_on_bulk(int c,int s,int hs,int ex=0) const;
+  double re_bdry(int c,int s,int hs,int ex=0) const;
+  double im_bdry(int c,int s,int hs,int ex=0) const;
+  double re_bulk(int c,int s,int hs,int ex=0) const;
+  double im_bulk(int c,int s,int hs,int ex=0) const;
 };
 
 template<typename FMT> 
@@ -280,22 +280,22 @@ const double* ShiftField_even_dn<FMT>::get_bulk_addr(int hs,int ex) {
 }
 
 template<typename FMT> 
-double ShiftField_even_dn<FMT>::re_on_bdry(int c,int s,int hs,int ex) const {
+double ShiftField_even_dn<FMT>::re_bdry(int c,int s,int hs,int ex) const {
   return bdry_[bdfmt_->index_r(c,s,idx_->obid_lw(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_even_dn<FMT>::im_on_bdry(int c,int s,int hs,int ex) const {
+double ShiftField_even_dn<FMT>::im_bdry(int c,int s,int hs,int ex) const {
   return bdry_[bdfmt_->index_i(c,s,idx_->obid_lw(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_even_dn<FMT>::re_on_bulk(int c,int s,int hs,int ex) const {
+double ShiftField_even_dn<FMT>::re_bulk(int c,int s,int hs,int ex) const {
   return (*field_)[fmt_->index_r(c,s,idx_->ox_m(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_even_dn<FMT>::im_on_bulk(int c,int s,int hs,int ex) const {
+double ShiftField_even_dn<FMT>::im_bulk(int c,int s,int hs,int ex) const {
   return (*field_)[fmt_->index_i(c,s,idx_->ox_m(hs,dir_),ex)];
 }  
 
@@ -375,10 +375,10 @@ public:
   bool on_bdry(int hs,int ex=0) const;
   const double* get_bdry_addr(int site,int ex=0);
   const double* get_bulk_addr(int site,int ex=0);
-  double re_on_bdry(int c,int s,int hs,int ex=0) const;
-  double im_on_bdry(int c,int s,int hs,int ex=0) const;
-  double re_on_bulk(int c,int s,int hs,int ex=0) const;
-  double im_on_bulk(int c,int s,int hs,int ex=0) const;
+  double re_bdry(int c,int s,int hs,int ex=0) const;
+  double im_bdry(int c,int s,int hs,int ex=0) const;
+  double re_bulk(int c,int s,int hs,int ex=0) const;
+  double im_bulk(int c,int s,int hs,int ex=0) const;
 };
 
 template<typename FMT> 
@@ -428,22 +428,22 @@ const double* ShiftField_odd_up<FMT>::get_bulk_addr(int hs,int ex){
 
 
 template<typename FMT> 
-double ShiftField_odd_up<FMT>::re_on_bdry(int c,int s,int hs,int ex) const {
+double ShiftField_odd_up<FMT>::re_bdry(int c,int s,int hs,int ex) const {
   return bdry_[bdfmt_->index_r(c,s,idx_->ebid_up(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_odd_up<FMT>::im_on_bdry(int c,int s,int hs,int ex) const {
+double ShiftField_odd_up<FMT>::im_bdry(int c,int s,int hs,int ex) const {
   return bdry_[bdfmt_->index_i(c,s,idx_->ebid_up(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_odd_up<FMT>::re_on_bulk(int c,int s,int hs,int ex) const {
+double ShiftField_odd_up<FMT>::re_bulk(int c,int s,int hs,int ex) const {
   return (*field_)[fmt_->index_r(c,s,idx_->ex_p(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_odd_up<FMT>::im_on_bulk(int c,int s,int hs,int ex) const {
+double ShiftField_odd_up<FMT>::im_bulk(int c,int s,int hs,int ex) const {
   return (*field_)[fmt_->index_i(c,s,idx_->ex_p(hs,dir_),ex)];
 }  
 
@@ -521,10 +521,10 @@ public:
   bool on_bdry(int hs,int ex=0) const;
   const double* get_bdry_addr(int site,int ex=0);
   const double* get_bulk_addr(int site,int ex=0);
-  double re_on_bdry(int c,int s,int hs,int ex=0) const;
-  double im_on_bdry(int c,int s,int hs,int ex=0) const;
-  double re_on_bulk(int c,int s,int hs,int ex=0) const;
-  double im_on_bulk(int c,int s,int hs,int ex=0) const;
+  double re_bdry(int c,int s,int hs,int ex=0) const;
+  double im_bdry(int c,int s,int hs,int ex=0) const;
+  double re_bulk(int c,int s,int hs,int ex=0) const;
+  double im_bulk(int c,int s,int hs,int ex=0) const;
   const Field field() const;
 };
 
@@ -574,22 +574,22 @@ const double* ShiftField_odd_dn<FMT>::get_bulk_addr(int hs,int ex) {
 }
 
 template<typename FMT> 
-double ShiftField_odd_dn<FMT>::re_on_bdry(int c,int s,int hs,int ex) const {
+double ShiftField_odd_dn<FMT>::re_bdry(int c,int s,int hs,int ex) const {
   return bdry_[bdfmt_->index_r(c,s,idx_->ebid_lw(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_odd_dn<FMT>::im_on_bdry(int c,int s,int hs,int ex) const {
+double ShiftField_odd_dn<FMT>::im_bdry(int c,int s,int hs,int ex) const {
   return bdry_[bdfmt_->index_i(c,s,idx_->ebid_lw(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_odd_dn<FMT>::re_on_bulk(int c,int s,int hs,int ex) const {
+double ShiftField_odd_dn<FMT>::re_bulk(int c,int s,int hs,int ex) const {
   return (*field_)[fmt_->index_r(c,s,idx_->ex_m(hs,dir_),ex)];
 }  
 
 template<typename FMT> 
-double ShiftField_odd_dn<FMT>::im_on_bulk(int c,int s,int hs,int ex) const {
+double ShiftField_odd_dn<FMT>::im_bulk(int c,int s,int hs,int ex) const {
   return (*field_)[fmt_->index_i(c,s,idx_->ex_m(hs,dir_),ex)];
 }  
 
