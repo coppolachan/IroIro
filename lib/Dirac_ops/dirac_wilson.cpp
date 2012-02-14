@@ -58,7 +58,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   /// bulk part ///
   double v1tr[NC_], v1ti[NC_], v2tr[NC_], v2ti[NC_];
   for(int x=0; x<Nx-1; ++x){
-    for(int bsite = 0; bsite < Vsl; ++bsite) {
+    for(int bsite=0; bsite<Vsl; ++bsite) {
       int site = SiteIndex::instance()->bdsite(bsite,x,0);
       int xp = SiteIndex::instance()->x_p(site,0);
       int id = ff_->index_r(0,0,site);
@@ -89,109 +89,234 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 }
 
 void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
-
   int Nih = Nd_*NC_; /*!< @brief num ob elements of a half spinor */
-  double v[Nih];
-  double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];
-  const double* vt;           
-  sf_up_[1]->setf(f);
 
-  for(int site=0; site<Nvol_; ++site){
-    const double* ut = u_->getaddr(gf_->index_r(0,0,(this->*gp)(site),1));
-    int id = ff_->index_r(0,0,site);
+  /// boundary part ///
+  int Ny = CommonPrms::instance()->Ny();
+  int Vsl = SiteIndex::instance()->Vdir(1); /*!< @brief Nx*Nz*Nt */
+  double vbd[Nih*Vsl];
 
-    if(!sf_up_[1]->on_bdry(site)) {vt = sf_up_[1]->get_bulk_addr(site);}
-    else {vt = sf_up_[1]->get_bdry_addr(site);}
-
+   for(int bsite=0; bsite<Vsl; ++bsite) {
+    int site = SiteIndex::instance()->bdsite(bsite,0,1);
+    int is = Nih*bsite;
+    const double* vt = f.getaddr(ff_->index_r(0,0,site));
+    
     for(int c=0; c<NC_; ++c){
-      v[r0(c)] = vt[r0(c)] +vt[r3(c)];  v[i0(c)] = vt[i0(c)] +vt[i3(c)];
-      v[r1(c)] = vt[r1(c)] -vt[r2(c)];  v[i1(c)] = vt[i1(c)] -vt[i2(c)];
+      vbd[r0(c)+is] = vt[r0(c)]+vt[r3(c)]; vbd[i0(c)+is] = vt[i0(c)]+vt[i3(c)];
+      vbd[r1(c)+is] = vt[r1(c)]-vt[r2(c)]; vbd[i1(c)+is] = vt[i1(c)]-vt[i2(c)];
     }
+   }
+   
+   double vbc[Nih*Vsl];  //Copy vbd from backward processor
+   Communicator::instance()->transfer_fw(vbc,vbd, Nih*Vsl,1);
+
+  double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];     
+
+  for(int bsite=0; bsite<Vsl; ++bsite){
+    int site = SiteIndex::instance()->bdsite(bsite,Ny-1,1);
+    int is = Nih*bsite;
+    int id = ff_->index_r(0,0,site);
+    const double* ut = u_->getaddr(gf_->index_r(0,0,(this->*gm)(site),1));
+
     for(int c=0; c<NC_; ++c){
       v1r[c] = 0.0; v1i[c] = 0.0;
       v2r[c] = 0.0; v2i[c] = 0.0;
-   
+      
       for(int c1=0; c1<NC_; ++c1){
-	v1r[c] += ut[r(c,c1)]*v[r0(c1)] -ut[i(c,c1)]*v[i0(c1)];
-	v1i[c] += ut[i(c,c1)]*v[r0(c1)] +ut[r(c,c1)]*v[i0(c1)];
-	v2r[c] += ut[r(c,c1)]*v[r1(c1)] -ut[i(c,c1)]*v[i1(c1)];
-	v2i[c] += ut[i(c,c1)]*v[r1(c1)] +ut[r(c,c1)]*v[i1(c1)];
+	v1r[c]+= ut[r(c,c1)]*vbc[r0(c1)+is] -ut[i(c,c1)]*vbc[i0(c1)+is];
+	v1i[c]+= ut[i(c,c1)]*vbc[r0(c1)+is] +ut[r(c,c1)]*vbc[i0(c1)+is];
+	v2r[c]+= ut[r(c,c1)]*vbc[r1(c1)+is] -ut[i(c,c1)]*vbc[i1(c1)+is];
+	v2i[c]+= ut[i(c,c1)]*vbc[r1(c1)+is] +ut[r(c,c1)]*vbc[i1(c1)+is];
       }
-      fp.add(id+r0(c), v1r[c]);  fp.add(id+i0(c), v1i[c]);
-      fp.add(id+r1(c), v2r[c]);  fp.add(id+i1(c), v2i[c]);
-      fp.add(id+r2(c),-v2r[c]);  fp.add(id+i2(c),-v2i[c]);
-      fp.add(id+r3(c), v1r[c]);  fp.add(id+i3(c), v1i[c]);
+      fp.add(id+r0(c), v1r[c]);   fp.add(id+i0(c), v1i[c]);
+      fp.add(id+r1(c), v2r[c]);   fp.add(id+i1(c), v2i[c]);
+      fp.add(id+r2(c),-v2r[c]);   fp.add(id+i2(c),-v2i[c]);
+      fp.add(id+r3(c), v1r[c]);   fp.add(id+i3(c), v1i[c]);
+    }
+  }
+  /// bulk part ///
+  double v1tr[NC_], v1ti[NC_], v2tr[NC_], v2ti[NC_];
+  for(int y=0; y<Ny-1; ++y){
+    for(int bsite=0; bsite<Vsl; ++bsite) {
+      int site = SiteIndex::instance()->bdsite(bsite,y,1);
+      int yp = SiteIndex::instance()->x_p(site,1);
+      int id = ff_->index_r(0,0,site);
+      
+      const double* vt = f.getaddr(ff_->index_r(0,0,yp));
+      for(int c=0; c<NC_; ++c){
+	v1tr[c] = vt[r0(c)] +vt[r3(c)];  v1ti[c] = vt[i0(c)] +vt[i3(c)];
+	v2tr[c] = vt[r1(c)] -vt[r2(c)];  v2ti[c] = vt[i1(c)] -vt[i2(c)];
+      }
+      const double* ut = u_->getaddr(gf_->index_r(0,0,(this->*gp)(site),1));
+      for(int c=0; c<NC_; ++c){
+	v1r[c] = 0.0;  v1i[c] = 0.0;
+	v2r[c] = 0.0;  v2i[c] = 0.0;
+	
+	for(int c1=0; c1<NC_; ++c1){
+	  v1r[c] += ut[r(c,c1)]*v1tr[c1] -ut[i(c,c1)]*v1ti[c1];
+	  v1i[c] += ut[i(c,c1)]*v1tr[c1] +ut[r(c,c1)]*v1ti[c1];
+	  v2r[c] += ut[r(c,c1)]*v2tr[c1] -ut[i(c,c1)]*v2ti[c1];
+	  v2i[c] += ut[i(c,c1)]*v2tr[c1] +ut[r(c,c1)]*v2ti[c1];
+	}
+	fp.add(id+r0(c), v1r[c]);  fp.add(id+i0(c), v1i[c]);
+	fp.add(id+r1(c), v2r[c]);  fp.add(id+i1(c), v2i[c]);
+	fp.add(id+r2(c),-v2r[c]);  fp.add(id+i2(c),-v2i[c]);
+	fp.add(id+r3(c), v1r[c]);  fp.add(id+i3(c), v1i[c]);
+      }
     }
   }
 }
 
 void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
   int Nih = Nd_*NC_; /*!< @brief num ob elements of a half spinor */
-  double v[Nih];
-  double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];      
-  const double* vt;
-  sf_up_[2]->setf(f);
 
-  for(int site=0; site<Nvol_; ++site){
-    const double* ut = u_->getaddr(gf_->index_r(0,0,(this->*gp)(site),2));
-    int id =ff_->index_r(0,0,site);
+  /// boundary part ///
+  int Nz = CommonPrms::instance()->Nx();
+  int Vsl = SiteIndex::instance()->Vdir(2);  /*!< @brief Nx*Ny*Nt */
+  double vbd[Nih*Vsl]; 
 
-    if(!sf_up_[2]->on_bdry(site)) {vt = sf_up_[2]->get_bulk_addr(site);}
-    else {vt = sf_up_[2]->get_bdry_addr(site);}
-
+  for(int bsite=0; bsite<Vsl; ++bsite) {
+    int site = SiteIndex::instance()->bdsite(bsite,0,2);
+    int is = Nih*bsite;
+    const double* vt = f.getaddr(ff_->index_r(0,0,site));
+    
     for(int c=0; c<NC_; ++c){
-      v[r0(c)] = vt[r0(c)] -vt[i2(c)];   v[i0(c)] = vt[i0(c)] +vt[r2(c)];
-      v[r1(c)] = vt[r1(c)] +vt[i3(c)];   v[i1(c)] = vt[i1(c)] -vt[r3(c)];
+      vbd[r0(c)+is] = vt[r0(c)]-vt[i2(c)]; vbd[i0(c)+is] = vt[i0(c)]+vt[r2(c)];
+      vbd[r1(c)+is] = vt[r1(c)]+vt[i3(c)]; vbd[i1(c)+is] = vt[i1(c)]-vt[r3(c)];
     }
+  }
+  
+  double vbc[Nih*Vsl];  //Copy vbd from backward processor
+  Communicator::instance()->transfer_fw(vbc,vbd, Nih*Vsl,2);
+
+  double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];     
+
+  for(int bsite=0; bsite<Vsl; ++bsite){
+    int site = SiteIndex::instance()->bdsite(bsite,Nz-1,2);
+    int is = Nih*bsite;
+    int id = ff_->index_r(0,0,site);
+    const double* ut = u_->getaddr(gf_->index_r(0,0,(this->*gm)(site),2));
+
     for(int c=0; c<NC_; ++c){
-      v1r[c] = 0.0;  v1i[c] = 0.0;
-      v2r[c] = 0.0;  v2i[c] = 0.0;
-   
+      v1r[c] = 0.0; v1i[c] = 0.0;
+      v2r[c] = 0.0; v2i[c] = 0.0;
+      
       for(int c1=0; c1<NC_; ++c1){
-	v1r[c] += ut[r(c,c1)]*v[r0(c1)] -ut[i(c,c1)]*v[i0(c1)];
-	v1i[c] += ut[i(c,c1)]*v[r0(c1)] +ut[r(c,c1)]*v[i0(c1)];
-	v2r[c] += ut[r(c,c1)]*v[r1(c1)] -ut[i(c,c1)]*v[i1(c1)];
-	v2i[c] += ut[i(c,c1)]*v[r1(c1)] +ut[r(c,c1)]*v[i1(c1)];
+	v1r[c]+= ut[r(c,c1)]*vbc[r0(c1)+is] -ut[i(c,c1)]*vbc[i0(c1)+is];
+	v1i[c]+= ut[i(c,c1)]*vbc[r0(c1)+is] +ut[r(c,c1)]*vbc[i0(c1)+is];
+	v2r[c]+= ut[r(c,c1)]*vbc[r1(c1)+is] -ut[i(c,c1)]*vbc[i1(c1)+is];
+	v2i[c]+= ut[i(c,c1)]*vbc[r1(c1)+is] +ut[r(c,c1)]*vbc[i1(c1)+is];
       }
-      fp.add(id+r0(c), v1r[c]);  fp.add(id+i0(c), v1i[c]); 
-      fp.add(id+r1(c), v2r[c]);  fp.add(id+i1(c), v2i[c]);
-      fp.add(id+r2(c), v1i[c]);  fp.add(id+i2(c),-v1r[c]);
-      fp.add(id+r3(c),-v2i[c]);  fp.add(id+i3(c), v2r[c]);
+      fp.add(id+r0(c), v1r[c]);   fp.add(id+i0(c), v1i[c]);
+      fp.add(id+r1(c), v2r[c]);   fp.add(id+i1(c), v2i[c]);
+      fp.add(id+r2(c), v1i[c]);   fp.add(id+i2(c),-v1r[c]);
+      fp.add(id+r3(c),-v2i[c]);   fp.add(id+i3(c), v2r[c]);
+    }
+  }
+  /// bulk part ///
+  double v1tr[NC_], v1ti[NC_], v2tr[NC_], v2ti[NC_];
+  for(int z=0; z<Nz-1; ++z){
+    for(int bsite=0; bsite<Vsl; ++bsite) {
+      int site = SiteIndex::instance()->bdsite(bsite,z,2);
+      int zp = SiteIndex::instance()->x_p(site,2);
+      int id = ff_->index_r(0,0,site);
+      
+      const double* vt = f.getaddr(ff_->index_r(0,0,zp));
+      for(int c=0; c<NC_; ++c){
+	v1tr[c] = vt[r0(c)] -vt[i2(c)];  v1ti[c] = vt[i0(c)] +vt[r2(c)];
+	v2tr[c] = vt[r1(c)] +vt[i3(c)];  v2ti[c] = vt[i1(c)] -vt[r3(c)];
+      }
+      const double* ut = u_->getaddr(gf_->index_r(0,0,(this->*gp)(site),2));
+      for(int c=0; c<NC_; ++c){
+	v1r[c] = 0.0;  v1i[c] = 0.0;
+	v2r[c] = 0.0;  v2i[c] = 0.0;
+	
+	for(int c1=0; c1<NC_; ++c1){
+	  v1r[c] += ut[r(c,c1)]*v1tr[c1] -ut[i(c,c1)]*v1ti[c1];
+	  v1i[c] += ut[i(c,c1)]*v1tr[c1] +ut[r(c,c1)]*v1ti[c1];
+	  v2r[c] += ut[r(c,c1)]*v2tr[c1] -ut[i(c,c1)]*v2ti[c1];
+	  v2i[c] += ut[i(c,c1)]*v2tr[c1] +ut[r(c,c1)]*v2ti[c1];
+	}
+	fp.add(id+r0(c), v1r[c]);  fp.add(id+i0(c), v1i[c]);
+	fp.add(id+r1(c), v2r[c]);  fp.add(id+i1(c), v2i[c]);
+	fp.add(id+r2(c), v1i[c]);  fp.add(id+i2(c),-v1r[c]);
+	fp.add(id+r3(c),-v2i[c]);  fp.add(id+i3(c), v2r[c]);
+      }
     }
   }
 }
 
 void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
   int Nih = Nd_*NC_; /*!< @brief num ob elements of a half spinor */
-  double v[Nih];
-  double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];
 
-  const double* vt;
-  sf_up_[3]->setf(f);
+  /// boundary part ///
+  int Nt = CommonPrms::instance()->Nt();
+  int Vsl = SiteIndex::instance()->Vdir(3);  /*!< @brief Nx*Ny*Nz */
+  double vbd[Nih*Vsl]; 
 
-  for(int site=0; site<Nvol_; ++site){
-    const double* ut = u_->getaddr(gf_->index_r(0,0,(this->*gp)(site),3));
-    int id = ff_->index_r(0,0,site);
-
-    if(!sf_up_[3]->on_bdry(site)) {vt = sf_up_[3]->get_bulk_addr(site);}
-    else {vt = sf_up_[3]->get_bdry_addr(site);}
-
+  for(int bsite=0; bsite<Vsl; ++bsite) {
+    int site = SiteIndex::instance()->bdsite(bsite,0,3);
+    int is = Nih*bsite;
+    const double* vt = f.getaddr(ff_->index_r(0,0,site));
+    
     for(int c=0; c<NC_; ++c){
-      v[r0(c)] = vt[r2(c)]*2.0;   v[i0(c)] = vt[i2(c)]*2.0;
-      v[r1(c)] = vt[r3(c)]*2.0;   v[i1(c)] = vt[i3(c)]*2.0;
+      vbd[r0(c)+is] = vt[r2(c)]*2.0;  vbd[i0(c)+is] = vt[i2(c)]*2.0;
+      vbd[r1(c)+is] = vt[r3(c)]*2.0;  vbd[i1(c)+is] = vt[i3(c)]*2.0;
     }
+  }
+  
+  double vbc[Nih*Vsl];  //Copy vbd from backward processor
+  Communicator::instance()->transfer_fw(vbc,vbd, Nih*Vsl,3);
+
+  double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];     
+
+  for(int bsite=0; bsite<Vsl; ++bsite){
+    int site = SiteIndex::instance()->bdsite(bsite,Nt-1,3);
+    int is = Nih*bsite;
+    int id = ff_->index_r(0,0,site);
+    const double* ut = u_->getaddr(gf_->index_r(0,0,(this->*gm)(site),3));
+
     for(int c=0; c<NC_; ++c){
       v1r[c] = 0.0; v1i[c] = 0.0;
       v2r[c] = 0.0; v2i[c] = 0.0;
-   
+      
       for(int c1=0; c1<NC_; ++c1){
-	v1r[c] += ut[r(c,c1)]*v[r0(c1)] -ut[i(c,c1)]*v[i0(c1)];
-	v1i[c] += ut[i(c,c1)]*v[r0(c1)] +ut[r(c,c1)]*v[i0(c1)];
-	v2r[c] += ut[r(c,c1)]*v[r1(c1)] -ut[i(c,c1)]*v[i1(c1)];
-	v2i[c] += ut[i(c,c1)]*v[r1(c1)] +ut[r(c,c1)]*v[i1(c1)];
+	v1r[c]+= ut[r(c,c1)]*vbc[r0(c1)+is] -ut[i(c,c1)]*vbc[i0(c1)+is];
+	v1i[c]+= ut[i(c,c1)]*vbc[r0(c1)+is] +ut[r(c,c1)]*vbc[i0(c1)+is];
+	v2r[c]+= ut[r(c,c1)]*vbc[r1(c1)+is] -ut[i(c,c1)]*vbc[i1(c1)+is];
+	v2i[c]+= ut[i(c,c1)]*vbc[r1(c1)+is] +ut[r(c,c1)]*vbc[i1(c1)+is];
       }
-      fp.add(id+r2(c),v1r[c]);   fp.add(id+i2(c),v1i[c]); 
-      fp.add(id+r3(c),v2r[c]);   fp.add(id+i3(c),v2i[c]); 
+      fp.add(id+r2(c), v1r[c]);   fp.add(id+i2(c), v1i[c]);
+      fp.add(id+r3(c), v2r[c]);   fp.add(id+i3(c), v2i[c]);
+    }
+  }
+  /// bulk part ///
+  double v1tr[NC_], v1ti[NC_], v2tr[NC_], v2ti[NC_];
+  for(int t=0; t<Nt-1; ++t){
+    for(int bsite=0; bsite<Vsl; ++bsite) {
+      int site = SiteIndex::instance()->bdsite(bsite,t,3);
+      int tp = SiteIndex::instance()->x_p(site,3);
+      int id = ff_->index_r(0,0,site);
+      
+      const double* vt = f.getaddr(ff_->index_r(0,0,tp));
+      for(int c=0; c<NC_; ++c){
+	v1tr[c] = vt[r2(c)]*2.0;  v1ti[c] = vt[i2(c)]*2.0;
+	v2tr[c] = vt[r3(c)]*2.0;  v2ti[c] = vt[i3(c)]*2.0;
+      }
+      const double* ut = u_->getaddr(gf_->index_r(0,0,(this->*gp)(site),3));
+      for(int c=0; c<NC_; ++c){
+	v1r[c] = 0.0;  v1i[c] = 0.0;
+	v2r[c] = 0.0;  v2i[c] = 0.0;
+	
+	for(int c1=0; c1<NC_; ++c1){
+	  v1r[c] += ut[r(c,c1)]*v1tr[c1] -ut[i(c,c1)]*v1ti[c1];
+	  v1i[c] += ut[i(c,c1)]*v1tr[c1] +ut[r(c,c1)]*v1ti[c1];
+	  v2r[c] += ut[r(c,c1)]*v2tr[c1] -ut[i(c,c1)]*v2ti[c1];
+	  v2i[c] += ut[i(c,c1)]*v2tr[c1] +ut[r(c,c1)]*v2ti[c1];
+	}
+	fp.add(id+r2(c), v1r[c]);  fp.add(id+i2(c), v1i[c]);
+	fp.add(id+r3(c), v2r[c]);  fp.add(id+i3(c), v2i[c]);
+      }
     }
   }
 }
@@ -228,7 +353,8 @@ void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
       }
     }
   }
-  double vbc[Nih*Vsl];   //Copy vbd from backward processor
+  //Copy vbd from backward processor
+  double vbc[Nih*Vsl];   
   Communicator::instance()->transfer_bk(vbc,vbd,Nih*Vsl,0);
 
   for(int bsite=0; bsite<Vsl; ++bsite) {
