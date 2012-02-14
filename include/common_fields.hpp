@@ -192,7 +192,6 @@ template < class DATA, class FORMAT, typename TAG = NullType>
 class GeneralField {
 protected:
   FORMAT format;
-  GeneralField(const GeneralField& rhs); //hide copy constructor
 public:
   DATA data;
   GeneralField();
@@ -291,7 +290,6 @@ template < class DATA, class FORMAT>
 class GeneralField<DATA, FORMAT, ExtraDimTag> {
   FORMAT format;
   GeneralField(){}; //hide default constructor
-  GeneralField(const GeneralField& rhs); //hide copy constructor
 public:
   DATA data;
   GeneralField(int Ls):format(FORMAT( CommonPrms::instance()->Nvol()*Ls)),
@@ -310,7 +308,9 @@ public:
   GeneralField& operator=(const GeneralField& rhs);
   GeneralField& operator+=(const GeneralField& rhs);
   GeneralField& operator-=(const GeneralField& rhs);
-
+  double& operator[](size_t idx){
+    return data[idx];
+  }
 };
 
 

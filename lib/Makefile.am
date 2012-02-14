@@ -2,6 +2,8 @@ SUBDIRS = .
 
 if USE_MPI
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
+MAPPER_SRCS	  = Main/Geometry/map_parallelscalar.cpp
+MAPPER_HEAD	  = Main/Geometry/map_parallelscalar.hpp
 if HITACHI	
 CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 LDFLAGS += -q64
@@ -11,6 +13,8 @@ LDFLAGS +=
 endif
 else
 COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
+MAPPER_SRCS	  = Main/Geometry/map_scalar.cpp
+MAPPER_HEAD	  = Main/Geometry/map_scalar.hpp
 endif
 
 AM_CPPFLAGS=-I$(top_srcdir)
@@ -75,6 +79,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp	\
 		Main/Geometry/siteIndex.cpp		\
 		Main/Geometry/siteIndex_eo.cpp		\
+		Main/Geometry/mapper.cpp		\
+		$(MAPPER_SRCS)		     	        \
 		Main/gaugeConf.cpp			\
 		Main/commandline.cpp			\
 		PugiXML/pugixml.cpp			\
@@ -144,6 +150,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Main/Geometry/shiftField.h		\
 			Main/Geometry/shiftField_eo.h		\
 			Main/Geometry/siteIndex_eo.h		\
+			Main/Geometry/mapper.hpp		\
+			$(MAPPER_HEAD)		     	        \
 			Main/gaugeConf.hpp			\
 			Main/commandline.cpp			\
 			Dirac_ops/dirac_Operator_Factory.hpp	\

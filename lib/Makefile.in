@@ -43,7 +43,7 @@ target_triplet = @target@
 @HITACHI_FALSE@@USE_MPI_TRUE@am__append_4 = 
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
-DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
+DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_doxygen.m4 \
@@ -119,13 +119,17 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Measurements/FermionicM/fermion_meas_factory.cpp \
 	Measurements/FermionicM/utils_DWF4d.cpp \
 	Main/Geometry/siteIndex.cpp Main/Geometry/siteIndex_eo.cpp \
-	Main/gaugeConf.cpp Main/commandline.cpp PugiXML/pugixml.cpp \
+	Main/Geometry/mapper.cpp Main/Geometry/map_scalar.cpp \
+	Main/Geometry/map_parallelscalar.cpp Main/gaugeConf.cpp \
+	Main/commandline.cpp PugiXML/pugixml.cpp \
 	PugiXML/pugi_interface.cpp Tools/sunMatUtils.cpp \
 	Tools/randNum_MT19937.cpp Tools/randNum_Factory.cpp \
 	Tools/gammaMatrices.cpp \
 	$(top_srcdir)/include/common_fields.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
+@USE_MPI_FALSE@am__objects_2 = map_scalar.$(OBJEXT)
+@USE_MPI_TRUE@am__objects_2 = map_parallelscalar.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	action.$(OBJEXT) action_gauge_wilson.$(OBJEXT) \
 	action_gauge_rect.$(OBJEXT) action_Nf2.$(OBJEXT) \
@@ -150,11 +154,12 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	staples.$(OBJEXT) qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
 	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
 	fermion_meas_factory.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
-	siteIndex.$(OBJEXT) siteIndex_eo.$(OBJEXT) gaugeConf.$(OBJEXT) \
-	commandline.$(OBJEXT) pugixml.$(OBJEXT) \
-	pugi_interface.$(OBJEXT) sunMatUtils.$(OBJEXT) \
-	randNum_MT19937.$(OBJEXT) randNum_Factory.$(OBJEXT) \
-	gammaMatrices.$(OBJEXT) common_fields.$(OBJEXT)
+	siteIndex.$(OBJEXT) siteIndex_eo.$(OBJEXT) mapper.$(OBJEXT) \
+	$(am__objects_2) gaugeConf.$(OBJEXT) commandline.$(OBJEXT) \
+	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
+	sunMatUtils.$(OBJEXT) randNum_MT19937.$(OBJEXT) \
+	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT) \
+	common_fields.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -190,6 +195,76 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	install-pdf-recursive install-ps-recursive install-recursive \
 	installcheck-recursive installdirs-recursive pdf-recursive \
 	ps-recursive uninstall-recursive
+am__include_HEADERS_DIST = $(top_srcdir)/include/commonPrms.h \
+	$(top_srcdir)/include/commandline.hpp \
+	$(top_srcdir)/include/common_code.hpp \
+	$(top_srcdir)/include/common_fields.hpp \
+	$(top_srcdir)/include/config.h \
+	$(top_srcdir)/include/geometry.hpp \
+	$(top_srcdir)/include/field.h \
+	$(top_srcdir)/include/factories.hpp \
+	$(top_srcdir)/include/fopr_chebyshev_DdagD.h \
+	$(top_srcdir)/include/fopr_Dhat.h \
+	$(top_srcdir)/include/fopr_eo.h \
+	$(top_srcdir)/include/fopr_eo_wilson.h \
+	$(top_srcdir)/include/fopr.h \
+	$(top_srcdir)/include/fopr_signH_Zolotarev.h \
+	$(top_srcdir)/include/format_A.h \
+	$(top_srcdir)/include/format_F.h \
+	$(top_srcdir)/include/format_G.h \
+	$(top_srcdir)/include/numerical_const.hpp \
+	$(top_srcdir)/include/macros.hpp \
+	$(top_srcdir)/include/typeDefs.h \
+	$(top_srcdir)/include/pugi_interface.h \
+	$(top_srcdir)/include/singleton.h \
+	$(top_srcdir)/include/observer.hpp PugiXML/pugixml.hpp \
+	PugiXML/pugiconfig.hpp Action/action_gauge_wilson.hpp \
+	Action/action_gauge_rect.hpp Action/action.hpp \
+	Action/action_gaugetype_factory.hpp \
+	Action/action_fermiontype_factory.hpp \
+	Action/action_Factory.hpp Action/action_Nf2.hpp \
+	Action/action_Nf2_ratio.hpp Action/action_Nf2_DomainWall.hpp \
+	EigenModes/eigenModes_IRL.hpp EigenModes/sortEigen.h \
+	EigenModes/eigenProc_Zolotarev.h \
+	Measurements/GaugeM/staples.hpp \
+	Measurements/FermionicM/source.hpp \
+	Measurements/FermionicM/source_types.hpp \
+	Measurements/FermionicM/qprop_MultiShift.hpp \
+	Measurements/FermionicM/qprop.h \
+	Measurements/FermionicM/qprop_EvenOdd.h \
+	Measurements/FermionicM/qprop_DomainWall.hpp \
+	Measurements/FermionicM/fermion_meas_factory.hpp \
+	Measurements/FermionicM/quark_propagators.hpp \
+	Measurements/FermionicM/sources_factory.hpp \
+	Measurements/FermionicM/meson_correlator.hpp \
+	Measurements/FermionicM/utils_DWF4d.hpp \
+	Communicator/communicator.h Communicator/comm_io.hpp \
+	Communicator/fields_io.hpp Main/Geometry/siteIndex.h \
+	Main/Geometry/shiftField.h Main/Geometry/shiftField_eo.h \
+	Main/Geometry/siteIndex_eo.h Main/Geometry/mapper.hpp \
+	Main/Geometry/map_scalar.hpp \
+	Main/Geometry/map_parallelscalar.hpp Main/gaugeConf.hpp \
+	Main/commandline.cpp Dirac_ops/dirac_Operator_Factory.hpp \
+	Dirac_ops/dirac_overlap_Zolotarev.h Dirac_ops/dirac_wilson.h \
+	Dirac_ops/dirac_clover.hpp Dirac_ops/dirac_wilson_EvenOdd.h \
+	Dirac_ops/dirac.h Dirac_ops/dirac_DomainWall.hpp \
+	Dirac_ops/dirac_DomainWall_EvenOdd.hpp \
+	Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
+	Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
+	Dirac_ops/dirac_Preconditioners.hpp Dirac_ops/eoUtils.hpp \
+	Fields/field_expressions.hpp Solver/solver_Factory.hpp \
+	Solver/solver_BiCGStab.h Solver/solver.hpp Solver/solver_CG.h \
+	Solver/multiShiftSolver_CG.hpp Solver/multiShiftSolver.hpp \
+	Smearing/APEsmear.hpp Smearing/BaseSmear.hpp \
+	Smearing/StoutSmear.hpp Smearing/SmartConf.hpp \
+	Smearing/Smearing_Factories.hpp HMC/hmcGeneral.hpp \
+	HMC/mdExec.h HMC/mdExec_leapfrog.hpp \
+	HMC/mdExec_leapfrog_eigen.h HMC/mdExec_Factory.hpp \
+	Tools/sunMat.h Tools/sunMatUtils.hpp Tools/randNum_MP.h \
+	Tools/randNum.h Tools/sunVec.h Tools/randNum_MT19937.h \
+	Tools/randNum_Factory.h Tools/RAIIFactory.hpp \
+	Tools/EnumToString.hpp Tools/byteswap.hpp \
+	Tools/gammaMatrices.hpp
 HEADERS = $(include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -335,6 +410,10 @@ top_srcdir = @top_srcdir@
 SUBDIRS = . 
 @USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 @USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
+@USE_MPI_FALSE@MAPPER_SRCS = Main/Geometry/map_scalar.cpp
+@USE_MPI_TRUE@MAPPER_SRCS = Main/Geometry/map_parallelscalar.cpp
+@USE_MPI_FALSE@MAPPER_HEAD = Main/Geometry/map_scalar.hpp
+@USE_MPI_TRUE@MAPPER_HEAD = Main/Geometry/map_parallelscalar.hpp
 AM_CPPFLAGS = -I$(top_srcdir)
 AM_CFLAGS = -I$(top_srcdir)
 AM_LDFLAGS = 
@@ -392,6 +471,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp	\
 		Main/Geometry/siteIndex.cpp		\
 		Main/Geometry/siteIndex_eo.cpp		\
+		Main/Geometry/mapper.cpp		\
+		$(MAPPER_SRCS)		     	        \
 		Main/gaugeConf.cpp			\
 		Main/commandline.cpp			\
 		PugiXML/pugixml.cpp			\
@@ -460,6 +541,8 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Main/Geometry/shiftField.h		\
 			Main/Geometry/shiftField_eo.h		\
 			Main/Geometry/siteIndex_eo.h		\
+			Main/Geometry/mapper.hpp		\
+			$(MAPPER_HEAD)		     	        \
 			Main/gaugeConf.hpp			\
 			Main/commandline.cpp			\
 			Dirac_ops/dirac_Operator_Factory.hpp	\
@@ -657,6 +740,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeConf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hmc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/map_parallelscalar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/map_scalar.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_leapfrog.Po@am__quote@
@@ -1479,6 +1565,54 @@ siteIndex_eo.obj: Main/Geometry/siteIndex_eo.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex_eo.cpp' object='siteIndex_eo.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex_eo.obj `if test -f 'Main/Geometry/siteIndex_eo.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex_eo.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex_eo.cpp'; fi`
+
+mapper.o: Main/Geometry/mapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mapper.o -MD -MP -MF $(DEPDIR)/mapper.Tpo -c -o mapper.o `test -f 'Main/Geometry/mapper.cpp' || echo '$(srcdir)/'`Main/Geometry/mapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapper.Tpo $(DEPDIR)/mapper.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/mapper.cpp' object='mapper.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mapper.o `test -f 'Main/Geometry/mapper.cpp' || echo '$(srcdir)/'`Main/Geometry/mapper.cpp
+
+mapper.obj: Main/Geometry/mapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mapper.obj -MD -MP -MF $(DEPDIR)/mapper.Tpo -c -o mapper.obj `if test -f 'Main/Geometry/mapper.cpp'; then $(CYGPATH_W) 'Main/Geometry/mapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/mapper.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapper.Tpo $(DEPDIR)/mapper.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/mapper.cpp' object='mapper.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mapper.obj `if test -f 'Main/Geometry/mapper.cpp'; then $(CYGPATH_W) 'Main/Geometry/mapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/mapper.cpp'; fi`
+
+map_scalar.o: Main/Geometry/map_scalar.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map_scalar.o -MD -MP -MF $(DEPDIR)/map_scalar.Tpo -c -o map_scalar.o `test -f 'Main/Geometry/map_scalar.cpp' || echo '$(srcdir)/'`Main/Geometry/map_scalar.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/map_scalar.Tpo $(DEPDIR)/map_scalar.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/map_scalar.cpp' object='map_scalar.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map_scalar.o `test -f 'Main/Geometry/map_scalar.cpp' || echo '$(srcdir)/'`Main/Geometry/map_scalar.cpp
+
+map_scalar.obj: Main/Geometry/map_scalar.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map_scalar.obj -MD -MP -MF $(DEPDIR)/map_scalar.Tpo -c -o map_scalar.obj `if test -f 'Main/Geometry/map_scalar.cpp'; then $(CYGPATH_W) 'Main/Geometry/map_scalar.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/map_scalar.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/map_scalar.Tpo $(DEPDIR)/map_scalar.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/map_scalar.cpp' object='map_scalar.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map_scalar.obj `if test -f 'Main/Geometry/map_scalar.cpp'; then $(CYGPATH_W) 'Main/Geometry/map_scalar.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/map_scalar.cpp'; fi`
+
+map_parallelscalar.o: Main/Geometry/map_parallelscalar.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map_parallelscalar.o -MD -MP -MF $(DEPDIR)/map_parallelscalar.Tpo -c -o map_parallelscalar.o `test -f 'Main/Geometry/map_parallelscalar.cpp' || echo '$(srcdir)/'`Main/Geometry/map_parallelscalar.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/map_parallelscalar.Tpo $(DEPDIR)/map_parallelscalar.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/map_parallelscalar.cpp' object='map_parallelscalar.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map_parallelscalar.o `test -f 'Main/Geometry/map_parallelscalar.cpp' || echo '$(srcdir)/'`Main/Geometry/map_parallelscalar.cpp
+
+map_parallelscalar.obj: Main/Geometry/map_parallelscalar.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map_parallelscalar.obj -MD -MP -MF $(DEPDIR)/map_parallelscalar.Tpo -c -o map_parallelscalar.obj `if test -f 'Main/Geometry/map_parallelscalar.cpp'; then $(CYGPATH_W) 'Main/Geometry/map_parallelscalar.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/map_parallelscalar.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/map_parallelscalar.Tpo $(DEPDIR)/map_parallelscalar.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/map_parallelscalar.cpp' object='map_parallelscalar.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map_parallelscalar.obj `if test -f 'Main/Geometry/map_parallelscalar.cpp'; then $(CYGPATH_W) 'Main/Geometry/map_parallelscalar.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/map_parallelscalar.cpp'; fi`
 
 gaugeConf.o: Main/gaugeConf.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeConf.o -MD -MP -MF $(DEPDIR)/gaugeConf.Tpo -c -o gaugeConf.o `test -f 'Main/gaugeConf.cpp' || echo '$(srcdir)/'`Main/gaugeConf.cpp

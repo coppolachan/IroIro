@@ -10,6 +10,8 @@
 #include "Communicator/comm_io.hpp"
 #include "include/common_fields.hpp"
 
+#include "Main/Geometry/mapper.hpp"
+
 
 using namespace std;
 using namespace Format;
@@ -36,6 +38,16 @@ int Test_Gauge::shift(){
   Format_G FormatObj = d_conf.get_Format();
   ShiftField_up<Format_G> upt(d_conf.data,&FormatObj,3); //+t
   ShiftField_dn<Format_G> umx(d_conf.data,&FormatObj,0); //-x
+  Mapper shift;
+
+  double loop_timer;
+  TIMING_START;
+  for (int loop = 0; loop< 1000; ++loop) {
+    ShiftField_up<Format_G> stest(d_conf.data,&FormatObj,2); //+z
+    std::valarray<double> va_stest = upt.getva();
+  }
+  TIMING_END(loop_timer);
+  CCIO::cout <<"ShiftField Loop timing: "<< loop_timer<< endl;
 
   Staples wl(FormatObj);
   int nid = Communicator::instance()->nodeid();
@@ -59,7 +71,27 @@ int Test_Gauge::shift(){
   CCIO::cout <<" FermionField size     : " << test_v.data.size() << "\n";
   CCIO::cout <<" FermionFieldExtraDim  : " << test_v_5D.data.size() << "\n";
 
+  gettimeofday(&start,NULL);
+  for (int loop = 0; loop< 1000; ++loop) 
+    GaugeFieldType map_test = shift(test_u, 0,  Forward);
+  gettimeofday(&end,NULL);
+  loop_timer = (end.tv_sec - start.tv_sec) * 1000.0;                          
+  loop_timer = loop_timer + (end.tv_usec - start.tv_usec) / 1000.0 ;  // us to ms
+    
+  CCIO::cout <<"Mapper Loop timing: "<< loop_timer<< endl;
 
+  
+  CCIO::cout <<" plaq (orignal) = "<<wl.plaquette(test_u.data)<< endl; 
+  CCIO::cout <<" plaq (+x map ) = "<<wl.plaquette(shift(test_u, 0,  Forward).data)<< endl; 
+  
+  CCIO::cout <<" plaq (-x map ) = "<<wl.plaquette(shift(test_u, 0, Backward).data)<< endl; 
+  CCIO::cout <<" plaq (+y map ) = "<<wl.plaquette(shift(test_u, 1,  Forward).data)<< endl; 
+  CCIO::cout <<" plaq (-y map ) = "<<wl.plaquette(shift(test_u, 1, Backward).data)<< endl; 
+  CCIO::cout <<" plaq (+z map ) = "<<wl.plaquette(shift(test_u, 2,  Forward).data)<< endl; 
+  CCIO::cout <<" plaq (-z map ) = "<<wl.plaquette(shift(test_u, 2, Backward).data)<< endl; 
+  CCIO::cout <<" plaq (+t map ) = "<<wl.plaquette(shift(test_u, 3,  Forward).data)<< endl; 
+  CCIO::cout <<" plaq (-t map ) = "<<wl.plaquette(shift(test_u, 3, Backward).data)<< endl; 
+  
   return 0;
 }
 
