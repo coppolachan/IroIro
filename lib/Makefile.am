@@ -32,6 +32,7 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
+		Main/common_fields.cpp			\
 		$(COMMUNICATOR_SRCS)     	        \
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
@@ -88,8 +89,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
-		Tools/gammaMatrices.cpp			\
-		$(top_srcdir)/include/common_fields.cpp
+		Tools/gammaMatrices.cpp			
+
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD   = libcommcode.a

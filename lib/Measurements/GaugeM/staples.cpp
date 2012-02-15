@@ -8,11 +8,60 @@
 #include "staples.hpp"
 #include "Tools/sunMatUtils.hpp"
 
-using namespace SUNmat_utils;
 
+
+using namespace SUNmat_utils;
+using namespace FieldUtils;
 typedef ShiftField_up<GaugeFieldFormat> FieldUP;
 typedef ShiftField_dn<GaugeFieldFormat> FieldDN;
 typedef std::valarray<double> field1d;
+
+//------------------------------------------------------------
+double Staples::plaquette(const GaugeFieldType& F)const {
+  return (plaq_s(F) + plaq_t(F))*0.5;
+}
+double Staples::plaq_s(const GaugeFieldType& F)const {
+  double plaq = 0.0;
+  GaugeField1DType stpl;
+
+  for(int i=0;i<Ndim_-1;++i){
+    int j = (i+1)%(Ndim_-1);
+    
+    stpl = lower(F,i,j);
+
+    for(int site=0; site<Nvol_; ++site)
+      plaq += ReTr(matrix(F,site,i) * matrix_dag(stpl,site));  // P_ij
+  }
+  plaq = com_->reduce_sum(plaq);
+  return plaq/(Lvol_*Nc_*3.0);
+}
+double Staples::plaq_t(const GaugeFieldType& F)const {
+  return 0;
+}
+GaugeField1DType Staples::lower(const GaugeFieldType& G, int mu, int nu) const{
+  //         +     +
+  // nu,w_dag|     |w(site+mu,nu) 
+  //     site+-->--+ 
+  //           mu,v              
+
+  GaugeField1DType v = DirSlice(G,mu);
+  
+  GaugeField1DType w = DirSlice(G,nu);
+  
+  GaugeField1DType c;
+  GaugeField1DType WupMu = shift(w,mu,Forward);
+  
+  for(int site = 0; site < Nvol_; ++site)
+    c.data[format1d_->cslice(0,site)] = 
+      (matrix_dag(w,site)* matrix(v,site)* matrix(WupMu,site)).getva();
+  
+  c = shift(c,nu,Backward);
+  
+  return c;
+}
+
+//////////////////////////////////////////////////////////////
+
 
 //------------------------------------------------------------
 double Staples::plaquette(const Field& g)const{ 

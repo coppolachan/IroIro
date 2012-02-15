@@ -22,4 +22,10 @@ namespace FieldUtils{
     }
     return fp;
   }
+
+  GaugeField1DType DirSlice(const GaugeFieldType& F, int dir){
+    return GaugeField1DType(Field(F.data[F.get_Format().dir_slice(dir)]));
+  }
+
+
 }

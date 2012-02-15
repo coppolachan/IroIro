@@ -56,6 +56,16 @@ int Test_Gauge::shift(){
   CCIO::cout <<" plaq (+t sfted) = "<<wl.plaquette(upt)     <<" nodeid= "<<nid << endl;
   CCIO::cout <<" plaq (-x sfted) = "<<wl.plaquette(umx)     <<" nodeid= "<<nid << endl;
 
+  gettimeofday(&start,NULL);
+  for (int loop = 0; loop< 100; ++loop) 
+    wl.lower(d_conf.data,0,0);
+  gettimeofday(&end,NULL);
+  loop_timer = (end.tv_sec - start.tv_sec) * 1000.0;                          
+  loop_timer = loop_timer + (end.tv_usec - start.tv_usec) / 1000.0 ;  // us to ms
+    
+  CCIO::cout <<"Old staple lower Loop timing: "<< loop_timer<< endl;
+
+  CCIO::cout <<" lower norm     = "<<(wl.lower(d_conf.data,0,0)).norm() <<" nodeid= "<<nid << endl;
 
   GaugeFieldType test_u;
   test_u = d_conf;   //create from existing data
@@ -91,7 +101,20 @@ int Test_Gauge::shift(){
   CCIO::cout <<" plaq (-z map ) = "<<wl.plaquette(shift(test_u, 2, Backward).data)<< endl; 
   CCIO::cout <<" plaq (+t map ) = "<<wl.plaquette(shift(test_u, 3,  Forward).data)<< endl; 
   CCIO::cout <<" plaq (-t map ) = "<<wl.plaquette(shift(test_u, 3, Backward).data)<< endl; 
-  
+ 
+  // Specialized Staples
+  gettimeofday(&start,NULL);
+  for (int loop = 0; loop< 100; ++loop) 
+    wl.lower(d_conf,0,0);
+  gettimeofday(&end,NULL);
+  loop_timer = (end.tv_sec - start.tv_sec) * 1000.0;                          
+  loop_timer = loop_timer + (end.tv_usec - start.tv_usec) / 1000.0 ;  // us to ms
+  CCIO::cout <<"New staple lower Loop timing: "<< loop_timer<< endl;
+
+
+  CCIO::cout <<" Map lower norm     = "<<(wl.lower(d_conf,0,0)).norm() <<" nodeid= "<<nid << endl;
+
+ 
   return 0;
 }
 

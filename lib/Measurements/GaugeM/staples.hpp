@@ -15,11 +15,17 @@
 #include "Main/Geometry/shiftField.h"
 #include "Tools/sunMat.h"
 
+
+#include "include/common_fields.hpp"
+//temporary
+#include "lib/Main/Geometry/mapper.hpp"
+
 class Staples {
   int Nc_;
   int Ndim_;
   int Nvol_, Lvol_;
   const Format::Format_G& gf_;
+  Mapper shift;
 
   Communicator* com_;
   SiteIndex* idx_;  
@@ -35,9 +41,18 @@ public:
      Lvol_(CommonPrms::instance()->Lvol()),
      com_(Communicator::instance()),
      idx_(SiteIndex::instance()),
+     shift(),
      format1d_(new Format::Format_G(Nvol_,1)){}
 
   ~Staples(){delete format1d_;}
+
+  /////////////////////////////////////////////////
+  double plaquette(const GaugeFieldType&) const;
+  double plaq_s   (const GaugeFieldType&) const;
+  double plaq_t   (const GaugeFieldType&) const;
+  GaugeField1DType lower(const GaugeFieldType&, int, int) const;
+
+  //////////////////////////////////////////////////
 
   // functions for Field class
   ShiftField_up<GaugeFieldFormat> LinkUp(const Field&, int, int) const;
@@ -60,5 +75,13 @@ public:
   
   void staple(Field&, const ShiftField&, int) const;
 };
+
+
+
+
+
+
+
+
 
 #endif  

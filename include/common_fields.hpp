@@ -209,6 +209,7 @@ public:
   GeneralField& operator+=(const GeneralField& rhs);
   GeneralField& operator-=(const GeneralField& rhs);
 
+  
   double norm();
 
 };
@@ -308,9 +309,6 @@ public:
   GeneralField& operator=(const GeneralField& rhs);
   GeneralField& operator+=(const GeneralField& rhs);
   GeneralField& operator-=(const GeneralField& rhs);
-  double& operator[](size_t idx){
-    return data[idx];
-  }
 };
 
 
@@ -416,10 +414,24 @@ private:
 namespace FieldUtils{
   const Field TracelessAntihermite(const GaugeField&);
 
-  SUNmat matrix(GaugeFieldType, int site, int ex);
-  SUNmat matrix(GaugeField1DType, int site, int ex);
+  // Field type-type transformations
+  GaugeField1DType DirSlice(const GaugeFieldType& F, int dir);
 
 
+  // Inline functions
+  inline SUNmat matrix(const GaugeFieldType F, int site, int dir) {
+    return SUNmat(F.data[F.get_Format().cslice(0,site,dir)]);
+  }
+  inline SUNmat matrix(const GaugeField1DType F, int site){
+    return SUNmat(F.data[F.get_Format().cslice(0,site)]);
+  }
+
+  inline SUNmat matrix_dag(const GaugeFieldType F, int site, int dir){
+    return SUNmat(F.data[F.get_Format().cslice(0,site,dir)]).dag();
+  }
+  inline SUNmat matrix_dag(const GaugeField1DType F, int site){
+    return SUNmat(F.data[F.get_Format().cslice(0,site)]).dag();
+  }
 
 }
 
