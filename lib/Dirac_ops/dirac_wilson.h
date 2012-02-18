@@ -52,6 +52,16 @@ private:
   const size_t fsize_;
   const size_t gsize_;
 
+  const list_vec& bdry_mup_;
+  const list_vec& bdry_mlw_;
+  const list_vec& bdry_pup_;
+  const list_vec& bdry_plw_;
+
+  const list_vec& bulk_mup_;
+  const list_vec& bulk_mlw_;
+  const list_vec& bulk_pup_;
+  const list_vec& bulk_plw_;
+
   void mult_xp(Field&,const Field&)const;
   void mult_yp(Field&,const Field&)const;
   void mult_zp(Field&,const Field&)const;
@@ -77,8 +87,8 @@ private:
   int i3(int c)const{return 2*(3*NC_+c)+1;} 
 #endif
 
-  int r(int c1,int c2)const{return 2*(NC_*c1+c2);}
-  int i(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
+  int re(int c1,int c2)const{return 2*(NC_*c1+c2);}
+  int im(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
 
   void mult_full(Field&,const Field&)const;   /*! @brief  -kpp*D*f */
   void mult_offdiag(Field&,const Field&)const;/*! @brief  (1-kpp*D)*f */
@@ -87,8 +97,24 @@ private:
   int esec(int site)const {return SiteIndex_eo::instance()->esec(site);}
   int osec(int site)const {return SiteIndex_eo::instance()->osec(site);}
 
+  int xp_full(int site,int dir)const {
+    return SiteIndex::instance()->x_p(site,dir);}
+  int xp_eo(int hs,int dir)const {
+    return SiteIndex_eo::instance()->ex_p(hs,dir);}
+  int xp_oe(int hs,int dir)const {
+    return SiteIndex_eo::instance()->ox_p(hs,dir);}
+
+  int xm_full(int site,int dir)const {
+    return SiteIndex::instance()->x_m(site,dir);}
+  int xm_eo(int hs,int dir)const {
+    return SiteIndex_eo::instance()->ex_m(hs,dir);}
+  int xm_oe(int hs,int dir)const {
+    return SiteIndex_eo::instance()->ox_m(hs,dir);}
+
   int(Dirac_Wilson::*gp)(int)const;
   int(Dirac_Wilson::*gm)(int)const;
+  int(Dirac_Wilson::*x_p)(int,int)const;
+  int(Dirac_Wilson::*x_m)(int,int)const;
   void(Dirac_Wilson::*mult_core)(Field&,const Field&)const;
 
   Dirac_Wilson(const Dirac_Wilson&); /*!< @brief simple copy is prohibited.*/
@@ -100,13 +126,21 @@ public:
      Nvol_(CommonPrms::instance()->Nvol()/2),
      Ndim_(CommonPrms::instance()->Ndim()),
      Nd_(CommonPrms::instance()->Nd()),
-     gp(&Dirac_Wilson::esec),
-     gm(&Dirac_Wilson::osec),
+     gp(&Dirac_Wilson::esec),gm(&Dirac_Wilson::osec),
+     x_p(&Dirac_Wilson::xp_eo),x_m(&Dirac_Wilson::xm_eo),
      mult_core(&Dirac_Wilson::mult_offdiag),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(2*Nvol_)),
      fsize_(ff_->size()),
-     gsize_(gf_->size()){
+     gsize_(gf_->size()),
+     bdry_mlw_(SiteIndex_eo::instance()->ebdry_lw()),
+     bdry_plw_(SiteIndex_eo::instance()->obdry_lw()),
+     bdry_mup_(SiteIndex_eo::instance()->obdry_up()),
+     bdry_pup_(SiteIndex_eo::instance()->ebdry_up()),
+     bulk_mlw_(SiteIndex_eo::instance()->ebulk_lw()),
+     bulk_plw_(SiteIndex_eo::instance()->obulk_lw()),
+     bulk_mup_(SiteIndex_eo::instance()->obulk_up()),
+     bulk_pup_(SiteIndex_eo::instance()->ebulk_up()){
     //
     for(int d=0;d<Ndim_;++d){
       sf_up_.push_back(new shift_oup(ff_,d));
@@ -120,13 +154,21 @@ public:
      Nvol_(CommonPrms::instance()->Nvol()/2),
      Ndim_(CommonPrms::instance()->Ndim()),
      Nd_(CommonPrms::instance()->Nd()),
-     gp(&Dirac_Wilson::osec),
-     gm(&Dirac_Wilson::esec),
+     gp(&Dirac_Wilson::osec),gm(&Dirac_Wilson::esec),
+     x_p(&Dirac_Wilson::xp_oe),x_m(&Dirac_Wilson::xm_oe),
      mult_core(&Dirac_Wilson::mult_offdiag),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(2*Nvol_)),
      fsize_(ff_->size()),
-     gsize_(gf_->size()){
+     gsize_(gf_->size()),
+     bdry_mlw_(SiteIndex_eo::instance()->obdry_lw()),
+     bdry_plw_(SiteIndex_eo::instance()->ebdry_lw()),
+     bdry_mup_(SiteIndex_eo::instance()->ebdry_up()),
+     bdry_pup_(SiteIndex_eo::instance()->obdry_up()),
+     bulk_mlw_(SiteIndex_eo::instance()->obulk_lw()),
+     bulk_plw_(SiteIndex_eo::instance()->ebulk_lw()),
+     bulk_mup_(SiteIndex_eo::instance()->ebulk_up()),
+     bulk_pup_(SiteIndex_eo::instance()->obulk_up()){
     //
     for(int d=0;d<Ndim_;++d){
       sf_up_.push_back(new shift_eup(ff_,d));
@@ -141,13 +183,21 @@ public:
      Nvol_(CommonPrms::instance()->Nvol()),
      Ndim_(CommonPrms::instance()->Ndim()),
      Nd_(CommonPrms::instance()->Nd()),
-     gp(&Dirac_Wilson::gsite),
-     gm(&Dirac_Wilson::gsite),
+     gp(&Dirac_Wilson::gsite),gm(&Dirac_Wilson::gsite),
+     x_p(&Dirac_Wilson::xp_full),x_m(&Dirac_Wilson::xm_full),
      mult_core(&Dirac_Wilson::mult_full),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
      fsize_(ff_->size()),
-     gsize_(gf_->size()){
+     gsize_(gf_->size()),
+     bdry_mlw_(SiteIndex::instance()->bdry_lw()),
+     bdry_plw_(SiteIndex::instance()->bdry_lw()),
+     bdry_mup_(SiteIndex::instance()->bdry_up()),
+     bdry_pup_(SiteIndex::instance()->bdry_up()),
+     bulk_mlw_(SiteIndex::instance()->bulk_lw()),
+     bulk_plw_(SiteIndex::instance()->bulk_lw()),
+     bulk_mup_(SiteIndex::instance()->bulk_up()),
+     bulk_pup_(SiteIndex::instance()->bulk_up()){
     //
     for(int d=0;d<Ndim_;++d){
       sf_up_.push_back(new shift_up(ff_,d));
@@ -160,13 +210,21 @@ public:
      Nvol_(CommonPrms::instance()->Nvol()),
      Ndim_(CommonPrms::instance()->Ndim()),
      Nd_(CommonPrms::instance()->Nd()),
-     gp(&Dirac_Wilson::gsite),
-     gm(&Dirac_Wilson::gsite),
+     gp(&Dirac_Wilson::gsite),gm(&Dirac_Wilson::gsite),
+     x_p(&Dirac_Wilson::xp_full),x_m(&Dirac_Wilson::xm_full),
      mult_core(&Dirac_Wilson::mult_full),
      ff_(new ffmt_t(Nvol_)),
      gf_(new gfmt_t(Nvol_)),
      fsize_(ff_->size()),
-     gsize_(gf_->size()){
+     gsize_(gf_->size()),
+     bdry_mlw_(SiteIndex::instance()->bdry_lw()),
+     bdry_plw_(SiteIndex::instance()->bdry_lw()),
+     bdry_mup_(SiteIndex::instance()->bdry_up()),
+     bdry_pup_(SiteIndex::instance()->bdry_up()),
+     bulk_mlw_(SiteIndex::instance()->bulk_lw()),
+     bulk_plw_(SiteIndex::instance()->bulk_lw()),
+     bulk_mup_(SiteIndex::instance()->bulk_up()),
+     bulk_pup_(SiteIndex::instance()->bulk_up()){
     //
     double mass;
     XML::read(node, "mass", mass);

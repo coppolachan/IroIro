@@ -26,7 +26,6 @@ namespace MPrand{
 
     rn=0.0;
     assert(rn.size()==fmt.size());
-    assert(rn.size()==gsite.size());
 
     int Nvol = fmt.Nvol();
     int Nin = fmt.Nin();
@@ -50,7 +49,6 @@ namespace MPrand{
     rn=0.0;
 
     assert(rn.size()==fmt.size());
-    assert(fmt.Nvol()==gsite.size());
 
     int Nvol = fmt.Nvol();
     int Nin = fmt.Nin();
