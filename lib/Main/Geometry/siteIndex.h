@@ -9,6 +9,8 @@
 #include<iostream>
 #include<vector>
 
+typedef std::vector<std::vector<int> > list_vec;
+
 class SiteIndex{
 private:
   enum{Ndim_max_ = 4};
@@ -21,9 +23,16 @@ private:
   std::vector<int> Ndir_;
   std::vector<int> Vdir_;
   std::vector<int> Cdir_;
+
+  static list_vec bdup_;
+  static list_vec bdlw_;
+
+  static list_vec bdry_up_;
+  static list_vec bulk_up_;
+  static list_vec bdry_lw_;
+  static list_vec bulk_lw_;
+
   static std::vector<int> gsite_;
-  static std::vector<std::vector<int> > bdup_;
-  static std::vector<std::vector<int> > bdlw_;
 
   // indices with a step forward (for bulk sites)
   int xp(int site) const{ return site+1;}
@@ -103,21 +112,28 @@ public:
   int cmp(int site,int dir)const{return (this->*SiteIndex::cmps[dir])(site);}
 
   // indices for one-step forward/backward in each direction
-  int x_p(int site,int dir)const{return (this->*SiteIndex::xps[dir])(site);}
-  int x_m(int site,int dir)const{return (this->*SiteIndex::xms[dir])(site);}
+  int x_p(int site,int dir){return (this->*SiteIndex::xps[dir])(site);}
+  int x_m(int site,int dir){return (this->*SiteIndex::xms[dir])(site);}
 
   // map from site to index on the boundary
   int x_b(int site,int dir)const{return (this->*SiteIndex::xbds[dir])(site);}
 
   int Bdir(int d)const{return Bdir_[d];}
   int Vdir(int d)const{return Vdir_[d];}
-  const std::vector<int> bdup(int d)const{return bdup_[d];}
-  const std::vector<int> bdlw(int d)const{return bdlw_[d];}
+
+  const std::vector<int>& bdup(int d)const{return bdup_[d];}
+  const std::vector<int>& bdlw(int d)const{return bdlw_[d];}
+
+  const list_vec& bdry_up()const{return bdry_up_;}
+  const list_vec& bulk_up()const{return bulk_up_;}
+  
+  const list_vec& bdry_lw()const{return bdry_lw_;}
+  const list_vec& bulk_lw()const{return bulk_lw_;}
 
   int bdsite(int bsite,int x,int d)const{
     return bdlw_[d][bsite] +x*Cdir_[d];}
-  
-  const std::vector<int> get_gsite() const{ return gsite_;}
+
+  const std::vector<int>& get_gsite() const{ return gsite_;}
   int get_gsite(int site) const{ return gsite_[site];}
 };
 

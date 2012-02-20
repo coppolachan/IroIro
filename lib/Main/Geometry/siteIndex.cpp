@@ -1,14 +1,21 @@
 //---------------------------------------------------------------------
 // siteIndex.cpp
 //---------------------------------------------------------------------
-#include <iostream>
 #include "siteIndex.h"
 #include "Communicator/communicator.h"
+#include <iostream>
+#include <cassert>
 
 using namespace std;
 
-vector<vector<int> > SiteIndex::bdup_;
-vector<vector<int> > SiteIndex::bdlw_;
+list_vec SiteIndex::bdup_;
+list_vec SiteIndex::bdlw_;
+
+list_vec SiteIndex::bdry_up_;
+list_vec SiteIndex::bdry_lw_;
+list_vec SiteIndex::bulk_up_;
+list_vec SiteIndex::bulk_lw_;
+
 vector<int> SiteIndex::gsite_;
 
 SiteIndex* SiteIndex::instance(){
@@ -34,15 +41,30 @@ void SiteIndex::setup_bdry(){
   int Ndim= CommonPrms::Ndim();
   bdup_.resize(Ndim);
   bdlw_.resize(Ndim);
+  bdry_up_.resize(Ndim);
+  bdry_lw_.resize(Ndim);
+  bulk_up_.resize(Ndim);
+  bulk_lw_.resize(Ndim);
 
   for(int d=0;d<Ndim;++d){
-    bdup_[d].resize(Nvol_/Ndir_[d]);
-    bdlw_[d].resize(Nvol_/Ndir_[d]);
 
+    bdup_[d].resize(Nvol_/Ndir_[d]);
     for(int site=0;site<Nvol_;++site){
-      if(cmp(site,d)==0)        bdlw_[d][x_b(site,d)]= site;
-      if(cmp(site,d)==Bdir_[d]) bdup_[d][x_b(site,d)]= site;
+      if(cmp(site,d)==Bdir_[d]){
+	bdup_[d][x_b(site,d)]= site;
+	bdry_up_[d].push_back(site);
+      }
+      else bulk_up_[d].push_back(site);
     }
+    bdlw_[d].resize(Nvol_/Ndir_[d]);
+    for(int site=0;site<Nvol_;++site){
+      if(cmp(site,d)==0){
+        bdlw_[d][x_b(site,d)]= site;
+	bdry_lw_[d].push_back(site);
+      }
+      else bulk_lw_[d].push_back(site);
+    }
+    assert(bdry_up_[d].size()==bdry_lw_[d].size());
   }
 }  
 
