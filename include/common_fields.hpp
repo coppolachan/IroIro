@@ -191,8 +191,9 @@ struct OneDimTag {};
 template < class DATA, class FORMAT, typename TAG = NullType> 
 class GeneralField {
 protected:
-  FORMAT format;
+
 public:
+  FORMAT format;
   DATA data;
   GeneralField();
   GeneralField(int);
@@ -419,18 +420,18 @@ namespace FieldUtils{
 
 
   // Inline functions
-  inline SUNmat matrix(const GaugeFieldType F, int site, int dir) {
-    return SUNmat(F.data[F.get_Format().cslice(0,site,dir)]);
+  inline SUNmat matrix(const GaugeFieldType& F, int site, int dir) {
+    return SUNmat(F.data[F.format.cslice(0,site,dir)]);
   }
-  inline SUNmat matrix(const GaugeField1DType F, int site){
-    return SUNmat(F.data[F.get_Format().cslice(0,site)]);
+  inline SUNmat matrix(const GaugeField1DType& F, int site){
+    return SUNmat(F.data[F.format.cslice(0,site)]);
   }
 
-  inline SUNmat matrix_dag(const GaugeFieldType F, int site, int dir){
-    return SUNmat(F.data[F.get_Format().cslice(0,site,dir)]).dag();
+  inline SUNmat matrix_dag(const GaugeFieldType& F, int site, int dir){
+    return SUNmat(F.data[F.format.cslice(0,site,dir)]).dag();
   }
-  inline SUNmat matrix_dag(const GaugeField1DType F, int site){
-    return SUNmat(F.data[F.get_Format().cslice(0,site)]).dag();
+  inline SUNmat matrix_dag(const GaugeField1DType& F, int site){
+    return SUNmat(F.data[F.format.cslice(0,site)]).dag();
   }
 
 }

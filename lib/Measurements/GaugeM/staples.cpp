@@ -20,12 +20,13 @@ typedef std::valarray<double> field1d;
 double Staples::plaquette(const GaugeFieldType& F)const {
   return (plaq_s(F) + plaq_t(F))*0.5;
 }
+//------------------------------------------------------------
 double Staples::plaq_s(const GaugeFieldType& F)const {
   double plaq = 0.0;
   GaugeField1DType stpl;
 
-  for(int i=0;i<Ndim_-1;++i){
-    int j = (i+1)%(Ndim_-1);
+  for(int i=0;i<NDIM_-1;++i){
+    int j = (i+1)%(NDIM_-1);
     
     stpl = lower(F,i,j);
 
@@ -35,33 +36,71 @@ double Staples::plaq_s(const GaugeFieldType& F)const {
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*Nc_*3.0);
 }
+//------------------------------------------------------------
 double Staples::plaq_t(const GaugeFieldType& F)const {
-  return 0;
+  double plaq = 0.0;
+  GaugeField1DType stpl;
+
+  for(int nu=0; nu < NDIM_-1; ++nu){
+    stpl = lower(F,3,nu);
+    for(int site=0; site<Nvol_; ++site)
+      plaq += ReTr(matrix(F,site,3)* matrix_dag(stpl,site));  // P_zx
+  }
+  plaq = com_->reduce_sum(plaq);
+  return plaq/(Lvol_*Nc_*3.0);
 }
+//------------------------------------------------------------
 GaugeField1DType Staples::lower(const GaugeFieldType& G, int mu, int nu) const{
   //         +     +
   // nu,w_dag|     |w(site+mu,nu) 
   //     site+-->--+ 
   //           mu,v              
-
   GaugeField1DType v = DirSlice(G,mu);
-  
   GaugeField1DType w = DirSlice(G,nu);
-  
+
   GaugeField1DType c;
   GaugeField1DType WupMu = shift(w,mu,Forward);
-  
-  for(int site = 0; site < Nvol_; ++site)
-    c.data[format1d_->cslice(0,site)] = 
+
+  for(int site = 0; site < Nvol_; ++site) 
+    c.data[c.format.cslice(0,site)] = 
       (matrix_dag(w,site)* matrix(v,site)* matrix(WupMu,site)).getva();
-  
-  c = shift(c,nu,Backward);
-  
+
+  return shift(c,nu,Backward);
+}
+//------------------------------------------------------------
+GaugeField1DType Staples::upper(const GaugeFieldType& G, int mu, int nu) const{
+
+  //       mu,v                               
+  //      +-->--+                                                    
+  // nu,w |     |t_dag(site+mu,nu)
+  //  site+     +                                                             
+
+  GaugeField1DType v = DirSlice(G,mu);
+  GaugeField1DType w = DirSlice(G,nu);
+
+  GaugeField1DType c;
+  GaugeField1DType WupMu = shift(w,mu,Forward);
+  GaugeField1DType VupNu = shift(v,nu,Forward);
+  for(int site = 0; site < Nvol_; ++site){
+    c.data[c.format.cslice(0,site)] = 
+      (matrix(w,site) * matrix(VupNu,site) * matrix_dag(WupMu,site)).getva();
+  }
+ 
   return c;
+}
+//------------------------------------------------------------
+void Staples::staple(GaugeField1DType& W, const GaugeFieldType& G, int mu) const{
+  W = 0.0;
+  for(int nu = 0; nu < NDIM_; nu++){
+    if(nu != mu){
+      W += upper(G,mu,nu);
+      W += lower(G,mu,nu);
+    }
+  }
 }
 
 //////////////////////////////////////////////////////////////
-
+//////////////////////////////////////////////////////////////
 
 //------------------------------------------------------------
 double Staples::plaquette(const Field& g)const{ 

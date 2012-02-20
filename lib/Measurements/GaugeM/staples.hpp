@@ -51,7 +51,8 @@ public:
   double plaq_s   (const GaugeFieldType&) const;
   double plaq_t   (const GaugeFieldType&) const;
   GaugeField1DType lower(const GaugeFieldType&, int, int) const;
-
+  GaugeField1DType upper(const GaugeFieldType&, int, int) const;
+  void staple(GaugeField1DType&, const GaugeFieldType&, int) const;
   //////////////////////////////////////////////////
 
   // functions for Field class

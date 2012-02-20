@@ -12,7 +12,7 @@ double ActionGaugeWilson::calc_H(){
   //Number of plaquettes
   int Nplaq = CommonPrms::instance()->NP()*Nvol_*Ndim_*(Ndim_-1)/2.0;
 
-  double Hgauge = Params.beta*Nplaq*(1.0-plaq);
+  double Hgauge = Params.beta * Nplaq * (1.0-plaq);
 
   _Message(ACTION_VERB_LEVEL,"    [ActionGaugeWilson] H = "<< Hgauge <<"\n");
   CCIO::cout<<"    -- Plaquette = "<< plaq <<"\n";

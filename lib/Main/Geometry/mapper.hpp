@@ -29,7 +29,7 @@ public:
   template<class DATA, class FORMAT, class TAG>
   GeneralField<DATA,FORMAT,TAG>
   operator()(const GeneralField<DATA,FORMAT,TAG>& F, int dir, int sign)const {
-    return ShiftsMap[(sign+1)>>1+2*dir](F);
+    return ShiftsMap[((sign+1)>>1)+2*dir](F);
   }
 
 

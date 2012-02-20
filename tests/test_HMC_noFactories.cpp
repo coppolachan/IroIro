@@ -31,7 +31,7 @@ int Test_HMC::run(){
   
   Field* CommonField = new Field(Gfield_.Format.size());
 
-  DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
+  //DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
   
   ActionLevel al_1, al_2;
   Action* Gauge = new ActionGaugeWilson(5.0, 
@@ -39,6 +39,7 @@ int Test_HMC::run(){
 					CommonField);
   al_1.push_back(Gauge);
  
+  /*
   Solver* SolvNf2 = new Solver_CG(1e-14,
 				  1000,
 				  new Fopr_DdagD(OpNf2));
@@ -49,10 +50,10 @@ int Test_HMC::run(){
 				     SolvNf2);
   
   al_2.push_back(Nf2Action);
-
+  */
 
   ActionSet ASet;
-  ASet.push_back(al_2);
+  //ASet.push_back(al_2);
   ASet.push_back(al_1);
   
   MDexec* Integrator = new MDexec_leapfrog(8,
