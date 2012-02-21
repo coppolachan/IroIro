@@ -11,8 +11,9 @@
 #include <memory>
 
 #include "Tools/randNum_Factory.h"
-#include "HMC/mdExec_Factory.hpp"
 #include "include/pugi_interface.h"
+#include "HMC/mdExec_factory_abs.hpp"
+
 
 class Field;
 class MDexec;
@@ -47,7 +48,7 @@ private:
   const HMCGeneralParams Params;
 
   bool metropolis_test(const double Hdiff)const;
-  double evolve_step(Field&)const;
+  double evolve_step(GaugeField&)const;
 
 public:
   HMCgeneral(pugi::xml_node node, 
@@ -72,7 +73,7 @@ public:
   
 
 
-  void evolve(Field& U)const;
+  void evolve(GaugeField& U)const;
 };
 
 #endif

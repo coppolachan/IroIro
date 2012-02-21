@@ -9,7 +9,6 @@
 
 #include <string>
 
-#include "include/macros.hpp"
 #include "include/observer.hpp"
 #include "include/common_fields.hpp"
 

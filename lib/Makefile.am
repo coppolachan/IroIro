@@ -37,6 +37,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
 		Action/action_gauge_rect.cpp            \
+		Action/action_gaugetype_factory.cpp     \
 		Communicator/comm_io.cpp		\
 		Communicator/fields_io.cpp		\
 		Measurements/GaugeM/staples.cpp		\
@@ -46,6 +47,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(MAPPER_SRCS)		     	        \
 		Main/gaugeConf.cpp			\
 		Main/commandline.cpp			\
+		HMC/hmcGeneral.cpp                      \
+		HMC/mdExec.cpp		                \
 		PugiXML/pugixml.cpp			\
 		PugiXML/pugi_interface.cpp		\
 		Tools/sunMatUtils.cpp			\
@@ -87,6 +90,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Action/action_gauge_rect.hpp                    \
 			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\
+			Action/action_gaugetype_factory_abs.hpp		\
+			Action/action_fermiontype_factory_abs.hpp	\
 			Action/action_Factory.hpp			\
 			Measurements/GaugeM/staples.hpp			\
 			Communicator/communicator.h		\
@@ -99,6 +104,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Main/gaugeConf.hpp			\
 			Main/commandline.cpp			\
 			Fields/field_expressions.hpp		\
+			HMC/hmcGeneral.hpp                      \
+			HMC/mdExec.hpp		                \
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\

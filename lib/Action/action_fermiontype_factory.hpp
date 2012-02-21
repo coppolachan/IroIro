@@ -9,23 +9,13 @@
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
 
-#include "action_Factory.hpp"
+#include "action_fermiontype_factory_abs.hpp"
 #include "Action/action_Nf2.hpp"
 #include "Action/action_Nf2_ratio.hpp"
 #include "Action/action_Nf2_DomainWall.hpp"
 #include "Solver/solver_CG.h"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
-
-class FermionActionFactory : public ActionFactory {
-  virtual Action* getFermionAction(const Format::Format_G&,
-				   Field* const) = 0;
-public:
-  Action* getAction(const Format::Format_G& GaugeForm,
-		    Field* const GaugeField) {
-    return getFermionAction(GaugeForm,GaugeField);
-  }
-};
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -150,12 +140,5 @@ private:
 
 //Add new factories here
 //....
-
-
-////////////////////////////////////////////////////
-namespace FermionAction {
-  FermionActionFactory* createFermionActionFactory(XML::node);
-
-}
 
 #endif

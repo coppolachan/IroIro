@@ -5,10 +5,10 @@
 */
 #include "action_gauge_rect.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Measurements/GaugeM/staples.hpp"
 #include "lib/Main/Geometry/mapper.hpp"
 #include "include/messages_macros.hpp"
 
-//using namespace std;
 using namespace SUNmatUtils;
 using namespace FieldUtils;
 
@@ -20,6 +20,7 @@ double ActionGaugeRect::calc_H(){
   double plaqF = 0.0;
   double rectF = 0.0;
 
+  const Staples stpl_;
   GaugeField1D Cup1, Cup2;
   GaugeField1D U_nu, U_mu, res;
   GaugeField1D UpNu, UpMu;
@@ -93,6 +94,7 @@ double ActionGaugeRect::calc_H(){
 GaugeField ActionGaugeRect::md_force(){
  using namespace MapsEnv;
   
+  const Staples stpl_;
   SUNmat force_mat;
   GaugeField force;
   GaugeField1D force_pl;

@@ -8,7 +8,6 @@
 
 #include "action.hpp"
 #include "include/common_fields.hpp"
-#include "Measurements/GaugeM/staples.hpp"
 #include "include/pugi_interface.h"
 
 
@@ -62,7 +61,6 @@ struct ActionGaugeRectPrm {
 class ActionGaugeRect :public Action {
 private:
   GaugeField* const u_;
-  const Staples stpl_;
   ActionGaugeRectPrm Params;
   const int Nvol_;
 
@@ -77,7 +75,6 @@ public:
 		  const double c_rect_,  
 		  GaugeField* const GField)
     :u_(GField),
-     stpl_(),
      Params(ActionGaugeRectPrm(beta, c_plaq_, c_rect_)), 
      Nvol_(CommonPrms::instance()->Nvol()){}
   
@@ -88,7 +85,6 @@ public:
   ActionGaugeRect(const XML::node node,
 		  GaugeField* const GField)
     :u_(GField),
-     stpl_(),
      Params(ActionGaugeRectPrm(node)), 
      Nvol_(CommonPrms::instance()->Nvol()){}
 
@@ -103,7 +99,6 @@ public:
 		  const double c_rect,
 		  GaugeField* const GField)
     :u_(GField),
-     stpl_(),
      Params(ActionGaugeRectPrm(node, c_plaq, c_rect)), 
      Nvol_(CommonPrms::instance()->Nvol()){}
   

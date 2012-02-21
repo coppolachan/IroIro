@@ -12,10 +12,10 @@
 #include <stdio.h>
 #include <time.h>
 
-//#include "HMC/hmcGeneral.hpp"
+#include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"
 #include "Tools/randNum_Factory.h"
-#include "Action/action_gauge_rect.hpp"
+#include "Action/action_gauge_wilson.hpp"
 
 
 int Test_HMC::run(){
@@ -31,20 +31,16 @@ int Test_HMC::run(){
   
   GaugeField* CommonField = new GaugeField;
 
-  //  Action* Gauge = new ActionGaugeWilson(5.0, CommonField);
-  Action* Gauge = new ActionGaugeRect(2.25, 3.648, -0.331, CommonField);
+  Action* Gauge = new ActionGaugeWilson(5.0, CommonField);
+  //  Action* Gauge = new ActionGaugeRect(2.25, 3.648, -0.331, CommonField);
 
-  CommonField->data = Gfield_.data;
-  Gauge->calc_H();
-  Gauge->md_force();
 
-/*
-  DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
+  //DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
   
   ActionLevel al_1, al_2;
   al_1.push_back(Gauge);
  
-  
+  /*
   Solver* SolvNf2 = new Solver_CG(1e-14,
 				  1000,
 				  new Fopr_DdagD(OpNf2));
@@ -58,7 +54,7 @@ int Test_HMC::run(){
   
 
   ActionSet ASet;
-  ASet.push_back(al_2);
+  //ASet.push_back(al_2);
   ASet.push_back(al_1);
   
   MDexec* Integrator = new MDexec_leapfrog(8,
@@ -66,7 +62,6 @@ int Test_HMC::run(){
 					   0.02,
 					   ASet,
 					   multip,
-					   Gfield_.Format,
 					   CommonField);
 
 				      
