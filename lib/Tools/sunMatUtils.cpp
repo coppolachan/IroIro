@@ -71,7 +71,6 @@ namespace SUNmat_utils{
 
   const valarray<double> trace_less(const SUNmat& m){
     
-    
     double rtr = ReTr(m);
     double itr = ImTr(m);
 
@@ -87,6 +86,22 @@ namespace SUNmat_utils{
   }
 
   const valarray<double> anti_hermite(const SUNmat& m){
+ 
+    std::valarray<double> va(m.getva());
+    for(int a=0; a<NC_; ++a){
+      for(int b=a; b<NC_; ++b){
+	double re = va[2*(NC_*a+b)  ] -va[2*(NC_*b+a)  ];
+	double im = va[2*(NC_*a+b)+1] +va[2*(NC_*b+a)+1];
+	va[2*(NC_*a+b)  ] =  0.5*re;
+	va[2*(NC_*a+b)+1] =  0.5*im;
+	va[2*(NC_*b+a)  ] = -0.5*re;
+	va[2*(NC_*b+a)+1] =  0.5*im;
+      }
+    }
+    return va;
+  }
+
+  const valarray<double> anti_hermite_traceless(const SUNmat& m){
     double trace = ImTr(m);
     trace /= NC_;
 
@@ -110,4 +125,21 @@ namespace SUNmat_utils{
     }
     return va;
   }
+
+/*! @brief Calculates the outer product of two vectors
+  \f[(A^\dagger \circ B)_{ab} = A^*_a B_b \f]
+ */
+  const SUNmat outer_prod(const SUNvec& v,const SUNvec& w){
+    
+    SUNmat f;
+    for(int a=0; a<NC_; ++a){
+      for(int b=0; b<NC_; ++b){
+	f.set(a,b,
+	      v.r(b)*w.r(a) +v.i(b)*w.i(a),
+	      v.r(b)*w.i(a) -v.i(b)*w.r(a));
+      }
+    }
+    return f;
+  }
+
 }//endof namespace SUNmat_utils

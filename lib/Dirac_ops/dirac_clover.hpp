@@ -1,10 +1,7 @@
 /*! 
   @file dirac_clover.hpp
-
   @brief Dirac clover operator class. Class declaration
-
 */
-
 #ifndef DIRAC_CLOVER_INCLUDED
 #define DIRAC_CLOVER_INCLUDED
 
@@ -18,7 +15,6 @@
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
-
 typedef ShiftField_up<ffmt_t> shift_up;
 typedef ShiftField_dn<ffmt_t> shift_dn;
 
@@ -34,9 +30,9 @@ private:
 
   const Field* const u_;
   const Dirac_Wilson* Dw;
-  mutable gfmt_t* gf_;
-  mutable ffmt_t* ff_;
-  const Staples* stpl_;
+  mutable gfmt_t gf_;
+  mutable ffmt_t ff_;
+  const Staples stpl_;
 
   std::vector<ShiftField*> sf_up_; 
   std::vector<ShiftField*> sf_dn_; 
@@ -45,7 +41,7 @@ private:
   const size_t gsize_;
 
   SUNvec v(const Field& f,int spin,int site) const{
-    return SUNvec(f[ff_->cslice(spin,site)]);
+    return SUNvec(f[ff_.cslice(spin,site)]);
   }
   SUNvec v(const ShiftField* sf,int spin,int site) const{
     return SUNvec(sf->cv(spin,site));
@@ -53,30 +49,35 @@ private:
 
   int gsite(int site)const {return site;}
 
-  //void (Dirac_Clover::*mult_isigma[])(Field&,const Field&) const;
+  static void (Dirac_Clover::*isigma[])(Field&,const Field&)const;
 
-  void mult_isigma(Field&, const Field&,int mu,int nu) const;
-  
-  void mult_csw(Field&, const Field&) const ;
+  void mult_sw(Field&, const Field&)const ;
   void set_csw() ;
   void set_fieldstrength(GaugeField1D&, const int mu, const int nu);
 
-  void mult_isigma23(Field&, const Field&)const;
-  void mult_isigma12(Field&, const Field&)const;
-  void mult_isigma31(Field&, const Field&)const;
-  void mult_isigma41(Field&, const Field&)const;
-  void mult_isigma42(Field&, const Field&)const;
-  void mult_isigma43(Field&, const Field&)const;
+  void isigma_diag(Field&, const Field&)const;
+
+  void isigma_12(Field&, const Field&)const;
+  void isigma_13(Field&, const Field&)const;
+  void isigma_14(Field&, const Field&)const;
+
+  void isigma_21(Field&, const Field&)const;
+  void isigma_23(Field&, const Field&)const;
+  void isigma_24(Field&, const Field&)const;
+
+  void isigma_31(Field&, const Field&)const;
+  void isigma_32(Field&, const Field&)const;
+  void isigma_34(Field&, const Field&)const;
+
+  void isigma_41(Field&, const Field&)const;
+  void isigma_42(Field&, const Field&)const;
+  void isigma_43(Field&, const Field&)const;
 
   const Field md_force_block(const Field&,const Field&)const;
 
-  GaugeField1D d_Bx, d_By, d_Bz, d_Ex, d_Ey, d_Ez;
+  GaugeField1D Bx_, By_, Bz_, Ex_, Ey_, Ez_;
   // Bx = -iF(1,2), By = -iF(2,1), -iBz = F(0,1)
   // Ex = -iF(4,0), Ey = -iF(4,1), Ez = -iF(4,2)
-
-  //auxiliary, eventually moved outside
-  const std::valarray<double> anti_herm(const SUNmat& m);
-  void external_prod(Field& res, const Field& A, const Field& B) const;
 
 public:
   Dirac_Clover(double mass,double csw,const Field* u)
@@ -85,15 +86,12 @@ public:
      Ndim_(CommonPrms::instance()->Ndim()),
      u_(u),
      Dw(new Dirac_Wilson(mass,u)),
-     gf_(new gfmt_t(Nvol_)),
-     ff_(new ffmt_t(Nvol_)),
-     stpl_(new Staples(*gf_)),
-     fsize_(ff_->size()),
-     gsize_(gf_->size()){
-
+     ff_(Nvol_),fsize_(ff_.size()),
+     gf_(Nvol_),gsize_(gf_.size()),
+     stpl_(gf_){
     for(int d=0;d<Ndim_;++d){
-      sf_up_.push_back(new shift_up(ff_,d));
-      sf_dn_.push_back(new shift_dn(ff_,d));
+      sf_up_.push_back(new shift_up(&ff_,d));
+      sf_dn_.push_back(new shift_dn(&ff_,d));
     }
     set_csw();
   }
@@ -103,25 +101,19 @@ public:
      Ndim_(CommonPrms::instance()->Ndim()),
      u_(u),
      Dw(new Dirac_Wilson(node,u)),
-     gf_(new gfmt_t(Nvol_)),
-     ff_(new ffmt_t(Nvol_)),
-     stpl_(new Staples(*gf_)),
-     fsize_(ff_->size()),
-     gsize_(gf_->size()){
+     ff_(Nvol_),fsize_(ff_.size()),
+     gf_(Nvol_),gsize_(gf_.size()),
+     stpl_(gf_){
 
     XML::read(node, "Csw", csw_,MANDATORY);
-    
     for(int d=0;d<Ndim_;++d){
-      sf_up_.push_back(new shift_up(ff_,d));
-      sf_dn_.push_back(new shift_dn(ff_,d));
+      sf_up_.push_back(new shift_up(&ff_,d));
+      sf_dn_.push_back(new shift_dn(&ff_,d));
     }
     set_csw();
   }
 
   virtual ~Dirac_Clover(){
-    delete stpl_;
-    delete ff_;
-    delete gf_;
     for(int d=0;d<sf_up_.size();++d) delete sf_up_[d];
     for(int d=0;d<sf_dn_.size();++d) delete sf_dn_[d];
     delete Dw;
@@ -149,6 +141,6 @@ public:
   void update_internal_state() {set_csw();}
   
   const std::vector<int> get_gsite() const;
-  const ffmt_t get_fermionFormat() const {return *ff_;}
+  const ffmt_t get_fermionFormat() const {return ff_;}
 };
 #endif

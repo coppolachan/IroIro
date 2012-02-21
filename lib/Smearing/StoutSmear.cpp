@@ -33,7 +33,8 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in) const{
     U_mu = u_in[Gformat.dir_slice(mu)];
     for(int site = 0; site < Nvol; ++site){
       ut = u(u_tmp1,site,mu) * u_dag(U_mu,site);//Omega_mu
-      q_mu.U.set(q_mu.Format.cslice(0,site,mu), anti_hermite(ut));
+      q_mu.U.set(q_mu.Format.cslice(0,site,mu), 
+		 anti_hermite_traceless(ut));
     }
   }
 

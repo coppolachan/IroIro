@@ -1,19 +1,21 @@
 //------------------------------------------------------------------------
 /*!
- * @file testerWilson.cpp 
- * @brief Main source code for testing the Wilson classes
+ * @file testerClover.cpp 
+ * @brief Main source code for testing the Clover classes
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
-
-#include "test_wilson.hpp"
+#include "test_clover.hpp"
+#include "include/commandline.hpp"
 
 using namespace XML;
 
-int main(){
-  
-  //Reading input file
-  node top_node = getInputXML("test_Wilson.xml");  
+int main(int argc, char* argv[]){
+
+  CommandOptions Options = ReadCmdLine(argc, argv);
+
+  //Reading input file    
+  node top_node = getInputXML(Options.filename);
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
@@ -23,12 +25,11 @@ int main(){
   GaugeF.initialize(top_node);
 
   /////////////
-  
-  node Wilson_node = top_node;
-  descend(Wilson_node, "TestWilson");
+  node clover_node = top_node;
+  descend(clover_node, "TestClover");
     
-  Test_Wilson WilsonTest(Wilson_node, GaugeF);
-  WilsonTest.run();
+  Test_Clover CloverTest(clover_node, GaugeF);
+  CloverTest.run();
 
   return 0;
 }

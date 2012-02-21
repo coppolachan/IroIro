@@ -1,8 +1,6 @@
 /*!
  * @file test_wilson.hpp
- *
  * @brief Tests for the propagators and sources
- *
  */
 #ifndef TEST_WILSON_INCLUDED
 #define TEST_WILSON_INCLUDED
@@ -12,11 +10,11 @@
 
 class Test_Wilson : public TestGeneral{
 private:
-  XML::node Wilson_node_;
+  XML::node wilson_node_;
   GaugeField& conf_;
 public:
   Test_Wilson(const XML::node node, GaugeField& conf)
-    :Wilson_node_(node),
+    :wilson_node_(node),
      conf_(conf){}
 
   ~Test_Wilson(){}

@@ -1,22 +1,18 @@
 /*!
   @file SmartConf.cpp
-
   @brief Defines the SmartConf class
-
 */
-
 #include "SmartConf.hpp"
 #include "Main/Geometry/shiftField.h"
 #include "Tools/sunMatUtils.hpp"
 
 typedef ShiftField_up<GaugeFieldFormat> FieldUP;
 typedef ShiftField_dn<GaugeFieldFormat> FieldDN;
-typedef complex<double> dcomplex;
+typedef std::complex<double> dcomplex;
 
 //====================================================================
 Field* SmartConf::get_current_conf() const{
   return const_cast<Field*>(&(SmearedSet[smearingLevels-1].U));
-  
 }
 //====================================================================
 const Field& SmartConf::get_smeared_conf(int Level) const{
@@ -64,7 +60,8 @@ void SmartConf::smeared_force(Field& SigmaTilde)const {
   for(int mu = 0; mu < Ndim; ++mu){
     for (int site = 0; site < Nvol; ++site){
       ut = u(*ThinLinks,force.Format,site,mu) * u(force,site,mu);
-       force.U.set(force.Format.cslice(0,site,mu),anti_hermite(ut));
+       force.U.set(force.Format.cslice(0,site,mu),
+                   anti_hermite_traceless(ut));
     }
   }  
   */
@@ -92,7 +89,7 @@ GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
     U_mu = GaugeK[C.Format.dir_slice(mu)];
     for(int site = 0; site < Nvol; ++site){
       ut = u(C,site,mu) * u_dag(U_mu,site);//Omega_mu
-      iQ.U.set(iQ.Format.cslice(0,site,mu), anti_hermite(ut));
+      iQ.U.set(iQ.Format.cslice(0,site,mu), anti_hermite_traceless(ut));
     }
   }// created iQ
   
@@ -132,7 +129,7 @@ void SmartConf::set_iLambda(GaugeField& iLambda,
   dcomplex f0, f1, f2, h0, h1, h2, e2iu, emiu, qt;
   dcomplex r01, r11, r21, r02, r12, r22, tr1, tr2;
   dcomplex b10, b11, b12, b20, b21, b22;
-
+  
   for(int mu = 0; mu < Ndim; ++mu){
     for(int site = 0; site < Nvol; ++site){
 
@@ -231,9 +228,8 @@ void SmartConf::set_iLambda(GaugeField& iLambda,
           + f2  * dcomplex(iUSQ.i(cc),-iUSQ.r(cc));
 	iGamma.set(cc,-qt.imag(),qt.real());
       }
-
-      iLambda.U.set(iLambda.Format.cslice(0,site,mu),anti_hermite(iGamma));
-
+      iLambda.U.set(iLambda.Format.cslice(0,site,mu),
+		    anti_hermite_traceless(iGamma));
     }
   }
 

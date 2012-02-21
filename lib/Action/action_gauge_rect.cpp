@@ -219,7 +219,8 @@ Field ActionGaugeRect::md_force(const void*){
     force_rect.U += force_pl.U; //force_rect = total force (staples term)
     for(int site = 0; site<Nvol_; ++site){
       force_mat = (u(*u_,gf_,site,mu)*u_dag(force_rect,site));
-      force.U.set(force.Format.cslice(0,site,mu), anti_hermite(force_mat));
+      force.U.set(force.Format.cslice(0,site,mu), 
+		  anti_hermite_traceless(force_mat));
     } 
   }
 

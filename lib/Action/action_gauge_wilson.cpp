@@ -37,7 +37,8 @@ Field ActionGaugeWilson::md_force(const void*){
     }
     for(int site=0; site<Nvol_; ++site){
       pl = (u(*u_,gf_,site,m)*u_dag(tmp,site));
-      force.U.set(force.Format.cslice(0,site,m), anti_hermite(pl));
+      force.U.set(force.Format.cslice(0,site,m),
+		  anti_hermite_traceless(pl));
     }
   }
 

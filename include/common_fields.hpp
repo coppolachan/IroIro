@@ -18,8 +18,6 @@
 
 typedef Format::Format_G GaugeFieldFormat;/**< Format of gauge field
 					     at compilation time */
-
-
 /*!
  * @brief A Class to handle gauge fields
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a> 
@@ -28,13 +26,11 @@ typedef Format::Format_G GaugeFieldFormat;/**< Format of gauge field
  * and Field class in order to bind them 
  * into a single self contained object
  * that knows the details of storage
- *
  */
 class GaugeField {
 public:
   GaugeFieldFormat Format;/**< Format specifier */
   Field U; /**< Configuration container */
-  
   /*! 
    * Default constructor\n 
    * Takes Geometry class as input
@@ -43,7 +39,6 @@ public:
   GaugeField(Geometry geom): 
     Format(GaugeFieldFormat( geom.parameters->Nvol() )),
     U(Field(Format.size())){}
-
   /*! 
    * Default constructor\n 
    * No parameters, automatically creates a 4D field 
@@ -52,7 +47,6 @@ public:
   GaugeField(): 
     Format(GaugeFieldFormat( CommonPrms::instance()->Nvol() )),
     U(Field(Format.size())){}
-
   /*! 
    * Constructor\n 
    * to contain given Field data
@@ -62,7 +56,6 @@ public:
     U(Uin){ 
     assert(U.size()==Format.size());
   }
-
   /*!
    * Initializes the gauge field with an \n
    * external configuration in file <Filename>
@@ -74,7 +67,6 @@ public:
     GaugeConf_txt gconf(Format,Filename);
     gconf.init_conf(U);
   }
-
   /*!
    * Initializes the gauge field with an \n
    * external configuration in binary format
@@ -92,7 +84,6 @@ public:
     GaugeConf_JLQCDLegacy gconf(Format,Filename);
     gconf.init_conf(U);
   }
-
  /*!
    * Initializes the gauge field with \n
    * unit matrices
@@ -103,7 +94,6 @@ public:
     GaugeConf_unit gconf(Format);
     gconf.init_conf(U);
   }
-
 
   int initialize(XML::node node) {
     try {
@@ -130,7 +120,6 @@ public:
     } catch(...) {
       std::cout << "Error in initialization of gauge field "<< std::endl;
     }
-
     return 0;
   }
 
@@ -149,7 +138,6 @@ class GaugeField1D {
 public:
   const GaugeFieldFormat Format;/**< Format specifier */
   Field U; /**< Field container */
-  
   /*! 
    * Default constructor\n
    *
@@ -174,7 +162,6 @@ public:
   inline GaugeField1D& operator=(const GaugeField1D& rhs){
     U = rhs.U;
     return *this;
-
   }
 
   inline SUNmat matrix(int site, int ex){
@@ -186,8 +173,6 @@ public:
 struct ExtraDimTag {};
 struct OneDimTag {};
 
-
-
 template < class DATA, class FORMAT, typename TAG = NullType> 
 class GeneralField {
 protected:
@@ -198,7 +183,6 @@ public:
   GeneralField(int);
 
   const FORMAT get_Format() const{ return format;}
-
   /*! 
    * Constructor\n 
    * to store given data
@@ -210,7 +194,6 @@ public:
   GeneralField& operator-=(const GeneralField& rhs);
 
   double norm();
-
 };
 
 template < class DATA, class FORMAT, typename TAG> 
@@ -220,9 +203,9 @@ GeneralField():format(FORMAT( CommonPrms::instance()->Nvol())),
 
 // Specialization for one dimension gauge field
 template <> 
-inline GeneralField< Field, Format::Format_G, OneDimTag>:: 
-GeneralField():format(Format::Format_G( CommonPrms::instance()->Nvol(),1)),
-	       data(format.size()){}
+inline GeneralField< Field, Format::Format_G, OneDimTag>::GeneralField()
+ :format(Format::Format_G(CommonPrms::instance()->Nvol(),1)),
+  data(format.size()){}
 
 template < class DATA, class FORMAT, typename TAG> 
 GeneralField<DATA,FORMAT,TAG>:: 
@@ -235,11 +218,9 @@ inline GeneralField< Field, Format::Format_G, OneDimTag>::
 GeneralField(int LocalVol):format(Format::Format_G( LocalVol,1)),
 			   data(format.size()){}
 
-
 template < class DATA, class FORMAT, typename TAG> 
-GeneralField<DATA,FORMAT,TAG>:: 
-GeneralField(const DATA& FieldIn):format(FORMAT( CommonPrms::instance()->Nvol()))
-{
+GeneralField<DATA,FORMAT,TAG>::GeneralField(const DATA& FieldIn)
+  :format(FORMAT( CommonPrms::instance()->Nvol())){
   assert(FieldIn.size()== format.size());
   data = FieldIn;
 }
@@ -247,41 +228,35 @@ GeneralField(const DATA& FieldIn):format(FORMAT( CommonPrms::instance()->Nvol())
 // Specialization for one dimension gauge field
 template <> 
 inline GeneralField< Field, Format::Format_G, OneDimTag>::
-GeneralField(const Field& FieldIn):format(Format::Format_G( CommonPrms::instance()->Nvol(),1))
-{
+GeneralField(const Field& FieldIn)
+ :format(Format::Format_G( CommonPrms::instance()->Nvol(),1)){
   assert(FieldIn.size()== format.size());
   data = FieldIn;
 }
 
 template < class DATA, class FORMAT, typename TAG> 
 inline GeneralField<DATA,FORMAT,TAG>& 
-GeneralField<DATA,FORMAT,TAG>::operator=(const GeneralField& rhs)
-{
+GeneralField<DATA,FORMAT,TAG>::operator=(const GeneralField& rhs){
   data = rhs.data;
   return *this;
 }
 
 template < class DATA, class FORMAT, typename TAG>
 inline GeneralField<DATA,FORMAT,TAG>&
-GeneralField<DATA,FORMAT,TAG>::operator+=(const GeneralField& rhs) 
-{
+GeneralField<DATA,FORMAT,TAG>::operator+=(const GeneralField& rhs){
   data += rhs.data;
   return *this;
 }
 
 template < class DATA, class FORMAT, typename TAG> 
 inline GeneralField<DATA,FORMAT,TAG>&
-GeneralField<DATA,FORMAT,TAG>::operator-=(const GeneralField& rhs) 
-{
+GeneralField<DATA,FORMAT,TAG>::operator-=(const GeneralField& rhs){
   data -= rhs.data;
   return *this;
 }
 
 template < class DATA, class FORMAT, typename TAG> 
-double GeneralField<DATA,FORMAT,TAG>::norm() 
-{
-  return data.norm();
-}
+double GeneralField<DATA,FORMAT,TAG>::norm(){  return data.norm();}
 
 ////////////////////////////////////////////////////////////////
 // Specialization for extradimension
@@ -324,7 +299,6 @@ typedef GeneralField< Field, Format::Format_G, OneDimTag >   GaugeField1DType;
 typedef GeneralField< Field, Format::Format_F >              FermionField;
 typedef GeneralField< Field, Format::Format_F, ExtraDimTag > FermionFieldExtraDim;
 typedef GeneralField< std::vector<Field>, Format::Format_F > PropagatorField;
-
 
 struct GaugeGlobal: public GaugeFieldType{
   GaugeGlobal(Geometry geom){std::cout<< "prova!!!!!\n"; }
@@ -375,7 +349,6 @@ struct GaugeGlobal: public GaugeFieldType{
     gconf.init_conf(data);
   }
 
-
   int initialize(XML::node node) {
     try {
       XML::descend(node, "Configuration");
@@ -401,28 +374,18 @@ struct GaugeGlobal: public GaugeFieldType{
     } catch(...) {
       std::cout << "Error in initialization of gauge field "<< std::endl;
     }
-
     return 0;
   }
-
 private:
   GaugeGlobal(const GaugeGlobal&);
 };
 
-
-
-
-
 namespace FieldUtils{
   const Field TracelessAntihermite(const GaugeField&);
+  const Field field_oprod(const Field&,const Field&);
 
   SUNmat matrix(GaugeFieldType, int site, int ex);
   SUNmat matrix(GaugeField1DType, int site, int ex);
-
-
-
 }
-
-
 
 #endif //COMMON_FIELDS_H_

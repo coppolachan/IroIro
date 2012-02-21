@@ -30,18 +30,18 @@ public:
   SUNmatrix& operator-();
   
   SUNmatrix& operator=(const SUNmatrix&);
-  SUNmatrix& operator=(const double&);
+  SUNmatrix& operator=(const double);
 
   SUNmatrix& operator+=(const SUNmatrix&);
-  SUNmatrix& operator+=(const double&);
+  SUNmatrix& operator+=(const double);
 
   SUNmatrix& operator-=(const SUNmatrix&);
-  SUNmatrix& operator-=(const double&);
+  SUNmatrix& operator-=(const double);
 
   SUNmatrix& operator*=(const SUNmatrix&);
-  SUNmatrix& operator*=(const double&);
+  SUNmatrix& operator*=(const double);
 
-  SUNmatrix& operator/=(const double&);
+  SUNmatrix& operator/=(const double);
 
   SUNmatrix& dag();
   SUNmatrix& unity();
@@ -119,7 +119,7 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator-() {
 }
 
 template <size_t COLORS>
-inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator=(const double& rhs){
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator=(const double rhs){
   va_= rhs; 
   return *this;
 }
@@ -137,7 +137,7 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator+=(const SUNmatrix& rhs){
 }
 
 template <size_t COLORS>
-inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator+=(const double& rhs){
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator+=(const double rhs){
   va_+= rhs;
   return *this;
 }
@@ -149,7 +149,7 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator-=(const SUNmatrix& rhs){
 }
 
 template <size_t COLORS>
-inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator-=(const double& rhs){
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator-=(const double rhs){
   va_-= rhs;
   return *this;
 }
@@ -257,13 +257,13 @@ inline SUNmatrix<3>& SUNmatrix<3>::operator*=(const SUNmatrix& rhs){
 
 
 template <size_t COLORS>
-inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(const double& rhs){
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(const double rhs){
   va_*= rhs;
   return *this;
 }
 
 template <size_t COLORS>
-inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator/=(const double& rhs){
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator/=(const double rhs){
   va_ /= rhs;
   return *this;
 }

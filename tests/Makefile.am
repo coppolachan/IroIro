@@ -10,9 +10,11 @@ EXTRA_DIST = 	testResults.info	\
 		test_HMC.xml	 	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
+		test_Clover.xml	 	\
 		test_Wilson_EvenOdd.xml	\
 		test_DomainWall.xml 	\
-		test_ResMass.xml 	\
+		test_ResMass_full.xml 	\
+		test_ResMass_eo.xml 	\
 		test_IO.xml		\
 		test_Gauge.xml		\
 		test_Overlap.xml	\
@@ -27,6 +29,7 @@ test_PROGRAMS = test_HMC 		\
 		test_HMC_DomainWall	\
 		test_RNG 		\
 		test_Wilson 		\
+		test_Clover 		\
 		test_Wilson_EvenOdd 	\
 		test_DomainWall		\
 		test_ResMass 		\
@@ -61,6 +64,9 @@ test_RNG_SOURCES 	= 	test_RNG.cpp
 test_Wilson_SOURCES 	=	test_wilson.cpp 		\
 				testerWilson.cpp
 
+test_Clover_SOURCES 	=	test_clover.cpp 		\
+				testerClover.cpp
+
 test_Wilson_EvenOdd_SOURCES =	test_wilson_EvenOdd.cpp 	\
 		        	testerWilson_EvenOdd.cpp
 
@@ -91,6 +97,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_HMC_EvenOdd.hpp		\
 				test_HMC_DomainWall.hpp		\
 				test_wilson.hpp 		\
+				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
 				test_DomainWall.hpp 		\
 				test_ResidualMass.hpp 		\

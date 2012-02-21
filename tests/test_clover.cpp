@@ -1,14 +1,11 @@
 /*!
- * @file test_wilson.cpp
- *
+ * @file test_clover.cpp
  * @brief Tests for the propagators 
- *
  */
-#include "test_wilson.hpp"
+#include "test_clover.hpp"
 #include "Measurements/FermionicM/fermion_meas_factory.hpp"
 
-
-#include "Dirac_ops/dirac_wilson.h"
+#include "Dirac_ops/dirac_clover.hpp"
 #include "Solver/solver_CG.h"
 #include "Solver/solver_BiCGStab.h"
 #include "Measurements/FermionicM/qprop.h"
@@ -20,18 +17,18 @@
 using namespace std;
 using namespace Format;
 
-int Test_Wilson::run(){
+int Test_Clover::run(){
   prop_t sq;// propagator
   // Use factories to construct the propagator
   QuarkPropagator* QP;
-  XML::descend(wilson_node_, "QuarkPropagator");
+  XML::descend(clover_node_, "QuarkPropagator");
 
   Staples Staple(conf_.Format);
   CCIO::cout << "Plaquette : " << Staple.plaquette(conf_.U) << std::endl;
 
 
   QuarkPropagatorFactory* QP_Factory = 
-    QuarkPropagators::createQuarkPropagatorFactory(wilson_node_);
+    QuarkPropagators::createQuarkPropagatorFactory(clover_node_);
   //////////////////////////////////////
 
   unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
@@ -48,8 +45,7 @@ int Test_Wilson::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
-  //Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
+  Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
   //Kernel->update_internal_state();
 
   // Solver definition
