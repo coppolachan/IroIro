@@ -29,6 +29,8 @@ namespace SUNmatUtils{
   const valarray<double> trace_less(const SUNmat&);
   const SUNmat anti_hermite(const SUNmat&);
 
+  void SUNprint(const SUNmat&);
+
 }//endof namespace SUNmat_utils
 
 #endif

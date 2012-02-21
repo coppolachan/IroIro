@@ -31,24 +31,21 @@ private:
   GaugeField* const u_;
   const Staples stpl_;
   ActionGaugeWilsonPrm Params;
-  const int Ndim_;
   const int Nvol_;
 
 public:
-  void  init(const RandNum&,const void* = 0){}
+  void  init(const RandNum&){}
   double calc_H();
-  Field  md_force(const void* = 0);
+  GaugeField  md_force();
   void observer_update(){}; 
-
+  
   ActionGaugeWilson(const double beta, 
 		    GaugeField* const GField)
     :u_(GField),
      stpl_(),
      Params(ActionGaugeWilsonPrm(beta)), 
-     Ndim_(CommonPrms::instance()->Ndim()),
      Nvol_(CommonPrms::instance()->Nvol()){}
-
-
+  
   /*!
    * @brief Constructor with XML reader
    *
@@ -58,9 +55,8 @@ public:
     :u_(GField),
      stpl_(),
      Params(ActionGaugeWilsonPrm(node)), 
-     Ndim_(CommonPrms::instance()->Ndim()),
      Nvol_(CommonPrms::instance()->Nvol()){}
-
+  
   ~ActionGaugeWilson(){}
 };
 #endif

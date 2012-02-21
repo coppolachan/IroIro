@@ -45,11 +45,13 @@ public:
    */
   explicit GeneralField(const DATA&);
 
-  GeneralField& operator=(const GeneralField& rhs);
-  GeneralField& operator+=(const GeneralField& rhs);
-  GeneralField& operator-=(const GeneralField& rhs);
-  GeneralField& operator*=(const double& rhs);
-  
+  GeneralField& operator=(const GeneralField&);
+  GeneralField& operator=(const double&);
+  GeneralField& operator+=(const GeneralField&);
+  GeneralField& operator-=(const GeneralField&);
+  GeneralField& operator*=(const double&);
+
+
   double norm();
 
 };
@@ -99,6 +101,13 @@ inline GeneralField<DATA,FORMAT,TAG>&
 GeneralField<DATA,FORMAT,TAG>::operator=(const GeneralField& rhs)
 {
   data = rhs.data;
+  return *this;
+}
+
+template < class DATA, class FORMAT, typename TAG> 
+inline GeneralField<DATA,FORMAT,TAG>&
+GeneralField<DATA,FORMAT,TAG>::operator=(const double& rhs){
+  data = rhs;
   return *this;
 }
 

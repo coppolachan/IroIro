@@ -79,13 +79,14 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/pugi_interface.h		\
 			$(top_srcdir)/include/singleton.h		\
 			$(top_srcdir)/include/observer.hpp		\
+			$(top_srcdir)/include/messages_macros.hpp	\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
 			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\
 			Action/action_Factory.hpp			\
-			Measurements/GaugeM/staples.hpp				\
+			Measurements/GaugeM/staples.hpp			\
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\

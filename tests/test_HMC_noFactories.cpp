@@ -33,8 +33,6 @@ int Test_HMC::run(){
 
   Action* Gauge = new ActionGaugeWilson(5.0, CommonField);
 
-  
-
 /*
   DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
   

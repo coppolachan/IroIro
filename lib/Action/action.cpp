@@ -7,11 +7,11 @@
 
 #include "action.hpp"
 #include "Communicator/comm_io.hpp"
-#include "include/field.h"
 
-void Action::monitor_force(Field& force, std::string ActionName){
-  double f_abs = force.average_abs();
-  double f_max = force.max_element();
+
+void Action::monitor_force(GaugeField& force, std::string ActionName){
+  double f_abs = force.data.average_abs();
+  double f_max = force.data.max_element();
 
   CCIO::cout<<"    ["<<ActionName<<"]\n";  
   //we want to check the real part of iP only for debugging purposes

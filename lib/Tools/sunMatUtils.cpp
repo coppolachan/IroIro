@@ -90,30 +90,32 @@ namespace SUNmatUtils{
     double trace = ImTr(m);
     trace /= NC_;
 
-    //  valarray<double> va(m.getva());
-    SUNmat out;
+    SUNmat out = m;
+
     for(int a=0; a<NC_; ++a){
+      out.setr(a,a, 0.0);
       out.add(a,a, 0.0, -trace);
-      for(int b=0; b<a; ++b){
-	//	int ab = 2*(NC_*a+b);
-	//int ba = 2*(NC_*b+a);
-	
-	out.set(a,b, -out.r(b,a), out.i(b,a));
-	out *= 0.5;
+       for(int b=0; b<a; ++b){
+	out.add(a,b, -out.r(b,a), out.i(b,a));
+	out.mult(a,b,0.5,0.5);
 	out.set(b,a, -out.r(a,b), out.i(a,b));
-	
-
-	/*
-	va[ab]-= va[ba];
-	va[ab]/= 2.0;
-	va[ba] =-va[ab];
-
-	va[ab+1]+= va[ba+1];
-	va[ab+1]/= 2.0;
-	va[ba+1] = va[ab+1];
-	*/
       }
+      
     }
     return out;
   }
+
+  void SUNprint(const SUNmat& mat) {
+    for(int a=0; a<NC_; ++a){
+      for(int b=0; b<NC_; ++b){ 
+	std::cout << "("<<mat.r(a,b)<<","<<mat.i(a,b)<<")   ";
+      }
+      std::cout << "\n";
+    }
+
+  }
+
+
+
+
 }//endof namespace SUNmat_utils
