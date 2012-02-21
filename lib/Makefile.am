@@ -36,6 +36,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
+		Action/action_gauge_rect.cpp            \
 		Communicator/comm_io.cpp		\
 		Communicator/fields_io.cpp		\
 		Measurements/GaugeM/staples.cpp		\
@@ -83,6 +84,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
+			Action/action_gauge_rect.hpp                    \
 			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\
 			Action/action_Factory.hpp			\

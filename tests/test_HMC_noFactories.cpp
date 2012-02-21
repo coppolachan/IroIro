@@ -15,7 +15,7 @@
 //#include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"
 #include "Tools/randNum_Factory.h"
-#include "Action/action_gauge_wilson.hpp"
+#include "Action/action_gauge_rect.hpp"
 
 
 int Test_HMC::run(){
@@ -31,7 +31,12 @@ int Test_HMC::run(){
   
   GaugeField* CommonField = new GaugeField;
 
-  Action* Gauge = new ActionGaugeWilson(5.0, CommonField);
+  //  Action* Gauge = new ActionGaugeWilson(5.0, CommonField);
+  Action* Gauge = new ActionGaugeRect(2.25, 3.648, -0.331, CommonField);
+
+  CommonField->data = Gfield_.data;
+  Gauge->calc_H();
+  Gauge->md_force();
 
 /*
   DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
