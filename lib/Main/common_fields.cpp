@@ -6,26 +6,28 @@
 #include "Tools/sunMatUtils.hpp"
 
 namespace FieldUtils{
-  const Field TracelessAntihermite(const GaugeField& fce){
-
-    using namespace SUNmat_utils;
-    
+  const GaugeField TracelessAntihermite(const GaugeField& G){
+    using namespace SUNmatUtils;
     int Ndim = CommonPrms::instance()->Ndim();
     int Nvol = CommonPrms::instance()->Nvol();
-    
-    Field fp(fce.Format.size());
+
+    GaugeField TAField;
     for(int mu=0; mu< Ndim; ++mu){
       for(int site=0; site<Nvol; ++site){
-	SUNmat a_h = u(fce,site,mu);
-	fp.set(fce.Format.cslice(0,site,mu),anti_hermite(a_h));
+	SetMatrix(TAField, anti_hermite(matrix(G,site,mu)),site,mu);
       }
     }
-    return fp;
+    return TAField;
   }
 
-  GaugeField1DType DirSlice(const GaugeFieldType& F, int dir){
-    return GaugeField1DType(Field(F.data[F.format.dir_slice(dir)]));
+  GaugeField1D DirSlice(const GaugeField& F, int dir){
+    return GaugeField1D(Field(F.data[F.format.dir_slice(dir)]));
   }
 
-
+  void SetMatrix(GaugeField& F, SUNmat mat, int site, int dir){
+    F.data.set(F.format.cslice(0,site,dir), mat.getva());
+  }
+  void SetMatrix(GaugeField1D& F, SUNmat mat, int site){
+    F.data.set(F.format.cslice(0,site), mat.getva());
+  }
 }

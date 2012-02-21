@@ -13,12 +13,11 @@
 #include "include/format_A.h"
 #include "include/format_G.h"
 #include "include/format_F.h"
-#include "lib/Tools/sunMat.h"
+#include "lib/Tools/sunMat.hpp"
 #include "include/macros.hpp"
 
-typedef Format::Format_G GaugeFieldFormat;/**< Format of gauge field
-					     at compilation time */
-
+struct ExtraDimTag {};
+struct OneDimTag {};
 
 /*!
  * @brief A Class to handle gauge fields
@@ -30,168 +29,8 @@ typedef Format::Format_G GaugeFieldFormat;/**< Format of gauge field
  * that knows the details of storage
  *
  */
-class GaugeField {
-public:
-  GaugeFieldFormat Format;/**< Format specifier */
-  Field U; /**< Configuration container */
-  
-  /*! 
-   * Default constructor\n 
-   * Takes Geometry class as input
-   * @param geom Defines the lattice geometry
-   */
-  GaugeField(Geometry geom): 
-    Format(GaugeFieldFormat( geom.parameters->Nvol() )),
-    U(Field(Format.size())){}
-
-  /*! 
-   * Default constructor\n 
-   * No parameters, automatically creates a 4D field 
-   * of local dimension Nvol
-   */
-  GaugeField(): 
-    Format(GaugeFieldFormat( CommonPrms::instance()->Nvol() )),
-    U(Field(Format.size())){}
-
-  /*! 
-   * Constructor\n 
-   * to contain given Field data
-   */
-  explicit GaugeField(Field& Uin): 
-    Format(GaugeFieldFormat( CommonPrms::instance()->Nvol())),
-    U(Uin){ 
-    assert(U.size()==Format.size());
-  }
-
-  /*!
-   * Initializes the gauge field with an \n
-   * external configuration in file <Filename>
-   *
-   * Configuration type in XML: TextFile
-   * @param Filename String containing the filename
-   */
-  void initializeTxt(const std::string &Filename) {
-    GaugeConf_txt gconf(Format,Filename);
-    gconf.init_conf(U);
-  }
-
-  /*!
-   * Initializes the gauge field with an \n
-   * external configuration in binary format
-   * contained in file <Filename>
-   *
-   * Configuration type in XML: Binary
-   * @param Filename String containing the filename
-   */
-  void initializeBin(const std::string &Filename) {
-    GaugeConf_bin gconf(Format,Filename);
-    gconf.init_conf(U);
-  }
-
-  void initializeJLQCDlegacy(const std::string &Filename) {
-    GaugeConf_JLQCDLegacy gconf(Format,Filename);
-    gconf.init_conf(U);
-  }
-
- /*!
-   * Initializes the gauge field with \n
-   * unit matrices
-   *
-   * Configuration type in XML: Unit
-   */
-  void initializeUnit(){
-    GaugeConf_unit gconf(Format);
-    gconf.init_conf(U);
-  }
-
-
-  int initialize(XML::node node) {
-    try {
-      XML::descend(node, "Configuration");
-      if (!XML::attribute_compare(node,"Type","TextFile")){
-	std::string filename(node.child_value());
-	initializeTxt(filename);
-	return 0;
-      }
-      if (!XML::attribute_compare(node,"Type","Unit")){
-	initializeUnit();
-	return 0;
-      }
-      if (!XML::attribute_compare(node,"Type","Binary")){
-	std::string filename(node.child_value());
-	initializeBin(filename);
-	return 0;
-      }
-      if (!XML::attribute_compare(node,"Type","JLQCDlegacy")){
-	std::string filename(node.child_value());
-	initializeJLQCDlegacy(filename);
-	return 0;
-      }
-    } catch(...) {
-      std::cout << "Error in initialization of gauge field "<< std::endl;
-    }
-
-    return 0;
-  }
-
-  inline GaugeField& operator=(const GaugeField& rhs){
-    U = rhs.U;
-    return *this;
-  }
-
-  inline SUNmat matrix(int site, int ex) const {
-    return SUNmat(U[Format.cslice(0,site,ex)]);    
-  }
-};
-
-class GaugeField1D {
-
-public:
-  const GaugeFieldFormat Format;/**< Format specifier */
-  Field U; /**< Field container */
-  
-  /*! 
-   * Default constructor\n
-   *
-   * Contains links only in one direction
-   */
-  GaugeField1D(): 
-    Format(GaugeFieldFormat(CommonPrms::instance()->Nvol(),1)),
-    U(Field(Format.size())){}
-
-  GaugeField1D(Field& f): 
-    Format(GaugeFieldFormat(CommonPrms::instance()->Nvol(),1)),
-    U(f){}
-
-  GaugeField1D(std::valarray<double> f): 
-    Format(GaugeFieldFormat(CommonPrms::instance()->Nvol(),1)),
-    U(Field(f)){}
-
-  void set_matrix(int site, SUNmat matrix) {
-    U.set(Format.cslice(0,site),matrix.getva());
-  }
-
-  inline GaugeField1D& operator=(const GaugeField1D& rhs){
-    U = rhs.U;
-    return *this;
-
-  }
-
-  inline SUNmat matrix(int site, int ex){
-    return SUNmat(U[Format.cslice(0,site,ex)]);    
-  }
-};
-
-//////////////////////////////////////////////////////////////////////
-struct ExtraDimTag {};
-struct OneDimTag {};
-
-
-
 template < class DATA, class FORMAT, typename TAG = NullType> 
 class GeneralField {
-protected:
-
 public:
   FORMAT format;
   DATA data;
@@ -209,7 +48,7 @@ public:
   GeneralField& operator=(const GeneralField& rhs);
   GeneralField& operator+=(const GeneralField& rhs);
   GeneralField& operator-=(const GeneralField& rhs);
-
+  GeneralField& operator*=(const double& rhs);
   
   double norm();
 
@@ -280,6 +119,14 @@ GeneralField<DATA,FORMAT,TAG>::operator-=(const GeneralField& rhs)
 }
 
 template < class DATA, class FORMAT, typename TAG> 
+inline GeneralField<DATA,FORMAT,TAG>&
+GeneralField<DATA,FORMAT,TAG>::operator*=(const double& rhs) 
+{
+  data *= rhs;
+  return *this;
+}
+
+template < class DATA, class FORMAT, typename TAG> 
 double GeneralField<DATA,FORMAT,TAG>::norm() 
 {
   return data.norm();
@@ -316,23 +163,29 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 // Notes
-// GaugeFieldType shoud contain also methods to create from geometry and initialize
+// GaugeField shoud contain also methods to create from geometry and initialize
 typedef GeneralField< Field, Format::Format_A >              AdjGaugeField;
-typedef GeneralField< Field, Format::Format_G >              GaugeFieldType;
-typedef GeneralField< Field, Format::Format_G, OneDimTag >   GaugeField1DType;
+typedef GeneralField< Field, Format::Format_G >              GaugeField;
+typedef GeneralField< Field, Format::Format_G, OneDimTag >   GaugeField1D;
 typedef GeneralField< Field, Format::Format_F >              FermionField;
 typedef GeneralField< Field, Format::Format_F, ExtraDimTag > FermionFieldExtraDim;
 typedef GeneralField< std::vector<Field>, Format::Format_F > PropagatorField;
 
 
-struct GaugeGlobal: public GaugeFieldType{
-  GaugeGlobal(Geometry geom){std::cout<< "prova!!!!!\n"; }
+class GaugeGlobal: public GaugeField{
+public:
+  GaugeGlobal(Geometry geom){
+    format = Format::Format_G( geom.parameters->Nvol());
+    data = Field(format.size());
+  }
+
  
-  GaugeFieldType& operator=(GaugeGlobal& Source){
+  GaugeField& operator=(GaugeGlobal& Source){
     assert (format.size() == Source.format.size());
     data = Source.data;
     return *this;
   }
+
  /*!
    * Initializes the gauge field with an \n
    * external configuration in file <Filename>
@@ -405,7 +258,7 @@ struct GaugeGlobal: public GaugeFieldType{
   }
 
 private:
-  GaugeGlobal(const GaugeGlobal&);
+  GaugeGlobal(const GaugeGlobal&);//hide copy constructor
 };
 
 
@@ -413,24 +266,26 @@ private:
 
 
 namespace FieldUtils{
-  const Field TracelessAntihermite(const GaugeField&);
+  const GaugeField TracelessAntihermite(const GaugeField&);
 
   // Field type-type transformations
-  GaugeField1DType DirSlice(const GaugeFieldType& F, int dir);
+  GaugeField1D DirSlice(const GaugeField& F, int dir);
 
+  void SetMatrix(GaugeField& F, SUNmat mat, int site, int dir);
+  void SetMatrix(GaugeField1D& F, SUNmat mat, int site);
 
   // Inline functions
-  inline SUNmat matrix(const GaugeFieldType& F, int site, int dir) {
+  inline SUNmat matrix(const GaugeField& F, int site, int dir) {
     return SUNmat(F.data[F.format.cslice(0,site,dir)]);
   }
-  inline SUNmat matrix(const GaugeField1DType& F, int site){
+  inline SUNmat matrix(const GaugeField1D& F, int site){
     return SUNmat(F.data[F.format.cslice(0,site)]);
   }
 
-  inline SUNmat matrix_dag(const GaugeFieldType& F, int site, int dir){
+  inline SUNmat matrix_dag(const GaugeField& F, int site, int dir){
     return SUNmat(F.data[F.format.cslice(0,site,dir)]).dag();
   }
-  inline SUNmat matrix_dag(const GaugeField1DType& F, int site){
+  inline SUNmat matrix_dag(const GaugeField1D& F, int site){
     return SUNmat(F.data[F.format.cslice(0,site)]).dag();
   }
 

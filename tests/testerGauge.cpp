@@ -11,9 +11,9 @@
 #include "include/commandline.hpp"
 
 using namespace XML;
+using namespace MapsEnv;
 
 int main(int argc, char* argv[]){
-
   CommandOptions Options = ReadCmdLine(argc, argv);
   
   //Reading input file
@@ -21,23 +21,18 @@ int main(int argc, char* argv[]){
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
-
+  initialize_mapper();
+ 
   //Initialize GaugeField using XML input
   GaugeGlobal G_Global(geom);
   G_Global.initialize(top_node);
 
-  //GaugeField GaugeF(geom);
-  //GaugeF.initialize(top_node);
-
-  /////////////
-  
   node Gauge_node = top_node;
   descend(Gauge_node, "Gauge");
   
-  
   Test_Gauge GaugeTest(Gauge_node,G_Global);
   GaugeTest.run();
-
+  
   return 0;
 }
 

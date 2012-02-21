@@ -11,22 +11,20 @@
 #include "include/common_code.hpp"
 #include "tests.hpp"
 
-
 /*!
  *@brief Class to test the gauge field methods and measurements
  */
 class Test_Gauge: public TestGeneral{
  private:
   const XML::node Gauge_node;
-  const GaugeFieldType& d_conf;
+  const GaugeField& d_conf;
 
-  int shift();
+  int map_test();
   int plaquette();
-  //  int evenodd();
 
  public:
-  Test_Gauge(XML::node node, GaugeFieldType& conf):Gauge_node(node),
-						   d_conf(conf){}
+  Test_Gauge(XML::node node, GaugeField& conf):Gauge_node(node),
+					       d_conf(conf){}
   int run();
 };
 

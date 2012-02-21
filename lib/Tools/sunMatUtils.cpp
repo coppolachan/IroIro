@@ -11,7 +11,7 @@
 using namespace std;
 
 
-namespace SUNmat_utils{
+namespace SUNmatUtils{
   SUNmat unity(){
     SUNmat tmp(0.0);
     for(int c=0; c<NC_; ++c) tmp.setr(c,c,1.0);
@@ -86,19 +86,24 @@ namespace SUNmat_utils{
     return va;
   }
 
-  const valarray<double> anti_hermite(const SUNmat& m){
+  const SUNmat anti_hermite(const SUNmat& m){
     double trace = ImTr(m);
     trace /= NC_;
 
-    valarray<double> va(m.getva());
+    //  valarray<double> va(m.getva());
+    SUNmat out;
     for(int a=0; a<NC_; ++a){
-      va[2*(NC_*a+a)  ]= 0.0;
-      va[2*(NC_*a+a)+1]-= trace;
-      
+      out.add(a,a, 0.0, -trace);
       for(int b=0; b<a; ++b){
-	int ab = 2*(NC_*a+b);
-	int ba = 2*(NC_*b+a);
+	//	int ab = 2*(NC_*a+b);
+	//int ba = 2*(NC_*b+a);
+	
+	out.set(a,b, -out.r(b,a), out.i(b,a));
+	out *= 0.5;
+	out.set(b,a, -out.r(a,b), out.i(a,b));
+	
 
+	/*
 	va[ab]-= va[ba];
 	va[ab]/= 2.0;
 	va[ba] =-va[ab];
@@ -106,8 +111,9 @@ namespace SUNmat_utils{
 	va[ab+1]+= va[ba+1];
 	va[ab+1]/= 2.0;
 	va[ba+1] = va[ab+1];
+	*/
       }
     }
-    return va;
+    return out;
   }
 }//endof namespace SUNmat_utils

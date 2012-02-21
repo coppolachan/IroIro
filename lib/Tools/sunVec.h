@@ -8,7 +8,7 @@
 #ifndef SUNVEC_INCLUDED
 #define SUNVEC_INCLUDED
 
-#include "sunMat.h"
+#include "sunMat.hpp"
 
 #include <valarray>
 

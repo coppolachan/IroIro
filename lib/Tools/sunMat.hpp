@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------
-/*! @file sunMat.h
+/*! @file sunMat.hpp
   @brief \f$SU(N)\f$ Matrices linear algebra
 
   Class declarations

@@ -9,7 +9,7 @@
 #include "include/pugi_interface.h"
 #include "Main/Geometry/siteIndex_eo.h"
 
-#include "Tools/sunMat.h"
+#include "Tools/sunMat.hpp"
 #include "Tools/sunVec.h"
 #include "dirac.h"
 //#define IMPROVED_WILSON

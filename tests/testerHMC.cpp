@@ -23,7 +23,7 @@ int main(int argc, char* argv[]){
   Geometry geom(top_node);
 
   //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
+  GaugeGlobal GaugeF(geom);
   GaugeF.initialize(top_node);
 
   /////////////

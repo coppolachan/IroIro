@@ -8,10 +8,7 @@
 #ifndef MAPPER_H_
 #define MAPPER_H_
 
-#include "include/commonPrms.h"
 #include "include/common_fields.hpp"
-#include "siteIndex.h"
-#include "Communicator/comm_io.hpp"
 
 #ifndef HAVE_MPI
 #include "map_scalar.hpp"
@@ -24,7 +21,8 @@ class Mapper{
   std::vector<Map> ShiftsMap;
 
 public:
-  Mapper();
+  Mapper(){};
+  void fill();
 
   template<class DATA, class FORMAT, class TAG>
   GeneralField<DATA,FORMAT,TAG>
@@ -35,5 +33,9 @@ public:
 
 };
 
+namespace MapsEnv{
+  extern Mapper shift;
+  void initialize_mapper();
+}
 
 #endif //MAPPER_H_

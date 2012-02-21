@@ -4,11 +4,12 @@
   @brief Definition of the ActionGaugeWilson class
 */
 #include "action_gauge_wilson.hpp"
-#include "Communicator/comm_io.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Communicator/comm_io.hpp"
+
 
 double ActionGaugeWilson::calc_H(){
-  double plaq = stpl_->plaquette(*u_);
+  double plaq = stpl_.plaquette(*u_);
   //Number of plaquettes
   int Nplaq = CommonPrms::instance()->NP()*Nvol_*Ndim_*(Ndim_-1)/2.0;
 
@@ -22,30 +23,31 @@ double ActionGaugeWilson::calc_H(){
 
 
 Field ActionGaugeWilson::md_force(const void*){
-  using namespace SUNmat_utils;
+  using namespace FieldUtils;
+  using namespace SUNmatUtils;
   SUNmat pl;
   GaugeField force;
   GaugeField1D tmp; 
  
-  for(int m = 0; m < Ndim_; ++m){
-    tmp.U = 0.0;
-    for(int n=0; n< Ndim_; ++n){
+  for(int m = 0; m < NDIM_; ++m){
+    tmp = 0.0;
+    for(int n=0; n< NDIM_; ++n){
       if(n != m){
-	tmp.U += stpl_->upper(*u_,m,n);
-	tmp.U += stpl_->lower(*u_,m,n);
+	tmp += stpl_.upper(*u_,m,n);
+	tmp += stpl_.lower(*u_,m,n);
       }
     }
-    for(int site=0; site<Nvol_; ++site){
-      pl = (u(*u_,gf_,site,m)*u_dag(tmp,site));
-      force.U.set(force.Format.cslice(0,site,m), anti_hermite(pl));
+    for(int site=0; site < Nvol_; ++site){
+      pl = matrix(*u_, site, m);// * matrix_dag(tmp, site);
+      SetMatrix(force, anti_hermite(pl), site, m);
     }
   }
 
-  force.U *= 0.5*Params.beta/CommonPrms::instance()->Nc();
+  force *= 0.5*Params.beta/NC_;
 
-  _MonitorMsg(ACTION_VERB_LEVEL, Action, force.U, "ActionGaugeWilson");
+  //_MonitorMsg(ACTION_VERB_LEVEL, Action, force, "ActionGaugeWilson");
 
-  return force.U;
+  return force.data;
 }
 
 

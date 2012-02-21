@@ -12,9 +12,9 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "HMC/hmcGeneral.hpp"
+//#include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"
-
+#include "Tools/randNum_Factory.h"
 #include "Action/action_gauge_wilson.hpp"
 
 
@@ -29,17 +29,19 @@ int Test_HMC::run(){
   multip[0]= 1;
   multip[1]= 2;
   
-  Field* CommonField = new Field(Gfield_.Format.size());
+  GaugeField* CommonField = new GaugeField;
 
-  //DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
+  Action* Gauge = new ActionGaugeWilson(5.0, CommonField);
+
+  
+
+/*
+  DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
   
   ActionLevel al_1, al_2;
-  Action* Gauge = new ActionGaugeWilson(5.0, 
-					Gfield_.Format, 
-					CommonField);
   al_1.push_back(Gauge);
  
-  /*
+  
   Solver* SolvNf2 = new Solver_CG(1e-14,
 				  1000,
 				  new Fopr_DdagD(OpNf2));
@@ -50,10 +52,10 @@ int Test_HMC::run(){
 				     SolvNf2);
   
   al_2.push_back(Nf2Action);
-  */
+  
 
   ActionSet ASet;
-  //ASet.push_back(al_2);
+  ASet.push_back(al_2);
   ASet.push_back(al_1);
   
   MDexec* Integrator = new MDexec_leapfrog(8,
@@ -85,5 +87,8 @@ int Test_HMC::run(){
   clock_t end_t = clock();
   CCIO::cout << (double)(end_t -start_t)/CLOCKS_PER_SEC << std::endl;
   
+
+  */
+
   return 0;
 }
