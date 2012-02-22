@@ -24,10 +24,26 @@ namespace FieldUtils{
     return GaugeField1D(Field(F.data[F.format.dir_slice(dir)]));
   }
 
+  void SetSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
+    G.data.set(G.format.dir_slice(dir), Gslice.data.getva());
+  }
+
+  void AddSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
+    G.data.add(G.format.dir_slice(dir), Gslice.data.getva());
+  }
+
   void SetMatrix(GaugeField& F, SUNmat mat, int site, int dir){
     F.data.set(F.format.cslice(0,site,dir), mat.getva());
   }
   void SetMatrix(GaugeField1D& F, SUNmat mat, int site){
     F.data.set(F.format.cslice(0,site), mat.getva());
   }
+
+  void AddMatrix(GaugeField& F, SUNmat mat, int site, int dir){
+    F.data.add(F.format.cslice(0,site,dir), mat.getva());
+  }
+  void AddMatrix(GaugeField1D& F, SUNmat mat, int site){
+    F.data.add(F.format.cslice(0,site), mat.getva());
+  }
+
 }

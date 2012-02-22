@@ -4,7 +4,7 @@
  * @brief Definition of BiCGstab solver
  *
  */
-#include "solver_BiCGStab.h"
+#include "solver_BiCGStab.hpp"
 #include "Fields/field_expressions.hpp"
 #include "Communicator/communicator.h"
 

@@ -279,9 +279,17 @@ namespace FieldUtils{
 
   // Field type-type transformations
   GaugeField1D DirSlice(const GaugeField& F, int dir);
+  void SetSlice(GaugeField&, const GaugeField1D&, int dir);
+  void AddSlice(GaugeField&, const GaugeField1D&, int dir);
+
+
 
   void SetMatrix(GaugeField& F, SUNmat mat, int site, int dir);
   void SetMatrix(GaugeField1D& F, SUNmat mat, int site);
+  
+  void AddMatrix(GaugeField& F, SUNmat mat, int site, int dir);
+  void AddMatrix(GaugeField1D& F, SUNmat mat, int site);
+
 
   // Inline functions
   inline SUNmat matrix(const GaugeField& F, int site, int dir) {

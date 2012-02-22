@@ -10,6 +10,9 @@ Add support for staggered fermions
 Add support for more fermionic observables
 
 
+-- Would-be features
+Add constructor to Solvers to accomodate for GeneralFields
+
 
 -- Optional features
 Add new Mersenne Twister (should be faster)

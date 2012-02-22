@@ -26,8 +26,7 @@ bin_PROGRAMS = main_hmc
 lib_LIBRARIES = libcommcode.a
 
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
-		../tests/test_HMC_noFactories.cpp \
-		Main/documentation_pages.h\
+		Main/documentation_pages.h	\
 		Fields/field.inl
 
 
@@ -38,8 +37,10 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 	 	Action/action_gauge_wilson.cpp 		\
 		Action/action_gauge_rect.cpp            \
 		Action/action_gaugetype_factory.cpp     \
+		Action/action_Nf2.cpp			\
 		Communicator/comm_io.cpp		\
 		Communicator/fields_io.cpp		\
+		Dirac_ops/dirac_wilson.cpp		\
 		Measurements/GaugeM/staples.cpp		\
 		Main/Geometry/siteIndex.cpp		\
 		Main/Geometry/siteIndex_eo.cpp		\
@@ -53,6 +54,15 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		HMC/mdExec_factory.cpp                  \
 		PugiXML/pugixml.cpp			\
 		PugiXML/pugi_interface.cpp		\
+		Solver/solver_BiCGStab.cpp		\
+		Solver/solver_CG.cpp			\
+		Solver/solver_Factory.cpp		\
+		Solver/multiShiftSolver_CG.cpp		\
+		Solver/solver.cpp			\
+		Smearing/APEsmear.cpp			\
+		Smearing/StoutSmear.cpp			\
+		Smearing/SmartConf.cpp			\
+		Smearing/Smearing_Factories.cpp		\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
@@ -95,10 +105,13 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Action/action_gaugetype_factory_abs.hpp		\
 			Action/action_fermiontype_factory_abs.hpp	\
 			Action/action_Factory.hpp			\
+			Action/action_Nf2.hpp				\
 			Measurements/GaugeM/staples.hpp			\
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
+			Dirac_ops/dirac.hpp			\
+			Dirac_ops/dirac_wilson.hpp		\
 			Main/Geometry/siteIndex.h		\
 			Main/Geometry/siteIndex_eo.h		\
 			Main/Geometry/mapper.hpp		\
@@ -111,6 +124,17 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			HMC/mdExec_leapfrog_eigen.hpp		\
 			HMC/mdExec_factory.hpp			\
 			HMC/mdExec_factory_abs.hpp		\
+			Solver/solver_Factory.hpp		\
+			Solver/solver_BiCGStab.hpp		\
+			Solver/solver.hpp			\
+			Solver/solver_CG.hpp			\
+			Solver/multiShiftSolver_CG.hpp		\
+			Solver/multiShiftSolver.hpp		\
+			Smearing/APEsmear.hpp			\
+			Smearing/BaseSmear.hpp			\
+			Smearing/StoutSmear.hpp			\
+			Smearing/SmartConf.hpp			\
+			Smearing/Smearing_Factories.hpp		\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\

@@ -9,7 +9,7 @@
 #include <iomanip>
 #include "Communicator/communicator.h"
 #include "Fields/field_expressions.hpp"
-#include "solver_CG.h"
+#include "solver_CG.hpp"
 
 using namespace std;
 

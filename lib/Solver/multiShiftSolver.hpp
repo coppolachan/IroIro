@@ -6,7 +6,10 @@
 #ifndef MULTISOLVER_INCLUDED
 #define MULTISOLVER_INCLUDED
 
+
 #include <vector>
+
+#include "Fields/field_expressions.hpp"
 
 class Field;
 

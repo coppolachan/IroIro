@@ -16,7 +16,10 @@
 #include "test_HMC.hpp"
 #include "Tools/randNum_Factory.h"
 #include "Action/action_gauge_wilson.hpp"
+#include "Action/action_gauge_rect.hpp"
 #include "HMC/mdExec_leapfrog.hpp"
+#include "Dirac_ops/dirac_wilson.hpp"
+#include "Solver/solver_CG.hpp"
 
 int Test_HMC::run(){
   CCIO::cout << "Starting HMCrun\n";
@@ -32,20 +35,20 @@ int Test_HMC::run(){
   GaugeField* CommonField = new GaugeField;
 
   Action* Gauge = new ActionGaugeWilson(5.0, CommonField);
-  //  Action* Gauge = new ActionGaugeRect(2.25, 3.648, -0.331, CommonField);
+  //Action* Gauge = new ActionGaugeRect(2.25, 3.648, -0.331, CommonField);
 
 
-  //DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,CommonField);
+  DiracWilsonLike* OpNf2    = new Dirac_Wilson(0.1,&(CommonField->data));
   
   ActionLevel al_1, al_2;
   al_1.push_back(Gauge);
  
-  /*
+  
   Solver* SolvNf2 = new Solver_CG(1e-14,
 				  1000,
 				  new Fopr_DdagD(OpNf2));
   
-  
+  /*
   Action* Nf2Action = new Action_Nf2(CommonField,
 				     OpNf2,
 				     SolvNf2);

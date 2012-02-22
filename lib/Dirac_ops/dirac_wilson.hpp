@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// dirac_wilson.h
+// dirac_wilson.hpp
 //----------------------------------------------------------------------
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
@@ -11,7 +11,7 @@
 
 #include "Tools/sunMat.hpp"
 #include "Tools/sunVec.h"
-#include "dirac.h"
+#include "dirac.hpp"
 //#define IMPROVED_WILSON
 
 typedef Format::Format_F ffmt_t;

@@ -15,8 +15,6 @@
 #include "APEsmear.hpp"
 
 
-class Field;
-
 /*!
   @brief Stout smearing of link variable.
 
@@ -24,32 +22,25 @@ class Field;
 class Smear_Stout: public Smear {
 
  private:
-  const int Ndim;
   const std::valarray<double> d_rho;
-  const Format::Format_G Gformat;
+  //const Format::Format_G Gformat;
   const Smear* SmearBase;
 
 
   double func_xi0(double w) const;
  public:
-  Smear_Stout(Smear* base):
-    SmearBase(base),
-    Ndim(CommonPrms::Ndim()),
-    Gformat(CommonPrms::Nvol()){};
+  Smear_Stout(Smear* base):SmearBase(base){};
 
   /*! Default constructor */
-  Smear_Stout():
-    SmearBase(new Smear_APE()),
-    Ndim(CommonPrms::Ndim()),
-    Gformat(CommonPrms::Nvol()){};
+  Smear_Stout():SmearBase(new Smear_APE()){};
 
   ~Smear_Stout(){};
 
-  size_t getFieldSize(){return Gformat.size();}
+  //size_t getFieldSize(){return Gformat.size();}
 
-  void smear(Field&,const Field&) const;
-  void BaseSmear(Field&, const Field&) const;
-  void derivative(Field&, const Field&, const Field&) const;
+  void smear(GaugeField&,const GaugeField&) const;
+  void BaseSmear(GaugeField&, const GaugeField&) const;
+  void derivative(GaugeField&, const GaugeField&, const GaugeField&) const;
   void exponentiate_iQ(GaugeField&, const GaugeField&) const;
 };
 

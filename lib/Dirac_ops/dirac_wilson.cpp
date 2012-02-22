@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // dirac_wilson.cpp
 //----------------------------------------------------------------------
-#include "dirac_wilson.h"
+#include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
 
 using namespace SUNvec_utils;
@@ -1475,7 +1475,7 @@ const Field Dirac_Wilson::mult_dag(const Field& f)const{
  */
 void Dirac_Wilson::md_force_p(Field& fce,
 			      const Field& eta,const Field& zeta)const{
-  using namespace SUNmat_utils;
+  using namespace SUNmatUtils;
   SUNmat f;
 
   for(int mu=0; mu<Ndim_; ++mu){
@@ -1511,7 +1511,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
 
 void Dirac_Wilson::md_force_m(Field& fce,
 			      const Field& eta,const Field& zeta)const{
-  using namespace SUNmat_utils;
+  using namespace SUNmatUtils;
   SUNmat f;
   Field et5 = gamma5(eta);
   Field zt5 = gamma5(zeta);
