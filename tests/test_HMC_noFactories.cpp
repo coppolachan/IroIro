@@ -16,7 +16,7 @@
 #include "test_HMC.hpp"
 #include "Tools/randNum_Factory.h"
 #include "Action/action_gauge_wilson.hpp"
-
+#include "HMC/mdExec_leapfrog.hpp"
 
 int Test_HMC::run(){
   CCIO::cout << "Starting HMCrun\n";
@@ -52,7 +52,7 @@ int Test_HMC::run(){
   
   al_2.push_back(Nf2Action);
   
-
+  */
   ActionSet ASet;
   //ASet.push_back(al_2);
   ASet.push_back(al_1);
@@ -67,7 +67,7 @@ int Test_HMC::run(){
 				      
   HMCgeneral hmc_general(HMC_node, *Integrator);  
 
-
+  
   //Initialization
   //HMCgeneral hmc_general(HMC_node);
 
@@ -76,7 +76,7 @@ int Test_HMC::run(){
 
   try{
     CCIO::cout<< "HMC starts\n";
-    hmc_general.evolve(Gfield_.U);
+    hmc_general.evolve(Gfield_);
   }catch(const char* error){
     CCIO::cerr << error << std::endl;
     return EXIT_FAILURE;
@@ -86,7 +86,7 @@ int Test_HMC::run(){
   CCIO::cout << (double)(end_t -start_t)/CLOCKS_PER_SEC << std::endl;
   
 
-  */
+  
 
   return 0;
 }

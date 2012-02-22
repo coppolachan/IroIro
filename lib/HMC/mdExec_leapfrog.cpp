@@ -4,13 +4,13 @@
  * @brief Definition of MDexec_leapfrog class and Parameters 
  */
 #include "mdExec_leapfrog.hpp"
-#include "include/field.h"
 #include "Tools/sunMatUtils.hpp"
+#include "include/messages_macros.hpp"
 
 #include <iomanip>
 
 using namespace std;
-using namespace Format;
+//using namespace Format;
 
 void MDexec_leapfrog::register_observers(){
   // Register actions 
@@ -40,7 +40,8 @@ void MDexec_leapfrog::notify_observers(ObserverList& OList) {
 
 
 void MDexec_leapfrog::update_U(double ep){
-  using namespace SUNmat_utils;
+  using namespace SUNmatUtils;
+  using namespace FieldUtils;
 
   int Ndim = CommonPrms::instance()->Ndim();
   int Nvol = CommonPrms::instance()->Nvol();
@@ -53,11 +54,11 @@ void MDexec_leapfrog::update_U(double ep){
       au = I;
       for(int k = Params.Nexp; k > 0; --k){
  	au *= ep/k;
-	au *= u(P_,gf_,site,m);
+	au *= matrix(P_,site,m);
 	au += I;
       }
-      au *= u(*U_,gf_,site,m);
-      U_->set(gf_.islice(site,m),au.reunit().getva());
+      au *= matrix(*U_,site,m);
+      U_->data.set(U_->format.islice(site,m),au.reunit().getva());
     }
   }
 
@@ -66,19 +67,19 @@ void MDexec_leapfrog::update_U(double ep){
 
 void MDexec_leapfrog::update_P(int lv,double ep){
   for(int a = 0; a < as_[lv].size(); ++a){
-    Field fce = as_[lv].at(a)->md_force();
+    GaugeField fce = as_[lv].at(a)->md_force();
     fce *= ep;
     P_-= fce; 
   }
 }
 
 void MDexec_leapfrog::
-init(vector<int>& clock,const Field& U,const RandNum& rand){
+init(vector<int>& clock,const GaugeField& U,const RandNum& rand){
   clock.resize(as_.size(),0.0);  
 
   *U_= U;                       // initialize U_ (common to actions) to U
   notify_observers(GaugeObservers);
-  MDutils::md_mom(P_,rand,gf_); // initialize P_ 
+  MDutils::md_mom(P_,rand); // initialize P_ 
 
   for(int lv = 0; lv< as_.size(); ++lv){
     for(int id = 0; id < as_.at(lv).size(); ++id){
@@ -93,14 +94,13 @@ init(vector<int>& clock,const Field& U,const RandNum& rand){
 }
 
 double MDexec_leapfrog::calc_H()const{
-  using namespace SUNmat_utils;
+  using namespace SUNmatUtils;
   // kinetic term
   double H_local = 0.0;
-  Format::Format_G gf(CommonPrms::instance()->Nvol());
 
   for(int site = 0; site < CommonPrms::instance()->Nvol(); ++site){
     for(int dir = 0; dir < CommonPrms::instance()->Ndim(); ++dir){
-      SUNmat Pxm(P_[gf.cslice(0,site, dir)]);
+      SUNmat Pxm(P_.data[P_.format.cslice(0,site, dir)]);
       H_local -= ReTr(Pxm*Pxm);
     }
   }
@@ -172,4 +172,4 @@ integrator(int cl,std::vector<int>& clock){
   }
 }
 
-const Field MDexec_leapfrog::get_U() const{ return *U_;}
+const GaugeField MDexec_leapfrog::get_U() const{ return *U_;}

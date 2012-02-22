@@ -49,6 +49,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Main/commandline.cpp			\
 		HMC/hmcGeneral.cpp                      \
 		HMC/mdExec.cpp		                \
+		HMC/mdExec_leapfrog.cpp                 \
+		HMC/mdExec_factory.cpp                  \
 		PugiXML/pugixml.cpp			\
 		PugiXML/pugi_interface.cpp		\
 		Tools/sunMatUtils.cpp			\
@@ -106,6 +108,9 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/mdExec.hpp		                \
+			HMC/mdExec_leapfrog_eigen.hpp		\
+			HMC/mdExec_factory.hpp			\
+			HMC/mdExec_factory_abs.hpp		\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\

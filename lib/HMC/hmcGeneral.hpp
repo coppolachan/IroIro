@@ -14,8 +14,6 @@
 #include "include/pugi_interface.h"
 #include "HMC/mdExec_factory_abs.hpp"
 
-
-class Field;
 class MDexec;
 class RandNum;
 

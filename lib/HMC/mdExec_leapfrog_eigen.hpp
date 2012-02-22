@@ -1,5 +1,5 @@
 //--------------------------------------------------------------------
-// mdExec_leapfrog_eigen.h
+// mdExec_leapfrog_eigen.hpp
 //--------------------------------------------------------------------
 #ifndef MD_LEAPFROG_EIGEN_INCLUDED
 #define MD_LEAPFROG_EIGEN_INCLUDED
