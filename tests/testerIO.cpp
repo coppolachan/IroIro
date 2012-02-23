@@ -21,7 +21,7 @@ int main(){
   Geometry geom(top_node);
 
   //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
+  GaugeGlobal GaugeF(geom);
   GaugeF.initialize(top_node);
 
   /////////////

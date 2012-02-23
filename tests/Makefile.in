@@ -15,7 +15,7 @@
 
 @SET_MAKE@
 
-# Time-stamp: <2012-02-20 16:28:22 neo>
+# Time-stamp: <2012-02-23 10:15:19 neo>
 
 
 VPATH = @srcdir@
@@ -38,7 +38,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-test_PROGRAMS = test_HMC_nofact$(EXEEXT) test_Gauge$(EXEEXT)
+test_PROGRAMS = test_HMC_nofact$(EXEEXT) test_Gauge$(EXEEXT) \
+	test_HMC_smear_noF$(EXEEXT) test_IO$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -62,6 +63,15 @@ am_test_HMC_nofact_OBJECTS = test_HMC_noFactories.$(OBJEXT) \
 test_HMC_nofact_OBJECTS = $(am_test_HMC_nofact_OBJECTS)
 test_HMC_nofact_LDADD = $(LDADD)
 test_HMC_nofact_DEPENDENCIES =
+am_test_HMC_smear_noF_OBJECTS = test_HMC_Smear_noFact.$(OBJEXT) \
+	testerHMC.$(OBJEXT)
+test_HMC_smear_noF_OBJECTS = $(am_test_HMC_smear_noF_OBJECTS)
+test_HMC_smear_noF_LDADD = $(LDADD)
+test_HMC_smear_noF_DEPENDENCIES =
+am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
+test_IO_OBJECTS = $(am_test_IO_OBJECTS)
+test_IO_LDADD = $(LDADD)
+test_IO_DEPENDENCIES =
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -83,8 +93,10 @@ am__v_CXXLD_0 = @echo "  CXXLD " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(test_Gauge_SOURCES) $(test_HMC_nofact_SOURCES)
-DIST_SOURCES = $(test_Gauge_SOURCES) $(test_HMC_nofact_SOURCES)
+SOURCES = $(test_Gauge_SOURCES) $(test_HMC_nofact_SOURCES) \
+	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES)
+DIST_SOURCES = $(test_Gauge_SOURCES) $(test_HMC_nofact_SOURCES) \
+	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -241,6 +253,12 @@ test_Gauge_SOURCES = test_Gauge.cpp			\
 test_HMC_nofact_SOURCES = test_HMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
+test_HMC_smear_noF_SOURCES = test_HMC_Smear_noFact.cpp 	\
+			  	testerHMC.cpp
+
+test_IO_SOURCES = test_IO.cpp 			\
+				testerIO.cpp
+
 include_HEADERS = tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
@@ -334,6 +352,12 @@ test_Gauge$(EXEEXT): $(test_Gauge_OBJECTS) $(test_Gauge_DEPENDENCIES)
 test_HMC_nofact$(EXEEXT): $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_DEPENDENCIES) 
 	@rm -f test_HMC_nofact$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_LDADD) $(LIBS)
+test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_DEPENDENCIES) 
+	@rm -f test_HMC_smear_noF$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_LDADD) $(LIBS)
+test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES) 
+	@rm -f test_IO$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -342,9 +366,12 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_Smear_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerGauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

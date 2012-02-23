@@ -1,4 +1,4 @@
-# Time-stamp: <2012-02-20 16:28:22 neo>
+# Time-stamp: <2012-02-23 10:15:19 neo>
 
 testdir = $(bindir)/Test
 
@@ -21,7 +21,9 @@ EXTRA_DIST = 	testResults.info	\
 		test_MultiShiftSolver.xml
 
 test_PROGRAMS = test_HMC_nofact 	\
-		test_Gauge		
+		test_Gauge		\
+		test_HMC_smear_noF	\
+		test_IO
 
 
 test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
@@ -29,6 +31,12 @@ test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
 
 test_HMC_nofact_SOURCES = 	test_HMC_noFactories.cpp 	\
 			  	testerHMC.cpp
+
+test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
+			  	testerHMC.cpp
+
+test_IO_SOURCES 	= 	test_IO.cpp 			\
+				testerIO.cpp
 
 include_HEADERS 	=	tests.hpp			\
 				tests_all.hpp			\

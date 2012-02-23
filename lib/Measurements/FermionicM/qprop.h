@@ -9,7 +9,7 @@
 #define QPROP_INCLUDED
 
 #include "quark_propagators.hpp"
-#include "Dirac_ops/dirac.h"
+#include "Dirac_ops/dirac.hpp"
 #include "Solver/solver.hpp"
 #include "Measurements/FermionicM/source.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
