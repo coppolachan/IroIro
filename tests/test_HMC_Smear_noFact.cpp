@@ -15,9 +15,11 @@
 #include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"
 #include "Action/action_gauge_wilson.hpp"
+#include "Action/action_Nf2.hpp"
 #include "Dirac_ops/dirac_wilson.hpp"
 #include "Solver/solver_CG.hpp"
 #include "HMC/mdExec_leapfrog.hpp"
+
 
 #include "Smearing/SmartConf.hpp"
 
@@ -59,16 +61,16 @@ int Test_HMC::run(){
   Solver* SolvNf2 = new Solver_CG(1e-14,
 				  1000,
 				  new Fopr_DdagD(OpNf2));
-  /*
+  
   Action* Nf2Action = new Action_Nf2(FatField.select_conf(dosmear),
 				     OpNf2,
 				     SolvNf2,
 				     true,
 				     &FatField);
   al_2.push_back(Nf2Action);
-  */
+  
   ActionSet ASet;
-  //ASet.push_back(al_2);
+  ASet.push_back(al_2);
   ASet.push_back(al_1);
   
   MDexec* Integrator = new MDexec_leapfrog(8,

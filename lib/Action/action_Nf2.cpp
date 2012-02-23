@@ -50,9 +50,12 @@ double Action_Nf2::calc_H(){
 GaugeField Action_Nf2::md_force(){
   FermionField eta = DdagD_inv(phi_);
   GaugeField fce;
+
+  CCIO::cout << "ETA norm: "<< eta.norm() << std::endl;
+
   fce.data = D_->md_force(eta.data,D_->mult(eta.data));
   // [fce] is [U*SigmaTilde] in smearing language
-  
+  CCIO::cout << "forceD norm: "<< fce.norm() << std::endl;
   if(smeared_) SmartField_->smeared_force(fce);
 
   GaugeField force = FieldUtils::TracelessAntihermite(fce);

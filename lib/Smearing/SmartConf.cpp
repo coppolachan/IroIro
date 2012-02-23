@@ -51,7 +51,6 @@ void SmartConf::smeared_force(GaugeField& SigmaTilde)const {
   force1 = SigmaTilde;//actually = U*SigmaTilde
 
   for(int mu = 0; mu < NDIM_; ++mu){
-    //U_mu = (SmearedSet[smearingLevels-1].data)[force.Format.dir_slice(mu)];
     U_mu = DirSlice(SmearedSet[smearingLevels-1], mu);
     for (int site = 0; site < Nvol; ++site){
       ut = matrix_dag(U_mu,site) * matrix(force1,site,mu);
@@ -63,18 +62,15 @@ void SmartConf::smeared_force(GaugeField& SigmaTilde)const {
     force = AnalyticSmearedForce(force1,get_smeared_conf(ismr));
     force1 = force;
   }
-  force = AnalyticSmearedForce(force1,*ThinLinks);
 
-  SigmaTilde = force;
-  /*
+  force = AnalyticSmearedForce(force1,*ThinLinks);
+  
   for(int mu = 0; mu < NDIM_; ++mu){
     for (int site = 0; site < Nvol; ++site){
-      ut = u(*ThinLinks,force.Format,site,mu) * u(force,site,mu);
-       force.U.set(force.Format.cslice(0,site,mu),anti_hermite(ut));
+      ut = matrix(*ThinLinks,site,mu) * matrix(force,site,mu);
+      SetMatrix(SigmaTilde, ut, site, mu);
     }
   }  
-  */
-  //return force.U;
 }
 //====================================================================
 GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
@@ -93,7 +89,7 @@ GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
   GaugeField1D st, u_tmp1, u_tmp2;
   
   StoutSmearing.BaseSmear(C,GaugeK);
-  
+  CCIO::cout << "Base Smear norm: "<< C.norm() << std::endl;
   for(int mu = 0; mu < NDIM_; ++mu){
     //U_mu = GaugeK[C.Format.dir_slice(mu)];
     U_mu = DirSlice(GaugeK, mu);
@@ -102,18 +98,18 @@ GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
       SetMatrix(iQ, anti_hermite(ut), site, mu);
     }
   }// created iQ
-  
+  CCIO::cout << "iQ Smear norm: "<< iQ.norm() << std::endl;
   set_iLambda(iLambda, e_iQ, iQ, SigmaKPrime, GaugeK);
-
+  CCIO::cout << "iLambda Smear norm: "<< iLambda.norm() << std::endl;
   for(int mu = 0; mu < NDIM_; ++mu){
     for (int site = 0; site < Nvol; ++site){
       ut = matrix(SigmaKPrime,site,mu) * matrix(e_iQ,site,mu);
       SetMatrix(SigmaK,ut, site, mu);
       ut = matrix_dag(C,site,mu) * matrix(iLambda,site,mu);
-      SetMatrix(SigmaK,ut, site, mu);
+      AddMatrix(SigmaK,ut, site, mu);
     }
   }
-
+  CCIO::cout << "SigmaK Smear norm: "<< SigmaK.norm() << std::endl;
   StoutSmearing.derivative(SigmaK, iLambda, GaugeK);
   
   return SigmaK;

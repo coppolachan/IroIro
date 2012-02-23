@@ -12,6 +12,7 @@
 #include "Tools/sunMat.hpp"
 #include "Tools/sunVec.h"
 #include "dirac.hpp"
+
 //#define IMPROVED_WILSON
 
 typedef Format::Format_F ffmt_t;
