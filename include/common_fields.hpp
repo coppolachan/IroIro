@@ -14,6 +14,7 @@
 #include "include/format_G.h"
 #include "include/format_F.h"
 #include "lib/Tools/sunMat.hpp"
+#include "lib/Tools/sunVec.hpp"
 #include "include/macros.hpp"
 
 struct ExtraDimTag {};
@@ -53,7 +54,7 @@ public:
 
 
   double norm();
-
+  double size() const { return format.size(); }
 };
 
 template < class DATA, class FORMAT, typename TAG> 
@@ -273,7 +274,7 @@ private:
 
 
 
-
+//eventually move to a different file
 namespace FieldUtils{
   const GaugeField TracelessAntihermite(const GaugeField&);
 
@@ -284,11 +285,14 @@ namespace FieldUtils{
 
 
 
-  void SetMatrix(GaugeField& F, SUNmat mat, int site, int dir);
-  void SetMatrix(GaugeField1D& F, SUNmat mat, int site);
+  void SetMatrix(GaugeField& F, const SUNmat& mat, int site, int dir);
+  void SetMatrix(GaugeField1D& F, const SUNmat& mat, int site);
   
-  void AddMatrix(GaugeField& F, SUNmat mat, int site, int dir);
-  void AddMatrix(GaugeField1D& F, SUNmat mat, int site);
+  void AddMatrix(GaugeField& F, const SUNmat& mat, int site, int dir);
+  void AddMatrix(GaugeField1D& F, const SUNmat& mat, int site);
+
+  void SetVector(FermionField&, const SUNvec&, int spin, int site); 
+  void AddVector(FermionField&, const SUNvec&, int spin, int site); 
 
 
   // Inline functions
@@ -304,6 +308,10 @@ namespace FieldUtils{
   }
   inline SUNmat matrix_dag(const GaugeField1D& F, int site){
     return SUNmat(F.data[F.format.cslice(0,site)]).dag();
+  }
+
+  inline SUNvec vect(const FermionField& F, int spin, int site){
+    return SUNvec(F.data[F.format.cslice(spin,site)]);
   }
 
 }

@@ -1,4 +1,4 @@
-# Time-stamp: <2012-02-08 10:25:11 neo>
+# Time-stamp: <2012-02-23 11:37:26 neo>
 
 testdir = $(bindir)/Test
 
@@ -75,9 +75,6 @@ test_IO_SOURCES 	= 	test_IO.cpp 			\
 
 test_EigenModes_SOURCES = 	test_EigenModes_IRL.cpp		\
 				testerEigenModes.cpp
-
-test_Smearing_SOURCES 	= 	test_smear.cpp			\
-				testerSmear.cpp
 
 test_Overlap_SOURCES 	= 	test_overlap.cpp		\
 				testerOverlap.cpp

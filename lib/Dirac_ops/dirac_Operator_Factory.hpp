@@ -9,8 +9,8 @@
 
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
-#include "dirac_wilson.h"
-#include "dirac_wilson_EvenOdd.h"
+#include "dirac_wilson.hpp"
+#include "dirac_wilson_EvenOdd.hpp"
 #include "dirac_clover.hpp"
 #include "dirac_DomainWall_4D_fullSolv.hpp"
 #include "dirac_DomainWall_4D_eoSolv.hpp"

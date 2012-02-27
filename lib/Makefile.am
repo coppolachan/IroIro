@@ -38,9 +38,25 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_gauge_rect.cpp            \
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
+		Action/action_Nf2_ratio.cpp		\
+		Action/action_Nf2_DomainWall.cpp	\
+		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
 		Communicator/fields_io.cpp		\
 		Dirac_ops/dirac_wilson.cpp		\
+		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
+		Dirac_ops/dirac_clover.cpp		\
+		Dirac_ops/fopr_signH_Zolotarev.cpp	\
+		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
+		Dirac_ops/dirac_DomainWall.cpp   	\
+		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  \
+		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
+		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
+		Dirac_ops/eoUtils.cpp           	\
+		EigenModes/eigenModes_IRL.cpp		\
+		EigenModes/eigenProc_Zolotarev.cpp	\
+		EigenModes/sortEigen.cpp		\
+		EigenModes/fopr_chebyshev_DdagD.cpp	\
 		Measurements/GaugeM/staples.cpp		\
 		Main/Geometry/siteIndex.cpp		\
 		Main/Geometry/siteIndex_eo.cpp		\
@@ -48,6 +64,11 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(MAPPER_SRCS)		     	        \
 		Main/gaugeConf.cpp			\
 		Main/commandline.cpp			\
+		Measurements/FermionicM/qprop_MultiShift.cpp 		\
+		Measurements/FermionicM/qprop.cpp 			\
+		Measurements/FermionicM/qprop_EvenOdd.cpp		\
+		Measurements/FermionicM/qprop_DomainWall.cpp		\
+		Measurements/FermionicM/utils_DWF4d.cpp	\
 		HMC/hmcGeneral.cpp                      \
 		HMC/mdExec.cpp		                \
 		HMC/mdExec_leapfrog.cpp                 \
@@ -104,14 +125,39 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Action/action_gaugetype_factory.hpp		\
 			Action/action_gaugetype_factory_abs.hpp		\
 			Action/action_fermiontype_factory_abs.hpp	\
+			Action/action_fermiontype_factory.hpp		\
 			Action/action_Factory.hpp			\
 			Action/action_Nf2.hpp				\
+			Action/action_Nf2_ratio.hpp			\
+			Action/action_Nf2_DomainWall.hpp		\
 			Measurements/GaugeM/staples.hpp			\
+			Measurements/FermionicM/source.hpp		\
+			Measurements/FermionicM/source_types.hpp	\
+			Measurements/FermionicM/qprop_MultiShift.hpp 	\
+			Measurements/FermionicM/qprop.hpp		\
+			Measurements/FermionicM/qprop_EvenOdd.hpp	\
+			Measurements/FermionicM/qprop_DomainWall.hpp 	\
+			Measurements/FermionicM/quark_propagators.hpp	\
+			Measurements/FermionicM/sources_factory.hpp	\
+			Measurements/FermionicM/meson_correlator.hpp	\
+                        Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
 			Dirac_ops/dirac.hpp			\
 			Dirac_ops/dirac_wilson.hpp		\
+			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
+			Dirac_ops/dirac_clover.hpp		\
+			Dirac_ops/dirac_DomainWall.hpp   	\
+			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
+			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
+			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
+			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
+			Dirac_ops/dirac_Preconditioners.hpp	\
+			Dirac_ops/eoUtils.hpp            	\
+			EigenModes/eigenModes_IRL.hpp		\
+			EigenModes/sortEigen.h			\
+			EigenModes/eigenProc_Zolotarev.h	\
 			Main/Geometry/siteIndex.h		\
 			Main/Geometry/siteIndex_eo.h		\
 			Main/Geometry/mapper.hpp		\
@@ -121,6 +167,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/mdExec.hpp		                \
+			HMC/mdExec_leapfrog.hpp			\
 			HMC/mdExec_leapfrog_eigen.hpp		\
 			HMC/mdExec_factory.hpp			\
 			HMC/mdExec_factory_abs.hpp		\
@@ -139,7 +186,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
-			Tools/sunVec.h				\
+			Tools/sunVec.hpp			\
 			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
 			Tools/RAIIFactory.hpp			\

@@ -38,7 +38,7 @@ GaugeField ActionGaugeWilson::md_force(){
      }
      for(int site=0; site < Nvol_; ++site){
       pl = matrix(*u_, site, m) * matrix_dag(tmp, site);
-      SetMatrix(force, anti_hermite(pl), site, m);
+      SetMatrix(force, anti_hermite_traceless(pl), site, m);
     }
   }
 

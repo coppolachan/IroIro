@@ -229,7 +229,7 @@ GaugeField ActionGaugeRect::md_force(){
     force_rect += force_pl; //force_rect = total force (staples term)
     for(int site = 0; site<Nvol_; ++site){
       force_mat = (matrix(*u_,site,mu)*matrix_dag(force_rect,site));
-      SetMatrix(force, anti_hermite(force_mat), site, mu);
+      SetMatrix(force, anti_hermite_traceless(force_mat), site, mu);
     } 
   }
 

@@ -3,7 +3,7 @@
  * @brief Declaration of utility functions for 4D-DWF op.
 */
 #include "Measurements/FermionicM/utils_DWF4d.hpp"
-#include "Dirac_ops/dirac.h"
+#include "Dirac_ops/dirac.hpp"
 #include "Fields/field_expressions.hpp"
 
 namespace Utils_DWF4D{

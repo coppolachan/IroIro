@@ -12,7 +12,7 @@
 #include "include/pugi_interface.h"
 #include "Measurements/FermionicM/source.hpp"
 #include "Solver/multiShiftSolver.hpp"
-#include "Dirac_ops/dirac.h"
+#include "Dirac_ops/dirac.hpp"
 #include <vector>
 
 typedef std::vector<Field> prop_t;

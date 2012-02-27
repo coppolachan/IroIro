@@ -86,7 +86,7 @@ namespace SUNmatUtils{
     return va;
   }
 
-  const SUNmat anti_hermite(const SUNmat& m){
+  const SUNmat anti_hermite_traceless(const SUNmat& m){
     double trace = ImTr(m);
     trace /= NC_;
 
@@ -104,6 +104,23 @@ namespace SUNmatUtils{
     }
     return out;
   }
+
+  const SUNmat anti_hermite(const SUNmat& m){
+    std::valarray<double> va(m.getva());
+    for(int a=0; a<NC_; ++a){
+      for(int b=a; b<NC_; ++b){
+	double re = va[2*(NC_*a+b)  ] - va[2*(NC_*b+a)  ];
+	double im = va[2*(NC_*a+b)+1] + va[2*(NC_*b+a)+1];
+	va[2*(NC_*a+b)  ] =  0.5 * re;
+	va[2*(NC_*a+b)+1] =  0.5 * im;
+	va[2*(NC_*b+a)  ] = -0.5 * re;
+	va[2*(NC_*b+a)+1] =  0.5 * im;
+	
+      }
+    }
+    return SUNmat(va);
+  }
+
 
   void SUNprint(const SUNmat& mat) {
     for(int a=0; a<NC_; ++a){

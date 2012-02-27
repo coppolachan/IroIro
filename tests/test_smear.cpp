@@ -8,9 +8,9 @@
 #include "Measurements/FermionicM/fermion_meas_factory.hpp"
 
 
-#include "Dirac_ops/dirac_wilson.h"
-#include "Solver/solver_CG.h"
-#include "Solver/solver_BiCGStab.h"
+#include "Dirac_ops/dirac_wilson.hpp"
+#include "Solver/solver_CG.hpp"
+#include "Solver/solver_BiCGStab.hpp"
 #include "Measurements/FermionicM/qprop.h"
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"

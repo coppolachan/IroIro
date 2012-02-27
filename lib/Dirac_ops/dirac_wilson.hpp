@@ -10,7 +10,7 @@
 #include "Main/Geometry/siteIndex_eo.h"
 
 #include "Tools/sunMat.hpp"
-#include "Tools/sunVec.h"
+#include "Tools/sunVec.hpp"
 #include "dirac.hpp"
 
 //#define IMPROVED_WILSON

@@ -5,39 +5,20 @@
 */
 
 #include "dirac_clover.hpp"
-#include "Communicator/comm_io.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Communicator/comm_io.hpp"
+#include "Main/Geometry/mapper.hpp"
+#include "Measurements/GaugeM/staples.hpp"
+#include "include/messages_macros.hpp"
 
 using namespace std;
-
-typedef ShiftField_up<GaugeFieldFormat> FieldUP;//shifter up   for matrices
-typedef ShiftField_dn<GaugeFieldFormat> FieldDN;//shifter down for matrices
-
-//======== Auxiliary routines
-
-const std::valarray<double> Dirac_Clover::anti_herm(const SUNmat& m){
-  
-  std::valarray<double> va(m.getva());
-  for(int a=0; a<NC_; ++a){
-    for(int b=a; b<NC_; ++b){
-      double re = va[2*(NC_*a+b)  ] - va[2*(NC_*b+a)  ];
-      double im = va[2*(NC_*a+b)+1] + va[2*(NC_*b+a)+1];
-      va[2*(NC_*a+b)  ] =  0.5 * re;
-      va[2*(NC_*a+b)+1] =  0.5 * im;
-      va[2*(NC_*b+a)  ] = -0.5 * re;
-      va[2*(NC_*b+a)+1] =  0.5 * im;
-
-    }
-  }
-  return va;
-}
 
 //=================================================================
 
 //void (Dirac_Clover::*Dirac_Clover::mult_isigma[])(Field&,const Field&)const 
 //= {&Dirac_Clover::i_sigma};
   
-void Dirac_Clover::mult_isigma(Field& v, const Field& w,int mu,int nu) const {
+void Dirac_Clover::mult_isigma(FermionField& v, const FermionField& w,int mu,int nu) const {
   
   if(mu==nu) {
     CCIO::cout << "Illegal value of (mu,nu) in Dirac_Clover::mult_isigma.\n";
@@ -125,65 +106,65 @@ void Dirac_Clover::mult_isigma(Field& v, const Field& w,int mu,int nu) const {
 
 
 //====================================================================
-void Dirac_Clover::mult_csw(Field& v_out, const Field& w) const {
-  using namespace SUNmat_utils;
+void Dirac_Clover::mult_csw(FermionField& v_out, const FermionField& w) const {
+  using namespace SUNmatUtils;
   using namespace SUNvec_utils;
+  using namespace FieldUtils;
 
   //Temporary variable declarations
   SUNvec v1;
-  Field wt(fsize_);
+  FermionField wt;
 
   //Actual calculation - START
   mult_isigma23(wt,w);
   for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < Ndim_; ++s){
-      v1 = u(d_Bx,site) * v(wt,s,site);
-      v_out.set(ff_->cslice(s,site), v1.getva());
+    for(int s = 0; s < NDIM_; ++s){
+      v1 = matrix(d_Bx,site) * vect(wt,s,site);
+      SetVector(v_out, v1, s, site);
     }
   }
    
   mult_isigma31(wt,w);
   for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < Ndim_; ++s){
-      v1 = u(d_By,site) * v(wt,s,site);
-      v_out.add(ff_->cslice(s,site), v1.getva());
+    for(int s = 0; s < NDIM_; ++s){
+      v1 = matrix(d_By,site) * vect(wt,s,site);
+      AddVector(v_out, v1, s, site);
     }
   }
 
   mult_isigma12(wt,w);
   for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < Ndim_; ++s){
-      v1 = u(d_Bz,site) * v(wt,s,site);
-      v_out.add(ff_->cslice(s,site),v1.getva());
+    for(int s = 0; s < NDIM_; ++s){
+      v1 = matrix(d_Bz,site) * vect(wt,s,site);
+      AddVector(v_out, v1, s, site);
     }
   }
   
   mult_isigma41(wt,w);
   for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < Ndim_; ++s){
-      v1 = u(d_Ex,site) * v(wt,s,site);
-      v_out.add(ff_->cslice(s,site), v1.getva());
+    for(int s = 0; s < NDIM_; ++s){
+      v1 = matrix(d_Ex,site) * vect(wt,s,site);
+      AddVector(v_out, v1, s, site);
     }
   }
 
 
   mult_isigma42(wt,w);
   for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < Ndim_; ++s){
-      v1 = u(d_Ey,site) * v(wt,s,site);
-      v_out.add(ff_->cslice(s,site),v1.getva());
+    for(int s = 0; s < NDIM_; ++s){
+      v1 = matrix(d_Ey,site) * vect(wt,s,site);
+      AddVector(v_out, v1, s, site);
     }
   }
   
 
   mult_isigma43(wt,w);
   for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < Ndim_; ++s){
-      v1 = u(d_Ez,site) * v(wt,s,site);
-      v_out.add(ff_->cslice(s,site), v1.getva());
+    for(int s = 0; s < NDIM_; ++s){
+      v1 = matrix(d_Ez,site) * vect(wt,s,site);
+      AddVector(v_out, v1, s, site);
     }
   }
-  
   
   v_out *= Dw->getKappa() * csw_;
 }
@@ -207,26 +188,32 @@ void Dirac_Clover::set_csw() {
 /*! @brief Calculates the term \f$F_{\mu.\nu}\f$  */
 void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
 				     const int mu, const int nu){
-  using namespace SUNmat_utils;
+  using namespace SUNmatUtils;
+  using namespace FieldUtils;
+  using namespace MapsEnv;
 
   //.................. Temporary variables declaration
   GaugeField1D Cup, Cdn;
-  GaugeField1D U_mu((*u_)[gf_->dir_slice(mu)]);  /*< @brief \f$U_\mu(x)\f$ */
+  GaugeField1D U_mu;  /*< @brief \f$U_\mu(x)\f$ */
   GaugeField1D w1, w2, v1, v2;
+  Staples stpl_;
 
+  //really temporary
+  GaugeField temp_u_(*u_);
   //.......................................
+  U_mu = DirSlice(temp_u_, mu);
 
-  Cup.U = stpl_->upper(*u_,mu,nu); // Upper staple V_+mu
-  Cdn.U = stpl_->lower(*u_,mu,nu); // Lower staple V_-mu
+  Cup = stpl_.upper(temp_u_,mu,nu); // Upper staple V_+mu
+  Cdn = stpl_.lower(temp_u_,mu,nu); // Lower staple V_-mu
 
   for(int site = 0; site < Nvol_; ++site){
-    w1.set_matrix(site, u(U_mu,site)    * u_dag(Cup,site) );// U_mu(x)*(V_+mu)^dag
-    w2.set_matrix(site, u(U_mu,site)    * u_dag(Cdn,site) );// U_mu(x)*(V_-mu)^dag
-    v1.set_matrix(site, u_dag(Cup,site) * u(U_mu,site)    );// (V_+mu)^dag*U_mu(x)
-    v2.set_matrix(site, u_dag(Cdn,site) * u(U_mu,site)    );// (V_-mu)^dag*U_mu(x)
+    SetMatrix(w1, matrix(U_mu,site)    * matrix_dag(Cup,site), site);// U_mu(x)*(V_+mu)^dag
+    SetMatrix(w2, matrix(U_mu,site)    * matrix_dag(Cdn,site), site);// U_mu(x)*(V_-mu)^dag
+    SetMatrix(v1, matrix_dag(Cup,site) * matrix(U_mu,site)   , site);// (V_+mu)^dag*U_mu(x)
+    SetMatrix(v2, matrix_dag(Cdn,site) * matrix(U_mu,site)   , site);// (V_-mu)^dag*U_mu(x)
   }
 
-  w1.U -= w2.U;
+  w1 -= w2;
 
   //    +--<--+ 
   //    |     | w1
@@ -236,9 +223,7 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   //    |     | w2
   //    +--<--+  
 
-  v1.U -= v2.U; 
- 
-  FieldDN DnMu(v1, mu);
+  v1 -= v2; 
  
   //    +--<--+ 
   //    |     | v1
@@ -249,36 +234,35 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   //    +--<--+  
 
   //Sum up the four terms
-  w1.U += DnMu.getva();
+  w1 += shift(v1, mu, Backward);
 
   for(int site = 0; site < Nvol_; ++site){
-    field_strength.U.set(field_strength.Format.cslice(0,site,0),
-			 anti_herm(u(w1,site)));
+    SetMatrix(field_strength, anti_hermite(matrix(w1,site)), site);
   }
 
-  field_strength.U *= 0.25;
+  field_strength *= 0.25;
 
 }
 //====================================================================
 /*! @brief Calculates the product \f$\sigma_{\mu,\nu} v\f$, 
   \f$\mu = 2, \nu = 3\f$ */
-void Dirac_Clover::mult_isigma23(Field& v, const Field& w) const {
+void Dirac_Clover::mult_isigma23(FermionField& v, const FermionField& w) const {
   // v = \sigma_23 * w
 
   for(int site = 0; site < Nvol_; ++site){
     for(int cc = 0; cc < NC_; ++cc){
       
-      v.set(ff_->index_r(cc,0,site), -w[ff_->index_i(cc,1,site)]);
-      v.set(ff_->index_i(cc,0,site),  w[ff_->index_r(cc,1,site)]);
+      v.data.set(ff_->index_r(cc,0,site), -w.data[ff_->index_i(cc,1,site)]);
+      v.data.set(ff_->index_i(cc,0,site),  w.data[ff_->index_r(cc,1,site)]);
       
-      v.set(ff_->index_r(cc,1,site), -w[ff_->index_i(cc,0,site)]);
-      v.set(ff_->index_i(cc,1,site),  w[ff_->index_r(cc,0,site)]);
+      v.data.set(ff_->index_r(cc,1,site), -w.data[ff_->index_i(cc,0,site)]);
+      v.data.set(ff_->index_i(cc,1,site),  w.data[ff_->index_r(cc,0,site)]);
       
-      v.set(ff_->index_r(cc,2,site), -w[ff_->index_i(cc,3,site)]);
-      v.set(ff_->index_i(cc,2,site),  w[ff_->index_r(cc,3,site)]);
+      v.data.set(ff_->index_r(cc,2,site), -w.data[ff_->index_i(cc,3,site)]);
+      v.data.set(ff_->index_i(cc,2,site),  w.data[ff_->index_r(cc,3,site)]);
       
-      v.set(ff_->index_r(cc,3,site), -w[ff_->index_i(cc,2,site)]);
-      v.set(ff_->index_i(cc,3,site),  w[ff_->index_r(cc,2,site)]);
+      v.data.set(ff_->index_r(cc,3,site), -w.data[ff_->index_i(cc,2,site)]);
+      v.data.set(ff_->index_i(cc,3,site),  w.data[ff_->index_r(cc,2,site)]);
       
     }
   }
@@ -286,22 +270,22 @@ void Dirac_Clover::mult_isigma23(Field& v, const Field& w) const {
 /*! @brief Calculates the product \f$\sigma_{\mu,\nu} v\f$, 
   \f$\mu = 3, \nu = 1\f$ */
 //====================================================================
-void Dirac_Clover::mult_isigma31(Field& v, const Field& w) const {
+void Dirac_Clover::mult_isigma31(FermionField& v, const FermionField& w) const {
 
   for(int site = 0; site < Nvol_; ++site){
     for(int cc = 0; cc < NC_; ++cc){
       
-      v.set(ff_->index_r(cc,0,site),  w[ff_->index_r(cc,1,site)]);
-      v.set(ff_->index_i(cc,0,site),  w[ff_->index_i(cc,1,site)]);
+      v.data.set(ff_->index_r(cc,0,site),  w.data[ff_->index_r(cc,1,site)]);
+      v.data.set(ff_->index_i(cc,0,site),  w.data[ff_->index_i(cc,1,site)]);
       
-      v.set(ff_->index_r(cc,1,site), -w[ff_->index_r(cc,0,site)]);
-      v.set(ff_->index_i(cc,1,site), -w[ff_->index_i(cc,0,site)]);
+      v.data.set(ff_->index_r(cc,1,site), -w.data[ff_->index_r(cc,0,site)]);
+      v.data.set(ff_->index_i(cc,1,site), -w.data[ff_->index_i(cc,0,site)]);
       
-      v.set(ff_->index_r(cc,2,site),  w[ff_->index_r(cc,3,site)]);
-      v.set(ff_->index_i(cc,2,site),  w[ff_->index_i(cc,3,site)]);
+      v.data.set(ff_->index_r(cc,2,site),  w.data[ff_->index_r(cc,3,site)]);
+      v.data.set(ff_->index_i(cc,2,site),  w.data[ff_->index_i(cc,3,site)]);
       
-      v.set(ff_->index_r(cc,3,site), -w[ff_->index_r(cc,2,site)]);
-      v.set(ff_->index_i(cc,3,site), -w[ff_->index_i(cc,2,site)]);
+      v.data.set(ff_->index_r(cc,3,site), -w.data[ff_->index_r(cc,2,site)]);
+      v.data.set(ff_->index_i(cc,3,site), -w.data[ff_->index_i(cc,2,site)]);
       
     }
   }
@@ -309,22 +293,22 @@ void Dirac_Clover::mult_isigma31(Field& v, const Field& w) const {
 /*! @brief Calculates the product \f$\sigma_{\mu,\nu} v\f$, 
   \f$\mu = 1, \nu = 2\f$ */
 //====================================================================
-void Dirac_Clover::mult_isigma12(Field& v, const Field& w) const {
+void Dirac_Clover::mult_isigma12(FermionField& v, const FermionField& w) const {
 
   for(int site = 0; site < Nvol_; ++site){
     for(int cc = 0; cc < NC_; ++cc){
       
-      v.set(ff_->index_r(cc,0,site), -w[ff_->index_i(cc,0,site)]);
-      v.set(ff_->index_i(cc,0,site),  w[ff_->index_r(cc,0,site)]);
+      v.data.set(ff_->index_r(cc,0,site), -w.data[ff_->index_i(cc,0,site)]);
+      v.data.set(ff_->index_i(cc,0,site),  w.data[ff_->index_r(cc,0,site)]);
       
-      v.set(ff_->index_r(cc,1,site),  w[ff_->index_i(cc,1,site)]);
-      v.set(ff_->index_i(cc,1,site), -w[ff_->index_r(cc,1,site)]);
+      v.data.set(ff_->index_r(cc,1,site),  w.data[ff_->index_i(cc,1,site)]);
+      v.data.set(ff_->index_i(cc,1,site), -w.data[ff_->index_r(cc,1,site)]);
       
-      v.set(ff_->index_r(cc,2,site), -w[ff_->index_i(cc,2,site)]);
-      v.set(ff_->index_i(cc,2,site),  w[ff_->index_r(cc,2,site)]);
+      v.data.set(ff_->index_r(cc,2,site), -w.data[ff_->index_i(cc,2,site)]);
+      v.data.set(ff_->index_i(cc,2,site),  w.data[ff_->index_r(cc,2,site)]);
       
-      v.set(ff_->index_r(cc,3,site),  w[ff_->index_i(cc,3,site)]);
-      v.set(ff_->index_i(cc,3,site), -w[ff_->index_r(cc,3,site)]);
+      v.data.set(ff_->index_r(cc,3,site),  w.data[ff_->index_i(cc,3,site)]);
+      v.data.set(ff_->index_i(cc,3,site), -w.data[ff_->index_r(cc,3,site)]);
       
     }
   }
@@ -332,22 +316,22 @@ void Dirac_Clover::mult_isigma12(Field& v, const Field& w) const {
 /*! @brief Calculates the product \f$\sigma_{\mu,\nu} v\f$, 
   \f$\mu = 4, \nu = 1\f$ */
 //====================================================================
-void Dirac_Clover::mult_isigma41(Field& v, const Field& w) const {
+void Dirac_Clover::mult_isigma41(FermionField& v, const FermionField& w) const {
   
   for(int site = 0; site < Nvol_; ++site){
     for(int cc = 0; cc < NC_; ++cc){
       
-      v.set(ff_->index_r(cc,0,site),  w[ff_->index_i(cc,3,site)]);
-      v.set(ff_->index_i(cc,0,site), -w[ff_->index_r(cc,3,site)]);
+      v.data.set(ff_->index_r(cc,0,site),  w.data[ff_->index_i(cc,3,site)]);
+      v.data.set(ff_->index_i(cc,0,site), -w.data[ff_->index_r(cc,3,site)]);
       
-      v.set(ff_->index_r(cc,1,site),  w[ff_->index_i(cc,2,site)]);
-      v.set(ff_->index_i(cc,1,site), -w[ff_->index_r(cc,2,site)]);
+      v.data.set(ff_->index_r(cc,1,site),  w.data[ff_->index_i(cc,2,site)]);
+      v.data.set(ff_->index_i(cc,1,site), -w.data[ff_->index_r(cc,2,site)]);
       
-      v.set(ff_->index_r(cc,2,site),  w[ff_->index_i(cc,1,site)]);
-      v.set(ff_->index_i(cc,2,site), -w[ff_->index_r(cc,1,site)]);
+      v.data.set(ff_->index_r(cc,2,site),  w.data[ff_->index_i(cc,1,site)]);
+      v.data.set(ff_->index_i(cc,2,site), -w.data[ff_->index_r(cc,1,site)]);
       
-      v.set(ff_->index_r(cc,3,site),  w[ff_->index_i(cc,0,site)]);
-      v.set(ff_->index_i(cc,3,site), -w[ff_->index_r(cc,0,site)]);
+      v.data.set(ff_->index_r(cc,3,site),  w.data[ff_->index_i(cc,0,site)]);
+      v.data.set(ff_->index_i(cc,3,site), -w.data[ff_->index_r(cc,0,site)]);
       
     }
   }
@@ -355,22 +339,22 @@ void Dirac_Clover::mult_isigma41(Field& v, const Field& w) const {
 /*! @brief Calculates the product \f$\sigma_{\mu,\nu} v\f$, 
   \f$\mu = 4, \nu = 2\f$ */
 //====================================================================
-void Dirac_Clover::mult_isigma42(Field& v, const Field& w) const {
+void Dirac_Clover::mult_isigma42(FermionField& v, const FermionField& w) const {
 
   for(int site = 0; site < Nvol_; ++site){
     for(int cc = 0; cc < NC_; ++cc){
       
-      v.set(ff_->index_r(cc,0,site), -w[ff_->index_r(cc,3,site)]);
-      v.set(ff_->index_i(cc,0,site), -w[ff_->index_i(cc,3,site)]);
+      v.data.set(ff_->index_r(cc,0,site), -w.data[ff_->index_r(cc,3,site)]);
+      v.data.set(ff_->index_i(cc,0,site), -w.data[ff_->index_i(cc,3,site)]);
       
-      v.set(ff_->index_r(cc,1,site),  w[ff_->index_r(cc,2,site)]);
-      v.set(ff_->index_i(cc,1,site),  w[ff_->index_i(cc,2,site)]);
+      v.data.set(ff_->index_r(cc,1,site),  w.data[ff_->index_r(cc,2,site)]);
+      v.data.set(ff_->index_i(cc,1,site),  w.data[ff_->index_i(cc,2,site)]);
 
-      v.set(ff_->index_r(cc,2,site), -w[ff_->index_r(cc,1,site)]);
-      v.set(ff_->index_i(cc,2,site), -w[ff_->index_i(cc,1,site)]);
+      v.data.set(ff_->index_r(cc,2,site), -w.data[ff_->index_r(cc,1,site)]);
+      v.data.set(ff_->index_i(cc,2,site), -w.data[ff_->index_i(cc,1,site)]);
       
-      v.set(ff_->index_r(cc,3,site),  w[ff_->index_r(cc,0,site)]);
-      v.set(ff_->index_i(cc,3,site),  w[ff_->index_i(cc,0,site)]);
+      v.data.set(ff_->index_r(cc,3,site),  w.data[ff_->index_r(cc,0,site)]);
+      v.data.set(ff_->index_i(cc,3,site),  w.data[ff_->index_i(cc,0,site)]);
       
     }
   }
@@ -378,22 +362,22 @@ void Dirac_Clover::mult_isigma42(Field& v, const Field& w) const {
 /*! @brief Calculates the product \f$\sigma_{\mu,\nu} v\f$, 
   \f$\mu = 4, \nu = 3\f$ */
 //====================================================================
-void Dirac_Clover::mult_isigma43(Field& v, const Field& w) const {
+void Dirac_Clover::mult_isigma43(FermionField& v, const FermionField& w) const {
 
   for(int site = 0; site < Nvol_; ++site){
     for(int cc = 0; cc < NC_; ++cc){
       
-      v.set(ff_->index_r(cc,0,site),  w[ff_->index_i(cc,2,site)]);
-      v.set(ff_->index_i(cc,0,site), -w[ff_->index_r(cc,2,site)]);
+      v.data.set(ff_->index_r(cc,0,site),  w.data[ff_->index_i(cc,2,site)]);
+      v.data.set(ff_->index_i(cc,0,site), -w.data[ff_->index_r(cc,2,site)]);
       
-      v.set(ff_->index_r(cc,1,site), -w[ff_->index_i(cc,3,site)]);
-      v.set(ff_->index_i(cc,1,site),  w[ff_->index_r(cc,3,site)]);
+      v.data.set(ff_->index_r(cc,1,site), -w.data[ff_->index_i(cc,3,site)]);
+      v.data.set(ff_->index_i(cc,1,site),  w.data[ff_->index_r(cc,3,site)]);
       
-      v.set(ff_->index_r(cc,2,site),  w[ff_->index_i(cc,0,site)]);
-      v.set(ff_->index_i(cc,2,site), -w[ff_->index_r(cc,0,site)]);
+      v.data.set(ff_->index_r(cc,2,site),  w.data[ff_->index_i(cc,0,site)]);
+      v.data.set(ff_->index_i(cc,2,site), -w.data[ff_->index_r(cc,0,site)]);
       
-      v.set(ff_->index_r(cc,3,site), -w[ff_->index_i(cc,1,site)]);
-      v.set(ff_->index_i(cc,3,site),  w[ff_->index_r(cc,1,site)]);
+      v.data.set(ff_->index_r(cc,3,site), -w.data[ff_->index_i(cc,1,site)]);
+      v.data.set(ff_->index_i(cc,3,site),  w.data[ff_->index_r(cc,1,site)]);
       
     }
   }
@@ -404,13 +388,12 @@ const Field Dirac_Clover::gamma5(const Field& f) const{
 }
 //====================================================================
 const Field Dirac_Clover::mult(const Field& f) const{
-  Field w (ff_->size());
-  Field w2(ff_->size());
+  FermionField w, w2;
 
-  w  = Dw->mult(f);
-  mult_csw(w2,f);
+  w.data  = Dw->mult(f);
+  mult_csw(w2,FermionField(f));
   w -= w2;
-  return w;
+  return w.data;
 }
 //====================================================================
 const Field Dirac_Clover::mult_dag(const Field& f)const{ 
@@ -423,9 +406,10 @@ const Field Dirac_Clover::mult_dag(const Field& f)const{
 
   \f[(A^\dagger \wedge B)_{ab} = A^*_a B_b \f]
  */
-void Dirac_Clover::external_prod(Field& res, 
-				 const Field& A, 
-				 const Field& B) const {
+void Dirac_Clover::external_prod(GaugeField1D& res, 
+				 const FermionField& A, 
+				 const FermionField& B) const {
+  using namespace FieldUtils;
   assert(A.size() == B.size());
 
   // .................. Temporary variables declaration
@@ -442,20 +426,20 @@ void Dirac_Clover::external_prod(Field& res,
 	fre = fim = 0.0;
 	for(int s=0; s<Nd; ++s){
 	  //indexes
-	  ra =ff_->index_r(a,s,site);
-	  ia =ff_->index_i(a,s,site);
+	  ra =A.format.index_r(a,s,site);
+	  ia =A.format.index_i(a,s,site);
 	  
-	  rb =ff_->index_r(b,s,site);
-	  ib =ff_->index_i(b,s,site);
+	  rb =B.format.index_r(b,s,site);
+	  ib =B.format.index_i(b,s,site);
 	  
-	  fre += A[rb]*B[ra] + A[ib]*B[ia];
-	  fim += A[rb]*B[ia] - A[ib]*B[ra];
+	  fre += A.data[rb]*B.data[ra] + A.data[ib]*B.data[ia];
+	  fim += A.data[rb]*B.data[ia] - A.data[ib]*B.data[ra];
 	}
 	f.set(a,b,fre,fim);
       }
     }
     // Store matrix in res field
-    res.set(gf_->cslice(0,gsite(site),0),f.getva());
+    SetMatrix(res, f, gsite(site));
   }
 }
 
@@ -464,193 +448,198 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
   //Wilson term
   Field force = Dw->md_force(eta,zeta);
  
-  force += md_force_block(eta, zeta);
-  force += md_force_block(zeta, eta);
+  //just temporaries here (to be eliminated when all Field->FermionField)
+  FermionField eta_F(eta), zeta_F(zeta);
+
+  force += md_force_block(eta_F, zeta_F);
+  force += md_force_block(zeta_F, eta_F);
 
   return force;
 }
 //====================================================================
-const Field Dirac_Clover::md_force_block(const Field& eta,
-					 const Field& zeta)const{
-  using namespace SUNmat_utils;
+const Field Dirac_Clover::md_force_block(const FermionField& eta,
+					 const FermionField& zeta)const{
+  using namespace SUNmatUtils;
   using namespace SUNvec_utils;
+  using namespace FieldUtils;
+  using namespace MapsEnv;
 
   //.................... Temporary variables declaration
   int Nd = CommonPrms::instance()->Nd();
 
   GaugeField force;
   GaugeField1D fce_tmp1, fce_tmp2;
-  Field eta2(fsize_), vleft(fsize_), vright(fsize_);
-  Field shifted(fsize_);
+  FermionField eta2, vleft, vright;
+  FermionField shifted;
   GaugeField1D U_mu, U_nu;
   GaugeField1D Cmu_up, Cnu_up;
-  SUNvec vect;
+  Staples stpl_;
+  SUNvec temp_v;
   //...................................................
-  
+  //really temporary
+  GaugeField temp_u_(*u_);  
+
+
+
   //Clover term: 8 terms, see Matsufuru-san's note
 
-  for(int mu = 0; mu < Ndim_; ++mu){
-    for(int nu = 0; nu < Ndim_; ++nu){
+  for(int mu = 0; mu < NDIM_; ++mu){
+    for(int nu = 0; nu < NDIM_; ++nu){
       if(nu == mu) continue;
 
       mult_isigma(eta2, eta, mu, nu); //sigma_{mu,nu} mult
 
-      U_nu.U = (*u_)[gf_->dir_slice(nu)];
-      U_mu.U = (*u_)[gf_->dir_slice(mu)]; 
+      U_nu = DirSlice(temp_u_, nu);
+      U_mu = DirSlice(temp_u_, mu);
 
       //term 1 and 5 --------------------------------------
-      Cmu_up.U  = stpl_->upper(*u_, mu,nu); //V_mu
-      Cmu_up.U -= stpl_->lower(*u_, mu,nu); //V_+mu - V_-mu 
+      Cmu_up  = stpl_.upper(temp_u_, mu,nu); //V_mu
+      Cmu_up -= stpl_.lower(temp_u_, mu,nu); //V_+mu - V_-mu 
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = u_dag(Cmu_up,site) * v(eta2,s,site);
-	  vect = u(U_mu,site) * vect;
-	  vright.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = matrix_dag(Cmu_up,site) * vect(eta2,s,site);
+	  temp_v = matrix(U_mu,site) * temp_v;
+	  SetVector(vright, temp_v, s, site);
 	} 
       }
-      external_prod(fce_tmp1.U, zeta, vright);
-      fce_tmp2.U = fce_tmp1.U;
+      external_prod(fce_tmp1, zeta, vright);
+      fce_tmp2 = fce_tmp1;
  
   
  
       //term 2 --------------------------------------
-      Cnu_up.U = stpl_->upper(*u_, nu, mu);
-      sf_up_[nu]->setf(eta2);
+      Cnu_up = stpl_.upper(temp_u_, nu, mu);
+      shifted = shift(eta2, nu, Forward);
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(Cnu_up.U,site))* v(sf_up_[nu],s,site);
-	  vright.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = (matrix(Cnu_up,site))* vect(shifted,s,site);
+	  SetVector(vright, temp_v, s, site);
 	}
       }
-      sf_up_[nu]->setf(zeta);
+      shifted = shift(zeta, nu, Forward);
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(U_nu.U,site))* v(sf_up_[nu],s,site);
-	  vleft.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = matrix(U_nu,site) * vect(shifted,s,site);
+	  SetVector(vleft, temp_v, s, site);
 	}
       }// U_nu(x)*zeta(x+nu)
-      external_prod(fce_tmp1.U, vleft, vright);
-      fce_tmp2.U += fce_tmp1.U;
+      external_prod(fce_tmp1, vleft, vright);
+      fce_tmp2 += fce_tmp1;
 
    
 
       //term 4 and 8 --------------------------------------
-      sf_up_[mu]->setf(eta2);
+      shifted = shift(eta2, mu, Forward);
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(U_mu.U,site))* v(sf_up_[mu],s,site);
-	  vright.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = matrix(U_mu,site) * vect(shifted,s,site);
+	  SetVector(vright, temp_v, s, site);
 	}
       } // U_mu (x) * eta2(x+mu)   
-      sf_up_[mu]->setf(zeta);
-      for(int site = 0; site<Nvol_; ++site){
+      shifted = shift(zeta, mu, Forward);
+      for(int site = 0; site < Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(Cmu_up.U,site))* v(sf_up_[mu],s,site);
-	  vleft.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = matrix(Cmu_up,site) * vect(shifted,s,site);
+	  SetVector(vleft, temp_v, s, site);
 	}
       } //  (V_+mu + V_-mu) * zeta(x+mu)
-      external_prod(fce_tmp1.U, vleft, vright);
-      fce_tmp2.U += fce_tmp1.U;
+      external_prod(fce_tmp1, vleft, vright);
+      fce_tmp2 += fce_tmp1;
 
   
 
       //term 3 --------------------------------------
-      sf_up_[nu]->setf(eta2);
+      shifted = shift(eta2, nu, Forward);
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(U_nu.U,site))* v(sf_up_[nu],s,site);
-	  vright.set(ff_->cslice(s,site), vect.getva());
+	  //temp_v = (matrix(U_nu,site))* vect(shifted,s,site);
+	  SetVector(vright, (matrix(U_nu,site)* vect(shifted,s,site)), s, site);
 	}
       }       
-      sf_up_[mu]->setf(vright); //U_nu(x+mu)*eta2(x+mu+nu)
+      shifted = shift(vright, mu, Forward); //U_nu(x+mu)*eta2(x+mu+nu)
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(U_mu.U,site))* v(sf_up_[mu],s,site);
-	  vright.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = (matrix(U_mu,site))* vect(shifted,s,site);
+	  SetVector(vright, temp_v, s, site);
 	}
       } //vright = U_mu(x)*U_nu(x+mu)*eta2(x+mu+nu)  
      
-      sf_up_[mu]->setf(zeta);
+      shifted = shift(zeta, mu, Forward);
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(U_mu.U,site))* v(sf_up_[mu],s,site);
-	  vleft.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = (matrix(U_mu,site))* vect(shifted,s,site);
+	  SetVector(vleft, temp_v, s, site);
 	}
       }        
-      sf_up_[nu]->setf(vleft); //U_mu(x+nu)*zeta(x+mu+nu)
+      shifted = shift(vleft, nu, Forward); //U_mu(x+nu)*zeta(x+mu+nu)
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(U_nu.U,site))* v(sf_up_[nu],s,site);
-	  vleft.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = (matrix(U_nu,site))* vect(shifted,s,site);
+	  SetVector(vleft, temp_v, s, site);
 	}
       } //vright = U_nu(x)*U_mu(x+nu)*zeta(x+mu+nu)  
-      external_prod(fce_tmp1.U, vleft, vright);
-      fce_tmp2.U += fce_tmp1.U;
+      external_prod(fce_tmp1, vleft, vright);
+      fce_tmp2 += fce_tmp1;
 
  
       //term 6 --------------------------------------
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u_dag(Cnu_up.U,site))* v(eta2,s,site);
-	  vright.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = (matrix_dag(Cnu_up,site))* vect(eta2,s,site);
+	  SetVector(vright, temp_v, s, site);
 	}
       }       
-      sf_dn_[nu]->setf(vright); // V_+nu (x-nu)*eta2(x-nu)
-      shifted = sf_dn_[nu]->getva();
+      shifted = shift(vright, nu, Backward); // V_+nu (x-nu)*eta2(x-nu)
 
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u_dag(U_nu.U,site))* v(zeta,s,site);
-	  vleft.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = (matrix_dag(U_nu,site))* vect(zeta,s,site);
+	  SetVector(vleft, temp_v, s, site);
 	}
       }   
-      sf_dn_[nu]->setf(vleft);
-      external_prod(fce_tmp1.U, (Field)(sf_dn_[nu]->getva()), shifted);
-      fce_tmp2.U -= fce_tmp1.U;   
+      external_prod(fce_tmp1, shift(vleft, nu, Backward), shifted);
+      fce_tmp2 -= fce_tmp1;   
 
       // term 7  --------------------------------------
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u_dag(U_nu.U,site))* v(eta2,s,site);
-	  vright.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = (matrix_dag(U_nu,site))* vect(eta2,s,site);
+	  SetVector(vright, temp_v, s, site);
 	}
       }   
-      sf_dn_[nu]->setf(vright);
-      shifted = sf_dn_[nu]->getva(); // shifted = Udag_nu(x-nu)*eta2(x-nu)
-      sf_up_[mu]->setf(shifted);// Udag_nu(x+mu-nu)*eta2(x+mu-nu)
+      shifted = shift(vright, nu, Backward); // shifted = Udag_nu(x-nu)*eta2(x-nu)
+      shifted = shift(shifted, mu, Forward); // Udag_nu(x+mu-nu)*eta2(x+mu-nu)
 
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(U_mu.U,site))* v(sf_up_[mu],s,site);
-	  vright.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = (matrix(U_mu,site))* vect(shifted,s,site);
+	  SetVector(vright, temp_v, s, site);
 	}
       } //vright = U_mu(x)*Udag_nu(x+mu-nu)*eta2(x+mu-nu)
      
-      sf_up_[mu]->setf(zeta); //zeta(x+mu)
+      shifted = shift(zeta, mu, Forward); //zeta(x+mu)
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  vect = (u(U_mu.U,site))* v(sf_up_[mu],s,site);
-	  vect = (u_dag(U_nu.U,site))*vect;
-	  vleft.set(ff_->cslice(s,site), vect.getva());
+	  temp_v = (matrix(U_mu,site))* vect(shifted,s,site);
+	  temp_v = (matrix_dag(U_nu,site))*temp_v;
+	  SetVector(vleft, temp_v, s, site);
 	}
       }       
-      sf_dn_[nu]->setf(vleft);//sf_dn_[nu] = Udag_nu(x-nu)*U_mu(x-nu)*zeta(x+mu-nu)
-      external_prod(fce_tmp1.U, (Field)(sf_dn_[nu]->getva()), vright);
-      fce_tmp2.U -= fce_tmp1.U;   
+      //shift = Udag_nu(x-nu)*U_mu(x-nu)*zeta(x+mu-nu)
+      external_prod(fce_tmp1, shift(vleft, nu, Backward), vright);
+      fce_tmp2 -= fce_tmp1;   
      
-      fce_tmp2.U *= - Dw->getKappa() * csw_ / 8.0; 
+      fce_tmp2 *= - Dw->getKappa() * csw_ / 8.0; 
 
-      SUNmat force_mat;
-      for(int site = 0; site<Nvol_; ++site){
-	force_mat = u(fce_tmp2.U,site);
-	force.U.add(force.Format.cslice(0,site,mu), force_mat.getva() ); 
-      }
+      for(int site = 0; site<Nvol_; ++site)
+	AddMatrix(force, matrix(fce_tmp2, site), site, mu); 
+      
 
 
     }
   }
 
-  return force.U;
+  return force.data;
 }
 //====================================================================
 const vector<int> Dirac_Clover::get_gsite() const {

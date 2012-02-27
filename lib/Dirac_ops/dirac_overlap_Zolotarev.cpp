@@ -1,7 +1,7 @@
 //--------------------------------------------------------------------
 // dirac_overlap_Zolotarev.cpp
 //--------------------------------------------------------------------
-#include "dirac_overlap_Zolotarev.h"
+#include "dirac_overlap_Zolotarev.hpp"
 #include "Fields/field_expressions.hpp"
 using namespace std;
 

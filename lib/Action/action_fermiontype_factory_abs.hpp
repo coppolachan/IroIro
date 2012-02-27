@@ -10,12 +10,10 @@
 #include "action_Factory.hpp"
 
 class FermionActionFactory : public ActionFactory {
-  virtual Action* getFermionAction(const Format::Format_G&,
-				   Field* const) = 0;
+  virtual Action* getFermionAction(GaugeField* const) = 0;
 public:
-  Action* getAction(const Format::Format_G& GaugeForm,
-		    Field* const GaugeField) {
-    return getFermionAction(GaugeForm,GaugeField);
+  Action* getAction(GaugeField* const F) {
+    return getFermionAction(F);
   }
 };
 
