@@ -9,7 +9,7 @@
 #include "include/fopr.h"
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/qprop_MultiShift.hpp"
-#include "Dirac_ops/dirac_wilson.h"
+#include "Dirac_ops/dirac_wilson.hpp"
 
 #include <vector>
 #include <stdio.h>
@@ -42,7 +42,7 @@ int Test_MultiShiftSolver::test1(){
 
   // Definition of Dirac Kernel
   double M0=1.6;
-  Dirac* Kernel = new Dirac_Wilson(-M0, &(Gauge.U));
+  Dirac* Kernel = new Dirac_Wilson(-M0, &(Gauge.data));
 
   // Definition of the Solver
   int    Niter= 1000;

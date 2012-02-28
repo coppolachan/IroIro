@@ -53,6 +53,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
 		Dirac_ops/eoUtils.cpp           	\
+		Dirac_ops/dirac_Operator_Factory.cpp	\
 		EigenModes/eigenModes_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/sortEigen.cpp		\
@@ -68,7 +69,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
-		Measurements/FermionicM/utils_DWF4d.cpp	\
+		Measurements/FermionicM/utils_DWF4d.cpp			\
+		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		HMC/hmcGeneral.cpp                      \
 		HMC/mdExec.cpp		                \
 		HMC/mdExec_leapfrog.cpp                 \
@@ -140,6 +142,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/quark_propagators.hpp	\
 			Measurements/FermionicM/sources_factory.hpp	\
 			Measurements/FermionicM/meson_correlator.hpp	\
+			Measurements/FermionicM/fermion_meas_factory_abs.hpp	\
+			Measurements/FermionicM/quark_prop_meas_factory.hpp	\
                         Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
@@ -155,6 +159,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Dirac_ops/eoUtils.hpp            	\
+			Dirac_ops/dirac_Operator_Factory.hpp	\
 			EigenModes/eigenModes_IRL.hpp		\
 			EigenModes/sortEigen.h			\
 			EigenModes/eigenProc_Zolotarev.h	\

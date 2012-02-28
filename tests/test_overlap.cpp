@@ -4,11 +4,11 @@
  * @brief Definition of functions to test the overlap functions
  */
 #include "test_overlap.hpp"
-#include "Dirac_ops/dirac_wilson.h"
-#include "Dirac_ops/dirac_overlap_Zolotarev.h"
+#include "Dirac_ops/dirac_wilson.hpp"
+#include "Dirac_ops/dirac_overlap_Zolotarev.hpp"
 #include "EigenModes/eigenProc_Zolotarev.h"
-#include "Solver/solver_CG.h"
-#include "Measurements/FermionicM/qprop.h"
+#include "Solver/solver_CG.hpp"
+#include "Measurements/FermionicM/qprop.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Fields/field_expressions.hpp"
@@ -31,7 +31,7 @@ int Test_Overlap::sign_subt(){
 
   // Creation of Kernel Dw
   double M0 = 1.6;
-  DiracWilsonLike* Kernel = new Dirac_Wilson(-M0,&(Gauge.U));
+  DiracWilsonLike* Kernel = new Dirac_Wilson(-M0,&(Gauge.data));
 
   EigenPrms Eprms(//                     (calc of eigenmodes)
 		  100,                   // Nmm
@@ -70,7 +70,7 @@ int Test_Overlap::ovsolver_subt(){
   // Definition of Kernel
   double M0 = 1.6;
   double mq = 0.15;
-  DiracWilsonLike* Kernel = new Dirac_Wilson(-M0,&(Gauge.U));
+  DiracWilsonLike* Kernel = new Dirac_Wilson(-M0,&(Gauge.data));
 
   EigenPrms  Eprms(//                     (calc of eigenmodes)
 		   100,                   // Nmm

@@ -1,4 +1,4 @@
-# Time-stamp: <2012-02-23 11:37:50 neo>
+# Time-stamp: <2012-02-28 13:42:54 neo>
 
 testdir = $(bindir)/Test
 
@@ -20,20 +20,67 @@ EXTRA_DIST = 	testResults.info	\
 		test_HMC_DomainWall.xml	\
 		test_MultiShiftSolver.xml
 
-test_PROGRAMS = test_HMC_nofact 	\
-		test_Gauge		\
+test_PROGRAMS = test_HMC 		\
+		test_HMC_nofact 	\
+		test_HMC_EvenOdd	\
 		test_HMC_smear_noF	\
+		test_HMC_DomainWall	\
+		test_Gauge		\
+		test_Wilson 		\
+		test_Wilson_EvenOdd 	\
+		test_DomainWall		\
+		test_ResMass 		\
+		test_EigenModes		\
+		test_Smearing		\
+		test_Overlap		\
+		test_MultiShiftSolver	\
+		test_RNG 		\
 		test_IO
 
 
-test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
-				testerGauge.cpp
+test_HMC_SOURCES 	= 	test_HMC.cpp 			\
+		  		testerHMC.cpp
 
 test_HMC_nofact_SOURCES = 	test_HMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
 test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
 			  	testerHMC.cpp
+
+test_HMC_EvenOdd_SOURCES  =	test_HMC_EvenOdd.cpp		\
+				testerHMCeven-odd.cpp
+
+test_HMC_DomainWall_SOURCES =	test_HMC_DomainWall.cpp		\
+				testerHMC_DomainWall.cpp
+
+test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
+				testerGauge.cpp
+
+test_Wilson_SOURCES 	=	test_wilson.cpp 		\
+				testerWilson.cpp
+
+test_Wilson_EvenOdd_SOURCES =	test_wilson_EvenOdd.cpp 	\
+		        	testerWilson_EvenOdd.cpp
+
+test_DomainWall_SOURCES = 	test_DomainWall.cpp 		\
+				testerDWF.cpp
+
+test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
+				testerResMass.cpp
+
+test_EigenModes_SOURCES = 	test_EigenModes_IRL.cpp		\
+				testerEigenModes.cpp
+
+test_Overlap_SOURCES 	= 	test_overlap.cpp		\
+				testerOverlap.cpp
+
+test_MultiShiftSolver_SOURCES =	test_MultiShiftSolver.cpp	\
+				testerMultiShiftSolver.cpp
+
+test_Smearing_SOURCES   =       test_smear.cpp                  \
+                                testerSmear.cpp
+
+test_RNG_SOURCES 	= 	test_RNG.cpp
 
 test_IO_SOURCES 	= 	test_IO.cpp 			\
 				testerIO.cpp

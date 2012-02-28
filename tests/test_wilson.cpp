@@ -5,13 +5,14 @@
  *
  */
 #include "test_wilson.hpp"
-#include "Measurements/FermionicM/fermion_meas_factory.hpp"
+#include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
 
 
-#include "Dirac_ops/dirac_wilson.h"
-#include "Solver/solver_CG.h"
-#include "Solver/solver_BiCGStab.h"
-#include "Measurements/FermionicM/qprop.h"
+#include "Dirac_ops/dirac_wilson.hpp"
+#include "Solver/solver_CG.hpp"
+#include "Solver/solver_BiCGStab.hpp"
+#include "Measurements/GaugeM/staples.hpp"
+#include "Measurements/FermionicM/qprop.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Tools/randNum_MT19937.h"
@@ -26,8 +27,8 @@ int Test_Wilson::run(){
   QuarkPropagator* QP;
   XML::descend(Wilson_node_, "QuarkPropagator");
 
-  Staples Staple(conf_.Format);
-  CCIO::cout << "Plaquette : " << Staple.plaquette(conf_.U) << std::endl;
+  Staples Staple;
+  CCIO::cout << "Plaquette : " << Staple.plaquette(conf_) << std::endl;
 
 
   QuarkPropagatorFactory* QP_Factory = 
@@ -48,7 +49,7 @@ int Test_Wilson::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.U));
+  Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.data));
   //Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
   //Kernel->update_internal_state();
 

@@ -9,9 +9,8 @@
 
 
 #include "Dirac_ops/dirac_wilson.hpp"
-#include "Solver/solver_CG.hpp"
-#include "Solver/solver_BiCGStab.hpp"
-#include "Measurements/FermionicM/qprop.h"
+#include "Measurements/GaugeM/staples.hpp"
+#include "Measurements/FermionicM/qprop.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Smearing/StoutSmear.hpp"
@@ -45,8 +44,8 @@ int Test_Smear::run(){
     QuarkPropagators::createQuarkPropagatorFactory(Smear_node_);
   /////////////////////////////////////////////
   // Just a check on configuration
-  Staples Staple(conf_.Format);
-  CCIO::cout << "Plaquette : " << Staple.plaquette(conf_.U) << std::endl;
+  Staples Staple;
+  CCIO::cout << "Plaquette : " << Staple.plaquette(conf_) << std::endl;
   //////////////////////////////////////
   // source 
   vector<int> source_pos(4,0); 
@@ -58,7 +57,7 @@ int Test_Smear::run(){
   smeared_u_ = conf_; // Copy thin links to the initial smearing
   int Nsmear = 2;
   
-  gauge_pointer = &(smeared_u_.U);
+  gauge_pointer = &(smeared_u_.data);
   Dirac* Kernel = new Dirac_Wilson(1.0/6.0, gauge_pointer);
   
   // Solver definition
@@ -79,11 +78,11 @@ int Test_Smear::run(){
     
     if ( smear_step > 0) {
       previous_u_ = smeared_u_;
-      SmearingObj->smear(smeared_u_.U, previous_u_.U);
+      SmearingObj->smear(smeared_u_, previous_u_);
     }
     
     
-    CCIO::cout << "Plaquette : " << Staple.plaquette(smeared_u_.U) << std::endl;
+    CCIO::cout << "Plaquette : " << Staple.plaquette(smeared_u_) << std::endl;
     
     QuarkPropagator.calc(sq,src);
     

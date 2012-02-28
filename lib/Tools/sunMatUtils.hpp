@@ -30,6 +30,15 @@ namespace SUNmatUtils{
   const SUNmat anti_hermite_traceless(const SUNmat&);
   const SUNmat anti_hermite(const SUNmat&);
 
+  //BLAS style multiplications for optimization purposes
+  // Matrix-matrix
+  const SUNmat gemm(const SUNmat&, const SUNmat&);
+  // Matrix-matrix^dag)
+  const SUNmat gemmd(const SUNmat&, const SUNmat&);
+  // (Matrix^dag)-matrix
+  const SUNmat gemdm(const SUNmat&, const SUNmat&);
+  //////////////////////////////////////////////////////
+
   void SUNprint(const SUNmat&);
 
 }//endof namespace SUNmat_utils

@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------
 /*!
- * @file testerHMC.cpp 
+ * @file testerWilson.cpp 
  * @brief Main source code for testing the Wilson classes
  *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
@@ -10,6 +10,7 @@
 #include "test_wilson.hpp"
 
 using namespace XML;
+using namespace MapsEnv;
 
 int main(){
 
@@ -19,9 +20,10 @@ int main(){
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
+  initialize_mapper();
 
   //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
+  GaugeGlobal GaugeF(geom);
   GaugeF.initialize(top_node);
 
   /////////////

@@ -10,20 +10,20 @@
 #include "test_DomainWall.hpp"
 
 using namespace XML;
+using namespace MapsEnv;
 
 int main(){
-
-  
+ 
   //Reading input file
   node top_node = getInputXML("test_DomainWall.xml");  
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
+  initialize_mapper();
 
   //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
+  GaugeGlobal GaugeF(geom);
   GaugeF.initialize(top_node);
-
   /////////////
   
   node DWF_node = top_node;

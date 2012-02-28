@@ -102,6 +102,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_DomainWall_EvenOdd.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp Dirac_ops/eoUtils.cpp \
+	Dirac_ops/dirac_Operator_Factory.cpp \
 	EigenModes/eigenModes_IRL.cpp \
 	EigenModes/eigenProc_Zolotarev.cpp EigenModes/sortEigen.cpp \
 	EigenModes/fopr_chebyshev_DdagD.cpp \
@@ -114,16 +115,17 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Measurements/FermionicM/qprop.cpp \
 	Measurements/FermionicM/qprop_EvenOdd.cpp \
 	Measurements/FermionicM/qprop_DomainWall.cpp \
-	Measurements/FermionicM/utils_DWF4d.cpp HMC/hmcGeneral.cpp \
-	HMC/mdExec.cpp HMC/mdExec_leapfrog.cpp HMC/mdExec_factory.cpp \
-	PugiXML/pugixml.cpp PugiXML/pugi_interface.cpp \
-	Solver/solver_BiCGStab.cpp Solver/solver_CG.cpp \
-	Solver/solver_Factory.cpp Solver/multiShiftSolver_CG.cpp \
-	Solver/solver.cpp Smearing/APEsmear.cpp \
-	Smearing/StoutSmear.cpp Smearing/SmartConf.cpp \
-	Smearing/Smearing_Factories.cpp Tools/sunMatUtils.cpp \
-	Tools/randNum_MT19937.cpp Tools/randNum_Factory.cpp \
-	Tools/gammaMatrices.cpp
+	Measurements/FermionicM/utils_DWF4d.cpp \
+	Measurements/FermionicM/quark_prop_meas_factory.cpp \
+	HMC/hmcGeneral.cpp HMC/mdExec.cpp HMC/mdExec_leapfrog.cpp \
+	HMC/mdExec_factory.cpp PugiXML/pugixml.cpp \
+	PugiXML/pugi_interface.cpp Solver/solver_BiCGStab.cpp \
+	Solver/solver_CG.cpp Solver/solver_Factory.cpp \
+	Solver/multiShiftSolver_CG.cpp Solver/solver.cpp \
+	Smearing/APEsmear.cpp Smearing/StoutSmear.cpp \
+	Smearing/SmartConf.cpp Smearing/Smearing_Factories.cpp \
+	Tools/sunMatUtils.cpp Tools/randNum_MT19937.cpp \
+	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 @USE_MPI_FALSE@am__objects_2 = map_scalar.$(OBJEXT)
@@ -141,13 +143,14 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) \
 	dirac_DomainWall_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
 	dirac_DomainWall_4D_eoSolv.$(OBJEXT) eoUtils.$(OBJEXT) \
-	eigenModes_IRL.$(OBJEXT) eigenProc_Zolotarev.$(OBJEXT) \
-	sortEigen.$(OBJEXT) fopr_chebyshev_DdagD.$(OBJEXT) \
-	staples.$(OBJEXT) siteIndex.$(OBJEXT) siteIndex_eo.$(OBJEXT) \
-	mapper.$(OBJEXT) $(am__objects_2) gaugeConf.$(OBJEXT) \
-	commandline.$(OBJEXT) qprop_MultiShift.$(OBJEXT) \
-	qprop.$(OBJEXT) qprop_EvenOdd.$(OBJEXT) \
-	qprop_DomainWall.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
+	dirac_Operator_Factory.$(OBJEXT) eigenModes_IRL.$(OBJEXT) \
+	eigenProc_Zolotarev.$(OBJEXT) sortEigen.$(OBJEXT) \
+	fopr_chebyshev_DdagD.$(OBJEXT) staples.$(OBJEXT) \
+	siteIndex.$(OBJEXT) siteIndex_eo.$(OBJEXT) mapper.$(OBJEXT) \
+	$(am__objects_2) gaugeConf.$(OBJEXT) commandline.$(OBJEXT) \
+	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
+	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
+	utils_DWF4d.$(OBJEXT) quark_prop_meas_factory.$(OBJEXT) \
 	hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
 	mdExec_leapfrog.$(OBJEXT) mdExec_factory.$(OBJEXT) \
 	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
@@ -234,6 +237,8 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/commonPrms.h \
 	Measurements/FermionicM/quark_propagators.hpp \
 	Measurements/FermionicM/sources_factory.hpp \
 	Measurements/FermionicM/meson_correlator.hpp \
+	Measurements/FermionicM/fermion_meas_factory_abs.hpp \
+	Measurements/FermionicM/quark_prop_meas_factory.hpp \
 	Measurements/FermionicM/utils_DWF4d.hpp \
 	Communicator/communicator.h Communicator/comm_io.hpp \
 	Communicator/fields_io.hpp Dirac_ops/dirac.hpp \
@@ -244,6 +249,7 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/commonPrms.h \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
 	Dirac_ops/dirac_overlap_Zolotarev.hpp \
 	Dirac_ops/dirac_Preconditioners.hpp Dirac_ops/eoUtils.hpp \
+	Dirac_ops/dirac_Operator_Factory.hpp \
 	EigenModes/eigenModes_IRL.hpp EigenModes/sortEigen.h \
 	EigenModes/eigenProc_Zolotarev.h Main/Geometry/siteIndex.h \
 	Main/Geometry/siteIndex_eo.h Main/Geometry/mapper.hpp \
@@ -443,6 +449,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
 		Dirac_ops/eoUtils.cpp           	\
+		Dirac_ops/dirac_Operator_Factory.cpp	\
 		EigenModes/eigenModes_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/sortEigen.cpp		\
@@ -458,7 +465,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
-		Measurements/FermionicM/utils_DWF4d.cpp	\
+		Measurements/FermionicM/utils_DWF4d.cpp			\
+		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		HMC/hmcGeneral.cpp                      \
 		HMC/mdExec.cpp		                \
 		HMC/mdExec_leapfrog.cpp                 \
@@ -528,6 +536,8 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/quark_propagators.hpp	\
 			Measurements/FermionicM/sources_factory.hpp	\
 			Measurements/FermionicM/meson_correlator.hpp	\
+			Measurements/FermionicM/fermion_meas_factory_abs.hpp	\
+			Measurements/FermionicM/quark_prop_meas_factory.hpp	\
                         Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
@@ -543,6 +553,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Dirac_ops/eoUtils.hpp            	\
+			Dirac_ops/dirac_Operator_Factory.hpp	\
 			EigenModes/eigenModes_IRL.hpp		\
 			EigenModes/sortEigen.h			\
 			EigenModes/eigenProc_Zolotarev.h	\
@@ -721,6 +732,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_4D_fullSolv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_EvenOdd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Operator_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_clover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_overlap_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson.Po@am__quote@
@@ -748,6 +760,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_MultiShift.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quark_prop_meas_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_MT19937.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex.Po@am__quote@
@@ -1161,6 +1174,22 @@ eoUtils.obj: Dirac_ops/eoUtils.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eoUtils.obj `if test -f 'Dirac_ops/eoUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/eoUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/eoUtils.cpp'; fi`
 
+dirac_Operator_Factory.o: Dirac_ops/dirac_Operator_Factory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_Operator_Factory.o -MD -MP -MF $(DEPDIR)/dirac_Operator_Factory.Tpo -c -o dirac_Operator_Factory.o `test -f 'Dirac_ops/dirac_Operator_Factory.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_Operator_Factory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_Operator_Factory.Tpo $(DEPDIR)/dirac_Operator_Factory.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_Operator_Factory.cpp' object='dirac_Operator_Factory.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_Operator_Factory.o `test -f 'Dirac_ops/dirac_Operator_Factory.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_Operator_Factory.cpp
+
+dirac_Operator_Factory.obj: Dirac_ops/dirac_Operator_Factory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_Operator_Factory.obj -MD -MP -MF $(DEPDIR)/dirac_Operator_Factory.Tpo -c -o dirac_Operator_Factory.obj `if test -f 'Dirac_ops/dirac_Operator_Factory.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_Operator_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_Operator_Factory.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_Operator_Factory.Tpo $(DEPDIR)/dirac_Operator_Factory.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_Operator_Factory.cpp' object='dirac_Operator_Factory.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_Operator_Factory.obj `if test -f 'Dirac_ops/dirac_Operator_Factory.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_Operator_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_Operator_Factory.cpp'; fi`
+
 eigenModes_IRL.o: EigenModes/eigenModes_IRL.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenModes_IRL.o -MD -MP -MF $(DEPDIR)/eigenModes_IRL.Tpo -c -o eigenModes_IRL.o `test -f 'EigenModes/eigenModes_IRL.cpp' || echo '$(srcdir)/'`EigenModes/eigenModes_IRL.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenModes_IRL.Tpo $(DEPDIR)/eigenModes_IRL.Po
@@ -1432,6 +1461,22 @@ utils_DWF4d.obj: Measurements/FermionicM/utils_DWF4d.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/utils_DWF4d.cpp' object='utils_DWF4d.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o utils_DWF4d.obj `if test -f 'Measurements/FermionicM/utils_DWF4d.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/utils_DWF4d.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/utils_DWF4d.cpp'; fi`
+
+quark_prop_meas_factory.o: Measurements/FermionicM/quark_prop_meas_factory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT quark_prop_meas_factory.o -MD -MP -MF $(DEPDIR)/quark_prop_meas_factory.Tpo -c -o quark_prop_meas_factory.o `test -f 'Measurements/FermionicM/quark_prop_meas_factory.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/quark_prop_meas_factory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/quark_prop_meas_factory.Tpo $(DEPDIR)/quark_prop_meas_factory.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/quark_prop_meas_factory.cpp' object='quark_prop_meas_factory.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o quark_prop_meas_factory.o `test -f 'Measurements/FermionicM/quark_prop_meas_factory.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/quark_prop_meas_factory.cpp
+
+quark_prop_meas_factory.obj: Measurements/FermionicM/quark_prop_meas_factory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT quark_prop_meas_factory.obj -MD -MP -MF $(DEPDIR)/quark_prop_meas_factory.Tpo -c -o quark_prop_meas_factory.obj `if test -f 'Measurements/FermionicM/quark_prop_meas_factory.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/quark_prop_meas_factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/quark_prop_meas_factory.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/quark_prop_meas_factory.Tpo $(DEPDIR)/quark_prop_meas_factory.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/quark_prop_meas_factory.cpp' object='quark_prop_meas_factory.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o quark_prop_meas_factory.obj `if test -f 'Measurements/FermionicM/quark_prop_meas_factory.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/quark_prop_meas_factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/quark_prop_meas_factory.cpp'; fi`
 
 hmcGeneral.o: HMC/hmcGeneral.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hmcGeneral.o -MD -MP -MF $(DEPDIR)/hmcGeneral.Tpo -c -o hmcGeneral.o `test -f 'HMC/hmcGeneral.cpp' || echo '$(srcdir)/'`HMC/hmcGeneral.cpp

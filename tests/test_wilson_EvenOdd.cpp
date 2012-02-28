@@ -5,11 +5,12 @@
 #include <stdio.h>
 
 #include "test_wilson_EvenOdd.hpp"
-#include "Measurements/FermionicM/fermion_meas_factory.hpp"
-#include "Dirac_ops/dirac_wilson_EvenOdd.h"
-#include "Solver/solver_CG.h"
-#include "Solver/solver_BiCGStab.h"
-#include "Measurements/FermionicM/qprop_EvenOdd.h"
+#include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
+#include "Dirac_ops/dirac_wilson_EvenOdd.hpp"
+#include "Solver/solver_CG.hpp"
+#include "Solver/solver_BiCGStab.hpp"
+#include "Measurements/FermionicM/qprop.hpp"
+#include "Measurements/FermionicM/qprop_EvenOdd.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Tools/randNum_MT19937.h"
 #include "Measurements/FermionicM/source_types.hpp"
@@ -34,8 +35,8 @@ int Test_Wilson_EvenOdd::run(){
 
 
   //Dirac Kernel definition ---------------------------------------------
-  Dirac_Wilson_EvenOdd Deo(1.0/6.0, &(conf_.U));
-  Dirac_Wilson         D(  1.0/6.0, &(conf_.U));
+  Dirac_Wilson_EvenOdd Deo(1.0/6.0, &(conf_.data));
+  Dirac_Wilson         D(  1.0/6.0, &(conf_.data));
   SiteIndex_eo* ieo = SiteIndex_eo::instance();
   vector<int> esec= ieo->esec();
   vector<int> osec= ieo->osec();

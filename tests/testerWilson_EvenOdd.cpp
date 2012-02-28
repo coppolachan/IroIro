@@ -10,6 +10,7 @@
 #include "test_wilson_EvenOdd.hpp"
 
 using namespace XML;
+using namespace MapsEnv;
 
 int main(){
   
@@ -18,12 +19,13 @@ int main(){
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
+  initialize_mapper();
 
   //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
+  GaugeGlobal GaugeF(geom);
   GaugeF.initialize(top_node);
-  //
-  
+
+  /////////////
   node Wilson_node_EO = top_node;
   descend(Wilson_node_EO, "TestWilson_EvenOdd");
     

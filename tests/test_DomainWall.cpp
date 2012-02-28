@@ -1,12 +1,12 @@
 /*!
  * @file test_DomainWall.cpp
  *
- * @brief Definition of classes for testing the Dirac_optimalDomainWall classes
+ * @brief Definition of classes for testing the Dirac_optimalDomainWall classes and factories
  *
  */
 #include "test_DomainWall.hpp"
 #include "Communicator/comm_io.hpp"
-#include "Measurements/FermionicM/fermion_meas_factory.hpp"
+#include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
 #include "include/fopr.h"
 #include "Tools/randNum_MT19937.h"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
@@ -87,13 +87,13 @@ int Test_optimalDomainWall::run(){
   double mq = 0.02;
   vector<double> omega(N5d,1.0);
 
-  Dirac_optimalDomainWall Ddwf_5d(b,c,M0,mq,omega,&(conf_.U));
+  Dirac_optimalDomainWall Ddwf_5d(b,c,M0,mq,omega,&(conf_.data));
   /////////////////////////////
   XML::node QuarkProp_node = DWFnode;
   // operator using factories
   XML::descend(DWFnode, "DomainWall");
   DiracDWF5dFactory DWF_Factory(DWFnode);
-  DiracODWF = DWF_Factory.getDiracOperator(&(conf_.U));
+  DiracODWF = DWF_Factory.getDiracOperator(&(conf_.data));
 
   
   XML::descend(QuarkProp_node, "QuarkPropagator");
@@ -118,8 +118,8 @@ int Test_optimalDomainWall::run(){
   double mq1 = 0.05;
   double mq2 = 0.10;
   
-  Dirac_optimalDomainWall Ddwf1(b,c,M0,mq1,omega,&(conf_.U));
-  Dirac_optimalDomainWall Ddwf2(b,c,M0,mq2,omega,&(conf_.U));
+  Dirac_optimalDomainWall Ddwf1(b,c,M0,mq1,omega,&(conf_.data));
+  Dirac_optimalDomainWall Ddwf2(b,c,M0,mq2,omega,&(conf_.data));
 
   Fopr_DdagD DdagD2(&Ddwf2);
 

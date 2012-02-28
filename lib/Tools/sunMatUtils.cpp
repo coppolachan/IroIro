@@ -134,5 +134,27 @@ namespace SUNmatUtils{
 
 
 
+  // BLAS style optimization specific functions
+  // not working, just containers now
+
+  #if NC_==3 
+  // specialization for NC_=3
+  // Matrix-matrix
+  const SUNmat gemm(const SUNmat&, const SUNmat&){};
+  // Matrix-(matrix^dag)
+  const SUNmat gemmd(const SUNmat&, const SUNmat&){};
+  // (Matrix^dag)-matrix
+  const SUNmat gemdm(const SUNmat&, const SUNmat&){};
+  #else
+  // generic code 
+  // Matrix-matrix
+  const SUNmat gemm(const SUNmat&, const SUNmat&){};
+  // Matrix-(matrix^dag)
+  const SUNmat gemmd(const SUNmat&, const SUNmat&){};
+  // (Matrix^dag)-matrix
+  const SUNmat gemdm(const SUNmat&, const SUNmat&){};
+  #endif  
+
+
 
 }//endof namespace SUNmat_utils
