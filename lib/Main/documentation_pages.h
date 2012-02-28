@@ -197,6 +197,7 @@
    <HMC>
     <Nsweeps>1000</Nsweeps>
     <Thermalization>100</Thermalization>
+    <StartingConfig>10</StartingConfig>
     <SaveInterval>5</SaveInterval>
     <SavePrefix>HMC_</SavePrefix>
 
@@ -214,6 +215,8 @@
    \c \<%Thermalizations\> and  \c \<%SaveInterval\> are not mandatory. If omitted the code will just use default values (0 and 1 respectively). Set \c SaveInterval to 0 to avoid configuration storage. 
   
    \c \<%SavePrefix\> is used (optionally) to give a prefix to the configuration names (Default, if not provided, is \c "Conf_" , such that configuration names will be like \c "Conf_10").
+
+   \c \<%StartingConfig\> gives the starting sweep number [default = 1].
 
    The \c \<%RandomNumberGen\> section describes and initializes the random number generator.
    Only one choice is available at the moment: <b>Mersenne Twister</b> generator.

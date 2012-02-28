@@ -32,7 +32,8 @@ void HMCgeneral::evolve(Field& Uin)const{
   }
 
   // Actual updates
-  for(int iter=1; iter <= Params.Nsweeps; ++iter){
+  for(int iter=Params.StartingConfig; 
+      iter <= Params.Nsweeps+Params.StartingConfig; ++iter){
     CCIO::cout << "-- # Sweep = "<< iter <<  "\n";
     CCIO::cout << "---------------------------\n";
     double timer;

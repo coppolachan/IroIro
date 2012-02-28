@@ -46,7 +46,8 @@ subdir = lib
 DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_doxygen.m4 \
+	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -87,7 +88,7 @@ am__v_at_0 = @
 libcommcode_a_AR = $(AR) $(ARFLAGS)
 libcommcode_a_LIBADD =
 am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
-	Communicator/communicator_dummy.cpp \
+	Main/common_fields.cpp Communicator/communicator_dummy.cpp \
 	Communicator/communicator_mpi.cpp Action/action.cpp \
 	Action/action_gauge_wilson.cpp Action/action_gauge_rect.cpp \
 	Action/action_Nf2.cpp Action/action_Nf2_ratio.cpp \
@@ -123,16 +124,16 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Main/commandline.cpp PugiXML/pugixml.cpp \
 	PugiXML/pugi_interface.cpp Tools/sunMatUtils.cpp \
 	Tools/randNum_MT19937.cpp Tools/randNum_Factory.cpp \
-	Tools/gammaMatrices.cpp \
-	$(top_srcdir)/include/common_fields.cpp
+	Tools/gammaMatrices.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 @USE_MPI_FALSE@am__objects_2 = map_scalar.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_2 = map_parallelscalar.$(OBJEXT)
-am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
-	action.$(OBJEXT) action_gauge_wilson.$(OBJEXT) \
-	action_gauge_rect.$(OBJEXT) action_Nf2.$(OBJEXT) \
-	action_Nf2_ratio.$(OBJEXT) action_gaugetype_factory.$(OBJEXT) \
+am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) \
+	common_fields.$(OBJEXT) $(am__objects_1) action.$(OBJEXT) \
+	action_gauge_wilson.$(OBJEXT) action_gauge_rect.$(OBJEXT) \
+	action_Nf2.$(OBJEXT) action_Nf2_ratio.$(OBJEXT) \
+	action_gaugetype_factory.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	fields_io.$(OBJEXT) dirac_wilson.$(OBJEXT) \
 	dirac_clover.$(OBJEXT) dirac_wilson_EvenOdd.$(OBJEXT) \
@@ -157,8 +158,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) gaugeConf.$(OBJEXT) commandline.$(OBJEXT) \
 	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
 	sunMatUtils.$(OBJEXT) randNum_MT19937.$(OBJEXT) \
-	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT) \
-	common_fields.$(OBJEXT)
+	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -315,6 +315,8 @@ CXXFLAGS = @CXXFLAGS@ $(am__append_1) $(am__append_3)
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
+DOT = @DOT@
+DOXYGEN = @DOXYGEN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -368,6 +370,9 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
+enable_dot = @enable_dot@
+enable_html_docs = @enable_html_docs@
+enable_latex_docs = @enable_latex_docs@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -418,6 +423,7 @@ EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
+		Main/common_fields.cpp			\
 		$(COMMUNICATOR_SRCS)     	        \
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
@@ -474,8 +480,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
-		Tools/gammaMatrices.cpp			\
-		$(top_srcdir)/include/common_fields.cpp
+		Tools/gammaMatrices.cpp			
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD = libcommcode.a
@@ -791,6 +796,22 @@ commonPrms.obj: Main/commonPrms.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/commonPrms.cpp' object='commonPrms.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o commonPrms.obj `if test -f 'Main/commonPrms.cpp'; then $(CYGPATH_W) 'Main/commonPrms.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/commonPrms.cpp'; fi`
+
+common_fields.o: Main/common_fields.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT common_fields.o -MD -MP -MF $(DEPDIR)/common_fields.Tpo -c -o common_fields.o `test -f 'Main/common_fields.cpp' || echo '$(srcdir)/'`Main/common_fields.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/common_fields.Tpo $(DEPDIR)/common_fields.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/common_fields.cpp' object='common_fields.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o common_fields.o `test -f 'Main/common_fields.cpp' || echo '$(srcdir)/'`Main/common_fields.cpp
+
+common_fields.obj: Main/common_fields.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT common_fields.obj -MD -MP -MF $(DEPDIR)/common_fields.Tpo -c -o common_fields.obj `if test -f 'Main/common_fields.cpp'; then $(CYGPATH_W) 'Main/common_fields.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/common_fields.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/common_fields.Tpo $(DEPDIR)/common_fields.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/common_fields.cpp' object='common_fields.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o common_fields.obj `if test -f 'Main/common_fields.cpp'; then $(CYGPATH_W) 'Main/common_fields.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/common_fields.cpp'; fi`
 
 communicator_dummy.o: Communicator/communicator_dummy.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT communicator_dummy.o -MD -MP -MF $(DEPDIR)/communicator_dummy.Tpo -c -o communicator_dummy.o `test -f 'Communicator/communicator_dummy.cpp' || echo '$(srcdir)/'`Communicator/communicator_dummy.cpp
@@ -1735,22 +1756,6 @@ gammaMatrices.obj: Tools/gammaMatrices.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/gammaMatrices.cpp' object='gammaMatrices.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gammaMatrices.obj `if test -f 'Tools/gammaMatrices.cpp'; then $(CYGPATH_W) 'Tools/gammaMatrices.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/gammaMatrices.cpp'; fi`
-
-common_fields.o: $(top_srcdir)/include/common_fields.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT common_fields.o -MD -MP -MF $(DEPDIR)/common_fields.Tpo -c -o common_fields.o `test -f '$(top_srcdir)/include/common_fields.cpp' || echo '$(srcdir)/'`$(top_srcdir)/include/common_fields.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/common_fields.Tpo $(DEPDIR)/common_fields.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(top_srcdir)/include/common_fields.cpp' object='common_fields.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o common_fields.o `test -f '$(top_srcdir)/include/common_fields.cpp' || echo '$(srcdir)/'`$(top_srcdir)/include/common_fields.cpp
-
-common_fields.obj: $(top_srcdir)/include/common_fields.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT common_fields.obj -MD -MP -MF $(DEPDIR)/common_fields.Tpo -c -o common_fields.obj `if test -f '$(top_srcdir)/include/common_fields.cpp'; then $(CYGPATH_W) '$(top_srcdir)/include/common_fields.cpp'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/include/common_fields.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/common_fields.Tpo $(DEPDIR)/common_fields.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$(top_srcdir)/include/common_fields.cpp' object='common_fields.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o common_fields.obj `if test -f '$(top_srcdir)/include/common_fields.cpp'; then $(CYGPATH_W) '$(top_srcdir)/include/common_fields.cpp'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/include/common_fields.cpp'; fi`
 
 main_hmc.o: Main/main_hmc.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hmc.o -MD -MP -MF $(DEPDIR)/main_hmc.Tpo -c -o main_hmc.o `test -f 'Main/main_hmc.cpp' || echo '$(srcdir)/'`Main/main_hmc.cpp

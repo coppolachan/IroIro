@@ -21,6 +21,7 @@ class RandNum;
 struct HMCGeneralParams {
   int Nsweeps;
   int ThermalizationSteps;
+  int StartingConfig;
   int SaveInterval; //Setting to 0 does not save configurations
   std::string Filename_prefix;
 
@@ -28,11 +29,14 @@ struct HMCGeneralParams {
     // ---- Default values
     SaveInterval = 1;  
     ThermalizationSteps = 0;
+    StartingConfig = 1;
     Filename_prefix = "Conf_";
     // -------------------
     XML::read(node, "Nsweeps", Nsweeps, MANDATORY);
     if(XML::read(node, "Thermalization", ThermalizationSteps))
       CCIO::cout << "Using default [Thermalization = "<< ThermalizationSteps << "]\n";
+    if(XML::read(node, "StartingConfig", StartingConfig))
+      CCIO::cout << "Using default [StartingConfig  = "<< StartingConfig << "]\n";
     if(XML::read(node, "SaveInterval", SaveInterval))
       CCIO::cout << "Using default [SaveInterval = "<< SaveInterval << "]\n";
     if(XML::read(node, "SavePrefix", Filename_prefix))
