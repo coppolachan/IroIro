@@ -50,7 +50,7 @@ namespace FieldUtils{
     F.data.set(F.format.cslice(spin, site), vec.getva());
   }
   void AddVector(FermionField& F, const SUNvec& vec, int spin, int site){
-    F.data.set(F.format.cslice(spin, site), vec.getva());
+    F.data.add(F.format.cslice(spin, site), vec.getva());
   }
 
 }

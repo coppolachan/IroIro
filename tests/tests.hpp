@@ -33,7 +33,6 @@ namespace TestEnv{
     //Initialize GaugeField using XML input
     GaugeGlobal GaugeF(geom);
     GaugeF.initialize(top_node);
-    /////////////
     
     return TestClass(top_node, GaugeF);
   }

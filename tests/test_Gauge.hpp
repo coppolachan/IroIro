@@ -16,15 +16,20 @@
  */
 class Test_Gauge: public TestGeneral{
  private:
-  const XML::node Gauge_node;
-  const GaugeField& d_conf;
+  const char* test_name;
+  XML::node Gauge_node;
+  GaugeField d_conf;
 
   int map_test();
   int plaquette();
 
  public:
   Test_Gauge(XML::node node, GaugeField& conf):Gauge_node(node),
-					       d_conf(conf){}
+					       d_conf(conf){
+    test_name = "TestGauge";
+    XML::descend(Gauge_node, test_name);
+  }
+  
   int run();
 };
 

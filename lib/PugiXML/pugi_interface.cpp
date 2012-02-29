@@ -59,20 +59,22 @@ namespace XML
   }
 
   void descend(pugi::xml_node &node, const char *name, bool type) {
-    node = node.child(name);
-    if ((node==NULL) && (type == MANDATORY)) {
+    pugi::xml_node node_temp = node.child(name);
+    if ((node_temp==NULL) && (type == MANDATORY)) {
       MandatoryReadError(node, name);
-    } 
+    }
+    node = node_temp;
   }
 
 
 
   
   void next_sibling(pugi::xml_node &node, const char *name, bool type){
-    node = node.next_sibling(name);
-    if ((node==NULL) && (type == MANDATORY)) {
+    pugi::xml_node node_temp = node.next_sibling(name);
+    if ((node_temp==NULL) && (type == MANDATORY)) {
       MandatoryReadError(node, name);
-    } 
+    }
+    node = node_temp;
   }
 
 

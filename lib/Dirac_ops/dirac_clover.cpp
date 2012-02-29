@@ -119,41 +119,35 @@ void Dirac_Clover::mult_csw(FermionField& v_out, const FermionField& w) const {
   mult_isigma23(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < NDIM_; ++s){
-      v1 = matrix(d_Bx,site) * vect(wt,s,site);
-      SetVector(v_out, v1, s, site);
+      SetVector(v_out, (matrix(d_Bx,site) * vect(wt,s,site)), s, site);
     }
   }
    
   mult_isigma31(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < NDIM_; ++s){
-      v1 = matrix(d_By,site) * vect(wt,s,site);
-      AddVector(v_out, v1, s, site);
+      AddVector(v_out, (matrix(d_By,site) * vect(wt,s,site)), s, site);
     }
   }
 
   mult_isigma12(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < NDIM_; ++s){
-      v1 = matrix(d_Bz,site) * vect(wt,s,site);
-      AddVector(v_out, v1, s, site);
-    }
-  }
-  
-  mult_isigma41(wt,w);
-  for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < NDIM_; ++s){
-      v1 = matrix(d_Ex,site) * vect(wt,s,site);
-      AddVector(v_out, v1, s, site);
+      AddVector(v_out, (matrix(d_Bz,site) * vect(wt,s,site)), s, site);
     }
   }
 
+  mult_isigma41(wt,w);
+  for(int site = 0; site < Nvol_; ++site){
+    for(int s = 0; s < NDIM_; ++s){
+      AddVector(v_out, (matrix(d_Ex,site) * vect(wt,s,site)), s, site);
+    }
+  }
 
   mult_isigma42(wt,w);
   for(int site = 0; site < Nvol_; ++site){
     for(int s = 0; s < NDIM_; ++s){
-      v1 = matrix(d_Ey,site) * vect(wt,s,site);
-      AddVector(v_out, v1, s, site);
+      AddVector(v_out, (matrix(d_Ey,site) * vect(wt,s,site)), s, site);
     }
   }
   

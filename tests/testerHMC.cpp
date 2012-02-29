@@ -8,35 +8,13 @@
 //------------------------------------------------------------------------
 
 #include "test_HMC.hpp"
-#include "include/commandline.hpp"
-
-using namespace XML;
-using namespace MapsEnv;
 
 int main(int argc, char* argv[]){
 
-  CommandOptions Options = ReadCmdLine(argc, argv);
+  CREATE_TEST(Test_HMC);
+  RUN_TEST;
+  CLEAR_TEST;  
   
-  //Reading input file
-  node top_node = getInputXML(Options.filename);  
-
-  //Initializing geometry using XML input
-  Geometry geom(top_node);
-  initialize_mapper();
-
-  //Initialize GaugeField using XML input
-  GaugeGlobal GaugeF(geom);
-  GaugeF.initialize(top_node);
-
-  /////////////
-  
-  node HMC_node = top_node;
-  descend(HMC_node, "HMC");
-  
-  
-  Test_HMC HMCTest(HMC_node,GaugeF);
-  HMCTest.run();
-
   return 0;
 }
 
