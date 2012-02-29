@@ -14,16 +14,21 @@
 
 class Test_optimalDomainWall: public TestGeneral{
 private:
+  const char* test_name;
   XML::node DWFnode;
-  GaugeField& conf_;
+  GaugeField conf_;
 
-  int mult5d_test(const Dirac_optimalDomainWall&,const Field&,int);
-  int mult5d_dag_test(const Dirac_optimalDomainWall&,const Field&,int);
+  int mult5d_test       (const Dirac_optimalDomainWall&,const Field&,int);
+  int mult5d_dag_test   (const Dirac_optimalDomainWall&,const Field&,int);
   int mult5d_gamma5_test(const Dirac_optimalDomainWall&,const Field&,int);
 
 public:
-  Test_optimalDomainWall(XML::node node,GaugeField& conf):DWFnode(node),
-							  conf_(conf){}
+  Test_optimalDomainWall(XML::node node,GaugeField conf):DWFnode(node),
+							 conf_(conf){
+    test_name = "TestOptimalDomainWall";
+    XML::descend(DWFnode, test_name);
+  }
+
   int run();
 };
 

@@ -62,7 +62,6 @@ class QPropFactory_EvenOdd : public QuarkPropagatorFactory {
 
 public:
   QPropFactory_EvenOdd(XML::node node):Qprop_node(node){
-    //some leaking expected - check!
     XML::descend(node,"Kernel");
     DiracObj.save(new DiracWilsonEvenOddFactory(node));
     XML::next_sibling(node,"Solver");
@@ -71,13 +70,7 @@ public:
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
     Kernel.save(DiracObj.get()->getDiracOperator(&(Field.data)));
-
-    std::cout<<"&DiracOp="<<Kernel.get() <<std::endl;
-
     Solv.save(SolverObj.get()->getSolver(new Fopr_DdagD(Kernel.get())));
-
-    //std::cout<<"&Solv="<<Solv.get() <<std::endl;    
-    //std::cout<<"Qprop being created "<<std::endl;
     return new Qprop_EvenOdd(Kernel.get(), Solv.get());
   }
 };
@@ -93,11 +86,12 @@ class QPropDWFFactory : public QuarkPropagatorFactory {
 public:
   QPropDWFFactory(XML::node node):Qprop_node_(node){
     XML::descend(node,"Kernel4d");
-    DiracFactory_.save(DiracOperators::createDiracDWF4dOperatorFactory(node));
+    DiracFactory_.save(new DiracDWF4DfullFactory(node));
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
-    return getQuarkPropDW(Field);}
+    return getQuarkPropDW(Field);
+  }
 
   QpropDWF* getQuarkPropDW(GaugeField& Field){
     DWF4D_.save(DiracFactory_.get()->getDiracOperator4D(&(Field.data)));
