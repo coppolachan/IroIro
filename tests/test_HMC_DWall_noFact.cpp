@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------
 /*!
- * @file test_HMC_DomainWall.cpp
+ * @file test_HMC_DWall_noFact.cpp
  *
  * @brief run() function for HMCgeneral class test (DWF case)
  *
@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "HMC/hmcGeneral.hpp"
-#include "test_HMC_DomainWall.hpp"
+#include "test_HMC_DWall_noFact.hpp"
 #include "Action/action_gauge_wilson.hpp"
 #include "Action/action_Nf2_ratio.hpp"
 #include "Dirac_ops/dirac_DomainWall.hpp"

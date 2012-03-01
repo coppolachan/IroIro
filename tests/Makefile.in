@@ -15,7 +15,7 @@
 
 @SET_MAKE@
 
-# Time-stamp: <2012-02-29 15:36:43 neo>
+# Time-stamp: <2012-03-01 14:46:31 neo>
 
 
 VPATH = @srcdir@
@@ -40,7 +40,7 @@ host_triplet = @host@
 target_triplet = @target@
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_HMC_EvenOdd$(EXEEXT) test_HMC_smear_noF$(EXEEXT) \
-	test_HMC_DomainWall$(EXEEXT) test_Gauge$(EXEEXT) \
+	test_HMC_DWall_noF$(EXEEXT) test_Gauge$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_Wilson_EvenOdd$(EXEEXT) \
 	test_DomainWall$(EXEEXT) test_ResMass$(EXEEXT) \
 	test_EigenModes$(EXEEXT) test_Smearing$(EXEEXT) \
@@ -78,11 +78,11 @@ am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
 test_HMC_DEPENDENCIES =
-am_test_HMC_DomainWall_OBJECTS = test_HMC_DomainWall.$(OBJEXT) \
-	testerHMC_DomainWall.$(OBJEXT)
-test_HMC_DomainWall_OBJECTS = $(am_test_HMC_DomainWall_OBJECTS)
-test_HMC_DomainWall_LDADD = $(LDADD)
-test_HMC_DomainWall_DEPENDENCIES =
+am_test_HMC_DWall_noF_OBJECTS = test_HMC_DWall_noFact.$(OBJEXT) \
+	testerHMC_DWall_noFact.$(OBJEXT)
+test_HMC_DWall_noF_OBJECTS = $(am_test_HMC_DWall_noF_OBJECTS)
+test_HMC_DWall_noF_LDADD = $(LDADD)
+test_HMC_DWall_noF_DEPENDENCIES =
 am_test_HMC_EvenOdd_OBJECTS = test_HMC_EvenOdd.$(OBJEXT) \
 	testerHMCeven-odd.$(OBJEXT)
 test_HMC_EvenOdd_OBJECTS = $(am_test_HMC_EvenOdd_OBJECTS)
@@ -157,7 +157,7 @@ am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
-	$(test_HMC_DomainWall_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
+	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
 	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_IO_SOURCES) $(test_MultiShiftSolver_SOURCES) \
 	$(test_Overlap_SOURCES) $(test_RNG_SOURCES) \
@@ -165,7 +165,7 @@ SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
 	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
-	$(test_HMC_DomainWall_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
+	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
 	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_IO_SOURCES) $(test_MultiShiftSolver_SOURCES) \
 	$(test_Overlap_SOURCES) $(test_RNG_SOURCES) \
@@ -333,8 +333,8 @@ test_HMC_smear_noF_SOURCES = test_HMC_Smear_noFact.cpp 	\
 test_HMC_EvenOdd_SOURCES = test_HMC_EvenOdd.cpp		\
 				testerHMCeven-odd.cpp
 
-test_HMC_DomainWall_SOURCES = test_HMC_DomainWall.cpp		\
-				testerHMC_DomainWall.cpp
+test_HMC_DWall_noF_SOURCES = test_HMC_DWall_noFact.cpp	\
+				testerHMC_DWall_noFact.cpp
 
 test_Gauge_SOURCES = test_Gauge.cpp			\
 				testerGauge.cpp
@@ -371,7 +371,7 @@ include_HEADERS = tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
 				test_HMC_EvenOdd.hpp		\
-				test_HMC_DomainWall.hpp		\
+				test_HMC_DWall_noFact.hpp	\
 				test_wilson.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
 				test_DomainWall.hpp 		\
@@ -466,9 +466,9 @@ test_Gauge$(EXEEXT): $(test_Gauge_OBJECTS) $(test_Gauge_DEPENDENCIES)
 test_HMC$(EXEEXT): $(test_HMC_OBJECTS) $(test_HMC_DEPENDENCIES) 
 	@rm -f test_HMC$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_OBJECTS) $(test_HMC_LDADD) $(LIBS)
-test_HMC_DomainWall$(EXEEXT): $(test_HMC_DomainWall_OBJECTS) $(test_HMC_DomainWall_DEPENDENCIES) 
-	@rm -f test_HMC_DomainWall$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_DomainWall_OBJECTS) $(test_HMC_DomainWall_LDADD) $(LIBS)
+test_HMC_DWall_noF$(EXEEXT): $(test_HMC_DWall_noF_OBJECTS) $(test_HMC_DWall_noF_DEPENDENCIES) 
+	@rm -f test_HMC_DWall_noF$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_DWall_noF_OBJECTS) $(test_HMC_DWall_noF_LDADD) $(LIBS)
 test_HMC_EvenOdd$(EXEEXT): $(test_HMC_EvenOdd_OBJECTS) $(test_HMC_EvenOdd_DEPENDENCIES) 
 	@rm -f test_HMC_EvenOdd$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_EvenOdd_OBJECTS) $(test_HMC_EvenOdd_LDADD) $(LIBS)
@@ -513,7 +513,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModes_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_DomainWall.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_DWall_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_Smear_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
@@ -529,7 +529,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerEigenModes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerGauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC_DomainWall.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC_DWall_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMCeven-odd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMultiShiftSolver.Po@am__quote@

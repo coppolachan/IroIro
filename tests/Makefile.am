@@ -1,4 +1,4 @@
-# Time-stamp: <2012-02-29 15:36:43 neo>
+# Time-stamp: <2012-03-01 14:46:31 neo>
 
 testdir = $(bindir)/Test
 
@@ -24,7 +24,7 @@ test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
 		test_HMC_EvenOdd	\
 		test_HMC_smear_noF	\
-		test_HMC_DomainWall	\
+		test_HMC_DWall_noF	\
 		test_Gauge		\
 		test_Wilson 		\
 		test_Wilson_EvenOdd 	\
@@ -50,8 +50,8 @@ test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
 test_HMC_EvenOdd_SOURCES  =	test_HMC_EvenOdd.cpp		\
 				testerHMCeven-odd.cpp
 
-test_HMC_DomainWall_SOURCES =	test_HMC_DomainWall.cpp		\
-				testerHMC_DomainWall.cpp
+test_HMC_DWall_noF_SOURCES =	test_HMC_DWall_noFact.cpp	\
+				testerHMC_DWall_noFact.cpp
 
 test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
 				testerGauge.cpp
@@ -89,7 +89,7 @@ include_HEADERS 	=	tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
 				test_HMC_EvenOdd.hpp		\
-				test_HMC_DomainWall.hpp		\
+				test_HMC_DWall_noFact.hpp	\
 				test_wilson.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
 				test_DomainWall.hpp 		\
