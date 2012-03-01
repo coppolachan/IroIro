@@ -17,6 +17,7 @@
   * - \ref GSL_lib
   * - \ref testing
   * - \ref Silent
+  * - \ref autotools_problems
 
   @section help Options help
 
@@ -124,6 +125,27 @@
   --disable-silent-rules@endverbatim  
 
   at configure time. See the output of <tt>./configure --help</tt> for further informations.
+
+
+  @section autotools_problems Problems with autotools
+
+  Sometime you need to refresh your configure script.
+  In the case you need to regenerate the <tt>configure</tt> script by yourself the <tt>autoreconf</tt> command is most probably not going to work if you have an older version of autotools (<2.68).
+
+  In this case the workaround is just the following (tested on Linux with autoconf 2.63 and AIX 7.1): first delete the follwing files 
+
+  @verbatim
+  aclocal.m4
+  Makefile.in
+  lib/Makefile.in@endverbatim
+
+  then execute the following commands in sequence, ignoring the eventual warning outputs
+  @verbatim
+  aclocal -I m4
+  automake
+  autoconf  @endverbatim
+
+  Your brand new <tt>configure</tt> file should be generated without problems. 
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

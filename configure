@@ -2842,22 +2842,10 @@ fi
 case $enable_silent_rules in
 yes) AM_DEFAULT_VERBOSITY=0;;
 no)  AM_DEFAULT_VERBOSITY=1;;
-*)   AM_DEFAULT_VERBOSITY=1;;
-esac
-AM_BACKSLASH='\'
- ##backward compatibility
-# Check whether --enable-silent-rules was given.
-if test "${enable_silent_rules+set}" = set; then :
-  enableval=$enable_silent_rules;
-fi
-
-case $enable_silent_rules in
-yes) AM_DEFAULT_VERBOSITY=0;;
-no)  AM_DEFAULT_VERBOSITY=1;;
 *)   AM_DEFAULT_VERBOSITY=0;;
 esac
 AM_BACKSLASH='\'
- ##compile silently
+ ##backward compatibility
 
 ac_config_headers="$ac_config_headers include/config.h"
 
