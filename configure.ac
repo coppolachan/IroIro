@@ -217,6 +217,7 @@ You have several options now:
 make               Depends on configure's flags given, builds the docs,
                    builds $PACKAGE version $VERSION
 make doxyfile      Makes the docs using doxygen (if enabled)
+make dist	   Creates a tar.gz file to be distributed
 make install       Install code in $prefix
 make uninstall     Uninstall IroIro.
 "

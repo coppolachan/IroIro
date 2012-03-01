@@ -1,4 +1,4 @@
-# Time-stamp: <2012-02-08 10:25:11 neo>
+# Time-stamp: <2012-03-01 11:46:28 neo>
 
 testdir = $(bindir)/Test
 
@@ -8,9 +8,9 @@ AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
 EXTRA_DIST = 	testResults.info	\
 		test_HMC.xml	 	\
+		test_HMC.clover.xml	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
-		test_Clover.xml	 	\
 		test_Wilson_EvenOdd.xml	\
 		test_DomainWall.xml 	\
 		test_ResMass_full.xml 	\
