@@ -1,4 +1,4 @@
-# Time-stamp: <2012-02-28 13:42:54 neo>
+# Time-stamp: <2012-02-29 15:36:43 neo>
 
 testdir = $(bindir)/Test
 
@@ -21,7 +21,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_MultiShiftSolver.xml
 
 test_PROGRAMS = test_HMC 		\
-		test_HMC_nofact 	\
+		test_HMC_noFactories 	\
 		test_HMC_EvenOdd	\
 		test_HMC_smear_noF	\
 		test_HMC_DomainWall	\
@@ -41,7 +41,7 @@ test_PROGRAMS = test_HMC 		\
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
 
-test_HMC_nofact_SOURCES = 	test_HMC_noFactories.cpp 	\
+test_HMC_noFactories_SOURCES = 	test_HMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
 test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
@@ -71,7 +71,7 @@ test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 test_EigenModes_SOURCES = 	test_EigenModes_IRL.cpp		\
 				testerEigenModes.cpp
 
-test_Overlap_SOURCES 	= 	test_overlap.cpp		\
+test_Overlap_SOURCES 	= 	test_Overlap.cpp		\
 				testerOverlap.cpp
 
 test_MultiShiftSolver_SOURCES =	test_MultiShiftSolver.cpp	\
@@ -98,5 +98,5 @@ include_HEADERS 	=	tests.hpp			\
 				test_EigenModes_IRL.hpp		\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
-				test_overlap.hpp		\
+				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp

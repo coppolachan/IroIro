@@ -111,7 +111,6 @@ public:
   ~TwoFlavorDomainWall5dActionFactory(){}
 
   TwoFlavorDomainWall5dActionFactory(XML::node node):Action_node(node){
-    CCIO::cout<<"TwoFlavorDomainWallActionFactory called"<<std::endl;
     XML::descend(node,"Kernel5D", MANDATORY);
     DiracObj.save(DiracOperators::createDiracDWF5dOperatorFactory(node));
     XML::next_sibling(node,"Solver", MANDATORY);

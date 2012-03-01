@@ -15,7 +15,7 @@
 
 @SET_MAKE@
 
-# Time-stamp: <2012-02-28 13:42:54 neo>
+# Time-stamp: <2012-02-29 15:36:43 neo>
 
 
 VPATH = @srcdir@
@@ -38,7 +38,7 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_nofact$(EXEEXT) \
+test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_HMC_EvenOdd$(EXEEXT) test_HMC_smear_noF$(EXEEXT) \
 	test_HMC_DomainWall$(EXEEXT) test_Gauge$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_Wilson_EvenOdd$(EXEEXT) \
@@ -88,11 +88,11 @@ am_test_HMC_EvenOdd_OBJECTS = test_HMC_EvenOdd.$(OBJEXT) \
 test_HMC_EvenOdd_OBJECTS = $(am_test_HMC_EvenOdd_OBJECTS)
 test_HMC_EvenOdd_LDADD = $(LDADD)
 test_HMC_EvenOdd_DEPENDENCIES =
-am_test_HMC_nofact_OBJECTS = test_HMC_noFactories.$(OBJEXT) \
+am_test_HMC_noFactories_OBJECTS = test_HMC_noFactories.$(OBJEXT) \
 	testerHMC.$(OBJEXT)
-test_HMC_nofact_OBJECTS = $(am_test_HMC_nofact_OBJECTS)
-test_HMC_nofact_LDADD = $(LDADD)
-test_HMC_nofact_DEPENDENCIES =
+test_HMC_noFactories_OBJECTS = $(am_test_HMC_noFactories_OBJECTS)
+test_HMC_noFactories_LDADD = $(LDADD)
+test_HMC_noFactories_DEPENDENCIES =
 am_test_HMC_smear_noF_OBJECTS = test_HMC_Smear_noFact.$(OBJEXT) \
 	testerHMC.$(OBJEXT)
 test_HMC_smear_noF_OBJECTS = $(am_test_HMC_smear_noF_OBJECTS)
@@ -107,7 +107,7 @@ am_test_MultiShiftSolver_OBJECTS = test_MultiShiftSolver.$(OBJEXT) \
 test_MultiShiftSolver_OBJECTS = $(am_test_MultiShiftSolver_OBJECTS)
 test_MultiShiftSolver_LDADD = $(LDADD)
 test_MultiShiftSolver_DEPENDENCIES =
-am_test_Overlap_OBJECTS = test_overlap.$(OBJEXT) \
+am_test_Overlap_OBJECTS = test_Overlap.$(OBJEXT) \
 	testerOverlap.$(OBJEXT)
 test_Overlap_OBJECTS = $(am_test_Overlap_OBJECTS)
 test_Overlap_LDADD = $(LDADD)
@@ -158,7 +158,7 @@ am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
 	$(test_HMC_DomainWall_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
-	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
+	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_IO_SOURCES) $(test_MultiShiftSolver_SOURCES) \
 	$(test_Overlap_SOURCES) $(test_RNG_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
@@ -166,7 +166,7 @@ SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
 DIST_SOURCES = $(test_DomainWall_SOURCES) $(test_EigenModes_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
 	$(test_HMC_DomainWall_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
-	$(test_HMC_nofact_SOURCES) $(test_HMC_smear_noF_SOURCES) \
+	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_IO_SOURCES) $(test_MultiShiftSolver_SOURCES) \
 	$(test_Overlap_SOURCES) $(test_RNG_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
@@ -324,7 +324,7 @@ EXTRA_DIST = testResults.info	\
 test_HMC_SOURCES = test_HMC.cpp 			\
 		  		testerHMC.cpp
 
-test_HMC_nofact_SOURCES = test_HMC_noFactories.cpp 	\
+test_HMC_noFactories_SOURCES = test_HMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
 test_HMC_smear_noF_SOURCES = test_HMC_Smear_noFact.cpp 	\
@@ -354,7 +354,7 @@ test_ResMass_SOURCES = test_ResidualMass.cpp 		\
 test_EigenModes_SOURCES = test_EigenModes_IRL.cpp		\
 				testerEigenModes.cpp
 
-test_Overlap_SOURCES = test_overlap.cpp		\
+test_Overlap_SOURCES = test_Overlap.cpp		\
 				testerOverlap.cpp
 
 test_MultiShiftSolver_SOURCES = test_MultiShiftSolver.cpp	\
@@ -380,7 +380,7 @@ include_HEADERS = tests.hpp			\
 				test_EigenModes_IRL.hpp		\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
-				test_overlap.hpp		\
+				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp
 
 all: all-am
@@ -472,9 +472,9 @@ test_HMC_DomainWall$(EXEEXT): $(test_HMC_DomainWall_OBJECTS) $(test_HMC_DomainWa
 test_HMC_EvenOdd$(EXEEXT): $(test_HMC_EvenOdd_OBJECTS) $(test_HMC_EvenOdd_DEPENDENCIES) 
 	@rm -f test_HMC_EvenOdd$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_EvenOdd_OBJECTS) $(test_HMC_EvenOdd_LDADD) $(LIBS)
-test_HMC_nofact$(EXEEXT): $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_DEPENDENCIES) 
-	@rm -f test_HMC_nofact$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_nofact_OBJECTS) $(test_HMC_nofact_LDADD) $(LIBS)
+test_HMC_noFactories$(EXEEXT): $(test_HMC_noFactories_OBJECTS) $(test_HMC_noFactories_DEPENDENCIES) 
+	@rm -f test_HMC_noFactories$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_noFactories_OBJECTS) $(test_HMC_noFactories_LDADD) $(LIBS)
 test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_DEPENDENCIES) 
 	@rm -f test_HMC_smear_noF$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_LDADD) $(LIBS)
@@ -519,9 +519,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Overlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RNG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ResidualMass.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_overlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@

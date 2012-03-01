@@ -1,5 +1,5 @@
 /*!
- * @file test_overlap.hpp
+ * @file test_Overlap.hpp
  *
  * @brief Definition of the class to test the overlap functions
  */

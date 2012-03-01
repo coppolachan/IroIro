@@ -20,6 +20,10 @@ namespace DiracOperators {
 	return new DiracWilsonEvenOddFactory(node);
       if (!strcmp(Dirac_name, "DiracClover"))  
 	return new DiracCloverFactory(node);
+      if (!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
+	return new DiracDWF5dFactory(node);
+      if (!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
+	return new DiracDWF5dEvenOddFactory(node);
       std::cerr<<"No Dirac Operator available with name ["
 	       << Dirac_name << "]. Request by <" << node.name() << ">\n";
       abort();
@@ -46,6 +50,9 @@ namespace DiracOperators {
     }
   }
 
+
+  // this one forces to have a PauliVillars operator
+  // useful in the case of the DomainWall5d action
   DiracDWF5dOperatorFactory* 
   createDiracDWF5dOperatorFactory(const XML::node node){
     if (node !=NULL) {

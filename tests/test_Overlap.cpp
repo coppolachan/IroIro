@@ -1,9 +1,9 @@
 /*!
- * @file test_overlap.hpp
+ * @file test_Overlap.hpp
  *
  * @brief Definition of functions to test the overlap functions
  */
-#include "test_overlap.hpp"
+#include "test_Overlap.hpp"
 #include "Dirac_ops/dirac_wilson.hpp"
 #include "Dirac_ops/dirac_overlap_Zolotarev.hpp"
 #include "EigenModes/eigenProc_Zolotarev.h"

@@ -9,30 +9,12 @@
 
 #include "test_smear.hpp"
 
-using namespace XML;
-using namespace MapsEnv;
+int main(int argc, char* argv[]){
 
-int main(){
-
+  CREATE_TEST(Test_Smear);
+  RUN_TEST;
+  CLEAR_TEST;  
   
-  //Reading input file
-  node top_node = getInputXML("test_Smearing.xml");  
-
-  //Initializing geometry using XML input
-  Geometry geom(top_node);
-  initialize_mapper();
-
-  //Initialize GaugeField using XML input
-  GaugeGlobal GaugeF(geom);
-  GaugeF.initialize(top_node);
-  /////////////
-  
-  node Smear_node = top_node;
-  descend(Smear_node, "TestSmear");
-    
-  Test_Smear SmearTest(Smear_node, GaugeF);
-  SmearTest.run();
-
   return 0;
 }
 

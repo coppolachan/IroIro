@@ -36,9 +36,11 @@ void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
     U_mu = DirSlice(u_in, mu);
     for(int site = 0; site < Nvol; ++site){
       ut = matrix(u_tmp1,site,mu) * matrix_dag(U_mu,site);//Omega_mu
-      SetMatrix(q_mu, anti_hermite(ut), site, mu);
+      SetMatrix(q_mu, anti_hermite_traceless(ut), site, mu);
     }
   }
+
+
 
   exponentiate_iQ(u_tmp1, q_mu);
   

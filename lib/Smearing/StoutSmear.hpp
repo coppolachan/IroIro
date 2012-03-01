@@ -23,9 +23,7 @@ class Smear_Stout: public Smear {
 
  private:
   const std::valarray<double> d_rho;
-  //const Format::Format_G Gformat;
   const Smear* SmearBase;
-
 
   double func_xi0(double w) const;
  public:
@@ -35,8 +33,6 @@ class Smear_Stout: public Smear {
   Smear_Stout():SmearBase(new Smear_APE()){};
 
   ~Smear_Stout(){};
-
-  //size_t getFieldSize(){return Gformat.size();}
 
   void smear(GaugeField&,const GaugeField&) const;
   void BaseSmear(GaugeField&, const GaugeField&) const;

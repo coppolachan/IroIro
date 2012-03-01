@@ -17,8 +17,12 @@
 #include "lib/Tools/sunVec.hpp"
 #include "include/macros.hpp"
 
-struct ExtraDimTag {};
 struct OneDimTag {};
+struct FiveDim{
+  int fifth;
+  int LocalVol;
+};
+
 
 /*!
  * @brief A Class to handle gauge fields
@@ -142,35 +146,6 @@ double GeneralField<DATA,FORMAT,TAG>::norm()
   return data.norm();
 }
 
-////////////////////////////////////////////////////////////////
-// Specialization for extradimension
-
-template < class DATA, class FORMAT> 
-class GeneralField<DATA, FORMAT, ExtraDimTag> {
-  FORMAT format;
-  GeneralField(){}; //hide default constructor
-public:
-  DATA data;
-  GeneralField(int Ls):format(FORMAT( CommonPrms::instance()->Nvol()*Ls)),
-		       data(format.size()){}
-  
-  GeneralField(int Ls, int LocalVol):format(FORMAT( LocalVol*Ls)),
-				     data(format.size()){}
-
-
-  FORMAT get_Format(){ return format;}
-  /*! 
-   * Constructor\n 
-   * to store given data
-   */
-  explicit GeneralField(DATA&);
-  GeneralField& operator=(const GeneralField& rhs);
-  GeneralField& operator+=(const GeneralField& rhs);
-  GeneralField& operator-=(const GeneralField& rhs);
-};
-
-
-
 //////////////////////////////////////////////////////////////////////////////
 // Notes
 // GaugeField shoud contain also methods to create from geometry and initialize
@@ -178,7 +153,6 @@ typedef GeneralField< Field, Format::Format_A >              AdjGaugeField;
 typedef GeneralField< Field, Format::Format_G >              GaugeField;
 typedef GeneralField< Field, Format::Format_G, OneDimTag >   GaugeField1D;
 typedef GeneralField< Field, Format::Format_F >              FermionField;
-typedef GeneralField< Field, Format::Format_F, ExtraDimTag > FermionFieldExtraDim;
 typedef GeneralField< std::vector<Field>, Format::Format_F > PropagatorField;
 
 

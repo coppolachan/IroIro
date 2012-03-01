@@ -7,7 +7,7 @@
  */
 //------------------------------------------------------------------------
 
-#include "test_overlap.hpp"
+#include "test_Overlap.hpp"
 #include "include/commandline.hpp"
 
 using namespace XML;

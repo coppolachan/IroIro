@@ -25,33 +25,29 @@
     
     <Integrator name="leapfrog_multistep">
       <MDsteps>3</MDsteps>
-      <step_size>0.00004</step_size>
+      <step_size>0.01</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
 	<Action type="Fermion" name="TwoFlavorsRatio">
 	  <Numerator name="DiracOptimalDomainWall5d">
 	    <Preconditioning>NoPreconditioner</Preconditioning>
+	    <wilson_mass>-1.8</wilson_mass>
 	    <N5d>6</N5d>
 	    <b>2.0</b>
 	    <c>0.0</c>
 	    <mass>0.05</mass>
 	    <approximation name="Tanh" />
-	    <Kernel name="DiracWilson">
-	      <mass>-1.8</mass>
-	    </Kernel>
 	  </Numerator>
 	  
 	  <Denominator name="DiracOptimalDomainWall5d">
 	    <Preconditioning>NoPreconditioner</Preconditioning>
+	    <wilson_mass>-1.8</wilson_mass>
 	    <N5d>6</N5d>
 	    <b>2.0</b>
 	    <c>0.0</c>
 	    <mass>0.10</mass>
 	    <approximation name="Tanh" />
-	    <Kernel name="DiracWilson">
-	      <mass>-1.8</mass>
-	    </Kernel>
 	  </Denominator>
 	  
 	  <SolverNumerator type="Solver_CG">
@@ -67,12 +63,10 @@
 	</Action>	 
 	<step>
 	  <multiplier>2</multiplier>
-	  <Action type="Fermion" name="TwoFlavorsDomainWall">
-	    <Kernel5D>
+	  <Action type="Fermion" name="TwoFlavorsDomainWall_5D">
+	    <Kernel5D name="DiracOptimalDomainWall5d">
 	      <Preconditioning>NoPreconditioner</Preconditioning>
-	      <Kernel name="DiracWilson">
-		<mass>-1.8</mass>
-	      </Kernel>
+	      <wilson_mass>-1.8</wilson_mass>
 	      <N5d>6</N5d>
 	      <b>2.0</b>
 	      <c>0.0</c>

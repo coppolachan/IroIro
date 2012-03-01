@@ -26,10 +26,11 @@ private:
   const DiracWilsonLike* D2_;
   const Solver* slv1_;
   const Solver* slv2_;
-  FermionField phi_;
+  const size_t fsize_;
+  Field phi_;
   
-  FermionField DdagD1_inv(const FermionField& src);
-  FermionField DdagD2_inv(const FermionField& src);
+  Field DdagD1_inv(const Field& src);
+  Field DdagD2_inv(const Field& src);
   
  public:
   Action_Nf2_ratio(GaugeField* const GField, 
@@ -37,7 +38,8 @@ private:
 		   const Solver* Solv1,const Solver* Solv2)
     :u_(GField),
      D1_(D1), D2_(D2),
-     slv1_(Solv1), slv2_(Solv2){}
+     slv1_(Solv1), slv2_(Solv2),
+     fsize_(D1->fsize()){}
   
   ~Action_Nf2_ratio();
   
