@@ -22,6 +22,7 @@ private:
   DiracWilsonLike* const D_; /*!< Dirac Kernel operator */ 
   const Solver* slv_;        /*!< Linear solver operator */
   FermionField phi_;
+  int fermion_size_;
   bool smeared_;
   SmartConf* SmartField_;
   
@@ -40,7 +41,8 @@ public:
     :u_(GField),
      D_(D),
      slv_(Solv),
-     smeared_(smeared){
+     smeared_(smeared),
+     fermion_size_(D->fsize()){
     if (smeared_ && SmearObj !=NULL) attach_smearing(SmearObj);
   }
 
