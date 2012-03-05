@@ -40,7 +40,7 @@ int Test_MultiShiftSolver::test1(){
   double M0 = -1.6;
   double c  = 1.0;
   double b  = 1.0;
-  double mq = 0.02;
+  double mq = 0.01;
   vector<double> omega(N5d,1.0);
 
   Dirac_optimalDomainWall* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gauge.data));
@@ -60,7 +60,7 @@ int Test_MultiShiftSolver::test1(){
   int    Niter= 1000;
   double stop_cond = 1.0e-24;
   MultiShiftSolver* Solver = 
-    new MultiShiftSolver_CG(new Fopr_DDdag(Kernel),
+    new MultiShiftSolver_CG(new Fopr_DdagD(Kernel),
 			    stop_cond,
 			    Niter);
   
