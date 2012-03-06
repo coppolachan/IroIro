@@ -1,37 +1,24 @@
 /*!
- * @file fermion_meas_factory.hpp 
- * @brief Fermionic measurements operators factories
- */
-#ifndef FERMION_MEAS_FACT_
-#define FERMION_MEAS_FACT_
+
+  @file quark_prop_meas_factory.hpp 
+ 
+  @brief QuarkPropagators measurements operators factories
+
+*/
+#ifndef QUARKPROP_MEAS_FACT_
+#define QUARKPROP_MEAS_FACT_
+
+#include "fermion_meas_factory_abs.hpp"
 
 #include "include/pugi_interface.h"
-#include "include/common_fields.hpp"
 #include "Tools/RAIIFactory.hpp"
 
-#include "quark_propagators.hpp"
-#include "qprop.h"
-#include "qprop_EvenOdd.h"
+// Concrete objects definitions
+#include "qprop.hpp"
+#include "qprop_EvenOdd.hpp"
 #include "qprop_DomainWall.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
-
-/*!
- * @brief Abstract base class for creating QuarkPropagators
- */
-class QuarkPropagatorFactory {
-public:
-  virtual QuarkPropagator* getQuarkProp(GaugeField& Field) = 0;
-  virtual ~QuarkPropagatorFactory(){}
-};
-
-/*
-class GenericMeasurementFactory {
-public:
-  virtual GenericMeasurement* getGMeas(GaugeField& Field) = 0;
-  ~GenericMeasurementFactory();
-}
-*/
 
 /////////////////////////////////////////////////
 /*!
@@ -55,7 +42,7 @@ public:
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
-    Kernel.save(DiracObj.get()->getDiracOperator(&(Field.U)));
+    Kernel.save(DiracObj.get()->getDiracOperator(&(Field.data)));
     Solv.save(SolverObj.get()->getSolver(new Fopr_DdagD(Kernel.get())));
 
     return new Qprop(Kernel.get(), Solv.get());
@@ -75,7 +62,6 @@ class QPropFactory_EvenOdd : public QuarkPropagatorFactory {
 
 public:
   QPropFactory_EvenOdd(XML::node node):Qprop_node(node){
-    //some leaking expected - check!
     XML::descend(node,"Kernel");
     DiracObj.save(new DiracWilsonEvenOddFactory(node));
     XML::next_sibling(node,"Solver");
@@ -83,14 +69,8 @@ public:
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
-    Kernel.save(DiracObj.get()->getDiracOperator(&(Field.U)));
-
-    std::cout<<"&DiracOp="<<Kernel.get() <<std::endl;
-
+    Kernel.save(DiracObj.get()->getDiracOperator(&(Field.data)));
     Solv.save(SolverObj.get()->getSolver(new Fopr_DdagD(Kernel.get())));
-
-    //std::cout<<"&Solv="<<Solv.get() <<std::endl;    
-    //std::cout<<"Qprop being created "<<std::endl;
     return new Qprop_EvenOdd(Kernel.get(), Solv.get());
   }
 };
@@ -106,23 +86,19 @@ class QPropDWFFactory : public QuarkPropagatorFactory {
 public:
   QPropDWFFactory(XML::node node):Qprop_node_(node){
     XML::descend(node,"Kernel4d");
-    DiracFactory_.save(DiracOperators::createDiracDWF4dOperatorFactory(node));
+    DiracFactory_.save(new DiracDWF4DfullFactory(node));
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
-    return getQuarkPropDW(Field);}
+    return getQuarkPropDW(Field);
+  }
 
   QpropDWF* getQuarkPropDW(GaugeField& Field){
-    DWF4D_.save(DiracFactory_.get()->getDiracOperator4D(&(Field.U)));
+    DWF4D_.save(DiracFactory_.get()->getDiracOperator4D(&(Field.data)));
     return new QpropDWF(*DWF4D_.get());
   }
 };
 
-///////////////////////////////////////////////////
-
-namespace QuarkPropagators{
-  QuarkPropagatorFactory* createQuarkPropagatorFactory(const XML::node);
-}
 
 
 #endif 

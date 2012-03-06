@@ -11,14 +11,17 @@ using namespace std;
 
 #include "Communicator/comm_io.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "include/messages_macros.hpp"
 #include <complex>
 
 
 typedef complex<double> dcomplex;
 
 //====================================================================
-void Smear_Stout::smear(Field& u_smr, const Field& u_in) const{
-  using namespace SUNmat_utils;
+void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
+  using namespace SUNmatUtils;
+  using namespace FieldUtils;
+
   int Nvol = CommonPrms::Nvol();
 
   GaugeField u_tmp1, q_mu;
@@ -27,24 +30,25 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in) const{
 
   _Message(DEBUG_VERB_LEVEL, "Stout smearing started\n");
 
-  SmearBase->smear(u_tmp1.U,u_in);
+  SmearBase->smear(u_tmp1,u_in);
 
-  for(int mu = 0; mu < Ndim; ++mu){
-    U_mu = u_in[Gformat.dir_slice(mu)];
+  for(int mu = 0; mu < NDIM_; ++mu){
+    U_mu = DirSlice(u_in, mu);
     for(int site = 0; site < Nvol; ++site){
-      ut = u(u_tmp1,site,mu) * u_dag(U_mu,site);//Omega_mu
-      q_mu.U.set(q_mu.Format.cslice(0,site,mu), 
-		 anti_hermite_traceless(ut));
+      ut = matrix(u_tmp1,site,mu) * matrix_dag(U_mu,site);//Omega_mu
+      SetMatrix(q_mu, anti_hermite_traceless(ut), site, mu);
     }
   }
 
+
+
   exponentiate_iQ(u_tmp1, q_mu);
   
-  for(int mu = 0; mu < Ndim; ++mu){
-    U_mu = u_in[Gformat.dir_slice(mu)];
+  for(int mu = 0; mu < NDIM_; ++mu){
+    U_mu = DirSlice(u_in, mu);
     for(int site = 0; site < Nvol; ++site){
-      ut = u(u_tmp1,site,mu) * u(U_mu,site);//New smeared matrix
-      u_smr.set(Gformat.cslice(0,site,mu), ut.getva());
+      ut = matrix(u_tmp1,site,mu) * matrix(U_mu,site);//New smeared matrix
+      SetMatrix(u_smr, ut, site, mu);
     }
   }
 
@@ -52,22 +56,23 @@ void Smear_Stout::smear(Field& u_smr, const Field& u_in) const{
   
 }
 //====================================================================
-void Smear_Stout::BaseSmear(Field& C, const Field& u_in) const{
+void Smear_Stout::BaseSmear(GaugeField& C, const GaugeField& u_in) const{
   SmearBase->smear(C, u_in);
 }
 //====================================================================
-void Smear_Stout::derivative(Field& SigmaTerm, 
-		    const Field& iLambda,
-		    const Field& Gauge) const{
-
+void Smear_Stout::derivative(GaugeField& SigmaTerm, 
+			     const GaugeField& iLambda,
+			     const GaugeField& Gauge) const{
+  
   SmearBase->derivative(SigmaTerm, iLambda, Gauge);
 }
 //====================================================================
 void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ) const{
-  using namespace SUNmat_utils;
+  using namespace SUNmatUtils;
+  using namespace FieldUtils;
 
-  int Nvol = e_iQ.Format.Nvol();
-  int Nex  = e_iQ.Format.Nex();
+  int Nvol = e_iQ.format.Nvol();
+  int Nex  = e_iQ.format.Nex();
 
   SUNmat iQ0, iQ1, iQ2, iQ3;
   iQ0 = unity();
@@ -78,7 +83,7 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ) const{
   for(int ex = 0; ex < Nex; ++ex){
     for(int site = 0; site < Nvol; ++site){
 
-      iQ1 = iQ.matrix(site,ex);
+      iQ1 = matrix(iQ,site,ex);
   
       iQ2 = iQ1 * iQ1;
       iQ3 = iQ1 * iQ2;
@@ -124,8 +129,8 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ) const{
 	qt =  f0 * dcomplex(iQ0.r(cc), iQ0.i(cc))
 	  + f1 * dcomplex(iQ1.i(cc),-iQ1.r(cc))
 	  - f2 * dcomplex(iQ2.r(cc), iQ2.i(cc));
-	e_iQ.U.set(e_iQ.Format.index(2*cc,site,ex),  qt.real());
-	e_iQ.U.set(e_iQ.Format.index(2*cc+1,site,ex),qt.imag());
+	e_iQ.data.set(e_iQ.format.index(2*cc,site,ex),  qt.real());
+	e_iQ.data.set(e_iQ.format.index(2*cc+1,site,ex),qt.imag());
       }
       
     }

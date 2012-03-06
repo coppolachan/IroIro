@@ -11,7 +11,7 @@
 using namespace std;
 
 
-namespace SUNmat_utils{
+namespace SUNmatUtils{
   SUNmat unity(){
     SUNmat tmp(0.0);
     for(int c=0; c<NC_; ++c) tmp.setr(c,c,1.0);
@@ -85,45 +85,50 @@ namespace SUNmat_utils{
     return va;
   }
 
-  const valarray<double> anti_hermite(const SUNmat& m){
- 
-    std::valarray<double> va(m.getva());
-    for(int a=0; a<NC_; ++a){
-      for(int b=a; b<NC_; ++b){
-	double re = va[2*(NC_*a+b)  ] -va[2*(NC_*b+a)  ];
-	double im = va[2*(NC_*a+b)+1] +va[2*(NC_*b+a)+1];
-	va[2*(NC_*a+b)  ] =  0.5*re;
-	va[2*(NC_*a+b)+1] =  0.5*im;
-	va[2*(NC_*b+a)  ] = -0.5*re;
-	va[2*(NC_*b+a)+1] =  0.5*im;
-      }
-    }
-    return va;
-  }
-
-  const valarray<double> anti_hermite_traceless(const SUNmat& m){
+  const SUNmat anti_hermite_traceless(const SUNmat& m){
     double trace = ImTr(m);
     trace /= NC_;
 
-    valarray<double> va(m.getva());
+    SUNmat out = m;
+
     for(int a=0; a<NC_; ++a){
-      va[2*(NC_*a+a)  ]= 0.0;
-      va[2*(NC_*a+a)+1]-= trace;
+      out.setr(a,a, 0.0);
+      out.add(a,a, 0.0, -trace);
+       for(int b=0; b<a; ++b){
+	out.add(a,b, -out.r(b,a), out.i(b,a));
+	out.mult(a,b,0.5,0.5);
+	out.set(b,a, -out.r(a,b), out.i(a,b));
+      }
       
-      for(int b=0; b<a; ++b){
-	int ab = 2*(NC_*a+b);
-	int ba = 2*(NC_*b+a);
+    }
+    return out;
+  }
 
-	va[ab]-= va[ba];
-	va[ab]/= 2.0;
-	va[ba] =-va[ab];
-
-	va[ab+1]+= va[ba+1];
-	va[ab+1]/= 2.0;
-	va[ba+1] = va[ab+1];
+  const SUNmat anti_hermite(const SUNmat& m){
+    std::valarray<double> va(m.getva());
+    for(int a=0; a<NC_; ++a){
+      for(int b=a; b<NC_; ++b){
+	double re = va[2*(NC_*a+b)  ] - va[2*(NC_*b+a)  ];
+	double im = va[2*(NC_*a+b)+1] + va[2*(NC_*b+a)+1];
+	va[2*(NC_*a+b)  ] =  0.5 * re;
+	va[2*(NC_*a+b)+1] =  0.5 * im;
+	va[2*(NC_*b+a)  ] = -0.5 * re;
+	va[2*(NC_*b+a)+1] =  0.5 * im;
+	
       }
     }
-    return va;
+    return SUNmat(va);
+  }
+
+
+  void SUNprint(const SUNmat& mat) {
+    for(int a=0; a<NC_; ++a){
+      for(int b=0; b<NC_; ++b){ 
+	std::cout << "("<<mat.r(a,b)<<","<<mat.i(a,b)<<")   ";
+      }
+      std::cout << "\n";
+    }
+
   }
 
 /*! @brief Calculates the outer product of two vectors
@@ -141,5 +146,28 @@ namespace SUNmat_utils{
     }
     return f;
   }
+
+
+  // BLAS style optimization specific functions
+  // not working, just containers now
+
+  #if NC_==3 
+  // specialization for NC_=3
+  // Matrix-matrix
+  const SUNmat gemm(const SUNmat&, const SUNmat&){};
+  // Matrix-(matrix^dag)
+  const SUNmat gemmd(const SUNmat&, const SUNmat&){};
+  // (Matrix^dag)-matrix
+  const SUNmat gemdm(const SUNmat&, const SUNmat&){};
+  #else
+  // generic code 
+  // Matrix-matrix
+  const SUNmat gemm(const SUNmat&, const SUNmat&){};
+  // Matrix-(matrix^dag)
+  const SUNmat gemmd(const SUNmat&, const SUNmat&){};
+  // (Matrix^dag)-matrix
+  const SUNmat gemdm(const SUNmat&, const SUNmat&){};
+  #endif  
+
 
 }//endof namespace SUNmat_utils

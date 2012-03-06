@@ -9,23 +9,13 @@
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
 
-#include "action_Factory.hpp"
+#include "action_fermiontype_factory_abs.hpp"
 #include "Action/action_Nf2.hpp"
 #include "Action/action_Nf2_ratio.hpp"
 #include "Action/action_Nf2_DomainWall.hpp"
-#include "Solver/solver_CG.h"
+#include "Solver/solver_CG.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
-
-class FermionActionFactory : public ActionFactory {
-  virtual Action* getFermionAction(const Format::Format_G&,
-				   Field* const) = 0;
-public:
-  Action* getAction(const Format::Format_G& GaugeForm,
-		    Field* const GaugeField) {
-    return getFermionAction(GaugeForm,GaugeField);
-  }
-};
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -49,12 +39,11 @@ public:
 
   ~TwoFlavorActionFactory(){}
 private:
-  Action_Nf2* getFermionAction(const Format::Format_G& Form,
-			       Field* const GaugeField){
-    Kernel.save(DiracObj.get()->getDiracOperator(GaugeField));
+  Action_Nf2* getFermionAction(GaugeField* const F){
+    Kernel.save(DiracObj.get()->getDiracOperator(&(F->data)));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
-    return new Action_Nf2(GaugeField, Kernel.get(), Solv.get());
+    return new Action_Nf2(F, Kernel.get(), Solv.get());
   }
 };
 
@@ -88,15 +77,14 @@ public:
   }
   
 private:  
-  Action_Nf2_ratio* getFermionAction(const Format::Format_G& Form,
-				     Field* const GaugeField){
-    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(GaugeField));
-    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(GaugeField));
+  Action_Nf2_ratio* getFermionAction(GaugeField* const F){
+    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(F->data)));
+    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(F->data)));
     
     Solver1.save(SolverNumObj.get()->getSolver(new Fopr_DdagD(DiracNumerator.get())));
     Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_DdagD(DiracDenominator.get())));
 
-    return new Action_Nf2_ratio(GaugeField,
+    return new Action_Nf2_ratio(F,
 				DiracNumerator.get(),
 				DiracDenominator.get(),
 				Solver1.get(),
@@ -123,7 +111,6 @@ public:
   ~TwoFlavorDomainWall5dActionFactory(){}
 
   TwoFlavorDomainWall5dActionFactory(XML::node node):Action_node(node){
-    CCIO::cout<<"TwoFlavorDomainWallActionFactory called"<<std::endl;
     XML::descend(node,"Kernel5D", MANDATORY);
     DiracObj.save(DiracOperators::createDiracDWF5dOperatorFactory(node));
     XML::next_sibling(node,"Solver", MANDATORY);
@@ -131,16 +118,15 @@ public:
   }
 
 private:  
-  Action_Nf2_ratio* getFermionAction(const Format::Format_G& Form,
-				     Field* const GaugeField){
-    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(GaugeField));
-    DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(GaugeField));
+  Action_Nf2_ratio* getFermionAction(GaugeField* const F){
+    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(F->data)));
+    DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(F->data)));
 
     HermitianOp.save(  new Fopr_DdagD_Precondition(DWF5d_Kernel.get()));
     HermitianOpPV.save(new Fopr_DdagD_Precondition(DWF5d_KernelPV.get()));
     Solv.save(  SolverObj.get()->getSolver(HermitianOp.get()));
     SolvPV.save(SolverObj.get()->getSolver(HermitianOpPV.get()));
-    return new Action_Nf2_ratio(GaugeField,
+    return new Action_Nf2_ratio(F,
 				DWF5d_Kernel.get(),
 				DWF5d_KernelPV.get(),
 				Solv.get(),
@@ -150,12 +136,5 @@ private:
 
 //Add new factories here
 //....
-
-
-////////////////////////////////////////////////////
-namespace FermionAction {
-  FermionActionFactory* createFermionActionFactory(XML::node);
-
-}
 
 #endif

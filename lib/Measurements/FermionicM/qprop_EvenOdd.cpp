@@ -4,7 +4,7 @@
  * @brief Definition of Qprop_EvenOdd member functions 
  */
 //-------------------------------------------------------------------------
-#include "qprop_EvenOdd.h"
+#include "qprop_EvenOdd.hpp"
 #include "Measurements/FermionicM/source.hpp"
 #include "Communicator/comm_io.hpp"
 

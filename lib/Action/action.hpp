@@ -9,11 +9,10 @@
 
 #include <string>
 
-#include "include/macros.hpp"
 #include "include/observer.hpp"
+#include "include/common_fields.hpp"
 
 
-class Field;
 class RandNum;
 
 /*!
@@ -26,24 +25,24 @@ public:
   /*!
     Initializes the Action class
    */
-  virtual void init(const RandNum&, const void* x=0)= 0;
+  virtual void init(const RandNum&)= 0;
 
   /*!
     Calculates action contribution
    */
-  virtual double calc_H()= 0;
+  virtual double calc_H() = 0;
 
   /*!
     Calculates force contribution
    */
-  virtual Field md_force(const void* x=0)= 0;
+  virtual GaugeField md_force() = 0;
 
   virtual ~Action(){}
 
   /*!
     Monitor force contribution
    */
-  void monitor_force(Field&, std::string);
+  void monitor_force(GaugeField&, std::string);
 
 };
 

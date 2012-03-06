@@ -12,17 +12,19 @@
 #define TEST_HMC_H_
 
 #include "include/common_code.hpp"
-
 #include "tests/tests.hpp"
-
 
 class Test_HMC: TestGeneral{
 private:
+  const char* test_name;
   XML::node HMC_node;
-  GaugeField& Gfield_;
+  GaugeField Gfield_;
 public:
   Test_HMC(XML::node node,GaugeField& Gfield):HMC_node(node),
-					      Gfield_(Gfield){}
+					      Gfield_(Gfield){
+    test_name = "HMC";
+    XML::descend(HMC_node, test_name);    
+  }
 
   int run();  
 };

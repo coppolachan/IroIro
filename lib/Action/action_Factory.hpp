@@ -15,8 +15,7 @@ public:
   /*!
     Virtual function returning the %Action
   */
-  virtual Action* getAction(const Format::Format_G& GaugeFormat,
-			    Field* const GaugeField) = 0;
+  virtual Action* getAction(GaugeField* const) = 0;
 };
 
 

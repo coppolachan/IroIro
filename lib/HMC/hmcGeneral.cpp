@@ -6,16 +6,13 @@
  */
 //--------------------------------------------------------------------
 #include "hmcGeneral.hpp"
-#include "mdExec.h"
 #include "Communicator/comm_io.hpp"
 #include "Communicator/fields_io.hpp"
 
 #include <string>
 #include <sstream>
-class Field;
 
-
-void HMCgeneral::evolve(Field& Uin)const{
+void HMCgeneral::evolve(GaugeField& Uin)const{
   double Hdiff;
   // Thermalizations
   for(int iter=1; iter <= Params.ThermalizationSteps; ++iter){
@@ -47,7 +44,7 @@ void HMCgeneral::evolve(Field& Uin)const{
     if (Params.SaveInterval!=0 && iter%Params.SaveInterval == 0) {
       std::stringstream file;
       file << Params.Filename_prefix << iter;
-      if(CCIO::SaveOnDisk<GaugeFieldFormat> (Uin, file.str().c_str())){
+      if(CCIO::SaveOnDisk<Format::Format_G> (Uin.data, file.str().c_str())){
 	CCIO::cout << "Some error occurred in saving file\n";
       }
     }
@@ -56,7 +53,7 @@ void HMCgeneral::evolve(Field& Uin)const{
   }
 }
 
-double HMCgeneral::evolve_step(Field& Uin)const{
+double HMCgeneral::evolve_step(GaugeField& Uin)const{
     
   std::vector<int> clock;
   md_->init(clock,Uin,*rand_);     // set U and initialize P and phi's 

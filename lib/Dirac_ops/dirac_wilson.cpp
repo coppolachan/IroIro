@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------
 // dirac_wilson.cpp
 //----------------------------------------------------------------------
-#include "dirac_wilson.h"
+#include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
 
 using namespace SUNvec_utils;
@@ -31,7 +31,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];     
   is = 0;
   for(int k=0; k<Nbdry; ++k){   /*!< @brief calc on the upper boundary */   
-    const double* U = u_->getaddr(gf_->index(0,(this->*gp)(bdry_pup_[0][k]),0));
+    const double* U = u_->getaddr(gf_.index(0,(this->*gp)(bdry_pup_[0][k]),0));
     int id = ff_.index(0,bdry_pup_[0][k]);    
     for(int c=0; c<NC_; ++c){
       v1r[c] = 0.0; v1i[c] = 0.0;
@@ -1475,7 +1475,7 @@ const Field Dirac_Wilson::mult_dag(const Field& f)const{
  */
 void Dirac_Wilson::md_force_p(Field& fce,
 			      const Field& eta,const Field& zeta)const{
-  using namespace SUNmat_utils;
+  using namespace SUNmatUtils;
   SUNmat f;
 
   for(int mu=0; mu<Ndim_; ++mu){
@@ -1511,7 +1511,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
 
 void Dirac_Wilson::md_force_m(Field& fce,
 			      const Field& eta,const Field& zeta)const{
-  using namespace SUNmat_utils;
+  using namespace SUNmatUtils;
   SUNmat f;
   Field et5 = gamma5(eta);
   Field zt5 = gamma5(zeta);

@@ -1,15 +1,14 @@
-#include "mdExec_Factory.hpp"
+#include "mdExec_factory.hpp"
 #include <string.h>
 
 namespace Integrators{
-  MDIntegratorFactory* createIntegratorFactory(XML::node node,
-					       Format::Format_G& F){
+  MDIntegratorFactory* createIntegratorFactory(XML::node node){
     XML::descend(node, "Integrator");
     if(node !=NULL){
       const char* Int_name = node.attribute("name").value();
       
       if(!strcmp(Int_name, "leapfrog_multistep")) 
-	return  new MDIntegrator_LeapfrogFactory(node, F);
+	return  new MDIntegrator_LeapfrogFactory(node);
 
       std::cerr << "No Integrator available with name ["
 		<< Int_name << "]" << std::endl;

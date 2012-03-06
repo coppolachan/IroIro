@@ -14,7 +14,7 @@
 #include "include/pugi_interface.h"
 #include "Tools/EnumToString.hpp"
 
-#include "dirac_wilson.h"
+#include "dirac_wilson.hpp"
 #include "dirac_Preconditioners.hpp"
 
 namespace DomainWallFermions {

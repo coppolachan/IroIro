@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------
 /*!
- * @file test_HMC.cpp
+ * @file test_HMC_Smear_noFact.cpp
  *
  * @brief run() function for HMCgeneral class test without factories
  *
@@ -14,11 +14,17 @@
 
 #include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"
+#include "Action/action_gauge_wilson.hpp"
+#include "Action/action_Nf2.hpp"
+#include "Dirac_ops/dirac_wilson.hpp"
+#include "Solver/solver_CG.hpp"
+#include "HMC/mdExec_leapfrog.hpp"
+
 
 #include "Smearing/SmartConf.hpp"
 
 int Test_HMC::run(){
-  CCIO::cout << "Starting HMCrun\n";
+  CCIO::header("Testing Smearing routines\n");
   
   //Using factories just for RNG
   
@@ -28,7 +34,7 @@ int Test_HMC::run(){
   multip[0]= 1;
   multip[1]= 1;
   
-  Field* CommonField = new Field(Gfield_.Format.size());
+  GaugeField* CommonField = new GaugeField;
   // --------------------------------- Smearing
   Smear_APE* BaseAPE = new Smear_APE(0.1);
   Smear_Stout AnalyticSmear(BaseAPE);
@@ -45,13 +51,12 @@ int Test_HMC::run(){
   ActionLevel al_1, al_2;
   // Gauge action
   Action* Gauge = new ActionGaugeWilson(6.2, 
-					Gfield_.Format, 
 					FatField.select_conf(nosmear));
   al_1.push_back(Gauge);
 
   // Fermionic action
   //  DiracWilsonLike* OpNf2    = new Dirac_Clover(1.0/6.0,1.0,FatField.select_conf(dosmear));
-  DiracWilsonLike* OpNf2    = new Dirac_Wilson(1.0/6.0,FatField.select_conf(dosmear));
+  DiracWilsonLike* OpNf2    = new Dirac_Wilson(1.0/6.0,&(FatField.select_conf(dosmear)->data));
  
   Solver* SolvNf2 = new Solver_CG(1e-14,
 				  1000,
@@ -63,7 +68,7 @@ int Test_HMC::run(){
 				     true,
 				     &FatField);
   al_2.push_back(Nf2Action);
-
+  
   ActionSet ASet;
   ASet.push_back(al_2);
   ASet.push_back(al_1);
@@ -73,7 +78,6 @@ int Test_HMC::run(){
 					   0.02,
 					   ASet,
 					   multip,
-					   Gfield_.Format,
 					   &FatField);
 
 				      
@@ -92,7 +96,7 @@ int Test_HMC::run(){
 
   try{
     CCIO::cout<< "HMC starts\n";
-    hmc_general.evolve(Gfield_.U);
+    hmc_general.evolve(Gfield_);
   }catch(const char* error){
     CCIO::cerr << error << std::endl;
     return EXIT_FAILURE;

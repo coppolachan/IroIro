@@ -43,7 +43,7 @@
 
 #include "include/common_code.hpp"
 #include "include/commandline.hpp"
-#include "HMC/hmcGeneral.hpp"
+//#include "HMC/hmcGeneral.hpp"
 
 using namespace XML;
 
@@ -62,7 +62,7 @@ int main(int argc, char* argv[]){
   Geometry geom(top_node);
 
   //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
+  GaugeGlobal GaugeF(geom);
   GaugeF.initialize(top_node);
 
   node HMC_node = top_node;
@@ -75,6 +75,10 @@ int main(int argc, char* argv[]){
 
 
 int run(GaugeField Gfield_, node HMC_node) {
+  /*
+
+
+
   CCIO::header("Starting HMC updater");
 
   RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
@@ -102,6 +106,13 @@ int run(GaugeField Gfield_, node HMC_node) {
 
   CCIO::cout << "Saving configuration on disk in binary format\n";
   CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "final_conf.bin");
+
+
+  */
+
+
+
+
   return 0;
 }
 

@@ -7,7 +7,7 @@
 #ifndef DIRAC_WILSON_EVENODD_INCLUDED
 #define DIRAC_WILSON_EVENODD_INCLUDED
 
-#include "dirac_wilson.h"
+#include "dirac_wilson.hpp"
 
 class Dirac_Wilson_EvenOdd:public DiracWilsonLike_EvenOdd {
 private:

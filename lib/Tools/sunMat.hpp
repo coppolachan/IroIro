@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------
-/*! @file sunMat.h
+/*! @file sunMat.hpp
   @brief \f$SU(N)\f$ Matrices linear algebra
 
   Class declarations
@@ -74,7 +74,13 @@ public:
     va_[2*c+1] += im;
   }
   void add(int c1,int c2,double re, double im){ add(COLORS*c1+c2, re, im);}
-  
+ 
+  void mult(int c,double re, double im){
+    va_[2*c  ] *= re;
+    va_[2*c+1] *= im;
+  }
+ 
+  void mult(int c1,int c2,double re, double im){ mult(COLORS*c1+c2, re, im);}
 };
 
 

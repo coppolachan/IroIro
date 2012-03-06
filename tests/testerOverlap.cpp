@@ -7,10 +7,11 @@
  */
 //------------------------------------------------------------------------
 
-#include "test_overlap.hpp"
+#include "test_Overlap.hpp"
 #include "include/commandline.hpp"
 
 using namespace XML;
+using namespace MapsEnv;
 
 int main(int argc, char* argv[]){
 
@@ -21,11 +22,11 @@ int main(int argc, char* argv[]){
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
+  initialize_mapper();
 
   //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
+  GaugeGlobal GaugeF(geom);
   GaugeF.initialize(top_node);
-
   /////////////
   
   node Overlap_node = top_node;

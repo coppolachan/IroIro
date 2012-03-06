@@ -5,8 +5,10 @@
 #include "test_ResidualMass.hpp"
 #include "include/factories.hpp"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
+#include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
 #include "Measurements/FermionicM/utils_DWF4d.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
+#include "Measurements/GaugeM/staples.hpp"
 #include "EigenModes/eigenModes_IRL.hpp"
 #include "Fields/field_expressions.hpp"
 #include "EigenModes/sortEigen.h"
@@ -19,8 +21,8 @@ int Test_ResMass::run() {
   RNG_Env::RNG = RNG_Env::createRNGfactory(node_); 
 
 // Prints plaquette (thin) link
-  Staples Staple(conf_.Format);
-  CCIO::cout << "Plaquette (thin): " << Staple.plaquette(conf_.U) << std::endl;
+  Staples Staple;
+  CCIO::cout << "Plaquette (thin): " << Staple.plaquette(conf_) << "\n";
   ///////////////////////////////////////////////////////////////////////////////////////
   // Smearing objects
   Smear* SmearingObj;         // Empty pointer
@@ -45,9 +47,9 @@ int Test_ResMass::run() {
   // Do the actual smearing 
   for (int i = 0; i < Nsmear; i++) {
     previous_u_ = smeared_u_;
-    SmearingObj->smear(smeared_u_.U, previous_u_.U);
+    SmearingObj->smear(smeared_u_, previous_u_);
   }
-  CCIO::cout << "Plaquette (smeared): " << Staple.plaquette(smeared_u_.U) << std::endl;
+  CCIO::cout << "Plaquette (smeared): " << Staple.plaquette(smeared_u_) << std::endl;
   //////////////////////////////////////////////////////////////////////////////////////
   /*
   // Eigenvalue calculation

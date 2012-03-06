@@ -21,7 +21,7 @@ int Test_HMC::run(){
   
   RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
   Integrators::Integr = 
-    Integrators::createIntegratorFactory(HMC_node, Gfield_.Format);
+    Integrators::createIntegratorFactory(HMC_node);
 
   //Initialization
   HMCgeneral hmc_general(HMC_node);
@@ -31,7 +31,7 @@ int Test_HMC::run(){
   TIMING_START;
   try{
     CCIO::cout<< "HMC starts"<<std::endl;
-    hmc_general.evolve(Gfield_.U);
+    hmc_general.evolve(Gfield_);
   }catch(const char* error){
     CCIO::cerr << error << std::endl;
     return EXIT_FAILURE;
@@ -41,6 +41,6 @@ int Test_HMC::run(){
   CCIO::cout << "Total elapsed time (s): "<< elapsed_time/1000.0 << "\n";
 
   CCIO::cout << "Saving configuration on disk in binary format\n";
-  CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "final_conf.bin");
+  CCIO::SaveOnDisk< Format::Format_G >(Gfield_.data, "final_conf.bin");
   return 0;
 }

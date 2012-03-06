@@ -6,25 +6,8 @@
 #include "Tools/sunMatUtils.hpp"
 
 namespace FieldUtils{
-  const Field TracelessAntihermite(const GaugeField& fce){
-    using namespace SUNmat_utils;
-    
-    int Ndim = CommonPrms::instance()->Ndim();
-    int Nvol = CommonPrms::instance()->Nvol();
-    
-    Field fp(fce.Format.size());
-    for(int mu=0; mu< Ndim; ++mu){
-      for(int site=0; site<Nvol; ++site){
-	SUNmat a_h = u(fce,site,mu);
-	fp.set(fce.Format.cslice(0,site,mu),
-	       anti_hermite_traceless(a_h));
-      }
-    }
-    return fp;
-  }
-  
   const Field field_oprod(const Field& f1,const Field& f2){
-    using namespace SUNmat_utils;
+    using namespace SUNmatUtils;
 
     int Nd = CommonPrms::instance()->Nd();
     int Nvol = CommonPrms::instance()->Nvol();
@@ -43,4 +26,52 @@ namespace FieldUtils{
     }
     return f;
   }
+
+  const GaugeField TracelessAntihermite(const GaugeField& G){
+    using namespace SUNmatUtils;
+    int Ndim = CommonPrms::instance()->Ndim();
+    int Nvol = CommonPrms::instance()->Nvol();
+
+    GaugeField TAField;
+    for(int mu=0; mu< Ndim; ++mu){
+      for(int site=0; site<Nvol; ++site){
+	SetMatrix(TAField, anti_hermite_traceless(matrix(G,site,mu)),site,mu);
+      }
+    }
+    return TAField;
+  }
+
+  GaugeField1D DirSlice(const GaugeField& F, int dir){
+    return GaugeField1D(Field(F.data[F.format.dir_slice(dir)]));
+  }
+
+  void SetSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
+    G.data.set(G.format.dir_slice(dir), Gslice.data.getva());
+  }
+
+  void AddSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
+    G.data.add(G.format.dir_slice(dir), Gslice.data.getva());
+  }
+
+  void SetMatrix(GaugeField& F, const SUNmat& mat, int site, int dir){
+    F.data.set(F.format.cslice(0,site,dir), mat.getva());
+  }
+  void SetMatrix(GaugeField1D& F, const SUNmat& mat, int site){
+    F.data.set(F.format.cslice(0,site), mat.getva());
+  }
+
+  void AddMatrix(GaugeField& F, const SUNmat& mat, int site, int dir){
+    F.data.add(F.format.cslice(0,site,dir), mat.getva());
+  }
+  void AddMatrix(GaugeField1D& F, const SUNmat& mat, int site){
+    F.data.add(F.format.cslice(0,site), mat.getva());
+  }
+
+  void SetVector(FermionField& F, const SUNvec& vec, int spin, int site){
+    F.data.set(F.format.cslice(spin, site), vec.getva());
+  }
+  void AddVector(FermionField& F, const SUNvec& vec, int spin, int site){
+    F.data.add(F.format.cslice(spin, site), vec.getva());
+  }
+
 }

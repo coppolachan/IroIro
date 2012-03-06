@@ -1,10 +1,10 @@
 /*!
-  @file mdExec_Factory.hpp
+  @file mdExec_factory_abs.hpp
   @brief Defines the Factories for Molecular Dynamics Integrator
 */
 
-#ifndef MDEXEC_FACT_H_
-#define MDEXEC_FACT_H_
+#ifndef MDEXEC_FACT_ABS_HPP_
+#define MDEXEC_FACT_ABS_HPP_
 
 #include <iostream>
 #include <string>
@@ -13,11 +13,12 @@
 
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
-#include "Action/action_Factory.hpp"
-#include "Action/action_gaugetype_factory.hpp"
-#include "Action/action_fermiontype_factory.hpp"
+#include "Action/action_gaugetype_factory_abs.hpp"
+#include "Action/action_fermiontype_factory_abs.hpp"
 #include "Communicator/comm_io.hpp"
-#include "HMC/mdExec_leapfrog.hpp"
+#include "HMC/mdExec.hpp"
+
+
 /*!
  *@class IntegratorFactory
  *@brief Abstract Factory class for Molecular Dynamics Integrator
@@ -79,8 +80,7 @@ class ActionSetFactory {
   ActionSetFactory(const ActionSetFactory&){} //hide copy constructor
 
 public:  
-  ActionSet getActionSet(const Format::Format_G& GaugeForm,
-			  Field* const GaugeField){
+  ActionSet getActionSet(GaugeField* const G){
     std::multimap<int, ActionFactory* >::iterator it;
 
     ActionSet Levels;
@@ -93,7 +93,7 @@ public:
     for(it = LevelMap.begin(); it != LevelMap.end(); it++)
       Levels[(*it).first-1].
 	push_back(ActionPointers.
-		  save((*it).second->getAction(GaugeForm,GaugeField)));
+		  save((*it).second->getAction(G)));
     return Levels;
   }
 
@@ -104,45 +104,9 @@ public:
 
 };//end of class ActionSetFactory definition
 
-/*
- * :::::::::::::::::::::   Concrete classes
- */
-class MDIntegrator_LeapfrogFactory : public MDIntegratorFactory {
-  ActionSetFactory ActSetFactory;
-  const Format::Format_G& Format;
-  const XML::node Integrator_node;
-  Field* CommonField;
-  RaiiFactoryObj<Staples> StaplePointer;
-
-  MDexec* createLeapfrog(){
-    CommonField->resize(Format.size()); 
-    try{
-      return new MDexec_leapfrog(Integrator_node,
-				 ActSetFactory.
-				 getActionSet(Format,CommonField), 
-				 ActSetFactory.getMultipliers(),
-				 Format,
-				 CommonField);
-    }catch(...){
-      std::cerr << "Error in creating leapfrog" << std::endl;
-      abort();
-    }
-  }
-public:
-  MDexec* getMDIntegrator(){return createLeapfrog();}
-  
-  ~MDIntegrator_LeapfrogFactory(){delete CommonField;}
-
-  MDIntegrator_LeapfrogFactory(XML::node node,Format::Format_G& F)
-    :ActSetFactory(node),
-     Integrator_node(node),
-     Format(F),
-     CommonField(new Field){} 
-};
 
 namespace Integrators{
   static MDIntegratorFactory* Integr;
-  MDIntegratorFactory* createIntegratorFactory(XML::node,
-					       Format::Format_G&);
+  MDIntegratorFactory* createIntegratorFactory(XML::node);
 }
 #endif // MDEXEC_FACT_H_

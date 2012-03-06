@@ -17,9 +17,9 @@ public:
 
   template<class DATA, class FORMAT, class TAG>
   GeneralField<DATA,FORMAT,TAG> 
-  operator()(const GeneralField<DATA,FORMAT,TAG>& InField){
+  operator()(const GeneralField<DATA,FORMAT,TAG>& InField) const{
     GeneralField<DATA,FORMAT,TAG> OutField;
-    register int Nex = InField.get_Format().Nex();
+    register int Nex = InField.format.Nex();
 
     for (int index = 0; index < sites; ++index) {
       for (int outer_idx = 0; outer_idx < Nex; ++outer_idx){

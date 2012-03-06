@@ -18,7 +18,9 @@
 #include "Action/action_gauge_wilson.hpp"
 #include "Action/action_Nf2.hpp"
 #include "Action/action_Nf2_ratio.hpp"
-#include "Communicator/comm_io.hpp"
+#include "Dirac_ops/dirac_wilson_EvenOdd.hpp"
+#include "Solver/solver_CG.hpp"
+#include "HMC/mdExec_leapfrog.hpp"
 
 using namespace std;
 
@@ -32,19 +34,19 @@ int Test_HMC_EvenOdd::run(){
   multip[1]= 2;
   multip[2]= 2;
   
-  Field* CommonField = new Field(Gfield_.Format.size());
+  GaugeField* CommonField = new GaugeField;
 
   double mq1 = 0.10;
   double mq2 = 0.20;
 
-  DiracWilsonLike* D1 = new Dirac_Wilson_EvenOdd(mq1,CommonField);
-  DiracWilsonLike* D2 = new Dirac_Wilson_EvenOdd(mq2,CommonField);
+  DiracWilsonLike* D1 = new Dirac_Wilson_EvenOdd(mq1,&(CommonField->data));
+  DiracWilsonLike* D2 = new Dirac_Wilson_EvenOdd(mq2,&(CommonField->data));
    
   // gauge term
   ActionLevel al_1, al_2, al_3;
 
   Action* Gauge 
-    = new ActionGaugeWilson(6.0,Gfield_.Format,CommonField);
+    = new ActionGaugeWilson(6.0,CommonField);
   al_1.push_back(Gauge);
 
   // pf1 term
@@ -74,22 +76,18 @@ int Test_HMC_EvenOdd::run(){
 					   0.01,
 					   ASet,
 					   multip,
-					   Gfield_.Format,
 					   CommonField);
 
   HMCgeneral hmc_general(HMC_node, *Integrator);  
-
   ////////////// HMC calculation /////////////////
-  clock_t start_t = clock();
   try{
     CCIO::cout<< "HMC starts"<<std::endl;
-    hmc_general.evolve(Gfield_.U);
+    hmc_general.evolve(Gfield_);
   }catch(const char* error){
     CCIO::cerr << error << std::endl;
     return EXIT_FAILURE;
   }
-  clock_t end_t = clock();
-  CCIO::cout << (double)(end_t -start_t)/CLOCKS_PER_SEC 
-	     << std::endl;
+  /////////////////////////////////////////////////
+
   return 0;
 }

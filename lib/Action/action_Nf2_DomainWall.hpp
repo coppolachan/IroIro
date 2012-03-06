@@ -1,5 +1,5 @@
 /*! 
- * @file action_Nf2_DomainWall.h
+ * @file action_Nf2_DomainWall.hpp
  *
  * @brief Declaration of Action_Nf2_DomainWall class
  *
@@ -7,12 +7,8 @@
 #ifndef ACTION_NF2_DOMAINWALL_INCLUDED
 #define ACTION_NF2_DOMAINWALL_INCLUDED
 
-#include "Tools/randNum_MP.h"
-#include "Action/action.hpp"
-#include "include/fopr.h"
-#include "include/format_G.h"
-#include "Dirac_ops/dirac_Operator_Factory.hpp"
-#include "Solver/solver_Factory.hpp"
+//#include "Tools/randNum_MP.h"
+#include "Action/action_Nf2_ratio.hpp"
 #include "Dirac_ops/dirac_DomainWall.hpp"
 
 /*!
@@ -28,30 +24,17 @@ public:
   /*!
    * @brief Standard constructor 
    */
-  Action_Nf2_DomainWall(Field* const GField,
+  Action_Nf2_DomainWall(GaugeField* const F,
 			const Dirac_optimalDomainWall* D,
 			const Dirac_optimalDomainWall* Dpv,
 			const Solver* Solv,
 			const Solver* SolvPv)
-    :action_(GField,D,Dpv,Solv,SolvPv){}
+    :action_(F,D,Dpv,Solv,SolvPv){}
   
-  ~Action_Nf2_DomainWall(){}
+  void observer_update(){};
+  void init(const RandNum& rand);
 
-  void init(const RandNum& rand,const void* vp= 0){
-    action_.init(rand,vp);
-  }
-
-  double calc_H(){return action_.calc_H();}
-
-  Field md_force(const void* vp = 0){
-    Field force = action_.md_force(vp);
-#if VERBOSITY>=ACTION_VERB_LEVEL
-    monitor_force(force, "Action_Nf2_DomainWall");
-#endif
-    return force;
-  }
-
-   void observer_update(){};
-
+  double calc_H();
+  GaugeField md_force();
 };
 #endif

@@ -8,10 +8,9 @@
 
 #include<vector>
 
-#include "mdExec.h"
+#include "mdExec.hpp"
 #include "Action/action.hpp"
 #include "include/pugi_interface.h"
-#include "include/field.h"
 #include "Smearing/SmartConf.hpp"
 
 struct MDexec_leapfrogParams{
@@ -34,10 +33,10 @@ private:
   const MDexec_leapfrogParams Params;
   const std::vector<int> Nrel_;
   const ActionSet as_;
-  const Format::Format_G& gf_;
+  //  const Format::Format_G& gf_;
   ObserverList GaugeObservers;
-  Field* const U_;
-  Field P_;
+  GaugeField* const U_;
+  GaugeField P_;
 
   // Private functions
   void update_P(int lv,double ep);
@@ -54,48 +53,47 @@ public:
    MDexec_leapfrog(int Nexp, int MDiter, double step,
    		  const ActionSet as,
    		  const std::vector<int> multipliers,
-   		  const Format::Format_G& gf,
-   		  Field* const CommonF)
-     :as_(as),gf_(gf),
+   		  GaugeField* const CommonF)
+     :as_(as),
       Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
       Nrel_(multipliers),
-      U_(CommonF),P_(CommonF->size())
+      U_(CommonF),P_()
    {
      register_observers();
    }
 
+
+  
   MDexec_leapfrog(int Nexp, int MDiter, double step,
 		  const ActionSet as,
 		  const std::vector<int> multipliers,
-		  const Format::Format_G& gf,
 		  SmartConf* const CommonF)
-    :as_(as),gf_(gf),
+    :as_(as),
      Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
      Nrel_(multipliers),
-     U_(CommonF->ThinLinks),P_(CommonF->ThinLinks->size())
+     U_(CommonF->ThinLinks)
   {
     attach_observer(GaugeObservers, CommonF);//Attach smearing as 1st observer
     register_observers();
   }
-
+  
   
   MDexec_leapfrog(XML::node node,
 		  const ActionSet as,
 		  const std::vector<int> multipliers,
-		  const Format::Format_G& gf,
-		  Field* const CommonF)
-    :as_(as),gf_(gf),
+		  GaugeField* const CommonF)
+    :as_(as),
      Params(MDexec_leapfrogParams(node)),
      Nrel_(multipliers),
-     U_(CommonF),P_(CommonF->size())
+     U_(CommonF),P_()
   {
     register_observers();
   }
   
-  void init(std::vector<int>& clock,const Field& U,const RandNum& rand);
+  void init(std::vector<int>& clock,const GaugeField& U,const RandNum& rand);
   void integrator(int level,std::vector<int>& clock);
   double calc_H() const;
-  const Field get_U() const;
+  const GaugeField get_U() const;
 };
 
 #endif  //MD_LEAPFROG_INCLUDED

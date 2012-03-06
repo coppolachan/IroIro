@@ -1,4 +1,4 @@
-# Time-stamp: <2012-03-01 11:46:28 neo>
+# Time-stamp: <2012-03-05 17:12:16 neo>
 
 testdir = $(bindir)/Test
 
@@ -23,31 +23,28 @@ EXTRA_DIST = 	testResults.info	\
 		test_MultiShiftSolver.xml
 
 test_PROGRAMS = test_HMC 		\
-		test_HMC_nofact 	\
-		test_HMC_smear_noF	\
+		test_HMC_noFactories 	\
 		test_HMC_EvenOdd	\
-		test_HMC_DomainWall	\
-		test_RNG 		\
+		test_HMC_smear_noF	\
+		test_HMC_DWall_noF	\
+		test_Gauge		\
 		test_Wilson 		\
 		test_Clover 		\
 		test_Wilson_EvenOdd 	\
 		test_DomainWall		\
 		test_ResMass 		\
-		test_IO   		\
 		test_EigenModes		\
 		test_Smearing		\
-		test_Gauge		\
 		test_Overlap		\
-		test_MultiShiftSolver
+		test_MultiShiftSolver	\
+		test_RNG 		\
+		test_IO
 
-
-test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
-				testerGauge.cpp
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
 
-test_HMC_nofact_SOURCES = 	test_HMC_noFactories.cpp 	\
+test_HMC_noFactories_SOURCES = 	test_HMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
 test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
@@ -56,10 +53,11 @@ test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
 test_HMC_EvenOdd_SOURCES  =	test_HMC_EvenOdd.cpp		\
 				testerHMCeven-odd.cpp
 
-test_HMC_DomainWall_SOURCES =	test_HMC_DomainWall.cpp		\
-				testerHMC_DomainWall.cpp
+test_HMC_DWall_noF_SOURCES =	test_HMC_DWall_noFact.cpp	\
+				testerHMC_DWall_noFact.cpp
 
-test_RNG_SOURCES 	= 	test_RNG.cpp
+test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
+				testerGauge.cpp
 
 test_Wilson_SOURCES 	=	test_wilson.cpp 		\
 				testerWilson.cpp
@@ -76,26 +74,28 @@ test_DomainWall_SOURCES = 	test_DomainWall.cpp 		\
 test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 				testerResMass.cpp
 
-test_IO_SOURCES 	= 	test_IO.cpp 			\
-				testerIO.cpp
-
 test_EigenModes_SOURCES = 	test_EigenModes_IRL.cpp		\
 				testerEigenModes.cpp
 
-test_Smearing_SOURCES 	= 	test_smear.cpp			\
-				testerSmear.cpp
-
-test_Overlap_SOURCES 	= 	test_overlap.cpp		\
+test_Overlap_SOURCES 	= 	test_Overlap.cpp		\
 				testerOverlap.cpp
 
 test_MultiShiftSolver_SOURCES =	test_MultiShiftSolver.cpp	\
 				testerMultiShiftSolver.cpp
 
+test_Smearing_SOURCES   =       test_smear.cpp                  \
+                                testerSmear.cpp
+
+test_RNG_SOURCES 	= 	test_RNG.cpp
+
+test_IO_SOURCES 	= 	test_IO.cpp 			\
+				testerIO.cpp
+
 include_HEADERS 	=	tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
 				test_HMC_EvenOdd.hpp		\
-				test_HMC_DomainWall.hpp		\
+				test_HMC_DWall_noFact.hpp	\
 				test_wilson.hpp 		\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
@@ -105,5 +105,5 @@ include_HEADERS 	=	tests.hpp			\
 				test_EigenModes_IRL.hpp		\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
-				test_overlap.hpp		\
+				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp

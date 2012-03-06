@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// dirac_wilson.h
+// dirac_wilson.hpp
 //----------------------------------------------------------------------
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
@@ -9,10 +9,11 @@
 #include "include/pugi_interface.h"
 #include "Main/Geometry/siteIndex_eo.h"
 
-#include "Tools/sunMat.h"
-#include "Tools/sunVec.h"
-#include "dirac.h"
-//#define IMPROVED_WILSON
+#include "Tools/sunMat.hpp"
+#include "Tools/sunVec.hpp"
+#include "dirac.hpp"
+
+#define IMPROVED_WILSON
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;

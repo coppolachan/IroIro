@@ -45,7 +45,7 @@ Map::Map(const int dir, const ShiftSign sign):
   
 }  
 
-void Map::transfer(basic_type* receive, basic_type* send, size_t datasize){
+void Map::transfer(basic_type* receive, basic_type* send, size_t datasize) const{
   (Communicator::instance()->*comm_transfer)(receive, send, datasize,direction);
 }
  

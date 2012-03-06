@@ -8,7 +8,6 @@
 
 #include "action.hpp"
 #include "include/common_fields.hpp"
-#include "Measurements/GaugeM/staples.hpp"
 #include "include/pugi_interface.h"
 
 
@@ -61,50 +60,33 @@ struct ActionGaugeRectPrm {
  */
 class ActionGaugeRect :public Action {
 private:
+  GaugeField* const u_;
   ActionGaugeRectPrm Params;
-  const int Ndim_;
   const int Nvol_;
-  const int Nc_;
-  const Format::Format_G& gf_;
-  const Format::Format_G* sf_;
-  const Staples* stpl_;
-  Field* const u_;
 
 public:
-  void  init(const RandNum&,const void* = 0){};
+  void  init(const RandNum&){};
   double calc_H();
-  Field  md_force(const void* = 0);
+  GaugeField  md_force();
   void observer_update(){};
   
   ActionGaugeRect(const double beta, 
 		  const double c_plaq_,
-		  const double c_rect_, 
-		  const Format::Format_G& gf, 
-		  Field* const GField)
+		  const double c_rect_,  
+		  GaugeField* const GField)
     :u_(GField),
      Params(ActionGaugeRectPrm(beta, c_plaq_, c_rect_)), 
-     Ndim_(CommonPrms::instance()->Ndim()),
-     Nvol_(CommonPrms::instance()->Nvol()),
-     Nc_(  CommonPrms::instance()->Nc()),
-     gf_(gf),
-     sf_(new Format::Format_G(Nvol_,1)),
-     stpl_(new Staples(gf_)){}
+     Nvol_(CommonPrms::instance()->Nvol()){}
   
   /*!
    * @brief Constructor for factories
    *
    */
-  ActionGaugeRect(const XML::node node, 
-		  const Format::Format_G& gf,
-		  Field* const GField)
+  ActionGaugeRect(const XML::node node,
+		  GaugeField* const GField)
     :u_(GField),
      Params(ActionGaugeRectPrm(node)), 
-     Ndim_(CommonPrms::instance()->Ndim()),
-     Nvol_(CommonPrms::instance()->Nvol()),
-     Nc_(  CommonPrms::instance()->Nc()),
-     gf_(gf),
-     sf_(new Format::Format_G(Nvol_,1)),
-     stpl_(new Staples(gf_)){}
+     Nvol_(CommonPrms::instance()->Nvol()){}
 
   /*!
    * @brief Specialized constructor for the case of
@@ -115,20 +97,10 @@ public:
   ActionGaugeRect(const XML::node node, 
 		  const double c_plaq,
 		  const double c_rect,
-		  const Format::Format_G& gf,
-		  Field* const GField)
+		  GaugeField* const GField)
     :u_(GField),
      Params(ActionGaugeRectPrm(node, c_plaq, c_rect)), 
-     Ndim_(CommonPrms::instance()->Ndim()),
-     Nvol_(CommonPrms::instance()->Nvol()),
-     Nc_(  CommonPrms::instance()->Nc()),
-     gf_(gf),
-     sf_(new Format::Format_G(Nvol_,1)),
-     stpl_(new Staples(gf_)){}
-
+     Nvol_(CommonPrms::instance()->Nvol()){}
   
-  ~ActionGaugeRect(){delete stpl_;}
 };
-
-
 #endif

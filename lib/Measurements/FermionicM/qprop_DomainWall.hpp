@@ -6,7 +6,7 @@
 #define QPROP_OPTIMALDOMAINWALL_INCLUDED
 
 #include "quark_propagators.hpp"
-#include "Dirac_ops/dirac.h"
+#include "Dirac_ops/dirac.hpp"
 #include "source.hpp"
 
 typedef std::vector<Field> prop_t;

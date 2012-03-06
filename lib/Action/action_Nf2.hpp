@@ -6,11 +6,11 @@
 #ifndef ACTION_NF2_INCLUDED
 #define ACTION_NF2_INCLUDED
 
-#include "Tools/randNum_MP.h"
 #include "Action/action.hpp"
-#include "Dirac_ops/dirac.h"
+#include "Dirac_ops/dirac.hpp"
 #include "Solver/solver.hpp"
 #include "Smearing/SmartConf.hpp"
+
 /*!
  * @class Action_Nf2
  *
@@ -18,37 +18,41 @@
  */
 class Action_Nf2 :public Action{
 private:
-  Field* const u_; /*!< The gauge field */
+  GaugeField* const u_;      /*!< The gauge field */
   DiracWilsonLike* const D_; /*!< Dirac Kernel operator */ 
-  const Solver* slv_;  /*!< Linear solver operator */
-  size_t fsize_;
-  Field phi_;
+  const Solver* slv_;        /*!< Linear solver operator */
+  FermionField phi_;
+  int fermion_size_;
   bool smeared_;
   SmartConf* SmartField_;
   
-  Field DdagD_inv(const Field& src);
+  FermionField DdagD_inv(const FermionField& src);
   void attach_smearing(SmartConf*);
 public:
   /*!
    * @brief Standard constructor 
    * CG solver is assumed
    */
-  Action_Nf2(Field* const GField,
+  Action_Nf2(GaugeField* const GField,
 	     DiracWilsonLike* const D, 
 	     const Solver* Solv,
 	     bool smeared = false,
 	     SmartConf* SmearObj = NULL)
-    :u_(GField),D_(D),slv_(Solv),
-     fsize_(D_->fsize()),phi_(fsize_),
-     smeared_(smeared){
+    :u_(GField),
+     D_(D),
+     slv_(Solv),
+     smeared_(smeared),
+     fermion_size_(D->fsize()){
     if (smeared_ && SmearObj !=NULL) attach_smearing(SmearObj);
   }
 
   ~Action_Nf2(){}
 
-  void init(const RandNum& rand,const void* = 0);
-  Field md_force(const void* = 0);
-  double calc_H();
+  void init(const RandNum& rand);
   void observer_update();
+
+  double calc_H();
+  GaugeField md_force();
+
 };
 #endif

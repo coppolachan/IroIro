@@ -11,6 +11,7 @@
 #include "include/commandline.hpp"
 
 using namespace XML;
+using namespace MapsEnv;
 
 int main(int argc, char* argv[]){
 
@@ -21,11 +22,11 @@ int main(int argc, char* argv[]){
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
+  initialize_mapper();
 
   //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
+  GaugeGlobal GaugeF(geom);
   GaugeF.initialize(top_node);
-
   /////////////
   
   node MS_node = top_node;

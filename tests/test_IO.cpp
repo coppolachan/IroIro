@@ -17,14 +17,14 @@ int Test_IO::run(){
   CCIO::cout << "Test IO Starts ------------------------\n";
   CCIO::cout << "Running on "<<Communicator::instance()->size() << " nodes\n";
   
-  Staples Staple(Gfield_.Format);
-  CCIO::cout << "Plaquette : " << Staple.plaquette(Gfield_.U) << std::endl;
+  Staples Staple;
+  CCIO::cout << "Plaquette : " << Staple.plaquette(Gfield_) << std::endl;
 
-  CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "temp_out");
+  CCIO::SaveOnDisk< Format::Format_G >(Gfield_.data, "temp_out");
 
-  CCIO::ReadFromDisk< Format::Format_G >(Gfield_.U, "temp_out");
-  Staples Staple2(Gfield_.Format);
-  CCIO::cout << "Plaquette : " << Staple2.plaquette(Gfield_.U) << std::endl;
+  CCIO::ReadFromDisk< Format::Format_G >(Gfield_.data, "temp_out");
+  Staples Staple2;
+  CCIO::cout << "Plaquette : " << Staple2.plaquette(Gfield_) << std::endl;
 
   return 0;
 }

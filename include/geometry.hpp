@@ -12,7 +12,6 @@
 #include "include/commonPrms.h"
 #include "include/pugi_interface.h"
 #include "Main/Geometry/siteIndex.h"
-#include "Communicator/communicator.h"
 
 /*!
  * @class Geometry
@@ -62,6 +61,7 @@ class Geometry {
 		 * and MPI nodes distribution on 4 dimensions */ 
   SiteIndex* idx;  /*!< Singleton containing the geometry (nearest neighbors...) */
   CommonPrms* parameters; /*!< Singleton handling the global lattice parameters */
+  
   /*!
    * @brief Constructor - Initialized geometry object
   */

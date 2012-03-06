@@ -20,7 +20,7 @@ class Map{
 
   typedef void (Communicator::*comm_transfer_func)(basic_type*, basic_type*, int, int);
   comm_transfer_func comm_transfer;
-  void transfer(basic_type*, basic_type*, size_t);
+  void transfer(basic_type*, basic_type*, size_t) const;
 
   Map(){}; // default constructor empty
 public:
@@ -28,7 +28,7 @@ public:
   
   template<class DATA, class FORMAT, class TAG>
   GeneralField<DATA,FORMAT,TAG> 
-  operator()(const GeneralField<DATA,FORMAT,TAG>& InField){
+  operator()(const GeneralField<DATA,FORMAT,TAG>& InField) const {
     
     GeneralField<DATA,FORMAT,TAG> OutField;
     register int Nex = InField.get_Format().Nex();

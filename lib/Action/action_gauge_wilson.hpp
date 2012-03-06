@@ -28,46 +28,35 @@ struct ActionGaugeWilsonPrm {
  */
 class ActionGaugeWilson :public Action {
 private:
-  Field* const u_;
-  const Format::Format_G& gf_;
-  const Staples* stpl_;
+  GaugeField* const u_;
+  const Staples stpl_;
   ActionGaugeWilsonPrm Params;
-  const int Ndim_;
   const int Nvol_;
 
 public:
-  void  init(const RandNum&,const void* = 0){
-    CCIO::cout<<"ActionGaugeWilson initialized"<<std::endl;
-  }
+  void  init(const RandNum&){}
   double calc_H();
-  Field  md_force(const void* = 0);
+  GaugeField  md_force();
   void observer_update(){}; 
-
+  
   ActionGaugeWilson(const double beta, 
-		    const Format::Format_G& gf, 
-		    Field* const GField)
+		    GaugeField* const GField)
     :u_(GField),
-     gf_(gf),
-     stpl_(new Staples(gf)),
+     stpl_(),
      Params(ActionGaugeWilsonPrm(beta)), 
-     Ndim_(CommonPrms::instance()->Ndim()),
      Nvol_(CommonPrms::instance()->Nvol()){}
-
-
+  
   /*!
    * @brief Constructor with XML reader
    *
    */
-  ActionGaugeWilson(const XML::node node, 
-		    const Format::Format_G& gf,
-		    Field* const GField)
+  ActionGaugeWilson(const XML::node node,
+		    GaugeField* const GField)
     :u_(GField),
-     gf_(gf),
-     stpl_(new Staples(gf_)),
+     stpl_(),
      Params(ActionGaugeWilsonPrm(node)), 
-     Ndim_(CommonPrms::instance()->Ndim()),
      Nvol_(CommonPrms::instance()->Nvol()){}
-
-  ~ActionGaugeWilson(){delete stpl_;}
+  
+  ~ActionGaugeWilson(){}
 };
 #endif

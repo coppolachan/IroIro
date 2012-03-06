@@ -4,7 +4,7 @@
   @brief Definition of Even Odd wilson operator
 */
 //--------------------------------------------------------------
-#include "dirac_wilson_EvenOdd.h"
+#include "dirac_wilson_EvenOdd.hpp"
 using namespace std;
 
 const Field Dirac_Wilson_EvenOdd::mult_eo(const Field& f) const{ 

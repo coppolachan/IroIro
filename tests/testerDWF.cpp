@@ -9,29 +9,11 @@
 
 #include "test_DomainWall.hpp"
 
-using namespace XML;
+int main(int argc, char* argv[]){
 
-int main(){
-
-  
-  //Reading input file
-  node top_node = getInputXML("test_DomainWall.xml");  
-
-  //Initializing geometry using XML input
-  Geometry geom(top_node);
-
-  //Initialize GaugeField using XML input
-  GaugeField GaugeF(geom);
-  GaugeF.initialize(top_node);
-
-  /////////////
-  
-  node DWF_node = top_node;
-  descend(DWF_node, "TestOptimalDomainWall");
-  
-  
-  Test_optimalDomainWall DomWallTest(DWF_node,GaugeF);
-  DomWallTest.run();
+  CREATE_TEST(Test_optimalDomainWall);
+  RUN_TEST;
+  CLEAR_TEST;
 
   return 0;
 }

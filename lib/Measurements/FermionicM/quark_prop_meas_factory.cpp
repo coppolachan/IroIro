@@ -1,8 +1,8 @@
 /*!
- * @file fermion_meas_factory.cpp 
- * @brief Fermionic measurements operators factories selector
+ * @file quark_prop_meas_factory.cpp 
+ * @brief QuarkPropagators measurements operators factories selector
  */
-#include "fermion_meas_factory.hpp"
+#include "quark_prop_meas_factory.hpp"
 #include <string.h>
 
 namespace QuarkPropagators {

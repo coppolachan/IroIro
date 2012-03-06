@@ -1,134 +1,132 @@
 #include "APEsmear.hpp"
-
-using namespace std;
-
 #include "Measurements/GaugeM/staples.hpp"
-#include "include/common_fields.hpp"
+#include "Main/Geometry/mapper.hpp"
 #include "Tools/sunMatUtils.hpp"
 
-typedef ShiftField_up<GaugeFieldFormat> FieldUP;
-typedef ShiftField_dn<GaugeFieldFormat> FieldDN;
 
 //====================================================================
 std::vector<double> Smear_APE::set_rho(const double common_rho)const{
 
-  std::vector<double> res(Ndim*Ndim);
+  std::vector<double> res(NDIM_*NDIM_);
 
-  for(int mu = 0; mu < Ndim; ++mu){
-   for(int nu = 0; nu < Ndim; ++nu){
-     res[mu + nu*Ndim] = common_rho;
+  for(int mu = 0; mu < NDIM_; ++mu){
+   for(int nu = 0; nu < NDIM_; ++nu){
+     res[mu + nu*NDIM_] = common_rho;
    }
   }
-  for(int mu = 0; mu < Ndim; ++mu){
-     res[mu + mu*Ndim] = 0.0;
+  for(int mu = 0; mu < NDIM_; ++mu){
+     res[mu + mu*NDIM_] = 0.0;
   }
 
   return res;
 }
 
 //====================================================================
-void Smear_APE::smear(Field& u_smr, const Field& u) const{
-
+void Smear_APE::smear(GaugeField& u_smr, const GaugeField& u) const{
+  using namespace FieldUtils;
   double d_rho;
   GaugeField1D Cup, Cdn;
-  Staples stpl(Gformat);
+  Staples stpl;
 
   u_smr = 0.0;
 
-  for(int mu = 0; mu < Ndim; ++mu){
-   for(int nu = 0; nu < Ndim; ++nu){
-     Cup.U = stpl.upper(u,mu,nu);
-     Cdn.U = stpl.lower(u,mu,nu);
+  for(int mu = 0; mu < NDIM_; ++mu){
+   for(int nu = 0; nu < NDIM_; ++nu){
+     Cup = stpl.upper(u,mu,nu);
+     Cdn = stpl.lower(u,mu,nu);
 
-     d_rho = rho[mu + Ndim * nu];
+     d_rho = rho[mu + NDIM_ * nu];
 
-     Cup.U += Cdn.U;
-     Cup.U *= d_rho;
-     u_smr.add(Gformat.dir_slice(mu),Cup.U.getva());
+     Cup += Cdn;
+     Cup *= d_rho;
+     AddSlice(u_smr, Cup, mu);
    }
   }
 }
 //====================================================================
-void Smear_APE::derivative(Field& SigmaTerm,
-			   const Field& iLambda, 
-			   const Field& Gauge) const{
-  using namespace SUNmat_utils;
+void Smear_APE::derivative(GaugeField& SigmaTerm,
+			   const GaugeField& iLambda, 
+			   const GaugeField& Gauge) const{
+  using namespace SUNmatUtils;
+  using namespace FieldUtils;
+  using namespace MapsEnv;
 
-  Staples stpl(Gformat);
+  Staples stpl;
   GaugeField1D staple, u_tmp, iLambda_mu, iLambda_nu;
   GaugeField1D U_mu, U_nu;
+  GaugeField1D sh_field;
   SUNmat temp_mat, temp_mat2;
   double rho_munu, rho_numu;
 
   int Nvol = CommonPrms::instance()->Nvol();
 
-  for(int mu = 0; mu < Ndim; ++mu){
-    FieldUP UpMu(&staple.Format,mu);//1D field shifter
-    U_mu       =   Gauge[Gformat.dir_slice(mu)]; 
-    iLambda_mu = iLambda[Gformat.dir_slice(mu)];
+  for(int mu = 0; mu < NDIM_; ++mu){
+    //FieldUP UpMu(&staple.Format,mu);//1D field shifter
+    U_mu       = DirSlice(  Gauge, mu);
+    iLambda_mu = DirSlice(iLambda, mu);
     
-    for(int nu = 0; nu < Ndim; ++nu){
+    for(int nu = 0; nu < NDIM_; ++nu){
       if(nu==mu) continue;
       
-      FieldDN DnNu(&staple.Format,nu);
-      FieldUP UpNu(&staple.Format,nu);
-      U_nu       =   Gauge[Gformat.dir_slice(nu)];
-      iLambda_nu = iLambda[Gformat.dir_slice(nu)];
+      //FieldDN DnNu(&staple.Format,nu);
+      //FieldUP UpNu(&staple.Format,nu);
+      U_nu       = DirSlice(  Gauge, nu);
+      iLambda_nu = DirSlice(iLambda, nu);
       
-      rho_munu = rho[mu + Ndim * nu];
-      rho_numu = rho[nu + Ndim * mu];
+      rho_munu = rho[mu + NDIM_ * nu];
+      rho_numu = rho[nu + NDIM_ * mu];
       
-      staple.U = stpl.upper(Gauge,mu,nu);
+      staple = stpl.upper(Gauge,mu,nu);
       
       for (int site = 0; site < Nvol; ++site){
-	temp_mat = u_dag(staple,site) * u(iLambda_nu,site);
+	temp_mat = matrix_dag(staple,site) * matrix(iLambda_nu,site);
 	temp_mat *= - rho_numu;
-	SigmaTerm.add(Gformat.cslice(0,site,mu),temp_mat.getva());
+	AddMatrix(SigmaTerm, temp_mat, site, mu);
       }//-r_numu*U_nu(x+mu)*Udag_mu(x+nu)*Udag_nu(x)*Lambda_nu(x)
 
-      UpMu.setf(iLambda_nu.U);
+      sh_field = shift(iLambda_nu, mu, Forward);
       for (int site = 0; site < Nvol; ++site){
-	temp_mat = u(UpMu,site) * u_dag(staple,site);
+	temp_mat = matrix(sh_field,site) * matrix_dag(staple,site);
 	temp_mat *= rho_numu;
-	SigmaTerm.add(Gformat.cslice(0,site,mu),temp_mat.getva());
+	AddMatrix(SigmaTerm, temp_mat, site, mu);
       }//r_numu*Lambda_nu(mu)*U_nu(x+mu)*Udag_mu(x+nu)*Udag_nu(x)
  
-      UpNu.setf(iLambda_mu.U);
+      sh_field = shift(iLambda_mu, nu, Forward);
       for (int site = 0; site < Nvol; ++site){
-	temp_mat = u(U_nu,site) * u(UpNu,site) * u_dag(U_nu,site);
-	temp_mat = u_dag(staple,site) * temp_mat;
+	temp_mat = matrix(U_nu,site) * matrix(sh_field,site) * matrix_dag(U_nu,site);
+	temp_mat = matrix_dag(staple,site) * temp_mat;
 	temp_mat *= - rho_munu;
-	SigmaTerm.add(Gformat.cslice(0,site,mu),temp_mat.getva());
+	AddMatrix(SigmaTerm, temp_mat, site, mu);
       }//-r_munu*U_nu(x+mu)*Udag_mu(x+nu)*Lambda_mu(x+nu)*Udag_nu(x)
-
- 
-     staple.U = 0.0;
-      UpMu.setf(U_nu.U);
-      for (int site = 0; site < Nvol; ++site){
-	temp_mat2 = u_dag(UpMu,site) * u_dag(U_mu,site);
-	temp_mat = temp_mat2  * u(iLambda_mu,site) * u(U_nu,site);
-	temp_mat *= - rho_munu;
-	staple.U.add(staple.Format.cslice(0,site,0),temp_mat.getva());
-	temp_mat = temp_mat2 * u(iLambda_nu,site) * u(U_nu,site);
-	temp_mat *= rho_numu;
-	staple.U.add(staple.Format.cslice(0,site,0),temp_mat.getva());
-      }     
-
-      for (int site = 0; site < Nvol; ++site){
-	temp_mat = u_dag(U_nu,site) * u(iLambda_nu,site);
-	u_tmp.U.set(u_tmp.Format.cslice(0,site,0),temp_mat.getva());
-      }     
-      UpMu.setf(u_tmp.U);
-
-      for (int site = 0; site < Nvol; ++site){
-	temp_mat = u(UpMu,site) * u_dag(U_mu,site) * u(U_nu,site);
-	temp_mat *= - rho_numu;
-	staple.U.add(staple.Format.cslice(0,site,0),temp_mat.getva());
-      }     
-
-      DnNu.setf(staple.U);
       
-      SigmaTerm.add(Gformat.dir_slice(mu),DnNu.getva());
+      
+      staple = 0.0;
+      sh_field = shift(U_nu, mu, Forward);
+      for (int site = 0; site < Nvol; ++site){
+	temp_mat2 = matrix_dag(sh_field,site) * matrix_dag(U_mu,site);
+	temp_mat = temp_mat2  * matrix(iLambda_mu,site) * matrix(U_nu,site);
+	temp_mat *= - rho_munu;
+	AddMatrix(staple, temp_mat, site);
+	temp_mat = temp_mat2 * matrix(iLambda_nu,site) * matrix(U_nu,site);
+	temp_mat *= rho_numu;
+	AddMatrix(staple, temp_mat, site);
+      }     
+
+      for (int site = 0; site < Nvol; ++site){
+	temp_mat = matrix_dag(U_nu,site) * matrix(iLambda_nu,site);
+	SetMatrix(u_tmp, temp_mat, site);
+      }     
+      
+      sh_field = shift(u_tmp, mu, Forward);
+      for (int site = 0; site < Nvol; ++site){
+	temp_mat = matrix(sh_field,site) * matrix_dag(U_mu,site) * matrix(U_nu,site);
+	temp_mat *= - rho_numu;
+	AddMatrix(staple, temp_mat, site);
+      }     
+
+      sh_field = shift(staple, nu, Backward);
+      
+      AddSlice(SigmaTerm, sh_field, mu);
 
     }
   }

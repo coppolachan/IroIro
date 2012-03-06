@@ -6,6 +6,9 @@
  *
  */
 
+#ifndef COMMANDLINE_H_
+#define COMMANDLINE_H_
+
 struct CommandOptions{
   char* filename;
   char* output;
@@ -13,3 +16,5 @@ struct CommandOptions{
 };
 
 CommandOptions ReadCmdLine(int argc, char* argv[]);
+
+#endif

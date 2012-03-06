@@ -12,7 +12,7 @@
 #define FOPR_INCLUDED
 
 #include "field.h"
-#include "Dirac_ops/dirac.h"
+#include "Dirac_ops/dirac.hpp"
 
 class Fopr{
 public:

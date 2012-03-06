@@ -7,7 +7,7 @@
 #include "EigenModes/sortEigen.h"
 #include "include/fopr.h"
 #include "include/fopr_chebyshev_DdagD.h"
-#include "Dirac_ops/dirac_wilson.h"
+#include "Dirac_ops/dirac_wilson.hpp"
 #include <stdio.h>
 
 using namespace std;
@@ -30,7 +30,7 @@ int Test_EigenModes_IRL::lowlying(){
 
   //double mq  = 0.1666666666666;
   double mq  = -1.6;
-  Fopr_H Hw(new Dirac_Wilson(mq, &(u_.U)));
+  Fopr_H Hw(new Dirac_Wilson(mq, &(u_.data)));
   SortEigen_low sort;
   int    Nk = 20;
   int    Np = 50;
@@ -65,7 +65,7 @@ int Test_EigenModes_IRL::highest(){
   Format::Format_F ff(CommonPrms::instance()->Nvol());
   double mq  = 0.166666666666;
   
-  Fopr_H Hw(new Dirac_Wilson(mq,&(u_.U)));
+  Fopr_H Hw(new Dirac_Wilson(mq,&(u_.data)));
   SortEigen_high sort;
   int    Nk = 20;
   int    Np = 20;
@@ -106,7 +106,7 @@ int Test_EigenModes_IRL::chebyshev()
   double vmax = 2.50;
   double mq  = 0.1666666666666666;
 
-  DiracWilsonLike* Kernel = new Dirac_Wilson(mq, &(u_.U));
+  DiracWilsonLike* Kernel = new Dirac_Wilson(mq, &(u_.data));
 
   Fopr_Chebyshev_DdagD Tn_DdagD(Npoly,
 				vthrs,

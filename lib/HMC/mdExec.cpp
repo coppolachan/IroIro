@@ -2,7 +2,7 @@
   @file mdExec.cpp
   @brief utilities for MD including funcs to generate initial HMC momentum
  */
-#include "mdExec.h"
+#include "mdExec.hpp"
 #include "include/format_A.h"
 #include "include/format_G.h"
 #include "include/field.h"
@@ -11,15 +11,15 @@
 using namespace std;
 
 namespace MDutils{
-  void md_mom(Field& P,const RandNum& rand,const Format::Format_G& gf){
+  void md_mom(GaugeField& P,const RandNum& rand){
     if(CommonPrms::instance()->Nc() == 3){
-      md_mom_su3(P,rand,gf);
+      md_mom_su3(P,rand);
     }else{
       throw "MD momentum P is not implemented for Nc_!=3.";
     }
   }
 
-  void md_mom_su3(Field& P,const RandNum& rand,const Format::Format_G& gf){
+  void md_mom_su3(GaugeField& P,const RandNum& rand){
 
     static const double sq3i = 1.0/sqrt(3.0);
     int Nvol = CommonPrms::instance()->Nvol();
@@ -56,7 +56,7 @@ namespace MDutils{
 			0.0,  
 			-2*sq3i*pj[fmt.index(7,site,d)]};
 	
-	P.set(gf.cslice(0,site,d),valarray<double>(pjp,18));
+	P.data.set(P.format.cslice(0,site,d),valarray<double>(pjp,18));
       }
     }
   }

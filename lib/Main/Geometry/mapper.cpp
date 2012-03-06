@@ -6,10 +6,19 @@
 
 */
 
-#include "include/macros.hpp"
 #include "mapper.hpp"
+#include "include/macros.hpp"
 
-Mapper::Mapper(){
+
+namespace MapsEnv{
+  Mapper shift;
+
+  void initialize_mapper() {
+    shift.fill();
+  }
+}
+
+void Mapper::fill(){
   for (int dir = 0; dir < NDIM_ ; ++dir ) {
     ShiftsMap.push_back(Map(dir, Backward));
     ShiftsMap.push_back(Map(dir, Forward));

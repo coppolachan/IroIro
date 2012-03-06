@@ -17,8 +17,8 @@ namespace FermionAction {
       if (!strcmp(Action_name, "TwoFlavorsRatio")) 
 	return new TwoFlavorRatioActionFactory(node);
 
-      if (!strcmp(Action_name, "TwoFlavorsDomainWall_4D")) 
-	return new TwoFlavorActionFactory(node);
+      //      if (!strcmp(Action_name, "TwoFlavorsDomainWall_4D")) 
+      //	return new TwoFlavorActionFactory(node);
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D")) 
 	return new TwoFlavorDomainWall5dActionFactory(node);
 

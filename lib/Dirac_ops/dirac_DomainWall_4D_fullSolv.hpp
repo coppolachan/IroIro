@@ -7,7 +7,7 @@
 
 #include "Dirac_ops/dirac_DomainWall.hpp"
 #include "Solver/solver.hpp"
-#include "Solver/solver_CG.h"
+#include "Solver/solver_CG.hpp"
 #include "include/fopr.h"
 
 class Format_F;

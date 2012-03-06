@@ -6239,16 +6239,18 @@ Summary of configuration for $PACKAGE $VERSION
 
 The following optional features are enabled:
 
-Architecture  	              : $arch
-Cross compilation             : `if test "x$cross_compiling" = xyes; then echo yes; else echo no; fi`
-Multicore MPI version enabled : $mpi
-build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
-graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
+- architecture                  : $arch
+- cross compilation             : `if test "x$cross_compiling" = xyes; then echo yes; else echo no; fi`
+- multicore MPI version enabled : $mpi
+- build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
+- graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
 
-Source code location          : $srcdir
-Install path                  : $prefix
+Directories:
 
-Compiler Flags used:
+- Source code location          : $srcdir
+- Install path                  : $prefix
+
+Compiler flags setup:
 -------------------------------
 CXX                           : $CXX
 CXXFLAGS                      : $CXXFLAGS

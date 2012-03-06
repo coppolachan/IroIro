@@ -10,8 +10,8 @@
 #include "Tools/RAIIFactory.hpp"
 
 #include "Solver/solver.hpp"
-#include "Solver/solver_CG.h"
-#include "Solver/solver_BiCGStab.h"
+#include "Solver/solver_CG.hpp"
+#include "Solver/solver_BiCGStab.hpp"
 
 /*!
  * @brief Abstract base class for creating Solver operators
