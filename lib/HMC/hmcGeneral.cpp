@@ -30,7 +30,7 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
 
   // Actual updates
   for(int iter=Params.StartingConfig; 
-      iter <= Params.Nsweeps+Params.StartingConfig; ++iter){
+      iter < Params.Nsweeps+Params.StartingConfig; ++iter){
     CCIO::cout << "-- # Sweep = "<< iter <<  "\n";
     CCIO::cout << "---------------------------\n";
     double timer;

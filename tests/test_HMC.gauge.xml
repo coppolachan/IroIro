@@ -14,6 +14,7 @@
   <HMC>
     <Nsweeps>10</Nsweeps>
     <Thermalization>0</Thermalization>
+    <StartingConfig>1</StartingConfig>
     
     <RandomNumberGen name="Mersenne Twister">
       <!--   <seedFile>seed_file</seedFile>
