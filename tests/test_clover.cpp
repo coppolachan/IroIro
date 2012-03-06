@@ -3,14 +3,15 @@
  * @brief Tests for the propagators 
  */
 #include "test_clover.hpp"
-#include "Measurements/FermionicM/fermion_meas_factory.hpp"
+#include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
 
 #include "Dirac_ops/dirac_clover.hpp"
-#include "Solver/solver_CG.h"
-#include "Solver/solver_BiCGStab.h"
-#include "Measurements/FermionicM/qprop.h"
+#include "Solver/solver_CG.hpp"
+#include "Solver/solver_BiCGStab.hpp"
+#include "Measurements/FermionicM/qprop.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
+#include "Measurements/GaugeM/staples.hpp"
 #include "Tools/randNum_MT19937.h"
 #include <stdio.h>
 
@@ -23,8 +24,8 @@ int Test_Clover::run(){
   QuarkPropagator* QP;
   XML::descend(clover_node_, "QuarkPropagator");
 
-  Staples Staple(conf_.Format);
-  CCIO::cout << "Plaquette : " << Staple.plaquette(conf_.U) << std::endl;
+  Staples Staple;
+  CCIO::cout << "Plaquette : " << Staple.plaquette(conf_) << std::endl;
 
 
   QuarkPropagatorFactory* QP_Factory = 
@@ -45,7 +46,7 @@ int Test_Clover::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
+  Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.data));
   //Kernel->update_internal_state();
 
   // Solver definition

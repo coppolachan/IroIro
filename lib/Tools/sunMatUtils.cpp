@@ -19,8 +19,7 @@ namespace SUNmatUtils{
   }
 
   SUNmat zero(){
-    SUNmat tmp(0.0);
-    return tmp;
+    return SUNmat(0.0);
   }
 
   double ReTr(const SUNmat& m){

@@ -234,6 +234,7 @@ private:
 //eventually move to a different file
 namespace FieldUtils{
   const GaugeField TracelessAntihermite(const GaugeField&);
+  const GaugeField1D field_oprod(const FermionField&,const FermionField&);
 
   // Field type-type transformations
   GaugeField1D DirSlice(const GaugeField& F, int dir);

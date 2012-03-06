@@ -6,23 +6,21 @@
 #include "Tools/sunMatUtils.hpp"
 
 namespace FieldUtils{
-  const Field field_oprod(const Field& f1,const Field& f2){
+  const GaugeField1D field_oprod(const FermionField& f1,
+				 const FermionField& f2){
     using namespace SUNmatUtils;
 
+    GaugeField1D f;
+    SUNmat mat;
     int Nd = CommonPrms::instance()->Nd();
     int Nvol = CommonPrms::instance()->Nvol();
 
-    Format::Format_F ff(Nvol);
-    Format::Format_G gf(Nvol,1);
-    Field f(gf.size());
-    
     for(int site=0; site<Nvol; ++site){
-      SUNmat mat(0.0);
+      mat.zero();
       for(int s=0; s<Nd; ++s){
-	mat += outer_prod(SUNvec(f1[ff.cslice(s,site)]),
-			  SUNvec(f2[ff.cslice(s,site)]));
+	mat += outer_prod(vect(f1, s, site), vect(f2, s, site));
       }
-      f.set(gf.islice(site),mat.getva());
+      SetMatrix(f, mat, site);
     }
     return f;
   }

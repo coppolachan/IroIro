@@ -108,7 +108,7 @@ void Dirac_Clover::set_csw() {
 /*! @brief Calculates the term \f$F_{\mu.\nu}\f$  */
 void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
 				     const int mu, const int nu){
-  using namespace SUNmat_utils;
+  using namespace SUNmatUtils;
   using namespace FieldUtils;
   using namespace MapsEnv;
 
@@ -116,14 +116,15 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   GaugeField1D Cup, Cdn;
   GaugeField1D U_mu;  /*< @brief \f$U_\mu(x)\f$ */
   GaugeField1D w1, w2, v1, v2;
+  Staples stpl;
 
   //really temporary - to be eliminated in future
   GaugeField temp_u_(*u_);
   //.......................................
   U_mu = DirSlice(temp_u_, mu);
 
-  Cup.U = stpl_.upper(temp_u_,mu,nu); // Upper staple V_+mu
-  Cdn.U = stpl_.lower(temp_u_,mu,nu); // Lower staple V_-mu
+  Cup = stpl.upper(temp_u_,mu,nu); // Upper staple V_+mu
+  Cdn = stpl.lower(temp_u_,mu,nu); // Lower staple V_-mu
 
   for(int site = 0; site < Nvol_; ++site){
     SetMatrix(w1, matrix(U_mu,site)    * matrix_dag(Cup,site), site);// U_mu(x)*(V_+mu)^dag
@@ -276,7 +277,7 @@ const Field Dirac_Clover::gamma5(const Field& f) const{
 const Field Dirac_Clover::mult(const Field& f) const{
   FermionField w, w2;
 
-  w  = Dw->mult(f);
+  w.data  = Dw->mult(f);
   mult_sw(w2,FermionField(f));
   w -= w2;
   return w.data;

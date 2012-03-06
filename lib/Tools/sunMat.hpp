@@ -45,7 +45,7 @@ public:
 
   SUNmatrix& dag();
   SUNmatrix& unity();
-  SUNmatrix& zero();
+  SUNmatrix& zero() { va_ = 0.0; }
   SUNmatrix& xI();
   SUNmatrix& reunit();
 
