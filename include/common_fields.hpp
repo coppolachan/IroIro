@@ -55,6 +55,10 @@ public:
 
   double norm();
   double size() const { return format.size(); }
+  void resize(size_t size) { 
+    if (data.size() != size)
+      data.resize(size); 
+  }
 };
 
 template < class DATA, class FORMAT, typename TAG> 

@@ -27,7 +27,7 @@ void Action_Nf2::attach_smearing(SmartConf* SmearObj) {
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 FermionField Action_Nf2::DdagD_inv(const FermionField& src){
-  FermionField sol;
+  FermionField sol(fermion_size_);
   SolverOutput monitor = slv_->solve(sol.data,src.data);
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
   monitor.print();
@@ -36,7 +36,7 @@ FermionField Action_Nf2::DdagD_inv(const FermionField& src){
 }
 
 void Action_Nf2::init(const RandNum& rand){
-  std::valarray<double> ph(phi_.data.size());
+  std::valarray<double> ph(fermion_size_);
   MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
   phi_.data = D_->mult_dag(Field(ph));
 }
@@ -48,8 +48,10 @@ double Action_Nf2::calc_H(){
 }
 
 GaugeField Action_Nf2::md_force(){
-  FermionField eta = DdagD_inv(phi_);
+  FermionField eta(fermion_size_);
   GaugeField fce;
+
+  eta = DdagD_inv(phi_);
 
   CCIO::cout << "ETA norm: "<< eta.norm() << std::endl;
 

@@ -43,6 +43,7 @@ public:
      slv_(Solv),
      smeared_(smeared),
      fermion_size_(D->fsize()){
+    phi_.resize(fermion_size_); //takes care of EvenOdd and 5D cases
     if (smeared_ && SmearObj !=NULL) attach_smearing(SmearObj);
   }
 
