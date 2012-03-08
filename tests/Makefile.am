@@ -19,7 +19,6 @@ EXTRA_DIST = 	testResults.info	\
 		test_Gauge.xml		\
 		test_Overlap.xml	\
 		test_HMC_EvenOdd.xml	\
-		test_HMC_DomainWall.xml	\
 		test_MultiShiftSolver.xml
 
 test_PROGRAMS = test_HMC 		\

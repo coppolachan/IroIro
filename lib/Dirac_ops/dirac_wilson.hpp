@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// dirac_wilson.hpp
+// dirac_wilson.h
 //----------------------------------------------------------------------
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
