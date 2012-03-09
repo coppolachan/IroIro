@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [0.9.1], [cossu@post.kek.jp])
+AC_INIT([IroIro], [0.9.5], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility
@@ -55,6 +55,16 @@ AC_ARG_ENABLE(mpi,
      no)  mpi=false ;;
      *) AC_MSG_ERROR([bad value ${enableval} for --enable-mpi . MPI not used.]) ;;
    esac],[mpi=false])
+
+###################################################################
+# Enabling Improved version routines
+AC_ARG_ENABLE(improved,
+	AC_HELP_STRING([--enable-improved], [Enable compilation of improved version of kernels.]),
+	[case "${enableval}" in
+     	yes) improved_kernels=true  ;;
+     	no)  improved_kernels=false ;;
+     	*) AC_MSG_ERROR([bad value ${enableval} for --enable-improved . Compiling with standard kernels.]) ;;
+   esac],[improved_kernels=false])
 
 ######################################################################
 # many HPC systems are configured so that running parallel programs
@@ -122,6 +132,9 @@ if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
 ARFLAGS=$ar_flags
 echo configure: setting linker flags... $ARFLAGS
 
+
+###################################################################
+# Automake flags
 AM_CONDITIONAL([USE_MPI], [(test x$mpi = xtrue)])
 AM_CONDITIONAL([HITACHI], [(test x$hitachi = xtrue)])	 
 ###################################################################
@@ -153,7 +166,7 @@ AC_FUNC_MALLOC
 AC_CHECK_FUNCS([sqrt])
 
 ##################################################################
-# Make compile decisions on MPI flags
+# Define macros for compilation
 if [ $mpi ]
 then
 AC_DEFINE([HAVE_MPI],[],[Processing MPI routines])
@@ -162,6 +175,12 @@ fi
 if [ $hitachi ]
 then
 AC_DEFINE([HITACHISR16K],[],[Specific tweaks for Hitachi SR16K])
+fi
+
+# Turn on all improved kernels
+if [ $improved_kernels ]
+then 
+AC_DEFINE([IMPROVED_WILSON],[], [Enable improved Wilson kernel])
 fi
 ###################################################################
 # Checks for doxygen support
@@ -196,6 +215,7 @@ The following optional features are enabled:
 - architecture                  : $arch
 - cross compilation             : `if test "x$cross_compiling" = xyes; then echo yes; else echo no; fi`
 - multicore MPI version enabled : $mpi
+- improved kernels compilation	: $improved_kernels
 - build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
 - graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
 

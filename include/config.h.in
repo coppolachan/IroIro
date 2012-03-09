@@ -58,6 +58,9 @@
 /* Specific tweaks for Hitachi SR16K */
 #undef HITACHISR16K
 
+/* Enable improved Wilson kernel */
+#undef IMPROVED_WILSON
+
 /* Name of package */
 #undef PACKAGE
 

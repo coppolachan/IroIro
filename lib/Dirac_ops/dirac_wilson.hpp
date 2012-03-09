@@ -1,5 +1,5 @@
 //----------------------------------------------------------------------
-// dirac_wilson.h
+// dirac_wilson.hpp
 //----------------------------------------------------------------------
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
@@ -13,7 +13,7 @@
 #include "Tools/sunVec.hpp"
 #include "dirac.hpp"
 
-#define IMPROVED_WILSON
+//#define IMPROVED_WILSON
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
