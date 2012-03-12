@@ -45,6 +45,7 @@ int Test_Wilson_EvenOdd::run(){
   valarray<size_t> ie = fmt.get_sub(esec);
   valarray<size_t> io = fmt.get_sub(osec);
 
+  /*
   // test of Dirac mult
   Field ff= src.mksrc(1,1);
   Field fe= src.mksrc(esec,1,1);
@@ -58,7 +59,7 @@ int Test_Wilson_EvenOdd::run(){
     CCIO::cout<<" (we["<<i<<"],wf["<<ie[i]<<"])=("<<we[i]<<","<<wf[ie[i]]<<")"
 	      <<" (wo["<<i<<"],wf["<<io[i]<<"])=("<<wo[i]<<","<<wf[io[i]]<<")"
 	      <<std::endl;  
-
+  */
   //------------ e/o preconditioned solver ------------------
   int    Niter= 1000;
   double stop_cond = 1.0e-24;

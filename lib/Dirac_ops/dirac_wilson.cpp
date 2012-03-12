@@ -8,12 +8,12 @@ using namespace SUNvec_utils;
 using namespace std;
 
 #ifdef IMPROVED_WILSON
-#include "dirac_wilson_improved.code"
+#include "dirac_wilson_improved2.code"
 #else
 #include "dirac_wilson_standard.code"
 #endif /*IMPROVED_WILSON*/
-/////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////
 void (Dirac_Wilson::*Dirac_Wilson::mult_p[])
 (Field&,const Field&) const = {&Dirac_Wilson::mult_xp,
 			       &Dirac_Wilson::mult_yp,

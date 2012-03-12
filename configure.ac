@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [0.9.5], [cossu@post.kek.jp])
+AC_INIT([IroIro], [0.9.5.1], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility
@@ -136,7 +136,8 @@ echo configure: setting linker flags... $ARFLAGS
 ###################################################################
 # Automake flags
 AM_CONDITIONAL([USE_MPI], [(test x$mpi = xtrue)])
-AM_CONDITIONAL([HITACHI], [(test x$hitachi = xtrue)])	 
+AM_CONDITIONAL([HITACHI], [(test x$hitachi = xtrue)])
+	 
 ###################################################################
 # Checks for libraries.
 AC_CHECK_LIB([m], [pow])
@@ -210,7 +211,7 @@ echo "
 Summary of configuration for $PACKAGE $VERSION
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following optional features are enabled:
+The following features are enabled:
 
 - architecture                  : $arch
 - cross compilation             : `if test "x$cross_compiling" = xyes; then echo yes; else echo no; fi`
@@ -226,10 +227,10 @@ Directories:
 
 Compiler flags setup:
 -------------------------------
-CXX                           : $CXX
-CXXFLAGS                      : $CXXFLAGS
-LDFLAGS			      : $LDFLAGS
-ARFLAGS			      : $ARFLAGS
+CXX       (Compiler)          : $CXX
+CXXFLAGS  (Compiler flags)    : $CXXFLAGS
+LDFLAGS	  (Library flags)     : $LDFLAGS
+ARFLAGS	  (Linker flags)      : $ARFLAGS
 -------------------------------
 
 The configure script has generated makefiles for your platform.

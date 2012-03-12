@@ -13,8 +13,6 @@
 #include "Tools/sunVec.hpp"
 #include "dirac.hpp"
 
-//#define IMPROVED_WILSON
-
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
 
@@ -65,18 +63,18 @@ private:
   static void(Dirac_Wilson::*mult_p[])(Field&,const Field&)const;
   static void(Dirac_Wilson::*mult_m[])(Field&,const Field&)const;
 
-  int r0(int c)const{return 2*c;}
-  int r1(int c)const{return 2*(NC_+c);}
-  int r2(int c)const{return 2*(2*NC_+c);}
-  int r3(int c)const{return 2*(3*NC_+c);} 
+  inline int r0(int c)const{return 2*c;}
+  inline int r1(int c)const{return 2*(NC_+c);}
+  inline int r2(int c)const{return 2*(2*NC_+c);}
+  inline int r3(int c)const{return 2*(3*NC_+c);} 
 
-  int i0(int c)const{return 2*c+1;}
-  int i1(int c)const{return 2*(NC_+c)+1;}
-  int i2(int c)const{return 2*(2*NC_+c)+1;}
-  int i3(int c)const{return 2*(3*NC_+c)+1;} 
+  inline int i0(int c)const{return 2*c+1;}
+  inline int i1(int c)const{return 2*(NC_+c)+1;}
+  inline int i2(int c)const{return 2*(2*NC_+c)+1;}
+  inline int i3(int c)const{return 2*(3*NC_+c)+1;} 
 
-  int re(int c1,int c2)const{return 2*(NC_*c1+c2);}
-  int im(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
+  inline int re(int c1,int c2)const{return 2*(NC_*c1+c2);}
+  inline int im(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
 
   void mult_full(Field&,const Field&)const;   /*! @brief  -kpp*D*f */
   void mult_offdiag(Field&,const Field&)const;/*! @brief  (1-kpp*D)*f */

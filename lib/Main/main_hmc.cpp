@@ -1,5 +1,5 @@
 /*!
- * @mainpage KEK common code for %Lattice QCD simulations
+ * @mainpage KEK code for %Lattice QCD simulations
  *
  * \image html keklogo-c.jpg 
  * \image html JICFUSsymbolmark170px.png 

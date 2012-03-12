@@ -12,7 +12,7 @@
 
 class Field{
 private:
-  std::valarray<double> field;
+  std::valarray<double> field __attribute__ ((aligned(16)));
 public:
 
   Field(){}

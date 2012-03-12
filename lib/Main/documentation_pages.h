@@ -13,6 +13,7 @@
   for bug reports and requests please send an email to \b cossu(AT)post(DOT)kek(DOT)jp 
 
   Other topics in this page:
+  * - \ref improved_kernels
   * - \ref verbosity
   * - \ref GSL_lib
   * - \ref testing
@@ -79,6 +80,16 @@
 
   Run with <tt>mpirun -np #nodes #executable</tt>
   
+  @section improved_kernels Improved kernels
+
+  Use the command 
+
+  @verbatim
+  ./configure --enable-improved@endverbatim
+  
+  to enable compilation of improved version of kernels (default = disabled, slower but stable and easy to debug - use this version for reference purposes).
+  
+
   @section verbosity Verbosity control 
   
   In order to set the verbosity of executable files during runtime use the variable \c code_verbosity in configuration.
