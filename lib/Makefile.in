@@ -39,8 +39,9 @@ host_triplet = @host@
 target_triplet = @target@
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_1 = -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_2 = -q64
-@HITACHI_FALSE@@USE_MPI_TRUE@am__append_3 = 
-@HITACHI_FALSE@@USE_MPI_TRUE@am__append_4 = 
+@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_3 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
+@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_4 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
+@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_5 = -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
@@ -164,7 +165,9 @@ libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
 main_hmc_OBJECTS = $(am_main_hmc_OBJECTS)
-main_hmc_DEPENDENCIES = libcommcode.a
+am__DEPENDENCIES_1 =
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+main_hmc_DEPENDENCIES = libcommcode.a $(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -412,12 +415,14 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . 
-@USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
+OPTLIB = $(am__append_5)
+@USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp 
 @USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 @USE_MPI_FALSE@MAPPER_SRCS = Main/Geometry/map_scalar.cpp
 @USE_MPI_TRUE@MAPPER_SRCS = Main/Geometry/map_parallelscalar.cpp
 @USE_MPI_FALSE@MAPPER_HEAD = Main/Geometry/map_scalar.hpp
 @USE_MPI_TRUE@MAPPER_HEAD = Main/Geometry/map_parallelscalar.hpp
+@IBM_WATSON_TRUE@@USE_MPI_TRUE@DRIVER = /bgsys/drivers/ppcfloor
 AM_CPPFLAGS = -I$(top_srcdir)
 AM_CFLAGS = -I$(top_srcdir)
 AM_LDFLAGS = 
@@ -425,6 +430,8 @@ lib_LIBRARIES = libcommcode.a
 EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp		\
 		Main/documentation_pages.h		\
 		Dirac_ops/dirac_wilson_improved.code	\
+		Dirac_ops/dirac_wilson_improved2.code	\
+		Dirac_ops/dirac_wilson_improved3.code	\
 		Dirac_ops/dirac_wilson_standard.code	\
 		Fields/field.inl
 
@@ -490,7 +497,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/gammaMatrices.cpp			
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
-main_hmc_LDADD = libcommcode.a
+main_hmc_LDADD = libcommcode.a $(OPTLIB)
 include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
                         $(top_srcdir)/include/commandline.hpp           \
 			$(top_srcdir)/include/common_code.hpp		\

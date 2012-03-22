@@ -1,7 +1,7 @@
 /* include/config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Using Big Endian machine type */
-#undef BIG_ENDIAN
+#undef BIG_ENDIAN_TYPE
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
@@ -14,10 +14,6 @@
 
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
-
-/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
-   to 0 otherwise. */
-#undef HAVE_MALLOC
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
@@ -58,6 +54,9 @@
 /* Specific tweaks for Hitachi SR16K */
 #undef HITACHISR16K
 
+/* Specific tweaks for IBM Watson BG/Q */
+#undef IBM_WATSON
+
 /* Enable improved Wilson kernel */
 #undef IMPROVED_WILSON
 
@@ -96,9 +95,6 @@
 #ifndef __cplusplus
 #undef inline
 #endif
-
-/* Define to rpl_malloc if the replacement function should be used. */
-#undef malloc
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
