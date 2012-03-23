@@ -1,5 +1,4 @@
 /*! @file staples.hpp
-  
   @brief Defines the staples measurement classes
 */
 #ifndef STAPLES_INCLUDED
@@ -11,14 +10,11 @@
 
 class Staples {
   int Nvol_, Lvol_;
-
   Communicator* com_;
-
 public:
-  Staples()
-    :Nvol_(CommonPrms::instance()->Nvol()),
-     Lvol_(CommonPrms::instance()->Lvol()),
-     com_(Communicator::instance()){}
+  Staples():Nvol_(CommonPrms::instance()->Nvol()),
+	    Lvol_(CommonPrms::instance()->Lvol()),
+	    com_(Communicator::instance()){}
 
   /////////////////////////////////////////////////
   double plaquette(const GaugeField&) const;
@@ -28,7 +24,6 @@ public:
   GaugeField1D upper(const GaugeField&, int, int) const;
   void staple(GaugeField1D&, const GaugeField&, int) const;
   //////////////////////////////////////////////////
-
 };
 
 #endif  

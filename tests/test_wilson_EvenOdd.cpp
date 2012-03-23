@@ -14,11 +14,16 @@
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Tools/randNum_MT19937.h"
 #include "Measurements/FermionicM/source_types.hpp"
+#include "Measurements/GaugeM/staples.hpp"
 
 using namespace std;
 using namespace Format;
 
 int Test_Wilson_EvenOdd::run(){
+  CCIO::cout<<"conf_[0]="<<conf_[0]<<std::endl;
+
+  //  Staples Staple;
+  //  CCIO::cout<< "Plaquette (thin): "<< Staple.plaquette(conf_) <<"\n";
 
   // Generating source vector -------------------------------------------
   // local source
@@ -32,7 +37,6 @@ int Test_Wilson_EvenOdd::run(){
   RandNum_MT19937 rand(init, length);
   Source_wnoise<SiteIndex,Format::Format_F> 
     src(rand,CommonPrms::instance()->Nvol());    
-
 
   //Dirac Kernel definition ---------------------------------------------
   Dirac_Wilson_EvenOdd Deo(1.0/6.0, &(conf_.data));

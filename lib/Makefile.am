@@ -71,6 +71,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
+		Measurements/FermionicM/qprop_mom.cpp 			\
 		Measurements/FermionicM/utils_DWF4d.cpp			\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		HMC/hmcGeneral.cpp                      \
@@ -139,6 +140,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\
 			Measurements/FermionicM/qprop.hpp		\
+			Measurements/FermionicM/qprop_mom.hpp		\
 			Measurements/FermionicM/qprop_EvenOdd.hpp	\
 			Measurements/FermionicM/qprop_DomainWall.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp	\

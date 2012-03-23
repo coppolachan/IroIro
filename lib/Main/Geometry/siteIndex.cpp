@@ -68,17 +68,20 @@ void SiteIndex::setup_bdry(){
   }
 }  
 
-void SiteIndex::setup_global() {
-  Communicator* commu = Communicator::instance();
-  int nx = commu->ipe(0);
-  int ny = commu->ipe(1);
-  int nz = commu->ipe(2);
-  int nt = commu->ipe(3);
+int SiteIndex::g_x(int site)const{ 
+  return x(site)+Nx_*Communicator::instance()->ipe(XDIR);}
+int SiteIndex::g_y(int site)const{ 
+  return y(site)+Ny_*Communicator::instance()->ipe(YDIR);}
+int SiteIndex::g_z(int site)const{ 
+  return z(site)+Nz_*Communicator::instance()->ipe(ZDIR);}
+int SiteIndex::g_t(int site)const{ 
+  return t(site)+Nt_*Communicator::instance()->ipe(TDIR);}
 
+void SiteIndex::setup_global() {
   for(int site=0; site<Nvol_; ++site)
-    gsite_.push_back(x(site)+Nx_*nx 
-		     +Lx_*((y(site)+Ny_*ny)
-			   +Ly_*((z(site)+Nz_*nz)
-				 +Lz_*(t(site)+Nt_*nt))));
+    gsite_.push_back(g_x(site)
+		     +Lx_*(g_y(site)
+			   +Ly_*(g_z(site)
+				 +Lz_*(g_t(site)))));
 }
 

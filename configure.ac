@@ -186,12 +186,12 @@ fi
 ###################################################################
 # Checks for doxygen support
 # if present enables the "make doxyfile" command
-AC_PROG_DOXYGEN
-
-if test -n "$DOXYGEN"
-then
-AC_CONFIG_FILES([docs/doxy.cfg])
-fi
+#AC_PROG_DOXYGEN
+#
+#if test -n "$DOXYGEN"
+#then
+#AC_CONFIG_FILES([docs/doxy.cfg])
+#fi
 
 # Verbosity level - default level is 1
 AC_ARG_VAR(code_verbosity, Sets code verbosity level 0..5)

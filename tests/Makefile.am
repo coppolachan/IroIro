@@ -18,6 +18,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_IO.xml		\
 		test_Gauge.xml		\
 		test_Overlap.xml	\
+		test_QpropMom.xml	\
 		test_HMC_EvenOdd.xml	\
 		test_MultiShiftSolver.xml
 
@@ -31,6 +32,7 @@ test_PROGRAMS = test_HMC 		\
 		test_Clover 		\
 		test_Wilson_EvenOdd 	\
 		test_DomainWall		\
+		test_QpropMom 		\
 		test_ResMass 		\
 		test_EigenModes		\
 		test_Smearing		\
@@ -70,6 +72,9 @@ test_Wilson_EvenOdd_SOURCES =	test_wilson_EvenOdd.cpp 	\
 test_DomainWall_SOURCES = 	test_DomainWall.cpp 		\
 				testerDWF.cpp
 
+test_QpropMom_SOURCES 	= 	test_QpropMom.cpp 		\
+				testerQpropMom.cpp
+
 test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 				testerResMass.cpp
 
@@ -99,6 +104,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
 				test_DomainWall.hpp 		\
+				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
 				test_IO.hpp			\
 				test_EigenModes_IRL.hpp		\

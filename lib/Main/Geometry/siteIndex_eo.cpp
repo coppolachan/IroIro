@@ -71,10 +71,10 @@ void SiteIndex_eo::setup_eo(){
   std::vector<int> Gev(Lvol_);
   e=0; 
   for(int gsite=0;gsite<Lvol_;++gsite){
-    int eo =(idx_->gx(gsite)
-	    +idx_->gy(gsite)
-	    +idx_->gz(gsite)
-	    +idx_->gt(gsite))%2;
+    int eo =(idx_->gsx(gsite)
+	    +idx_->gsy(gsite)
+	    +idx_->gsz(gsite)
+	    +idx_->gst(gsite))%2;
     
     if(!eo) Gev[gsite] = e++;
   }

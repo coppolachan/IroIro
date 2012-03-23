@@ -46,8 +46,7 @@ subdir = lib
 DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_doxygen.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -115,6 +114,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Measurements/FermionicM/qprop.cpp \
 	Measurements/FermionicM/qprop_EvenOdd.cpp \
 	Measurements/FermionicM/qprop_DomainWall.cpp \
+	Measurements/FermionicM/qprop_mom.cpp \
 	Measurements/FermionicM/utils_DWF4d.cpp \
 	Measurements/FermionicM/quark_prop_meas_factory.cpp \
 	HMC/hmcGeneral.cpp HMC/mdExec.cpp HMC/mdExec_leapfrog.cpp \
@@ -150,16 +150,17 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) \
 	$(am__objects_2) gaugeConf.$(OBJEXT) commandline.$(OBJEXT) \
 	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
 	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
-	utils_DWF4d.$(OBJEXT) quark_prop_meas_factory.$(OBJEXT) \
-	hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
-	mdExec_leapfrog.$(OBJEXT) mdExec_factory.$(OBJEXT) \
-	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
-	solver_BiCGStab.$(OBJEXT) solver_CG.$(OBJEXT) \
-	solver_Factory.$(OBJEXT) multiShiftSolver_CG.$(OBJEXT) \
-	solver.$(OBJEXT) APEsmear.$(OBJEXT) StoutSmear.$(OBJEXT) \
-	SmartConf.$(OBJEXT) Smearing_Factories.$(OBJEXT) \
-	sunMatUtils.$(OBJEXT) randNum_MT19937.$(OBJEXT) \
-	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT)
+	qprop_mom.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
+	quark_prop_meas_factory.$(OBJEXT) hmcGeneral.$(OBJEXT) \
+	mdExec.$(OBJEXT) mdExec_leapfrog.$(OBJEXT) \
+	mdExec_factory.$(OBJEXT) pugixml.$(OBJEXT) \
+	pugi_interface.$(OBJEXT) solver_BiCGStab.$(OBJEXT) \
+	solver_CG.$(OBJEXT) solver_Factory.$(OBJEXT) \
+	multiShiftSolver_CG.$(OBJEXT) solver.$(OBJEXT) \
+	APEsmear.$(OBJEXT) StoutSmear.$(OBJEXT) SmartConf.$(OBJEXT) \
+	Smearing_Factories.$(OBJEXT) sunMatUtils.$(OBJEXT) \
+	randNum_MT19937.$(OBJEXT) randNum_Factory.$(OBJEXT) \
+	gammaMatrices.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -232,6 +233,7 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/commonPrms.h \
 	Measurements/FermionicM/source_types.hpp \
 	Measurements/FermionicM/qprop_MultiShift.hpp \
 	Measurements/FermionicM/qprop.hpp \
+	Measurements/FermionicM/qprop_mom.hpp \
 	Measurements/FermionicM/qprop_EvenOdd.hpp \
 	Measurements/FermionicM/qprop_DomainWall.hpp \
 	Measurements/FermionicM/quark_propagators.hpp \
@@ -320,8 +322,6 @@ CXXFLAGS = @CXXFLAGS@ $(am__append_1) $(am__append_3)
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DOT = @DOT@
-DOXYGEN = @DOXYGEN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
@@ -375,9 +375,6 @@ datadir = @datadir@
 datarootdir = @datarootdir@
 docdir = @docdir@
 dvidir = @dvidir@
-enable_dot = @enable_dot@
-enable_html_docs = @enable_html_docs@
-enable_latex_docs = @enable_latex_docs@
 exec_prefix = @exec_prefix@
 host = @host@
 host_alias = @host_alias@
@@ -467,6 +464,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
+		Measurements/FermionicM/qprop_mom.cpp 			\
 		Measurements/FermionicM/utils_DWF4d.cpp			\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		HMC/hmcGeneral.cpp                      \
@@ -533,6 +531,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\
 			Measurements/FermionicM/qprop.hpp		\
+			Measurements/FermionicM/qprop_mom.hpp		\
 			Measurements/FermionicM/qprop_EvenOdd.hpp	\
 			Measurements/FermionicM/qprop_DomainWall.hpp 	\
 			Measurements/FermionicM/quark_propagators.hpp	\
@@ -762,6 +761,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_MultiShift.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_mom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quark_prop_meas_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_MT19937.Po@am__quote@
@@ -1447,6 +1447,22 @@ qprop_DomainWall.obj: Measurements/FermionicM/qprop_DomainWall.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop_DomainWall.cpp' object='qprop_DomainWall.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_DomainWall.obj `if test -f 'Measurements/FermionicM/qprop_DomainWall.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_DomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_DomainWall.cpp'; fi`
+
+qprop_mom.o: Measurements/FermionicM/qprop_mom.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_mom.o -MD -MP -MF $(DEPDIR)/qprop_mom.Tpo -c -o qprop_mom.o `test -f 'Measurements/FermionicM/qprop_mom.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_mom.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qprop_mom.Tpo $(DEPDIR)/qprop_mom.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop_mom.cpp' object='qprop_mom.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_mom.o `test -f 'Measurements/FermionicM/qprop_mom.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_mom.cpp
+
+qprop_mom.obj: Measurements/FermionicM/qprop_mom.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_mom.obj -MD -MP -MF $(DEPDIR)/qprop_mom.Tpo -c -o qprop_mom.obj `if test -f 'Measurements/FermionicM/qprop_mom.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_mom.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_mom.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qprop_mom.Tpo $(DEPDIR)/qprop_mom.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop_mom.cpp' object='qprop_mom.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_mom.obj `if test -f 'Measurements/FermionicM/qprop_mom.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_mom.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_mom.cpp'; fi`
 
 utils_DWF4d.o: Measurements/FermionicM/utils_DWF4d.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_DWF4d.o -MD -MP -MF $(DEPDIR)/utils_DWF4d.Tpo -c -o utils_DWF4d.o `test -f 'Measurements/FermionicM/utils_DWF4d.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/utils_DWF4d.cpp
