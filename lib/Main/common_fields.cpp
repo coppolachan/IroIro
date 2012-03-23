@@ -40,7 +40,13 @@ namespace FieldUtils{
   }
 
   GaugeField1D DirSlice(const GaugeField& F, int dir){
+    #ifdef IBM_WATSON
+    GaugeField1D out;
+    out.data = F.data[F.format.dir_slice(dir)];
+    return out;
+    #else
     return GaugeField1D(Field(F.data[F.format.dir_slice(dir)]));
+    #endif
   }
 
   void SetSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){

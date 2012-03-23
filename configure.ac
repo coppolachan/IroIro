@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [0.9.5.1], [cossu@post.kek.jp])
+AC_INIT([IroIro], [0.9.5.3], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility
@@ -26,6 +26,7 @@ cpp_flags=$CXXFLAGS
 ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value 
+watson=false   # default value
 #####################################################################
 # identify architecture
 if test "$arch" = ""
@@ -35,6 +36,7 @@ then
         x86_64-*-linux-gnu )    arch=amd64    ;;
         *-pc-linux-gnu )        arch=ia32     ;;
         *-ibm-aix* )            arch=aix      ;;
+	powerpc64-* )           arch=watsonBG ;;
         powerpc-apple-darwin* ) arch=macppc   ;;
         i*86-apple-darwin* )    arch=macx86   ;;
 	x86_64-apple-darwin* )  arch=mac86_64 ;;
@@ -111,8 +113,21 @@ aix )
      use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${HOME}/gsl/include -qflag=i:s"
      ld_flags="${LDFLAGS} -L${HOME}/gsl/lib"
      use_ar_flags="-X64 -c -ru"
-     AC_DEFINE([BIG_ENDIAN],[],[Using Big Endian machine type])
+     AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
      ;;
+watsonBG ) 
+     host=$build
+     cross_compiling=yes  # this will do the trick     
+     mpi=true
+     watson=true
+     AC_MSG_NOTICE([forcing cross compilation on Watson BG/Q])
+     use_cpp="bgxlC";
+     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -I${HOME}/gsl/include -qflag=i:s"
+     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib"
+     use_ar_flags="cru"
+     AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
+     ;;
+
 esac
 ###################################################################
 # Checks for programs.
@@ -137,6 +152,7 @@ echo configure: setting linker flags... $ARFLAGS
 # Automake flags
 AM_CONDITIONAL([USE_MPI], [(test x$mpi = xtrue)])
 AM_CONDITIONAL([HITACHI], [(test x$hitachi = xtrue)])
+AM_CONDITIONAL([IBM_WATSON], [(test x$watson = xtrue)])
 	 
 ###################################################################
 # Checks for libraries.
@@ -163,7 +179,7 @@ AC_C_INLINE
 AC_TYPE_SIZE_T
 
 # Checks for library functions.
-AC_FUNC_MALLOC
+#AC_FUNC_MALLOC
 AC_CHECK_FUNCS([sqrt])
 
 ##################################################################
@@ -176,6 +192,11 @@ fi
 if [ $hitachi ]
 then
 AC_DEFINE([HITACHISR16K],[],[Specific tweaks for Hitachi SR16K])
+fi
+
+if [ $watson ]
+then
+AC_DEFINE([IBM_WATSON],[],[Specific tweaks for IBM Watson BG/Q])
 fi
 
 # Turn on all improved kernels

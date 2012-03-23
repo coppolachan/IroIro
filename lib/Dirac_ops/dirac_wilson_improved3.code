@@ -3,27 +3,79 @@
   
  */
 
+#include <xmmintrin.h>
+#include <emmintrin.h>
+#include <pmmintrin.h>
+
 void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   int Nih = Nd_*NC_; /*!< @brief num of elements of a half spinor */
   int Nbdry = bdry_plw_[0].size();
   int Nbulk = bulk_pup_[0].size();
   
-  double *v;
+  double *v __attribute__ ((aligned (16)));;
   double *res;
   double *U;
   double *mat_el;
 
+  __m128d m1, m2, m3, m4;
+
   /// boundary part ///
-  double vbd[Nih*Nbdry]; /*!< @brief information on the lower boundary */   
-  double vbc[Nih*Nbdry]; /*!< @brief information on the upper neighbor */   
+  double vbd[Nih*Nbdry] __attribute__ ((aligned (16))); /*!< @brief information on the lower boundary */   
+  double vbc[Nih*Nbdry] __attribute__ ((aligned (16))); /*!< @brief information on the upper neighbor */   
 
   int is = 0;
   for(int k=0; k<Nbdry; ++k){
     v = const_cast<Field*>(&f)->getaddr(ff_.index(0,bdry_plw_[0][k]));
+
+    /*
     for(int c=0; c<NC_; ++c){
-      vbd[r0(c)+is] = v[r0(c)]-v[i3(c)]; vbd[i0(c)+is] = v[i0(c)]+v[r3(c)];
-      vbd[r1(c)+is] = v[r1(c)]-v[i2(c)]; vbd[i1(c)+is] = v[i1(c)]+v[r2(c)];
-    }
+      __m128d pV1 = _mm_load_pd(v);
+      __m128d pV2 = _mm_load_pd(v+2*NC_);
+      __m128d m1 = _mm_loadr_pd(v+4*NC_);
+      __m128d m2 = _mm_loadr_pd(v+6*NC_);
+      
+      m3 = _mm_addsub_pd(pV1, m2);
+      m4 = _mm_addsub_pd(pV2, m1);
+      
+      _mm_store_pd(&vbd[r0(c)+is], m3);
+      _mm_store_pd(&vbd[r1(c)+is], m4);
+      v += 2;
+     }
+    */
+
+    __m128d pV0 = _mm_load_pd(v);
+    __m128d pV1 = _mm_load_pd(v+2);
+    __m128d pV2 = _mm_load_pd(v+4);
+    m1 = _mm_loadr_pd(v+6*NC_);
+    m2 = _mm_loadr_pd(v+6*NC_+2);
+    m3 = _mm_loadr_pd(v+6*NC_+4);
+    
+    m4 = _mm_addsub_pd(pV0, m1);
+    _mm_store_pd(&vbd[is], m4);
+    
+    m4 = _mm_addsub_pd(pV1, m2);
+    _mm_store_pd(&vbd[2+is], m4);
+    
+    m4 = _mm_addsub_pd(pV2, m3);
+    _mm_store_pd(&vbd[4+is], m4);
+    
+    v+=2*NC_;
+    pV0 = _mm_load_pd(v);
+    pV1 = _mm_load_pd(v+2);
+    pV2 = _mm_load_pd(v+4);
+    m1 = _mm_loadr_pd(v+2*NC_);
+    m2 = _mm_loadr_pd(v+2*NC_+2);
+    m3 = _mm_loadr_pd(v+2*NC_+4);
+    
+    m4 = _mm_addsub_pd(pV0, m1);
+    _mm_store_pd(&vbd[2*NC_+is], m4);
+    
+    m4 = _mm_addsub_pd(pV1, m2);
+    _mm_store_pd(&vbd[2*NC_+2+is], m4);
+    
+    m4 = _mm_addsub_pd(pV2, m3);
+    _mm_store_pd(&vbd[2*NC_+4+is], m4);
+    
     is += Nih;
   }
   // Copy
@@ -75,45 +127,24 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
       ws[loc+1] = v[r1(c)] -v[i2(c)];  ws[loc+3] = v[i1(c)] +v[r2(c)];
     }
 
+    __builtin_prefetch(&U[0]);
+    __builtin_prefetch(&U[0]);
     register int loc;
     for(int c=0; c<NC_; ++c){
       
       v1r[c] = 0.0;  v1i[c] = 0.0;
       v2r[c] = 0.0;  v2i[c] = 0.0;
       
-       for(int c1=0; c1<NC_; ++c1){
-	 loc = 4*c1;
-	 //mat_el = U+re(c,c1);
-	 v1r[c] += U[re(c,c1)]*ws[loc  ] -U[im(c,c1)]*ws[loc+2];
-	 v1i[c] += U[im(c,c1)]*ws[loc  ] +U[re(c,c1)]*ws[loc+2];
-	 v2r[c] += U[re(c,c1)]*ws[loc+1] -U[im(c,c1)]*ws[loc+3];
-	 v2i[c] += U[im(c,c1)]*ws[loc+1] +U[re(c,c1)]*ws[loc+3];
-     
-
-      /*	
-      mat_el = U+re(c,0);
-      __builtin_prefetch(&mat_el[2]);
-      __builtin_prefetch(&mat_el[3]);
-
-      v1r[c] = mat_el[0]*ws[0] -mat_el[1]*ws[2];
-      v1i[c] = mat_el[1]*ws[0] +mat_el[0]*ws[2];
-      v2r[c] = mat_el[0]*ws[1] -mat_el[1]*ws[3];
-      v2i[c] = mat_el[1]*ws[1] +mat_el[0]*ws[3];
-      
-      //      mat_el = U+re(c,1);
-      v1r[c] += mat_el[2]*ws[4] -mat_el[3]*ws[6];
-      v1i[c] += mat_el[3]*ws[4] +mat_el[2]*ws[6];
-      v2r[c] += mat_el[2]*ws[5] -mat_el[3]*ws[7];
-      v2i[c] += mat_el[3]*ws[5] +mat_el[2]*ws[7];
-      
-      // mat_el = U+re(c,2);
-      v1r[c] += mat_el[4]*ws[8] -mat_el[5]*ws[10];
-      v1i[c] += mat_el[5]*ws[8] +mat_el[4]*ws[10];
-      v2r[c] += mat_el[4]*ws[9] -mat_el[5]*ws[11];
-      v2i[c] += mat_el[5]*ws[9] +mat_el[4]*ws[11];
-      */
-	 }   
-      
+      for(int c1=0; c1<NC_; ++c1){
+	loc = 4*c1;
+	//mat_el = U+re(c,c1);
+	__builtin_prefetch(&U[re(c,c1+1)]);
+	__builtin_prefetch(&U[im(c,c1+1)]);
+	v1r[c] += U[re(c,c1)]*ws[loc  ] -U[im(c,c1)]*ws[loc+2];
+	v1i[c] += U[im(c,c1)]*ws[loc  ] +U[re(c,c1)]*ws[loc+2];
+	v2r[c] += U[re(c,c1)]*ws[loc+1] -U[im(c,c1)]*ws[loc+3];
+	v2i[c] += U[im(c,c1)]*ws[loc+1] +U[re(c,c1)]*ws[loc+3];
+      }
       res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
       res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
       res[r2(c)] += v2i[c];      res[i2(c)] -= v2r[c];

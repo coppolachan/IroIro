@@ -1,8 +1,15 @@
-# Time-stamp: <2012-03-05 17:12:16 neo>
+# Time-stamp: <2012-03-13 15:48:18 neo>
 
 testdir = $(bindir)/Test
 
-LDADD = -L../lib/ -lcommcode
+if IBM_WATSON
+DRIVER=/bgsys/drivers/ppcfloor
+CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include
+LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
+OPTLIB = -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
+endif
+
+LDADD = -L../lib/ -lcommcode $(OPTLIB)
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 

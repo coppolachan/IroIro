@@ -1,20 +1,30 @@
 SUBDIRS = . 
 
-if USE_MPI
-COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
-MAPPER_SRCS	  = Main/Geometry/map_parallelscalar.cpp
-MAPPER_HEAD	  = Main/Geometry/map_parallelscalar.hpp
-if HITACHI	
-CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
-LDFLAGS += -q64
-else
 CXXFLAGS += 
 LDFLAGS += 
+OPTLIB =
+
+if USE_MPI
+COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
+MAPPER_SRCS       = Main/Geometry/map_parallelscalar.cpp
+MAPPER_HEAD       = Main/Geometry/map_parallelscalar.hpp
+
+if HITACHI      
+CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
+LDFLAGS += -q64
 endif
+
+if IBM_WATSON
+DRIVER=/bgsys/drivers/ppcfloor
+CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
+LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
+OPTLIB += -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
+endif
+
 else
-COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
-MAPPER_SRCS	  = Main/Geometry/map_scalar.cpp
-MAPPER_HEAD	  = Main/Geometry/map_scalar.hpp
+COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp 
+MAPPER_SRCS       = Main/Geometry/map_scalar.cpp
+MAPPER_HEAD       = Main/Geometry/map_scalar.hpp
 endif
 
 AM_CPPFLAGS=-I$(top_srcdir)
@@ -28,6 +38,8 @@ lib_LIBRARIES = libcommcode.a
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp		\
 		Main/documentation_pages.h		\
 		Dirac_ops/dirac_wilson_improved.code	\
+		Dirac_ops/dirac_wilson_improved2.code	\
+		Dirac_ops/dirac_wilson_improved3.code	\
 		Dirac_ops/dirac_wilson_standard.code	\
 		Fields/field.inl
 
@@ -96,7 +108,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
-main_hmc_LDADD   = libcommcode.a
+main_hmc_LDADD   = libcommcode.a $(OPTLIB)
 
 include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
                         $(top_srcdir)/include/commandline.hpp           \
