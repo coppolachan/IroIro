@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [0.9.5.3], [cossu@post.kek.jp])
+AC_INIT([IroIro], [0.9.5.4], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility

@@ -1,4 +1,4 @@
-# Time-stamp: <2012-03-13 15:48:18 neo>
+# Time-stamp: <2012-03-26 11:27:26 neo>
 
 testdir = $(bindir)/Test
 
@@ -25,9 +25,11 @@ EXTRA_DIST = 	testResults.info	\
 		test_IO.xml		\
 		test_Gauge.xml		\
 		test_Overlap.xml	\
-		test_QpropMom.xml	\
 		test_HMC_EvenOdd.xml	\
 		test_MultiShiftSolver.xml
+
+#		test_QpropMom.xml	
+
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
