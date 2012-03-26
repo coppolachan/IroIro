@@ -3,7 +3,6 @@
 
 Map::Map(int dir, ShiftSign sign) {
   sites = CommonPrms::instance()->Lvol(); //assuming single node
-  CCIO::cout << "Mapper scalar " << dir << " constructing. Sites: "<< sites<<"\n";
   int Block[4];
   Block[0] =          CommonPrms::instance()->Nx();
   Block[1] = Block[0]*CommonPrms::instance()->Ny();

@@ -22,7 +22,6 @@ public:
   template<class DATA, class FORMAT, class TAG>
   GeneralField<DATA,FORMAT,TAG>
   operator()(const GeneralField<DATA,FORMAT,TAG>& F, int dir, int sign)const {
-    CCIO::cout<<"Mapper::operator()"<<std::endl;
     return ShiftsMap[((sign+1)>>1)+2*dir](F);
   }
 };

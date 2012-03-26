@@ -27,7 +27,8 @@ void Action_Nf2::attach_smearing(SmartConf* SmearObj) {
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 FermionField Action_Nf2::DdagD_inv(const FermionField& src){
-  FermionField sol(fermion_size_);
+  FermionField sol;
+  sol.resize(fermion_size_);
   SolverOutput monitor = slv_->solve(sol.data,src.data);
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
   monitor.print();
@@ -48,16 +49,14 @@ double Action_Nf2::calc_H(){
 }
 
 GaugeField Action_Nf2::md_force(){
-  FermionField eta(fermion_size_);
   GaugeField fce;
+  FermionField eta;
+  eta.resize(fermion_size_);
 
   eta = DdagD_inv(phi_);
 
-  CCIO::cout << "ETA norm: "<< eta.norm() << std::endl;
-
   fce.data = D_->md_force(eta.data,D_->mult(eta.data));
   // [fce] is [U*SigmaTilde] in smearing language
-  CCIO::cout << "forceD norm: "<< fce.norm() << std::endl;
   if(smeared_) SmartField_->smeared_force(fce);
 
   GaugeField force = FieldUtils::TracelessAntihermite(fce);

@@ -86,18 +86,21 @@ GeneralField(int LocalVol):format(Format::Format_G( LocalVol,1)),
 
 template < class DATA, class FORMAT, typename TAG> 
 GeneralField<DATA,FORMAT,TAG>::GeneralField(const DATA& FieldIn)
-  :format(FORMAT( CommonPrms::instance()->Nvol())){
+  :format(FORMAT( CommonPrms::instance()->Nvol())),
+   data(FieldIn)
+{
   assert(FieldIn.size()== format.size());
-  data = FieldIn;
+
 }
 
 // Specialization for one dimension gauge field
 template <> 
 inline GeneralField< Field, Format::Format_G, OneDimTag>::
 GeneralField(const Field& FieldIn)
- :format(Format::Format_G( CommonPrms::instance()->Nvol(),1)){
+  :format(Format::Format_G( CommonPrms::instance()->Nvol(),1)),
+   data(FieldIn)
+{
   assert(FieldIn.size()== format.size());
-  data = FieldIn;
 }
 
 template < class DATA, class FORMAT, typename TAG> 

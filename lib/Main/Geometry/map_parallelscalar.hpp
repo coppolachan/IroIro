@@ -41,7 +41,6 @@ public:
  
     // Gather boundary
     for (int idx = 0, sidx = 0; idx < bdry_size; ++idx) {
-      //CCIO::cout << "boundary site map  "<< bdry_site_map[idx] << "\n";
       for (int outer_idx = 0; outer_idx < Nex; ++outer_idx){
 	for (int inner_idx = 0; inner_idx < Nin; ++inner_idx){
 	  send_bdry[sidx++] = InField.data[InField.get_Format().index(inner_idx,
