@@ -3,12 +3,12 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
+    <Lattice>4 4 4 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
 
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
 
   <TestWilson>
     <QuarkPropagator name="Qprop">
