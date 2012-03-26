@@ -54,7 +54,8 @@ public:
   GeneralField& operator*=(const double&);
 
   double norm();
-  double size() const { return format.size(); }
+  double size() const { return data.size(); }
+  const double operator[](int i)const {return data[i];}
   void resize(size_t size) { 
     if (data.size() != size)
       data.resize(size); 

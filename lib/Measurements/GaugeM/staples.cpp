@@ -1,5 +1,4 @@
 /*! @file staples.cpp
-  
   @brief Defines the staples measurement classes
 */
 #include "staples.hpp"
@@ -11,6 +10,7 @@ using namespace SUNmatUtils;
 
 //------------------------------------------------------------
 double Staples::plaquette(const GaugeField& F)const {
+  CCIO::cout<<"calculating plaquette"<<std::endl;
   return (plaq_s(F) + plaq_t(F))*0.5;
 }
 //------------------------------------------------------------
@@ -50,13 +50,16 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
   //           mu,v              
   GaugeField1D v = DirSlice(G,mu);
   GaugeField1D w = DirSlice(G,nu);
-
   GaugeField1D c;
   GaugeField1D WupMu = MapsEnv::shift(w,mu,Forward);
+
+  CCIO::cout<<"MapsEnv::shift done"<<std::endl;
 
   for(int site = 0; site < Nvol_; ++site) 
     c.data[c.format.cslice(0,site)] = 
       (matrix_dag(w,site)* matrix(v,site)* matrix(WupMu,site)).getva();
+
+  CCIO::cout<<"mat*mat done"<<std::endl;
 
   return MapsEnv::shift(c,nu,Backward);
 }

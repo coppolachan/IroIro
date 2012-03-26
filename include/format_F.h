@@ -1,9 +1,6 @@
 //----------------------------------------------------------------------
 /*! @file format_F.h
-
-  @brief Defines the Format_F class
-
-*/
+  @brief Defines the Format_F class */
 //----------------------------------------------------------------------
 #ifndef FORMAT_F_INCLUDED
 #define FORMAT_F_INCLUDED
@@ -31,22 +28,21 @@ namespace Format{
     int size() const {return Nin_*Nvol_*Nex_;}
     
     // get indices
-    inline int index(int i, int site, int ex=0) const {
+    inline int index(int i,int site,int ex=0) const {
       return i +Nin_*(site +Nvol_*ex);
     }
 
-    inline int index_r(int c, int s, int site, int ex=0) const { 
+    inline int index_r(int c,int s,int site,int ex=0) const { 
       return 2*(c +NC_*s) +Nin_*(site +Nvol_*ex); 
     }
-
-    inline int index_i(int c, int s, int site, int ex=0) const { 
+    inline int index_i(int c,int s,int site,int ex=0) const { 
       return 1+2*(c +NC_*s) +Nin_*(site +Nvol_*ex); 
     }
     // get slices
-    std::slice cplx_slice(int c, int s, int site, int ex=0) const {
+    std::slice cplx_slice(int c,int s,int site,int ex=0) const {
       return std::slice(index_r(c,s,site,ex), 2,1);
     }
-    std::slice islice(int site, int ex=0) const {
+    std::slice islice(int site,int ex=0) const {
       return std::slice(index(0,site,ex), Nin_,1);
     }
     std::slice cslice(int s,int site,int ex=0) const {

@@ -23,7 +23,7 @@ void Qprop::calc(prop_t& xq,Source& src) const{
   }
 }
 
-void Qprop::calc(prop_t& xq,Source& src, int Nd, int Nc) const{
+void Qprop::calc(prop_t& xq,Source& src,int Nd,int Nc) const{
   
   xq.clear();
   SolverOutput monitor;
@@ -38,7 +38,6 @@ void Qprop::calc(prop_t& xq,Source& src, int Nd, int Nc) const{
   monitor.print();
 #endif
   xq.push_back(sol);
-  
 }
 
 void Qprop::calc(prop_t& xq,const prop_t& prp)const{

@@ -1,8 +1,6 @@
 /*!
  * @file test_wilson_EvenOdd.hpp
- *
  * @brief Tests for the propagators and sources
- *
  */
 #ifndef TEST_WILSON_EVENODD_INCLUDED
 #define TEST_WILSON_EVENODD_INCLUDED

@@ -5,11 +5,11 @@
 #define SITEINDEX_INCLUDED
 
 #include "include/commonPrms.h"
-
 #include<iostream>
 #include<vector>
 
 typedef std::vector<std::vector<int> > list_vec;
+enum{XDIR,YDIR,ZDIR,TDIR};
 
 class SiteIndex{
 private:
@@ -92,17 +92,12 @@ public:
   int z(int site) const{ return (site/NxNy_)%Nz_;}
   int t(int site) const{ return site/NxNyNz_;}
 
-  int gx(int site) const{ return site%Lx_;}
-  int gy(int site) const{ return (site/Lx_)%Ly_;}
-  int gz(int site) const{ return (site/LxLy_)%Lz_;}
-  int gt(int site) const{ return site/LxLyLz_;}
-
-
   int site(int x,int y,int z,int t) const{
     return x +Nx_*y +NxNy_*z +NxNyNz_*t; 
   }
   
   static int (SiteIndex::*cmps[])(int site) const;
+  static int (SiteIndex::*cmps_g[])(int site) const;
   static int (SiteIndex::*xps[])(int site) const;
   static int (SiteIndex::*xms[])(int site) const;
   static int (SiteIndex::*xbds[])(int site) const;
@@ -110,6 +105,17 @@ public:
   //// interfaces to handle the site index
   // component in each direction
   int cmp(int site,int dir)const{return (this->*SiteIndex::cmps[dir])(site);}
+
+  // global compornents of given site index
+  int g_x(int site)const;
+  int g_y(int site)const;
+  int g_z(int site)const;
+  int g_t(int site)const;
+  
+  int gsx(int gsite) const{ return gsite%Lx_;}
+  int gsy(int gsite) const{ return (gsite/Lx_)%Ly_;}
+  int gsz(int gsite) const{ return (gsite/LxLy_)%Lz_;}
+  int gst(int gsite) const{ return gsite/LxLyLz_;}
 
   // indices for one-step forward/backward in each direction
   int x_p(int site,int dir){return (this->*SiteIndex::xps[dir])(site);}

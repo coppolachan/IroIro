@@ -1,9 +1,5 @@
-/*!
-
-  @file quark_prop_meas_factory.hpp 
- 
+/*!  @file quark_prop_meas_factory.hpp 
   @brief QuarkPropagators measurements operators factories
-
 */
 #ifndef QUARKPROP_MEAS_FACT_
 #define QUARKPROP_MEAS_FACT_
@@ -21,9 +17,8 @@
 #include "Solver/solver_Factory.hpp"
 
 /////////////////////////////////////////////////
-/*!
- @brief Concrete class for creating Quark Propagator Qprop operator
-*/
+/*! @brief Concrete class for creating Quark Propagator Qprop operator */
+
 class QPropFactory : public QuarkPropagatorFactory {
   RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverObj;
@@ -86,7 +81,7 @@ class QPropDWFFactory : public QuarkPropagatorFactory {
 public:
   QPropDWFFactory(XML::node node):Qprop_node_(node){
     XML::descend(node,"Kernel4d");
-    DiracFactory_.save(new DiracDWF4DfullFactory(node));
+    DiracFactory_.save(DiracOperators::createDiracDWF4dOperatorFactory(node));
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
@@ -98,7 +93,5 @@ public:
     return new QpropDWF(*DWF4D_.get());
   }
 };
-
-
 
 #endif 

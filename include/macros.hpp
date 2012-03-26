@@ -25,6 +25,7 @@
 #define DEBUG_VERB_LEVEL 5
 
 #define NC_ 3  //Number of colours, now fixed here
+#define ND_ 3  //Number of dirac spinors, now fixed here
 #define NDIM_ 4  //Number of lattice dimensions, now fixed here
 
 #define TIMING_START				\

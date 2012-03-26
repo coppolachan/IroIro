@@ -2,7 +2,6 @@
  * @file meson_correlator.hpp
  * @brief Class for calculation of generic meson correlator
  */
-
 #include "meson_correlator.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Main/Geometry/siteIndex.h"
@@ -17,14 +16,14 @@ const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
 
   std::vector<double> correl_local(Nt,0.0);
   
-  for(int site = 0; site < CommonPrms::instance()->Nvol(); ++site){
+  for(int site=0; site<CommonPrms::instance()->Nvol(); ++site){
     int t = SiteIndex::instance()->t(site);//get t from site index
     //Cycle among spinor and color indexes
-    for(int spinor1 = 0; spinor1 < Nd_; ++spinor1){
-      for(int color1 = 0; color1 < Nc_; ++color1){
-	for(int spinor2=0; spinor2 < Nd_; ++spinor2){
-	  correl_local[t] +=(q1[color1+Nc_*spinor1][fmt->cslice(spinor2,site)]
-			     *q2[color1+Nc_*spinor1][fmt->cslice(spinor2,site)]).sum();
+    for(int s1=0; s1<Nd_; ++s1){
+      for(int s2=0; s2<Nd_; ++s2){
+	for(int c1=0; c1<Nc_; ++c1){
+	  correl_local[t] +=(q1[c1+Nc_*s1][fmt->cslice(s2,site)]
+			    *q2[c1+Nc_*s1][fmt->cslice(s2,site)]).sum();
 	}
       }
     }
@@ -41,7 +40,4 @@ const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
     correl[t] = Communicator::instance()->reduce_sum(correl_tmp[t]);
   
   return correl;
-
-
-
 }

@@ -33,7 +33,7 @@ namespace TestEnv{
     //Initialize GaugeField using XML input
     GaugeGlobal GaugeF(geom);
     GaugeF.initialize(top_node);
-    
+    CCIO::cout<<"GaugeF initialized"<<std::endl;
     return TestClass(top_node, GaugeF);
   }
 }
