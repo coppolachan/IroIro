@@ -82,19 +82,19 @@ ia64 | amd64 | ia32 )
    if [ $mpi ]
     then
       # list of tested MPI compilers	
-      use_cpp="mpicxx.openmpi" 
+      use_cpp="mpicxx.openmpi mpicxx mpic++" 
     else
      # list of tested compilers
       use_cpp="g++ icpc"; 
     fi
-    use_cpp_flags="-O3"
+    use_cpp_flags="-O3" 
     use_ar_flags="cru"
     ;;
 macppc | macx86 | mac86_64 )
    if [ $mpi ]
     then
       # list of tested MPI compilers	
-      use_cpp="mpicxx.openmpi" 
+      use_cpp="mpicxx.openmpi mpicxx mpic++" 
     else
      # list of tested compilers
       use_cpp="g++ icpc"; 
