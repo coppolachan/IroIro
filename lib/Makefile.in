@@ -39,7 +39,9 @@ host_triplet = @host@
 target_triplet = @target@
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_1 = -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_2 = -q64
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_3 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
+@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_3 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk \
+@IBM_WATSON_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
+
 @IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_4 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
 @IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_5 = -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
 bin_PROGRAMS = main_hmc$(EXEEXT)
@@ -127,7 +129,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Smearing/APEsmear.cpp Smearing/StoutSmear.cpp \
 	Smearing/SmartConf.cpp Smearing/Smearing_Factories.cpp \
 	Tools/sunMatUtils.cpp Tools/randNum_MT19937.cpp \
-	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp
+	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp \
+	Tools/Remez/alg_remez.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 @USE_MPI_FALSE@am__objects_2 = map_scalar.$(OBJEXT)
@@ -162,7 +165,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) \
 	APEsmear.$(OBJEXT) StoutSmear.$(OBJEXT) SmartConf.$(OBJEXT) \
 	Smearing_Factories.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	randNum_MT19937.$(OBJEXT) randNum_Factory.$(OBJEXT) \
-	gammaMatrices.$(OBJEXT)
+	gammaMatrices.$(OBJEXT) alg_remez.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -274,7 +277,8 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/commonPrms.h \
 	Tools/randNum.h Tools/sunVec.hpp Tools/randNum_MT19937.h \
 	Tools/randNum_Factory.h Tools/RAIIFactory.hpp \
 	Tools/EnumToString.hpp Tools/byteswap.hpp \
-	Tools/gammaMatrices.hpp
+	Tools/gammaMatrices.hpp Tools/Remez/alg_remez.hpp \
+	Tools/Remez/bigfloat.hpp
 HEADERS = $(include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -498,7 +502,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
-		Tools/gammaMatrices.cpp			
+		Tools/gammaMatrices.cpp			\
+		Tools/Remez/alg_remez.cpp
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD = libcommcode.a $(OPTLIB)
@@ -605,7 +610,9 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
-			Tools/gammaMatrices.hpp			
+			Tools/gammaMatrices.hpp			\
+			Tools/Remez/alg_remez.hpp		\
+			Tools/Remez/bigfloat.hpp
 
 all: all-recursive
 
@@ -736,6 +743,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_rect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gaugetype_factory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alg_remez.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/comm_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commandline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commonPrms.Po@am__quote@
@@ -1812,6 +1820,22 @@ gammaMatrices.obj: Tools/gammaMatrices.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/gammaMatrices.cpp' object='gammaMatrices.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gammaMatrices.obj `if test -f 'Tools/gammaMatrices.cpp'; then $(CYGPATH_W) 'Tools/gammaMatrices.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/gammaMatrices.cpp'; fi`
+
+alg_remez.o: Tools/Remez/alg_remez.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT alg_remez.o -MD -MP -MF $(DEPDIR)/alg_remez.Tpo -c -o alg_remez.o `test -f 'Tools/Remez/alg_remez.cpp' || echo '$(srcdir)/'`Tools/Remez/alg_remez.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/alg_remez.Tpo $(DEPDIR)/alg_remez.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/Remez/alg_remez.cpp' object='alg_remez.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o alg_remez.o `test -f 'Tools/Remez/alg_remez.cpp' || echo '$(srcdir)/'`Tools/Remez/alg_remez.cpp
+
+alg_remez.obj: Tools/Remez/alg_remez.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT alg_remez.obj -MD -MP -MF $(DEPDIR)/alg_remez.Tpo -c -o alg_remez.obj `if test -f 'Tools/Remez/alg_remez.cpp'; then $(CYGPATH_W) 'Tools/Remez/alg_remez.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Remez/alg_remez.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/alg_remez.Tpo $(DEPDIR)/alg_remez.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/Remez/alg_remez.cpp' object='alg_remez.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o alg_remez.obj `if test -f 'Tools/Remez/alg_remez.cpp'; then $(CYGPATH_W) 'Tools/Remez/alg_remez.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Remez/alg_remez.cpp'; fi`
 
 main_hmc.o: Main/main_hmc.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hmc.o -MD -MP -MF $(DEPDIR)/main_hmc.Tpo -c -o main_hmc.o `test -f 'Main/main_hmc.cpp' || echo '$(srcdir)/'`Main/main_hmc.cpp

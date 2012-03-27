@@ -219,7 +219,8 @@ top_srcdir = @top_srcdir@
 SUBDIRS = lib tests docs
 EXTRA_DIST = m4	\
 		README 	\
-		todo
+		todo	\
+		reconfigure-script
 
 @DOXYGEN_DOC_TRUE@directory = $(top_srcdir)/docs/
 all: all-recursive

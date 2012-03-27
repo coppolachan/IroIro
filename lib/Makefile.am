@@ -16,7 +16,8 @@ endif
 
 if IBM_WATSON
 DRIVER=/bgsys/drivers/ppcfloor
-CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
+CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk \
+	-I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
 LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
 OPTLIB += -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
 endif
@@ -104,7 +105,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
-		Tools/gammaMatrices.cpp			
+		Tools/gammaMatrices.cpp			\
+		Tools/Remez/alg_remez.cpp
 
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
@@ -213,7 +215,9 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
-			Tools/gammaMatrices.hpp			
+			Tools/gammaMatrices.hpp			\
+			Tools/Remez/alg_remez.hpp		\
+			Tools/Remez/bigfloat.hpp
 
 
 
