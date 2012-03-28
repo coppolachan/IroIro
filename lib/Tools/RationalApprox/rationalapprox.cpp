@@ -1,162 +1,105 @@
-#ifdef USE_GPU
-#include"../Packer/packer.h"
-#include"../Cuda/cuda_sol_sum.h"
-#include"../Inverter/cu_inverter.h"
-#endif
+/*!
+
+ * @file rationalapprox.cpp
+
+ * @brief Calculates the rational approximation for a given function
+
+ */
+
+#include <assert.h>
+#include "rationalapprox.hpp"
+#include "Tools/Remez/alg_remez.hpp"
+#include "Communicator/comm_io.hpp"
+
+// Standard Constructor 
+RationalApprox::RationalApprox(RationalApprox_params Par):Params(Par)
+{
+  fill();
+}
+
+void RationalApprox::fill() {
+
+  CCIO::cout << "Calculating Rational Approximation of the function:\n";
+  CCIO::cout << "f(x) = x^("<<Params.exponent_num<<"/"<<Params.exponent_den<<") ";
+  CCIO::cout << "in the interval ["<<Params.lambda_low<<";"<<Params.lambda_high<<"]";
+
+  AlgRemez RemezApprox(Params.lambda_low, Params.lambda_high, Params.gmp_remez_precision);
+
+  double error = RemezApprox.generateApprox(Params.numerator_deg,
+					    Params.denominator_deg,
+					    Params.exponent_num,
+					    Params.exponent_den);
+  
+  CCIO::cout << "Approximation error: "<< error << "\n";
+
+  // Find the partial fraction expansion of the approximation 
+  // to the function x^{a/b} (this only works currently for 
+  // the special case that num_deg = den_deg)
+  
+  // temporary arrays
+  double *res = new double[Params.numerator_deg];
+  double *den = new double[Params.denominator_deg];
+
+  assert (Params.numerator_deg == Params.denominator_deg);
+  RemezApprox.getPFE(res, den, &RA_a0);
+
+  // Fill the vectors
+  RA_res.resize(Params.numerator_deg);
+  RA_pole.resize(Params.denominator_deg);
 
 
-//                                                                    __ i<approx_order       RA_a[i]
-//  approximation valid in [min_epsilon, 1] of the form  f(x)=RA_a0 + \                  --------------------
-//                                                                    /_ i=0                x + RA_b[i]
-class RationalApprox {
-private:
- REAL min_epsilon;
- int approx_order;
- REAL RA_a0;
- REAL RA_a[max_approx_order];
- REAL RA_b[max_approx_order];
-public:
- RationalApprox();
- RationalApprox(const REAL eps, const int order, const REAL a0, const REAL *a, const REAL *b);
- RationalApprox& operator=(const RationalApprox &rhs); 
+  for (int i = 0; i < Params.numerator_deg;  i++) {
+    RA_res[i]  = res[i];
+    RA_pole[i] = den[i];
 
- friend void get_order(int &order, RationalApprox approx);
- friend void get_shifts(float shifts[max_approx_order], RationalApprox approx);
- friend void get_shifts(double shifts[max_approx_order], RationalApprox approx);
- friend void get_const(float &a, RationalApprox approx);
- friend void get_const(double &a, RationalApprox approx);
- friend void get_numerators(float numerators[max_approx_order], RationalApprox approx);
- friend void get_numerators(double numerators[max_approx_order], RationalApprox approx);
- friend std::ostream& operator<<(std::ostream &os, const RationalApprox &approx); 
+    CCIO::cout << "Res["<<i<<"] = "<< RA_res[i] 
+	       << "   Pole["<<i<<"] = "<< RA_pole[i] << "\n";
+  }
 
- // rescaled coefficients
- void first_inv_approx_coeff(void);
- void md_inv_approx_coeff(void);
- void last_inv_approx_coeff(void);
+  delete[] res;
+  delete[] den;
 
- friend void first_inv_approx_calc(REAL res);
- friend void last_inv_approx_calc(REAL res);
-
- // defined in Inverter/inverter.cc
- friend void multips_shifted_invert(ShiftMultiFermion *chi, MultiFermion *phi, REAL res, RationalApprox approx);
-
- // defined in FermionForce/fermionforce.cc
- friend void fermionforce(void);
-};
-
-// default constructor
-RationalApprox::RationalApprox(void)
- {
- min_epsilon=1.0;
- approx_order=max_approx_order;
- RA_a0=0.0;
- for(int i=0; i<approx_order; i++)
-    {
-    RA_a[i]=0.0;
-    RA_b[i]=0.0;
-    }
- }
+}
 
 
-// constuctor with initialization
-RationalApprox::RationalApprox(const REAL eps, const int order, const REAL a0, const REAL *a, const REAL *b)
- {
- min_epsilon=eps;
- approx_order=order;
- RA_a0=a0;
- for(int i=0; i<order; i++)
-    {
-    RA_a[i]=a[i];
-    RA_b[i]=b[i];
-    }
- }
 
 
-// asignement operator
-RationalApprox& RationalApprox::operator=(const RationalApprox& rhs)
- {
- min_epsilon=rhs.min_epsilon;
- approx_order=rhs.approx_order;
- RA_a0=rhs.RA_a0;
- for(int i=0; i<approx_order; i++)
-    {
-    RA_a[i]=rhs.RA_a[i];
-    RA_b[i]=rhs.RA_b[i];
-    }
- 
- return *this;
- }
 
 
-void get_order(int &order, RationalApprox approx)
- {
- order=(approx.approx_order);
- }
 
 
-void get_shifts(float shifts[max_approx_order], RationalApprox approx)
- {
- for(int i=0; i<max_approx_order; i++)
-    {
-    shifts[i]=(float) (approx.RA_b[i]); 
-    }
- }
 
 
-void get_const(float &a, RationalApprox approx)
- {
- a=(approx.RA_a0);
- }
 
 
-void get_const(double &a, RationalApprox approx)
- {
- a=(approx.RA_a0);
- }
 
 
-void get_shifts(double shifts[max_approx_order], RationalApprox approx)
- {
- for(int i=0; i<max_approx_order; i++)
-    {
-    shifts[i]=(double) (approx.RA_b[i]); 
-    }
- }
 
 
-void get_numerators(float numerators[max_approx_order], RationalApprox approx)
- {
- for(int i=0; i<max_approx_order; i++)
-    {
-    numerators[i]=(float) (approx.RA_a[i]); 
-    }
- }
 
 
-void get_numerators(double numerators[max_approx_order], RationalApprox approx)
- {
- for(int i=0; i<max_approx_order; i++)
-    {
-    numerators[i]=(double) (approx.RA_a[i]); 
-    }
- }
 
 
-std::ostream& operator<<(std::ostream &os, const RationalApprox &approx) 
-   {
-   os << "\t+++++++++++RationalApprox++++++++++++++++\n";
-   os << "\t++ approx_order="<< approx.approx_order<<"\n";
-   os << "\t++ min_epsilon="<< approx.min_epsilon<<"\n";
-   os << "\t++ RA_a0="<< approx.RA_a0 <<"\n";
-   for(int i=0; i<approx.approx_order; i++)
-      {
-      os <<"\t++ "<<i<<"\t"<<"RA_a["<<i<<"]="<< approx.RA_a[i] << "\t" <<"RA_b["<<i<<"]="<< approx.RA_b[i]<<"\n";
-      }
-   os << "\t+++++++++++++++++++++++++++++++++++++++++"<< endl;
-   return os;
-   }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 
                                              // RESCALED COEFFICIENTS
 
@@ -397,3 +340,4 @@ void last_inv_approx_calc(REAL res)
  #endif
  }
 
+*/

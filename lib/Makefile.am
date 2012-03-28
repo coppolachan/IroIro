@@ -106,7 +106,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
-		Tools/Remez/alg_remez.cpp
+		Tools/Remez/alg_remez.cpp		\
+		Tools/RationalApprox/rationalapprox.cpp	
 
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
@@ -217,7 +218,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/byteswap.hpp			\
 			Tools/gammaMatrices.hpp			\
 			Tools/Remez/alg_remez.hpp		\
-			Tools/Remez/bigfloat.hpp
+			Tools/Remez/bigfloat.hpp		\
+			Tools/RationalApprox/rationalapprox.hpp	
 
 
 

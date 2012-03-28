@@ -130,7 +130,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Smearing/SmartConf.cpp Smearing/Smearing_Factories.cpp \
 	Tools/sunMatUtils.cpp Tools/randNum_MT19937.cpp \
 	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp \
-	Tools/Remez/alg_remez.cpp
+	Tools/Remez/alg_remez.cpp \
+	Tools/RationalApprox/rationalapprox.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 @USE_MPI_FALSE@am__objects_2 = map_scalar.$(OBJEXT)
@@ -165,7 +166,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) \
 	APEsmear.$(OBJEXT) StoutSmear.$(OBJEXT) SmartConf.$(OBJEXT) \
 	Smearing_Factories.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	randNum_MT19937.$(OBJEXT) randNum_Factory.$(OBJEXT) \
-	gammaMatrices.$(OBJEXT) alg_remez.$(OBJEXT)
+	gammaMatrices.$(OBJEXT) alg_remez.$(OBJEXT) \
+	rationalapprox.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -278,7 +280,8 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/commonPrms.h \
 	Tools/randNum_Factory.h Tools/RAIIFactory.hpp \
 	Tools/EnumToString.hpp Tools/byteswap.hpp \
 	Tools/gammaMatrices.hpp Tools/Remez/alg_remez.hpp \
-	Tools/Remez/bigfloat.hpp
+	Tools/Remez/bigfloat.hpp \
+	Tools/RationalApprox/rationalapprox.hpp
 HEADERS = $(include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -503,7 +506,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
-		Tools/Remez/alg_remez.cpp
+		Tools/Remez/alg_remez.cpp		\
+		Tools/RationalApprox/rationalapprox.cpp	
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD = libcommcode.a $(OPTLIB)
@@ -612,7 +616,8 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Tools/byteswap.hpp			\
 			Tools/gammaMatrices.hpp			\
 			Tools/Remez/alg_remez.hpp		\
-			Tools/Remez/bigfloat.hpp
+			Tools/Remez/bigfloat.hpp		\
+			Tools/RationalApprox/rationalapprox.hpp	
 
 all: all-recursive
 
@@ -786,6 +791,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quark_prop_meas_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_MT19937.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalapprox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex_eo.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver.Po@am__quote@
@@ -1836,6 +1842,22 @@ alg_remez.obj: Tools/Remez/alg_remez.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/Remez/alg_remez.cpp' object='alg_remez.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o alg_remez.obj `if test -f 'Tools/Remez/alg_remez.cpp'; then $(CYGPATH_W) 'Tools/Remez/alg_remez.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Remez/alg_remez.cpp'; fi`
+
+rationalapprox.o: Tools/RationalApprox/rationalapprox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalapprox.o -MD -MP -MF $(DEPDIR)/rationalapprox.Tpo -c -o rationalapprox.o `test -f 'Tools/RationalApprox/rationalapprox.cpp' || echo '$(srcdir)/'`Tools/RationalApprox/rationalapprox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/rationalapprox.Tpo $(DEPDIR)/rationalapprox.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/RationalApprox/rationalapprox.cpp' object='rationalapprox.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalapprox.o `test -f 'Tools/RationalApprox/rationalapprox.cpp' || echo '$(srcdir)/'`Tools/RationalApprox/rationalapprox.cpp
+
+rationalapprox.obj: Tools/RationalApprox/rationalapprox.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalapprox.obj -MD -MP -MF $(DEPDIR)/rationalapprox.Tpo -c -o rationalapprox.obj `if test -f 'Tools/RationalApprox/rationalapprox.cpp'; then $(CYGPATH_W) 'Tools/RationalApprox/rationalapprox.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RationalApprox/rationalapprox.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/rationalapprox.Tpo $(DEPDIR)/rationalapprox.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/RationalApprox/rationalapprox.cpp' object='rationalapprox.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalapprox.obj `if test -f 'Tools/RationalApprox/rationalapprox.cpp'; then $(CYGPATH_W) 'Tools/RationalApprox/rationalapprox.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RationalApprox/rationalapprox.cpp'; fi`
 
 main_hmc.o: Main/main_hmc.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hmc.o -MD -MP -MF $(DEPDIR)/main_hmc.Tpo -c -o main_hmc.o `test -f 'Main/main_hmc.cpp' || echo '$(srcdir)/'`Main/main_hmc.cpp
