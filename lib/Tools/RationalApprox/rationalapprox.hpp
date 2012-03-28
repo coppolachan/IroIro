@@ -26,6 +26,37 @@ struct RationalApprox_params{
   int gmp_remez_precision;  /*! @brief precision used by GMP Remez algorithm */
   double lambda_low;           /*! @brief lower boundary of approximation interval */
   double lambda_high;          /*! @brief upper boundary of approximation interval */
+
+  RationalApprox_params(const double num_deg, 
+			const double den_deg,
+			const int exp_num,
+			const int exp_den,
+			const int prec,
+			const double l_low,
+			const double l_high):
+    numerator_deg(num_deg),
+    denominator_deg(den_deg),
+    exponent_num(exp_num),
+    exponent_den(exp_den),
+    gmp_remez_precision(prec),
+    lambda_low(l_low),
+    lambda_high(l_high){}
+
+
+  RationalApprox_params(const XML::node node) {
+    XML::read(node, "Num_deg", numerator_deg, MANDATORY);
+    XML::read(node, "Den_deg", denominator_deg, MANDATORY);
+    
+    XML::read(node, "Exp_num", exponent_num, MANDATORY);
+    XML::read(node, "Exp_den", exponent_den, MANDATORY);
+
+    XML::read(node, "Precision", gmp_remez_precision, MANDATORY);
+    XML::read(node, "Low", lambda_low, MANDATORY);
+    XML::read(node, "High", lambda_high, MANDATORY);
+  }
+
+
+
 };
 
 
@@ -52,7 +83,7 @@ private:
   void fill();
 public:
   /*! XML Constructor */
-  RationalApprox(XML::node Approx_node);
+  RationalApprox(const XML::node Approx_node);
 
   /*! Standard Constructor */
   RationalApprox(RationalApprox_params Par);

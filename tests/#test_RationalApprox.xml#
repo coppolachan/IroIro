@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- simple input file for general tests -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="Unit">conf_04040408.txt</Configuration> 
+
+  <RationalApprox>
+    <Num_deg>10</Num_deg>
+    <Den_deg>10</Den_deg>
+    <Exp_num>1</Exp_num>
+    <Exp_den>2</Exp_den>
+    <Precision>40</Precision>
+    <Low>0.05</Low>
+    <High>1.0</High>
+  </RationalApprox>
+
+</Parameters>
+

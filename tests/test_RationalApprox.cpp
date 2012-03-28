@@ -10,6 +10,16 @@
 
 #include "Tools/RationalApprox/rationalapprox.hpp"
 #include "test_RationalApprox.hpp"
+
+#include "Solver/multiShiftSolver_CG.hpp"
+#include "include/format_F.h"
+#include "include/fopr.h"
+#include "Measurements/FermionicM/source_types.hpp"
+#include "Measurements/FermionicM/qprop_MultiShift.hpp"
+#include "Dirac_ops/dirac_wilson.hpp"
+#include "Dirac_ops/dirac_clover.hpp"
+#include "Dirac_ops/dirac_DomainWall.hpp"
+
 #include <assert.h>
 #include <vector>
 
@@ -19,8 +29,8 @@ int Test_RationalApprox::run(){
   CCIO::cout << "Starting Rational Approximation test" << std::endl;
 
   // Test standard constructor
-  RationalApprox_params PsParameters;
-
+  RationalApprox_params PsParameters(10, 10, 1, 2, 40, 0.05, 1.0);
+  /*
   PsParameters.numerator_deg   = 10;
   PsParameters.denominator_deg = 10;
   
@@ -30,13 +40,12 @@ int Test_RationalApprox::run(){
   PsParameters.gmp_remez_precision = 40;
   PsParameters.lambda_low          = 0.05;
   PsParameters.lambda_high         = 1.0;
+  */
 
   RationalApprox TestApprox(PsParameters);
 
-
-
   // Test XML constructor
-
+  RationalApprox TestXMLApprox(RA_node);
 
   // Test output
   // Reconstruct and test against pow
@@ -53,7 +62,7 @@ int Test_RationalApprox::run(){
   vector<double> Poles = TestApprox.Poles();
   assert(Res.size() == Poles.size());
 
-  result += TestApprox.Const();
+  result = TestApprox.Const();
   
   for (int i = 0; i < Res.size(); ++i) {
     result += Res[i]/(x_test + Poles[i]);
@@ -62,5 +71,78 @@ int Test_RationalApprox::run(){
   CCIO::cout << "Result = "<< result << "\n";
   CCIO::cout << "Difference = "<< result-reference << "\n";
   
+  // Testing the multishift solver
+  CCIO::cout << "\n";
+  // Definition of source 
+  prop_t  xqs;
+  vector<int> spos(4,0);
+  Source_local<Format::Format_F> Source(spos,
+                                        CommonPrms::instance()->Nvol());
+  
+ 
+  Dirac* Kernel = new Dirac_Wilson(0.01, &(Gfield_.data));
+  //Dirac* Kernel = new Dirac_Clover(0.01, 1.0, &(Gauge.data));
+  //Dirac_optimalDomainWall* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gauge.data));
+
+   // Definition of the Solver
+  int    Niter= 1000;
+  double stop_cond = 1.0e-24;
+  MultiShiftSolver* Solver = 
+    new MultiShiftSolver_CG(new Fopr_DdagD(Kernel),
+                            stop_cond,
+                            Niter);
+  
+
+  // Solver test
+  xqs.resize(Res.size());
+  for (int i = 0; i < Res.size(); ++i)
+    xqs.push_back(Field(CommonPrms::instance()->Nvol()));
+  double residual;
+  int Nconv;
+  Solver->solve(xqs, Source.mksrc(0,0), Poles, residual, Nconv);
+
+  //xqs contains the solutions of (M - Poles[i])
+
+  // Reconstruct solution (M^dag M)^(1/2)
+  Field solution, solution2; 
+  Field temp;
+
+  solution = Source.mksrc(0,0);
+  solution *= TestApprox.Const();
+
+  for (int i = 0; i < Poles.size(); ++i){
+    temp = xqs[i];
+    temp *= Res[i];
+    solution += temp;
+  }
+
+  // Apply again (M^dag M)^(1/2)
+  Solver->solve(xqs, solution, Poles, residual, Nconv);  
+
+  solution2 = solution;
+  solution2 *= TestApprox.Const();
+
+  for (int i = 0; i < Poles.size(); ++i){
+    temp = xqs[i];
+    temp *= Res[i];
+    solution2 += temp;
+  }  
+  ////////////////////////////////
+
+  // Check answer
+  // Compare with (M^dag M)
+  Field reference_sol, diff_field;
+  
+  temp = Kernel->mult(Source.mksrc(0,0));
+  reference_sol = Kernel->mult_dag(temp);
+
+  diff_field = reference_sol;
+  diff_field -= solution2;
+
+  CCIO::cout << "Check answer -- diff = "<< diff_field.norm() <<"\n";
+
+
+
+
 
 }

@@ -17,6 +17,13 @@ RationalApprox::RationalApprox(RationalApprox_params Par):Params(Par)
   fill();
 }
 
+// XML constructor
+RationalApprox::RationalApprox(const XML::node Approx_node):
+  Params(Approx_node)
+{
+  fill();
+}
+
 void RationalApprox::fill() {
 
   CCIO::cout << "Calculating Rational Approximation of the function:\n";
