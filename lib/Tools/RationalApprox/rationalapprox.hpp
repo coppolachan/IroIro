@@ -6,6 +6,9 @@
 
  */
 
+#ifndef RATIONAL_APPROX_HPP_
+#define RATIONAL_APPROX_HPP_
+
 #include <vector>
 #include "include/pugi_interface.h"
 
@@ -21,8 +24,8 @@ struct RationalApprox_params{
   int exponent_den;    /*!< @brief exponent denominator (\$b\$) */ 
 
   int gmp_remez_precision;  /*! @brief precision used by GMP Remez algorithm */
-  int lambda_low;           /*! @brief lower boundary of approximation interval */
-  int lambda_high;          /*! @brief upper boundary of approximation interval */
+  double lambda_low;           /*! @brief lower boundary of approximation interval */
+  double lambda_high;          /*! @brief upper boundary of approximation interval */
 };
 
 
@@ -60,3 +63,4 @@ public:
 
 };
 
+#endif

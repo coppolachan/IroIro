@@ -1,4 +1,4 @@
-# Time-stamp: <2012-03-26 11:27:26 neo>
+# Time-stamp: <2012-03-28 11:49:51 neo>
 
 testdir = $(bindir)/Test
 
@@ -26,7 +26,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_Gauge.xml		\
 		test_Overlap.xml	\
 		test_HMC_EvenOdd.xml	\
-		test_MultiShiftSolver.xml
+		test_MultiShiftSolver.xml 
 
 #		test_QpropMom.xml	
 
@@ -48,7 +48,8 @@ test_PROGRAMS = test_HMC 		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
 		test_RNG 		\
-		test_IO
+		test_IO			\
+		test_RationalApprox
 
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
@@ -104,6 +105,10 @@ test_RNG_SOURCES 	= 	test_RNG.cpp
 test_IO_SOURCES 	= 	test_IO.cpp 			\
 				testerIO.cpp
 
+test_RationalApprox_SOURCES 	= 	test_RationalApprox.cpp	\
+				testerRationalApprox.cpp
+
+
 include_HEADERS 	=	tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
@@ -120,4 +125,5 @@ include_HEADERS 	=	tests.hpp			\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
 				test_Overlap.hpp		\
-				test_MultiShiftSolver.hpp
+				test_MultiShiftSolver.hpp	\
+				test_RationalApprox.hpp

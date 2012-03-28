@@ -1,172 +1,66 @@
-// same as rationalapprox_calc.cc
-// to be used to find the correct approximations before running the rhmc program
+//------------------------------------------------------------------------
+/*!
+ * @file test_RationalApprox.cpp
+ *
+ * @brief run() function for Test_RationalApprox class test
+ *
+ * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
+ */
+//------------------------------------------------------------------------
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
+#include "Tools/RationalApprox/rationalapprox.hpp"
+#include "test_RationalApprox.hpp"
+#include <assert.h>
+#include <vector>
 
-#include"../Remez/alg_remez.h"
-#include"../Remez/alg_remez.cc"
+using namespace std;
 
-#include"../Include/global_macro.cc"
-#include"../Include/parameters.cc"
+int Test_RationalApprox::run(){
+  CCIO::cout << "Starting Rational Approximation test" << std::endl;
 
+  // Test standard constructor
+  RationalApprox_params PsParameters;
 
-int main(void)
-  {
-//  FILE *output = fopen("REMEZ_approx.dat", "a");
+  PsParameters.numerator_deg   = 10;
+  PsParameters.denominator_deg = 10;
+  
+  PsParameters.exponent_num = 1;
+  PsParameters.exponent_den = 2;
 
-  // CALCULATION OF COEFFICIENTS FOR FIRST_INV_APPROX_NORM_COEFF
+  PsParameters.gmp_remez_precision = 40;
+  PsParameters.lambda_low          = 0.05;
+  PsParameters.lambda_high         = 1.0;
 
-  int n=approx_metro; // The degree of the numerator polynomial
-  int d=approx_metro; // The degree of the denominator polynomial
-  int y1=no_flavours; // The numerator of the exponent
-  int z1=8*no_ps;     // The denominator of the exponent
-  int precision=gmp_remez_precision; // The precision that gmp uses
-  double lambda_low=lambda_min_metro;
-  double  lambda_high=1.0;              // The bounds of the approximation
-
-  // The error from the approximation (the relative error is minimised
-  // - if another error minimisation is requried, then line 398 in
-  // alg_remez.C is where to change it)
-  double error;
-
-  // The partial fraction expansion takes the form 
-  // r(x) = norm + sum_{k=1}^{n} res[k] / (x + pole[k])
-  double norm;
-  double *res1 = new double[n];
-  double *pole1 = new double[d];
- 
-  printf("\nApproximation to f(x) = (x)^(%d/%d) on [%e, %e]\n\n", y1, z1, lambda_low, lambda_high);
-  fflush(stdout);
-
-  // Instantiate the Remez class
-  AlgRemez remez1(lambda_low,lambda_high,precision);
-
-  // Generate the required approximation
-  error = remez1.generateApprox(n,d,y1,z1);
-
-  printf("approximation error = %e\n\n", error);
-
-  // Find the partial fraction expansion of the approximation 
-  // to the function x^{y/z} (this only works currently for 
-  // the special case that n = d)
-  remez1.getPFE(res1,pole1,&norm);
-
-/*
-  fprintf(output, "\nApproximation to f(x) = (x)^(%d/%d)\n\n", y1, z1);
-  fprintf(output, "RA_a0 = %18.16e\n", norm);
-  for(int i = 0; i < n; i++) 
-     {
-     fprintf(output, "RA_a[%d] = %18.16e, RA_b[%d] = %18.16e\n", i, res1[i], i, pole1[i]);
-     } 
-*/
-
-  printf("RA_a0 = %18.16e\n", norm);
-  for(int i = 0; i < n; i++) 
-     {
-     printf("RA_a[%d] = %18.16e, RA_b[%d] = %18.16e\n", i, res1[i], i, pole1[i]);
-     } 
-
-//  first_inv_approx_norm_coeff= new RationalApprox(lambda_low, n, norm, res1, pole1);  
-
-  delete res1;
-  delete pole1;
+  RationalApprox TestApprox(PsParameters);
 
 
 
-  // CALCULATION OF COEFFICIENTS FOR MD_INV_APPROX_NORM_COEFF
-
-  n=approx_md; // The degree of the numerator polynomial
-  d=approx_md; // The degree of the denominator polynomial
-  y1=no_flavours; // The numerator of the exponent
-  z1=4*no_ps;     // The denominator of the exponent
-  precision=gmp_remez_precision; // The precision that gmp uses
-  lambda_low=lambda_min_md;      // The lower bounds of the approximation
-
-  double *res2 = new double[n];
-  double *pole2 = new double[d];
-
-  printf("\nApproximation to f(x) = (x)^(-%d/%d) on [%e, %e]\n\n", y1, z1, lambda_low, lambda_high);
-  fflush(stdout);
-  // Instantiate the Remez class
-  AlgRemez remez2(lambda_low,lambda_high,precision);
-
-  // Generate the required approximation
-  error = remez2.generateApprox(n,d,y1,z1);
-
-  printf("approximation error = %e\n\n", error);
-
-  // Find pfe of inverse function
-  remez2.getIPFE(res2,pole2,&norm);
-
-/*
-  fprintf(output, "\nApproximation to f(x) = (x)^(-%d/%d)\n\n", y1, z1);
-  fprintf(output, "RA_a0 = %18.16e\n", norm);
-  for(int i = 0; i < n; i++) 
-     {
-     fprintf(output, "RA_a[%d] = %18.16e, RA_b[%d] = %18.16e\n", i, res2[i], i, pole2[i]);
-     } 
-*/
-
-  printf("RA_a0 = %18.16e\n", norm);
-  for(int i = 0; i < n; i++) 
-     {
-     printf("RA_a[%d] = %18.16e, RA_b[%d] = %18.16e\n", i, res2[i], i, pole2[i]);
-     } 
-
-//  md_inv_approx_norm_coeff=new RationalApprox(lambda_low, n, norm, res2, pole2);  
-
-  delete res2;
-  delete pole2;
+  // Test XML constructor
 
 
-  // CALCULATION OF COEFFICIENTS FOR LAST_INV_APPROX_NORM_COEFF
+  // Test output
+  // Reconstruct and test against pow
+  double x_test = 0.5;
+  double exponent = (double)PsParameters.exponent_num/(double)PsParameters.exponent_den;
+  double reference = pow(x_test, exponent);
+  
+  CCIO::cout << "Reference = "<< reference << "\n";
 
-  n=approx_metro; // The degree of the numerator polynomial
-  d=approx_metro; // The degree of the denominator polynomial
-  y1=no_flavours; // The numerator of the exponent
-  z1=4*no_ps;     // The denominator of the exponent
-  precision=gmp_remez_precision; // The precision that gmp uses
-  lambda_low=lambda_min_metro;      // The lower bounds of the approximation
+  //Reconstruct rational expansion
 
-  double *res3 = new double[n];
-  double *pole3 = new double[d];
+  double result;
+  vector<double> Res = TestApprox.Residuals();
+  vector<double> Poles = TestApprox.Poles();
+  assert(Res.size() == Poles.size());
 
-  printf("\nApproximation to f(x) = (x)^(-%d/%d) on [%e, %e]\n\n", y1, z1, lambda_low, lambda_high);
-  fflush(stdout);
-
-  // Instantiate the Remez class
-  AlgRemez remez3(lambda_low,lambda_high,precision);
-
-  // Generate the required approximation
-  error = remez3.generateApprox(n,d,y1,z1);
-
-  printf("approximation error = %e\n\n", error);
-
-  // Find pfe of inverse function
-  remez3.getIPFE(res3,pole3,&norm);
-
-/*
-  fprintf(output, "\nApproximation to f(x) = (x)^(-%d/%d)\n\n", y1, z1);
-  fprintf(output, "RA_a0 = %18.16e\n", norm);
-  for(int i = 0; i < n; i++) 
-     {
-     fprintf(output, "RA_a[%d] = %18.16e, RA_b[%d] = %18.16e\n", i, res3[i], i, pole3[i]);
-     } 
-*/
-
-  printf("RA_a0 = %18.16e\n", norm);
-  for(int i = 0; i < n; i++) 
-     {
-     printf("RA_a[%d] = %18.16e, RA_b[%d] = %18.16e\n", i, res3[i], i, pole3[i]);
-     } 
-
-//  last_inv_approx_norm_coeff= new RationalApprox(lambda_low, n, norm, res3, pole3);  
-
-
-//  fclose(output);
-
-  delete res3;
-  delete pole3;
+  result += TestApprox.Const();
+  
+  for (int i = 0; i < Res.size(); ++i) {
+    result += Res[i]/(x_test + Poles[i]);
   }
+
+  CCIO::cout << "Result = "<< result << "\n";
+  CCIO::cout << "Difference = "<< result-reference << "\n";
+  
+
+}

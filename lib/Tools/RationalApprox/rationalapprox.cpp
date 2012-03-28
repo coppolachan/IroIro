@@ -21,7 +21,7 @@ void RationalApprox::fill() {
 
   CCIO::cout << "Calculating Rational Approximation of the function:\n";
   CCIO::cout << "f(x) = x^("<<Params.exponent_num<<"/"<<Params.exponent_den<<") ";
-  CCIO::cout << "in the interval ["<<Params.lambda_low<<";"<<Params.lambda_high<<"]";
+  CCIO::cout << "in the interval ["<<Params.lambda_low<<";"<<Params.lambda_high<<"]\n";
 
   AlgRemez RemezApprox(Params.lambda_low, Params.lambda_high, Params.gmp_remez_precision);
 
@@ -52,8 +52,8 @@ void RationalApprox::fill() {
     RA_res[i]  = res[i];
     RA_pole[i] = den[i];
 
-    CCIO::cout << "Res["<<i<<"] = "<< RA_res[i] 
-	       << "   Pole["<<i<<"] = "<< RA_pole[i] << "\n";
+    CCIO::cout << "Res["<<i<<"] = "<< std::setw(25)<< RA_res[i] 
+	       << "   Pole["<<i<<"] = "<< std::setw(25)<< RA_pole[i] << "\n";
   }
 
   delete[] res;
