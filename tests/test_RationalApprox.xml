@@ -7,7 +7,7 @@
     <Nodes>1 1 1 1</Nodes>
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Unit"></Configuration> 
+  <Configuration Type="Unit">conf_04040408.txt</Configuration> 
 
   <RationalApprox>
     <Num_deg>10</Num_deg>

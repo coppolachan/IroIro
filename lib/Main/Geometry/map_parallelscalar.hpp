@@ -88,9 +88,12 @@ public:
       }
     }
     */
+    delete [] send_bdry ;
+    delete [] recv_bdry ;
+
+
     return OutField;
   }
-  
 };
 
 #endif //MAP_PARALLELSCALAR_H_
