@@ -88,9 +88,9 @@ public:
   /*! Standard Constructor */
   RationalApprox(RationalApprox_params Par);
 
-  std::vector<double> Residuals() { return RA_res; }
-  std::vector<double> Poles() { return RA_pole; }
-  double Const() { return RA_a0; }
+  std::vector<double> Residuals() const { return RA_res; }
+  std::vector<double> Poles() const { return RA_pole; }
+  double Const() const { return RA_a0; }
 
 };
 

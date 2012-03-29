@@ -97,6 +97,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/solver_CG.cpp			\
 		Solver/solver_Factory.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
+		Solver/rationalSolver.cpp		\
 		Solver/solver.cpp			\
 		Smearing/APEsmear.cpp			\
 		Smearing/StoutSmear.cpp			\
@@ -201,6 +202,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Solver/solver_CG.hpp			\
 			Solver/multiShiftSolver_CG.hpp		\
 			Solver/multiShiftSolver.hpp		\
+			Solver/rationalSolver.hpp		\
 			Smearing/APEsmear.hpp			\
 			Smearing/BaseSmear.hpp			\
 			Smearing/StoutSmear.hpp			\

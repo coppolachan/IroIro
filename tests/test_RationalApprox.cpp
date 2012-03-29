@@ -12,6 +12,7 @@
 #include "test_RationalApprox.hpp"
 
 #include "Solver/multiShiftSolver_CG.hpp"
+#include "Solver/rationalSolver.hpp"
 #include "include/format_F.h"
 #include "include/fopr.h"
 #include "Measurements/FermionicM/source_types.hpp"
@@ -102,44 +103,19 @@ int Test_RationalApprox::run(){
                             Niter);
   
 
-  // Solver test
-  xqs.resize(Res.size());
-  for (int i = 0; i < Res.size(); ++i)
-    xqs.push_back(Field(CommonPrms::instance()->Nvol()*N5d));
-  double residual;
-  int Nconv;
-  Solver->solve(xqs, Source5d.mksrc(0,0), Poles, residual, Nconv);
+  RationalSolver* RASolver = new RationalSolver(Solver, TestXMLApprox);
 
-  //xqs contains the solutions of (M - Poles[i])x = b
-
-  // Reconstruct solution (M^dag M)^(1/2)
-  Field solution, solution2; 
-  Field temp;
-
-  solution = Source5d.mksrc(0,0);
-  solution *= TestXMLApprox.Const();
-
-  for (int i = 0; i < Poles.size(); ++i){
-    temp = xqs[i];
-    temp *= Res[i];
-    solution += temp;
-  }
+  Field solution(CommonPrms::instance()->Nvol()*N5d);
+  Field solution2(CommonPrms::instance()->Nvol()*N5d);
+  RASolver->solve(solution, Source5d.mksrc(0,0));
 
   // Apply again (M^dag M)^(1/2)
-  Solver->solve(xqs, solution, Poles, residual, Nconv);  
+  RASolver->solve(solution2, solution);  
 
-  solution2 = solution;
-  solution2 *= TestXMLApprox.Const();
-
-  for (int i = 0; i < Poles.size(); ++i){
-    temp = xqs[i];
-    temp *= Res[i];
-    solution2 += temp;
-  }  
   ////////////////////////////////
   // Check answer
   // Compare with (M^dag M)
-  Field reference_sol, diff_field;
+  Field reference_sol, diff_field,temp;
   
   temp = Kernel->mult(Source5d.mksrc(0,0));
   reference_sol = Kernel->mult_dag(temp);
