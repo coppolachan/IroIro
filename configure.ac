@@ -168,6 +168,8 @@ Please install or provide the correct path to your installation
 Info at: http://www.gnu.org/s/gsl/)])
 AC_CHECK_FUNC([gsl_sf_ellint_Kcomp],,
 	[AC_MSG_ERROR(Missing function in GNU Scientific Library)])
+
+
 AC_CHECK_LIB([gmp],[__gmpf_init],,
 	[AC_MSG_ERROR(GNU Multiple Precision GMP library was not found in your system.
 Please install or provide the correct path to your installation

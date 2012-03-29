@@ -1,4 +1,4 @@
-# Time-stamp: <2012-03-28 12:27:00 neo>
+# Time-stamp: <2012-03-28 18:00:12 neo>
 
 testdir = $(bindir)/Test
 

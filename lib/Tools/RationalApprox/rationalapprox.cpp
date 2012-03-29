@@ -12,7 +12,8 @@
 #include "Communicator/comm_io.hpp"
 
 // Standard Constructor 
-RationalApprox::RationalApprox(RationalApprox_params Par):Params(Par)
+RationalApprox::RationalApprox(RationalApprox_params Par):
+  Params(Par)
 {
   fill();
 }

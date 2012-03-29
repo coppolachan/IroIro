@@ -58,11 +58,11 @@ int Test_RationalApprox::run(){
   //Reconstruct rational expansion
 
   double result;
-  vector<double> Res = TestApprox.Residuals();
-  vector<double> Poles = TestApprox.Poles();
+  vector<double> Res = TestXMLApprox.Residuals();
+  vector<double> Poles = TestXMLApprox.Poles();
   assert(Res.size() == Poles.size());
 
-  result = TestApprox.Const();
+  result = TestXMLApprox.Const();
   
   for (int i = 0; i < Res.size(); ++i) {
     result += Res[i]/(x_test + Poles[i]);
@@ -78,14 +78,23 @@ int Test_RationalApprox::run(){
   vector<int> spos(4,0);
   Source_local<Format::Format_F> Source(spos,
                                         CommonPrms::instance()->Nvol());
-  
+
  
-  Dirac* Kernel = new Dirac_Wilson(0.01, &(Gfield_.data));
-  //Dirac* Kernel = new Dirac_Clover(0.01, 1.0, &(Gauge.data));
-  //Dirac_optimalDomainWall* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gauge.data));
+  //Dirac* Kernel = new Dirac_Wilson(0.01, &(Gfield_.data));
+  //Dirac* Kernel = new Dirac_Clover(0.01, 1.0, &(Gfield_.data));
+
+  int N5d   = 6;
+  double M0 = -1.6;
+  double c  = 1.0;
+  double b  = 1.0;
+  double mq = 0.01;
+  vector<double> omega(N5d,1.0);
+  Dirac_optimalDomainWall* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gfield_.data));
+  Source_local<Format::Format_F> Source5d(spos,
+					  CommonPrms::instance()->Nvol()*N5d); 
 
    // Definition of the Solver
-  int    Niter= 1000;
+  int    Niter= 2000;
   double stop_cond = 1.0e-24;
   MultiShiftSolver* Solver = 
     new MultiShiftSolver_CG(new Fopr_DdagD(Kernel),
@@ -96,19 +105,19 @@ int Test_RationalApprox::run(){
   // Solver test
   xqs.resize(Res.size());
   for (int i = 0; i < Res.size(); ++i)
-    xqs.push_back(Field(CommonPrms::instance()->Nvol()));
+    xqs.push_back(Field(CommonPrms::instance()->Nvol()*N5d));
   double residual;
   int Nconv;
-  Solver->solve(xqs, Source.mksrc(0,0), Poles, residual, Nconv);
+  Solver->solve(xqs, Source5d.mksrc(0,0), Poles, residual, Nconv);
 
-  //xqs contains the solutions of (M - Poles[i])
+  //xqs contains the solutions of (M - Poles[i])x = b
 
   // Reconstruct solution (M^dag M)^(1/2)
   Field solution, solution2; 
   Field temp;
 
-  solution = Source.mksrc(0,0);
-  solution *= TestApprox.Const();
+  solution = Source5d.mksrc(0,0);
+  solution *= TestXMLApprox.Const();
 
   for (int i = 0; i < Poles.size(); ++i){
     temp = xqs[i];
@@ -120,7 +129,7 @@ int Test_RationalApprox::run(){
   Solver->solve(xqs, solution, Poles, residual, Nconv);  
 
   solution2 = solution;
-  solution2 *= TestApprox.Const();
+  solution2 *= TestXMLApprox.Const();
 
   for (int i = 0; i < Poles.size(); ++i){
     temp = xqs[i];
@@ -128,21 +137,16 @@ int Test_RationalApprox::run(){
     solution2 += temp;
   }  
   ////////////////////////////////
-
   // Check answer
   // Compare with (M^dag M)
   Field reference_sol, diff_field;
   
-  temp = Kernel->mult(Source.mksrc(0,0));
+  temp = Kernel->mult(Source5d.mksrc(0,0));
   reference_sol = Kernel->mult_dag(temp);
-
+  
   diff_field = reference_sol;
   diff_field -= solution2;
 
-  CCIO::cout << "Check answer -- diff = "<< diff_field.norm() <<"\n";
-
-
-
-
+  CCIO::cout << ":::::::: Check answer -- diff (norm) = "<< diff_field.norm() <<"\n";
 
 }
