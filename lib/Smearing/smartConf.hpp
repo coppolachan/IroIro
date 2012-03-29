@@ -1,21 +1,17 @@
 /*!
-  @file SmartConf.hpp
-
+  @file smartConf.hpp
   @brief Declares the SmartConf class
 */
-
-
 #ifndef SMART_CONF_H_
 #define SMART_CONF_H_
 
 #include <complex>
-#include "StoutSmear.hpp"
+#include "stoutSmear.hpp"
 #include "include/observer.hpp"
 #include "include/common_fields.hpp"
 
 class Action;
 /*!
-
   @brief Smeared configuration container
 
   It will behave like a configuration from the point of view of
@@ -31,7 +27,6 @@ class SmartConf : public Observer {
   const int smearingLevels;
   Smear_Stout StoutSmearing;
   std::vector<GaugeField> SmearedSet;
-  
   
   // Member functions
   void fill_smearedSet();
@@ -89,9 +84,7 @@ public:
     }
     else return ThinLinks;
   }
-  
   void observer_update() { fill_smearedSet();}
 };
-
 
 #endif

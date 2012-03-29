@@ -39,12 +39,9 @@ host_triplet = @host@
 target_triplet = @target@
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_1 = -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_2 = -q64
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_3 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_4 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_5 = -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
-DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
+DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_doxygen.m4 \
@@ -95,9 +92,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Action/action_gaugetype_factory.cpp Action/action_Nf2.cpp \
 	Action/action_Nf2_ratio.cpp Action/action_Nf2_DomainWall.cpp \
 	Action/action_fermiontype_factory.cpp Communicator/comm_io.cpp \
-	Communicator/fields_io.cpp Dirac_ops/dirac_wilson.cpp \
-	Dirac_ops/dirac_wilson_EvenOdd.cpp Dirac_ops/dirac_clover.cpp \
-	Dirac_ops/fopr_signH_Zolotarev.cpp \
+	Dirac_ops/dirac_wilson.cpp Dirac_ops/dirac_wilson_EvenOdd.cpp \
+	Dirac_ops/dirac_clover.cpp Dirac_ops/fopr_signH_Zolotarev.cpp \
 	Dirac_ops/dirac_overlap_Zolotarev.cpp \
 	Dirac_ops/dirac_DomainWall.cpp \
 	Dirac_ops/dirac_DomainWall_EvenOdd.cpp \
@@ -107,40 +103,37 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	EigenModes/eigenModes_IRL.cpp \
 	EigenModes/eigenProc_Zolotarev.cpp EigenModes/sortEigen.cpp \
 	EigenModes/fopr_chebyshev_DdagD.cpp \
-	Measurements/GaugeM/staples.cpp Main/Geometry/siteIndex.cpp \
-	Main/Geometry/siteIndex_eo.cpp Main/Geometry/mapper.cpp \
-	Main/Geometry/map_scalar.cpp \
-	Main/Geometry/map_parallelscalar.cpp Main/gaugeConf.cpp \
-	Main/commandline.cpp \
+	Measurements/GaugeM/staples.cpp \
 	Measurements/FermionicM/qprop_MultiShift.cpp \
 	Measurements/FermionicM/qprop.cpp \
+	Measurements/FermionicM/qprop_mom.cpp \
 	Measurements/FermionicM/qprop_EvenOdd.cpp \
 	Measurements/FermionicM/qprop_DomainWall.cpp \
-	Measurements/FermionicM/qprop_mom.cpp \
 	Measurements/FermionicM/utils_DWF4d.cpp \
 	Measurements/FermionicM/quark_prop_meas_factory.cpp \
-	HMC/hmcGeneral.cpp HMC/mdExec.cpp HMC/mdExec_leapfrog.cpp \
-	HMC/mdExec_factory.cpp PugiXML/pugixml.cpp \
-	PugiXML/pugi_interface.cpp Solver/solver_BiCGStab.cpp \
-	Solver/solver_CG.cpp Solver/solver_Factory.cpp \
-	Solver/multiShiftSolver_CG.cpp Solver/solver.cpp \
-	Smearing/APEsmear.cpp Smearing/StoutSmear.cpp \
-	Smearing/SmartConf.cpp Smearing/Smearing_Factories.cpp \
-	Tools/sunMatUtils.cpp Tools/randNum_MT19937.cpp \
-	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp
+	Main/Geometry/siteIndex.cpp \
+	Main/Geometry/siteIndex_EvenOdd.cpp Main/Geometry/mapping.cpp \
+	Main/Geometry/siteMap.cpp Main/gaugeConf.cpp \
+	Main/commandline.cpp HMC/hmcGeneral.cpp HMC/mdExec.cpp \
+	HMC/mdExec_leapfrog.cpp HMC/mdExec_factory.cpp \
+	PugiXML/pugixml.cpp PugiXML/pugi_interface.cpp \
+	Solver/solver_BiCGStab.cpp Solver/solver_CG.cpp \
+	Solver/solver_Factory.cpp Solver/multiShiftSolver_CG.cpp \
+	Solver/solver.cpp Smearing/APEsmear.cpp \
+	Smearing/stoutSmear.cpp Smearing/smartConf.cpp \
+	Smearing/smearingFactories.cpp Tools/sunMatUtils.cpp \
+	Tools/randNum_MT19937.cpp Tools/randNum_Factory.cpp \
+	Tools/gammaMatrices.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
-@USE_MPI_FALSE@am__objects_2 = map_scalar.$(OBJEXT)
-@USE_MPI_TRUE@am__objects_2 = map_parallelscalar.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) \
 	common_fields.$(OBJEXT) $(am__objects_1) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) action_gauge_rect.$(OBJEXT) \
 	action_gaugetype_factory.$(OBJEXT) action_Nf2.$(OBJEXT) \
 	action_Nf2_ratio.$(OBJEXT) action_Nf2_DomainWall.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
-	fields_io.$(OBJEXT) dirac_wilson.$(OBJEXT) \
-	dirac_wilson_EvenOdd.$(OBJEXT) dirac_clover.$(OBJEXT) \
-	fopr_signH_Zolotarev.$(OBJEXT) \
+	dirac_wilson.$(OBJEXT) dirac_wilson_EvenOdd.$(OBJEXT) \
+	dirac_clover.$(OBJEXT) fopr_signH_Zolotarev.$(OBJEXT) \
 	dirac_overlap_Zolotarev.$(OBJEXT) dirac_DomainWall.$(OBJEXT) \
 	dirac_DomainWall_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
@@ -148,28 +141,25 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) eigenModes_IRL.$(OBJEXT) \
 	eigenProc_Zolotarev.$(OBJEXT) sortEigen.$(OBJEXT) \
 	fopr_chebyshev_DdagD.$(OBJEXT) staples.$(OBJEXT) \
-	siteIndex.$(OBJEXT) siteIndex_eo.$(OBJEXT) mapper.$(OBJEXT) \
-	$(am__objects_2) gaugeConf.$(OBJEXT) commandline.$(OBJEXT) \
-	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
+	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) qprop_mom.$(OBJEXT) \
 	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
-	qprop_mom.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
-	quark_prop_meas_factory.$(OBJEXT) hmcGeneral.$(OBJEXT) \
-	mdExec.$(OBJEXT) mdExec_leapfrog.$(OBJEXT) \
-	mdExec_factory.$(OBJEXT) pugixml.$(OBJEXT) \
-	pugi_interface.$(OBJEXT) solver_BiCGStab.$(OBJEXT) \
-	solver_CG.$(OBJEXT) solver_Factory.$(OBJEXT) \
-	multiShiftSolver_CG.$(OBJEXT) solver.$(OBJEXT) \
-	APEsmear.$(OBJEXT) StoutSmear.$(OBJEXT) SmartConf.$(OBJEXT) \
-	Smearing_Factories.$(OBJEXT) sunMatUtils.$(OBJEXT) \
-	randNum_MT19937.$(OBJEXT) randNum_Factory.$(OBJEXT) \
-	gammaMatrices.$(OBJEXT)
+	utils_DWF4d.$(OBJEXT) quark_prop_meas_factory.$(OBJEXT) \
+	siteIndex.$(OBJEXT) siteIndex_EvenOdd.$(OBJEXT) \
+	mapping.$(OBJEXT) siteMap.$(OBJEXT) gaugeConf.$(OBJEXT) \
+	commandline.$(OBJEXT) hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
+	mdExec_leapfrog.$(OBJEXT) mdExec_factory.$(OBJEXT) \
+	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
+	solver_BiCGStab.$(OBJEXT) solver_CG.$(OBJEXT) \
+	solver_Factory.$(OBJEXT) multiShiftSolver_CG.$(OBJEXT) \
+	solver.$(OBJEXT) APEsmear.$(OBJEXT) stoutSmear.$(OBJEXT) \
+	smartConf.$(OBJEXT) smearingFactories.$(OBJEXT) \
+	sunMatUtils.$(OBJEXT) randNum_MT19937.$(OBJEXT) \
+	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
 main_hmc_OBJECTS = $(am_main_hmc_OBJECTS)
-am__DEPENDENCIES_1 =
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
-main_hmc_DEPENDENCIES = libcommcode.a $(am__DEPENDENCIES_2)
+main_hmc_DEPENDENCIES = libcommcode.a
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -200,81 +190,6 @@ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	install-pdf-recursive install-ps-recursive install-recursive \
 	installcheck-recursive installdirs-recursive pdf-recursive \
 	ps-recursive uninstall-recursive
-am__include_HEADERS_DIST = $(top_srcdir)/include/commonPrms.h \
-	$(top_srcdir)/include/commandline.hpp \
-	$(top_srcdir)/include/common_code.hpp \
-	$(top_srcdir)/include/common_fields.hpp \
-	$(top_srcdir)/include/config.h \
-	$(top_srcdir)/include/geometry.hpp \
-	$(top_srcdir)/include/field.h \
-	$(top_srcdir)/include/factories.hpp \
-	$(top_srcdir)/include/fopr_chebyshev_DdagD.h \
-	$(top_srcdir)/include/fopr_Dhat.h \
-	$(top_srcdir)/include/fopr_eo.h \
-	$(top_srcdir)/include/fopr_eo_wilson.h \
-	$(top_srcdir)/include/fopr.h \
-	$(top_srcdir)/include/fopr_signH_Zolotarev.h \
-	$(top_srcdir)/include/format_A.h \
-	$(top_srcdir)/include/format_F.h \
-	$(top_srcdir)/include/format_G.h \
-	$(top_srcdir)/include/numerical_const.hpp \
-	$(top_srcdir)/include/macros.hpp \
-	$(top_srcdir)/include/typeDefs.h \
-	$(top_srcdir)/include/pugi_interface.h \
-	$(top_srcdir)/include/singleton.h \
-	$(top_srcdir)/include/observer.hpp \
-	$(top_srcdir)/include/messages_macros.hpp PugiXML/pugixml.hpp \
-	PugiXML/pugiconfig.hpp Action/action_gauge_wilson.hpp \
-	Action/action_gauge_rect.hpp Action/action.hpp \
-	Action/action_gaugetype_factory.hpp \
-	Action/action_gaugetype_factory_abs.hpp \
-	Action/action_fermiontype_factory_abs.hpp \
-	Action/action_fermiontype_factory.hpp \
-	Action/action_Factory.hpp Action/action_Nf2.hpp \
-	Action/action_Nf2_ratio.hpp Action/action_Nf2_DomainWall.hpp \
-	Measurements/GaugeM/staples.hpp \
-	Measurements/FermionicM/source.hpp \
-	Measurements/FermionicM/source_types.hpp \
-	Measurements/FermionicM/qprop_MultiShift.hpp \
-	Measurements/FermionicM/qprop.hpp \
-	Measurements/FermionicM/qprop_mom.hpp \
-	Measurements/FermionicM/qprop_EvenOdd.hpp \
-	Measurements/FermionicM/qprop_DomainWall.hpp \
-	Measurements/FermionicM/quark_propagators.hpp \
-	Measurements/FermionicM/sources_factory.hpp \
-	Measurements/FermionicM/meson_correlator.hpp \
-	Measurements/FermionicM/fermion_meas_factory_abs.hpp \
-	Measurements/FermionicM/quark_prop_meas_factory.hpp \
-	Measurements/FermionicM/utils_DWF4d.hpp \
-	Communicator/communicator.h Communicator/comm_io.hpp \
-	Communicator/fields_io.hpp Dirac_ops/dirac.hpp \
-	Dirac_ops/dirac_wilson.hpp Dirac_ops/dirac_wilson_EvenOdd.hpp \
-	Dirac_ops/dirac_clover.hpp Dirac_ops/dirac_DomainWall.hpp \
-	Dirac_ops/dirac_DomainWall_EvenOdd.hpp \
-	Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
-	Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
-	Dirac_ops/dirac_overlap_Zolotarev.hpp \
-	Dirac_ops/dirac_Preconditioners.hpp Dirac_ops/eoUtils.hpp \
-	Dirac_ops/dirac_Operator_Factory.hpp \
-	EigenModes/eigenModes_IRL.hpp EigenModes/sortEigen.h \
-	EigenModes/eigenProc_Zolotarev.h Main/Geometry/siteIndex.h \
-	Main/Geometry/siteIndex_eo.h Main/Geometry/mapper.hpp \
-	Main/Geometry/map_scalar.hpp \
-	Main/Geometry/map_parallelscalar.hpp Main/gaugeConf.hpp \
-	Main/commandline.cpp Fields/field_expressions.hpp \
-	HMC/hmcGeneral.hpp HMC/mdExec.hpp HMC/mdExec_leapfrog.hpp \
-	HMC/mdExec_leapfrog_eigen.hpp HMC/mdExec_factory.hpp \
-	HMC/mdExec_factory_abs.hpp Solver/solver_Factory.hpp \
-	Solver/solver_BiCGStab.hpp Solver/solver.hpp \
-	Solver/solver_CG.hpp Solver/multiShiftSolver_CG.hpp \
-	Solver/multiShiftSolver.hpp Smearing/APEsmear.hpp \
-	Smearing/BaseSmear.hpp Smearing/StoutSmear.hpp \
-	Smearing/SmartConf.hpp Smearing/Smearing_Factories.hpp \
-	Tools/sunMat.hpp Tools/sunMatUtils.hpp Tools/randNum_MP.h \
-	Tools/randNum.h Tools/sunVec.hpp Tools/randNum_MT19937.h \
-	Tools/randNum_Factory.h Tools/RAIIFactory.hpp \
-	Tools/EnumToString.hpp Tools/byteswap.hpp \
-	Tools/gammaMatrices.hpp
 HEADERS = $(include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -322,7 +237,7 @@ CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@ $(am__append_1) $(am__append_3)
+CXXFLAGS = @CXXFLAGS@ $(am__append_1)
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -339,7 +254,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LDFLAGS = @LDFLAGS@ $(am__append_2) $(am__append_4)
+LDFLAGS = @LDFLAGS@ $(am__append_2)
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
@@ -418,24 +333,19 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . 
-OPTLIB = $(am__append_5)
-@USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp 
+OPTLIB = 
+@USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 @USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
-@USE_MPI_FALSE@MAPPER_SRCS = Main/Geometry/map_scalar.cpp
-@USE_MPI_TRUE@MAPPER_SRCS = Main/Geometry/map_parallelscalar.cpp
-@USE_MPI_FALSE@MAPPER_HEAD = Main/Geometry/map_scalar.hpp
-@USE_MPI_TRUE@MAPPER_HEAD = Main/Geometry/map_parallelscalar.hpp
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@DRIVER = /bgsys/drivers/ppcfloor
 AM_CPPFLAGS = -I$(top_srcdir)
 AM_CFLAGS = -I$(top_srcdir)
 AM_LDFLAGS = 
 lib_LIBRARIES = libcommcode.a
-EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp		\
-		Main/documentation_pages.h		\
-		Dirac_ops/dirac_wilson_improved.code	\
-		Dirac_ops/dirac_wilson_improved2.code	\
-		Dirac_ops/dirac_wilson_improved3.code	\
-		Dirac_ops/dirac_wilson_standard.code	\
+EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
+		Main/documentation_pages.h	\
+                Dirac_ops/dirac_wilson_improved.code    \
+                Dirac_ops/dirac_wilson_improved2.code   \
+                Dirac_ops/dirac_wilson_improved3.code   \
+                Dirac_ops/dirac_wilson_standard.code    \
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
@@ -450,7 +360,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_Nf2_DomainWall.cpp	\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
-		Communicator/fields_io.cpp		\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_clover.cpp		\
@@ -467,19 +376,19 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/sortEigen.cpp		\
 		EigenModes/fopr_chebyshev_DdagD.cpp	\
 		Measurements/GaugeM/staples.cpp		\
-		Main/Geometry/siteIndex.cpp		\
-		Main/Geometry/siteIndex_eo.cpp		\
-		Main/Geometry/mapper.cpp		\
-		$(MAPPER_SRCS)		     	        \
-		Main/gaugeConf.cpp			\
-		Main/commandline.cpp			\
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
+		Measurements/FermionicM/qprop_mom.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
-		Measurements/FermionicM/qprop_mom.cpp 			\
-		Measurements/FermionicM/utils_DWF4d.cpp			\
+		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
+		Main/Geometry/siteIndex.cpp	        \
+		Main/Geometry/siteIndex_EvenOdd.cpp	\
+		Main/Geometry/mapping.cpp		\
+		Main/Geometry/siteMap.cpp		\
+		Main/gaugeConf.cpp			\
+		Main/commandline.cpp			\
 		HMC/hmcGeneral.cpp                      \
 		HMC/mdExec.cpp		                \
 		HMC/mdExec_leapfrog.cpp                 \
@@ -492,16 +401,16 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
 		Solver/solver.cpp			\
 		Smearing/APEsmear.cpp			\
-		Smearing/StoutSmear.cpp			\
-		Smearing/SmartConf.cpp			\
-		Smearing/Smearing_Factories.cpp		\
+		Smearing/stoutSmear.cpp			\
+		Smearing/smartConf.cpp			\
+		Smearing/smearingFactories.cpp		\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
-main_hmc_LDADD = libcommcode.a $(OPTLIB)
+main_hmc_LDADD = libcommcode.a
 include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
                         $(top_srcdir)/include/commandline.hpp           \
 			$(top_srcdir)/include/common_code.hpp		\
@@ -550,12 +459,20 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/quark_propagators.hpp	\
 			Measurements/FermionicM/sources_factory.hpp	\
 			Measurements/FermionicM/meson_correlator.hpp	\
-			Measurements/FermionicM/fermion_meas_factory_abs.hpp	\
-			Measurements/FermionicM/quark_prop_meas_factory.hpp	\
+			Measurements/FermionicM/fermion_meas_factory_abs.hpp \
+			Measurements/FermionicM/quark_prop_meas_factory.hpp \
                         Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
+			Main/Geometry/siteIndex.hpp     	\
+			Main/Geometry/siteIndex_EvenOdd.hpp	\
+			Main/Geometry/mapping.hpp		\
+			Main/Geometry/siteMap.hpp		\
+			Main/gaugeConf.hpp			\
+			Main/commandline.cpp			\
+			Dirac_ops/dirac_Operator_Factory.hpp	\
+			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac.hpp			\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
@@ -571,10 +488,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			EigenModes/eigenModes_IRL.hpp		\
 			EigenModes/sortEigen.h			\
 			EigenModes/eigenProc_Zolotarev.h	\
-			Main/Geometry/siteIndex.h		\
-			Main/Geometry/siteIndex_eo.h		\
-			Main/Geometry/mapper.hpp		\
-			$(MAPPER_HEAD)		     	        \
+			Main/Geometry/mapping.hpp		\
 			Main/gaugeConf.hpp			\
 			Main/commandline.cpp			\
 			Fields/field_expressions.hpp		\
@@ -591,10 +505,10 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Solver/multiShiftSolver_CG.hpp		\
 			Solver/multiShiftSolver.hpp		\
 			Smearing/APEsmear.hpp			\
-			Smearing/BaseSmear.hpp			\
-			Smearing/StoutSmear.hpp			\
-			Smearing/SmartConf.hpp			\
-			Smearing/Smearing_Factories.hpp		\
+			Smearing/baseSmear.hpp			\
+			Smearing/stoutSmear.hpp			\
+			Smearing/smartConf.hpp			\
+			Smearing/smearingFactories.hpp		\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\
@@ -725,9 +639,6 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SmartConf.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Smearing_Factories.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StoutSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2_DomainWall.Po@am__quote@
@@ -754,16 +665,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModes_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenProc_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eoUtils.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fields_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fopr_chebyshev_DdagD.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fopr_signH_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gammaMatrices.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeConf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hmc.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/map_parallelscalar.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/map_scalar.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapper.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapping.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_leapfrog.Po@am__quote@
@@ -779,13 +687,17 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_MT19937.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex_eo.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex_EvenOdd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteMap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smartConf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smearingFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver_BiCGStab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver_CG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sortEigen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staples.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stoutSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunMatUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
 
@@ -1012,22 +924,6 @@ comm_io.obj: Communicator/comm_io.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/comm_io.cpp' object='comm_io.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o comm_io.obj `if test -f 'Communicator/comm_io.cpp'; then $(CYGPATH_W) 'Communicator/comm_io.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/comm_io.cpp'; fi`
-
-fields_io.o: Communicator/fields_io.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fields_io.o -MD -MP -MF $(DEPDIR)/fields_io.Tpo -c -o fields_io.o `test -f 'Communicator/fields_io.cpp' || echo '$(srcdir)/'`Communicator/fields_io.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fields_io.Tpo $(DEPDIR)/fields_io.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/fields_io.cpp' object='fields_io.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o fields_io.o `test -f 'Communicator/fields_io.cpp' || echo '$(srcdir)/'`Communicator/fields_io.cpp
-
-fields_io.obj: Communicator/fields_io.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fields_io.obj -MD -MP -MF $(DEPDIR)/fields_io.Tpo -c -o fields_io.obj `if test -f 'Communicator/fields_io.cpp'; then $(CYGPATH_W) 'Communicator/fields_io.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/fields_io.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fields_io.Tpo $(DEPDIR)/fields_io.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/fields_io.cpp' object='fields_io.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o fields_io.obj `if test -f 'Communicator/fields_io.cpp'; then $(CYGPATH_W) 'Communicator/fields_io.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/fields_io.cpp'; fi`
 
 dirac_wilson.o: Dirac_ops/dirac_wilson.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson.o -MD -MP -MF $(DEPDIR)/dirac_wilson.Tpo -c -o dirac_wilson.o `test -f 'Dirac_ops/dirac_wilson.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson.cpp
@@ -1285,118 +1181,6 @@ staples.obj: Measurements/GaugeM/staples.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o staples.obj `if test -f 'Measurements/GaugeM/staples.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/staples.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/staples.cpp'; fi`
 
-siteIndex.o: Main/Geometry/siteIndex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex.o -MD -MP -MF $(DEPDIR)/siteIndex.Tpo -c -o siteIndex.o `test -f 'Main/Geometry/siteIndex.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex.Tpo $(DEPDIR)/siteIndex.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex.cpp' object='siteIndex.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex.o `test -f 'Main/Geometry/siteIndex.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex.cpp
-
-siteIndex.obj: Main/Geometry/siteIndex.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex.obj -MD -MP -MF $(DEPDIR)/siteIndex.Tpo -c -o siteIndex.obj `if test -f 'Main/Geometry/siteIndex.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex.Tpo $(DEPDIR)/siteIndex.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex.cpp' object='siteIndex.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex.obj `if test -f 'Main/Geometry/siteIndex.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex.cpp'; fi`
-
-siteIndex_eo.o: Main/Geometry/siteIndex_eo.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex_eo.o -MD -MP -MF $(DEPDIR)/siteIndex_eo.Tpo -c -o siteIndex_eo.o `test -f 'Main/Geometry/siteIndex_eo.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex_eo.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex_eo.Tpo $(DEPDIR)/siteIndex_eo.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex_eo.cpp' object='siteIndex_eo.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex_eo.o `test -f 'Main/Geometry/siteIndex_eo.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex_eo.cpp
-
-siteIndex_eo.obj: Main/Geometry/siteIndex_eo.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex_eo.obj -MD -MP -MF $(DEPDIR)/siteIndex_eo.Tpo -c -o siteIndex_eo.obj `if test -f 'Main/Geometry/siteIndex_eo.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex_eo.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex_eo.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex_eo.Tpo $(DEPDIR)/siteIndex_eo.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex_eo.cpp' object='siteIndex_eo.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex_eo.obj `if test -f 'Main/Geometry/siteIndex_eo.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex_eo.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex_eo.cpp'; fi`
-
-mapper.o: Main/Geometry/mapper.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mapper.o -MD -MP -MF $(DEPDIR)/mapper.Tpo -c -o mapper.o `test -f 'Main/Geometry/mapper.cpp' || echo '$(srcdir)/'`Main/Geometry/mapper.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapper.Tpo $(DEPDIR)/mapper.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/mapper.cpp' object='mapper.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mapper.o `test -f 'Main/Geometry/mapper.cpp' || echo '$(srcdir)/'`Main/Geometry/mapper.cpp
-
-mapper.obj: Main/Geometry/mapper.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mapper.obj -MD -MP -MF $(DEPDIR)/mapper.Tpo -c -o mapper.obj `if test -f 'Main/Geometry/mapper.cpp'; then $(CYGPATH_W) 'Main/Geometry/mapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/mapper.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapper.Tpo $(DEPDIR)/mapper.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/mapper.cpp' object='mapper.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mapper.obj `if test -f 'Main/Geometry/mapper.cpp'; then $(CYGPATH_W) 'Main/Geometry/mapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/mapper.cpp'; fi`
-
-map_scalar.o: Main/Geometry/map_scalar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map_scalar.o -MD -MP -MF $(DEPDIR)/map_scalar.Tpo -c -o map_scalar.o `test -f 'Main/Geometry/map_scalar.cpp' || echo '$(srcdir)/'`Main/Geometry/map_scalar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/map_scalar.Tpo $(DEPDIR)/map_scalar.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/map_scalar.cpp' object='map_scalar.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map_scalar.o `test -f 'Main/Geometry/map_scalar.cpp' || echo '$(srcdir)/'`Main/Geometry/map_scalar.cpp
-
-map_scalar.obj: Main/Geometry/map_scalar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map_scalar.obj -MD -MP -MF $(DEPDIR)/map_scalar.Tpo -c -o map_scalar.obj `if test -f 'Main/Geometry/map_scalar.cpp'; then $(CYGPATH_W) 'Main/Geometry/map_scalar.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/map_scalar.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/map_scalar.Tpo $(DEPDIR)/map_scalar.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/map_scalar.cpp' object='map_scalar.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map_scalar.obj `if test -f 'Main/Geometry/map_scalar.cpp'; then $(CYGPATH_W) 'Main/Geometry/map_scalar.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/map_scalar.cpp'; fi`
-
-map_parallelscalar.o: Main/Geometry/map_parallelscalar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map_parallelscalar.o -MD -MP -MF $(DEPDIR)/map_parallelscalar.Tpo -c -o map_parallelscalar.o `test -f 'Main/Geometry/map_parallelscalar.cpp' || echo '$(srcdir)/'`Main/Geometry/map_parallelscalar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/map_parallelscalar.Tpo $(DEPDIR)/map_parallelscalar.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/map_parallelscalar.cpp' object='map_parallelscalar.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map_parallelscalar.o `test -f 'Main/Geometry/map_parallelscalar.cpp' || echo '$(srcdir)/'`Main/Geometry/map_parallelscalar.cpp
-
-map_parallelscalar.obj: Main/Geometry/map_parallelscalar.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT map_parallelscalar.obj -MD -MP -MF $(DEPDIR)/map_parallelscalar.Tpo -c -o map_parallelscalar.obj `if test -f 'Main/Geometry/map_parallelscalar.cpp'; then $(CYGPATH_W) 'Main/Geometry/map_parallelscalar.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/map_parallelscalar.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/map_parallelscalar.Tpo $(DEPDIR)/map_parallelscalar.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/map_parallelscalar.cpp' object='map_parallelscalar.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o map_parallelscalar.obj `if test -f 'Main/Geometry/map_parallelscalar.cpp'; then $(CYGPATH_W) 'Main/Geometry/map_parallelscalar.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/map_parallelscalar.cpp'; fi`
-
-gaugeConf.o: Main/gaugeConf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeConf.o -MD -MP -MF $(DEPDIR)/gaugeConf.Tpo -c -o gaugeConf.o `test -f 'Main/gaugeConf.cpp' || echo '$(srcdir)/'`Main/gaugeConf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeConf.Tpo $(DEPDIR)/gaugeConf.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/gaugeConf.cpp' object='gaugeConf.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeConf.o `test -f 'Main/gaugeConf.cpp' || echo '$(srcdir)/'`Main/gaugeConf.cpp
-
-gaugeConf.obj: Main/gaugeConf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeConf.obj -MD -MP -MF $(DEPDIR)/gaugeConf.Tpo -c -o gaugeConf.obj `if test -f 'Main/gaugeConf.cpp'; then $(CYGPATH_W) 'Main/gaugeConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/gaugeConf.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeConf.Tpo $(DEPDIR)/gaugeConf.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/gaugeConf.cpp' object='gaugeConf.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeConf.obj `if test -f 'Main/gaugeConf.cpp'; then $(CYGPATH_W) 'Main/gaugeConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/gaugeConf.cpp'; fi`
-
-commandline.o: Main/commandline.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT commandline.o -MD -MP -MF $(DEPDIR)/commandline.Tpo -c -o commandline.o `test -f 'Main/commandline.cpp' || echo '$(srcdir)/'`Main/commandline.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/commandline.Tpo $(DEPDIR)/commandline.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/commandline.cpp' object='commandline.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o commandline.o `test -f 'Main/commandline.cpp' || echo '$(srcdir)/'`Main/commandline.cpp
-
-commandline.obj: Main/commandline.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT commandline.obj -MD -MP -MF $(DEPDIR)/commandline.Tpo -c -o commandline.obj `if test -f 'Main/commandline.cpp'; then $(CYGPATH_W) 'Main/commandline.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/commandline.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/commandline.Tpo $(DEPDIR)/commandline.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/commandline.cpp' object='commandline.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o commandline.obj `if test -f 'Main/commandline.cpp'; then $(CYGPATH_W) 'Main/commandline.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/commandline.cpp'; fi`
-
 qprop_MultiShift.o: Measurements/FermionicM/qprop_MultiShift.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_MultiShift.o -MD -MP -MF $(DEPDIR)/qprop_MultiShift.Tpo -c -o qprop_MultiShift.o `test -f 'Measurements/FermionicM/qprop_MultiShift.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_MultiShift.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qprop_MultiShift.Tpo $(DEPDIR)/qprop_MultiShift.Po
@@ -1428,6 +1212,22 @@ qprop.obj: Measurements/FermionicM/qprop.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop.cpp' object='qprop.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop.obj `if test -f 'Measurements/FermionicM/qprop.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop.cpp'; fi`
+
+qprop_mom.o: Measurements/FermionicM/qprop_mom.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_mom.o -MD -MP -MF $(DEPDIR)/qprop_mom.Tpo -c -o qprop_mom.o `test -f 'Measurements/FermionicM/qprop_mom.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_mom.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qprop_mom.Tpo $(DEPDIR)/qprop_mom.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop_mom.cpp' object='qprop_mom.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_mom.o `test -f 'Measurements/FermionicM/qprop_mom.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_mom.cpp
+
+qprop_mom.obj: Measurements/FermionicM/qprop_mom.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_mom.obj -MD -MP -MF $(DEPDIR)/qprop_mom.Tpo -c -o qprop_mom.obj `if test -f 'Measurements/FermionicM/qprop_mom.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_mom.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_mom.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qprop_mom.Tpo $(DEPDIR)/qprop_mom.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop_mom.cpp' object='qprop_mom.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_mom.obj `if test -f 'Measurements/FermionicM/qprop_mom.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_mom.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_mom.cpp'; fi`
 
 qprop_EvenOdd.o: Measurements/FermionicM/qprop_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_EvenOdd.o -MD -MP -MF $(DEPDIR)/qprop_EvenOdd.Tpo -c -o qprop_EvenOdd.o `test -f 'Measurements/FermionicM/qprop_EvenOdd.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_EvenOdd.cpp
@@ -1461,22 +1261,6 @@ qprop_DomainWall.obj: Measurements/FermionicM/qprop_DomainWall.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_DomainWall.obj `if test -f 'Measurements/FermionicM/qprop_DomainWall.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_DomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_DomainWall.cpp'; fi`
 
-qprop_mom.o: Measurements/FermionicM/qprop_mom.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_mom.o -MD -MP -MF $(DEPDIR)/qprop_mom.Tpo -c -o qprop_mom.o `test -f 'Measurements/FermionicM/qprop_mom.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_mom.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qprop_mom.Tpo $(DEPDIR)/qprop_mom.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop_mom.cpp' object='qprop_mom.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_mom.o `test -f 'Measurements/FermionicM/qprop_mom.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_mom.cpp
-
-qprop_mom.obj: Measurements/FermionicM/qprop_mom.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_mom.obj -MD -MP -MF $(DEPDIR)/qprop_mom.Tpo -c -o qprop_mom.obj `if test -f 'Measurements/FermionicM/qprop_mom.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_mom.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_mom.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/qprop_mom.Tpo $(DEPDIR)/qprop_mom.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/qprop_mom.cpp' object='qprop_mom.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qprop_mom.obj `if test -f 'Measurements/FermionicM/qprop_mom.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/qprop_mom.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/qprop_mom.cpp'; fi`
-
 utils_DWF4d.o: Measurements/FermionicM/utils_DWF4d.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_DWF4d.o -MD -MP -MF $(DEPDIR)/utils_DWF4d.Tpo -c -o utils_DWF4d.o `test -f 'Measurements/FermionicM/utils_DWF4d.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/utils_DWF4d.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utils_DWF4d.Tpo $(DEPDIR)/utils_DWF4d.Po
@@ -1508,6 +1292,102 @@ quark_prop_meas_factory.obj: Measurements/FermionicM/quark_prop_meas_factory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/quark_prop_meas_factory.cpp' object='quark_prop_meas_factory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o quark_prop_meas_factory.obj `if test -f 'Measurements/FermionicM/quark_prop_meas_factory.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/quark_prop_meas_factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/quark_prop_meas_factory.cpp'; fi`
+
+siteIndex.o: Main/Geometry/siteIndex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex.o -MD -MP -MF $(DEPDIR)/siteIndex.Tpo -c -o siteIndex.o `test -f 'Main/Geometry/siteIndex.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex.Tpo $(DEPDIR)/siteIndex.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex.cpp' object='siteIndex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex.o `test -f 'Main/Geometry/siteIndex.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex.cpp
+
+siteIndex.obj: Main/Geometry/siteIndex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex.obj -MD -MP -MF $(DEPDIR)/siteIndex.Tpo -c -o siteIndex.obj `if test -f 'Main/Geometry/siteIndex.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex.Tpo $(DEPDIR)/siteIndex.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex.cpp' object='siteIndex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex.obj `if test -f 'Main/Geometry/siteIndex.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex.cpp'; fi`
+
+siteIndex_EvenOdd.o: Main/Geometry/siteIndex_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex_EvenOdd.o -MD -MP -MF $(DEPDIR)/siteIndex_EvenOdd.Tpo -c -o siteIndex_EvenOdd.o `test -f 'Main/Geometry/siteIndex_EvenOdd.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex_EvenOdd.Tpo $(DEPDIR)/siteIndex_EvenOdd.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex_EvenOdd.cpp' object='siteIndex_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex_EvenOdd.o `test -f 'Main/Geometry/siteIndex_EvenOdd.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex_EvenOdd.cpp
+
+siteIndex_EvenOdd.obj: Main/Geometry/siteIndex_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex_EvenOdd.obj -MD -MP -MF $(DEPDIR)/siteIndex_EvenOdd.Tpo -c -o siteIndex_EvenOdd.obj `if test -f 'Main/Geometry/siteIndex_EvenOdd.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex_EvenOdd.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex_EvenOdd.Tpo $(DEPDIR)/siteIndex_EvenOdd.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex_EvenOdd.cpp' object='siteIndex_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex_EvenOdd.obj `if test -f 'Main/Geometry/siteIndex_EvenOdd.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex_EvenOdd.cpp'; fi`
+
+mapping.o: Main/Geometry/mapping.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mapping.o -MD -MP -MF $(DEPDIR)/mapping.Tpo -c -o mapping.o `test -f 'Main/Geometry/mapping.cpp' || echo '$(srcdir)/'`Main/Geometry/mapping.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapping.Tpo $(DEPDIR)/mapping.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/mapping.cpp' object='mapping.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mapping.o `test -f 'Main/Geometry/mapping.cpp' || echo '$(srcdir)/'`Main/Geometry/mapping.cpp
+
+mapping.obj: Main/Geometry/mapping.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mapping.obj -MD -MP -MF $(DEPDIR)/mapping.Tpo -c -o mapping.obj `if test -f 'Main/Geometry/mapping.cpp'; then $(CYGPATH_W) 'Main/Geometry/mapping.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/mapping.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mapping.Tpo $(DEPDIR)/mapping.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/mapping.cpp' object='mapping.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mapping.obj `if test -f 'Main/Geometry/mapping.cpp'; then $(CYGPATH_W) 'Main/Geometry/mapping.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/mapping.cpp'; fi`
+
+siteMap.o: Main/Geometry/siteMap.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteMap.o -MD -MP -MF $(DEPDIR)/siteMap.Tpo -c -o siteMap.o `test -f 'Main/Geometry/siteMap.cpp' || echo '$(srcdir)/'`Main/Geometry/siteMap.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteMap.Tpo $(DEPDIR)/siteMap.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteMap.cpp' object='siteMap.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteMap.o `test -f 'Main/Geometry/siteMap.cpp' || echo '$(srcdir)/'`Main/Geometry/siteMap.cpp
+
+siteMap.obj: Main/Geometry/siteMap.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteMap.obj -MD -MP -MF $(DEPDIR)/siteMap.Tpo -c -o siteMap.obj `if test -f 'Main/Geometry/siteMap.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteMap.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteMap.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteMap.Tpo $(DEPDIR)/siteMap.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteMap.cpp' object='siteMap.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteMap.obj `if test -f 'Main/Geometry/siteMap.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteMap.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteMap.cpp'; fi`
+
+gaugeConf.o: Main/gaugeConf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeConf.o -MD -MP -MF $(DEPDIR)/gaugeConf.Tpo -c -o gaugeConf.o `test -f 'Main/gaugeConf.cpp' || echo '$(srcdir)/'`Main/gaugeConf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeConf.Tpo $(DEPDIR)/gaugeConf.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/gaugeConf.cpp' object='gaugeConf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeConf.o `test -f 'Main/gaugeConf.cpp' || echo '$(srcdir)/'`Main/gaugeConf.cpp
+
+gaugeConf.obj: Main/gaugeConf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeConf.obj -MD -MP -MF $(DEPDIR)/gaugeConf.Tpo -c -o gaugeConf.obj `if test -f 'Main/gaugeConf.cpp'; then $(CYGPATH_W) 'Main/gaugeConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/gaugeConf.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeConf.Tpo $(DEPDIR)/gaugeConf.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/gaugeConf.cpp' object='gaugeConf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeConf.obj `if test -f 'Main/gaugeConf.cpp'; then $(CYGPATH_W) 'Main/gaugeConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/gaugeConf.cpp'; fi`
+
+commandline.o: Main/commandline.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT commandline.o -MD -MP -MF $(DEPDIR)/commandline.Tpo -c -o commandline.o `test -f 'Main/commandline.cpp' || echo '$(srcdir)/'`Main/commandline.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/commandline.Tpo $(DEPDIR)/commandline.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/commandline.cpp' object='commandline.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o commandline.o `test -f 'Main/commandline.cpp' || echo '$(srcdir)/'`Main/commandline.cpp
+
+commandline.obj: Main/commandline.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT commandline.obj -MD -MP -MF $(DEPDIR)/commandline.Tpo -c -o commandline.obj `if test -f 'Main/commandline.cpp'; then $(CYGPATH_W) 'Main/commandline.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/commandline.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/commandline.Tpo $(DEPDIR)/commandline.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/commandline.cpp' object='commandline.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o commandline.obj `if test -f 'Main/commandline.cpp'; then $(CYGPATH_W) 'Main/commandline.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/commandline.cpp'; fi`
 
 hmcGeneral.o: HMC/hmcGeneral.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hmcGeneral.o -MD -MP -MF $(DEPDIR)/hmcGeneral.Tpo -c -o hmcGeneral.o `test -f 'HMC/hmcGeneral.cpp' || echo '$(srcdir)/'`HMC/hmcGeneral.cpp
@@ -1701,53 +1581,53 @@ APEsmear.obj: Smearing/APEsmear.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o APEsmear.obj `if test -f 'Smearing/APEsmear.cpp'; then $(CYGPATH_W) 'Smearing/APEsmear.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/APEsmear.cpp'; fi`
 
-StoutSmear.o: Smearing/StoutSmear.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT StoutSmear.o -MD -MP -MF $(DEPDIR)/StoutSmear.Tpo -c -o StoutSmear.o `test -f 'Smearing/StoutSmear.cpp' || echo '$(srcdir)/'`Smearing/StoutSmear.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/StoutSmear.Tpo $(DEPDIR)/StoutSmear.Po
+stoutSmear.o: Smearing/stoutSmear.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stoutSmear.o -MD -MP -MF $(DEPDIR)/stoutSmear.Tpo -c -o stoutSmear.o `test -f 'Smearing/stoutSmear.cpp' || echo '$(srcdir)/'`Smearing/stoutSmear.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stoutSmear.Tpo $(DEPDIR)/stoutSmear.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/StoutSmear.cpp' object='StoutSmear.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/stoutSmear.cpp' object='stoutSmear.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o StoutSmear.o `test -f 'Smearing/StoutSmear.cpp' || echo '$(srcdir)/'`Smearing/StoutSmear.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stoutSmear.o `test -f 'Smearing/stoutSmear.cpp' || echo '$(srcdir)/'`Smearing/stoutSmear.cpp
 
-StoutSmear.obj: Smearing/StoutSmear.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT StoutSmear.obj -MD -MP -MF $(DEPDIR)/StoutSmear.Tpo -c -o StoutSmear.obj `if test -f 'Smearing/StoutSmear.cpp'; then $(CYGPATH_W) 'Smearing/StoutSmear.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/StoutSmear.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/StoutSmear.Tpo $(DEPDIR)/StoutSmear.Po
+stoutSmear.obj: Smearing/stoutSmear.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stoutSmear.obj -MD -MP -MF $(DEPDIR)/stoutSmear.Tpo -c -o stoutSmear.obj `if test -f 'Smearing/stoutSmear.cpp'; then $(CYGPATH_W) 'Smearing/stoutSmear.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/stoutSmear.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stoutSmear.Tpo $(DEPDIR)/stoutSmear.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/StoutSmear.cpp' object='StoutSmear.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/stoutSmear.cpp' object='stoutSmear.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o StoutSmear.obj `if test -f 'Smearing/StoutSmear.cpp'; then $(CYGPATH_W) 'Smearing/StoutSmear.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/StoutSmear.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stoutSmear.obj `if test -f 'Smearing/stoutSmear.cpp'; then $(CYGPATH_W) 'Smearing/stoutSmear.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/stoutSmear.cpp'; fi`
 
-SmartConf.o: Smearing/SmartConf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SmartConf.o -MD -MP -MF $(DEPDIR)/SmartConf.Tpo -c -o SmartConf.o `test -f 'Smearing/SmartConf.cpp' || echo '$(srcdir)/'`Smearing/SmartConf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SmartConf.Tpo $(DEPDIR)/SmartConf.Po
+smartConf.o: Smearing/smartConf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf.o -MD -MP -MF $(DEPDIR)/smartConf.Tpo -c -o smartConf.o `test -f 'Smearing/smartConf.cpp' || echo '$(srcdir)/'`Smearing/smartConf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf.Tpo $(DEPDIR)/smartConf.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/SmartConf.cpp' object='SmartConf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smartConf.cpp' object='smartConf.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SmartConf.o `test -f 'Smearing/SmartConf.cpp' || echo '$(srcdir)/'`Smearing/SmartConf.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf.o `test -f 'Smearing/smartConf.cpp' || echo '$(srcdir)/'`Smearing/smartConf.cpp
 
-SmartConf.obj: Smearing/SmartConf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT SmartConf.obj -MD -MP -MF $(DEPDIR)/SmartConf.Tpo -c -o SmartConf.obj `if test -f 'Smearing/SmartConf.cpp'; then $(CYGPATH_W) 'Smearing/SmartConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/SmartConf.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/SmartConf.Tpo $(DEPDIR)/SmartConf.Po
+smartConf.obj: Smearing/smartConf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf.obj -MD -MP -MF $(DEPDIR)/smartConf.Tpo -c -o smartConf.obj `if test -f 'Smearing/smartConf.cpp'; then $(CYGPATH_W) 'Smearing/smartConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smartConf.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf.Tpo $(DEPDIR)/smartConf.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/SmartConf.cpp' object='SmartConf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smartConf.cpp' object='smartConf.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o SmartConf.obj `if test -f 'Smearing/SmartConf.cpp'; then $(CYGPATH_W) 'Smearing/SmartConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/SmartConf.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf.obj `if test -f 'Smearing/smartConf.cpp'; then $(CYGPATH_W) 'Smearing/smartConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smartConf.cpp'; fi`
 
-Smearing_Factories.o: Smearing/Smearing_Factories.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Smearing_Factories.o -MD -MP -MF $(DEPDIR)/Smearing_Factories.Tpo -c -o Smearing_Factories.o `test -f 'Smearing/Smearing_Factories.cpp' || echo '$(srcdir)/'`Smearing/Smearing_Factories.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Smearing_Factories.Tpo $(DEPDIR)/Smearing_Factories.Po
+smearingFactories.o: Smearing/smearingFactories.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smearingFactories.o -MD -MP -MF $(DEPDIR)/smearingFactories.Tpo -c -o smearingFactories.o `test -f 'Smearing/smearingFactories.cpp' || echo '$(srcdir)/'`Smearing/smearingFactories.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smearingFactories.Tpo $(DEPDIR)/smearingFactories.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/Smearing_Factories.cpp' object='Smearing_Factories.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smearingFactories.cpp' object='smearingFactories.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Smearing_Factories.o `test -f 'Smearing/Smearing_Factories.cpp' || echo '$(srcdir)/'`Smearing/Smearing_Factories.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smearingFactories.o `test -f 'Smearing/smearingFactories.cpp' || echo '$(srcdir)/'`Smearing/smearingFactories.cpp
 
-Smearing_Factories.obj: Smearing/Smearing_Factories.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT Smearing_Factories.obj -MD -MP -MF $(DEPDIR)/Smearing_Factories.Tpo -c -o Smearing_Factories.obj `if test -f 'Smearing/Smearing_Factories.cpp'; then $(CYGPATH_W) 'Smearing/Smearing_Factories.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/Smearing_Factories.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/Smearing_Factories.Tpo $(DEPDIR)/Smearing_Factories.Po
+smearingFactories.obj: Smearing/smearingFactories.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smearingFactories.obj -MD -MP -MF $(DEPDIR)/smearingFactories.Tpo -c -o smearingFactories.obj `if test -f 'Smearing/smearingFactories.cpp'; then $(CYGPATH_W) 'Smearing/smearingFactories.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smearingFactories.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smearingFactories.Tpo $(DEPDIR)/smearingFactories.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/Smearing_Factories.cpp' object='Smearing_Factories.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smearingFactories.cpp' object='smearingFactories.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o Smearing_Factories.obj `if test -f 'Smearing/Smearing_Factories.cpp'; then $(CYGPATH_W) 'Smearing/Smearing_Factories.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/Smearing_Factories.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smearingFactories.obj `if test -f 'Smearing/smearingFactories.cpp'; then $(CYGPATH_W) 'Smearing/smearingFactories.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smearingFactories.cpp'; fi`
 
 sunMatUtils.o: Tools/sunMatUtils.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sunMatUtils.o -MD -MP -MF $(DEPDIR)/sunMatUtils.Tpo -c -o sunMatUtils.o `test -f 'Tools/sunMatUtils.cpp' || echo '$(srcdir)/'`Tools/sunMatUtils.cpp

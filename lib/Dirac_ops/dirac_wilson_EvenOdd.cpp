@@ -37,7 +37,7 @@ const Field Dirac_Wilson_EvenOdd::mult_dag(const Field& f) const{
 }
 
 const vector<int> Dirac_Wilson_EvenOdd::get_gsite() const {
-  return SiteIndex_eo::instance()->get_gsite();
+  return SiteIndex_EvenOdd::instance()->get_gsite();
 }
 
 void Dirac_Wilson_EvenOdd::

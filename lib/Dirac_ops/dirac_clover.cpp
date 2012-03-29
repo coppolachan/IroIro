@@ -1,19 +1,19 @@
 /*! 
   @file dirac_clover.cpp
-
   @brief Dirac Clover operator class. Functions definition
 */
 #include "dirac_clover.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Communicator/comm_io.hpp"
-#include "Main/Geometry/mapper.hpp"
+#include "Main/Geometry/mapping.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 #include "include/common_fields.hpp"
 #include "include/messages_macros.hpp"
 
 using namespace std;
 
-void (Dirac_Clover::*Dirac_Clover::isigma[])(FermionField&,const FermionField&)const
+void (Dirac_Clover::*Dirac_Clover::isigma[])(FermionField&,
+					     const FermionField&)const
 = {&Dirac_Clover::isigma_diag,
    &Dirac_Clover::isigma_12,
    &Dirac_Clover::isigma_13,
@@ -47,45 +47,35 @@ void Dirac_Clover::mult_sw(FermionField& v_out, const FermionField& w) const {
 
   //Actual calculation - START
   isigma_23(wt,w);
-  for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < NDIM_; ++s){
-      SetVector(v_out, (matrix(Bx_,site) * vect(wt,s,site)), s, site);
-    }
-  }
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      SetVec(v_out,(mat(Bx_,site)*vec(wt,s,site)),s,site);
 
   isigma_31(wt,w);
-  for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < NDIM_; ++s){
-      AddVector(v_out, (matrix(By_,site) * vect(wt,s,site)), s, site);
-    }
-  }
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      AddVec(v_out,(mat(By_,site)*vec(wt,s,site)),s,site);
   
   isigma_12(wt,w);
-  for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < NDIM_; ++s){
-      AddVector(v_out, (matrix(Bz_,site) * vect(wt,s,site)), s, site);
-    }
-  }
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      AddVec(v_out,(mat(Bz_,site)*vec(wt,s,site)),s,site);
 
   isigma_41(wt,w);
-  for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < NDIM_; ++s){
-      AddVector(v_out, (matrix(Ex_,site) * vect(wt,s,site)), s, site);
-    }
-  }
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      AddVec(v_out,(mat(Ex_,site)*vec(wt,s,site)),s,site);
 
   isigma_42(wt,w);
-  for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < NDIM_; ++s){
-      AddVector(v_out, (matrix(Ey_,site) * vect(wt,s,site)), s, site);
-    }
-  }
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      AddVec(v_out,(mat(Ey_,site)*vec(wt,s,site)),s,site);
 
   isigma_43(wt,w);
-  for(int site = 0; site < Nvol_; ++site){
-    for(int s = 0; s < NDIM_; ++s){
-      v1 = matrix(Ez_,site) * vect(wt,s,site);
-      AddVector(v_out, v1, s, site);
+  for(int site=0; site<Nvol_; ++site){
+    for(int s=0; s<NDIM_; ++s){
+      v1 = mat(Ez_,site)*vec(wt,s,site);
+      AddVec(v_out,v1,s,site);
     }
   }
   v_out *= Dw->getKappa() * csw_;
@@ -93,7 +83,6 @@ void Dirac_Clover::mult_sw(FermionField& v_out, const FermionField& w) const {
 
 //====================================================================
 void Dirac_Clover::set_csw() {
-
   _Message(DEBUG_VERB_LEVEL, "[DiracClover] Setting Field Strenght\n");
 
   set_fieldstrength(Bx_, 1, 2);
@@ -103,14 +92,13 @@ void Dirac_Clover::set_csw() {
   set_fieldstrength(Ey_, 3, 1);
   set_fieldstrength(Ez_, 3, 2);
 }
-
 //====================================================================
 /*! @brief Calculates the term \f$F_{\mu.\nu}\f$  */
 void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
 				     const int mu, const int nu){
   using namespace SUNmatUtils;
   using namespace FieldUtils;
-  using namespace MapsEnv;
+  using namespace Mapping;
 
   //.................. Temporary variables declaration
   GaugeField1D Cup, Cdn;
@@ -127,10 +115,10 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   Cdn = stpl.lower(temp_u_,mu,nu); // Lower staple V_-mu
 
   for(int site = 0; site < Nvol_; ++site){
-    SetMatrix(w1, matrix(U_mu,site)    * matrix_dag(Cup,site), site);// U_mu(x)*(V_+mu)^dag
-    SetMatrix(w2, matrix(U_mu,site)    * matrix_dag(Cdn,site), site);// U_mu(x)*(V_-mu)^dag
-    SetMatrix(v1, matrix_dag(Cup,site) * matrix(U_mu,site)   , site);// (V_+mu)^dag*U_mu(x)
-    SetMatrix(v2, matrix_dag(Cdn,site) * matrix(U_mu,site)   , site);// (V_-mu)^dag*U_mu(x)
+    SetMat(w1,mat(U_mu,site)   *mat_dag(Cup,site),site);// U_mu(x)*(V_+mu)^dag
+    SetMat(w2,mat(U_mu,site)   *mat_dag(Cdn,site),site);// U_mu(x)*(V_-mu)^dag
+    SetMat(v1,mat_dag(Cup,site)*mat(U_mu,site)   ,site);// (V_+mu)^dag*U_mu(x)
+    SetMat(v2,mat_dag(Cdn,site)*mat(U_mu,site)   ,site);// (V_-mu)^dag*U_mu(x)
   }
   w1 -= w2;
   //    +--<--+ 
@@ -140,7 +128,6 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   //    +--<--+  
 
   v1 -= v2; 
-
   //    +--<--+ 
   //    |     | v1
   //    +-->--+(x)
@@ -148,16 +135,15 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
   //    +--<--+  
 
   //Sum up the four terms
-  w1 += shift(v1, mu, Backward);
+  w1 += shiftField(v1, mu, Backward());
 
   for(int site = 0; site < Nvol_; ++site)
-    SetMatrix(field_strength, anti_hermite(matrix(w1,site)), site);
+    SetMat(field_strength, anti_hermite(mat(w1,site)), site);
 
   field_strength *= 0.25;
 }
 
 /////////////////////////////////////////////////////////////////////
-
 /*! @brief Calculates the product \f$\sigma_{\mu,\nu} v\f$, 
   \f$\mu = 1, \nu = 2\f$ */
 void Dirac_Clover::isigma_12(FermionField& w,const FermionField& v) const{
@@ -273,7 +259,6 @@ void Dirac_Clover::isigma_43(FermionField& w,const FermionField& v) const{
 const Field Dirac_Clover::gamma5(const Field& f) const{
   return Dw->gamma5(f);
 }
-
 const Field Dirac_Clover::mult(const Field& f) const{
   FermionField w, w2;
 
@@ -306,7 +291,7 @@ const Field Dirac_Clover::md_force_block(const FermionField& eta,
   using namespace SUNmatUtils;
   using namespace SUNvec_utils;
   using namespace FieldUtils;
-  using namespace MapsEnv;
+  using namespace Mapping;
 
   //.................... Temporary variables declaration
   int Nd = CommonPrms::instance()->Nd();
@@ -322,94 +307,93 @@ const Field Dirac_Clover::md_force_block(const FermionField& eta,
   //...................................................
   //really temporary
   GaugeField temp_u_(*u_);  
-
   
   //Clover term: 8 terms, see Matsufuru-san's note
 
-  for(int mu = 0; mu < NDIM_; ++mu){
-    for(int nu = 0; nu < NDIM_; ++nu){
+  for(int mu=0; mu<NDIM_; ++mu){
+    for(int nu=0; nu<NDIM_; ++nu){
       if(nu == mu) continue;
 
       (this->*isigma[NDIM_*mu+nu])(eta2,eta); //sigma_{mu,nu} mult
 
-      U_nu = DirSlice(temp_u_, nu);
-      U_mu = DirSlice(temp_u_, mu);
+      U_nu = DirSlice(temp_u_,nu);
+      U_mu = DirSlice(temp_u_,mu);
 
       //term 1 and 5 --------------------------------------
-     Cmu_up  = stpl_.upper(temp_u_, mu,nu); //V_mu
-      Cmu_up -= stpl_.lower(temp_u_, mu,nu); //V_+mu - V_-mu 
+      Cmu_up  = stpl_.upper(temp_u_,mu,nu); //V_mu
+      Cmu_up -= stpl_.lower(temp_u_,mu,nu); //V_+mu - V_-mu 
       for(int site = 0; site<Nvol_; ++site){
-	for(int s = 0; s < Nd; ++s) {
-	  temp_v = matrix_dag(Cmu_up,site) * vect(eta2,s,site);
-	  temp_v = matrix(U_mu,site) * temp_v;
-	  SetVector(vright, temp_v, s, site);
+	for(int s=0; s<Nd; ++s){
+	  temp_v = mat_dag(Cmu_up,site)*vec(eta2,s,site);
+	  temp_v = mat(U_mu,site)*temp_v;
+	  SetVec(vright, temp_v, s, site);
 	} 
       }
       fce_tmp2 = field_oprod(zeta,vright); 
 
       //term 2 --------------------------------------
       Cnu_up = stpl_.upper(temp_u_, nu, mu);
-      shifted = shift(eta2, nu, Forward);
+      shifted = shiftField(eta2, nu, Forward());
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = (matrix(Cnu_up,site))* vect(shifted,s,site);
-	  SetVector(vright, temp_v, s, site);
+	  temp_v = (mat(Cnu_up,site))* vec(shifted,s,site);
+	  SetVec(vright, temp_v, s, site);
 	}
       }
-      shifted = shift(zeta, nu, Forward);
+      shifted = shiftField(zeta, nu, Forward());
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = matrix(U_nu,site) * vect(shifted,s,site);
-	  SetVector(vleft, temp_v, s, site);
+	  temp_v = mat(U_nu,site) * vec(shifted,s,site);
+	  SetVec(vleft, temp_v, s, site);
 	}
       }// U_nu(x)*zeta(x+nu)
       fce_tmp2 += field_oprod(vleft,vright);
 
       //term 4 and 8 --------------------------------------
-      shifted = shift(eta2, mu, Forward);
+      shifted = shiftField(eta2, mu, Forward());
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = matrix(U_mu,site) * vect(shifted,s,site);
-	  SetVector(vright, temp_v, s, site);
+	  temp_v = mat(U_mu,site) * vec(shifted,s,site);
+	  SetVec(vright, temp_v, s, site);
 	}
       } // U_mu (x) * eta2(x+mu)   
-      shifted = shift(zeta, mu, Forward);
+      shifted = shiftField(zeta, mu, Forward());
       for(int site = 0; site < Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = matrix(Cmu_up,site) * vect(shifted,s,site);
-	  SetVector(vleft, temp_v, s, site);
+	  temp_v = mat(Cmu_up,site) * vec(shifted,s,site);
+	  SetVec(vleft, temp_v, s, site);
 	}
       } //  (V_+mu + V_-mu) * zeta(x+mu)
       fce_tmp2 += field_oprod(vleft,vright);
       
       //term 3 --------------------------------------
-      shifted = shift(eta2, nu, Forward);
+      shifted = shiftField(eta2, nu, Forward());
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  //temp_v = (matrix(U_nu,site))* vect(shifted,s,site);
-	  SetVector(vright, (matrix(U_nu,site)* vect(shifted,s,site)), s, site);
+	  //temp_v = (mat(U_nu,site))* vec(shifted,s,site);
+	  SetVec(vright, (mat(U_nu,site)* vec(shifted,s,site)), s, site);
 	}
       }       
-      shifted = shift(vright, mu, Forward); //U_nu(x+mu)*eta2(x+mu+nu)
+      shifted = shiftField(vright, mu, Forward()); //U_nu(x+mu)*eta2(x+mu+nu)
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = (matrix(U_mu,site))* vect(shifted,s,site);
-	  SetVector(vright, temp_v, s, site);
+	  temp_v = (mat(U_mu,site))* vec(shifted,s,site);
+	  SetVec(vright, temp_v, s, site);
 	}
       } //vright = U_mu(x)*U_nu(x+mu)*eta2(x+mu+nu)  
      
-      shifted = shift(zeta, mu, Forward);
+      shifted = shiftField(zeta, mu, Forward());
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = (matrix(U_mu,site))* vect(shifted,s,site);
-	  SetVector(vleft, temp_v, s, site);
+	  temp_v = (mat(U_mu,site))* vec(shifted,s,site);
+	  SetVec(vleft, temp_v, s, site);
 	}
       }        
-      shifted = shift(vleft, nu, Forward); //U_mu(x+nu)*zeta(x+mu+nu)
+      shifted = shiftField(vleft, nu, Forward()); //U_mu(x+nu)*zeta(x+mu+nu)
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = (matrix(U_nu,site))* vect(shifted,s,site);
-	  SetVector(vleft, temp_v, s, site);
+	  temp_v = (mat(U_nu,site))* vec(shifted,s,site);
+	  SetVec(vleft, temp_v, s, site);
 	}
       } //vright = U_nu(x)*U_mu(x+nu)*zeta(x+mu+nu)  
       fce_tmp2 += field_oprod(vleft,vright);
@@ -417,54 +401,51 @@ const Field Dirac_Clover::md_force_block(const FermionField& eta,
       //term 6 --------------------------------------
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = (matrix_dag(Cnu_up,site))* vect(eta2,s,site);
-	  SetVector(vright, temp_v, s, site);
+	  temp_v = (mat_dag(Cnu_up,site))* vec(eta2,s,site);
+	  SetVec(vright, temp_v, s, site);
 	}
       }       
-      shifted = shift(vright, nu, Backward); // V_+nu (x-nu)*eta2(x-nu)
+      shifted = shiftField(vright, nu, Backward()); // V_+nu (x-nu)*eta2(x-nu)
 
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = (matrix_dag(U_nu,site))* vect(zeta,s,site);
-	  SetVector(vleft, temp_v, s, site);
+	  temp_v = (mat_dag(U_nu,site))* vec(zeta,s,site);
+	  SetVec(vleft, temp_v, s, site);
 	}
       }   
-      fce_tmp2 -= field_oprod(shift(vleft, nu, Backward), shifted);
+      fce_tmp2 -= field_oprod(shiftField(vleft, nu, Backward()), shifted);
 
       // term 7  --------------------------------------
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = (matrix_dag(U_nu,site))* vect(eta2,s,site);
-	  SetVector(vright, temp_v, s, site);
+	  temp_v = (mat_dag(U_nu,site))* vec(eta2,s,site);
+	  SetVec(vright, temp_v, s, site);
 	}
       }   
-      shifted = shift(vright, nu, Backward); // shifted = Udag_nu(x-nu)*eta2(x-nu)
-      shifted = shift(shifted, mu, Forward); // Udag_nu(x+mu-nu)*eta2(x+mu-nu)
+      shifted = shiftField(vright,nu,Backward());//shifted = Udag_nu(x-nu)*eta2(x-nu)
+      shifted = shiftField(shifted,mu,Forward());//Udag_nu(x+mu-nu)*eta2(x+mu-nu)
 
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = (matrix(U_mu,site))* vect(shifted,s,site);
-	  SetVector(vright, temp_v, s, site);
+	  temp_v = (mat(U_mu,site))* vec(shifted,s,site);
+	  SetVec(vright, temp_v, s, site);
 	}
       } //vright = U_mu(x)*Udag_nu(x+mu-nu)*eta2(x+mu-nu)
      
-      shifted = shift(zeta, mu, Forward); //zeta(x+mu)
+      shifted = shiftField(zeta, mu, Forward()); //zeta(x+mu)
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
-	  temp_v = (matrix(U_mu,site))* vect(shifted,s,site);
-	  temp_v = (matrix_dag(U_nu,site))*temp_v;
-	  SetVector(vleft, temp_v, s, site);
+	  temp_v = (mat(U_mu,site))* vec(shifted,s,site);
+	  temp_v = (mat_dag(U_nu,site))*temp_v;
+	  SetVec(vleft, temp_v, s, site);
 	}
       }       
       //shift = Udag_nu(x-nu)*U_mu(x-nu)*zeta(x+mu-nu)
-      fce_tmp2 -= field_oprod(shift(vleft, nu, Backward), vright);
-    
-      fce_tmp2 *= - Dw->getKappa() * csw_ / 8.0; 
+      fce_tmp2 -= field_oprod(shiftField(vleft, nu, Backward()), vright);
+      fce_tmp2 *= -Dw->getKappa()*csw_/8.0; 
 
-      for(int site = 0; site<Nvol_; ++site)
-	AddMatrix(force, matrix(fce_tmp2, site), site, mu); 
-
-
+      for(int site=0; site<Nvol_; ++site)
+	AddMat(force,mat(fce_tmp2,site),site,mu); 
     }
   }
   return force.data;

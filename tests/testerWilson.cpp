@@ -9,7 +9,6 @@
 #include "test_wilson.hpp"
 
 using namespace XML;
-using namespace MapsEnv;
 
 int main(){
   
@@ -18,7 +17,6 @@ int main(){
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
-  initialize_mapper();
 
   //Initialize GaugeField using XML input
   GaugeGlobal GaugeF(geom);

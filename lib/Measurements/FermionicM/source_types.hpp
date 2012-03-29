@@ -1,25 +1,20 @@
 /*!
- *
  * @file source_types.hpp
- *
  * @brief Definition of source types for propagator calculations
- *
  * Include this file if you need to specify explicitly the source type
  */
 #ifndef SOURCES_TYPES_H_
 #define SOURCES_TYPES_H_
 
 #include "include/numerical_const.hpp"
-#include "Main/Geometry/siteIndex.h"
+#include "Main/Geometry/siteIndex.hpp"
 #include "Tools/randNum.h"
 #include "Tools/randNum_MP.h"
 #include "source.hpp"
 #include "Tools/EnumToString.hpp"
 
 #include <cmath>
-
 #include <iostream>
-
 
 ////// Source_local -------------------------------------------------------
 
@@ -51,13 +46,11 @@ void Source_local<FMT>::set_src(){
   int Nt = CommonPrms::instance()->Nt();
   int Ndim = CommonPrms::instance()->Ndim();
 
-  int nid= Communicator::
-    instance()->nodeid(sp_[0]/Nx,sp_[1]/Ny,sp_[2]/Nz,sp_[3]/Nt);
-
+  int nid = Communicator::instance()->nodeid(sp_[0]/Nx,sp_[1]/Ny,
+					     sp_[2]/Nz,sp_[3]/Nt);
   if(Communicator::instance()->nodeid() == nid){
     has_source_= true;
-    loc_= SiteIndex::instance()->site(sp_[0]%Nx,sp_[1]%Ny,
-				      sp_[2]%Nz,sp_[3]%Nt);
+    loc_= SiteIndex::instance()->site(sp_[0]%Nx,sp_[1]%Ny,sp_[2]%Nz,sp_[3]%Nt);
   }
 }
 
@@ -108,13 +101,13 @@ void Source_exp<FMT>::set_src(){
   int NPt =(Communicator::instance()->ipe(3))*CommonPrms::instance()->NPEt();
 
   for(int site= 0; site< ff_->Nvol(); ++site){
-    int x = NPx+SiteIndex::instance()->x(site);
-    int y = NPy+SiteIndex::instance()->y(site);
-    int z = NPz+SiteIndex::instance()->z(site);
-    int t = NPt+SiteIndex::instance()->t(site);
+    int x = NPx +SiteIndex::instance()->c_x(site);
+    int y = NPy +SiteIndex::instance()->c_y(site);
+    int z = NPz +SiteIndex::instance()->c_z(site);
+    int t = NPt +SiteIndex::instance()->c_t(site);
 
     double r = sqrt((double)((x-sp_[0])*(x-sp_[0]) +(y-sp_[1])*(y-sp_[1])
-			     +(z-sp_[2])*(z-sp_[2]) +(t-sp_[3])*(t-sp_[3])));
+			    +(z-sp_[2])*(z-sp_[2]) +(t-sp_[3])*(t-sp_[3])));
     smr_[site]= exp(-alpha_*r);
   }
 }
@@ -162,10 +155,10 @@ void Source_Gauss<FMT>::set_src(){
   int NPt =(Communicator::instance()->ipe(3))*CommonPrms::instance()->NPEt();
 
   for(int site= 0; site< ff_->Nvol(); ++site){
-    int x = NPx+SiteIndex::instance()->x(site);
-    int y = NPy+SiteIndex::instance()->y(site);
-    int z = NPz+SiteIndex::instance()->z(site);
-    int t = NPt+SiteIndex::instance()->t(site);
+    int x = NPx +SiteIndex::instance()->c_x(site);
+    int y = NPy +SiteIndex::instance()->c_y(site);
+    int z = NPz +SiteIndex::instance()->c_z(site);
+    int t = NPt +SiteIndex::instance()->c_t(site);
 
     double rsq = (x-sp_[0])*(x-sp_[0]) +(y-sp_[1])*(y-sp_[1])
                 +(z-sp_[2])*(z-sp_[2]) +(t-sp_[3])*(t-sp_[3]);
@@ -213,7 +206,7 @@ void Source_wall<FMT>::set_src(){
 
   int NPt =(Communicator::instance()->ipe(3))*CommonPrms::instance()->NPEt();
   for(int site= 0; site< ff_->Nvol(); ++site){
-    int t = NPt+SiteIndex::instance()->t(site);
+    int t = NPt +SiteIndex::instance()->c_t(site);
     if(t == spt_) smr_[site]= 1.0;
   }
 }

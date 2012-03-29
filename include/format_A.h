@@ -4,10 +4,7 @@
 #ifndef FORMAT_A_INCLUDED
 #define FORMAT_A_INCLUDED
 
-#ifndef COMMONPRMS_INCLUDED
-#include "commonPrms.h"
-#endif
-
+#include "macros.hpp"
 #include <valarray>
 
 namespace Format{
@@ -19,13 +16,13 @@ namespace Format{
     int Nin_,Nex_;
   public:
     Format_A(int Nvol, int Nex=0):Nvol_(Nvol),
-				  Nc_(CommonPrms::instance()->Nc()),
-				  Ndim_(CommonPrms::instance()->Ndim()),
+				  Nc_(NC_),
+				  Ndim_(NDIM_),
 				  Nex_(Ndim_),
 				  Nin_(Nc_*Nc_-1){
       if(Nex) Nex_= Nex;
     }
-    int Nin() const {return Nin_;}
+    static int Nin(){return NC_*NC_-1;}
     int Nvol() const {return Nvol_;}
     int Nex() const {return Nex_;}
     int size() const {return Nin_*Nvol_*Nex_;}

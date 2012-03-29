@@ -1,30 +1,19 @@
 SUBDIRS = . 
 
-CXXFLAGS += 
-LDFLAGS += 
+CXXFLAGS +=
+LDFLAGS +=
 OPTLIB =
 
 if USE_MPI
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
-MAPPER_SRCS       = Main/Geometry/map_parallelscalar.cpp
-MAPPER_HEAD       = Main/Geometry/map_parallelscalar.hpp
 
-if HITACHI      
+if HITACHI	
 CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 LDFLAGS += -q64
 endif
 
-if IBM_WATSON
-DRIVER=/bgsys/drivers/ppcfloor
-CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
-LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
-OPTLIB += -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
-endif
-
 else
-COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp 
-MAPPER_SRCS       = Main/Geometry/map_scalar.cpp
-MAPPER_HEAD       = Main/Geometry/map_scalar.hpp
+COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 endif
 
 AM_CPPFLAGS=-I$(top_srcdir)
@@ -35,12 +24,12 @@ bin_PROGRAMS = main_hmc
 
 lib_LIBRARIES = libcommcode.a
 
-EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp		\
-		Main/documentation_pages.h		\
-		Dirac_ops/dirac_wilson_improved.code	\
-		Dirac_ops/dirac_wilson_improved2.code	\
-		Dirac_ops/dirac_wilson_improved3.code	\
-		Dirac_ops/dirac_wilson_standard.code	\
+EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
+		Main/documentation_pages.h	\
+                Dirac_ops/dirac_wilson_improved.code    \
+                Dirac_ops/dirac_wilson_improved2.code   \
+                Dirac_ops/dirac_wilson_improved3.code   \
+                Dirac_ops/dirac_wilson_standard.code    \
 		Fields/field.inl
 
 
@@ -56,7 +45,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_Nf2_DomainWall.cpp	\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
-		Communicator/fields_io.cpp		\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_clover.cpp		\
@@ -73,19 +61,19 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/sortEigen.cpp		\
 		EigenModes/fopr_chebyshev_DdagD.cpp	\
 		Measurements/GaugeM/staples.cpp		\
-		Main/Geometry/siteIndex.cpp		\
-		Main/Geometry/siteIndex_eo.cpp		\
-		Main/Geometry/mapper.cpp		\
-		$(MAPPER_SRCS)		     	        \
-		Main/gaugeConf.cpp			\
-		Main/commandline.cpp			\
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
+		Measurements/FermionicM/qprop_mom.cpp 			\
 		Measurements/FermionicM/qprop_EvenOdd.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
-		Measurements/FermionicM/qprop_mom.cpp 			\
-		Measurements/FermionicM/utils_DWF4d.cpp			\
+		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
+		Main/Geometry/siteIndex.cpp	        \
+		Main/Geometry/siteIndex_EvenOdd.cpp	\
+		Main/Geometry/mapping.cpp		\
+		Main/Geometry/siteMap.cpp		\
+		Main/gaugeConf.cpp			\
+		Main/commandline.cpp			\
 		HMC/hmcGeneral.cpp                      \
 		HMC/mdExec.cpp		                \
 		HMC/mdExec_leapfrog.cpp                 \
@@ -98,9 +86,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
 		Solver/solver.cpp			\
 		Smearing/APEsmear.cpp			\
-		Smearing/StoutSmear.cpp			\
-		Smearing/SmartConf.cpp			\
-		Smearing/Smearing_Factories.cpp		\
+		Smearing/stoutSmear.cpp			\
+		Smearing/smartConf.cpp			\
+		Smearing/smearingFactories.cpp		\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
@@ -108,7 +96,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
-main_hmc_LDADD   = libcommcode.a $(OPTLIB)
+main_hmc_LDADD   = libcommcode.a
 
 include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
                         $(top_srcdir)/include/commandline.hpp           \
@@ -158,12 +146,20 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/quark_propagators.hpp	\
 			Measurements/FermionicM/sources_factory.hpp	\
 			Measurements/FermionicM/meson_correlator.hpp	\
-			Measurements/FermionicM/fermion_meas_factory_abs.hpp	\
-			Measurements/FermionicM/quark_prop_meas_factory.hpp	\
+			Measurements/FermionicM/fermion_meas_factory_abs.hpp \
+			Measurements/FermionicM/quark_prop_meas_factory.hpp \
                         Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.h		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
+			Main/Geometry/siteIndex.hpp     	\
+			Main/Geometry/siteIndex_EvenOdd.hpp	\
+			Main/Geometry/mapping.hpp		\
+			Main/Geometry/siteMap.hpp		\
+			Main/gaugeConf.hpp			\
+			Main/commandline.cpp			\
+			Dirac_ops/dirac_Operator_Factory.hpp	\
+			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac.hpp			\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
@@ -179,10 +175,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			EigenModes/eigenModes_IRL.hpp		\
 			EigenModes/sortEigen.h			\
 			EigenModes/eigenProc_Zolotarev.h	\
-			Main/Geometry/siteIndex.h		\
-			Main/Geometry/siteIndex_eo.h		\
-			Main/Geometry/mapper.hpp		\
-			$(MAPPER_HEAD)		     	        \
+			Main/Geometry/mapping.hpp		\
 			Main/gaugeConf.hpp			\
 			Main/commandline.cpp			\
 			Fields/field_expressions.hpp		\
@@ -199,10 +192,10 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Solver/multiShiftSolver_CG.hpp		\
 			Solver/multiShiftSolver.hpp		\
 			Smearing/APEsmear.hpp			\
-			Smearing/BaseSmear.hpp			\
-			Smearing/StoutSmear.hpp			\
-			Smearing/SmartConf.hpp			\
-			Smearing/Smearing_Factories.hpp		\
+			Smearing/baseSmear.hpp			\
+			Smearing/stoutSmear.hpp			\
+			Smearing/smartConf.hpp			\
+			Smearing/smearingFactories.hpp		\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\

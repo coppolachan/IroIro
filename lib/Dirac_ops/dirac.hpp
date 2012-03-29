@@ -9,10 +9,9 @@
 #include "include/format_F.h"
 
 enum {Op, Dag};
-//class Format::Format_F;
 
 /*
- * @class Dirac
+ *! @class Dirac
  * @brief Declaration of abstract base class for Dirac operators
  */
 class Dirac {

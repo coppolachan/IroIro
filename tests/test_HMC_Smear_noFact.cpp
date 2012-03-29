@@ -19,9 +19,7 @@
 #include "Dirac_ops/dirac_wilson.hpp"
 #include "Solver/solver_CG.hpp"
 #include "HMC/mdExec_leapfrog.hpp"
-
-
-#include "Smearing/SmartConf.hpp"
+#include "Smearing/smartConf.hpp"
 
 int Test_HMC::run(){
   CCIO::header("Testing Smearing routines\n");
@@ -47,16 +45,16 @@ int Test_HMC::run(){
 
   /////////////////////////////////////////////
 
-
   ActionLevel al_1, al_2;
   // Gauge action
-  Action* Gauge = new ActionGaugeWilson(6.2, 
-					FatField.select_conf(nosmear));
+  Action* Gauge = new ActionGaugeWilson(6.2,FatField.select_conf(nosmear));
   al_1.push_back(Gauge);
 
   // Fermionic action
-  //  DiracWilsonLike* OpNf2    = new Dirac_Clover(1.0/6.0,1.0,FatField.select_conf(dosmear));
-  DiracWilsonLike* OpNf2    = new Dirac_Wilson(1.0/6.0,&(FatField.select_conf(dosmear)->data));
+  //  DiracWilsonLike* OpNf2   
+  //= new Dirac_Clover(1.0/6.0,1.0,FatField.select_conf(dosmear));
+  DiracWilsonLike* OpNf2    
+    = new Dirac_Wilson(1.0/6.0,&(FatField.select_conf(dosmear)->data));
  
   Solver* SolvNf2 = new Solver_CG(1e-14,
 				  1000,
@@ -65,7 +63,6 @@ int Test_HMC::run(){
   Action* Nf2Action = new Action_Nf2(FatField.select_conf(dosmear),
 				     OpNf2,
 				     SolvNf2,
-				     true,
 				     &FatField);
   al_2.push_back(Nf2Action);
   
@@ -79,14 +76,12 @@ int Test_HMC::run(){
 					   ASet,
 					   multip,
 					   &FatField);
-
 				      
   HMCgeneral hmc_general(HMC_node, *Integrator);  
 
   // Note:
   // The line *U_=U in mdExec_leapfrog.cpp (init)
   // must be substituted by a call to SmartConf::set_GaugeField()
-
 
   //Initialization
   //HMCgeneral hmc_general(node);

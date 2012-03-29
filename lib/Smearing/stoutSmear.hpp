@@ -1,38 +1,29 @@
 /*
-  @file StoutSmear.hpp
-
+  @file stoutSmear.hpp
   @brief Declares Stout smearing class
-
- */
-
+*/
 #ifndef STOUT_SMEAR_H_
 #define STOUT_SMEAR_H_
-
-#include <valarray>
 
 #include "include/commonPrms.h"
 #include "include/common_fields.hpp"
 #include "APEsmear.hpp"
+#include <valarray>
 
-
-/*!
-  @brief Stout smearing of link variable.
-
- */
+/*!  @brief Stout smearing of link variable. */
 class Smear_Stout: public Smear {
-
- private:
+private:
   const std::valarray<double> d_rho;
   const Smear* SmearBase;
 
   double func_xi0(double w) const;
- public:
-  Smear_Stout(Smear* base):SmearBase(base){};
+public:
+  Smear_Stout(Smear* base):SmearBase(base){}
 
   /*! Default constructor */
-  Smear_Stout():SmearBase(new Smear_APE()){};
+  Smear_Stout():SmearBase(new Smear_APE()){}
 
-  ~Smear_Stout(){};
+  ~Smear_Stout(){}
 
   void smear(GaugeField&,const GaugeField&) const;
   void BaseSmear(GaugeField&, const GaugeField&) const;

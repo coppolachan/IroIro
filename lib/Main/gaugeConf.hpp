@@ -1,17 +1,14 @@
 /*! 
   @file gaugeConf.hpp
-
   @brief Declaration of classes to manage gauge configurations
 */
-
 #ifndef GAUGECONF_INCLUDED
 #define GAUGECONF_INCLUDED
 
-#include "Main/Geometry/siteIndex.h"
+#include "Main/Geometry/siteIndex.hpp"
 #include "include/format_G.h"
 
 class Field;
-
 class SiteIndex;
 
 class GaugeConf{
@@ -61,8 +58,7 @@ public:
 
 class GaugeConf_unit:public GaugeConf{
 public:
-  GaugeConf_unit(const Format::Format_G& fg)
-    :GaugeConf(fg){}
+  GaugeConf_unit(const Format::Format_G& fg):GaugeConf(fg){}
   void init_conf(Field&);
 };
 

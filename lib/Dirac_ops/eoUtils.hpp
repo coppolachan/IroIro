@@ -6,7 +6,7 @@
 
 #include "Dirac_ops/dirac.hpp"
 #include "Solver/solver.hpp"
-#include "Main/Geometry/siteIndex_eo.h"
+#include "Main/Geometry/siteIndex_EvenOdd.hpp"
 #include "include/format_F.h"
 #include <valarray>
 
@@ -16,7 +16,7 @@ namespace EvenOddUtils{
   private:
     const DiracWilsonLike_EvenOdd* D_;
     const Solver* slv_;
-    const SiteIndex_eo* idx_eo_;
+    const SiteIndex_EvenOdd* idx_;
     const Format::Format_F fh_;  /*!< @brief half-size format */
     const Format::Format_F ff_;  /*!< @brief full-size format */
     const std::valarray<size_t> esub_;/*!< @brief generalized slice for even sites*/
@@ -26,9 +26,9 @@ namespace EvenOddUtils{
       :D_(D),slv_(Solver),
        fh_(D->get_fermionFormat()),
        ff_(2*fh_.Nvol(),fh_.Nex()),
-       idx_eo_(SiteIndex_eo::instance()),
-       esub_(ff_.get_sub(idx_eo_->esec())),
-       osub_(ff_.get_sub(idx_eo_->osec())){}
+       idx_(SiteIndex_EvenOdd::instance()),
+       esub_(ff_.get_sub(idx_->esec())),
+       osub_(ff_.get_sub(idx_->osec())){}
 
     void invert(Field& sol,const Field& src) const;
     void test(Field& Df, const Field& f) const;

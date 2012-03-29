@@ -3,9 +3,9 @@
 //----------------------------------------------------------------------
 #ifndef MDEXEC_INCLUDED
 #define MDEXEC_INCLUDED
-#include<vector>
 
 #include "include/common_fields.hpp"
+#include<vector>
 
 class Action;
 class RandNum;
@@ -15,20 +15,14 @@ typedef std::vector<Action*> ActionLevel;
 typedef std::vector<ActionLevel> ActionSet;
 typedef std::vector<Observer*> ObserverList;
 
-/*! 
- * @brief Abstract base class for Molecular Dynamics management
- *
- */
+/*! @brief Abstract base class for Molecular Dynamics management */
 class MDexec{
 private:
   virtual void update_P(int lv,double ep) = 0;
   virtual void update_U(double ep) = 0;
 
   virtual void register_observers() = 0;
-  virtual void attach_observer(ObserverList&, Observer*) = 0;
-  virtual void detach_observer(ObserverList&, Observer*) = 0;  
-  virtual void notify_observers(ObserverList&) = 0;
-  
+  virtual void notify_observers() = 0;
 
 public:
   virtual ~MDexec(){}

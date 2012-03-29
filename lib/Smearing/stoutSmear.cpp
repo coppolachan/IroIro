@@ -1,20 +1,14 @@
 /*
   @file StoutSmear.hpp
-
   @brief Defines Stout smearing class
-
 */
-
-#include "StoutSmear.hpp"
-
-using namespace std;
-
+#include "stoutSmear.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "include/messages_macros.hpp"
 #include <complex>
 
-
+using namespace std;
 typedef complex<double> dcomplex;
 
 //====================================================================
@@ -22,7 +16,7 @@ void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
   using namespace SUNmatUtils;
   using namespace FieldUtils;
 
-  int Nvol = CommonPrms::Nvol();
+  int Nvol = CommonPrms::instance()->Nvol();
 
   GaugeField u_tmp1, q_mu;
   GaugeField1D U_mu;
@@ -35,39 +29,31 @@ void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
   for(int mu = 0; mu < NDIM_; ++mu){
     U_mu = DirSlice(u_in, mu);
     for(int site = 0; site < Nvol; ++site){
-      ut = matrix(u_tmp1,site,mu) * matrix_dag(U_mu,site);//Omega_mu
-      SetMatrix(q_mu, anti_hermite_traceless(ut), site, mu);
+      ut = mat(u_tmp1,site,mu) * mat_dag(U_mu,site);//Omega_mu
+      SetMat(q_mu, anti_hermite_traceless(ut), site, mu);
     }
   }
-
-
-
   exponentiate_iQ(u_tmp1, q_mu);
   
   for(int mu = 0; mu < NDIM_; ++mu){
     U_mu = DirSlice(u_in, mu);
     for(int site = 0; site < Nvol; ++site){
-      ut = matrix(u_tmp1,site,mu) * matrix(U_mu,site);//New smeared matrix
-      SetMatrix(u_smr, ut, site, mu);
+      ut = mat(u_tmp1,site,mu) * mat(U_mu,site);//New smeared mat
+      SetMat(u_smr, ut, site, mu);
     }
   }
-
   _Message(DEBUG_VERB_LEVEL, "Stout smearing completed \n");
-  
 }
-//====================================================================
-void Smear_Stout::BaseSmear(GaugeField& C, const GaugeField& u_in) const{
-  SmearBase->smear(C, u_in);
-}
-//====================================================================
+
+void Smear_Stout::BaseSmear(GaugeField& C, const GaugeField& u_in)const{
+  SmearBase->smear(C, u_in);}
+
 void Smear_Stout::derivative(GaugeField& SigmaTerm, 
 			     const GaugeField& iLambda,
-			     const GaugeField& Gauge) const{
-  
-  SmearBase->derivative(SigmaTerm, iLambda, Gauge);
-}
-//====================================================================
-void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ) const{
+			     const GaugeField& Gauge)const{
+  SmearBase->derivative(SigmaTerm, iLambda, Gauge);}
+
+void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ,const GaugeField& iQ)const{
   using namespace SUNmatUtils;
   using namespace FieldUtils;
 
@@ -83,7 +69,7 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ) const{
   for(int ex = 0; ex < Nex; ++ex){
     for(int site = 0; site < Nvol; ++site){
 
-      iQ1 = matrix(iQ,site,ex);
+      iQ1 = mat(iQ,site,ex);
   
       iQ2 = iQ1 * iQ1;
       iQ3 = iQ1 * iQ2;
@@ -97,7 +83,6 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ) const{
       c0 = -c0/3.0;
       c1 = -c1/2.0;
       c0max = 2.0 * pow(c1/3.0,1.5);
-  
 
       theta = acos(c0/c0max);
       u_val = sqrt(c1/3.0) * cos(theta/3.0);
@@ -132,21 +117,12 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ, const GaugeField& iQ) const{
 	e_iQ.data.set(e_iQ.format.index(2*cc,site,ex),  qt.real());
 	e_iQ.data.set(e_iQ.format.index(2*cc+1,site,ex),qt.imag());
       }
-      
     }
   }
 }
 
-//====================================================================
 double Smear_Stout::func_xi0(double w) const{
-
   double xi0 = sin(w)/w;
-  if( w < 1e-4 )
-    CCIO::cout << "[Smear_stout] w too small: "<< w <<"\n";
-
+  if( w < 1e-4 ) CCIO::cout << "[Smear_stout] w too small: "<< w <<"\n";
   return xi0;
-
 }
-
-//====================================================================
-//============================================================END=====

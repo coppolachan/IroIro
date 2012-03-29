@@ -8,11 +8,7 @@
 #include "randNum.h"
 #endif
 
-#ifndef SITEINDEX_INCLUDED
-#include "Main/Geometry/siteIndex.h"
-#endif
-
-#include "Communicator/communicator.h"
+#include "include/commonPrms.h"
 #include "Communicator/comm_io.hpp"
 #include <cassert>
 

@@ -17,10 +17,9 @@ namespace FieldUtils{
 
     for(int site=0; site<Nvol; ++site){
       mat.zero();
-      for(int s=0; s<Nd; ++s){
-	mat += outer_prod(vect(f1, s, site), vect(f2, s, site));
-      }
-      SetMatrix(f, mat, site);
+      for(int s=0; s<Nd; ++s)
+	mat += outer_prod(vec(f1,s,site), vec(f2,s,site));
+      SetMat(f,mat,site);
     }
     return f;
   }
@@ -33,20 +32,14 @@ namespace FieldUtils{
     GaugeField TAField;
     for(int mu=0; mu< Ndim; ++mu){
       for(int site=0; site<Nvol; ++site){
-	SetMatrix(TAField, anti_hermite_traceless(matrix(G,site,mu)),site,mu);
+	SetMat(TAField,anti_hermite_traceless(mat(G,site,mu)),site,mu);
       }
     }
     return TAField;
   }
 
   GaugeField1D DirSlice(const GaugeField& F, int dir){
-    #ifdef IBM_WATSON
-    GaugeField1D out;
-    out.data = F.data[F.format.dir_slice(dir)];
-    return out;
-    #else
     return GaugeField1D(Field(F.data[F.format.dir_slice(dir)]));
-    #endif
   }
 
   void SetSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
@@ -57,24 +50,24 @@ namespace FieldUtils{
     G.data.add(G.format.dir_slice(dir), Gslice.data.getva());
   }
 
-  void SetMatrix(GaugeField& F, const SUNmat& mat, int site, int dir){
+  void SetMat(GaugeField& F, const SUNmat& mat, int site, int dir){
     F.data.set(F.format.cslice(0,site,dir), mat.getva());
   }
-  void SetMatrix(GaugeField1D& F, const SUNmat& mat, int site){
+  void SetMat(GaugeField1D& F, const SUNmat& mat, int site){
     F.data.set(F.format.cslice(0,site), mat.getva());
   }
 
-  void AddMatrix(GaugeField& F, const SUNmat& mat, int site, int dir){
+  void AddMat(GaugeField& F, const SUNmat& mat, int site, int dir){
     F.data.add(F.format.cslice(0,site,dir), mat.getva());
   }
-  void AddMatrix(GaugeField1D& F, const SUNmat& mat, int site){
+  void AddMat(GaugeField1D& F, const SUNmat& mat, int site){
     F.data.add(F.format.cslice(0,site), mat.getva());
   }
 
-  void SetVector(FermionField& F, const SUNvec& vec, int spin, int site){
+  void SetVec(FermionField& F, const SUNvec& vec, int spin, int site){
     F.data.set(F.format.cslice(spin, site), vec.getva());
   }
-  void AddVector(FermionField& F, const SUNvec& vec, int spin, int site){
+  void AddVec(FermionField& F, const SUNvec& vec, int spin, int site){
     F.data.add(F.format.cslice(spin, site), vec.getva());
   }
 

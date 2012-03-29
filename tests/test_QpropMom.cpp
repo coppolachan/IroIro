@@ -9,8 +9,8 @@
 #include "Measurements/GaugeM/staples.hpp"
 
 int Test_QpropMom::run(){
-  //  Staples Staple;
-  //  CCIO::cout<< "Plaquette (thin): "<< Staple.plaquette(conf_) <<"\n";
+  Staples Staple;
+  CCIO::cout<< "Plaquette (thin): "<< Staple.plaquette(conf_) <<"\n";
 
   //// smearing ////
   XML::node smr_node = node_;  // copy of the root node
@@ -19,20 +19,19 @@ int Test_QpropMom::run(){
   int Nsmear;                                    
   XML::read(smr_node,"Nsmear",Nsmear,MANDATORY);  
 
-  CCIO::cout<<"SmrFactory initialized"<<std::endl;
   SmearingOperatorFactory* SmrFactory = 
     SmearingOperators::createSmearingOperatorFactory(smr_node);
   
   Smear* SmearingObj = SmrFactory->getSmearingOperator();
-  CCIO::cout<<"SmearingObj obtained"<<std::endl;
 
   smeared_u_= conf_; // Copy original configuration to smeared_u_ 
   for(int i=0; i<Nsmear; i++){ // Do the actual smearing 
     GaugeField previous_u_= smeared_u_;
     SmearingObj->smear(smeared_u_,previous_u_);
   }
-  //CCIO::cout<< "Plaquette (smeared): "<< Staple.plaquette(smeared_u_)
-  //	    << std::endl;
+  CCIO::cout<< "Plaquette (smeared): "<< Staple.plaquette(smeared_u_)
+    	    << std::endl;
+
   //// Quark Propagator ////
   XML::descend(node_,"QuarkProp");
   QuarkPropagatorFactory* 

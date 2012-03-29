@@ -28,7 +28,6 @@ namespace TestEnv{
     
     //Initializing geometry using XML input
     Geometry geom(top_node);
-    MapsEnv::initialize_mapper();
     
     //Initialize GaugeField using XML input
     GaugeGlobal GaugeF(geom);

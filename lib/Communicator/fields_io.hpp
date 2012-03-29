@@ -10,7 +10,7 @@
 #define FIELDS_IO_HPP_
 
 #include "include/field.h"
-#include "Main/Geometry/siteIndex.h"
+#include "Main/Geometry/siteIndex.hpp"
 #include "Tools/byteswap.hpp"
 
 #define CCIO_FILE_APPEND_MODE true

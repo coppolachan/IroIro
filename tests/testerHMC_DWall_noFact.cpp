@@ -12,7 +12,6 @@
 #include "include/commandline.hpp"
 
 using namespace XML;
-using namespace MapsEnv;
 
 int main(int argc, char* argv[]){
 
