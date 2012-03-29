@@ -55,14 +55,34 @@ void RationalApprox::fill() {
   RA_res.resize(Params.numerator_deg);
   RA_pole.resize(Params.denominator_deg);
 
-
   for (int i = 0; i < Params.numerator_deg;  i++) {
     RA_res[i]  = res[i];
     RA_pole[i] = den[i];
+  }
+  // Inverse coefficients
+  RemezApprox.getIPFE(res, den, &I_RA_a0);
 
+  // Fill the vectors
+  I_RA_res.resize(Params.numerator_deg);
+  I_RA_pole.resize(Params.denominator_deg);
+
+  for (int i = 0; i < Params.numerator_deg;  i++) {
+    I_RA_res[i]  = res[i];
+    I_RA_pole[i] = den[i];
+  }
+
+  CCIO::cout << "Partial fraction expansion coefficients\n";
+  for (int i = 0; i < Params.numerator_deg;  i++) {
     CCIO::cout << "Res["<<i<<"] = "<< std::setw(25)<< RA_res[i] 
 	       << "   Pole["<<i<<"] = "<< std::setw(25)<< RA_pole[i] << "\n";
   }
+
+  CCIO::cout << "Inverse Partial fraction expansion coefficients\n";
+  for (int i = 0; i < Params.numerator_deg;  i++) {
+    CCIO::cout << "Res["<<i<<"] = "<< std::setw(25)<< I_RA_res[i] 
+	       << "   Pole["<<i<<"] = "<< std::setw(25)<< I_RA_pole[i] << "\n";
+  }
+
 
   delete[] res;
   delete[] den;

@@ -57,6 +57,8 @@ struct RationalApprox_params{
 
 
 
+
+
 };
 
 
@@ -74,9 +76,13 @@ private:
   // Parameters for rational expansion (i.e. force, pseudofermions,...)
   int approximation_order;
   double min_epsilon;
-  double RA_a0; /*!< @brief Rational Approximation Constant term */
+  double RA_a0;               /*!< @brief Rational Approximation Constant term */
   std::vector<double> RA_res; /*!< @brief Rational Approximation Residuals */
   std::vector<double> RA_pole;  /*!< @brief Rational Approximation Poles */
+
+  double I_RA_a0;               /*!< @brief Inverse Rational Approximation Constant term */
+  std::vector<double> I_RA_res; /*!< @brief Inverse Rational Approximation Residuals */
+  std::vector<double> I_RA_pole;  /*!< @brief Inverse Rational Approximation Poles */ 
 
   RationalApprox(); // hide default constructor
 
@@ -91,6 +97,11 @@ public:
   std::vector<double> Residuals() const { return RA_res; }
   std::vector<double> Poles() const { return RA_pole; }
   double Const() const { return RA_a0; }
+
+  std::vector<double> InvResiduals() const { return I_RA_res; }
+  std::vector<double> InvPoles() const { return I_RA_pole; }
+  double InvConst() const { return I_RA_a0; }
+
 
 };
 

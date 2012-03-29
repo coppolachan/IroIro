@@ -17,24 +17,52 @@
 
 class RationalSolver: public Solver {
   const MultiShiftSolver* MS_Solver_;
-  const RationalApprox& RApprox_;
 
-  const std::vector<double> Residuals;
-  const std::vector<double> Poles;
-  const double ConstTerm;
+  std::vector<double> Residuals;
+  std::vector<double> Poles;
+  double ConstTerm;
 
+  std::vector<double> InvResiduals;
+  std::vector<double> InvPoles;
+  double InvConstTerm;
+
+  RationalSolver(){}; //hide default constructor
 public:
-  // Constructor
+  // Standard Constructor
   RationalSolver(const MultiShiftSolver* Solv,
-		 const RationalApprox& RA)
+		 RationalApprox& RA)
     :MS_Solver_(Solv),
-     RApprox_(RA),
-     Residuals(RApprox_.Residuals()),
-     Poles(RApprox_.Poles()),
-     ConstTerm(RApprox_.Const()){};
+     Residuals(RA.Residuals()),
+     Poles(RA.Poles()),
+     ConstTerm(RA.Const()),
+     InvResiduals(RA.InvResiduals()),
+     InvPoles(RA.InvPoles()),
+     InvConstTerm(RA.InvConst()){};
+
+  // Destructor
   ~RationalSolver(){};
 
+  // To be used in Action constructions
+  RationalSolver(const MultiShiftSolver* Solv)
+    :MS_Solver_(Solv),
+     Residuals(0),
+     Poles(0),
+     ConstTerm(0),
+     InvResiduals(0),
+     InvPoles(0),
+     InvConstTerm(0){};
+
+  void set_Approx(RationalApprox& RA) {
+    Residuals = RA.Residuals();
+    Poles     = RA.Poles();
+    ConstTerm = RA.Const();
+    InvResiduals = RA.InvResiduals();
+    InvPoles     = RA.InvPoles();
+    InvConstTerm = RA.InvConst();
+  }
+
   SolverOutput solve(Field&, const Field&) const;
+  SolverOutput solve_inv(Field&, const Field&) const;
   bool check_DdagD() const {return true;}
 
 

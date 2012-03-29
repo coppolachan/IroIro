@@ -95,7 +95,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Communicator/communicator_mpi.cpp Action/action.cpp \
 	Action/action_gauge_wilson.cpp Action/action_gauge_rect.cpp \
 	Action/action_gaugetype_factory.cpp Action/action_Nf2.cpp \
-	Action/action_Nf2_ratio.cpp Action/action_Nf2_DomainWall.cpp \
+	Action/action_Nf.cpp Action/action_Nf2_ratio.cpp \
+	Action/action_Nf2_DomainWall.cpp \
 	Action/action_fermiontype_factory.cpp Communicator/comm_io.cpp \
 	Communicator/fields_io.cpp Dirac_ops/dirac_wilson.cpp \
 	Dirac_ops/dirac_wilson_EvenOdd.cpp Dirac_ops/dirac_clover.cpp \
@@ -140,7 +141,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) \
 	common_fields.$(OBJEXT) $(am__objects_1) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) action_gauge_rect.$(OBJEXT) \
 	action_gaugetype_factory.$(OBJEXT) action_Nf2.$(OBJEXT) \
-	action_Nf2_ratio.$(OBJEXT) action_Nf2_DomainWall.$(OBJEXT) \
+	action_Nf.$(OBJEXT) action_Nf2_ratio.$(OBJEXT) \
+	action_Nf2_DomainWall.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	fields_io.$(OBJEXT) dirac_wilson.$(OBJEXT) \
 	dirac_wilson_EvenOdd.$(OBJEXT) dirac_clover.$(OBJEXT) \
@@ -236,7 +238,8 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/commonPrms.h \
 	Action/action_fermiontype_factory_abs.hpp \
 	Action/action_fermiontype_factory.hpp \
 	Action/action_Factory.hpp Action/action_Nf2.hpp \
-	Action/action_Nf2_ratio.hpp Action/action_Nf2_DomainWall.hpp \
+	Action/action_Nf.hpp Action/action_Nf2_ratio.hpp \
+	Action/action_Nf2_DomainWall.hpp \
 	Measurements/GaugeM/staples.hpp \
 	Measurements/FermionicM/source.hpp \
 	Measurements/FermionicM/source_types.hpp \
@@ -454,6 +457,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_gauge_rect.cpp            \
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
+		Action/action_Nf.cpp			\
 		Action/action_Nf2_ratio.cpp		\
 		Action/action_Nf2_DomainWall.cpp	\
 		Action/action_fermiontype_factory.cpp	\
@@ -548,6 +552,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Action/action_fermiontype_factory.hpp		\
 			Action/action_Factory.hpp			\
 			Action/action_Nf2.hpp				\
+			Action/action_Nf.hpp				\
 			Action/action_Nf2_ratio.hpp			\
 			Action/action_Nf2_DomainWall.hpp		\
 			Measurements/GaugeM/staples.hpp			\
@@ -744,6 +749,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Smearing_Factories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StoutSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2_ratio.Po@am__quote@
@@ -966,6 +972,22 @@ action_Nf2.obj: Action/action_Nf2.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_Nf2.cpp' object='action_Nf2.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_Nf2.obj `if test -f 'Action/action_Nf2.cpp'; then $(CYGPATH_W) 'Action/action_Nf2.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_Nf2.cpp'; fi`
+
+action_Nf.o: Action/action_Nf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_Nf.o -MD -MP -MF $(DEPDIR)/action_Nf.Tpo -c -o action_Nf.o `test -f 'Action/action_Nf.cpp' || echo '$(srcdir)/'`Action/action_Nf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_Nf.Tpo $(DEPDIR)/action_Nf.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_Nf.cpp' object='action_Nf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_Nf.o `test -f 'Action/action_Nf.cpp' || echo '$(srcdir)/'`Action/action_Nf.cpp
+
+action_Nf.obj: Action/action_Nf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_Nf.obj -MD -MP -MF $(DEPDIR)/action_Nf.Tpo -c -o action_Nf.obj `if test -f 'Action/action_Nf.cpp'; then $(CYGPATH_W) 'Action/action_Nf.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_Nf.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_Nf.Tpo $(DEPDIR)/action_Nf.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_Nf.cpp' object='action_Nf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_Nf.obj `if test -f 'Action/action_Nf.cpp'; then $(CYGPATH_W) 'Action/action_Nf.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_Nf.cpp'; fi`
 
 action_Nf2_ratio.o: Action/action_Nf2_ratio.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_Nf2_ratio.o -MD -MP -MF $(DEPDIR)/action_Nf2_ratio.Tpo -c -o action_Nf2_ratio.o `test -f 'Action/action_Nf2_ratio.cpp' || echo '$(srcdir)/'`Action/action_Nf2_ratio.cpp

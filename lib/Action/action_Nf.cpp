@@ -29,6 +29,9 @@ void Action_Nf::attach_smearing(SmartConf* SmearObj) {
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 FermionField Action_Nf::DdagD_inv(const FermionField& src){
+  // Calculates the vector
+  // v = (M^dag M)^(-Nf/2n) x
+
   FermionField sol;
   sol.resize(fermion_size_);
   SolverOutput monitor = slv_->solve(sol.data,src.data);
@@ -39,19 +42,31 @@ FermionField Action_Nf::DdagD_inv(const FermionField& src){
 }
 
 void Action_Nf::init(const RandNum& rand){
-  // Generates a gaussian distributed vector <xi>
   std::valarray<double> xi(fermion_size_);
-  MPrand::mp_get_gauss(xi,rand,D_->get_gsite(),D_->get_fermionFormat());
- 
-  // Generates pseudofermions <phi_> = (M^dag M)^(Nf/4n) <xi> 
-  // where n is the number of pseudofermion fields 
-  // and Nf the number of flavors
-  phi_.data = D_->mult_dag(Field(ph)); 
+  slv_->set_Approx(PseudoFermionsApprox_);
+
+  // Loop on pseudofermions
+  for(int i=0; i<Params_.n_pseudof_; ++i){
+    // Generates a gaussian distributed vector <xi>   
+    MPrand::mp_get_gauss(xi,rand,D_->get_gsite(),D_->get_fermionFormat());
+    
+    // Generates pseudofermions <phi_> = (M^dag M)^(Nf/4n) <xi> 
+    // where n is the number of pseudofermion fields 
+    // and Nf the number of flavors
+    slv_->solve(phi_[i].data, Field(xi)); 
+  }
+
 }
 
 double Action_Nf::calc_H(){ 
   // Calculates action for the Metropolis step
-  double H_nf2 = (phi_.data) * DdagD_inv(phi_).data;
+  double H_nf2 = 0.0;
+  Field temp;
+  slv_->set_Approx(MetropolisApprox_);
+  for(int i=0; i<Params_.n_pseudof_; ++i){
+    slv_->solve_inv(temp, phi_[i].data); // (M^dag M)^(-Nf/2n) <phi_>
+    H_nf2 += (phi_[i].data) * temp;
+  }
   _Message(ACTION_VERB_LEVEL, "    [Action_Nf] H = "<< H_nf2<<"\n");
   return H_nf2;
 }
@@ -59,16 +74,24 @@ double Action_Nf::calc_H(){
 GaugeField Action_Nf::md_force(){
   // Calculates the force
   GaugeField fce;
-  FermionField eta;
+  FermionField eta, eta2;
+  GaugeField force;
   eta.resize(fermion_size_);
+  eta2.resize(fermion_size_);
+  slv_->set_Approx(MolecularDynApprox_);
 
-  eta = DdagD_inv(phi_);
+  // Loop on pseudofermions
+  for (int pf = 0; pf < Params_.n_pseudof_; ++pf){ 
+    slv_->solve_inv(eta.data, phi_[pf].data); //(M^dag M)^(-Nf/2n) <phi_>
 
-  fce.data = D_->md_force(eta.data,D_->mult(eta.data));
-  // [fce] is [U*SigmaTilde] in smearing language
-  if(smeared_) SmartField_->smeared_force(fce);
+    slv_->solve(eta2.data, eta.data);  //(M^dag M)^(Nf/2n) <phi_>
+    fce.data = D_->md_force(eta.data,eta2.data);
+    // [fce] is [U*SigmaTilde] in smearing language
+    if(smeared_) SmartField_->smeared_force(fce);
 
-  GaugeField force = FieldUtils::TracelessAntihermite(fce);
+    force += FieldUtils::TracelessAntihermite(fce);
+  }
+
 
   _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "Action_Nf");
   return force;
