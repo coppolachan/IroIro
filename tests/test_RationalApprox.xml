@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- sample input file for configuration generator -->
+<!-- simple input file for general tests -->
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
     <Lattice>8 8 8 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
-    <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
 
-  <MultiShift>
-  </MultiShift>
-  
+  <RationalApprox>
+    <Num_deg>10</Num_deg>
+    <Den_deg>10</Den_deg>
+    <Exp_num>1</Exp_num>
+    <Exp_den>2</Exp_den>
+    <Precision>40</Precision>
+    <Low>0.5</Low>
+    <High>6.0</High>
+  </RationalApprox>
+
 </Parameters>
 

@@ -37,24 +37,29 @@ int Test_MultiShiftSolver::test1(){
   mass_shifts.push_back(0.30);
 
   int N5d   = 6;
+  double wilson_kernel_mass = 0.01;
   double M0 = -1.6;
   double c  = 1.0;
   double b  = 1.0;
   double mq = 0.01;
   vector<double> omega(N5d,1.0);
 
-  Dirac_optimalDomainWall* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gauge.data));
+  
 
 
   // Definition of source 
   vector<int> spos(4,0);
   Source_local<Format::Format_F> Source(spos,
-					CommonPrms::instance()->Nvol()*N5d);
+					CommonPrms::instance()->Nvol());
+  
+  // 5d source
+  Source_local<Format::Format_F> Source5d(spos,
+					  CommonPrms::instance()->Nvol()*N5d);
 
   // Definition of Dirac Kernel
-  //Dirac* Kernel = new Dirac_Wilson(M0, &(Gauge.data));
+  //Dirac* Kernel = new Dirac_Wilson(wilson_kernel_mass, &(Gauge.data));
   //Dirac* Kernel = new Dirac_Clover(0.01, 1.0, &(Gauge.data));
-
+  Dirac_optimalDomainWall* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gauge.data));
 
   // Definition of the Solver
   int    Niter= 1000;
@@ -71,7 +76,7 @@ int Test_MultiShiftSolver::test1(){
     xqs.push_back(Field(CommonPrms::instance()->Nvol()*N5d));
   double residual;
   int Nconv;
-  Solver->solve(xqs, Source.mksrc(0,0), mass_shifts, residual, Nconv);
+  Solver->solve(xqs, Source5d.mksrc(0,0), mass_shifts, residual, Nconv);
 
 
 

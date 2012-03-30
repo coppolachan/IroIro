@@ -12,6 +12,14 @@ CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1
 LDFLAGS += -q64
 endif
 
+if IBM_WATSON
+DRIVER=/bgsys/drivers/ppcfloor
+CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk \
+	-I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
+LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
+OPTLIB += -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
+endif
+
 else
 COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 endif
@@ -41,6 +49,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_gauge_rect.cpp            \
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
+		Action/action_Nf.cpp			\
 		Action/action_Nf2_ratio.cpp		\
 		Action/action_Nf2_DomainWall.cpp	\
 		Action/action_fermiontype_factory.cpp	\
@@ -84,6 +93,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/solver_CG.cpp			\
 		Solver/solver_Factory.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
+		Solver/rationalSolver.cpp		\
 		Solver/solver.cpp			\
 		Smearing/APEsmear.cpp			\
 		Smearing/stoutSmear.cpp			\
@@ -92,7 +102,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
-		Tools/gammaMatrices.cpp			
+		Tools/gammaMatrices.cpp			\
+		Tools/Remez/alg_remez.cpp		\
+		Tools/RationalApprox/rationalapprox.cpp	
 
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
@@ -133,6 +145,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Action/action_fermiontype_factory.hpp		\
 			Action/action_Factory.hpp			\
 			Action/action_Nf2.hpp				\
+			Action/action_Nf.hpp				\
 			Action/action_Nf2_ratio.hpp			\
 			Action/action_Nf2_DomainWall.hpp		\
 			Measurements/GaugeM/staples.hpp			\
@@ -168,16 +181,11 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
 			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
-			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Dirac_ops/eoUtils.hpp            	\
-			Dirac_ops/dirac_Operator_Factory.hpp	\
 			EigenModes/eigenModes_IRL.hpp		\
 			EigenModes/sortEigen.h			\
 			EigenModes/eigenProc_Zolotarev.h	\
-			Main/Geometry/mapping.hpp		\
-			Main/gaugeConf.hpp			\
-			Main/commandline.cpp			\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/mdExec.hpp		                \
@@ -191,6 +199,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Solver/solver_CG.hpp			\
 			Solver/multiShiftSolver_CG.hpp		\
 			Solver/multiShiftSolver.hpp		\
+			Solver/rationalSolver.hpp		\
 			Smearing/APEsmear.hpp			\
 			Smearing/baseSmear.hpp			\
 			Smearing/stoutSmear.hpp			\
@@ -206,7 +215,10 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
-			Tools/gammaMatrices.hpp			
+			Tools/gammaMatrices.hpp			\
+			Tools/Remez/alg_remez.hpp		\
+			Tools/Remez/bigfloat.hpp		\
+			Tools/RationalApprox/rationalapprox.hpp	
 
 
 

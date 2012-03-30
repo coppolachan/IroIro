@@ -2,7 +2,8 @@ SUBDIRS = lib tests docs
 
 EXTRA_DIST = 	m4	\
 		README 	\
-		todo
+		todo	\
+		reconfigure-script
 
 if DOXYGEN_DOC
 directory = $(top_srcdir)/docs/
