@@ -24,11 +24,14 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   is = 0;
   Xb = Nx_-1;
   Nbdry = (this->*slice_osize)(Xb,XDIR);
+
   for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
+
     int xc = (this->*slice_out)(Xb,k,XDIR);
-    int id = ff_.index(0,xc);    
     const double* U 
       = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(xc),XDIR));
+    double* res = fp.getaddr(ff_.index(0,xc));    
+    
     for(int c=0; c<NC_; ++c){
       v1r[c] = 0.0; v1i[c] = 0.0;
       v2r[c] = 0.0; v2i[c] = 0.0;
@@ -39,10 +42,10 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 	v2r[c]+= U[re(c,c1)]*vbc[r1(c1)+is] -U[im(c,c1)]*vbc[i1(c1)+is];
 	v2i[c]+= U[im(c,c1)]*vbc[r1(c1)+is] +U[re(c,c1)]*vbc[i1(c1)+is];
       }
-      fp.add(id+r0(c), v1r[c]);   fp.add(id+i0(c), v1i[c]);
-      fp.add(id+r1(c), v2r[c]);   fp.add(id+i1(c), v2i[c]);
-      fp.add(id+r2(c), v2i[c]);   fp.add(id+i2(c),-v2r[c]);
-      fp.add(id+r3(c), v1i[c]);   fp.add(id+i3(c),-v1r[c]);
+      res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+      res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+      res[r2(c)] += v2i[c];      res[i2(c)] -= v2r[c];
+      res[r3(c)] += v1i[c];      res[i3(c)] -= v1r[c];
     }
     is += Nih;
   }
@@ -59,9 +62,10 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 	w2r[c] = v[r1(c)] -v[i2(c)];  w2i[c] = v[i1(c)] +v[r2(c)];
       }
       int xc = (this->*slice_out)(x,k,XDIR);
-      int id = ff_.index(0,xc);
       const double* U 
 	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(xc),XDIR));
+      double* res = fp.getaddr(ff_.index(0,xc));
+
       for(int c=0; c<NC_; ++c){
 	v1r[c] = 0.0;  v1i[c] = 0.0;
 	v2r[c] = 0.0;  v2i[c] = 0.0;
@@ -72,10 +76,10 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 	  v2r[c] += U[re(c,c1)]*w2r[c1] -U[im(c,c1)]*w2i[c1];
 	  v2i[c] += U[im(c,c1)]*w2r[c1] +U[re(c,c1)]*w2i[c1];
 	}
-	fp.add(id+r0(c), v1r[c]);  fp.add(id+i0(c), v1i[c]);
-	fp.add(id+r1(c), v2r[c]);  fp.add(id+i1(c), v2i[c]);
-	fp.add(id+r2(c), v2i[c]);  fp.add(id+i2(c),-v2r[c]);
-	fp.add(id+r3(c), v1i[c]);  fp.add(id+i3(c),-v1r[c]);
+	res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+	res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+	res[r2(c)] += v2i[c];      res[i2(c)] -= v2r[c];
+	res[r3(c)] += v1i[c];      res[i3(c)] -= v1r[c];
       }
     }
   }
@@ -105,11 +109,14 @@ void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
   is = 0;
   Yb = Ny_-1;
   Nbdry = (this->*slice_osize)(Yb,YDIR);
+
   for(int k=0; k<Nbdry; ++k){
+
     int yc = (this->*slice_out)(Yb,k,YDIR);
-    int id = ff_.index(0,yc);
     const double* U 
       = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(yc),YDIR));
+    double* res = fp.getaddr(ff_.index(0,yc));
+    
     for(int c=0; c<NC_; ++c){
       v1r[c] = 0.0; v1i[c] = 0.0;
       v2r[c] = 0.0; v2i[c] = 0.0;
@@ -120,10 +127,10 @@ void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
 	v2r[c]+= U[re(c,c1)]*vbc[r1(c1)+is] -U[im(c,c1)]*vbc[i1(c1)+is];
 	v2i[c]+= U[im(c,c1)]*vbc[r1(c1)+is] +U[re(c,c1)]*vbc[i1(c1)+is];
       }
-      fp.add(id+r0(c), v1r[c]);   fp.add(id+i0(c), v1i[c]);
-      fp.add(id+r1(c), v2r[c]);   fp.add(id+i1(c), v2i[c]);
-      fp.add(id+r2(c),-v2r[c]);   fp.add(id+i2(c),-v2i[c]);
-      fp.add(id+r3(c), v1r[c]);   fp.add(id+i3(c), v1i[c]);
+      res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+      res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+      res[r2(c)] -= v2r[c];      res[i2(c)] -= v2i[c];
+      res[r3(c)] += v1r[c];      res[i3(c)] += v1i[c];
     }
     is += Nih;
   }
@@ -140,9 +147,10 @@ void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
 	w2r[c] = v[r1(c)] -v[r2(c)];  w2i[c] = v[i1(c)] -v[i2(c)];
       }
       int yc = (this->*slice_out)(y,k,YDIR);
-      int id = ff_.index(0,yc);
       const double* U 
 	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(yc),YDIR));
+      double* res = fp.getaddr(ff_.index(0,yc));
+      
       for(int c=0; c<NC_; ++c){
 	v1r[c] = 0.0;  v1i[c] = 0.0;
 	v2r[c] = 0.0;  v2i[c] = 0.0;
@@ -153,10 +161,10 @@ void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
 	  v2r[c] += U[re(c,c1)]*w2r[c1] -U[im(c,c1)]*w2i[c1];
 	  v2i[c] += U[im(c,c1)]*w2r[c1] +U[re(c,c1)]*w2i[c1];
 	}
-	fp.add(id+r0(c), v1r[c]);  fp.add(id+i0(c), v1i[c]);
-	fp.add(id+r1(c), v2r[c]);  fp.add(id+i1(c), v2i[c]);
-	fp.add(id+r2(c),-v2r[c]);  fp.add(id+i2(c),-v2i[c]);
-	fp.add(id+r3(c), v1r[c]);  fp.add(id+i3(c), v1i[c]);
+	res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+	res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+	res[r2(c)] -= v2r[c];      res[i2(c)] -= v2i[c];
+	res[r3(c)] += v1r[c];      res[i3(c)] += v1i[c];
       }
     }
   }
@@ -187,10 +195,12 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
   Zb = Nz_-1;
   Nbdry = (this->*slice_osize)(Zb,ZDIR);
   for(int k=0; k<Nbdry; ++k){
+
     int zc = (this->*slice_out)(Zb,k,ZDIR);
-    int id = ff_.index(0,zc);
     const double* U 
       = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(zc),ZDIR));
+    double* res = fp.getaddr(ff_.index(0,zc));
+      
     for(int c=0; c<NC_; ++c){
       v1r[c] = 0.0; v1i[c] = 0.0;
       v2r[c] = 0.0; v2i[c] = 0.0;
@@ -201,10 +211,10 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
 	v2r[c]+= U[re(c,c1)]*vbc[r1(c1)+is] -U[im(c,c1)]*vbc[i1(c1)+is];
 	v2i[c]+= U[im(c,c1)]*vbc[r1(c1)+is] +U[re(c,c1)]*vbc[i1(c1)+is];
       }
-      fp.add(id+r0(c), v1r[c]);   fp.add(id+i0(c), v1i[c]);
-      fp.add(id+r1(c), v2r[c]);   fp.add(id+i1(c), v2i[c]);
-      fp.add(id+r2(c), v1i[c]);   fp.add(id+i2(c),-v1r[c]);
-      fp.add(id+r3(c),-v2i[c]);   fp.add(id+i3(c), v2r[c]);
+      res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+      res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+      res[r2(c)] += v1i[c];      res[i2(c)] -= v1r[c];
+      res[r3(c)] -= v2i[c];      res[i3(c)] += v2r[c];
     }
     is += Nih;
   }
@@ -221,9 +231,10 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
 	w2r[c] = v[r1(c)] +v[i3(c)];  w2i[c] = v[i1(c)] -v[r3(c)];
       }
       int zc = (this->*slice_out)(z,k,ZDIR);
-      int id = ff_.index(0,zc);
       const double* U 
 	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(zc),ZDIR));
+      double* res = fp.getaddr(ff_.index(0,zc));
+      
       for(int c=0; c<NC_; ++c){
 	v1r[c] = 0.0;  v1i[c] = 0.0;
 	v2r[c] = 0.0;  v2i[c] = 0.0;
@@ -234,10 +245,10 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
 	  v2r[c] += U[re(c,c1)]*w2r[c1] -U[im(c,c1)]*w2i[c1];
 	  v2i[c] += U[im(c,c1)]*w2r[c1] +U[re(c,c1)]*w2i[c1];
 	}
-	fp.add(id+r0(c), v1r[c]);  fp.add(id+i0(c), v1i[c]);
-	fp.add(id+r1(c), v2r[c]);  fp.add(id+i1(c), v2i[c]);
-	fp.add(id+r2(c), v1i[c]);  fp.add(id+i2(c),-v1r[c]);
-	fp.add(id+r3(c),-v2i[c]);  fp.add(id+i3(c), v2r[c]);
+	res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+	res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+	res[r2(c)] += v1i[c];      res[i2(c)] -= v1r[c];
+	res[r3(c)] -= v2i[c];      res[i3(c)] += v2r[c];
       }
     }
   }
@@ -268,10 +279,12 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
   Tb = Nt_-1;
   Nbdry = (this->*slice_osize)(Tb,TDIR);
   for(int k=0; k<Nbdry; ++k){
+
     int tc = (this->*slice_out)(Tb,k,TDIR);
-    int id = ff_.index(0,tc);
     const double* U 
       = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(tc),TDIR));
+    double* res = fp.getaddr(ff_.index(0,tc));
+    
     for(int c=0; c<NC_; ++c){
       v1r[c] = 0.0; v1i[c] = 0.0;
       v2r[c] = 0.0; v2i[c] = 0.0;
@@ -282,8 +295,8 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
 	v2r[c]+= U[re(c,c1)]*vbc[r1(c1)+is] -U[im(c,c1)]*vbc[i1(c1)+is];
 	v2i[c]+= U[im(c,c1)]*vbc[r1(c1)+is] +U[re(c,c1)]*vbc[i1(c1)+is];
       }
-      fp.add(id+r2(c), v1r[c]);   fp.add(id+i2(c), v1i[c]);
-      fp.add(id+r3(c), v2r[c]);   fp.add(id+i3(c), v2i[c]);
+      res[r2(c)] += v1r[c];      res[i2(c)] += v1i[c];
+      res[r3(c)] += v2r[c];      res[i3(c)] += v2i[c];
     }
     is += Nih;
   }
@@ -299,10 +312,12 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
 	w1r[c] = v[r2(c)]*2.0;  w1i[c] = v[i2(c)]*2.0;
 	w2r[c] = v[r3(c)]*2.0;  w2i[c] = v[i3(c)]*2.0;
       }
+
       int tc = (this->*slice_out)(t,k,TDIR);
-      int id = ff_.index(0,tc);
       const double* U 
 	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(tc),TDIR));
+      double* res = fp.getaddr(ff_.index(0,tc));
+
       for(int c=0; c<NC_; ++c){
 	v1r[c] = 0.0;  v1i[c] = 0.0;
 	v2r[c] = 0.0;  v2i[c] = 0.0;
@@ -313,8 +328,8 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
 	  v2r[c] += U[re(c,c1)]*w2r[c1] -U[im(c,c1)]*w2i[c1];
 	  v2i[c] += U[im(c,c1)]*w2r[c1] +U[re(c,c1)]*w2i[c1];
 	}
-	fp.add(id+r2(c), v1r[c]);  fp.add(id+i2(c), v1i[c]);
-	fp.add(id+r3(c), v2r[c]);  fp.add(id+i3(c), v2i[c]);
+	res[r2(c)] += v1r[c];      res[i2(c)] += v1i[c];
+	res[r3(c)] += v2r[c];      res[i3(c)] += v2i[c];
       }
     }
   }
@@ -356,14 +371,15 @@ void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
   is = 0;
   Xb = 0;
   Nbdry = (this->*slice_osize)(Xb,XDIR);
+  
   for(int k=0; k<Nbdry; ++k){
-    int xc = (this->*slice_out)(Xb,k,XDIR);
-    int id = ff_.index(0,xc);
+    double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(Xb,k,XDIR)));
+
     for(int c=0; c<NC_; ++c){  
-      fm.add(id+r0(c), vbc[r0(c)+is]);   fm.add(id+i0(c), vbc[i0(c)+is]);
-      fm.add(id+r1(c), vbc[r1(c)+is]);   fm.add(id+i1(c), vbc[i1(c)+is]);
-      fm.add(id+r2(c),-vbc[i1(c)+is]);   fm.add(id+i2(c), vbc[r1(c)+is]);
-      fm.add(id+r3(c),-vbc[i0(c)+is]);   fm.add(id+i3(c), vbc[r0(c)+is]);
+      res[r0(c)] += vbc[r0(c)+is];      res[i0(c)] += vbc[i0(c)+is];
+      res[r1(c)] += vbc[r1(c)+is];      res[i1(c)] += vbc[i1(c)+is];
+      res[r2(c)] -= vbc[i1(c)+is];      res[i2(c)] += vbc[r1(c)+is];
+      res[r3(c)] -= vbc[i0(c)+is];      res[i3(c)] += vbc[r0(c)+is];
     }
     is += Nih;
   }
@@ -379,9 +395,10 @@ void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
 	w1r[c] = v[r0(c)] +v[i3(c)];  w1i[c] = v[i0(c)] -v[r3(c)];
 	w2r[c] = v[r1(c)] +v[i2(c)];  w2i[c] = v[i1(c)] -v[r2(c)];
       }
-      int id = ff_.index(0,(this->*slice_out)(x,k,XDIR));
       const double* U 
 	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(xm),XDIR));
+      double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(x,k,XDIR)));
+
       for(int c=0; c<NC_; ++c){
 	v1r[c] = 0.0; v1i[c] = 0.0; 
 	v2r[c] = 0.0; v2i[c] = 0.0;
@@ -392,10 +409,10 @@ void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
 	  v2r[c] += U[re(c1,c)]*w2r[c1] +U[im(c1,c)]*w2i[c1];
 	  v2i[c] -= U[im(c1,c)]*w2r[c1] -U[re(c1,c)]*w2i[c1];
 	}
-	fm.add(id+r0(c), v1r[c]);  fm.add(id+i0(c), v1i[c]);
-	fm.add(id+r1(c), v2r[c]);  fm.add(id+i1(c), v2i[c]);
-	fm.add(id+r2(c),-v2i[c]);  fm.add(id+i2(c), v2r[c]);
-	fm.add(id+r3(c),-v1i[c]);  fm.add(id+i3(c), v1r[c]);
+	res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+	res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+	res[r2(c)] -= v2i[c];      res[i2(c)] += v2r[c];
+	res[r3(c)] -= v1i[c];      res[i3(c)] += v1r[c];
       }
     }
   }
@@ -437,14 +454,14 @@ void Dirac_Wilson::mult_ym(Field& fm, const Field& f) const{
   is = 0;
   Yb = 0;
   Nbdry = (this->*slice_osize)(Yb,YDIR);
+
   for(int k=0; k<Nbdry; ++k){
-    int yc = (this->*slice_out)(Yb,k,YDIR);
-    int id = ff_.index(0,yc);
+    double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(Yb,k,YDIR)));
     for(int c=0; c<NC_; ++c){  
-      fm.add(id+r0(c), vbc[r0(c)+is]);   fm.add(id+i0(c), vbc[i0(c)+is]);
-      fm.add(id+r1(c), vbc[r1(c)+is]);   fm.add(id+i1(c), vbc[i1(c)+is]);
-      fm.add(id+r2(c), vbc[r1(c)+is]);   fm.add(id+i2(c), vbc[i1(c)+is]);
-      fm.add(id+r3(c),-vbc[r0(c)+is]);   fm.add(id+i3(c),-vbc[i0(c)+is]);
+      res[r0(c)] += vbc[r0(c)+is];      res[i0(c)] += vbc[i0(c)+is];
+      res[r1(c)] += vbc[r1(c)+is];      res[i1(c)] += vbc[i1(c)+is];
+      res[r2(c)] += vbc[r1(c)+is];      res[i2(c)] += vbc[i1(c)+is];
+      res[r3(c)] -= vbc[r0(c)+is];      res[i3(c)] -= vbc[i0(c)+is];
     }
     is += Nih;
   }
@@ -460,9 +477,10 @@ void Dirac_Wilson::mult_ym(Field& fm, const Field& f) const{
 	w1r[c] = v[r0(c)] -v[r3(c)];  w1i[c] = v[i0(c)] -v[i3(c)];
 	w2r[c] = v[r1(c)] +v[r2(c)];  w2i[c] = v[i1(c)] +v[i2(c)];
       }
-      int id = ff_.index(0,(this->*slice_out)(y,k,YDIR));
       const double* U 
 	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(ym),YDIR));
+      double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(y,k,YDIR)));
+
       for(int c=0; c<NC_; ++c){
 	v1r[c] = 0.0; v1i[c] = 0.0; 
 	v2r[c] = 0.0; v2i[c] = 0.0;
@@ -473,10 +491,10 @@ void Dirac_Wilson::mult_ym(Field& fm, const Field& f) const{
 	  v2r[c] += U[re(c1,c)]*w2r[c1] +U[im(c1,c)]*w2i[c1];
 	  v2i[c] -= U[im(c1,c)]*w2r[c1] -U[re(c1,c)]*w2i[c1];
 	}
-	fm.add(id+r0(c), v1r[c]);  fm.add(id+i0(c), v1i[c]);
-	fm.add(id+r1(c), v2r[c]);  fm.add(id+i1(c), v2i[c]);
-	fm.add(id+r2(c), v2r[c]);  fm.add(id+i2(c), v2i[c]);
-	fm.add(id+r3(c),-v1r[c]);  fm.add(id+i3(c),-v1i[c]); 
+	res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+	res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+	res[r2(c)] += v2r[c];      res[i2(c)] += v2i[c];
+	res[r3(c)] -= v1r[c];      res[i3(c)] -= v1i[c];
       }
     }
   }
@@ -518,14 +536,15 @@ void Dirac_Wilson::mult_zm(Field& fm, const Field& f) const{
   is = 0;
   Zb = 0;
   Nbdry = (this->*slice_osize)(Zb,ZDIR);
+
   for(int k=0; k<Nbdry; ++k){
-    int zc = (this->*slice_out)(Zb,k,ZDIR);
-    int id = ff_.index(0,zc);
+    double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(Zb,k,ZDIR)));
+    
     for(int c=0; c<NC_; ++c){  
-      fm.add(id+r0(c), vbc[r0(c)+is]);   fm.add(id+i0(c), vbc[i0(c)+is]);
-      fm.add(id+r1(c), vbc[r1(c)+is]);   fm.add(id+i1(c), vbc[i1(c)+is]);
-      fm.add(id+r2(c),-vbc[i0(c)+is]);   fm.add(id+i2(c), vbc[r0(c)+is]);
-      fm.add(id+r3(c), vbc[i1(c)+is]);   fm.add(id+i3(c),-vbc[r1(c)+is]);
+      res[r0(c)] += vbc[r0(c)+is];      res[i0(c)] += vbc[i0(c)+is];
+      res[r1(c)] += vbc[r1(c)+is];      res[i1(c)] += vbc[i1(c)+is];
+      res[r2(c)] -= vbc[i0(c)+is];      res[i2(c)] += vbc[r0(c)+is];
+      res[r3(c)] += vbc[i1(c)+is];      res[i3(c)] -= vbc[r1(c)+is];
     }
     is += Nih;
   }
@@ -541,9 +560,10 @@ void Dirac_Wilson::mult_zm(Field& fm, const Field& f) const{
 	w1r[c] = v[r0(c)] +v[i2(c)];  w1i[c] = v[i0(c)] -v[r2(c)];
 	w2r[c] = v[r1(c)] -v[i3(c)];  w2i[c] = v[i1(c)] +v[r3(c)];
       }
-      int id = ff_.index(0,(this->*slice_out)(z,k,ZDIR));
       const double* U 
 	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(zm),ZDIR));
+      double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(z,k,ZDIR)));
+      
       for(int c=0; c<NC_; ++c){
 	v1r[c] = 0.0;  v1i[c] = 0.0; 
 	v2r[c] = 0.0;  v2i[c] = 0.0;
@@ -554,10 +574,10 @@ void Dirac_Wilson::mult_zm(Field& fm, const Field& f) const{
 	  v2r[c] += U[re(c1,c)]*w2r[c1] +U[im(c1,c)]*w2i[c1];
 	  v2i[c] -= U[im(c1,c)]*w2r[c1] -U[re(c1,c)]*w2i[c1];
 	}
-	fm.add(id+r0(c), v1r[c]);  fm.add(id+i0(c), v1i[c]);
-	fm.add(id+r1(c), v2r[c]);  fm.add(id+i1(c), v2i[c]);
-	fm.add(id+r2(c),-v1i[c]);  fm.add(id+i2(c), v1r[c]);
-	fm.add(id+r3(c), v2i[c]);  fm.add(id+i3(c),-v2r[c]); 
+	res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+	res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+	res[r2(c)] -= v1i[c];      res[i2(c)] += v1r[c];
+	res[r3(c)] += v2i[c];      res[i3(c)] -= v2r[c];
       }
     }
   }
@@ -600,12 +620,12 @@ void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
   is = 0;
   Tb = 0;
   Nbdry = (this->*slice_osize)(Tb,TDIR);
+
   for(int k=0; k<Nbdry; ++k){
-    int tc = (this->*slice_out)(Tb,k,TDIR);
-    int id = ff_.index(0,tc);
+    double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(Tb,k,TDIR)));
     for(int c=0; c<NC_; ++c){  
-      fm.add(id+r0(c), vbc[r0(c)+is]); fm.add(id+i0(c), vbc[i0(c)+is]);
-      fm.add(id+r1(c), vbc[r1(c)+is]); fm.add(id+i1(c), vbc[i1(c)+is]);
+      res[r0(c)] += vbc[r0(c)+is];      res[i0(c)] += vbc[i0(c)+is];
+      res[r1(c)] += vbc[r1(c)+is];      res[i1(c)] += vbc[i1(c)+is];
     }
     is += Nih;
   }
@@ -621,9 +641,10 @@ void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
 	w1r[c] = v[r0(c)]*2.0;   w1i[c] = v[i0(c)]*2.0;
 	w2r[c] = v[r1(c)]*2.0;   w2i[c] = v[i1(c)]*2.0;
       }
-      int id = ff_.index(0,(this->*slice_out)(t,k,TDIR));
       const double* U 
 	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(tm),TDIR));
+      double* res = fm.getaddr( ff_.index(0,(this->*slice_out)(t,k,TDIR)));
+      
       for(int c=0; c<NC_; ++c){
 	v1r[c] = 0.0;  v1i[c] = 0.0; 
 	v2r[c] = 0.0;  v2i[c] = 0.0;
@@ -634,8 +655,8 @@ void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
 	  v2r[c] += U[re(c1,c)]*w2r[c1] +U[im(c1,c)]*w2i[c1];
 	  v2i[c] -= U[im(c1,c)]*w2r[c1] -U[re(c1,c)]*w2i[c1];
 	}
-	fm.add(id+r0(c), v1r[c]);  fm.add(id+i0(c), v1i[c]);
-	fm.add(id+r1(c), v2r[c]);  fm.add(id+i1(c), v2i[c]);
+	res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+	res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
       }
     }
   }
