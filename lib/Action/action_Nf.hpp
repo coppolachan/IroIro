@@ -39,6 +39,8 @@ struct Action_Nf_params {
 			   3 integers for Metropolis, Molecular Dynamics
 			   and Pseudofermion steps, respectively */
   
+  Action_Nf_params(){};
+
   Action_Nf_params(const XML::node node)
     :degree_(3),precision_(3),b_low_(3),b_high_(3){
     
@@ -112,7 +114,8 @@ public:
 						 4*Params_.n_pseudof_,
 						 Params_.precision_[PFStep],
 						 Params_.b_low_[PFStep],
-						 Params_.b_high_[PFStep])){
+						 Params_.b_high_[PFStep]))
+  {
     for(int i=0; i<Params_.n_pseudof_; ++i)
       phi_[i].resize(fermion_size_); //takes care of EvenOdd and 5D cases
     if (smeared_ && SmearObj !=NULL) attach_smearing(SmearObj);

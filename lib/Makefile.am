@@ -67,6 +67,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/sortEigen.cpp		\
 		EigenModes/fopr_chebyshev_DdagD.cpp	\
+		EigenModes/findminmax.cpp		\
 		Measurements/GaugeM/staples.cpp		\
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
@@ -184,6 +185,13 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			EigenModes/eigenModes_IRL.hpp		\
 			EigenModes/sortEigen.h			\
 			EigenModes/eigenProc_Zolotarev.h	\
+			EigenModes/findminmax.hpp		\
+			Main/Geometry/siteIndex.h		\
+			Main/Geometry/siteIndex_eo.h		\
+			Main/Geometry/mapper.hpp		\
+			$(MAPPER_HEAD)		     	        \
+			Main/gaugeConf.hpp			\
+			Main/commandline.cpp			\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/mdExec.hpp		                \

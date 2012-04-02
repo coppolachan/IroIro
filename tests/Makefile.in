@@ -15,7 +15,7 @@
 
 @SET_MAKE@
 
-# Time-stamp: <2012-03-28 18:00:12 neo>
+# Time-stamp: <2012-03-29 17:48:37 neo>
 
 
 VPATH = @srcdir@
@@ -39,9 +39,9 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
-	test_HMC_EvenOdd$(EXEEXT) test_HMC_smear_noF$(EXEEXT) \
-	test_HMC_DWall_noF$(EXEEXT) test_Gauge$(EXEEXT) \
-	test_Wilson$(EXEEXT) test_Clover$(EXEEXT) \
+	test_RHMC_noFactories$(EXEEXT) test_HMC_EvenOdd$(EXEEXT) \
+	test_HMC_smear_noF$(EXEEXT) test_HMC_DWall_noF$(EXEEXT) \
+	test_Gauge$(EXEEXT) test_Wilson$(EXEEXT) test_Clover$(EXEEXT) \
 	test_Wilson_EvenOdd$(EXEEXT) test_DomainWall$(EXEEXT) \
 	test_QpropMom$(EXEEXT) test_ResMass$(EXEEXT) \
 	test_EigenModes$(EXEEXT) test_Smearing$(EXEEXT) \
@@ -123,6 +123,11 @@ am_test_QpropMom_OBJECTS = test_QpropMom.$(OBJEXT) \
 test_QpropMom_OBJECTS = $(am_test_QpropMom_OBJECTS)
 test_QpropMom_LDADD = $(LDADD)
 test_QpropMom_DEPENDENCIES =
+am_test_RHMC_noFactories_OBJECTS = test_RHMC_noFactories.$(OBJEXT) \
+	testerHMC.$(OBJEXT)
+test_RHMC_noFactories_OBJECTS = $(am_test_RHMC_noFactories_OBJECTS)
+test_RHMC_noFactories_LDADD = $(LDADD)
+test_RHMC_noFactories_DEPENDENCIES =
 am_test_RNG_OBJECTS = test_RNG.$(OBJEXT)
 test_RNG_OBJECTS = $(am_test_RNG_OBJECTS)
 test_RNG_LDADD = $(LDADD)
@@ -177,20 +182,20 @@ SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
-	$(test_QpropMom_SOURCES) $(test_RNG_SOURCES) \
-	$(test_RationalApprox_SOURCES) $(test_ResMass_SOURCES) \
-	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES) \
-	$(test_Wilson_EvenOdd_SOURCES)
+	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
+	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
+	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
+	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_EigenModes_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
-	$(test_QpropMom_SOURCES) $(test_RNG_SOURCES) \
-	$(test_RationalApprox_SOURCES) $(test_ResMass_SOURCES) \
-	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES) \
-	$(test_Wilson_EvenOdd_SOURCES)
+	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
+	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
+	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
+	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -348,6 +353,9 @@ test_HMC_SOURCES = test_HMC.cpp 			\
 		  		testerHMC.cpp
 
 test_HMC_noFactories_SOURCES = test_HMC_noFactories.cpp 	\
+			  	testerHMC.cpp
+
+test_RHMC_noFactories_SOURCES = test_RHMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
 test_HMC_smear_noF_SOURCES = test_HMC_Smear_noFact.cpp 	\
@@ -528,6 +536,9 @@ test_Overlap$(EXEEXT): $(test_Overlap_OBJECTS) $(test_Overlap_DEPENDENCIES)
 test_QpropMom$(EXEEXT): $(test_QpropMom_OBJECTS) $(test_QpropMom_DEPENDENCIES) 
 	@rm -f test_QpropMom$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_QpropMom_OBJECTS) $(test_QpropMom_LDADD) $(LIBS)
+test_RHMC_noFactories$(EXEEXT): $(test_RHMC_noFactories_OBJECTS) $(test_RHMC_noFactories_DEPENDENCIES) 
+	@rm -f test_RHMC_noFactories$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_RHMC_noFactories_OBJECTS) $(test_RHMC_noFactories_LDADD) $(LIBS)
 test_RNG$(EXEEXT): $(test_RNG_OBJECTS) $(test_RNG_DEPENDENCIES) 
 	@rm -f test_RNG$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_RNG_OBJECTS) $(test_RNG_LDADD) $(LIBS)
@@ -565,6 +576,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Overlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_QpropMom.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RHMC_noFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RNG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RationalApprox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ResidualMass.Po@am__quote@
