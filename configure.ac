@@ -110,8 +110,8 @@ aix )
      hitachi=true
      AC_MSG_NOTICE([forcing cross compilation on AIX])
      use_cpp="mpCC";
-     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${HOME}/gsl/include -qflag=i:s"
-     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib"
+     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type  -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
+     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib"
      use_ar_flags="-X64 -c -ru"
      AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
      ;;
