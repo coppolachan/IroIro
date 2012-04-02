@@ -1,8 +1,15 @@
-# Time-stamp: <2012-04-02 10:42:24 neo>
+# Time-stamp: <2012-04-02 10:54:03 neo>
 
 testdir = $(bindir)/Test
 
-LDADD = -L../lib/ -lcommcode
+if IBM_WATSON
+ DRIVER=/bgsys/drivers/ppcfloor
+ CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include
+ LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
+ OPTLIB = -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
+endif
+
+LDADD = -L../lib/ -lcommcode $(OPTLIB)
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
@@ -27,7 +34,6 @@ EXTRA_DIST = 	testResults.info	\
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
-		test_RHMC_noFactories 	\
 		test_HMC_EvenOdd	\
 		test_HMC_smear_noF	\
 		test_HMC_DWall_noF	\
@@ -43,8 +49,10 @@ test_PROGRAMS = test_HMC 		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
 		test_RNG 		\
-		test_IO			\
-		test_RationalApprox
+		test_IO			
+
+#		test_RationalApprox
+#		test_RHMC_noFactories 	
 
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
@@ -53,8 +61,8 @@ test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 test_HMC_noFactories_SOURCES = 	test_HMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
-test_RHMC_noFactories_SOURCES = test_RHMC_noFactories.cpp 	\
-			  	testerHMC.cpp
+#test_RHMC_noFactories_SOURCES = test_RHMC_noFactories.cpp 	\
+#			  	testerHMC.cpp
 
 test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
 			  	testerHMC.cpp
@@ -103,8 +111,8 @@ test_RNG_SOURCES 	= 	test_RNG.cpp
 test_IO_SOURCES 	= 	test_IO.cpp 			\
 				testerIO.cpp
 
-test_RationalApprox_SOURCES 	= 	test_RationalApprox.cpp	\
-				testerRationalApprox.cpp
+#test_RationalApprox_SOURCES 	= 	test_RationalApprox.cpp	\
+#				testerRationalApprox.cpp
 
 
 include_HEADERS 	=	tests.hpp			\

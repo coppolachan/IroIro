@@ -170,14 +170,14 @@ AC_CHECK_FUNC([gsl_sf_ellint_Kcomp],,
 	[AC_MSG_ERROR(Missing function in GNU Scientific Library)])
 
 
-AC_CHECK_LIB([gmp],[__gmpf_init],,
-	[AC_MSG_ERROR(GNU Multiple Precision GMP library was not found in your system.
-Please install or provide the correct path to your installation
-Info at: http://www.gmplib.org)])
-AC_CHECK_LIB([mpfr],[mpfr_init],,
-	[AC_MSG_ERROR(GNU Multiple Precision MPFR library was not found in your system.
-Please install or provide the correct path to your installation
-Info at: http://www.mpfr.org/)])
+#AC_CHECK_LIB([gmp],[__gmpf_init],,
+#	[AC_MSG_ERROR(GNU Multiple Precision GMP library was not found in your system.
+#Please install or provide the correct path to your installation
+#Info at: http://www.gmplib.org)])
+#AC_CHECK_LIB([mpfr],[mpfr_init],,
+#	[AC_MSG_ERROR(GNU Multiple Precision MPFR library was not found in your system.
+#Please install or provide the correct path to your installation
+#Info at: http://www.mpfr.org/)])
 	
 ###################################################################
 # Checks for header files.
