@@ -25,10 +25,6 @@
 #include "Communicator/comm_io.hpp"
 #include "Communicator/fields_io.hpp"
 
-
-//Mapper
-#include "Main/Geometry/mapper.hpp"
-
 //XML interface
 #include "include/pugi_interface.h"
 

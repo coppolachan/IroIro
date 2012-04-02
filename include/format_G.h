@@ -4,10 +4,8 @@
 #ifndef FORMAT_G_INCLUDED
 #define FORMAT_G_INCLUDED
 
-#ifndef SITEINDEX_INCLUDED
-#include "Main/Geometry/siteIndex.h"
-#endif
-
+#include "include/macros.hpp"
+#include <vector>
 #include <valarray>
 
 namespace Format{
@@ -19,13 +17,12 @@ namespace Format{
     int Nin_,Nex_;
   public:
     Format_G(int Nvol, int Nex=0):Nvol_(Nvol),
-				  Nc_(CommonPrms::instance()->Nc()),
-				  Ndim_(CommonPrms::instance()->Ndim()),
+				  Nc_(NC_),Ndim_(NDIM_),
 				  Nex_(Ndim_),
-				  Nin_(2*Nc_*Nc_){
+				  Nin_(2*NC_*NC_){
       if(Nex) Nex_= Nex;
     }
-    int Nin()  const {return Nin_;}
+    static int Nin(){return 2*NC_*NC_;}
     int Nvol() const {return Nvol_;}
     int Nex()  const {return Nex_;}
     int size() const {return Nin_*Nvol_*Nex_;}

@@ -1,13 +1,14 @@
 //----------------------------------------------------------------------
 /*! @file format_F.h
-  @brief Defines the Format_F class */
+  @brief Defines the Format_F class
+*/
 //----------------------------------------------------------------------
 #ifndef FORMAT_F_INCLUDED
 #define FORMAT_F_INCLUDED
 
-#include <valarray>
-#include "Main/Geometry/siteIndex.h"
 #include "Communicator/comm_io.hpp"
+#include "include/macros.hpp"
+#include <valarray>
 
 namespace Format{
 
@@ -18,31 +19,32 @@ namespace Format{
     int Nin_;
   public:
     Format_F(int Nvol, int Nex=1):Nvol_(Nvol),Nex_(Nex),
-				  Nd_(CommonPrms::instance()->Nd()),
-				  Ndim_(CommonPrms::instance()->Ndim()),
-				  Nin_(2*NC_*Nd_){}
+				  Nd_(ND_),
+				  Ndim_(NDIM_),
+				  Nin_(2*NC_*ND_){}
 
-    int Nin() const {return Nin_;}
+    static int Nin(){return 2*NC_*ND_;}
     int Nvol() const {return Nvol_;}
     int Nex() const {return Nex_;}
     int size() const {return Nin_*Nvol_*Nex_;}
     
     // get indices
-    inline int index(int i,int site,int ex=0) const {
+    inline int index(int i, int site, int ex=0) const {
       return i +Nin_*(site +Nvol_*ex);
     }
 
-    inline int index_r(int c,int s,int site,int ex=0) const { 
+    inline int index_r(int c, int s, int site, int ex=0) const { 
       return 2*(c +NC_*s) +Nin_*(site +Nvol_*ex); 
     }
-    inline int index_i(int c,int s,int site,int ex=0) const { 
+
+    inline int index_i(int c, int s, int site, int ex=0) const { 
       return 1+2*(c +NC_*s) +Nin_*(site +Nvol_*ex); 
     }
     // get slices
-    std::slice cplx_slice(int c,int s,int site,int ex=0) const {
+    std::slice cplx_slice(int c, int s, int site, int ex=0) const {
       return std::slice(index_r(c,s,site,ex), 2,1);
     }
-    std::slice islice(int site,int ex=0) const {
+    std::slice islice(int site, int ex=0) const {
       return std::slice(index(0,site,ex), Nin_,1);
     }
     std::slice cslice(int s,int site,int ex=0) const {

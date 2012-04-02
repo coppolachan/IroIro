@@ -22,26 +22,23 @@ int CommonPrms::NPEz_;
 int CommonPrms::NPEt_;
 int CommonPrms::NP_;
 
-CommonPrms* CommonPrms::instance_;
+CommonPrms* CommonPrms::instance_= NULL;
 
 CommonPrms* CommonPrms::instance(const Lattice& latt){
-  if(instance_ == NULL){ 
-    instance_ = new CommonPrms;
-    setup(latt);
-  }
+  if(instance_== NULL) instance_= new CommonPrms(latt);
   return instance_;
 }
 
 CommonPrms* CommonPrms::instance(){
-  if(instance_ == NULL){
+  if(instance_== NULL){
     cout << "CommonPrms is not initialized."<< endl;
     exit(EXIT_FAILURE);
   }
   return instance_;
 }
 
-void CommonPrms::setup(const Lattice& latt){
-
+CommonPrms::CommonPrms(const Lattice& latt){
+  cout << "CommonPrms(latt) is called"<< endl;
   if(latt.stdinput){
     cin >> Lx_>> Ly_>> Lz_>> Lt_;
     NPEx_ = 1;

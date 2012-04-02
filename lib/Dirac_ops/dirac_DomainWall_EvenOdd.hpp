@@ -79,7 +79,7 @@ public:
 
   const ffmt_t get_fermionFormat() const{return  Deo_.get_fermionFormat();}
   const std::vector<int> get_gsite() const { 
-    return SiteIndex_eo::instance()->get_gsite();}
+    return SiteIndex_EvenOdd::instance()->get_gsite();}
 
   void update_internal_state(){} 
 };

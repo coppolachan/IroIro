@@ -2,14 +2,7 @@
 
 testdir = $(bindir)/Test
 
-if IBM_WATSON
-DRIVER=/bgsys/drivers/ppcfloor
-CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include
-LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
-OPTLIB = -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
-endif
-
-LDADD = -L../lib/ -lcommcode $(OPTLIB)
+LDADD = -L../lib/ -lcommcode
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
@@ -20,18 +13,17 @@ EXTRA_DIST = 	testResults.info	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\
 		test_DomainWall.xml 	\
+		test_QpropMom.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
 		test_Gauge.xml		\
 		test_Overlap.xml	\
 		test_HMC_EvenOdd.xml	\
-		test_MultiShiftSolver.xml \
+		test_HMC.DWF.zolo.xml	\
+		test_MultiShiftSolver.xml
 		test_RationalApprox.xml	\
 		input.xml
-
-#		test_QpropMom.xml	
-
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
@@ -44,7 +36,7 @@ test_PROGRAMS = test_HMC 		\
 		test_Clover 		\
 		test_Wilson_EvenOdd 	\
 		test_DomainWall		\
-		test_QpropMom 		\
+		test_QpropMom		\
 		test_ResMass 		\
 		test_EigenModes		\
 		test_Smearing		\

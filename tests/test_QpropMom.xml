@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Input file for Residual Mass test -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
+  
+  <QpropMom>
+    <Smearing type="Stout">
+      <Nsmear>0</Nsmear>
+      <Base type="APE">
+        <rho>0.1</rho>
+      </Base>
+    </Smearing>
+    <QuarkProp name="QpropDWF" >
+      <Kernel4d name="DiracOptimalDomainWall4d_eo">
+	<Kernel5d>
+	  <Preconditioning>NoPreconditioner</Preconditioning>
+	  <wilson_mass>-1.6</wilson_mass>
+	  <N5d>8</N5d>
+	  <b>1.0</b>
+	  <c>1.0</c>
+	  <mass>0.025</mass>
+	  <approximation name="Zolotarev">
+	    <lambda_min>0.1</lambda_min>
+	    <lambda_max>1.5</lambda_max>
+	  </approximation>
+	</Kernel5d>
+	<SolverDWF type="Solver_CG">
+	  <MaxIter>10000</MaxIter>
+	  <Precision>1e-16</Precision>
+	</SolverDWF>
+      </Kernel4d>
+    </QuarkProp>
+    <Source type="Local">
+      <position>0 0 0 0</position>
+    </Source>
+  </QpropMom>
+</Parameters>
+

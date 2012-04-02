@@ -1,9 +1,7 @@
 /*!
  * @file common_fields.hpp
- *
  * @brief Code for general fields initializations
  */
-
 #ifndef COMMON_FIELDS_H_
 #define COMMON_FIELDS_H_
 
@@ -18,146 +16,161 @@
 #include "include/macros.hpp"
 
 struct OneDimTag {};
+//struct HalfSiteTag {};
 struct FiveDim{
   int fifth;
   int LocalVol;
 };
 
-/*!
- * @brief A Class to handle gauge fields
+/*!@brief A Class to handle gauge fields
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a> 
  * 
- * This class handles the Format 
- * and Field class in order to bind them 
- * into a single self contained object
- * that knows the details of storage
+ * This class handles the Format and Field class in order to bind them 
+ * into a single self contained object that knows the details of storage
  */
-template < class DATA, class FORMAT, typename TAG = NullType> 
+template <class DATA,class FORMAT,typename TAG = NullType> 
 class GeneralField {
 public:
   FORMAT format;
   DATA data;
   GeneralField();
   GeneralField(int);
-
+  
   const FORMAT get_Format() const{ return format;}
-  /*! 
-   * Constructor\n 
-   * to store given data
-   */
+
   explicit GeneralField(const DATA&);
 
   GeneralField& operator=(const GeneralField&);
-  GeneralField& operator=(const double&);
+  GeneralField& operator=(double);
+
   GeneralField& operator+=(const GeneralField&);
   GeneralField& operator-=(const GeneralField&);
-  GeneralField& operator*=(const double&);
+  GeneralField& operator*=(double);
 
   double norm();
-  double size() const { return data.size(); }
+  int size()const { return data.size(); }
+  int Nin()const {return format.Nin();}
+  int Nvol()const {return format.Nvol();}
+  int Nex()const {return format.Nex();}
   const double operator[](int i)const {return data[i];}
-  void resize(size_t size) { 
-    if (data.size() != size)
-      data.resize(size); 
-  }
+
+  std::valarray<size_t> get_sub(const std::vector<int>& map)const{
+    return format.get_sub(map);}
 };
 
-template < class DATA, class FORMAT, typename TAG> 
+// Constructor with no argument ///////////////////////
+template <class DATA,class FORMAT,typename TAG> 
 GeneralField<DATA,FORMAT,TAG>:: 
-GeneralField():format(FORMAT( CommonPrms::instance()->Nvol())),
+GeneralField():format(FORMAT(CommonPrms::instance()->Nvol())),
+	       data(format.size()){}
+/*
+// Specialization for even/odd field
+template <>
+inline GeneralField<Field,Format::Format_F,HalfSiteTag>:: 
+GeneralField():format(CommonPrms::instance()->Nvol()/2),
+	       data(format.size()){}
+template <>
+inline GeneralField<Field,Format::Format_G,HalfSiteTag>:: 
+GeneralField():format(CommonPrms::instance()->Nvol()/2),
+	       data(format.size()){}
+*/
+// Specialization for one dimension gauge field
+template <> 
+inline GeneralField<Field,Format::Format_G,OneDimTag>::
+GeneralField():format(Format::Format_G(CommonPrms::instance()->Nvol(),1)),
 	       data(format.size()){}
 
+// Constructor with 1 argument //////////////////////
+template <class DATA,class FORMAT,typename TAG> 
+GeneralField<DATA,FORMAT,TAG>::GeneralField(int LocalVol)
+  :format(FORMAT(LocalVol)),
+   data(format.size()){}
+
 // Specialization for one dimension gauge field
 template <> 
-inline GeneralField< Field, Format::Format_G, OneDimTag>::GeneralField()
- :format(Format::Format_G(CommonPrms::instance()->Nvol(),1)),
-  data(format.size()){}
-
-template < class DATA, class FORMAT, typename TAG> 
-GeneralField<DATA,FORMAT,TAG>:: 
-GeneralField(int LocalVol):format(FORMAT( LocalVol)),
+inline GeneralField<Field,Format::Format_G,OneDimTag>::
+GeneralField(int LocalVol):format(Format::Format_G(LocalVol,1)),
 			   data(format.size()){}
 
+// Copy constructor ////////////////////////////////
+template <class DATA,class FORMAT,typename TAG> 
+GeneralField<DATA,FORMAT,TAG>::GeneralField(const DATA& Fin)
+  :format(CommonPrms::instance()->Nvol()), // cannot accommodate e/o-field
+   data(Fin){  assert(Fin.size()== format.size());}
+/*
+// Specialization for even/odd field
+template <>
+inline GeneralField<Field,Format::Format_F,HalfSiteTag>::
+GeneralField(const Field& Fin):format(CommonPrms::instance()->Nvol()/2),
+			       data(Fin){ assert(Fin.size()== format.size());}
+template <>
+inline GeneralField<Field,Format::Format_G,HalfSiteTag>::
+GeneralField(const Field& Fin):format(CommonPrms::instance()->Nvol()/2),
+			       data(Fin){ assert(Fin.size()== format.size());}
+*/
 // Specialization for one dimension gauge field
 template <> 
-inline GeneralField< Field, Format::Format_G, OneDimTag>:: 
-GeneralField(int LocalVol):format(Format::Format_G( LocalVol,1)),
-			   data(format.size()){}
+inline GeneralField<Field,Format::Format_G,OneDimTag>::
+GeneralField(const Field& Fin)
+  :format(Fin.size()/Format::Format_G::Nin(),1),
+   data(Fin){  assert(Fin.size()== format.size());}
 
-template < class DATA, class FORMAT, typename TAG> 
-GeneralField<DATA,FORMAT,TAG>::GeneralField(const DATA& FieldIn)
-  :format(FORMAT( CommonPrms::instance()->Nvol())),
-   data(FieldIn)
-{
-  assert(FieldIn.size()== format.size());
-
-}
-
-// Specialization for one dimension gauge field
-template <> 
-inline GeneralField< Field, Format::Format_G, OneDimTag>::
-GeneralField(const Field& FieldIn)
-  :format(Format::Format_G( CommonPrms::instance()->Nvol(),1)),
-   data(FieldIn)
-{
-  assert(FieldIn.size()== format.size());
-}
-
-template < class DATA, class FORMAT, typename TAG> 
+// Assignment operators ////////////////////////////
+template <class DATA,class FORMAT,typename TAG> 
 inline GeneralField<DATA,FORMAT,TAG>& 
 GeneralField<DATA,FORMAT,TAG>::operator=(const GeneralField& rhs){
+  assert(format.size() == rhs.format.size());
   data = rhs.data;
   return *this;
 }
 
-template < class DATA, class FORMAT, typename TAG> 
+template <class DATA,class FORMAT,typename TAG> 
 inline GeneralField<DATA,FORMAT,TAG>&
-GeneralField<DATA,FORMAT,TAG>::operator=(const double& rhs){
+GeneralField<DATA,FORMAT,TAG>::operator=(double rhs){
   data = rhs;
   return *this;
 }
 
-template < class DATA, class FORMAT, typename TAG>
+template <class DATA,class FORMAT,typename TAG>
 inline GeneralField<DATA,FORMAT,TAG>&
 GeneralField<DATA,FORMAT,TAG>::operator+=(const GeneralField& rhs){
+  assert(format.size() == rhs.format.size());
   data += rhs.data;
   return *this;
 }
 
-template < class DATA, class FORMAT, typename TAG> 
+template <class DATA,class FORMAT,typename TAG> 
 inline GeneralField<DATA,FORMAT,TAG>&
 GeneralField<DATA,FORMAT,TAG>::operator-=(const GeneralField& rhs){
+  assert(format.size() == rhs.format.size());
   data -= rhs.data;
   return *this;
 }
 
-template < class DATA, class FORMAT, typename TAG> 
+template <class DATA,class FORMAT,typename TAG> 
 inline GeneralField<DATA,FORMAT,TAG>&
-GeneralField<DATA,FORMAT,TAG>::operator*=(const double& rhs) 
-{
+GeneralField<DATA,FORMAT,TAG>::operator*=(double rhs){
   data *= rhs;
   return *this;
 }
 
-template < class DATA, class FORMAT, typename TAG> 
-double GeneralField<DATA,FORMAT,TAG>::norm() 
-{
-  return data.norm();
-}
+template <class DATA,class FORMAT,typename TAG> 
+double GeneralField<DATA,FORMAT,TAG>::norm(){ return data.norm();}
 
 //////////////////////////////////////////////////////////////////////////////
 // Notes
 // GaugeField shoud contain also methods to create from geometry and initialize
-typedef GeneralField< Field, Format::Format_A >              AdjGaugeField;
-typedef GeneralField< Field, Format::Format_G >              GaugeField;
-typedef GeneralField< Field, Format::Format_G, OneDimTag >   GaugeField1D;
-typedef GeneralField< Field, Format::Format_F >              FermionField;
-typedef GeneralField< std::vector<Field>, Format::Format_F > PropagatorField;
+typedef GeneralField<Field,Format::Format_A>              AdjGaugeField;
+typedef GeneralField<Field,Format::Format_G>              GaugeField;
+typedef GeneralField<Field,Format::Format_G,OneDimTag>    GaugeField1D;
+typedef GeneralField<Field,Format::Format_F>              FermionField;
+//typedef GeneralField<Field,Format::Format_F,HalfSiteTag>  FermionEOField;
+typedef GeneralField<std::vector<Field>,Format::Format_F> PropagatorField;
 
 class GaugeGlobal: public GaugeField{
 public:
   GaugeGlobal(Geometry geom){
-    format = Format::Format_G( geom.parameters->Nvol());
+    format = Format::Format_G( geom.prms_->Nvol());
     data = Field(format.size());
   }
 
@@ -167,8 +180,7 @@ public:
     return *this;
   }
 
- /*!
-   * Initializes the gauge field with an \n
+  /*! Initializes the gauge field with an \n
    * external configuration in file <Filename>
    *
    * Configuration type in XML: TextFile
@@ -179,10 +191,8 @@ public:
     gconf.init_conf(data);
   }
 
-  /*!
-   * Initializes the gauge field with an \n
-   * external configuration in binary format
-   * contained in file <Filename>
+  /*! Initializes the gauge field with an \n
+   * external configuration in binary format contained in file <Filename>
    *
    * Configuration type in XML: Binary
    * @param Filename String containing the filename
@@ -191,15 +201,12 @@ public:
     GaugeConf_bin gconf(format,Filename);
     gconf.init_conf(data);
   }
-
   void initializeJLQCDlegacy(const std::string &Filename) {
     GaugeConf_JLQCDLegacy gconf(format,Filename);
     gconf.init_conf(data);
   }
 
- /*!
-   * @brief Initializes the gauge field with \n
-   * unit matrices
+ /*! @brief Initializes the gauge field with \n unit matrices
    *
    * Configuration type in XML: Unit
    */
@@ -249,37 +256,30 @@ namespace FieldUtils{
   void SetSlice(GaugeField&, const GaugeField1D&, int dir);
   void AddSlice(GaugeField&, const GaugeField1D&, int dir);
 
-
-
-  void SetMatrix(GaugeField& F, const SUNmat& mat, int site, int dir);
-  void SetMatrix(GaugeField1D& F, const SUNmat& mat, int site);
+  void SetMat(GaugeField& F, const SUNmat& mat, int site, int dir);
+  void SetMat(GaugeField1D& F, const SUNmat& mat, int site);
   
-  void AddMatrix(GaugeField& F, const SUNmat& mat, int site, int dir);
-  void AddMatrix(GaugeField1D& F, const SUNmat& mat, int site);
+  void AddMat(GaugeField& F, const SUNmat& mat, int site, int dir);
+  void AddMat(GaugeField1D& F, const SUNmat& mat, int site);
 
-  void SetVector(FermionField&, const SUNvec&, int spin, int site); 
-  void AddVector(FermionField&, const SUNvec&, int spin, int site); 
-
+  void SetVec(FermionField&, const SUNvec&, int spin, int site); 
+  void AddVec(FermionField&, const SUNvec&, int spin, int site); 
 
   // Inline functions
-  inline SUNmat matrix(const GaugeField& F, int site, int dir) {
-    return SUNmat(F.data[F.format.cslice(0,site,dir)]);
-  }
-  inline SUNmat matrix(const GaugeField1D& F, int site){
-    return SUNmat(F.data[F.format.cslice(0,site)]);
-  }
+  inline SUNmat mat(const GaugeField& F,int site,int dir){
+    return SUNmat(F.data[F.format.islice(site,dir)]);  }
 
-  inline SUNmat matrix_dag(const GaugeField& F, int site, int dir){
-    return SUNmat(F.data[F.format.cslice(0,site,dir)]).dag();
-  }
-  inline SUNmat matrix_dag(const GaugeField1D& F, int site){
-    return SUNmat(F.data[F.format.cslice(0,site)]).dag();
-  }
+  inline SUNmat mat(const GaugeField1D& F,int site){
+    return SUNmat(F.data[F.format.islice(site)]);  }
 
-  inline SUNvec vect(const FermionField& F, int spin, int site){
-    return SUNvec(F.data[F.format.cslice(spin,site)]);
-  }
+  inline SUNmat mat_dag(const GaugeField& F,int site,int dir){
+    return SUNmat(F.data[F.format.islice(site,dir)]).dag();  }
 
+  inline SUNmat mat_dag(const GaugeField1D& F,int site){
+    return SUNmat(F.data[F.format.islice(site)]).dag();  }
+
+  inline SUNvec vec(const FermionField& F,int spin,int site){
+    return SUNvec(F.data[F.format.cslice(spin,site)]);  }
 }
 
 #endif //COMMON_FIELDS_H_

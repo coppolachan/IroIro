@@ -1,17 +1,15 @@
 /*
  * @file mdExec_leapfrog.hpp
- *
  * @brief Declarations of MDexec_leapfrog class and Parameters 
  */
 #ifndef MD_LEAPFROG_INCLUDED
 #define MD_LEAPFROG_INCLUDED
 
-#include<vector>
-
 #include "mdExec.hpp"
 #include "Action/action.hpp"
 #include "include/pugi_interface.h"
-#include "Smearing/SmartConf.hpp"
+#include "Smearing/smartConf.hpp"
+#include<vector>
 
 struct MDexec_leapfrogParams{
   int Nexp;
@@ -33,8 +31,7 @@ private:
   const MDexec_leapfrogParams Params;
   const std::vector<int> Nrel_;
   const ActionSet as_;
-  //  const Format::Format_G& gf_;
-  ObserverList GaugeObservers;
+  ObserverList observers_;
   GaugeField* const U_;
   GaugeField P_;
 
@@ -45,48 +42,40 @@ private:
 
   // Observers controls
   void register_observers();
-  void attach_observer(ObserverList&, Observer*);
-  void detach_observer(ObserverList&, Observer*){};
-  void notify_observers(ObserverList&); 
+  void notify_observers(); 
 
 public:
-   MDexec_leapfrog(int Nexp, int MDiter, double step,
-   		  const ActionSet as,
-   		  const std::vector<int> multipliers,
-   		  GaugeField* const CommonF)
-     :as_(as),
-      Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
-      Nrel_(multipliers),
-      U_(CommonF),P_()
-   {
-     register_observers();
-   }
-
-
-  
   MDexec_leapfrog(int Nexp, int MDiter, double step,
 		  const ActionSet as,
 		  const std::vector<int> multipliers,
-		  SmartConf* const CommonF)
+		  SmartConf* const CommonU)
     :as_(as),
      Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
      Nrel_(multipliers),
-     U_(CommonF->ThinLinks)
-  {
-    attach_observer(GaugeObservers, CommonF);//Attach smearing as 1st observer
+     U_(CommonU->ThinLinks){
+    observers_.push_back(CommonU);//Attach smearing as 1st observer
     register_observers();
   }
   
+  MDexec_leapfrog(int Nexp, int MDiter, double step,
+   		  const ActionSet as,
+   		  const std::vector<int> multipliers,
+   		  GaugeField* const CommonU)
+    :as_(as),
+     Params(MDexec_leapfrogParams(Nexp,MDiter,step)),
+     Nrel_(multipliers),
+     U_(CommonU),P_(){
+    register_observers();
+  }
   
   MDexec_leapfrog(XML::node node,
 		  const ActionSet as,
 		  const std::vector<int> multipliers,
-		  GaugeField* const CommonF)
+		  GaugeField* const CommonU)
     :as_(as),
      Params(MDexec_leapfrogParams(node)),
      Nrel_(multipliers),
-     U_(CommonF),P_()
-  {
+     U_(CommonU),P_(){
     register_observers();
   }
   

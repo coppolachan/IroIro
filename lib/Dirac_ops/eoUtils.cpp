@@ -22,8 +22,8 @@ namespace EvenOddUtils{
 
     for(int ex=0; ex<fh_.Nex(); ++ex){
       for(int hs=0; hs<fh_.Nvol(); ++hs){
-	sol.set(ff_.islice(idx_eo_->esec(hs),ex), ye[fh_.islice(hs,ex)]);
-	sol.set(ff_.islice(idx_eo_->osec(hs),ex), bo[fh_.islice(hs,ex)]);
+	sol.set(ff_.islice(idx_->esec(hs),ex), ye[fh_.islice(hs,ex)]);
+	sol.set(ff_.islice(idx_->osec(hs),ex), bo[fh_.islice(hs,ex)]);
       }
     } 
   }
@@ -43,8 +43,8 @@ namespace EvenOddUtils{
 
     for(int ex=0; ex<fh_.Nex(); ++ex){
       for(int hs=0; hs<fh_.Nvol(); ++hs){
-	Df.set(ff_.islice(idx_eo_->esec(hs),ex), Dfe[fh_.islice(hs,ex)]);
-	Df.set(ff_.islice(idx_eo_->osec(hs),ex), Dfo[fh_.islice(hs,ex)]);
+	Df.set(ff_.islice(idx_->esec(hs),ex), Dfe[fh_.islice(hs,ex)]);
+	Df.set(ff_.islice(idx_->osec(hs),ex), Dfo[fh_.islice(hs,ex)]);
       }
     } 
   }
@@ -65,8 +65,8 @@ namespace EvenOddUtils{
 
     for(int ex=0; ex<fh_.Nex(); ++ex){
       for(int hs=0; hs<fh_.Nvol(); ++hs){
-	Df.set(ff_.islice(idx_eo_->esec(hs),ex), Dfe[fh_.islice(hs,ex)]);
-	Df.set(ff_.islice(idx_eo_->osec(hs),ex), Dfo[fh_.islice(hs,ex)]);
+	Df.set(ff_.islice(idx_->esec(hs),ex), Dfe[fh_.islice(hs,ex)]);
+	Df.set(ff_.islice(idx_->osec(hs),ex), Dfo[fh_.islice(hs,ex)]);
       }
     } 
   }

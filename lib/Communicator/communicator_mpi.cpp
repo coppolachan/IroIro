@@ -2,6 +2,7 @@
 // communicator_mpi.cpp
 //-----------------------------------------------------------------
 #include "communicator.h"
+#include "commonPrms.h"
 #include "mpi.h"
 #include "comm_io.hpp"
 #include <stdio.h>
@@ -85,7 +86,7 @@ int Communicator::nodeid(int x, int y, int z, int t)const{
 }
 
 void Communicator::
-transfer_fw(double *bin,double *data,int size,int dir){
+transfer_fw(double *bin,double *data,int size,int dir)const{
   MPI_Status  status;
   int p_send = nd_dn_[dir];
   int p_recv = nd_up_[dir];
@@ -99,14 +100,14 @@ transfer_fw(double *bin,double *data,int size,int dir){
 }
 
 void Communicator::
-transfer_fw(valarray<double>& bin,const valarray<double>& data,int dir){
+transfer_fw(valarray<double>& bin,const valarray<double>& data,int dir)const{
   transfer_fw(&bin[0],&(const_cast<valarray<double>& >(data))[0],
 	      bin.size(),dir);
 }
 
 void Communicator::
 transfer_fw(valarray<double>& bin,const valarray<double>& data,
-	    const vector<int>& index, int dir){
+	    const vector<int>& index, int dir)const{
   MPI_Status  status;
   MPI_Datatype subarray;
   MPI_Type_create_indexed_block(index.size(),1,
@@ -128,7 +129,7 @@ transfer_fw(valarray<double>& bin,const valarray<double>& data,
 }
 
 void Communicator::
-transfer_bk(double *bin,double *data,int size,int dir){
+transfer_bk(double *bin,double *data,int size,int dir)const{
   MPI_Status  status;
   int p_send = nd_up_[dir];
   int p_recv = nd_dn_[dir];
@@ -142,7 +143,7 @@ transfer_bk(double *bin,double *data,int size,int dir){
 }
 
 void Communicator::
-transfer_bk(valarray<double>& bin,const valarray<double>& data,int dir){
+transfer_bk(valarray<double>& bin,const valarray<double>& data,int dir)const{
   transfer_bk(&(bin[0]),&(const_cast<valarray<double>& >(data))[0],
 	      bin.size(),dir);
 }
@@ -173,7 +174,7 @@ transfer_bk(valarray<double>& bin,const valarray<double>& data,
 }
 
 void Communicator::send_1to1(double *bin,double *data,int size,
-			     int p_to,int p_from,int tag){
+			     int p_to,int p_from,int tag)const{
   MPI_Status status;
   if(p_to == p_from){
     for(int i=0; i<size; ++i) bin[i] = data[i];
@@ -188,30 +189,30 @@ void Communicator::send_1to1(double *bin,double *data,int size,
 
 void Communicator::send_1to1(valarray<double>& bin,
 			     const valarray<double>& data, 
-			     int size,int p_to,int p_from,int tag){
+			     int size,int p_to,int p_from,int tag)const{
   if(p_to == p_from)    bin = data;
   else send_1to1(&(bin[0]),&(const_cast<valarray<double>& >(data))[0],
 		 size,p_to,p_from,tag);
   MPI_Barrier(MPI_COMM_WORLD);
 }
 
-double Communicator::reduce_sum(double a){
+double Communicator::reduce_sum(double a)const{
  double a_sum = 0.0;
  MPI_Allreduce(&a, &a_sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
  return a_sum;
 }
 
-void Communicator::sync(){ MPI_Barrier(MPI_COMM_WORLD);}
+void Communicator::sync()const{ MPI_Barrier(MPI_COMM_WORLD);}
 
-void Communicator::broadcast(int size, int &data, int sender){
+void Communicator::broadcast(int size, int &data, int sender)const{
  MPI_Bcast( &data, size, MPI_INT, sender, MPI_COMM_WORLD );
 }
 
-void Communicator::broadcast(int size, double &data, int sender){
+void Communicator::broadcast(int size, double &data, int sender)const{
   MPI_Bcast( &data, size, MPI_DOUBLE, sender, MPI_COMM_WORLD );
 }
 
-int Communicator::reduce_max(double& val,int& idx,int size){
+int Communicator::reduce_max(double& val,int& idx,int size)const{
   /*! size is the maximum value of idx */
   VaId vi = {val, my_rank_*size +idx};
   VaId vo;
@@ -221,7 +222,7 @@ int Communicator::reduce_max(double& val,int& idx,int size){
   return vo.index/size;
 }
 
-int Communicator::reduce_min(double& val,int& idx,int size){
+int Communicator::reduce_min(double& val,int& idx,int size)const{
   /*! size is the maximum value of idx */
   
   VaId vi = {val, my_rank_*size +idx};
@@ -232,7 +233,7 @@ int Communicator::reduce_min(double& val,int& idx,int size){
   return vo.index/size;
 }
 
-int Communicator::pprintf(const char* format ...){
+int Communicator::pprintf(const char* format ...)const{
   va_list ap;
   int ret = 0;
 

@@ -25,10 +25,7 @@ public:
   Ly_(CommonPrms::instance()->Ly()),
   Lz_(CommonPrms::instance()->Lz()),
   Lt_(CommonPrms::instance()->Lt()),
-  fmt_(CommonPrms::instance()->Nvol()){ 
-    init_mom();
-    CCIO::cout<<"QpropMom initialized"<<std::endl;
-  }
+  fmt_(CommonPrms::instance()->Nvol()){ init_mom();}
   
   void output()const;
 };

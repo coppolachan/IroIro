@@ -1,18 +1,15 @@
 //--------------------------------------------------------------------
 /*! @file hmcGeneral.hpp
- *
  * @brief Declaration of classes for HMC update
- *
  */
 //--------------------------------------------------------------------
 #ifndef HMCEXEC_INCLUDED
 #define HMCEXEC_INCLUDED
 
-#include <memory>
-
 #include "Tools/randNum_Factory.h"
 #include "include/pugi_interface.h"
 #include "HMC/mdExec_factory_abs.hpp"
+#include <memory>
 
 class MDexec;
 class RandNum;
@@ -31,15 +28,19 @@ struct HMCGeneralParams {
     StartingConfig = 1;
     Filename_prefix = "Conf_";
     // -------------------
-    XML::read(node, "Nsweeps", Nsweeps, MANDATORY);
-    if(XML::read(node, "Thermalization", ThermalizationSteps))
-      CCIO::cout << "Using default [Thermalization = "<< ThermalizationSteps << "]\n";
+    XML::read(node,"Nsweeps", Nsweeps, MANDATORY);
+    if(XML::read(node,"Thermalization", ThermalizationSteps))
+      CCIO::cout<< "Using default [Thermalization = "
+		<< ThermalizationSteps << "]\n";
     if(XML::read(node, "StartingConfig", StartingConfig))
-      CCIO::cout << "Using default [StartingConfig  = "<< StartingConfig << "]\n";
+      CCIO::cout<< "Using default [StartingConfig  = "
+		<< StartingConfig << "]\n";
     if(XML::read(node, "SaveInterval", SaveInterval))
-      CCIO::cout << "Using default [SaveInterval = "<< SaveInterval << "]\n";
+      CCIO::cout<< "Using default [SaveInterval = "
+		<< SaveInterval << "]\n";
     if(XML::read(node, "SavePrefix", Filename_prefix))
-      CCIO::cout << "Using default [SavePrefix = "<< Filename_prefix << "]\n";
+      CCIO::cout<< "Using default [SavePrefix = "
+		<< Filename_prefix << "]\n";
   }
 };
 
@@ -51,17 +52,13 @@ private:
 
   bool metropolis_test(const double Hdiff)const;
   double evolve_step(GaugeField&)const;
-
 public:
-  HMCgeneral(pugi::xml_node node, 
-	     MDexec& md_exec, 
-	     const RandNum& rand_num)
+  HMCgeneral(pugi::xml_node node,MDexec& md_exec,const RandNum& rand_num)
     :md_(&md_exec),
      rand_(&rand_num),
      Params(HMCGeneralParams(node)){}
   
-  HMCgeneral(pugi::xml_node node, 
-	     MDexec& md_exec)
+  HMCgeneral(pugi::xml_node node,MDexec& md_exec)
     :md_(&md_exec),
      rand_(RNG_Env::RNG->getRandomNumGenerator()),
      Params(HMCGeneralParams(node)){}
@@ -72,8 +69,6 @@ public:
      Params(HMCGeneralParams(node)){}
   
   ~HMCgeneral(){}
-  
-
 
   void evolve(GaugeField& U)const;
 };

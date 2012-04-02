@@ -28,6 +28,7 @@ void Action_Nf::attach_smearing(SmartConf* SmearObj) {
 }
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
+
 void Action_Nf::init(const RandNum& rand){
   SolverOutput monitor;
   std::valarray<double> xi(fermion_size_);
@@ -43,7 +44,7 @@ void Action_Nf::init(const RandNum& rand){
     // Generates pseudofermions <phi_> = (M^dag M)^(Nf/4n) <xi> 
     // where n is the number of pseudofermion fields 
     // and Nf the number of flavors
-    monitor =  slv_->solve(phi_[i].data, Field(xi));
+    monitor =  slv_->solve(phi_[i], Field(xi));
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
 #endif 
@@ -58,11 +59,11 @@ double Action_Nf::calc_H(){
   Field temp;
   slv_->set_Approx(MetropolisApprox_);
   for(int i=0; i<Params_.n_pseudof_; ++i){
-    monitor = slv_->solve_inv(temp, phi_[i].data); // (M^dag M)^(-Nf/2n) <phi_>
+    monitor = slv_->solve_inv(temp, phi_[i]); // (M^dag M)^(-Nf/2n) <phi_>
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
 #endif 
-    H_nf2 += (phi_[i].data) * temp;
+    H_nf2 += (phi_[i]) * temp;
   }
   _Message(ACTION_VERB_LEVEL, "    [Action_Nf] H = "<< H_nf2<<"\n");
   return H_nf2;
@@ -81,7 +82,7 @@ GaugeField Action_Nf::md_force(){
   for (int pf = 0; pf < Params_.n_pseudof_; ++pf){ 
 
       //(M^dag M)^(-Nf/2n) <phi_>
-      monitor =  slv_->solve_noReconstruct(eta, phi_[pf].data); 
+      monitor =  slv_->solve_noReconstruct(eta, phi_[pf]); 
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
 #endif 

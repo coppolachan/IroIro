@@ -1,5 +1,7 @@
+/* Standard Wilson-Dirac Kernel */
+
 void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
-  int Nih = Nd_*NC_; 
+  int Nih = ND_*NC_; 
   int Nbdry = bdry_plw_[0].size();
   int Nbulk = bulk_pup_[0].size();
 
@@ -17,7 +19,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
     is += Nih;
   }
   double vbc[Nih*Nbdry]; 
-  Communicator::instance()->transfer_fw(vbc,vbd,Nih*Nbdry,0);
+  comm_->transfer_fw(vbc,vbd,Nih*Nbdry,0);
 
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];   
   double U[2*NC_*NC_];
@@ -63,7 +65,8 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 	U[im(c1,c2)] = (*u_)[gf_.index_i(c1,c2,(this->*gp)(site),0)];
       }
     }
-    int xp = (this->*x_p)(site,0);
+    //int xp = (this->*xp)(site,0);
+    int xp = map_->xp(site,0);
     for(int c=0; c<NC_; ++c){
       w1r[c] = f[ff_.index_r(c,0,xp)] -f[ff_.index_i(c,3,xp)];
       w1i[c] = f[ff_.index_i(c,0,xp)] +f[ff_.index_r(c,3,xp)];
@@ -93,7 +96,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 }
 
 void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
-  int Nih = Nd_*NC_; 
+  int Nih = ND_*NC_; 
   int Nbdry = bdry_plw_[1].size();
   int Nbulk = bulk_pup_[1].size();
 
@@ -111,7 +114,7 @@ void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
     is += Nih;
   }
   double vbc[Nih*Nbdry]; 
-  Communicator::instance()->transfer_fw(vbc,vbd,Nih*Nbdry,1);
+  comm_->transfer_fw(vbc,vbd,Nih*Nbdry,1);
 
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];   
   double U[2*NC_*NC_];
@@ -157,7 +160,8 @@ void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
 	U[im(c1,c2)] = (*u_)[gf_.index_i(c1,c2,(this->*gp)(site),1)];
       }
     }
-    int yp = (this->*x_p)(site,1);
+    //int yp = (this->*xp)(site,1);
+    int yp = map_->xp(site,1);
     for(int c=0; c<NC_; ++c){
       w1r[c] = f[ff_.index_r(c,0,yp)] +f[ff_.index_r(c,3,yp)];
       w1i[c] = f[ff_.index_i(c,0,yp)] +f[ff_.index_i(c,3,yp)];
@@ -187,7 +191,7 @@ void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
 }
 
 void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
-  int Nih = Nd_*NC_; 
+  int Nih = ND_*NC_; 
   int Nbdry = bdry_plw_[2].size();
   int Nbulk = bulk_pup_[2].size();
 
@@ -205,7 +209,7 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
     is += Nih;
   }
   double vbc[Nih*Nbdry]; 
-  Communicator::instance()->transfer_fw(vbc,vbd,Nih*Nbdry,2);
+  comm_->transfer_fw(vbc,vbd,Nih*Nbdry,2);
 
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];   
   double U[2*NC_*NC_];
@@ -251,7 +255,8 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
 	U[im(c1,c2)] = (*u_)[gf_.index_i(c1,c2,(this->*gp)(site),2)];
       }
     }
-    int zp = (this->*x_p)(site,2);
+    //int zp = (this->*xp)(site,2);
+    int zp = map_->xp(site,2);
     for(int c=0; c<NC_; ++c){
       w1r[c] = f[ff_.index_r(c,0,zp)] -f[ff_.index_i(c,2,zp)];
       w1i[c] = f[ff_.index_i(c,0,zp)] +f[ff_.index_r(c,2,zp)];
@@ -281,7 +286,7 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
 }
 
 void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
-  int Nih = Nd_*NC_; 
+  int Nih = ND_*NC_; 
   int Nbdry = bdry_plw_[3].size();
   int Nbulk = bulk_pup_[3].size();
 
@@ -299,7 +304,7 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
     is += Nih;
   }
   double vbc[Nih*Nbdry]; 
-  Communicator::instance()->transfer_fw(vbc,vbd,Nih*Nbdry,2);
+  comm_->transfer_fw(vbc,vbd,Nih*Nbdry,2);
 
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];   
   double U[2*NC_*NC_];
@@ -341,7 +346,8 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
 	U[im(c1,c2)] = (*u_)[gf_.index_i(c1,c2,(this->*gp)(site),3)];
       }
     }
-    int tp = (this->*x_p)(site,3);
+    //int tp = (this->*xp)(site,3);
+    int tp = map.xp(site,3);
     for(int c=0; c<NC_; ++c){
       w1r[c] = f[ff_.index_r(c,2,tp)]*2.0;
       w1i[c] = f[ff_.index_i(c,2,tp)]*2.0;
@@ -367,7 +373,7 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
 }
 
 void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
-  int Nih = Nd_*NC_; /*!< @brief num ob elements of a half spinor */
+  int Nih = ND_*NC_; /*!< @brief num ob elements of a half spinor */
   int Nbdry = bdry_mup_[0].size();
   int Nbulk = bulk_mlw_[0].size();
 
@@ -405,7 +411,7 @@ void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
     is += Nih;
   }
   double vbc[Nih*Nbdry];  //Copy vbd from backward processor
-  Communicator::instance()->transfer_bk(vbc,vbd,Nih*Nbdry,0);
+  comm_->transfer_bk(vbc,vbd,Nih*Nbdry,0);
   is = 0;
   for(int k=0; k<Nbdry; ++k){
     int site = bdry_mlw_[0][k];
@@ -425,7 +431,8 @@ void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_]; 
   for(int k=0; k<Nbulk; ++k){
     int site = bulk_mlw_[0][k];
-    int xm = (this->*x_m)(site,0);
+    //int xm = (this->*xm)(site,0);
+    int xm = map_->xm(site,0);
     for(int c=0; c<NC_; ++c){
       w1r[c] = f[ff_.index_r(c,0,xm)] +f[ff_.index_i(c,3,xm)]; 
       w1i[c] = f[ff_.index_i(c,0,xm)] -f[ff_.index_r(c,3,xm)];
@@ -461,7 +468,7 @@ void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
 }
 
 void Dirac_Wilson::mult_ym(Field& fm, const Field& f) const{
-  int Nih = Nd_*NC_; /*!< @brief num ob elements of a half spinor */
+  int Nih = ND_*NC_; /*!< @brief num ob elements of a half spinor */
   int Nbdry = bdry_mup_[1].size();
   int Nbulk = bulk_mlw_[1].size();
 
@@ -499,7 +506,7 @@ void Dirac_Wilson::mult_ym(Field& fm, const Field& f) const{
     is += Nih;
   }
   double vbc[Nih*Nbdry];  //Copy vbd from backward processor
-  Communicator::instance()->transfer_bk(vbc,vbd,Nih*Nbdry,1);
+  comm_->transfer_bk(vbc,vbd,Nih*Nbdry,1);
   is = 0;
   for(int k=0; k<Nbdry; ++k){
     int site = bdry_mlw_[1][k];
@@ -519,7 +526,8 @@ void Dirac_Wilson::mult_ym(Field& fm, const Field& f) const{
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_]; 
   for(int k=0; k<Nbulk; ++k){
     int site = bulk_mlw_[1][k];
-    int ym = (this->*x_m)(site,1);
+    //int ym = (this->*xm)(site,1);
+    int ym = map_->xm(site,1);
     for(int c=0; c<NC_; ++c){
       w1r[c] = f[ff_.index_r(c,0,ym)] -f[ff_.index_r(c,3,ym)]; 
       w1i[c] = f[ff_.index_i(c,0,ym)] -f[ff_.index_i(c,3,ym)];
@@ -555,7 +563,7 @@ void Dirac_Wilson::mult_ym(Field& fm, const Field& f) const{
 }
 
 void Dirac_Wilson::mult_zm(Field& fm, const Field& f) const{
-  int Nih = Nd_*NC_; /*!< @brief num ob elements of a half spinor */
+  int Nih = ND_*NC_; /*!< @brief num ob elements of a half spinor */
   int Nbdry = bdry_mup_[2].size();
   int Nbulk = bulk_mlw_[2].size();
 
@@ -593,7 +601,7 @@ void Dirac_Wilson::mult_zm(Field& fm, const Field& f) const{
     is += Nih;
   }
   double vbc[Nih*Nbdry];  //Copy vbd from backward processor
-  Communicator::instance()->transfer_bk(vbc,vbd,Nih*Nbdry,2);
+  comm_->transfer_bk(vbc,vbd,Nih*Nbdry,2);
   is = 0;
   for(int k=0; k<Nbdry; ++k){
     int site = bdry_mlw_[2][k];
@@ -613,7 +621,8 @@ void Dirac_Wilson::mult_zm(Field& fm, const Field& f) const{
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_]; 
   for(int k=0; k<Nbulk; ++k){
     int site = bulk_mlw_[2][k];
-    int zm = (this->*x_m)(site,2);
+    //int zm = (this->*xm)(site,2);
+    int zm = map_->xm(site,2);
     for(int c=0; c<NC_; ++c){
       w1r[c] = f[ff_.index_r(c,0,zm)] +f[ff_.index_i(c,2,zm)]; 
       w1i[c] = f[ff_.index_i(c,0,zm)] -f[ff_.index_r(c,2,zm)];
@@ -649,7 +658,7 @@ void Dirac_Wilson::mult_zm(Field& fm, const Field& f) const{
 }
 
 void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
-  int Nih = Nd_*NC_; /*!< @brief num ob elements of a half spinor */
+  int Nih = ND_*NC_; /*!< @brief num ob elements of a half spinor */
   int Nbdry = bdry_mup_[3].size();
   int Nbulk = bulk_mlw_[3].size();
 
@@ -687,7 +696,7 @@ void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
     is += Nih;
   }
   double vbc[Nih*Nbdry];  //Copy vbd from backward processor
-  Communicator::instance()->transfer_bk(vbc,vbd,Nih*Nbdry,3);
+  comm_->transfer_bk(vbc,vbd,Nih*Nbdry,3);
   is = 0;
   for(int k=0; k<Nbdry; ++k){
     int site = bdry_mlw_[3][k];
@@ -703,7 +712,8 @@ void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_]; 
   for(int k=0; k<Nbulk; ++k){
     int site = bulk_mlw_[3][k];
-    int tm = (this->*x_m)(site,3);
+    //int tm = (this->*xm)(site,3);
+    int tm = map_->xm(site,3);
     for(int c=0; c<NC_; ++c){
       w1r[c] = f[ff_.index_r(c,0,tm)]*2.0;
       w1i[c] = f[ff_.index_i(c,0,tm)]*2.0;

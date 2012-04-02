@@ -1,8 +1,6 @@
 /*!
  * @file factories.hpp
- *
  * @brief Includes all factories headers
- *
  */
 
 #include "Tools/randNum_Factory.h"
@@ -11,4 +9,4 @@
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
 #include "Measurements/FermionicM/sources_factory.hpp"
-#include "Smearing/Smearing_Factories.hpp"
+#include "Smearing/smearingFactories.hpp"

@@ -8,12 +8,13 @@ using namespace SUNvec_utils;
 using namespace std;
 
 #ifdef IMPROVED_WILSON
-#include "dirac_wilson_improved2.code"
+#include "dirac_wilson_improved.code"
 #else
 #include "dirac_wilson_standard.code"
 #endif /*IMPROVED_WILSON*/
 
 /////////////////////////////////////////////////////////////////////////
+
 void (Dirac_Wilson::*Dirac_Wilson::mult_p[])
 (Field&,const Field&) const = {&Dirac_Wilson::mult_xp,
 			       &Dirac_Wilson::mult_yp,
@@ -27,8 +28,7 @@ void (Dirac_Wilson::*Dirac_Wilson::mult_m[])
 			       &Dirac_Wilson::mult_tm,};
 
 void Dirac_Wilson::mult_offdiag(Field& w, const Field& f) const{
-  for(int d=0; d <Ndim_; ++d){
-    //  for(int d=0; d <1; ++d){
+  for(int d=0; d <NDIM_; ++d){
     (this->*mult_p[d])(w,f);
     (this->*mult_m[d])(w,f);
   }
@@ -57,7 +57,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
   using namespace SUNmatUtils;
   SUNmat f;
 
-  for(int mu=0; mu<Ndim_; ++mu){
+  for(int mu=0; mu<NDIM_; ++mu){
     Field xie(fsize_);
 
     (this->*mult_p[mu])(xie, eta);
@@ -68,7 +68,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
         for(int b=0; b<NC_; ++b){
           double fre = 0.0;
           double fim = 0.0;
-          for(int s=0; s<Nd_; ++s){
+          for(int s=0; s<ND_; ++s){
 
 	    size_t ra =ff_.index_r(a,s,site);
 	    size_t ia =ff_.index_i(a,s,site);
@@ -95,7 +95,7 @@ void Dirac_Wilson::md_force_m(Field& fce,
   Field et5 = gamma5(eta);
   Field zt5 = gamma5(zeta);
 
-  for(int mu=0; mu<Ndim_; ++mu){
+  for(int mu=0; mu<NDIM_; ++mu){
     Field xz5(fsize_);
     (this->*mult_p[mu])(xz5, zt5);
 
@@ -105,7 +105,7 @@ void Dirac_Wilson::md_force_m(Field& fce,
         for(int b=0; b<NC_; ++b){
           double fre = 0.0;
           double fim = 0.0;
-          for(int s=0; s<Nd_; ++s){
+          for(int s=0; s<ND_; ++s){
 
 	    size_t ra =ff_.index_r(a,s,site);
 	    size_t ia =ff_.index_i(a,s,site);

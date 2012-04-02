@@ -1,6 +1,5 @@
 /*! 
  * @file action_Nf2.h
- *
  * @brief Declaration of Action_Nf class
  *
  * Any number of flavours
@@ -13,7 +12,7 @@
 #include "Action/action.hpp"
 #include "Dirac_ops/dirac.hpp"
 #include "Solver/rationalSolver.hpp"
-#include "Smearing/SmartConf.hpp"
+#include "Smearing/smartConf.hpp"
 #include "Tools/RationalApprox/rationalapprox.hpp"
 
 
@@ -42,11 +41,8 @@ struct Action_Nf_params {
   
   Action_Nf_params(){};
 
-  Action_Nf_params(const XML::node node) {
-    degree_.resize(3);
-    precision_.resize(3);
-    b_low_.resize(3);
-    b_high_.resize(3);
+  Action_Nf_params(const XML::node node)
+    :degree_(3),precision_(3),b_low_(3),b_high_(3){
     
     XML::read(node, "Flavors", n_flav_, MANDATORY); 
     XML::read(node, "Pseudofermions", n_pseudof_, MANDATORY);
@@ -55,15 +51,11 @@ struct Action_Nf_params {
     XML::read_array(node, "BoundaryLow", b_low_, MANDATORY);
     XML::read_array(node, "BoundaryHigh", b_high_, MANDATORY);
   }
-
-
-  
 };
 
 
 /*!
  * @class Action_Nf
- *
  * @brief Class to calculate N-Flavors RHMC action term
  */
 class Action_Nf :public Action{
@@ -71,7 +63,7 @@ private:
   GaugeField* const u_;      /*!< The gauge field */
   DiracWilsonLike* const D_; /*!< Dirac Kernel operator */ 
   RationalSolver* slv_;        /*!< RationalSolver operator */
-  std::vector<FermionField> phi_;
+  std::vector<Field> phi_;
   Action_Nf_params Params_;
   int fermion_size_;
   bool smeared_;
@@ -82,7 +74,7 @@ private:
   RationalApprox MolecularDynApprox_;
   RationalApprox PseudoFermionsApprox_;
   
-  FermionField DdagD_inv(const FermionField& src);
+  Field DdagD_inv(const Field& src);
   void attach_smearing(SmartConf*);
 public:
   /*!

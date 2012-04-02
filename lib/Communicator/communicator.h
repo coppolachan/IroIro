@@ -4,10 +4,6 @@
 #ifndef COMMUNICATOR_INCLUDED
 #define COMMUNICATOR_INCLUDED
 
-#ifndef COMMONPRMS_INCLUDED
-#include "include/commonPrms.h"
-#endif
-
 #include <vector>
 #include <valarray>
 #include <stdio.h>
@@ -46,40 +42,40 @@ public:
 
   int nodeid(int x,int y,int z,int t) const;
   
-  double reduce_sum(double);
-  void sync();
-  void broadcast(int size, int &data, int sender);
-  void broadcast(int size, double &data, int sender);
+  double reduce_sum(double)const;
+  void sync()const;
+  void broadcast(int size, int &data, int sender)const;
+  void broadcast(int size, double &data, int sender)const;
   
-  void transfer_fw(double *bin,double *data,int size,int dir);
+  void transfer_fw(double *bin,double *data,int size,int dir)const;
 
   void transfer_fw(std::valarray<double>& bin,
-		   const std::valarray<double>& data,int dir);
+		   const std::valarray<double>& data,int dir)const;
 
   void transfer_fw(std::valarray<double>& bin,
 		   const std::valarray<double>& data,
-		   const std::vector<int>& index,int dir);
+		   const std::vector<int>& index,int dir)const;
 
-  void transfer_bk(double *bin,double *data,int size,int dir);
+  void transfer_bk(double *bin,double *data,int size,int dir)const;
 
   void transfer_bk(std::valarray<double>& bin,
-		   const std::valarray<double>& data,int dir);
+		   const std::valarray<double>& data,int dir)const;
 
   void transfer_bk(std::valarray<double>& bin,
 		   const std::valarray<double>& data,
-		   const std::vector<int>& index,int dir);
+		   const std::vector<int>& index,int dir)const;
 
   void send_1to1(double *bin,double *data,int size,
-		 int p_to, int p_from, int tag);
+		 int p_to, int p_from, int tag)const;
   void send_1to1(std::valarray<double>& bin, const std::valarray<double>& data,
-		 int size, int p_to, int p_from, int tag);
+		 int size, int p_to, int p_from, int tag)const;
 
-  int reduce_max(double& val,int& idx,int size);
-  int reduce_min(double& val,int& idx,int size);
+  int reduce_max(double& val,int& idx,int size)const;
+  int reduce_min(double& val,int& idx,int size)const;
 
-  double get_time(){return 0.0;};
+  double get_time()const{return 0.0;};
 
-  int pprintf(const char* ...);
+  int pprintf(const char* ...)const;
 
   static bool primaryNode();
 };

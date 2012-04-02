@@ -1,7 +1,7 @@
 /*! @file qprop_mom.cpp
   @brief implementation of QpropMom class */
 
-#include "Main/Geometry/siteIndex.h"
+#include "Main/Geometry/siteIndex.hpp"
 #include "include/numerical_const.hpp"
 #include "include/macros.hpp"
 #include "qprop_mom.hpp"
@@ -33,6 +33,17 @@ void QpropMom::fourier_tr(std::vector<double>& Sp_re,
 			  std::vector<double>& Sp_im, 
 			  const std::vector<int>& p) const{
 
+  double p_x = 2.0*PI/Lx_*p[XDIR];
+  double p_y = 2.0*PI/Ly_*p[YDIR];
+  double p_z = 2.0*PI/Lz_*p[ZDIR];
+  double p_t = 2.0*PI/Lt_*p[TDIR];
+
+  CCIO::cout<<"fourier_tr  p_latt= "
+	    <<p_x<<" "
+	    <<p_y<<" "
+	    <<p_z<<" "
+	    <<p_t<<std::endl;
+
   for(int in=0; in<NC_*ND_; ++in){
     for(int s=0; s<ND_; ++s){
       for(int c=0; c<NC_; ++c){
@@ -41,16 +52,13 @@ void QpropMom::fourier_tr(std::vector<double>& Sp_re,
 	double im =0.0;
 
 	for(int site=0; site<fmt_.Nvol(); ++site){
-	  double p_x = static_cast<double>(p[XDIR]/Lx_);
-	  double p_y = static_cast<double>(p[YDIR]/Ly_);
-	  double p_z = static_cast<double>(p[ZDIR]/Lz_);
-	  double p_t = static_cast<double>(p[TDIR]/Lt_);
 	    
-	  double pdotx = 2.0*PI*(p_x*SiteIndex::instance()->g_x(site)
-				+p_y*SiteIndex::instance()->g_y(site)
-				+p_z*SiteIndex::instance()->g_z(site)
-				+p_t*SiteIndex::instance()->g_t(site));
-
+	  double pdotx 
+	    = p_x*SiteIndex::instance()->g_x(site)
+	     +p_y*SiteIndex::instance()->g_y(site)
+ 	     +p_z*SiteIndex::instance()->g_z(site)
+	     +p_t*SiteIndex::instance()->g_t(site);
+	  //	  CCIO::cout<<"pdotx="<<pdotx<<std::endl;
 	  re += cos(pdotx)*Sq_[in][fmt_.index_r(c,s,site)]
        	       +sin(pdotx)*Sq_[in][fmt_.index_i(c,s,site)];
 	  im +=-sin(pdotx)*Sq_[in][fmt_.index_r(c,s,site)]
@@ -65,12 +73,12 @@ void QpropMom::fourier_tr(std::vector<double>& Sp_re,
   
 void QpropMom::output()const{
 
-  std::vector<double> Sp_re;
-  std::vector<double> Sp_im;
-
   CCIO::cout<<"S(p_latt)[s1 c1; s2 c2], p_latt=(nx,ny,nz,nt)"<<std::endl;
 
   for(int m=0; m<platt_.size(); ++m){
+
+    std::vector<double> Sp_re;
+    std::vector<double> Sp_im;
 
     fourier_tr(Sp_re,Sp_im,platt_[m]);
 

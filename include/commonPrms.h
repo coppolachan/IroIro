@@ -1,46 +1,25 @@
 /*!
  * @file commonPrms.h
- *
  * @brief Declares and defines CommonPrms class
  */
-
-
 #ifndef COMMONPRMS_INCLUDED
 #define COMMONPRMS_INCLUDED
-
+#include "macros.hpp"
 
 struct Lattice{
   bool stdinput;
-  int Lx;
-  int Ly;
-  int Lz;
-  int Lt;
-  int NPEx;
-  int NPEy;
-  int NPEz;
-  int NPEt;
+  int Lx, Ly, Lz, Lt;
+  int NPEx, NPEy, NPEz, NPEt;
 };
-
 
 /*!
  * @brief Defines a static class to store several global parameters
- *
  * Lattice size and processors topology are stored in this class
- *
  * Color and spinor dimensions are stored too.
- *
  * Access to private parameters is provided through public functions
- *
- *
  */
 class CommonPrms{
 private:
-  // color, spinor and space-time dimension
-  enum{NC=3, ND=4, NDIM=4}; // enum hack
-  static const int Nc_ =NC;
-  static const int Nd_ =ND;
-  static const int Ndim_=NDIM;
-
   // global lattice size
   static int Lx_,Ly_,Lz_,Lt_,Lvol_;
 
@@ -50,10 +29,8 @@ private:
   // local lattice size
   static int Nx_,Ny_,Nz_,Nt_,Nvol_;
 
-  CommonPrms(){}
-  //copy constructor has dummy initializer
+  CommonPrms(const Lattice&);
   CommonPrms(const CommonPrms&){}
-
   CommonPrms& operator=(const CommonPrms&);
 
   static void setup(const Lattice& latt);
@@ -82,9 +59,9 @@ public:
   static int Nt(){return Nt_;}
   static int Nvol(){return Nvol_;}
 
-  static int Nc(){return Nc_;}
-  static int Nd(){return Nd_;}
-  static int Ndim(){return Ndim_;}
+  static int Nc(){return NC_;}
+  static int Nd(){return ND_;}
+  static int Ndim(){return NDIM_;}
 };
 
 #endif
