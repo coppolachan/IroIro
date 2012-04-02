@@ -1,4 +1,4 @@
-# Time-stamp: <2012-03-29 17:48:37 neo>
+# Time-stamp: <2012-04-02 10:42:24 neo>
 
 testdir = $(bindir)/Test
 
@@ -20,7 +20,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_Gauge.xml		\
 		test_Overlap.xml	\
 		test_HMC_EvenOdd.xml	\
-		test_HMC.DWF.zolo.xml	\
+		test_HMC_DWF.xml	\
 		test_MultiShiftSolver.xml
 		test_RationalApprox.xml	\
 		input.xml

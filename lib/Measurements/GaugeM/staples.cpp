@@ -4,17 +4,19 @@
 */
 #include "staples.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "include/messages_macros.hpp"
 
 using namespace FieldUtils;
 using namespace SUNmatUtils;
 
 //------------------------------------------------------------
 double Staples::plaquette(const GaugeField& F)const {
-  CCIO::cout<<"Staples::plaquette called"<<std::endl;
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaquette called\n");
   return (plaq_s(F) + plaq_t(F))*0.5;
 }
 //------------------------------------------------------------
 double Staples::plaq_s(const GaugeField& F)const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaq_s called\n");
   double plaq = 0.0;
   GaugeField1D stpl;
 
@@ -29,6 +31,7 @@ double Staples::plaq_s(const GaugeField& F)const {
 }
 //------------------------------------------------------------
 double Staples::plaq_t(const GaugeField& F)const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaq_t called\n");
   double plaq = 0.0;
   GaugeField1D stpl;
 
@@ -42,6 +45,7 @@ double Staples::plaq_t(const GaugeField& F)const {
 }
 //------------------------------------------------------------
 GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
+  _Message(DEBUG_VERB_LEVEL, "Staples::lower called\n");
   using namespace Mapping;
   //         +     +
   // nu,w_dag|     |w(site+mu,nu) 
@@ -58,6 +62,7 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
 }
 //------------------------------------------------------------
 GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
+  _Message(DEBUG_VERB_LEVEL, "Staples::upper called\n");
   using namespace Mapping;
   //       mu,v                               
   //      +-->--+                                                    
@@ -75,6 +80,7 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
 }
 //------------------------------------------------------------
 void Staples::staple(GaugeField1D& W, const GaugeField& G, int mu) const{
+  _Message(DEBUG_VERB_LEVEL, "Staples::staple called\n");
   W = 0.0;
   for(int nu = 0; nu < NDIM_; nu++){
     if(nu != mu){

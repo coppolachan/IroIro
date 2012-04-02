@@ -150,7 +150,7 @@ transfer_bk(valarray<double>& bin,const valarray<double>& data,int dir)const{
 
 void Communicator::
 transfer_bk(valarray<double>& bin,const valarray<double>& data,
-	    const vector<int>& index, int dir){
+	    const vector<int>& index, int dir)const{
   MPI_Status  status;
   MPI_Datatype subarray;
   int MPIErr;
