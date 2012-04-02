@@ -21,6 +21,8 @@
 #include "Dirac_ops/dirac_clover.hpp"
 #include "Dirac_ops/dirac_DomainWall.hpp"
 
+#include "EigenModes/findminmax.hpp"
+#include "Tools/randNum_Factory.h"
 #include <assert.h>
 #include <vector>
 
@@ -28,6 +30,8 @@ using namespace std;
 
 int Test_RationalApprox::run(){
   CCIO::cout << "Starting Rational Approximation test" << std::endl;
+
+  RNG_Env::RNG = RNG_Env::createRNGfactory(RA_node);
 
   // Test standard constructor
   RationalApprox_params PsParameters(10, 10, 1, 2, 40, 0.05, 1.0);
@@ -55,6 +59,10 @@ int Test_RationalApprox::run(){
   double reference = pow(x_test, exponent);
   
   CCIO::cout << "Reference = "<< reference << "\n";
+
+ 
+
+  
 
   //Reconstruct rational expansion
 
@@ -94,11 +102,19 @@ int Test_RationalApprox::run(){
   Source_local<Format::Format_F> Source5d(spos,
 					  CommonPrms::instance()->Nvol()*N5d); 
 
+  // Find Max eigenvalue
+  Fopr_DdagD* FoprKernel = new Fopr_DdagD(Kernel);
+  findMinMax* MinMax = new findMinMax(FoprKernel,RNG_Env::RNG->getRandomNumGenerator(),
+				      Kernel->fsize());
+
+  double max_eigenval = MinMax->findMax();
+  CCIO::cout << "Maximal eigenvalue of Fopr = "<<max_eigenval << "\n";
+
    // Definition of the Solver
   int    Niter= 2000;
   double stop_cond = 1.0e-24;
   MultiShiftSolver* Solver = 
-    new MultiShiftSolver_CG(new Fopr_DdagD(Kernel),
+    new MultiShiftSolver_CG(FoprKernel,
                             stop_cond,
                             Niter);
   

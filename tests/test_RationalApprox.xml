@@ -17,7 +17,15 @@
     <Precision>40</Precision>
     <Low>0.5</Low>
     <High>6.0</High>
+
+    <RandomNumberGen name="Mersenne Twister">
+      <init>0x123 0x234 0x345 0x456</init> 
+    </RandomNumberGen>
+    
+
   </RationalApprox>
+
+
 
 </Parameters>
 

@@ -266,8 +266,8 @@
 
    @verbatim
     <Integrator name="leapfrog_multistep">
-      <MDsteps>3</MDsteps>
-      <step_size>0.00004</step_size>
+      <MDsteps>10</MDsteps>
+      <step_size>0.02</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>

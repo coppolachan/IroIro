@@ -10,14 +10,14 @@
 #include "rationalSolver.hpp"
 
 SolverOutput RationalSolver::solve(Field& sol, const Field& source) const {
-  if (Residuals.size() != 0) 
+  if (Residuals.size() == 0)  {
     CCIO::cout << "[RationalSolver] Rational Approximation not initialized yet\n";
+    abort();
+  }
   SolverOutput out;
   Field temp;
   prop_t shifted_sol;
   shifted_sol.resize(Residuals.size());
-  for (int i = 0; i < Residuals.size(); ++i)
-    shifted_sol.push_back(sol);
 
   MS_Solver_->solve(shifted_sol, source, Poles, out.diff, out.Iterations);
 
@@ -35,18 +35,18 @@ SolverOutput RationalSolver::solve(Field& sol, const Field& source) const {
 }
 
 SolverOutput RationalSolver::solve_inv(Field& sol, const Field& source) const {
-  if (InvResiduals.size() != 0) 
+  if (InvResiduals.size() == 0) {
     CCIO::cout << "[RationalSolver] Inverse Rational Approximation not initialized yet\n";
+    abort();
+  }
   SolverOutput out;
   Field temp;
   prop_t shifted_sol;
   shifted_sol.resize(InvResiduals.size());
-  for (int i = 0; i < InvResiduals.size(); ++i)
-    shifted_sol.push_back(sol);
 
   MS_Solver_->solve(shifted_sol, source, InvPoles, out.diff, out.Iterations);
 
-  // Reconstruct solution (M^dag M)^(a/b)
+  // Reconstruct solution (M^dag M)^(-a/b)
   sol = source;
   sol *= InvConstTerm;
 
@@ -55,6 +55,24 @@ SolverOutput RationalSolver::solve_inv(Field& sol, const Field& source) const {
     temp *= InvResiduals[i];
     sol += temp;
   }
+
+  return out;
+}
+
+SolverOutput RationalSolver::solve_noReconstruct(std::vector<Field>& shifted_sol, 
+						 const Field& source) const {
+  if (InvResiduals.size() == 0) {
+    CCIO::cout << "[RationalSolver] Inverse Rational Approximation not initialized yet\n";
+    abort();
+  }
+  SolverOutput out;
+  Field temp;
+  shifted_sol.resize(InvResiduals.size());
+  
+  MS_Solver_->solve(shifted_sol, source, InvPoles, out.diff, out.Iterations);
+
+  for (int i = 0; i < InvPoles.size(); ++i)
+    shifted_sol[i] *= sqrt(InvResiduals[i]);
 
   return out;
 }

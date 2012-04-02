@@ -1,4 +1,4 @@
-# Time-stamp: <2012-03-28 18:00:12 neo>
+# Time-stamp: <2012-03-29 17:48:37 neo>
 
 testdir = $(bindir)/Test
 
@@ -35,6 +35,7 @@ EXTRA_DIST = 	testResults.info	\
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
+		test_RHMC_noFactories 	\
 		test_HMC_EvenOdd	\
 		test_HMC_smear_noF	\
 		test_HMC_DWall_noF	\
@@ -58,6 +59,9 @@ test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
 
 test_HMC_noFactories_SOURCES = 	test_HMC_noFactories.cpp 	\
+			  	testerHMC.cpp
+
+test_RHMC_noFactories_SOURCES = test_RHMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
 test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
