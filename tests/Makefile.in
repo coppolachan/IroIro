@@ -15,7 +15,7 @@
 
 @SET_MAKE@
 
-# Time-stamp: <2012-04-02 10:54:03 neo>
+# Time-stamp: <2012-04-02 16:00:42 neo>
 
 
 VPATH = @srcdir@
@@ -38,8 +38,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@IBM_WATSON_TRUE@am__append_1 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include
-@IBM_WATSON_TRUE@am__append_2 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
+@IBM_BGQ_TRUE@am__append_1 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include
+@IBM_BGQ_TRUE@am__append_2 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/usr/local/bg/lib
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_HMC_EvenOdd$(EXEEXT) test_HMC_smear_noF$(EXEEXT) \
 	test_HMC_DWall_noF$(EXEEXT) test_Gauge$(EXEEXT) \
@@ -48,7 +48,8 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_QpropMom$(EXEEXT) test_ResMass$(EXEEXT) \
 	test_EigenModes$(EXEEXT) test_Smearing$(EXEEXT) \
 	test_Overlap$(EXEEXT) test_MultiShiftSolver$(EXEEXT) \
-	test_RNG$(EXEEXT) test_IO$(EXEEXT)
+	test_RNG$(EXEEXT) test_IO$(EXEEXT) \
+	test_RationalApprox$(EXEEXT) test_RHMC_noFactories$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -125,10 +126,20 @@ am_test_QpropMom_OBJECTS = test_QpropMom.$(OBJEXT) \
 test_QpropMom_OBJECTS = $(am_test_QpropMom_OBJECTS)
 test_QpropMom_LDADD = $(LDADD)
 test_QpropMom_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_test_RHMC_noFactories_OBJECTS = test_RHMC_noFactories.$(OBJEXT) \
+	testerHMC.$(OBJEXT)
+test_RHMC_noFactories_OBJECTS = $(am_test_RHMC_noFactories_OBJECTS)
+test_RHMC_noFactories_LDADD = $(LDADD)
+test_RHMC_noFactories_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_test_RNG_OBJECTS = test_RNG.$(OBJEXT)
 test_RNG_OBJECTS = $(am_test_RNG_OBJECTS)
 test_RNG_LDADD = $(LDADD)
 test_RNG_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_test_RationalApprox_OBJECTS = test_RationalApprox.$(OBJEXT) \
+	testerRationalApprox.$(OBJEXT)
+test_RationalApprox_OBJECTS = $(am_test_RationalApprox_OBJECTS)
+test_RationalApprox_LDADD = $(LDADD)
+test_RationalApprox_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_test_ResMass_OBJECTS = test_ResidualMass.$(OBJEXT) \
 	testerResMass.$(OBJEXT)
 test_ResMass_OBJECTS = $(am_test_ResMass_OBJECTS)
@@ -174,7 +185,8 @@ SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
-	$(test_QpropMom_SOURCES) $(test_RNG_SOURCES) \
+	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
+	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
 	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
@@ -183,7 +195,8 @@ DIST_SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
-	$(test_QpropMom_SOURCES) $(test_RNG_SOURCES) \
+	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
+	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
 	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
@@ -319,8 +332,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 testdir = $(bindir)/Test
-@IBM_WATSON_TRUE@DRIVER = /bgsys/drivers/ppcfloor
-@IBM_WATSON_TRUE@OPTLIB = -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
+@IBM_BGQ_TRUE@DRIVER = /bgsys/drivers/ppcfloor
+@IBM_BGQ_TRUE@OPTLIB = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
 LDADD = -L../lib/ -lcommcode $(OPTLIB)
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
@@ -341,18 +354,15 @@ EXTRA_DIST = testResults.info	\
 		test_HMC_DWF.xml	\
 		test_MultiShiftSolver.xml
 
-
-#		test_RationalApprox
-#		test_RHMC_noFactories 	
 test_HMC_SOURCES = test_HMC.cpp 			\
 		  		testerHMC.cpp
 
 test_HMC_noFactories_SOURCES = test_HMC_noFactories.cpp 	\
 			  	testerHMC.cpp
 
+test_RHMC_noFactories_SOURCES = test_RHMC_noFactories.cpp 	\
+			  	testerHMC.cpp
 
-#test_RHMC_noFactories_SOURCES = test_RHMC_noFactories.cpp 	\
-#			  	testerHMC.cpp
 test_HMC_smear_noF_SOURCES = test_HMC_Smear_noFact.cpp 	\
 			  	testerHMC.cpp
 
@@ -399,9 +409,9 @@ test_RNG_SOURCES = test_RNG.cpp
 test_IO_SOURCES = test_IO.cpp 			\
 				testerIO.cpp
 
+test_RationalApprox_SOURCES = test_RationalApprox.cpp	\
+				testerRationalApprox.cpp
 
-#test_RationalApprox_SOURCES 	= 	test_RationalApprox.cpp	\
-#				testerRationalApprox.cpp
 include_HEADERS = tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
@@ -531,9 +541,15 @@ test_Overlap$(EXEEXT): $(test_Overlap_OBJECTS) $(test_Overlap_DEPENDENCIES)
 test_QpropMom$(EXEEXT): $(test_QpropMom_OBJECTS) $(test_QpropMom_DEPENDENCIES) 
 	@rm -f test_QpropMom$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_QpropMom_OBJECTS) $(test_QpropMom_LDADD) $(LIBS)
+test_RHMC_noFactories$(EXEEXT): $(test_RHMC_noFactories_OBJECTS) $(test_RHMC_noFactories_DEPENDENCIES) 
+	@rm -f test_RHMC_noFactories$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_RHMC_noFactories_OBJECTS) $(test_RHMC_noFactories_LDADD) $(LIBS)
 test_RNG$(EXEEXT): $(test_RNG_OBJECTS) $(test_RNG_DEPENDENCIES) 
 	@rm -f test_RNG$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_RNG_OBJECTS) $(test_RNG_LDADD) $(LIBS)
+test_RationalApprox$(EXEEXT): $(test_RationalApprox_OBJECTS) $(test_RationalApprox_DEPENDENCIES) 
+	@rm -f test_RationalApprox$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_RationalApprox_OBJECTS) $(test_RationalApprox_LDADD) $(LIBS)
 test_ResMass$(EXEEXT): $(test_ResMass_OBJECTS) $(test_ResMass_DEPENDENCIES) 
 	@rm -f test_ResMass$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_ResMass_OBJECTS) $(test_ResMass_LDADD) $(LIBS)
@@ -565,7 +581,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Overlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_QpropMom.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RHMC_noFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RNG.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RationalApprox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ResidualMass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_clover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
@@ -582,6 +600,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerOverlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerQpropMom.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerRationalApprox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerResMass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson.Po@am__quote@

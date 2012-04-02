@@ -12,12 +12,12 @@ CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1
 LDFLAGS += -q64
 endif
 
-if IBM_WATSON
+if IBM_BGQ
 DRIVER=/bgsys/drivers/ppcfloor
 CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk \
 	-I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
 LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/usr/local/bg/lib
-OPTLIB += -lkek -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
+OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
 endif
 
 else
@@ -47,6 +47,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_gauge_rect.cpp            \
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
+		Action/action_Nf.cpp			\
 		Action/action_Nf2_ratio.cpp		\
 		Action/action_Nf2_DomainWall.cpp	\
 		Action/action_fermiontype_factory.cpp	\
@@ -100,11 +101,10 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
-		Tools/gammaMatrices.cpp			
+		Tools/gammaMatrices.cpp			\
+		Tools/Remez/alg_remez.cpp		\
+		Tools/RationalApprox/rationalapprox.cpp	
 
-#		Tools/Remez/alg_remez.cpp		
-#		Tools/RationalApprox/rationalapprox.cpp	
-#		Action/action_Nf.cpp			
 
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				

@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [0.9.5.4], [cossu@post.kek.jp])
+AC_INIT([IroIro], [0.9.5.5], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility
@@ -26,7 +26,7 @@ cpp_flags=$CXXFLAGS
 ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value 
-watson=false   # default value
+bluegeneq=false   # default value
 #####################################################################
 # identify architecture
 if test "$arch" = ""
@@ -36,7 +36,7 @@ then
         x86_64-*-linux-gnu )    arch=amd64    ;;
         *-pc-linux-gnu )        arch=ia32     ;;
         *-ibm-aix* )            arch=aix      ;;
-	powerpc64-* )           arch=watsonBG ;;
+	powerpc64-* )           arch=bgq      ;;
         powerpc-apple-darwin* ) arch=macppc   ;;
         i*86-apple-darwin* )    arch=macx86   ;;
 	x86_64-apple-darwin* )  arch=mac86_64 ;;
@@ -115,15 +115,15 @@ aix )
      use_ar_flags="-X64 -c -ru"
      AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
      ;;
-watsonBG ) 
+bgq ) 
      host=$build
      cross_compiling=yes  # this will do the trick     
      mpi=true
-     watson=true
-     AC_MSG_NOTICE([forcing cross compilation on Watson BG/Q])
+     bluegeneq=true
+     AC_MSG_NOTICE([forcing cross compilation on BG/Q])
      use_cpp="bgxlC";
-     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -I${HOME}/gsl/include -qflag=i:s"
-     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib"
+     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -I/usr/local/bg/include -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
+     ld_flags="${LDFLAGS} -L/usr/local/bg/lib -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib"
      use_ar_flags="cru"
      AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
      ;;
@@ -152,7 +152,7 @@ echo configure: setting linker flags... $ARFLAGS
 # Automake flags
 AM_CONDITIONAL([USE_MPI], [(test x$mpi = xtrue)])
 AM_CONDITIONAL([HITACHI], [(test x$hitachi = xtrue)])
-AM_CONDITIONAL([IBM_WATSON], [(test x$watson = xtrue)])
+AM_CONDITIONAL([IBM_BGQ], [(test x$bluegeneq = xtrue)])
 	 
 ###################################################################
 # Checks for libraries.
@@ -170,14 +170,14 @@ AC_CHECK_FUNC([gsl_sf_ellint_Kcomp],,
 	[AC_MSG_ERROR(Missing function in GNU Scientific Library)])
 
 
-#AC_CHECK_LIB([gmp],[__gmpf_init],,
-#	[AC_MSG_ERROR(GNU Multiple Precision GMP library was not found in your system.
-#Please install or provide the correct path to your installation
-#Info at: http://www.gmplib.org)])
-#AC_CHECK_LIB([mpfr],[mpfr_init],,
-#	[AC_MSG_ERROR(GNU Multiple Precision MPFR library was not found in your system.
-#Please install or provide the correct path to your installation
-#Info at: http://www.mpfr.org/)])
+AC_CHECK_LIB([gmp],[__gmpf_init],,
+	[AC_MSG_ERROR(GNU Multiple Precision GMP library was not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gmplib.org)])
+AC_CHECK_LIB([mpfr],[mpfr_init],,
+	[AC_MSG_ERROR(GNU Multiple Precision MPFR library was not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.mpfr.org/)])
 	
 ###################################################################
 # Checks for header files.
@@ -204,9 +204,9 @@ then
 AC_DEFINE([HITACHISR16K],[],[Specific tweaks for Hitachi SR16K])
 fi
 
-if [ $watson ]
+if [ $bluegeneq ]
 then
-AC_DEFINE([IBM_WATSON],[],[Specific tweaks for IBM Watson BG/Q])
+AC_DEFINE([IBM_BGQ],[],[Specific tweaks for IBM BG/Q])
 fi
 
 # Turn on all improved kernels
