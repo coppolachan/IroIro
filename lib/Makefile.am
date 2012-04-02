@@ -186,12 +186,6 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			EigenModes/sortEigen.h			\
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/findminmax.hpp		\
-			Main/Geometry/siteIndex.h		\
-			Main/Geometry/siteIndex_eo.h		\
-			Main/Geometry/mapper.hpp		\
-			$(MAPPER_HEAD)		     	        \
-			Main/gaugeConf.hpp			\
-			Main/commandline.cpp			\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/mdExec.hpp		                \
