@@ -37,7 +37,6 @@ class Geometry {
       exit(1);
     }
 #endif
-    std::cout<<"Geometry::initialize"<<std::endl;
     prms_= CommonPrms::instance(latt);
     idx_= SiteIndex::instance();
   }
@@ -50,7 +49,6 @@ public:
   
   /*! @brief Constructor - Initialized geometry object */
   Geometry(XML::node node){ 
-    std::cout<<"initializing Geometry"<<std::endl;
     initialize(node.child("Geometry")); }  
 };
 
