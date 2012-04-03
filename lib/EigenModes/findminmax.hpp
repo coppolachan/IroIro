@@ -11,6 +11,11 @@
 #include "Tools/randNum.h"
 
 
+struct MinMaxOut {
+  double min;
+  double max;
+};
+
 class findMinMax {
   Fopr* Kernel_;
   std::auto_ptr<const RandNum> rand_;
@@ -22,6 +27,8 @@ public:
   explicit findMinMax(Fopr*, const RandNum*, size_t) ;
 
   ~findMinMax();
-  double findMin() const;
+  double findMin(const double&) const;
   double findMax() const;
+  
+  MinMaxOut findExtrema() const;
 };

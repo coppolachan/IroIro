@@ -94,6 +94,8 @@ public:
   /*! Standard Constructor */
   RationalApprox(RationalApprox_params Par);
 
+  void rescale(const double& min, const double& max);
+
   std::vector<double> Residuals() const { return RA_res; }
   std::vector<double> Poles() const { return RA_pole; }
   double Const() const { return RA_a0; }
