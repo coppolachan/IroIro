@@ -11,37 +11,38 @@ using namespace std;
 #include "Communicator/communicator.h"
 #include "Tools/randNum.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Tools/fieldUtils.hpp"
 
 void GaugeFixing_Landau::fix(GaugeField& Uout, const GaugeField& Uin){
 
-  GaugeField Ue = Uin.even_sec();
-  GaugeField Uo = Uin.odd_sec();
+  GaugeField Ue = FieldUtils::get_even(Uin);
+  GaugeField Uo = FieldUtils::get_odd(Uin);
 
   int Nvh = Uin.Nvol()/2;
   GaugeField1D  Ge(Nvh), Go(Nvh);
-
+  
   int Nconv = -1;
 
   // gauge fixing iteration
-  for(int iter = 0; iter < d_Niter; ++iter){
+  for(int iter=0; iter<Niter_; ++iter){
 
-    if((iter % d_Nmeas) == 0){
+    if((iter%Nmeas_) == 0){
       double sg, Fval;
       calc_SG(sg,Fval,Ue,Uo);
       pprintf("  iter = %6d  sg = %16.8e  Fval = %16.8e\n",
               iter,sg,Fval);
-      if(sg < d_Enorm){
+      if(sg < prec_){
         Nconv = iter;
         pprintf("converged at iter = %d\n",Nconv);
         break;
       }
     }
 
-    double wp2 = d_wp;
-    if((iter % d_Nreset) < d_Nnaive) wp2 = 1.0;
+    double wp2 = wp_;
+    if((iter % Nreset_) < Niter_) wp2 = 1.0;
     gfix_step(Ue, Uo, wp2);
 
-    if((iter % d_Nreset) == 0 && iter > 0){
+    if((iter % Nreset_) == 0 && iter > 0){
       // random gauge transformation
       pprintf("  random gauge transformation performed.\n");
       set_randomGtrf(Ge);
@@ -49,12 +50,8 @@ void GaugeFixing_Landau::fix(GaugeField& Uout, const GaugeField& Uin){
       set_randomGtrf(Go);
       gauge_trf(Ue, Uo, Go, 1);
     }
-
   }
-
-  d_index.reverseField(Ufix,Ue,0);
-  d_index.reverseField(Ufix,Uo,1);
-
+  Uout = FieldUtils::combine_eo(Ue,Uo);
 }
 //====================================================================
 void GaugeFixing_Landau::gfix_step(Field_G& Ue, Field_G& Uo,

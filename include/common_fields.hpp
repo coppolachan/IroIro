@@ -246,40 +246,4 @@ private:
   GaugeGlobal(const GaugeGlobal&);//hide copy constructor
 };
 
-//eventually move to a different file
-namespace FieldUtils{
-  const GaugeField TracelessAntihermite(const GaugeField&);
-  const GaugeField1D field_oprod(const FermionField&,const FermionField&);
-
-  // Field type-type transformations
-  GaugeField1D DirSlice(const GaugeField& F, int dir);
-  void SetSlice(GaugeField&, const GaugeField1D&, int dir);
-  void AddSlice(GaugeField&, const GaugeField1D&, int dir);
-
-  void SetMat(GaugeField& F, const SUNmat& mat, int site, int dir);
-  void SetMat(GaugeField1D& F, const SUNmat& mat, int site);
-  
-  void AddMat(GaugeField& F, const SUNmat& mat, int site, int dir);
-  void AddMat(GaugeField1D& F, const SUNmat& mat, int site);
-
-  void SetVec(FermionField&, const SUNvec&, int spin, int site); 
-  void AddVec(FermionField&, const SUNvec&, int spin, int site); 
-
-  // Inline functions
-  inline SUNmat mat(const GaugeField& F,int site,int dir){
-    return SUNmat(F.data[F.format.islice(site,dir)]);  }
-
-  inline SUNmat mat(const GaugeField1D& F,int site){
-    return SUNmat(F.data[F.format.islice(site)]);  }
-
-  inline SUNmat mat_dag(const GaugeField& F,int site,int dir){
-    return SUNmat(F.data[F.format.islice(site,dir)]).dag();  }
-
-  inline SUNmat mat_dag(const GaugeField1D& F,int site){
-    return SUNmat(F.data[F.format.islice(site)]).dag();  }
-
-  inline SUNvec vec(const FermionField& F,int spin,int site){
-    return SUNvec(F.data[F.format.cslice(spin,site)]);  }
-}
-
 #endif //COMMON_FIELDS_H_
