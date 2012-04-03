@@ -52,13 +52,15 @@ void QpropMom::fourier_tr(std::vector<double>& Sp_re,
 	double im =0.0;
 
 	for(int site=0; site<fmt_.Nvol(); ++site){
-	    
+	  int gsite = SiteIndex::instance()->get_gsite(site);
 	  double pdotx 
-	    = p_x*SiteIndex::instance()->g_x(site)
-	     +p_y*SiteIndex::instance()->g_y(site)
- 	     +p_z*SiteIndex::instance()->g_z(site)
-	     +p_t*SiteIndex::instance()->g_t(site);
+	    = p_x*SiteIndex::instance()->g_x(gsite)
+	     +p_y*SiteIndex::instance()->g_y(gsite)
+ 	     +p_z*SiteIndex::instance()->g_z(gsite)
+	     +p_t*SiteIndex::instance()->g_t(gsite);
+
 	  //	  CCIO::cout<<"pdotx="<<pdotx<<std::endl;
+
 	  re += cos(pdotx)*Sq_[in][fmt_.index_r(c,s,site)]
        	       +sin(pdotx)*Sq_[in][fmt_.index_i(c,s,site)];
 	  im +=-sin(pdotx)*Sq_[in][fmt_.index_r(c,s,site)]

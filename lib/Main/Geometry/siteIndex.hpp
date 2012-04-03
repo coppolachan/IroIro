@@ -65,10 +65,10 @@ public:
   int c_z(int site) const{ return (site/NxNy_)%Nz_;}
   int c_t(int site) const{ return site/NxNyNz_;}
 
-  int g_x(int site) const{ return site%Lx_;}
-  int g_y(int site) const{ return (site/Lx_)%Ly_;}
-  int g_z(int site) const{ return (site/LxLy_)%Lz_;}
-  int g_t(int site) const{ return site/LxLyLz_;}
+  int g_x(int gsite) const{ return gsite%Lx_;}
+  int g_y(int gsite) const{ return (gsite/Lx_)%Ly_;}
+  int g_z(int gsite) const{ return (gsite/LxLy_)%Lz_;}
+  int g_t(int gsite) const{ return gsite/LxLyLz_;}
 
   // indices with a step forward/backward (for bulk sites)
   int p_x(int site) const{ return site+1;}

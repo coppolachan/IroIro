@@ -4,6 +4,7 @@
 */
 #include "action_gauge_rect.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Tools/fieldUtils.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 #include "lib/Main/Geometry/mapping.hpp"
 #include "include/messages_macros.hpp"

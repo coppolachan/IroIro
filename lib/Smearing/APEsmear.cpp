@@ -2,6 +2,7 @@
 #include "Measurements/GaugeM/staples.hpp"
 #include "Main/Geometry/mapping.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Tools/fieldUtils.hpp"
 
 //====================================================================
 std::vector<double> Smear_APE::set_rho(const double common_rho)const{

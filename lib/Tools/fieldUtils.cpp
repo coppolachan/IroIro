@@ -1,9 +1,9 @@
 /*!
- * @file common_fields.cpp
+ * @file fieldUtils.cpp
  * @brief function definitions in FieldUtils
  */
-#include "include/common_fields.hpp"
-#include "Tools/sunMatUtils.hpp"
+#include "fieldUtils.hpp"
+#include "sunMatUtils.hpp"
 
 namespace FieldUtils{
   const GaugeField1D field_oprod(const FermionField& f1,
@@ -70,5 +70,4 @@ namespace FieldUtils{
   void AddVec(FermionField& F, const SUNvec& vec, int spin, int site){
     F.data.add(F.format.cslice(spin, site), vec.getva());
   }
-
 }

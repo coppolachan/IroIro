@@ -4,6 +4,7 @@
 */
 #include "staples.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 
 using namespace FieldUtils;

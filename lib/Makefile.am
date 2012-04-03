@@ -40,7 +40,6 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
-		Main/common_fields.cpp			\
 		$(COMMUNICATOR_SRCS)     	        \
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
@@ -98,6 +97,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/stoutSmear.cpp			\
 		Smearing/smartConf.cpp			\
 		Smearing/smearingFactories.cpp		\
+		Tools/fieldUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
@@ -170,7 +170,6 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Main/Geometry/mapping.hpp		\
 			Main/Geometry/siteMap.hpp		\
 			Main/gaugeConf.hpp			\
-			Main/commandline.cpp			\
 			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac.hpp			\
@@ -213,6 +212,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/sunVec.hpp			\
 			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
+			Tools/fieldUtils.hpp			\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
