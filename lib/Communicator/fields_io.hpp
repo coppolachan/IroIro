@@ -13,6 +13,10 @@
 #include "Main/Geometry/siteIndex.hpp"
 #include "Tools/byteswap.hpp"
 
+#ifdef IBM_BGQ
+#include <stdio.h>
+#endif
+
 #define CCIO_FILE_APPEND_MODE true
 #define FORTRAN_CONTROL_WORDS 4  //number of fortran bytes for control
 
@@ -95,6 +99,20 @@ namespace CCIO {
     // closing loop among processing nodes
     
     if(comm->primaryNode()) {
+      #ifdef IBM_BGQ //hopefully temporary hack
+      FILE * outFile;
+      if(append_mode) 
+	outFile = fopen (filename,"a");
+      else
+	outFile = fopen (filename,"w");
+
+      if (outFile!=NULL) {
+	std::cout << "Binary writing "<<f.size()*comm->size()*sizeof(double)
+		  <<" bytes on "<< filename << " - BGQ hack\n";
+	Global.write_buffer(outFile);
+      }
+      fclose(outFile);
+      #else
       std::ofstream Outputfile;
       if(append_mode) 
 	Outputfile.open(filename, std::ios::binary | std::ios::app);
@@ -107,6 +125,7 @@ namespace CCIO {
 	Global.write_stream(Outputfile);
       }
       Outputfile.close();
+      #endif
     }
     return 0;
   }

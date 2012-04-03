@@ -43,9 +43,7 @@ public:
     loadSeed(file);
   }
 
-  ~RandNum_MT19937(){
-    std::string file("seed_file");
-    saveSeed(file);}//saving seed when destroyed?
+  ~RandNum_MT19937(){};
 
   void saveSeed(std::string& file);
   void loadSeed(std::string& file);

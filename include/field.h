@@ -170,6 +170,13 @@ public:
   void read_stream(std::ifstream& in) {
     in.read((char*)&field[0], sizeof(double)*field.size());
   }
+
+  #ifdef IBM_BGQ
+  void write_buffer(FILE* outstream) {
+    fwrite((const char*)&field[0],sizeof(double),field.size(),outstream);
+  }
+  #endif
+
 };
 
 #include "Fields/field.inl"  //definition of inlined functions

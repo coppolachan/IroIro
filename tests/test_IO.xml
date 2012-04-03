@@ -7,7 +7,7 @@
     <Nodes>1 1 1 1</Nodes>
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="JLQCDlegacy">Legacy8x8.bin</Configuration> 
+  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
 
 </Parameters>
 
