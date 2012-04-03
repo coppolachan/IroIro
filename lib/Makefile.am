@@ -12,12 +12,12 @@ CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1
 LDFLAGS += -q64
 endif
 
-if IBM_WATSON
+if IBM_BGQ
 DRIVER=/bgsys/drivers/ppcfloor
 CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk \
 	-I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
-LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
-OPTLIB += -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
+LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/usr/local/bg/lib
+OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
 endif
 
 else
@@ -106,8 +106,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	
 
 
+
 main_hmc_SOURCES = Main/main_hmc.cpp 				
-main_hmc_LDADD   = libcommcode.a
+main_hmc_LDADD   = libcommcode.a $(OPTLIB)
 
 include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
                         $(top_srcdir)/include/commandline.hpp           \

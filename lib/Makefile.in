@@ -39,11 +39,11 @@ host_triplet = @host@
 target_triplet = @target@
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_1 = -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_2 = -q64
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_3 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk \
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_3 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk \
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
 
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_4 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@am__append_5 = -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lstdc++
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/usr/local/bg/lib
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
@@ -170,7 +170,9 @@ libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
 main_hmc_OBJECTS = $(am_main_hmc_OBJECTS)
-main_hmc_DEPENDENCIES = libcommcode.a
+am__DEPENDENCIES_1 =
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+main_hmc_DEPENDENCIES = libcommcode.a $(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -347,7 +349,7 @@ SUBDIRS = .
 OPTLIB = $(am__append_5)
 @USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 @USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
-@IBM_WATSON_TRUE@@USE_MPI_TRUE@DRIVER = /bgsys/drivers/ppcfloor
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@DRIVER = /bgsys/drivers/ppcfloor
 AM_CPPFLAGS = -I$(top_srcdir)
 AM_CFLAGS = -I$(top_srcdir)
 AM_LDFLAGS = 
@@ -425,7 +427,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
-main_hmc_LDADD = libcommcode.a
+main_hmc_LDADD = libcommcode.a $(OPTLIB)
 include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
                         $(top_srcdir)/include/commandline.hpp           \
 			$(top_srcdir)/include/common_code.hpp		\

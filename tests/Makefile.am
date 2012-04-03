@@ -1,8 +1,15 @@
-# Time-stamp: <2012-03-29 17:48:37 neo>
+# Time-stamp: <2012-04-02 16:00:42 neo>
 
 testdir = $(bindir)/Test
 
-LDADD = -L../lib/ -lcommcode
+if IBM_BGQ
+ DRIVER=/bgsys/drivers/ppcfloor
+ CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include
+ LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/usr/local/bg/lib
+ OPTLIB = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
+endif
+
+LDADD = -L../lib/ -lcommcode $(OPTLIB)
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
@@ -20,14 +27,13 @@ EXTRA_DIST = 	testResults.info	\
 		test_Gauge.xml		\
 		test_Overlap.xml	\
 		test_HMC_EvenOdd.xml	\
-		test_HMC.DWF.zolo.xml	\
+		test_HMC_DWF.xml	\
 		test_MultiShiftSolver.xml
 		test_RationalApprox.xml	\
 		input.xml
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
-		test_RHMC_noFactories 	\
 		test_HMC_EvenOdd	\
 		test_HMC_smear_noF	\
 		test_HMC_DWall_noF	\
@@ -44,7 +50,8 @@ test_PROGRAMS = test_HMC 		\
 		test_MultiShiftSolver	\
 		test_RNG 		\
 		test_IO			\
-		test_RationalApprox
+		test_RationalApprox	\
+		test_RHMC_noFactories 	
 
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
