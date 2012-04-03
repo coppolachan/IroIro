@@ -45,7 +45,7 @@ public:
 
   ~RandNum_MT19937(){};
 
-  void saveSeed(std::string& file);
+  void saveSeed(std::string& file) const;
   void loadSeed(std::string& file);
 
 };

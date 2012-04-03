@@ -3,8 +3,8 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
-    <Nodes>2 2 1 1</Nodes>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
   </Geometry>
@@ -13,7 +13,7 @@
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>1</Nsweeps>
-    <Thermalization>5</Thermalization>
+    <Thermalization>2</Thermalization>
     <StartingConfig>0</StartingConfig>
     <SaveInterval>0</SaveInterval>
     <SavePrefix>HMCrect_</SavePrefix>
