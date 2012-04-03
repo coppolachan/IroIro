@@ -5,6 +5,7 @@
 #include "stoutSmear.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 #include <complex>
 

@@ -3,7 +3,7 @@
  * @brief Definition of methods of Action_Nf2_ratio class
  */
 #include "action_Nf2_ratio.hpp"
-#include "include/common_fields.hpp"
+#include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 
 Field Action_Nf2_ratio::DdagD1_inv(const Field& src){

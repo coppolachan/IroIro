@@ -4,10 +4,10 @@
 */
 #include "dirac_clover.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Tools/fieldUtils.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Main/Geometry/mapping.hpp"
 #include "Measurements/GaugeM/staples.hpp"
-#include "include/common_fields.hpp"
 #include "include/messages_macros.hpp"
 
 using namespace std;

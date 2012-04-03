@@ -4,6 +4,7 @@
  */
 #include "action_Nf2.hpp"
 #include "Tools/randNum_MP.h"
+#include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 /*
 //::::::::::::::::::::::::::::::::

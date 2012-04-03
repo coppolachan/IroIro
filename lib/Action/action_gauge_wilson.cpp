@@ -1,12 +1,11 @@
 /*!
   @file action_gauge_wilson.cpp
-
   @brief Definition of the ActionGaugeWilson class
 */
 #include "action_gauge_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
-
 
 double ActionGaugeWilson::calc_H(){
   //Number of plaquettes

@@ -7,6 +7,7 @@
  */
 #include "action_Nf.hpp"
 #include "Tools/randNum_MP.h"
+#include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 
 //::::::::::::::::::::::::::::::::Observer
