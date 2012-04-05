@@ -33,7 +33,6 @@ void Action_Nf::attach_smearing(SmartConf* SmearObj) {
 void Action_Nf::init(const RandNum& rand){
   SolverOutput monitor;
   std::valarray<double> xi(fermion_size_);
-  CCIO::cout <<" Set approx \n";
 
   slv_->set_Approx(PseudoFermionsApprox_);
 
@@ -66,7 +65,7 @@ double Action_Nf::calc_H(){
 #endif 
     H_nf2 += (phi_[i]) * temp;
   }
-  _Message(ACTION_VERB_LEVEL, "    [Action_Nf] H = "<< H_nf2<<"\n");
+  _Message(ACTION_VERB_LEVEL, "    [Action_Nf] H = "<< H_nf2 <<"\n");
   return H_nf2;
 }
 

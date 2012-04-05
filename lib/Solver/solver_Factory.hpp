@@ -12,6 +12,10 @@
 #include "Solver/solver.hpp"
 #include "Solver/solver_CG.hpp"
 #include "Solver/solver_BiCGStab.hpp"
+#include "Solver/multiShiftSolver.hpp"
+#include "Solver/rationalSolver.hpp"
+#include "Solver/multiShiftSolver_CG.hpp"
+
 
 /*!
  * @brief Abstract base class for creating Solver operators
@@ -22,6 +26,22 @@ public:
   virtual Solver* getSolver(const Fopr*) = 0;
   virtual Solver* getSolver(const Fopr_Herm*) = 0;//for CG like inverters
   virtual Solver* getSolver(const Fopr_Herm_Precondition*){
+    std::cerr<< "getSolver Error: not defined for Fopr_Herm_Precondition Operator" 
+	     << std::endl;
+    abort();
+  }//for Prec like inverters
+};
+
+/*!
+ * @brief Abstract base class for creating RationalSolver operators
+ *
+ * It serves as a type definition to distinguish this class of solvers
+ */
+class RationalSolverOperatorFactory{
+public:
+  virtual RationalSolver* getSolver(const Fopr*) = 0;
+  virtual RationalSolver* getSolver(const Fopr_Herm*) = 0;//for CG like inverters
+  virtual RationalSolver* getSolver(const Fopr_Herm_Precondition*){
     std::cerr<< "getSolver Error: not defined for Fopr_Herm_Precondition Operator" 
 	     << std::endl;
     abort();
@@ -100,10 +120,46 @@ public:
   }
 };
 
+
+/*!
+ @brief Concrete class for creating Rational Conjugate Gradient Solver
+ operator 
+ */
+class RationalSolverCGFactory: public RationalSolverOperatorFactory {
+  RaiiFactoryObj<MultiShiftSolver> MS_Solver;
+
+  const XML::node Solver_node;
+
+public:
+  RationalSolverCGFactory(const XML::node node):Solver_node(node){}
+
+  RationalSolver* getSolver(const Fopr_Herm* HermitianOperator) {
+    MS_Solver.save(new MultiShiftSolver_CG(HermitianOperator,
+					   Solver_node));
+    return new RationalSolver(MS_Solver.get());
+  }
+
+  RationalSolver* getSolver(const Fopr_Herm_Precondition* HermitianOperator) {
+    MS_Solver.save(new MultiShiftSolver_CG(HermitianOperator,
+					   Solver_node));
+    return new RationalSolver(MS_Solver.get());
+  }
+
+
+  RationalSolver*  getSolver(const Fopr* LinearOperator){
+    std::cerr<< "getSolver Error: RationalSolver requires Hermitian Operator" 
+	     << std::endl;
+    abort();
+  }
+
+};
+
+
 ///////////////////////////////////////////////////
 
 namespace SolverOperators{
   SolverOperatorFactory* createSolverOperatorFactory(const XML::node);
+  RationalSolverOperatorFactory* createRationalSolverOperatorFactory(const XML::node);
 }
 
 

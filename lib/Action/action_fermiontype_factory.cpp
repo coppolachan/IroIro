@@ -14,15 +14,15 @@ namespace FermionAction {
       }
       if (!strcmp(Action_name, "TwoFlavors")) 
 	return new TwoFlavorActionFactory(node);
+      if (!strcmp(Action_name, "NfFlavors")) 
+	return new NfFlavorsActionFactory(node);
       if (!strcmp(Action_name, "TwoFlavorsRatio")) 
 	return new TwoFlavorRatioActionFactory(node);
 
-      //      if (!strcmp(Action_name, "TwoFlavorsDomainWall_4D")) 
-      //	return new TwoFlavorActionFactory(node);
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D")) 
 	return new TwoFlavorDomainWall5dActionFactory(node);
 
-      std::cerr << "No Fermion Action available with name ["
+      std::cerr << "No Fermionic Action available with name ["
 		<< Action_name << "]. Request by <" << node.name() << ">\n";
       abort();
       

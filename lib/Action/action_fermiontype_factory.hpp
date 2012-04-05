@@ -11,11 +11,13 @@
 
 #include "action_fermiontype_factory_abs.hpp"
 #include "Action/action_Nf2.hpp"
+#include "Action/action_Nf.hpp"
 #include "Action/action_Nf2_ratio.hpp"
 #include "Action/action_Nf2_DomainWall.hpp"
 #include "Solver/solver_CG.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
+
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -45,6 +47,38 @@ private:
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
     return new Action_Nf2(F, Kernel.get(), Solv.get());
   }
+};
+
+//////////////////////////////////////////////////////////////////
+
+class NfFlavorsActionFactory : public FermionActionFactory {
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracObj;
+  RaiiFactoryObj<RationalSolverOperatorFactory> SolverObj;
+
+  RaiiFactoryObj<DiracWilsonLike> Kernel;
+  RaiiFactoryObj<Fopr_DdagD> HermitianOp;
+  RaiiFactoryObj<RationalSolver> Solv;
+
+  const XML::node Action_node;
+  
+public:
+  NfFlavorsActionFactory(XML::node node):Action_node(node) {
+    XML::descend(node, "Kernel", MANDATORY);
+    DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));  
+    XML::next_sibling(node,"RationalSolver", MANDATORY);
+    SolverObj.save(SolverOperators::createRationalSolverOperatorFactory(node));
+  }
+
+  ~NfFlavorsActionFactory(){}
+private: 
+  Action_Nf* getFermionAction(GaugeField* const F) {
+    Kernel.save(DiracObj.get()->getDiracOperator(&(F->data)));
+    HermitianOp.save(new Fopr_DdagD(Kernel.get()));
+    Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
+    return new Action_Nf(F, Kernel.get(), Solv.get(), 
+			 Action_Nf_params(Action_node));
+  }
+
 };
 
 ////////////////////////////////////////////////////

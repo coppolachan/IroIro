@@ -4,14 +4,14 @@
   <!-- Geometry parameters here -->
   <Geometry>
     <Lattice>8 8 8 8</Lattice>
-    <Nodes>2 2 1 1</Nodes>
+    <Nodes>1 1 1 1</Nodes>
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
 
   <RationalApprox>
-    <Num_deg>12</Num_deg>
-    <Den_deg>12</Den_deg>
+    <Num_deg>10</Num_deg>
+    <Den_deg>10</Den_deg>
     <Exp_num>1</Exp_num>
     <Exp_den>2</Exp_den>
     <Precision>50</Precision>
