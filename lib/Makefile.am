@@ -48,6 +48,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_Nf2.cpp			\
 		Action/action_Nf.cpp			\
 		Action/action_Nf2_ratio.cpp		\
+		Action/action_Nf_ratio.cpp		\
 		Action/action_Nf2_DomainWall.cpp	\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
@@ -147,6 +148,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Action/action_Nf2.hpp				\
 			Action/action_Nf.hpp				\
 			Action/action_Nf2_ratio.hpp			\
+			Action/action_Nf_ratio.hpp			\
 			Action/action_Nf2_DomainWall.hpp		\
 			Measurements/GaugeM/staples.hpp			\
 			Measurements/FermionicM/source.hpp		\

@@ -36,7 +36,7 @@ void Action_Nf_ratio::observer_update(){
   D2_->update_internal_state();
 }
 //::::::::::::::::::::::::::::::::
-void Action_Nf::attach_smearing(SmartConf* SmearObj) {}
+void Action_Nf_ratio::attach_smearing(SmartConf* SmearObj) {}
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 void Action_Nf_ratio::init(const RandNum& rand){
@@ -72,7 +72,7 @@ void Action_Nf_ratio::init(const RandNum& rand){
 double Action_Nf_ratio::calc_H(){
   // Calculates action for the Metropolis step
   SolverOutput monitor;
-  double H_nf2 = 0.0;
+  double H_nf2r = 0.0;
   Field temp, zeta;
   temp.resize(fermion_size_);
   zeta.resize(fermion_size_);

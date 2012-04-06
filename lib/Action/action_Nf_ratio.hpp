@@ -18,7 +18,7 @@ enum {MetroStep, MDStep, PFStep};
 /*!
  * @brief Parameter container for Action_Nf class
  */
-struct Action_Nf_params {
+struct Action_Nf_ratio_params {
   int n_pseudof_;        /*!< @brief Number of pseudofermion fields */
   int n_flav_;           /*!< @brief Number of flavors */ 
   std::vector<int> degree_;   /*!< @brief Polynomial degree of approximation -
@@ -36,9 +36,9 @@ struct Action_Nf_params {
 			   3 integers for Metropolis, Molecular Dynamics
 			   and Pseudofermion steps, respectively */
   
-  Action_Nf_params(){};
+  Action_Nf_ratio_params(){};
 
-  Action_Nf_params(const XML::node node)
+  Action_Nf_ratio_params(const XML::node node)
     :degree_(3),precision_(3),b_low_(3),b_high_(3){
     
     XML::read(node, "Flavors", n_flav_, MANDATORY); 
@@ -63,9 +63,9 @@ private:
   GaugeField* const u_; /*!< @brief The gauge field */
   DiracWilsonLike* D1_; /*!< @brief The numerator kernel */
   DiracWilsonLike* D2_; /*!< @brief The denominator kernel */
-  const RationalSolver* slv1_;  
-  const RationalSolver* slv2_;
-  Action_Nf_params Params_;
+  RationalSolver* slv1_;  
+  RationalSolver* slv2_;
+  Action_Nf_ratio_params Params_;
   const size_t fermion_size_;
   std::vector<Field> phi_; /*!< @brief Vector of pseudofermion fields */
 
@@ -80,7 +80,6 @@ private:
   // Rational approximations denominator
   RationalApprox MetropolisApprox_Den_;  
   RationalApprox MolecularDynApprox_Den_;
-  RationalApprox PseudoFermionsApprox_Den_;
 
   Field DdagD1_inv(const Field& src);
   Field DdagD2_inv(const Field& src);
@@ -92,7 +91,7 @@ public:
 		  DiracWilsonLike* const D2,
 		  RationalSolver* Solv1,
 		  RationalSolver* Solv2,
-		  Action_Nf_params Par,
+		  Action_Nf_ratio_params Par,
 		  bool smeared = false,
 		  SmartConf* smart_conf = NULL)
     :u_(GField),
