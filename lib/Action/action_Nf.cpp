@@ -57,6 +57,7 @@ double Action_Nf::calc_H(){
   SolverOutput monitor;
   double H_nf2 = 0.0;
   Field temp;
+  temp.resize(fermion_size_);
   slv_->set_Approx(MetropolisApprox_);
   for(int i=0; i<Params_.n_pseudof_; ++i){
     monitor = slv_->solve_inv(temp, phi_[i]); // (M^dag M)^(-Nf/2n) <phi_>

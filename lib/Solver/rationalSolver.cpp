@@ -18,7 +18,13 @@ SolverOutput RationalSolver::solve(Field& sol, const Field& source) const {
   prop_t shifted_sol;
   shifted_sol.resize(Residuals.size());
 
-    SolverOutput out = MS_Solver_->solve(shifted_sol, source, Poles, out.diff, out.Iterations);
+  for (int i=0; i< shifted_sol.size(); ++i) {
+    shifted_sol[i].resize(source.size());
+  }
+  temp.resize(source.size());
+  
+  
+  SolverOutput out = MS_Solver_->solve(shifted_sol, source, Poles, out.diff, out.Iterations);
 
   // Reconstruct solution (M^dag M)^(a/b)
   sol = source;
@@ -41,6 +47,12 @@ SolverOutput RationalSolver::solve_inv(Field& sol, const Field& source) const {
   Field temp;
   prop_t shifted_sol;
   shifted_sol.resize(InvResiduals.size());
+
+  for (int i=0; i< shifted_sol.size(); ++i) {
+    shifted_sol[i].resize(source.size());
+  }
+  temp.resize(source.size());
+
 
   SolverOutput out = MS_Solver_->solve(shifted_sol, source, InvPoles, out.diff, out.Iterations);
 
@@ -65,7 +77,13 @@ SolverOutput RationalSolver::solve_noReconstruct(std::vector<Field>& shifted_sol
   }
   Field temp;
   shifted_sol.resize(InvResiduals.size());
-  
+ 
+  for (int i=0; i< shifted_sol.size(); ++i) {
+    shifted_sol[i].resize(source.size());
+  }
+  temp.resize(source.size());
+
+ 
   SolverOutput out = MS_Solver_->solve(shifted_sol, source, InvPoles, out.diff, out.Iterations);
 
   for (int i = 0; i < InvPoles.size(); ++i)

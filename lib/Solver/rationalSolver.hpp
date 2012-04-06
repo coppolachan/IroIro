@@ -54,7 +54,6 @@ public:
 
   void set_Approx(RationalApprox& RA) {
     Residuals = RA.Residuals();
-    std::cout << "residual size "<< Residuals.size() << "\n";
     Poles     = RA.Poles();
     ConstTerm = RA.Const();
     InvResiduals = RA.InvResiduals();
