@@ -69,6 +69,9 @@ SolverOutput RationalSolver::solve_inv(Field& sol, const Field& source) const {
   return out;
 }
 
+
+// Needed in force calculation
+// It solves the inverse equation
 SolverOutput RationalSolver::solve_noReconstruct(std::vector<Field>& shifted_sol, 
 						 const Field& source) const {
   if (InvResiduals.size() == 0) {
@@ -91,3 +94,31 @@ SolverOutput RationalSolver::solve_noReconstruct(std::vector<Field>& shifted_sol
 
   return out;
 }
+
+
+// Needed in force calculation
+// It solves the direct equation (nevertheless the name says "inv" because in the action 
+// such a term is associated to the inverse operator
+SolverOutput RationalSolver::solve_noReconstruct_inv(std::vector<Field>& shifted_sol, 
+						 const Field& source) const {
+  if (Residuals.size() == 0) {
+    CCIO::cout << "[RationalSolver] Inverse Rational Approximation not initialized yet\n";
+    abort();
+  }
+  Field temp;
+  shifted_sol.resize(Residuals.size());
+ 
+  for (int i=0; i< shifted_sol.size(); ++i) {
+    shifted_sol[i].resize(source.size());
+  }
+  temp.resize(source.size());
+
+ 
+  SolverOutput out = MS_Solver_->solve(shifted_sol, source, Poles, out.diff, out.Iterations);
+
+  for (int i = 0; i < Poles.size(); ++i)
+    shifted_sol[i] *= sqrt(Residuals[i]);
+
+  return out;
+}
+

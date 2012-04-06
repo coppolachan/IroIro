@@ -66,6 +66,9 @@ public:
 
   // For force calculations
   SolverOutput solve_noReconstruct(std::vector<Field>&, const Field&) const;
+  SolverOutput solve_noReconstruct_inv(std::vector<Field>&, const Field&) const;
+
+
   bool check_DdagD() const {return true;}
 
 

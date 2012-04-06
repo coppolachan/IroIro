@@ -1,12 +1,9 @@
-/*! 
- * @file action_Nf.hpp
- *
- * @brief Declaration of Action_Nf class
- *
- * Any number of flavours
+/*!
+ * @file action_Nf_ratio.hpp
+ * @brief Declaration of Action_Nf_ratio class
  */
-#ifndef ACTION_NF_INCLUDED
-#define ACTION_NF_INCLUDED
+#ifndef ACTION_NF_RATIO_INCLUDED
+#define ACTION_NF_RATIO_INCLUDED
 
 #include <vector>
 
@@ -55,46 +52,59 @@ struct Action_Nf_params {
 };
 
 
+
+
 /*!
- * @class Action_Nf
- * @brief Class to calculate N-Flavors RHMC action term
+ * @class Action_Nf_ratio
+ * @brief Class to calculate HMC action term \f$det(D1)/det(D2)\f$
  */
-class Action_Nf :public Action{
+class Action_Nf_ratio : public Action{
 private:
-  GaugeField* const u_;      /*!< The gauge field */
-  DiracWilsonLike* const D_; /*!< Dirac Kernel operator */ 
-  RationalSolver* slv_;        /*!< RationalSolver operator */
+  GaugeField* const u_; /*!< @brief The gauge field */
+  DiracWilsonLike* D1_; /*!< @brief The numerator kernel */
+  DiracWilsonLike* D2_; /*!< @brief The denominator kernel */
+  const RationalSolver* slv1_;  
+  const RationalSolver* slv2_;
   Action_Nf_params Params_;
-  int fermion_size_;
-  std::vector<Field> phi_;
+  const size_t fermion_size_;
+  std::vector<Field> phi_; /*!< @brief Vector of pseudofermion fields */
+
   bool smeared_;
-  SmartConf* SmartField_;
-  
-  // Rational approximations
+  SmartConf* smart_conf_;
+
+  // Rational approximations numerator
   RationalApprox MetropolisApprox_;  
   RationalApprox MolecularDynApprox_;
   RationalApprox PseudoFermionsApprox_;
-  
- 
+
+  // Rational approximations denominator
+  RationalApprox MetropolisApprox_Den_;  
+  RationalApprox MolecularDynApprox_Den_;
+  RationalApprox PseudoFermionsApprox_Den_;
+
+  Field DdagD1_inv(const Field& src);
+  Field DdagD2_inv(const Field& src);
+
   void attach_smearing(SmartConf*);
 public:
-  /*!
-   * @brief Standard constructor 
-   * CG solver is assumed
-   */
-  Action_Nf(GaugeField* const GField,
-	    DiracWilsonLike* const D, 
-	    RationalSolver* Solv,
-	    Action_Nf_params Par,
-	    bool smeared = false,
-	    SmartConf* SmearObj = NULL)
+  Action_Nf_ratio(GaugeField* const GField, 
+		  DiracWilsonLike* const D1,
+		  DiracWilsonLike* const D2,
+		  RationalSolver* Solv1,
+		  RationalSolver* Solv2,
+		  Action_Nf_params Par,
+		  bool smeared = false,
+		  SmartConf* smart_conf = NULL)
     :u_(GField),
-     D_(D),
-     slv_(Solv),
+     D1_(D1), 
+     D2_(D2),
+     slv1_(Solv1), 
+     slv2_(Solv2),
      Params_(Par),
      smeared_(smeared),
-     fermion_size_(D->fsize()),
+     fermion_size_(D1->fsize()),
      phi_(Params_.n_pseudof_),
+     smart_conf_(smart_conf),
      MetropolisApprox_(RationalApprox_params(Params_.degree_[MetroStep],
 					     Params_.degree_[MetroStep],
 					     Params_.n_flav_,
@@ -102,6 +112,13 @@ public:
 					     Params_.precision_[MetroStep],
 					     Params_.b_low_[MetroStep],
 					     Params_.b_high_[MetroStep])),
+     MetropolisApprox_Den_(RationalApprox_params(Params_.degree_[MetroStep],
+						 Params_.degree_[MetroStep],
+						 Params_.n_flav_,
+						 4*Params_.n_pseudof_,
+						 Params_.precision_[MetroStep],
+						 Params_.b_low_[MetroStep],
+						 Params_.b_high_[MetroStep])),
      MolecularDynApprox_(RationalApprox_params(Params_.degree_[MDStep],
 					       Params_.degree_[MDStep],
 					       Params_.n_flav_,
@@ -109,6 +126,13 @@ public:
 					       Params_.precision_[MDStep],
 					       Params_.b_low_[MDStep],
 					       Params_.b_high_[MDStep])),
+     MolecularDynApprox_Den_(RationalApprox_params(Params_.degree_[MDStep],
+						   Params_.degree_[MDStep],
+						   Params_.n_flav_,
+						   4*Params_.n_pseudof_,
+						   Params_.precision_[MDStep],
+						   Params_.b_low_[MDStep],
+						   Params_.b_high_[MDStep])),
      PseudoFermionsApprox_(RationalApprox_params(Params_.degree_[PFStep],
 						 Params_.degree_[PFStep],
 						 Params_.n_flav_,
@@ -116,23 +140,27 @@ public:
 						 Params_.precision_[PFStep],
 						 Params_.b_low_[PFStep],
 						 Params_.b_high_[PFStep]))
-  {
+{
     for(int i=0; i<Params_.n_pseudof_; ++i)
       phi_[i].resize(fermion_size_); //takes care of EvenOdd and 5D cases
-    if (smeared_ && SmearObj !=NULL) attach_smearing(SmearObj);
-    
+
+
+    //Temporary
+    if(smart_conf_!= NULL) 
+      assert(u_== smart_conf_->get_current_conf());
+
     //It is assumed that the rational approximation is always
     //applied to (M^dag M)
     //See the factor 2 in the denominators
   }
-
-  ~Action_Nf(){}
-
-  void init(const RandNum& rand);
+  
+  ~Action_Nf_ratio(){}
+  
+  void init(const RandNum& rand);  
   void observer_update();
 
   double calc_H();
   GaugeField md_force();
-
 };
+
 #endif
