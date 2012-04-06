@@ -65,8 +65,8 @@ private:
   GaugeField* const u_;      /*!< The gauge field */
   DiracWilsonLike* const D_; /*!< Dirac Kernel operator */ 
   RationalSolver* slv_;        /*!< RationalSolver operator */
-  std::vector<Field> phi_;
   Action_Nf_params Params_;
+  std::vector<Field> phi_;
   int fermion_size_;
   bool smeared_;
   SmartConf* SmartField_;
