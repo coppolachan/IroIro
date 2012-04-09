@@ -13,6 +13,9 @@
 
 namespace Mapping{
 
+  struct EvenOdd_tag{};
+  struct OddEven_tag{};
+
   struct Forward{};
   struct Backward{};
 
@@ -26,11 +29,29 @@ namespace Mapping{
     AutoMap(){}//default constructor
 
   public:
-    AutoMap(int dir):bdry_t_(SiteMap::shiftSite.bdry_map(dir,Top)),
-		     bulk_t_(SiteMap::shiftSite.bulk_map(dir,Top)),
-		     bdry_b_(SiteMap::shiftSite.bdry_map(dir,Btm)),
-		     bulk_b_(SiteMap::shiftSite.bulk_map(dir,Btm)),
-		     dir_(dir){}
+    // using the reguler site indexing 
+    AutoMap(int dir)
+      :bdry_t_(SiteMap::shiftSite.bdry_map(dir,Top)),
+       bulk_t_(SiteMap::shiftSite.bulk_map(dir,Top)),
+       bdry_b_(SiteMap::shiftSite.bdry_map(dir,Btm)),
+       bulk_b_(SiteMap::shiftSite.bulk_map(dir,Btm)),
+       dir_(dir){}
+
+    // using the e/o site indexing (e<-o)
+    AutoMap(int dir,EvenOdd_tag)
+      :bdry_t_(SiteMap::shiftSite_eo.bdry_map(dir,Top)),
+       bulk_t_(SiteMap::shiftSite_eo.bulk_map(dir,Top)),
+       bdry_b_(SiteMap::shiftSite_eo.bdry_map(dir,Btm)),
+       bulk_b_(SiteMap::shiftSite_eo.bulk_map(dir,Btm)),
+       dir_(dir){}
+
+    // using the e/o site indexing (o<-e)
+    AutoMap(int dir,OddEven_tag)
+      :bdry_t_(SiteMap::shiftSite_oe.bdry_map(dir,Top)),
+       bulk_t_(SiteMap::shiftSite_oe.bulk_map(dir,Top)),
+       bdry_b_(SiteMap::shiftSite_oe.bdry_map(dir,Btm)),
+       bulk_b_(SiteMap::shiftSite_oe.bulk_map(dir,Btm)),
+       dir_(dir){}
     
     template<class DATA,class FORMAT,class TAG>
     GeneralField<DATA,FORMAT,TAG> 
@@ -70,9 +91,33 @@ namespace Mapping{
     void init_maps();
   };
 
+  class ShiftField_eo{
+    std::vector<AutoMap> maps_;
+  public:
+    template<typename DATA,typename FORMAT,typename TAG,typename FB>
+    GeneralField<DATA,FORMAT,TAG>
+    operator()(const GeneralField<DATA,FORMAT,TAG>& F,int dir, FB fb)const{
+      return maps_[dir](F,fb);}
+    void init_maps();
+  };
+
+  class ShiftField_oe{
+    std::vector<AutoMap> maps_;
+  public:
+    template<typename DATA,typename FORMAT,typename TAG,typename FB>
+    GeneralField<DATA,FORMAT,TAG>
+    operator()(const GeneralField<DATA,FORMAT,TAG>& F,int dir, FB fb)const{
+      return maps_[dir](F,fb);}
+    void init_maps();
+  };
+
   // declaration of a global object
   extern ShiftField shiftField;
   void init_shiftField();
+  
+  extern ShiftField_eo shiftField_eo;
+  extern ShiftField_oe shiftField_oe;
+  void init_shiftField_EvenOdd();
 }
 
 #endif

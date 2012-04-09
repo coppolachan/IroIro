@@ -8,7 +8,7 @@
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 
-typedef complex<double> dcomplex;
+typedef std::complex<double> dcomplex;
 
 //====================================================================
 /*! @brief Returns top level configuration */

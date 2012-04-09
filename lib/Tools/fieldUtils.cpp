@@ -5,6 +5,8 @@
 #include "fieldUtils.hpp"
 #include "sunMatUtils.hpp"
 
+class RandNum;
+
 namespace FieldUtils{
   const GaugeField1D field_oprod(const FermionField& f1,
 				 const FermionField& f2){
@@ -26,28 +28,33 @@ namespace FieldUtils{
 
   const GaugeField TracelessAntihermite(const GaugeField& G){
     using namespace SUNmatUtils;
-    int Ndim = CommonPrms::instance()->Ndim();
-    int Nvol = CommonPrms::instance()->Nvol();
-
     GaugeField TAField;
-    for(int mu=0; mu< Ndim; ++mu){
-      for(int site=0; site<Nvol; ++site){
+    for(int mu=0; mu<G.Nex(); ++mu){
+      for(int site=0; site<G.Nvol(); ++site){
 	SetMat(TAField,anti_hermite_traceless(mat(G,site,mu)),site,mu);
       }
     }
     return TAField;
   }
 
+  const GaugeField1D TracelessAntihermite(const GaugeField1D& G){
+    using namespace SUNmatUtils;
+    GaugeField1D TAField;
+    for(int site=0; site<G.Nvol(); ++site)
+      SetMat(TAField,anti_hermite_traceless(mat(G,site)),site);
+    return TAField;
+  }
+
   GaugeField1D DirSlice(const GaugeField& F, int dir){
-    return GaugeField1D(Field(F.data[F.format.dir_slice(dir)]));
+    return GaugeField1D(Field(F.data[F.format.ex_slice(dir)]));
   }
 
   void SetSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
-    G.data.set(G.format.dir_slice(dir), Gslice.data.getva());
+    G.data.set(G.format.ex_slice(dir), Gslice.data.getva());
   }
 
   void AddSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
-    G.data.add(G.format.dir_slice(dir), Gslice.data.getva());
+    G.data.add(G.format.ex_slice(dir), Gslice.data.getva());
   }
 
   void SetMat(GaugeField& F, const SUNmat& mat, int site, int dir){

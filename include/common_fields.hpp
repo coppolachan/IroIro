@@ -41,21 +41,30 @@ public:
   explicit GeneralField(const DATA&);
 
   GeneralField& operator=(const GeneralField&);
+  GeneralField& operator=(const Field&);
+  GeneralField& operator=(const std::valarray<double>&);
   GeneralField& operator=(double);
 
   GeneralField& operator+=(const GeneralField&);
-  GeneralField& operator-=(const GeneralField&);
-  GeneralField& operator*=(double);
+  GeneralField& operator+=(const Field&);
+  GeneralField& operator+=(const std::valarray<double>&);
 
+  GeneralField& operator-=(const GeneralField&);
+  GeneralField& operator-=(const Field&);
+  GeneralField& operator-=(const std::valarray<double>&);
+
+  GeneralField& operator*=(double);
+  
   double norm();
   int size()const { return data.size(); }
   int Nin()const {return format.Nin();}
   int Nvol()const {return format.Nvol();}
   int Nex()const {return format.Nex();}
   const double operator[](int i)const {return data[i];}
-
+  
   std::valarray<size_t> get_sub(const std::vector<int>& map)const{
     return format.get_sub(map);}
+  const std::valarray<double> getva()const{return data.getva();}
 };
 
 // Constructor with no argument ///////////////////////
@@ -108,7 +117,10 @@ inline GeneralField<Field,Format::Format_G,HalfSiteTag>::
 GeneralField(const Field& Fin):format(CommonPrms::instance()->Nvol()/2),
 			       data(Fin){ assert(Fin.size()== format.size());}
 */
+
 // Specialization for one dimension gauge field
+/*! Since Nex is fixed to be 1 in this case, Nvol can be determined 
+  as Fin.size()/Format::Format_G::Nin(), then e/o-field is also possible */
 template <> 
 inline GeneralField<Field,Format::Format_G,OneDimTag>::
 GeneralField(const Field& Fin)
@@ -121,6 +133,22 @@ inline GeneralField<DATA,FORMAT,TAG>&
 GeneralField<DATA,FORMAT,TAG>::operator=(const GeneralField& rhs){
   assert(format.size() == rhs.format.size());
   data = rhs.data;
+  return *this;
+}
+
+template <class DATA,class FORMAT,typename TAG> 
+inline GeneralField<DATA,FORMAT,TAG>& 
+GeneralField<DATA,FORMAT,TAG>::operator=(const Field& rhs){
+  assert(format.size() == rhs.size());
+  data = rhs;
+  return *this;
+}
+
+template <class DATA,class FORMAT,typename TAG> 
+inline GeneralField<DATA,FORMAT,TAG>& 
+GeneralField<DATA,FORMAT,TAG>::operator=(const std::valarray<double>& rhs){
+  assert(format.size() == rhs.size());
+  data = rhs;
   return *this;
 }
 
@@ -139,11 +167,43 @@ GeneralField<DATA,FORMAT,TAG>::operator+=(const GeneralField& rhs){
   return *this;
 }
 
+template <class DATA,class FORMAT,typename TAG>
+inline GeneralField<DATA,FORMAT,TAG>&
+GeneralField<DATA,FORMAT,TAG>::operator+=(const Field& rhs){
+  assert(format.size() == rhs.size());
+  data += rhs;
+  return *this;
+}
+
+template <class DATA,class FORMAT,typename TAG>
+inline GeneralField<DATA,FORMAT,TAG>&
+GeneralField<DATA,FORMAT,TAG>::operator+=(const std::valarray<double>& rhs){
+  assert(format.size() == rhs.size());
+  data += rhs;
+  return *this;
+}
+
 template <class DATA,class FORMAT,typename TAG> 
 inline GeneralField<DATA,FORMAT,TAG>&
 GeneralField<DATA,FORMAT,TAG>::operator-=(const GeneralField& rhs){
   assert(format.size() == rhs.format.size());
   data -= rhs.data;
+  return *this;
+}
+
+template <class DATA,class FORMAT,typename TAG> 
+inline GeneralField<DATA,FORMAT,TAG>&
+GeneralField<DATA,FORMAT,TAG>::operator-=(const Field& rhs){
+  assert(format.size() == rhs.size());
+  data -= rhs;
+  return *this;
+}
+
+template <class DATA,class FORMAT,typename TAG> 
+inline GeneralField<DATA,FORMAT,TAG>&
+GeneralField<DATA,FORMAT,TAG>::operator-=(const std::valarray<double>& rhs){
+  assert(format.size() == rhs.size());
+  data -= rhs;
   return *this;
 }
 
@@ -180,13 +240,19 @@ public:
     return *this;
   }
 
+  /*! Initializes the gauge field with random number */
+  void initializeRand(const RandNum& rand){
+    GaugeConf_rand gconf(format,rand);
+    gconf.init_conf(data);
+  }
+
   /*! Initializes the gauge field with an \n
    * external configuration in file <Filename>
    *
    * Configuration type in XML: TextFile
    * @param Filename String containing the filename
    */
-  void initializeTxt(const std::string &Filename) {
+  void initializeTxt(const std::string &Filename){
     GaugeConf_txt gconf(format,Filename);
     gconf.init_conf(data);
   }
@@ -197,7 +263,7 @@ public:
    * Configuration type in XML: Binary
    * @param Filename String containing the filename
    */
-  void initializeBin(const std::string &Filename) {
+  void initializeBin(const std::string &Filename){
     GaugeConf_bin gconf(format,Filename);
     gconf.init_conf(data);
   }

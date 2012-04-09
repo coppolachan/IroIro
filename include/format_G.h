@@ -47,8 +47,8 @@ namespace Format{
     std::slice cslice(int in,int site,int dir=0) const { // "in" is dummy
       return std::slice(index(0,site,dir),Nin_,1);
     }
-    std::slice dir_slice(int dir) const {
-      return std::slice(index(0,0,dir),Nin_*Nvol_,1);
+    std::slice ex_slice(int ex) const {
+      return std::slice(index(0,0,ex),Nin_*Nvol_,1);
     }
     std::gslice dslice(int site, int c1, int c2) const {
       std::valarray<std::size_t> vsz_(2);

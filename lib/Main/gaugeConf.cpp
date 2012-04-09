@@ -8,7 +8,7 @@
 #include "Communicator/communicator.h"
 #include "Communicator/fields_io.hpp"
 #include "Communicator/comm_io.hpp"
-
+#include "Tools/sunMat.hpp"
 using namespace std;
 
 int GaugeConf::getid(int x,int y,int z,int t){
@@ -24,8 +24,6 @@ void GaugeConf_JLQCDLegacy::init_conf(Field& U){
 					 FORTRAN_CONTROL_WORDS, 
 					 CCIO::JLQCDLegacyFormat);
 }
-
-
 
 void GaugeConf_txt::init_conf(Field& u){
   
@@ -70,7 +68,7 @@ void GaugeConf_txt::init_conf(Field& u){
           for(int x = 0; x < Lx; ++x){
 	    
 	    int id = getid(x,y,z,t);
-            int site = idx_->site(x%Nx_,y%Ny_,z%Nz_,t%Nt_);
+            int site = SiteIndex::instance()->site(x%Nx_,y%Ny_,z%Nz_,t%Nt_);
             for(int dir = 0; dir < Ndim_; ++dir){
               for(int c1 = 0; c1 < Nc_; ++c1){
                 for(int c2 = 0; c2 < Nc_; ++c2){
@@ -101,7 +99,7 @@ void GaugeConf_unit::init_conf(Field& u){
       for(int y = 0; y < Ny_; ++y){
         for(int x = 0; x < Nx_; ++x){
 
-          int site = idx_->site(x,y,z,t);
+          int site = SiteIndex::instance()->site(x,y,z,t);
 
           for(int dir=0; dir<Ndim_; ++dir){
             for(int c=0; c<Nc_; ++c){
@@ -110,6 +108,21 @@ void GaugeConf_unit::init_conf(Field& u){
           }
         }
       }
+    }
+  }
+}
+
+void GaugeConf_rand::init_conf(Field& Gfield){
+  int Nvol= CommonPrms::instance()->Nvol();
+
+  std::valarray<double> va(Gfield.size());
+  MPrand::mp_get(va,rand_,SiteIndex::instance()->get_gsite(),fg_);
+
+  for(int dir=0; dir<fg_.Nex(); ++dir){
+    for(int site=0; site<fg_.Nvol(); ++site){
+      SUNmat U(va[fg_.islice(site,dir)]);
+      U.reunit();
+      Gfield.set(fg_.islice(site,dir),U.getva());
     }
   }
 }

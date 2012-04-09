@@ -50,6 +50,9 @@ namespace Format{
     std::slice cslice(int s,int site,int ex=0) const {
       return std::slice(index_r(0,s,site,ex), 2*NC_,1);
     }
+    std::slice ex_slice(int ex) const{
+      return std::slice(index(0,0,ex),Nin_*Nvol_,1);
+    }
     std::gslice sslice(int c,int site,int ex=0) const {
       std::valarray<size_t> vsz_(2);
       std::valarray<size_t> vstr_(2);

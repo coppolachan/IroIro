@@ -49,7 +49,7 @@ public:
   SUNmatrix& xI();
   SUNmatrix& reunit();
 
-  int size() const {return 2*COLORS*COLORS;}
+  static int size(){return 2*COLORS*COLORS;}
 
   double r(int c) const {return va_[2*c  ];}
   double i(int c) const {return va_[2*c+1];}

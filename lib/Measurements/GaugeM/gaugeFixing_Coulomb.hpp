@@ -1,99 +1,69 @@
-/*!
-        @file    $Id:: gaugeFixing_Coulomb.h #$
-
-        @brief
-
-        @author  <Hideo Matsufuru> hideo.matsufuru@kek.jp(matsufuru) 
-                 $LastChangedBy: matufuru $
-
-        @date    $LastChangedDate:: 2012-03-15 17:01:15 #$
-
-        @version $LastChangedRevision: 137 $
+/*! @file gaugeFixing_Coulomb.hpp
+    @brief definition of GaugeFixing_Coulomb
+    original version is written by H. Matsufuru
 */
-
 #ifndef GAUGEFIXING_COULOMB_INCLUDED
 #define GAUGEFIXING_COULOMB_INCLUDED
 
-#include <valarray>
-
-#include "index_eo.h"
-#include "field_G.h"
-
-class RandomNumbers;
-
-//! Coulomb gauge fixing.
+#include "gaugeFixing.hpp"
+#include "gaugeFixingStep.hpp"
+#include "include/pugi_interface.h"
+#include "include/commonPrms.h"
+#include "Main/Geometry/mapping.hpp"
 /*
   This class fix the gauge of configuration to the Coulomb gauge.
-  The implementation assumes that the dimension is 4 and the
-  Coulomb gauge fixing is performed within each time slice.
-  The algorithm is that developed by the Los Alamos group [see the
-  implementation note].
   Overrelaxation is incorporated.
-  To escape the Gribov copy, if convergence is not reached on some
-  timeslices within the iterations specified by Nreset, random
-  gauge transformation is performed to reset the configuration on
-  that timeslice.
+  To escape the Gribov copy, if convergence is not reached within
+  the iterations specified by Nreset, random gauge transformation
+  is performed to reset the configuration.
   This is the reason that random number generator is needed at the
   construction of this class.
-
-  The implementation is not complete:
-  - only applies to SU(3) case: because of specific implementation
-      of maxTr function (Cabibbo-Marinari maximization).
-  - unnecessary arithmetic operations exist for the timeslices
-    on which the gauge is already fixed to good precision.
-  These should be improved in the version beyond test phase.
-                                        [16 Feb 2012 H.Matsufuru]
  */
-class GaugeFixing_Coulomb{
+class RandNum;
 
+class GaugeFixing_Coulomb: public GaugeFixing{
  private:
-  int    d_Niter;   // max iteration number
-  int    d_Nnaive;  // number of naive iterations
-  int    d_Nmeas;   // interval of measurements
-  int    d_Nreset;  // Number of iteration to reset the config.
-  double d_Enorm;   // convergence criterion
-  double d_wp;      // overrelaxation parameter
-  RandomNumbers* d_rnd;
-  Index_eo d_index;
+  int    max_iter_; // max iteration number
+  int    Niter_;    // number of naive iterations
+  int    Nmeas_;    // interval of measurements
+  int    Nreset_;   // Number of iteration to reset the config.
+  double prec_;     // convergence criterion
+  double wp_;       // overrelaxation parameter
+  int Nvh_;
+
+  const RandNum& rnd_;
+  const GaugeFixingStep* gstep_;
+
+  const std::vector<double> calc_F(const GaugeField& Ue,
+				   const GaugeField& Uo)const;
+  const std::vector<double> calc_SG(const GaugeField& Ue,
+				    const GaugeField& Uo)const;
+  void random_gtr(GaugeField& Ue,GaugeField& Uo)const;
 
  public:
-  GaugeFixing_Coulomb(RandomNumbers* rnd){
-    d_rnd = rnd;
-    d_Niter = 0;
-    //set_prms();
-  };
+  GaugeFixing_Coulomb(const RandNum& rnd,XML::node GFnode)
+    :rnd_(rnd),gstep_(new GaugeFixingStep(Coulomb)){
+    XML::read(GFnode,"max_iteration",max_iter_);
+    XML::read(GFnode,"naive_iteration",Niter_);
+    XML::read(GFnode,"reset_iteration",Nreset_);
+    XML::read(GFnode,"precision",prec_);
+    XML::read(GFnode,"overrelax_param",wp_);
+    //
+    Mapping::init_shiftField_EvenOdd();
+  }
 
-  ~GaugeFixing_Coulomb(){
-  };
+  GaugeFixing_Coulomb(const RandNum& rnd,int Niter,int Nnaive,int Nmeas,
+		     int Nreset,double prec,double wp)
+    :rnd_(rnd),gstep_(new GaugeFixingStep(Coulomb)),
+     Niter_(Niter),Nmeas_(Nmeas),Nreset_(Nreset),prec_(prec),wp_(wp),
+     Nvh_(CommonPrms::instance()->Nvol()/2){
+    //
+    Mapping::init_shiftField_EvenOdd();
+  }
 
-  void set_prms(int Niter, int Nnaive, int Nmeas,
-                int Nreset, double Enorm, double wp);
+  ~GaugeFixing_Coulomb(){delete gstep_;}
 
-  void set_prms();
-
-  void fix(Field_G& Ufix, const Field_G& Uorg);
-
-  void gauge_trf(Field_G& Ue, Field_G& Uo, Field_G& Geo, int Ieo);
-
-  void set_randomGtrf(std::valarray<double>& sg, Field_G& Geo);
-
-  //! one step of gauge fixing with overrelaxation parameter wp.
-  void gfix_step(std::valarray<double>& sg,
-                 Field_G& Ue, Field_G& Uo, double wp);
-
-  void calc_SG(std::valarray<double>& sg, std::valarray<double>& Fval,
-               Field_G& Ue, Field_G& Uo);
-  void calc_W(Field_G& Weo, Field_G& Ue, Field_G& Uo, int Ieo);
-  void calc_DLT(Field_G& Weo, Field_G& Ue, Field_G& Uo, int Ieo);
-
-  void maxTr(Field_G&, Field_G&);
-  void maxTr1(Field_G&, Field_G&);
-  void maxTr2(Field_G&, Field_G&);
-  void maxTr3(Field_G&, Field_G&);
-
-  void sum_global_t(std::valarray<double>& val_global,
-                    std::valarray<double>& val_local);
-
+  const GaugeField fix(const GaugeField& Uin)const;
 };
 
 #endif  

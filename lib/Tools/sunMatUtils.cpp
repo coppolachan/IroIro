@@ -1,15 +1,12 @@
 //---------------------------------------------------------------------
 /*! @file sunMatUtils.cpp
-  @brief \f$SU(N)\f$ Matrices linear algebra Utilities
-
-  Class definitions
+   @brief \f$SU(N)\f$ Matrices linear algebra Utilities
 */ 
 //---------------------------------------------------------------------
-
 #include "sunMatUtils.hpp"
+#include "Tools/randNum_MP.h"
 
 using namespace std;
-
 
 namespace SUNmatUtils{
   SUNmat unity(){
@@ -130,11 +127,10 @@ namespace SUNmatUtils{
 
   }
 
-/*! @brief Calculates the outer product of two vectors
-  \f[(A^\dagger \circ B)_{ab} = A^*_a B_b \f]
- */
+  /*! @brief Calculates the outer product of two vectors
+    \f[(A^\dagger \circ B)_{ab} = A^*_a B_b \f]  
+  */
   const SUNmat outer_prod(const SUNvec& v,const SUNvec& w){
-    
     SUNmat f;
     for(int a=0; a<NC_; ++a){
       for(int b=0; b<NC_; ++b){
@@ -145,7 +141,15 @@ namespace SUNmatUtils{
     }
     return f;
   }
+  /*
+  // Creates SUNmat from gausian random number 
+  const SUNmat random_mat(const RandNum& rand){
+    std::valarray<double> rn(SUNmat::size());
+    MPrand::mp_get_gauss(rn,rand);
 
+    return SUNmat(rn).reunit();
+  }
+  */
 
   // BLAS style optimization specific functions
   // not working, just containers now

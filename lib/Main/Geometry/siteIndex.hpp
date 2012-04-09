@@ -70,6 +70,11 @@ public:
   int g_z(int gsite) const{ return (gsite/LxLy_)%Lz_;}
   int g_t(int gsite) const{ return gsite/LxLyLz_;}
 
+  int global_x(int x);
+  int global_y(int y);
+  int global_z(int z);
+  int global_t(int t);
+
   // indices with a step forward/backward (for bulk sites)
   int p_x(int site) const{ return site+1;}
   int p_y(int site) const{ return site+Nx_;}

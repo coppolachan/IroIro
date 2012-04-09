@@ -5,14 +5,13 @@
   Class declarations
 */ 
 //---------------------------------------------------------------------
-
 #ifndef SUNMAT_UTILS_H_
 #define SUNMAT_UTILS_H_
 
 #include "sunMat.hpp"
 #include "include/common_fields.hpp"
 
-using namespace std;
+class RandNum;
 
 namespace SUNmatUtils{
   SUNmat unity();
@@ -25,10 +24,11 @@ namespace SUNmatUtils{
   const SUNmat operator-(const SUNmat&, const SUNmat&);
   const SUNmat operator*(const SUNmat&, const SUNmat&);
   const SUNmat reunit(const SUNmat&);
-  const valarray<double> trace_less(const SUNmat&);
+  const std::valarray<double> trace_less(const SUNmat&);
   const SUNmat anti_hermite_traceless(const SUNmat&);
   const SUNmat anti_hermite(const SUNmat&);
   const SUNmat outer_prod(const SUNvec& v,const SUNvec& w);
+  const SUNmat random_mat(const RandNum& rand);
 
   //BLAS style multiplications for optimization purposes
   // Matrix-matrix

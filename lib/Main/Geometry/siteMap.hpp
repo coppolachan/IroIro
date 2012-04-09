@@ -30,8 +30,9 @@ namespace SiteMap{
     int xslice(int x,int n,int dir)const{
       return (SiteIndex::instance()->*sl[dir])(x,n);}
 
-    std::vector<int> bdry_map(int dir,TopBtm tb)const;
-    std::vector<int> bulk_map(int dir,TopBtm tb)const;
+    const std::vector<int> xslice_map(int x,int dir)const;
+    const std::vector<int> bdry_map(int dir,TopBtm tb)const;
+    const std::vector<int> bulk_map(int dir,TopBtm tb)const;
   };
   
   class IndexOp_eo{
@@ -58,8 +59,9 @@ namespace SiteMap{
     int xslice(int x,int n,int dir)const {
       return (SiteIndex_EvenOdd::instance()->*sl[dir])(x,n);}
 
-    std::vector<int> bdry_map(int dir,TopBtm tb)const;
-    std::vector<int> bulk_map(int dir,TopBtm tb)const;
+    const std::vector<int> xslice_map(int x,int dir)const;
+    const std::vector<int> bdry_map(int dir,TopBtm tb)const;
+    const std::vector<int> bulk_map(int dir,TopBtm tb)const;
   };
 
   class IndexOp_oe{
@@ -86,8 +88,9 @@ namespace SiteMap{
     int xslice(int x,int n,int dir)const {
       return (SiteIndex_EvenOdd::instance()->*sl[dir])(x,n);}
 
-    std::vector<int> bdry_map(int dir,TopBtm tb)const;
-    std::vector<int> bulk_map(int dir,TopBtm tb)const;
+    const std::vector<int> xslice_map(int x,int dir)const;
+    const std::vector<int> bdry_map(int dir,TopBtm tb)const;
+    const std::vector<int> bulk_map(int dir,TopBtm tb)const;
   };
 
   // declaration of global objects

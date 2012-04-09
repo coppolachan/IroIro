@@ -19,7 +19,7 @@ double Staples::plaquette(const GaugeField& F)const {
 double Staples::plaq_s(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaq_s called\n");
   double plaq = 0.0;
-  GaugeField1D stpl;
+  GaugeField1D stpl(Nvol_);
 
   for(int i=0;i<NDIM_-1;++i){
     int j = (i+1)%(NDIM_-1);
@@ -34,7 +34,7 @@ double Staples::plaq_s(const GaugeField& F)const {
 double Staples::plaq_t(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaq_t called\n");
   double plaq = 0.0;
-  GaugeField1D stpl;
+  GaugeField1D stpl(Nvol_);
 
   for(int nu=0; nu < NDIM_-1; ++nu){
     stpl = lower(F,3,nu);

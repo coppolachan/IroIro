@@ -13,8 +13,29 @@ namespace Mapping{
     }
   }
 
+  void ShiftField_eo::init_maps(){
+    if(maps_.size()==0){
+      for(int dir=0; dir<NDIM_; ++dir)	
+	maps_.push_back(AutoMap(dir,EvenOdd_tag()));
+    }
+  }
+
+  void ShiftField_oe::init_maps(){
+    if(maps_.size()==0){
+      for(int dir=0; dir<NDIM_; ++dir)	
+	maps_.push_back(AutoMap(dir,OddEven_tag()));
+    }
+  }
+
   // global instance
   ShiftField shiftField;
   void init_shiftField(){ shiftField.init_maps();}
+
+  ShiftField_eo shiftField_eo;
+  ShiftField_oe shiftField_oe;
+  void init_shiftField_EvenOdd(){ 
+    shiftField_eo.init_maps();
+    shiftField_oe.init_maps();
+  }
 }
 
