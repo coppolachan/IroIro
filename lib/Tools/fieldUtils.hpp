@@ -7,9 +7,15 @@
 #include "include/common_fields.hpp"
 #include "Main/Geometry/siteIndex_EvenOdd.hpp"
 
+class RandNum;
+
 namespace FieldUtils{
   const GaugeField TracelessAntihermite(const GaugeField&);
+  const GaugeField1D TracelessAntihermite(const GaugeField1D&);
   const GaugeField1D field_oprod(const FermionField&,const FermionField&);
+
+  void RandomGauge(GaugeField1D& G,const RandNum& rand);
+  void RandomGauge(GaugeField& G,const RandNum& rand);
 
   // Field type-type transformations
   GaugeField1D DirSlice(const GaugeField& F, int dir);
@@ -58,8 +64,8 @@ namespace FieldUtils{
   template<typename GF>
   GF combine_eo(const GF& Fe,const GF& Fo){
     GF Fout(Fe.Nvol()+Fo.Nvol());
-    Fout.data.set(Fout.get_sub(SiteIndex_EvenOdd::instance()->esec),Fe.data);
-    Fout.data.set(Fout.get_sub(SiteIndex_EvenOdd::instance()->osec),Fo.data);
+    Fout.data.set(Fout.get_sub(SiteIndex_EvenOdd::instance()->esec()),Fe.getva());
+    Fout.data.set(Fout.get_sub(SiteIndex_EvenOdd::instance()->osec()),Fo.getva());
     return Fout;
   }
 }

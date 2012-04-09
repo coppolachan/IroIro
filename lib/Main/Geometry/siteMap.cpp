@@ -28,15 +28,19 @@ namespace SiteMap{
     &SiteIndex::slice_x, &SiteIndex::slice_y, 
     &SiteIndex::slice_z, &SiteIndex::slice_t,};
 
-  std::vector<int> IndexOp::bdry_map(int dir,TopBtm tb)const{
-    std::vector<int> bdry;
-    int bd = (tb==Top)? SiteIndex::instance()->Bdir(dir): 0;
-    for(int n=0; n<slice_size(bd,dir);++n) 
-      bdry.push_back(xslice(bd,n,dir));
-    return bdry;
+  const std::vector<int> IndexOp::xslice_map(int x,int dir)const{
+    std::vector<int> map;
+    for(int n=0; n<slice_size(x,dir);++n) 
+      map.push_back(xslice(x,n,dir));
+    return map;
   }
 
-  std::vector<int> IndexOp::bulk_map(int dir,TopBtm tb)const{
+  const std::vector<int> IndexOp::bdry_map(int dir,TopBtm tb)const{
+    int bd = (tb==Top)? SiteIndex::instance()->Bdir(dir): 0;
+    return xslice_map(bd,dir);
+  }
+
+  const std::vector<int> IndexOp::bulk_map(int dir,TopBtm tb)const{
     int ini = 0;
     int fin = SiteIndex::instance()->Bdir(dir);
     if(tb==Btm){
@@ -71,16 +75,20 @@ namespace SiteMap{
   const IndexOp_oe::SliceOp IndexOp_oe::sl[] ={
     &SiteIndex_EvenOdd::slice_xo,&SiteIndex_EvenOdd::slice_y, 
     &SiteIndex_EvenOdd::slice_z, &SiteIndex_EvenOdd::slice_t,};
-  
-  std::vector<int> IndexOp_oe::bdry_map(int dir,TopBtm tb)const{
-    std::vector<int> bdry;
-    int bd = (tb==Top) ? SiteIndex_EvenOdd::instance()->Bdir(dir): 0;
-    for(int n=0; n<slice_size(bd,dir);++n) 
-      bdry.push_back(xslice(bd,n,dir));
-    return bdry;
+
+  const std::vector<int> IndexOp_oe::xslice_map(int x,int dir)const{
+    std::vector<int> map;
+    for(int n=0; n<slice_size(x,dir);++n) 
+      map.push_back(xslice(x,n,dir));
+    return map;
   }
 
-  std::vector<int> IndexOp_oe::bulk_map(int dir,TopBtm tb)const{
+  const std::vector<int> IndexOp_oe::bdry_map(int dir,TopBtm tb)const{
+    int bd = (tb==Top)? SiteIndex_EvenOdd::instance()->Bdir(dir): 0;
+    return xslice_map(bd,dir);
+  }
+
+  const std::vector<int> IndexOp_oe::bulk_map(int dir,TopBtm tb)const{
     int ini = 0;
     int fin = SiteIndex_EvenOdd::instance()->Bdir(dir);
     if(tb==Btm){
@@ -116,15 +124,19 @@ namespace SiteMap{
     &SiteIndex_EvenOdd::slice_xe,&SiteIndex_EvenOdd::slice_y, 
     &SiteIndex_EvenOdd::slice_z, &SiteIndex_EvenOdd::slice_t,};
 
-  std::vector<int> IndexOp_eo::bdry_map(int dir,TopBtm tb)const{
-    std::vector<int> bdry;
-    int bd = (tb==Top)? SiteIndex_EvenOdd::instance()->Bdir(dir): 0;
-    for(int n=0; n<slice_size(bd,dir);++n) 
-      bdry.push_back(xslice(bd,n,dir));
-    return bdry;
+  const std::vector<int> IndexOp_eo::xslice_map(int x,int dir)const{
+    std::vector<int> map;
+    for(int n=0; n<slice_size(x,dir);++n) 
+      map.push_back(xslice(x,n,dir));
+    return map;
   }
 
-  std::vector<int> IndexOp_eo::bulk_map(int dir,TopBtm tb)const{
+  const std::vector<int> IndexOp_eo::bdry_map(int dir,TopBtm tb)const{
+    int bd = (tb==Top)? SiteIndex_EvenOdd::instance()->Bdir(dir): 0;
+    return xslice_map(bd,dir);
+  }
+
+  const std::vector<int> IndexOp_eo::bulk_map(int dir,TopBtm tb)const{
     int ini = 0;
     int fin = SiteIndex_EvenOdd::instance()->Bdir(dir);
     if(tb==Btm){

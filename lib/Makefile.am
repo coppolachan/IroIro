@@ -69,6 +69,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/fopr_chebyshev_DdagD.cpp	\
 		EigenModes/findminmax.cpp		\
 		Measurements/GaugeM/staples.cpp		\
+		Measurements/GaugeM/gaugeFixingStep.cpp			\
+		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
+		Measurements/GaugeM/gaugeFixing_Landau.cpp		\
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_mom.cpp 			\
@@ -151,6 +154,11 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Action/action_Nf_ratio.hpp			\
 			Action/action_Nf2_DomainWall.hpp		\
 			Measurements/GaugeM/staples.hpp			\
+			Measurements/GaugeM/gaugeFixing.hpp		\
+			Measurements/GaugeM/gaugeFixingStep.hpp		\
+			Measurements/GaugeM/gaugeFixing_Coulomb.hpp	\
+			Measurements/GaugeM/gaugeFixing_Landau.hpp	\
+			Measurements/GaugeM/gaugeFixing_Free.hpp	\
 			Measurements/FermionicM/source.hpp		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\

@@ -110,6 +110,9 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	EigenModes/eigenProc_Zolotarev.cpp EigenModes/sortEigen.cpp \
 	EigenModes/fopr_chebyshev_DdagD.cpp EigenModes/findminmax.cpp \
 	Measurements/GaugeM/staples.cpp \
+	Measurements/GaugeM/gaugeFixingStep.cpp \
+	Measurements/GaugeM/gaugeFixing_Coulomb.cpp \
+	Measurements/GaugeM/gaugeFixing_Landau.cpp \
 	Measurements/FermionicM/qprop_MultiShift.cpp \
 	Measurements/FermionicM/qprop.cpp \
 	Measurements/FermionicM/qprop_mom.cpp \
@@ -150,13 +153,14 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_Operator_Factory.$(OBJEXT) eigenModes_IRL.$(OBJEXT) \
 	eigenProc_Zolotarev.$(OBJEXT) sortEigen.$(OBJEXT) \
 	fopr_chebyshev_DdagD.$(OBJEXT) findminmax.$(OBJEXT) \
-	staples.$(OBJEXT) qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) \
-	qprop_mom.$(OBJEXT) qprop_EvenOdd.$(OBJEXT) \
-	qprop_DomainWall.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
-	quark_prop_meas_factory.$(OBJEXT) siteIndex.$(OBJEXT) \
-	siteIndex_EvenOdd.$(OBJEXT) mapping.$(OBJEXT) \
-	siteMap.$(OBJEXT) gaugeConf.$(OBJEXT) commandline.$(OBJEXT) \
-	hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
+	staples.$(OBJEXT) gaugeFixingStep.$(OBJEXT) \
+	gaugeFixing_Coulomb.$(OBJEXT) gaugeFixing_Landau.$(OBJEXT) \
+	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) qprop_mom.$(OBJEXT) \
+	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
+	utils_DWF4d.$(OBJEXT) quark_prop_meas_factory.$(OBJEXT) \
+	siteIndex.$(OBJEXT) siteIndex_EvenOdd.$(OBJEXT) \
+	mapping.$(OBJEXT) siteMap.$(OBJEXT) gaugeConf.$(OBJEXT) \
+	commandline.$(OBJEXT) hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
 	mdExec_leapfrog.$(OBJEXT) mdExec_factory.$(OBJEXT) \
 	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
 	solver_BiCGStab.$(OBJEXT) solver_CG.$(OBJEXT) \
@@ -391,6 +395,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/fopr_chebyshev_DdagD.cpp	\
 		EigenModes/findminmax.cpp		\
 		Measurements/GaugeM/staples.cpp		\
+		Measurements/GaugeM/gaugeFixingStep.cpp			\
+		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
+		Measurements/GaugeM/gaugeFixing_Landau.cpp		\
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_mom.cpp 			\
@@ -470,6 +477,11 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Action/action_Nf_ratio.hpp			\
 			Action/action_Nf2_DomainWall.hpp		\
 			Measurements/GaugeM/staples.hpp			\
+			Measurements/GaugeM/gaugeFixing.hpp		\
+			Measurements/GaugeM/gaugeFixingStep.hpp		\
+			Measurements/GaugeM/gaugeFixing_Coulomb.hpp	\
+			Measurements/GaugeM/gaugeFixing_Landau.hpp	\
+			Measurements/GaugeM/gaugeFixing_Free.hpp	\
 			Measurements/FermionicM/source.hpp		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\
@@ -694,6 +706,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fopr_signH_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gammaMatrices.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeConf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeFixingStep.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeFixing_Coulomb.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeFixing_Landau.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hmc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapping.Po@am__quote@
@@ -1239,6 +1254,54 @@ staples.obj: Measurements/GaugeM/staples.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/staples.cpp' object='staples.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o staples.obj `if test -f 'Measurements/GaugeM/staples.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/staples.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/staples.cpp'; fi`
+
+gaugeFixingStep.o: Measurements/GaugeM/gaugeFixingStep.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeFixingStep.o -MD -MP -MF $(DEPDIR)/gaugeFixingStep.Tpo -c -o gaugeFixingStep.o `test -f 'Measurements/GaugeM/gaugeFixingStep.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/gaugeFixingStep.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeFixingStep.Tpo $(DEPDIR)/gaugeFixingStep.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/gaugeFixingStep.cpp' object='gaugeFixingStep.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeFixingStep.o `test -f 'Measurements/GaugeM/gaugeFixingStep.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/gaugeFixingStep.cpp
+
+gaugeFixingStep.obj: Measurements/GaugeM/gaugeFixingStep.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeFixingStep.obj -MD -MP -MF $(DEPDIR)/gaugeFixingStep.Tpo -c -o gaugeFixingStep.obj `if test -f 'Measurements/GaugeM/gaugeFixingStep.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/gaugeFixingStep.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/gaugeFixingStep.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeFixingStep.Tpo $(DEPDIR)/gaugeFixingStep.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/gaugeFixingStep.cpp' object='gaugeFixingStep.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeFixingStep.obj `if test -f 'Measurements/GaugeM/gaugeFixingStep.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/gaugeFixingStep.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/gaugeFixingStep.cpp'; fi`
+
+gaugeFixing_Coulomb.o: Measurements/GaugeM/gaugeFixing_Coulomb.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeFixing_Coulomb.o -MD -MP -MF $(DEPDIR)/gaugeFixing_Coulomb.Tpo -c -o gaugeFixing_Coulomb.o `test -f 'Measurements/GaugeM/gaugeFixing_Coulomb.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/gaugeFixing_Coulomb.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeFixing_Coulomb.Tpo $(DEPDIR)/gaugeFixing_Coulomb.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/gaugeFixing_Coulomb.cpp' object='gaugeFixing_Coulomb.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeFixing_Coulomb.o `test -f 'Measurements/GaugeM/gaugeFixing_Coulomb.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/gaugeFixing_Coulomb.cpp
+
+gaugeFixing_Coulomb.obj: Measurements/GaugeM/gaugeFixing_Coulomb.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeFixing_Coulomb.obj -MD -MP -MF $(DEPDIR)/gaugeFixing_Coulomb.Tpo -c -o gaugeFixing_Coulomb.obj `if test -f 'Measurements/GaugeM/gaugeFixing_Coulomb.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/gaugeFixing_Coulomb.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/gaugeFixing_Coulomb.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeFixing_Coulomb.Tpo $(DEPDIR)/gaugeFixing_Coulomb.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/gaugeFixing_Coulomb.cpp' object='gaugeFixing_Coulomb.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeFixing_Coulomb.obj `if test -f 'Measurements/GaugeM/gaugeFixing_Coulomb.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/gaugeFixing_Coulomb.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/gaugeFixing_Coulomb.cpp'; fi`
+
+gaugeFixing_Landau.o: Measurements/GaugeM/gaugeFixing_Landau.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeFixing_Landau.o -MD -MP -MF $(DEPDIR)/gaugeFixing_Landau.Tpo -c -o gaugeFixing_Landau.o `test -f 'Measurements/GaugeM/gaugeFixing_Landau.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/gaugeFixing_Landau.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeFixing_Landau.Tpo $(DEPDIR)/gaugeFixing_Landau.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/gaugeFixing_Landau.cpp' object='gaugeFixing_Landau.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeFixing_Landau.o `test -f 'Measurements/GaugeM/gaugeFixing_Landau.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/gaugeFixing_Landau.cpp
+
+gaugeFixing_Landau.obj: Measurements/GaugeM/gaugeFixing_Landau.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeFixing_Landau.obj -MD -MP -MF $(DEPDIR)/gaugeFixing_Landau.Tpo -c -o gaugeFixing_Landau.obj `if test -f 'Measurements/GaugeM/gaugeFixing_Landau.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/gaugeFixing_Landau.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/gaugeFixing_Landau.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gaugeFixing_Landau.Tpo $(DEPDIR)/gaugeFixing_Landau.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/gaugeFixing_Landau.cpp' object='gaugeFixing_Landau.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeFixing_Landau.obj `if test -f 'Measurements/GaugeM/gaugeFixing_Landau.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/gaugeFixing_Landau.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/gaugeFixing_Landau.cpp'; fi`
 
 qprop_MultiShift.o: Measurements/FermionicM/qprop_MultiShift.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_MultiShift.o -MD -MP -MF $(DEPDIR)/qprop_MultiShift.Tpo -c -o qprop_MultiShift.o `test -f 'Measurements/FermionicM/qprop_MultiShift.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_MultiShift.cpp
