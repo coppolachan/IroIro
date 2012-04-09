@@ -45,7 +45,7 @@ public:
     for(int n = 0; n < rn.size(); ++n) rn[n] = get_gauss();
   }
 
-  virtual void saveSeed(std::string&) = 0;
+  virtual void saveSeed(std::string&) const = 0;
   virtual void loadSeed(std::string&) = 0;
 
 };

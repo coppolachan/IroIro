@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>2 2 2 2</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+    <!-- other params here -->
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="Binary">Thermalized_conf</Configuration> 
+  <!-- definition of HMC trajectory -->
+  <HMC>
+    <Nsweeps>200</Nsweeps>
+    <Thermalization>10</Thermalization>
+    <StartingConfig>0</StartingConfig>
+    <SaveInterval>10</SaveInterval>
+    <SavePrefix>HMC_NF_</SavePrefix>
+    <RandomNumberGen name="Mersenne Twister">
+      <!--   <seedFile>seed_file</seedFile>
+	   Using seedFile superseeds the <init> line 
+           that can be safely omitted
+           It is ignored by factory in this case -->
+      <init>0x123 0x234 0x345 0x456</init> 
+    </RandomNumberGen>
+    
+    <Integrator name="leapfrog_multistep">
+      <MDsteps>10</MDsteps>
+      <step_size>0.01</step_size>
+      <exp_approx>8</exp_approx>
+      <step>
+	<multiplier>1</multiplier>
+	<Action type="Fermion" name="NfFlavors">
+	  <Flavors>2</Flavors>
+	  <Pseudofermions>2</Pseudofermions>
+	  <ApproxDegree>10 8 10</ApproxDegree>
+	  <Precision>40 40 40</Precision>
+	  <BoundaryLow>0.01 0.01 0.01</BoundaryLow>
+	  <BoundaryHigh>18.0 18.0 18.0</BoundaryHigh>
+	  <Kernel name="DiracOptimalDomainWall5d">
+            <Preconditioning>NoPreconditioner</Preconditioning>
+            <wilson_mass>-1.8</wilson_mass>
+            <N5d>8</N5d>
+            <b>1.0</b>
+            <c>1.0</c>
+            <mass>0.1</mass>
+            <approximation name="Tanh" />
+	  </Kernel>
+	  <RationalSolver type="Rational_CG">
+	    <MaxIter>2000</MaxIter>
+	    <Precision>1e-14</Precision>
+	  </RationalSolver>
+	</Action>
+
+	<Action type="Fermion" name="NfFlavors">
+	  <Flavors>2</Flavors>
+	  <Pseudofermions>2</Pseudofermions>
+	  <ApproxDegree>6 6 6</ApproxDegree>
+	  <Precision>40 40 40</Precision>
+	  <BoundaryLow>0.01 0.01 0.01</BoundaryLow>
+	  <BoundaryHigh>18.0 18.0 18.0</BoundaryHigh>
+	  <Kernel name="DiracOptimalDomainWall5d">
+            <Preconditioning>NoPreconditioner</Preconditioning>
+            <wilson_mass>-1.8</wilson_mass>
+            <N5d>8</N5d>
+            <b>1.0</b>
+            <c>1.0</c>
+            <mass>1.0</mass>
+            <approximation name="Tanh" />
+	  </Kernel>
+	  <RationalSolver type="Rational_CG">
+	    <MaxIter>2000</MaxIter>
+	    <Precision>1e-14</Precision>
+	  </RationalSolver>
+	</Action>
+
+	<step>
+	  <multiplier>4</multiplier>
+	  <Action type="Gauge" name="Wilson">
+	    <beta>5.0</beta>
+	  </Action>
+	</step>
+      </step>
+      
+    </Integrator>
+  </HMC>
+  
+</Parameters>
+

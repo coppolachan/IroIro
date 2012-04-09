@@ -99,7 +99,7 @@ void MultiShiftSolver_CG::solve_step(vector<Field>& x,
   betap  = beta;
 }
 
-void MultiShiftSolver_CG::solve(prop_t& xq, 
+SolverOutput MultiShiftSolver_CG::solve(prop_t& xq, 
 				const Field& b,
 				const vector<double>& sigma, 
 				double& diff,
@@ -108,7 +108,13 @@ void MultiShiftSolver_CG::solve(prop_t& xq,
   using namespace FieldExpression;
   
   _Message(SOLV_ITER_VERB_LEVEL, "Multi-shift solver Conjugate Gradient start\n");
-  
+
+  SolverOutput Out;
+  Out.Msg = "Multishift CG solver";
+  Out.Iterations = -1;
+
+  TIMING_START;
+
   int Nshift = sigma.size();
   size_t fsize = b.size();
 
@@ -173,7 +179,13 @@ void MultiShiftSolver_CG::solve(prop_t& xq,
     CCIO::cout << "       ["<<i<<"]  "<<diff1<<"\n";
     if(diff1>diff) diff = diff1;
   }
-  CCIO::cout <<" Maximum residual  = "<<diff<<"\n";
+  _Message(SOLV_ITER_VERB_LEVEL, " Maximum residual  = "<<diff<<"\n");
   
   for(int i=0; i<Nshift; ++i) xq[i] = x[i];
+
+  Out.diff = diff;
+  TIMING_END(Out.timing);
+  
+  return Out;
+
 }

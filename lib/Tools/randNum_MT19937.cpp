@@ -4,12 +4,11 @@
 #include "randNum_MT19937.h"
 #include<iostream>
 
-// add by UEDA @ Nov.2
-//-----------------------
 #include <string>
 #include <fstream>
 #include <cstdlib>
 #include "Communicator/comm_io.hpp"
+#include "Communicator/communicator.h"
 //-----------------------
 
 void RandNum_MT19937::init(unsigned long s){
@@ -113,17 +112,20 @@ double RandNum_MT19937::rand_res53()const{
   return (a*67108864.0+b)*factor;
 }
 
-// add by UEDA @ Nov.2
-//--------------------------
 // save the seed config
-void RandNum_MT19937::saveSeed(std::string& file) {
-  CCIO::cout << "Saving Mersenne Twister in file ["
-	     << file << "]\n";
-  std::ofstream writer(file.c_str());
-  for (int i = 0; i < N; ++i) {
-    writer << state_[i] << std::endl;
+void RandNum_MT19937::saveSeed(std::string& file) const {
+  if (Communicator::instance()->primaryNode()) {
+    CCIO::cout << "Saving Mersenne Twister in file ["
+	       << file << "]\n";
+    std::ofstream writer(file.c_str());
+    for (int i = 0; i < N; ++i) {
+      writer << state_[i] << std::endl;
+    }
+    writer << left_ << std::endl;
+
+    writer.close();
   }
-  writer << left_ << std::endl;
+  Communicator::instance()->sync();
 }
 
 // load the seed config

@@ -1,4 +1,13 @@
+/*! 
+
+  @file commonPrms.cpp  
+
+  @brief Defines CommonPrms class
+
+*/
+
 #include "include/commonPrms.h"
+#include "include/messages_macros.hpp"
 #include<iostream>
 #include<cstdlib>
 
@@ -31,14 +40,14 @@ CommonPrms* CommonPrms::instance(const Lattice& latt){
 
 CommonPrms* CommonPrms::instance(){
   if(instance_== NULL){
-    cout << "CommonPrms is not initialized."<< endl;
+    _Message(DEBUG_VERB_LEVEL, "CommonPrms is not initialized.\n");
     exit(EXIT_FAILURE);
   }
   return instance_;
 }
 
 CommonPrms::CommonPrms(const Lattice& latt){
-  cout << "CommonPrms(latt) is called"<< endl;
+  _Message(DEBUG_VERB_LEVEL, "CommonPrms(latt) is called\n");
   if(latt.stdinput){
     cin >> Lx_>> Ly_>> Lz_>> Lt_;
     NPEx_ = 1;

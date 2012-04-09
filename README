@@ -1,4 +1,28 @@
-Test README file
+README file
+
+These are the instruction for compiling IroIro code
+
+
+Required dependences:
+---------------------
+
+* GSL GNU scientific library             [http://www.gnu.org/s/gsl/]
+* GMP GNU multiple precision             [http://www.gmplib.org]
+* MPFR Multiple precision floating point [http://www.mpfr.org/]
+
+
+Configure options
+=================
+
+Use 
+./configure --help 
+for a list of all options
+
+The two most relevant ones are
+--enable-improved  Turns on faster Wilson kernels
+--enable-mpi       Turns on mpi support on multicore pc
+
+MPI is automatic on Hitachi and IBM platforms.
 
 Simple compilation
 ==================
@@ -15,19 +39,32 @@ remembering that the following flags are necessary for correct configuration:
 
 -q64 -qlanglvl=stdc99 -qrtti=type
 
+If you have a multicore platform you can speedup the compilation time
+by using the command
+
+make -j #processes
+
+Where #processes should be about 1.5x the number of your cores 
+to keep all of them busy.
+
 
 Compilation on AIX Hitachi SR16000 machine
 ===================================================
-
-Use the following lines
+Use the following simple lines
  
-./configure --enable-mpi-hitachi 
+./configure 
+make
+
+Compilation on AIX Hitachi SR16000 machine
+===================================================
+Same as Hitachi SR16000, use the following lines
+ 
+./configure 
 make
 
 
 Compilation with INTEL compiler (icpc)
 ===================================================
-
 The configure will automatically look for INTEL compiler.
 If it is found in the path, icpc will be used in compilation.
 
@@ -40,7 +77,8 @@ Use this line to compile on MPI general machine
 ===============================================
 ./configure --enable-mpi 
 
-Run with mpirun -np #nodes #executable
+Run with mpirun -n #nodes #executable
+
 
 Testing and debugging
 =====================
@@ -59,16 +97,20 @@ Example
 set maximum verbosity. Allowed values from 0 to 5. Default is 1.
 
 
-Installing GSL
+Installing required dependences
 ==============
 
-The Gnu Scientific Library (GSL) is required during compilation 
-of Domain Wall routines. 
-  
+Required libraries
+
+* The Gnu Scientific Library (GSL) is required during compilation 
+  of Domain Wall routines. 
+* The Gnu Multiple Precision (GMP) and the MPFR libraries are required 
+  for Remez algorithm routines, in rational approximation of functions.  
+
 On AIX the default development environment is in 32 bit mode, 
 but IroIro compilation forces 64 bit mode. 
-In this case please check that GLS library is installed in 64 bit 
-version otherwise clash on libraries names could occur. 
+In this case please check that libraries are installed in 64 bit 
+version otherwise clash on library names could occur. 
 
 If you are compiling the library in a custom installation 
 with XLC on AIX please setup the environment variable 
@@ -84,3 +126,4 @@ among compilation flags (CFLAGS="-q64").
 For non standard installation configure assumes that GSL can also reside in
 ~/gsl/ directory, so that you can just create a symbolic link 
 to your preferred build. 
+The same applies to ~/gmp and ~/mpfr

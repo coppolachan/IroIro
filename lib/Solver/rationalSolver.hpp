@@ -54,7 +54,6 @@ public:
 
   void set_Approx(RationalApprox& RA) {
     Residuals = RA.Residuals();
-    std::cout << "residual size "<< Residuals.size() << "\n";
     Poles     = RA.Poles();
     ConstTerm = RA.Const();
     InvResiduals = RA.InvResiduals();
@@ -67,6 +66,9 @@ public:
 
   // For force calculations
   SolverOutput solve_noReconstruct(std::vector<Field>&, const Field&) const;
+  SolverOutput solve_noReconstruct_inv(std::vector<Field>&, const Field&) const;
+
+
   bool check_DdagD() const {return true;}
 
 

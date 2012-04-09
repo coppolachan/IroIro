@@ -64,6 +64,7 @@ int Test_HMC::run(){
   //Action* Gauge = new ActionGaugeRect(2.25, 3.648, -0.331, CommonField);
 
   DiracWilsonLike* Kernel   = new Dirac_Wilson(0.1,&(CommonField->data));
+
   
   ActionLevel al_1, al_2;
   al_1.push_back(Gauge);

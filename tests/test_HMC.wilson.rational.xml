@@ -3,7 +3,7 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
+    <Lattice>4 4 4 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
@@ -12,8 +12,8 @@
   <Configuration Type="Unit">final_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>20</Nsweeps>
-    <Thermalization>10</Thermalization>
+    <Nsweeps>1</Nsweeps>
+    <Thermalization>2</Thermalization>
     <StartingConfig>0</StartingConfig>
     <SaveInterval>0</SaveInterval>
     <SavePrefix>HMCrect_</SavePrefix>
@@ -31,14 +31,20 @@
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
-	<Action type="Fermion" name="TwoFlavors">
+	<Action type="Fermion" name="NfFlavors">
+	  <Flavors>2</Flavors>
+	  <Pseudofermions>2</Pseudofermions>
+	  <ApproxDegree>10 10 10</ApproxDegree>
+	  <Precision>40 40 40</Precision>
+	  <BoundaryLow>0.1 0.1 0.1</BoundaryLow>
+	  <BoundaryHigh>4 4 4</BoundaryHigh>
 	  <Kernel name="DiracWilson">
 	    <mass>0.1</mass>
 	  </Kernel>
-	  <Solver type="Solver_CG">
-	    <MaxIter>1000</MaxIter>
+	  <RationalSolver type="Rational_CG">
+	    <MaxIter>2000</MaxIter>
 	    <Precision>1e-14</Precision>
-	  </Solver>
+	  </RationalSolver>
 	</Action>
 	<step>
 	  <multiplier>2</multiplier>

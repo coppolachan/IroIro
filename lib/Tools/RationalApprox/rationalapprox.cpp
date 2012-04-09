@@ -7,6 +7,7 @@
  */
 
 #include <assert.h>
+#include <math.h>
 #include "rationalapprox.hpp"
 #include "Tools/Remez/alg_remez.hpp"
 #include "Communicator/comm_io.hpp"
@@ -90,7 +91,30 @@ void RationalApprox::fill() {
 }
 
 
+void RationalApprox::rescale(const double& minIn,
+			     const double& maxIn) {
 
+  // Rescale coefficients assuming that the original ones where
+  // calculated for the interval [a, 1.0]
+  double min = 0.95*minIn;
+  double max = 1.05*maxIn;
+
+  double factor = pow(max, (double)Params.exponent_num/(double)Params.exponent_den);
+  
+  RA_a0   *= factor;
+  for (int i = 0; i < Params.numerator_deg; ++i) {
+    RA_res[i]  *= factor*max;
+    RA_pole[i] *= max;
+  }
+
+  factor = pow(max, - (double)Params.exponent_num/(double)Params.exponent_den);
+
+  I_RA_a0   *= factor;
+  for (int i = 0; i < Params.numerator_deg; ++i) {
+    I_RA_res[i]  *= factor*max;
+    I_RA_pole[i] *= max;
+  }
+}
 
 
 

@@ -1,4 +1,4 @@
-# Time-stamp: <2012-04-02 16:00:42 neo>
+# Time-stamp: <2012-04-05 11:42:25 neo>
 
 testdir = $(bindir)/Test
 
@@ -16,6 +16,8 @@ AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 EXTRA_DIST = 	testResults.info	\
 		test_HMC.xml	 	\
 		test_HMC.clover.xml	\
+		test_HMC.wilson.xml	\
+		test_HMC.wilson.rational.xml	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\
@@ -28,7 +30,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_Overlap.xml	\
 		test_HMC_EvenOdd.xml	\
 		test_HMC_DWF.xml	\
-		test_MultiShiftSolver.xml
+		test_MultiShiftSolver.xml	\
 		test_RationalApprox.xml	\
 		input.xml
 

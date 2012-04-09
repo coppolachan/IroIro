@@ -3,7 +3,13 @@
 //-----------------------------------------------------------------
 #include "communicator.h"
 #include "commonPrms.h"
+
+#ifndef IBM_BGQ
 #include "mpi.h"
+#else
+#include "bgnet.h"
+#endif
+
 #include "comm_io.hpp"
 #include <stdio.h>
 #include <iostream>

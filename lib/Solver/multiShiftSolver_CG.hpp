@@ -75,11 +75,11 @@ public:
 
   ~MultiShiftSolver_CG(){}
   
-  void solve(prop_t& solution, 
-	     const Field& source,
-	     const std::vector<double>& shifts,
-	     double& residual,
-	     int& Nconv) const;
+  SolverOutput solve(prop_t& solution, 
+		     const Field& source,
+		     const std::vector<double>& shifts,
+		     double& residual,
+		     int& Nconv) const;
 
 };
 

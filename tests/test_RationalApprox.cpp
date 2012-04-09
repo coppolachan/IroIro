@@ -34,7 +34,7 @@ int Test_RationalApprox::run(){
   RNG_Env::RNG = RNG_Env::createRNGfactory(RA_node);
 
   // Test standard constructor
-  RationalApprox_params PsParameters(10, 10, 1, 2, 40, 0.05, 1.0);
+  RationalApprox_params PsParameters(10, 10, 1, 2, 40, 0.05, 60.0);
   /*
   PsParameters.numerator_deg   = 10;
   PsParameters.denominator_deg = 10;
@@ -85,9 +85,6 @@ int Test_RationalApprox::run(){
   // Definition of source 
   prop_t  xqs;
   vector<int> spos(4,0);
-  Source_local<Format::Format_F> Source(spos,
-                                        CommonPrms::instance()->Nvol());
-
  
   //Dirac* Kernel = new Dirac_Wilson(0.01, &(Gfield_.data));
   //Dirac* Kernel = new Dirac_Clover(0.01, 1.0, &(Gfield_.data));
@@ -98,17 +95,18 @@ int Test_RationalApprox::run(){
   double b  = 1.0;
   double mq = 0.01;
   vector<double> omega(N5d,1.0);
+  int volume_size = CommonPrms::instance()->Nvol()*N5d;
   Dirac_optimalDomainWall* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gfield_.data));
-  Source_local<Format::Format_F> Source5d(spos,
-					  CommonPrms::instance()->Nvol()*N5d); 
+  Source_local<Format::Format_F> Source(spos,volume_size); 
 
   // Find Max eigenvalue
   Fopr_DdagD* FoprKernel = new Fopr_DdagD(Kernel);
   findMinMax* MinMax = new findMinMax(FoprKernel,RNG_Env::RNG->getRandomNumGenerator(),
 				      Kernel->fsize());
 
-  double max_eigenval = MinMax->findMax();
-  CCIO::cout << "Maximal eigenvalue of Fopr = "<<max_eigenval << "\n";
+  MinMaxOut MinMaxResult = MinMax->findExtrema();
+  
+  TestXMLApprox.rescale(MinMaxResult.min, MinMaxResult.max);
 
    // Definition of the Solver
   int    Niter= 2000;
@@ -121,9 +119,9 @@ int Test_RationalApprox::run(){
 
   RationalSolver* RASolver = new RationalSolver(Solver, TestXMLApprox);
 
-  Field solution(CommonPrms::instance()->Nvol()*N5d);
-  Field solution2(CommonPrms::instance()->Nvol()*N5d);
-  RASolver->solve(solution, Source5d.mksrc(0,0));
+  Field solution(volume_size);
+  Field solution2(volume_size);
+  RASolver->solve(solution, Source.mksrc(0,0));
 
   // Apply again (M^dag M)^(1/2)
   RASolver->solve(solution2, solution);  
@@ -133,7 +131,7 @@ int Test_RationalApprox::run(){
   // Compare with (M^dag M)
   Field reference_sol, diff_field,temp;
   
-  temp = Kernel->mult(Source5d.mksrc(0,0));
+  temp = Kernel->mult(Source.mksrc(0,0));
   reference_sol = Kernel->mult_dag(temp);
   
   diff_field = reference_sol;

@@ -33,7 +33,6 @@ void Action_Nf::attach_smearing(SmartConf* SmearObj) {
 void Action_Nf::init(const RandNum& rand){
   SolverOutput monitor;
   std::valarray<double> xi(fermion_size_);
-  CCIO::cout <<" Set approx \n";
 
   slv_->set_Approx(PseudoFermionsApprox_);
 
@@ -58,7 +57,10 @@ double Action_Nf::calc_H(){
   SolverOutput monitor;
   double H_nf2 = 0.0;
   Field temp;
+  temp.resize(fermion_size_);
+
   slv_->set_Approx(MetropolisApprox_);
+
   for(int i=0; i<Params_.n_pseudof_; ++i){
     monitor = slv_->solve_inv(temp, phi_[i]); // (M^dag M)^(-Nf/2n) <phi_>
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
@@ -66,7 +68,7 @@ double Action_Nf::calc_H(){
 #endif 
     H_nf2 += (phi_[i]) * temp;
   }
-  _Message(ACTION_VERB_LEVEL, "    [Action_Nf] H = "<< H_nf2<<"\n");
+  _Message(ACTION_VERB_LEVEL, "    [Action_Nf] H = "<< H_nf2 <<"\n");
   return H_nf2;
 }
 
@@ -81,13 +83,13 @@ GaugeField Action_Nf::md_force(){
 
   // Loop on pseudofermions
   for (int pf = 0; pf < Params_.n_pseudof_; ++pf){ 
-
-      //(M^dag M)^(-Nf/2n) <phi_>
-      monitor =  slv_->solve_noReconstruct(eta, phi_[pf]); 
+    
+    //(M^dag M)^(-Nf/2n) <phi_>
+    monitor =  slv_->solve_noReconstruct(eta, phi_[pf]); 
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
 #endif 
-
+    
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
       
       fce.data = D_->md_force(eta[i],D_->mult(eta[i]));
@@ -95,10 +97,10 @@ GaugeField Action_Nf::md_force(){
       if(smeared_) SmartField_->smeared_force(fce);
       
       force += FieldUtils::TracelessAntihermite(fce);
-  
+      
     }
   }
-
+  
   _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "Action_Nf");
   return force;
 }
