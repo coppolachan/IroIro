@@ -18,6 +18,7 @@
 #include "Action/action_gauge_wilson.hpp"
 #include "Action/action_gauge_rect.hpp"
 #include "Action/action_Nf.hpp"
+#include "Action/action_Nf_ratio.hpp"
 #include "HMC/mdExec_leapfrog.hpp"
 #include "Dirac_ops/dirac_wilson.hpp"
 #include "Solver/solver_CG.hpp"
@@ -79,7 +80,7 @@ int Test_HMC::run(){
 				   Kernel,
 				   SolverRational,
 				   RationalParams);
-  
+
   al_2.push_back(NfAction);
   
   ActionSet ASet;

@@ -32,4 +32,6 @@ public:
   void monitor_force(GaugeField&, std::string);
 };
 
+enum {MetroStep, MDStep, PFStep};
+
 #endif

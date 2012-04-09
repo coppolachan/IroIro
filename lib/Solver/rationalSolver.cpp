@@ -89,8 +89,8 @@ SolverOutput RationalSolver::solve_noReconstruct(std::vector<Field>& shifted_sol
  
   SolverOutput out = MS_Solver_->solve(shifted_sol, source, InvPoles, out.diff, out.Iterations);
 
-  for (int i = 0; i < InvPoles.size(); ++i)
-    shifted_sol[i] *= sqrt(InvResiduals[i]);
+  //for (int i = 0; i < InvPoles.size(); ++i)
+  //  shifted_sol[i] *= sqrt(InvResiduals[i]);
 
   return out;
 }
@@ -102,7 +102,7 @@ SolverOutput RationalSolver::solve_noReconstruct(std::vector<Field>& shifted_sol
 SolverOutput RationalSolver::solve_noReconstruct_inv(std::vector<Field>& shifted_sol, 
 						 const Field& source) const {
   if (Residuals.size() == 0) {
-    CCIO::cout << "[RationalSolver] Inverse Rational Approximation not initialized yet\n";
+    CCIO::cout << "[RationalSolver] Rational Approximation not initialized yet\n";
     abort();
   }
   Field temp;
@@ -112,12 +112,8 @@ SolverOutput RationalSolver::solve_noReconstruct_inv(std::vector<Field>& shifted
     shifted_sol[i].resize(source.size());
   }
   temp.resize(source.size());
-
  
   SolverOutput out = MS_Solver_->solve(shifted_sol, source, Poles, out.diff, out.Iterations);
-
-  for (int i = 0; i < Poles.size(); ++i)
-    shifted_sol[i] *= sqrt(Residuals[i]);
 
   return out;
 }

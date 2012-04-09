@@ -13,6 +13,7 @@
 #include "Action/action_Nf2.hpp"
 #include "Action/action_Nf.hpp"
 #include "Action/action_Nf2_ratio.hpp"
+#include "Action/action_Nf_ratio.hpp"
 #include "Action/action_Nf2_DomainWall.hpp"
 #include "Solver/solver_CG.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
@@ -125,6 +126,55 @@ private:
 				Solver2.get()); 
   }
 };
+
+////////////////////////////////////////////////////
+
+class NfFlavorRatioActionFactory : public FermionActionFactory {
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracNumObj;
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracDenomObj;
+  RaiiFactoryObj<RationalSolverOperatorFactory> SolverNumObj;
+  RaiiFactoryObj<RationalSolverOperatorFactory> SolverDenomObj;
+
+  RaiiFactoryObj<DiracWilsonLike> DiracNumerator;
+  RaiiFactoryObj<DiracWilsonLike> DiracDenominator;
+  RaiiFactoryObj<RationalSolver> Solver1;
+  RaiiFactoryObj<RationalSolver> Solver2;
+
+  const XML::node Action_node;
+
+public:
+  ~NfFlavorRatioActionFactory(){}
+
+  NfFlavorRatioActionFactory(XML::node node):Action_node(node){
+    XML::descend(node,"Numerator", MANDATORY);
+    DiracNumObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node)); 
+    XML::next_sibling(node,"Denominator", MANDATORY);
+    DiracDenomObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
+    XML::next_sibling(node,"RationalSolverNumerator", MANDATORY);
+    SolverNumObj.save(SolverOperators::createRationalSolverOperatorFactory(node));
+    XML::next_sibling(node,"RationalSolverDenominator", MANDATORY);
+    SolverDenomObj.save(SolverOperators::createRationalSolverOperatorFactory(node));
+  }
+  
+private:  
+  Action_Nf_ratio* getFermionAction(GaugeField* const F){
+    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(F->data)));
+    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(F->data)));
+    
+    Solver1.save(SolverNumObj.get()->getSolver(new Fopr_DdagD(DiracNumerator.get())));
+    Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_DdagD(DiracDenominator.get())));
+
+    return new Action_Nf_ratio(F,
+			       DiracNumerator.get(),
+			       DiracDenominator.get(),
+			       Solver1.get(),
+			       Solver2.get(),
+			       Action_Nf_ratio_params(Action_node)); 
+  }
+};
+
+
+
 ////////////////////////////////////////////////////
 
 class TwoFlavorDomainWall5dActionFactory : public FermionActionFactory {

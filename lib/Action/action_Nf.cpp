@@ -93,6 +93,7 @@ GaugeField Action_Nf::md_force(){
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
       
       fce.data = D_->md_force(eta[i],D_->mult(eta[i]));
+      fce.data *=  MolecularDynApprox_.InvResiduals()[i];
       // [fce] is [U*SigmaTilde] in smearing language
       if(smeared_) SmartField_->smeared_force(fce);
       

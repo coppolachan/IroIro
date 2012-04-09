@@ -81,7 +81,7 @@ double Action_Nf_ratio::calc_H(){
   slv2_->set_Approx(MetropolisApprox_Den_);
 
   for(int i=0; i<Params_.n_pseudof_; ++i){
-    monitor = slv2_->solve(zeta, phi_[i]); // (M2^dag M2)^(Nf/2n) <phi_>
+    monitor = slv2_->solve(zeta, phi_[i]); // (M2^dag M2)^(Nf/4n) <phi_>
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
 #endif     
@@ -89,7 +89,7 @@ double Action_Nf_ratio::calc_H(){
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
 #endif     
-    // temp = [ (M1^dag M1)^(-Nf/2n) ][ (M2^dag M2)^(Nf/2n) ]<phi_>
+    // temp = [ (M1^dag M1)^(-Nf/2n) ][ (M2^dag M2)^(Nf/4n) ]<phi_>
 
     H_nf2r += zeta * temp;
   }
@@ -100,14 +100,17 @@ double Action_Nf_ratio::calc_H(){
 
 
 GaugeField Action_Nf_ratio::md_force(){
+  using namespace FieldUtils;
   // Calculates the force
-  GaugeField fce;
+  GaugeField fce, gauge_temp;
   Field zeta1, zeta2, zeta3;
   Field temp;
   std::vector<Field> eta1;
   std::vector<Field> eta2;
   GaugeField force;
   SolverOutput monitor;
+
+  _Message(DEBUG_VERB_LEVEL, "[Action_Nf_ratio] md_force()\n");
 
   zeta1.resize(fermion_size_);
   zeta2.resize(fermion_size_);
@@ -118,8 +121,10 @@ GaugeField Action_Nf_ratio::md_force(){
   slv2_->set_Approx(MolecularDynApprox_Den_);
 
   // Loop on pseudofermions
+  fce = 0.0;
   for (int pf = 0; pf < Params_.n_pseudof_; ++pf){ 
-    fce.data = 0.0;
+
+    _Message(DEBUG_VERB_LEVEL, "Pseudofermion n. " << pf <<"\n");
 
     monitor =  slv2_->solve_noReconstruct_inv(eta1, phi_[pf]); 
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
@@ -143,11 +148,13 @@ GaugeField Action_Nf_ratio::md_force(){
 #endif     
 
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
-     fce.data += D1_->md_force(eta2[i],D1_->mult(eta2[i]));
+      gauge_temp.data = D1_->md_force(eta2[i],D1_->mult(eta2[i]));
+      gauge_temp.data *= MolecularDynApprox_.InvResiduals()[i];
+      fce += gauge_temp;
     }
 
     //Reconstruct term zeta3
-    zeta3 = temp;
+    zeta3 = zeta1;
     zeta3 *= MolecularDynApprox_.InvConst();
     
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
@@ -157,7 +164,7 @@ GaugeField Action_Nf_ratio::md_force(){
     }
     //// zeta3
 
-    monitor =  slv2_->solve_noReconstruct(eta2, zeta3); 
+    monitor =  slv2_->solve_noReconstruct_inv(eta2, zeta3); 
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
 #endif 
@@ -165,7 +172,10 @@ GaugeField Action_Nf_ratio::md_force(){
 
     // do we need a factor of 2????
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
-     fce.data += D2_->md_force(eta1[i],D2_->mult(eta2[i]));
+     gauge_temp.data = D2_->md_force(eta1[i],D2_->mult(eta2[i]));
+     gauge_temp.data += D2_->md_force(eta2[i],D2_->mult(eta1[i]));
+     gauge_temp.data *= MolecularDynApprox_Den_.Residuals()[i];
+     fce += gauge_temp;
     }
 
     if(smart_conf_) smart_conf_->smeared_force(fce);
@@ -173,8 +183,11 @@ GaugeField Action_Nf_ratio::md_force(){
     
   }
 
+
+  
   _MonitorMsg(ACTION_VERB_LEVEL, Action,force,"Action_Nf_ratio");
   return force;
+
 }
 
 

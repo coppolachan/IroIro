@@ -13,8 +13,6 @@
 #include "Smearing/smartConf.hpp"
 #include "Tools/RationalApprox/rationalapprox.hpp"
 
-enum {MetroStep, MDStep, PFStep};
-
 /*!
  * @brief Parameter container for Action_Nf class
  */
