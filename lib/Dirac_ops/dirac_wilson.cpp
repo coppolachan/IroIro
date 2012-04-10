@@ -13,6 +13,10 @@ using namespace std;
 #include "dirac_wilson_standard.code"
 #endif /*IMPROVED_WILSON*/
 
+#ifdef IBM_BGQ_WILSON
+#include "bgqwilson.h"
+#endif
+
 /////////////////////////////////////////////////////////////////////////
 
 void (Dirac_Wilson::*Dirac_Wilson::mult_p[])
@@ -35,7 +39,15 @@ void Dirac_Wilson::mult_offdiag(Field& w, const Field& f) const{
   w *= -kpp_;
 }
 void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
+  #ifndef IBM_BGQ_WILSON
   mult_offdiag(w,f);
+  #else  
+  double* pF = const_cast<Field&>(f).getaddr(0);
+  double* pU = const_cast<Field *>(u_)->getaddr(0);
+  double* pW = w.getaddr(0);
+  BGWilson_Mult(pW, pU, pF, -kpp_ , BGWILSON_DIRAC);
+  #endif
+  
   w += f;
 }
 
