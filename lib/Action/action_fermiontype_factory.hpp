@@ -218,6 +218,51 @@ private:
   }
 };
 
+////////////////////////////////////////////////////
+
+class NfFlavorDomainWall5dActionFactory : public FermionActionFactory {
+
+  RaiiFactoryObj<DiracDWF5dOperatorFactory> DiracObj;
+  RaiiFactoryObj<RationalSolverOperatorFactory> SolverObj;
+
+  RaiiFactoryObj<DiracWilsonLike> DWF5d_Kernel;
+  RaiiFactoryObj<DiracWilsonLike> DWF5d_KernelPV;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOp;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOpPV;
+  RaiiFactoryObj<RationalSolver> Solv;
+  RaiiFactoryObj<RationalSolver> SolvPV;
+  
+  const XML::node Action_node;
+
+public:
+  ~NfFlavorDomainWall5dActionFactory(){}
+
+  NfFlavorDomainWall5dActionFactory(XML::node node):Action_node(node){
+    XML::descend(node,"Kernel5D", MANDATORY);
+    DiracObj.save(DiracOperators::createDiracDWF5dOperatorFactory(node));
+    XML::next_sibling(node,"RationalSolver", MANDATORY);
+    SolverObj.save(SolverOperators::createRationalSolverOperatorFactory(node));
+  }
+
+private:  
+  Action_Nf_ratio* getFermionAction(GaugeField* const F){
+    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(F->data)));
+    DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(F->data)));
+
+    HermitianOp.save(  new Fopr_DdagD_Precondition(DWF5d_Kernel.get()));
+    HermitianOpPV.save(new Fopr_DdagD_Precondition(DWF5d_KernelPV.get()));
+    Solv.save(  SolverObj.get()->getSolver(HermitianOp.get()));
+    SolvPV.save(SolverObj.get()->getSolver(HermitianOpPV.get()));
+    return new Action_Nf_ratio(F,
+			       DWF5d_Kernel.get(),
+			       DWF5d_KernelPV.get(),
+			       Solv.get(),
+			       SolvPV.get(),
+			       Action_Nf_ratio_params(Action_node));
+  }
+};
+
+
 //Add new factories here
 //....
 

@@ -168,7 +168,7 @@ SolverOutput MultiShiftSolver_CG::solve(prop_t& xq,
   }
   if(Nconv == -1) throw "Not converged.";
   
-  CCIO::cout << "  --- Summary of true residuals\n";
+  _Message(SOLV_ITER_VERB_LEVEL, "  --- Summary of true residuals\n");
   diff = -1.0;
   for(int i=0; i<Nshift; ++i){
     s = opr_->mult(x[i]);
@@ -176,7 +176,7 @@ SolverOutput MultiShiftSolver_CG::solve(prop_t& xq,
     s -= b;
     double diff1 = s * s;
     diff1 *= snorm;
-    CCIO::cout << "       ["<<i<<"]  "<<diff1<<"\n";
+    _Message(SOLV_ITER_VERB_LEVEL, "       ["<<i<<"]  "<<diff1<<"\n");
     if(diff1>diff) diff = diff1;
   }
   _Message(SOLV_ITER_VERB_LEVEL, " Maximum residual  = "<<diff<<"\n");

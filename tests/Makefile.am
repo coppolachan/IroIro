@@ -1,4 +1,4 @@
-# Time-stamp: <2012-04-05 11:42:25 neo>
+# Time-stamp: <2012-04-10 10:17:33 neo>
 
 testdir = $(bindir)/Test
 
@@ -18,6 +18,8 @@ EXTRA_DIST = 	testResults.info	\
 		test_HMC.clover.xml	\
 		test_HMC.wilson.xml	\
 		test_HMC.wilson.rational.xml	\
+		test_HMC.wilson.ratio.rational.xml	\
+		test_HMC.DWF.rational.xml	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\

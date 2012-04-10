@@ -23,6 +23,8 @@ namespace FermionAction {
 
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D")) 
 	return new TwoFlavorDomainWall5dActionFactory(node);
+      if (!strcmp(Action_name, "NfFlavorsDomainWall_5D")) 
+	return new NfFlavorDomainWall5dActionFactory(node);
 
       std::cerr << "No Fermionic Action available with name ["
 		<< Action_name << "]. Request by <" << node.name() << ">\n";

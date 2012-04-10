@@ -89,9 +89,6 @@ SolverOutput RationalSolver::solve_noReconstruct(std::vector<Field>& shifted_sol
  
   SolverOutput out = MS_Solver_->solve(shifted_sol, source, InvPoles, out.diff, out.Iterations);
 
-  //for (int i = 0; i < InvPoles.size(); ++i)
-  //  shifted_sol[i] *= sqrt(InvResiduals[i]);
-
   return out;
 }
 
