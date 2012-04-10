@@ -10,7 +10,7 @@
  * \section feat Features
  *
  * Current implementation:
- * - Actions (Gauge: Wilson, Rectangle, Fermion: 2 flavors, 2 flavors Ratio, Overlap)
+ * - Actions (Gauge: Wilson, Rectangle, Fermion: 2 flavors, 2 flavors Ratio, RHMC Nf flavors, RHMC Nf flavors ratio, Overlap)
  * - %Dirac operators (Wilson, Clover, Overlap, Even-odd preconditioned Wilson, Generalized Domain Wall (4d - 5d) )
  * - Linear Solvers (Conjugate Gradient Unpreconditioned, Conjugate Gradient Preconditioned, BiConjugate Gradient)
  * - Measurements (Quark Propagator [Wilson, Domain Wall], Gauge Quantities)

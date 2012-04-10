@@ -3052,7 +3052,7 @@ macppc | macx86 | mac86_64 )
       use_cpp="mpicxx.openmpi mpicxx mpic++"
     else
      # list of tested compilers
-      use_cpp="g++ icpc";
+      use_cpp="icpc g++";
     fi
     use_cpp_flags="-O3 -I/opt/local/include"
     ld_flags="${LDFLAGS} -L/opt/local/lib"
