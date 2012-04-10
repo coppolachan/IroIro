@@ -39,7 +39,11 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 @IBM_BGQ_TRUE@am__append_1 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include
-@IBM_BGQ_TRUE@am__append_2 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/usr/local/bg/lib
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_2 = -qsmp
+@IBM_BGQ_TRUE@am__append_3 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/usr/local/bg/lib
+@IBM_BGQ_TRUE@am__append_4 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_5 = -lbgqwilson3x4smp
+@IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@am__append_6 = -lbgqwilson3x4
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_HMC_EvenOdd$(EXEEXT) test_HMC_smear_noF$(EXEEXT) \
 	test_HMC_DWall_noF$(EXEEXT) test_Gauge$(EXEEXT) \
@@ -68,96 +72,98 @@ am_test_Clover_OBJECTS = test_clover.$(OBJEXT) testerClover.$(OBJEXT)
 test_Clover_OBJECTS = $(am_test_Clover_OBJECTS)
 test_Clover_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
-test_Clover_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+test_Clover_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_DomainWall_OBJECTS = test_DomainWall.$(OBJEXT) \
 	testerDWF.$(OBJEXT)
 test_DomainWall_OBJECTS = $(am_test_DomainWall_OBJECTS)
 test_DomainWall_LDADD = $(LDADD)
-test_DomainWall_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_DomainWall_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_EigenModes_OBJECTS = test_EigenModes_IRL.$(OBJEXT) \
 	testerEigenModes.$(OBJEXT)
 test_EigenModes_OBJECTS = $(am_test_EigenModes_OBJECTS)
 test_EigenModes_LDADD = $(LDADD)
-test_EigenModes_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_EigenModes_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_Gauge_OBJECTS = test_Gauge.$(OBJEXT) testerGauge.$(OBJEXT)
 test_Gauge_OBJECTS = $(am_test_Gauge_OBJECTS)
 test_Gauge_LDADD = $(LDADD)
-test_Gauge_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_Gauge_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
-test_HMC_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_HMC_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_HMC_DWall_noF_OBJECTS = test_HMC_DWall_noFact.$(OBJEXT) \
 	testerHMC_DWall_noFact.$(OBJEXT)
 test_HMC_DWall_noF_OBJECTS = $(am_test_HMC_DWall_noF_OBJECTS)
 test_HMC_DWall_noF_LDADD = $(LDADD)
-test_HMC_DWall_noF_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_HMC_DWall_noF_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_HMC_EvenOdd_OBJECTS = test_HMC_EvenOdd.$(OBJEXT) \
 	testerHMCeven-odd.$(OBJEXT)
 test_HMC_EvenOdd_OBJECTS = $(am_test_HMC_EvenOdd_OBJECTS)
 test_HMC_EvenOdd_LDADD = $(LDADD)
-test_HMC_EvenOdd_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_HMC_EvenOdd_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_HMC_noFactories_OBJECTS = test_HMC_noFactories.$(OBJEXT) \
 	testerHMC.$(OBJEXT)
 test_HMC_noFactories_OBJECTS = $(am_test_HMC_noFactories_OBJECTS)
 test_HMC_noFactories_LDADD = $(LDADD)
-test_HMC_noFactories_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_HMC_noFactories_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_HMC_smear_noF_OBJECTS = test_HMC_Smear_noFact.$(OBJEXT) \
 	testerHMC.$(OBJEXT)
 test_HMC_smear_noF_OBJECTS = $(am_test_HMC_smear_noF_OBJECTS)
 test_HMC_smear_noF_LDADD = $(LDADD)
-test_HMC_smear_noF_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_HMC_smear_noF_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
 test_IO_LDADD = $(LDADD)
-test_IO_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_IO_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_MultiShiftSolver_OBJECTS = test_MultiShiftSolver.$(OBJEXT) \
 	testerMultiShiftSolver.$(OBJEXT)
 test_MultiShiftSolver_OBJECTS = $(am_test_MultiShiftSolver_OBJECTS)
 test_MultiShiftSolver_LDADD = $(LDADD)
-test_MultiShiftSolver_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_MultiShiftSolver_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_Overlap_OBJECTS = test_Overlap.$(OBJEXT) \
 	testerOverlap.$(OBJEXT)
 test_Overlap_OBJECTS = $(am_test_Overlap_OBJECTS)
 test_Overlap_LDADD = $(LDADD)
-test_Overlap_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_Overlap_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_QpropMom_OBJECTS = test_QpropMom.$(OBJEXT) \
 	testerQpropMom.$(OBJEXT)
 test_QpropMom_OBJECTS = $(am_test_QpropMom_OBJECTS)
 test_QpropMom_LDADD = $(LDADD)
-test_QpropMom_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_QpropMom_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_RHMC_noFactories_OBJECTS = test_RHMC_noFactories.$(OBJEXT) \
 	testerHMC.$(OBJEXT)
 test_RHMC_noFactories_OBJECTS = $(am_test_RHMC_noFactories_OBJECTS)
 test_RHMC_noFactories_LDADD = $(LDADD)
-test_RHMC_noFactories_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_RHMC_noFactories_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_RNG_OBJECTS = test_RNG.$(OBJEXT)
 test_RNG_OBJECTS = $(am_test_RNG_OBJECTS)
 test_RNG_LDADD = $(LDADD)
-test_RNG_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_RNG_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_RationalApprox_OBJECTS = test_RationalApprox.$(OBJEXT) \
 	testerRationalApprox.$(OBJEXT)
 test_RationalApprox_OBJECTS = $(am_test_RationalApprox_OBJECTS)
 test_RationalApprox_LDADD = $(LDADD)
-test_RationalApprox_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_RationalApprox_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_ResMass_OBJECTS = test_ResidualMass.$(OBJEXT) \
 	testerResMass.$(OBJEXT)
 test_ResMass_OBJECTS = $(am_test_ResMass_OBJECTS)
 test_ResMass_LDADD = $(LDADD)
-test_ResMass_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_ResMass_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_Smearing_OBJECTS = test_smear.$(OBJEXT) testerSmear.$(OBJEXT)
 test_Smearing_OBJECTS = $(am_test_Smearing_OBJECTS)
 test_Smearing_LDADD = $(LDADD)
-test_Smearing_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_Smearing_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_Wilson_OBJECTS = test_wilson.$(OBJEXT) testerWilson.$(OBJEXT)
 test_Wilson_OBJECTS = $(am_test_Wilson_OBJECTS)
 test_Wilson_LDADD = $(LDADD)
-test_Wilson_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_Wilson_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_Wilson_EvenOdd_OBJECTS = test_wilson_EvenOdd.$(OBJEXT) \
 	testerWilson_EvenOdd.$(OBJEXT)
 test_Wilson_EvenOdd_OBJECTS = $(am_test_Wilson_EvenOdd_OBJECTS)
 test_Wilson_EvenOdd_LDADD = $(LDADD)
-test_Wilson_EvenOdd_DEPENDENCIES = $(am__DEPENDENCIES_1)
+test_Wilson_EvenOdd_DEPENDENCIES = $(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -236,7 +242,7 @@ CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@ $(am__append_1)
+CXXFLAGS = @CXXFLAGS@ $(am__append_1) $(am__append_2)
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -253,7 +259,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LDFLAGS = @LDFLAGS@ $(am__append_2)
+LDFLAGS = @LDFLAGS@ $(am__append_3)
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
@@ -265,7 +271,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
-PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -332,8 +337,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 testdir = $(bindir)/Test
+OPTLIB = $(am__append_4) $(am__append_5) $(am__append_6)
 @IBM_BGQ_TRUE@DRIVER = /bgsys/drivers/ppcfloor
-@IBM_BGQ_TRUE@OPTLIB = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
 LDADD = -L../lib/ -lcommcode $(OPTLIB)
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/

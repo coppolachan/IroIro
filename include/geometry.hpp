@@ -11,6 +11,8 @@
 #include <iostream>
 #include <vector>
 #include "macros.hpp"
+
+#include "bgqwilson.h"
 /*!
  * @class Geometry
  * @brief Initializes several geometry related objects
@@ -39,6 +41,12 @@ class Geometry {
 #endif
     prms_= CommonPrms::instance(latt);
     idx_= SiteIndex::instance();
+
+    #ifdef IBM_BGQ_WILSON
+    BGWilson_Init(Dim[XDIR],Dim[YDIR],Dim[ZDIR],Dim[TDIR],
+    		  Node[XDIR],Node[YDIR],Node[ZDIR],Node[TDIR]);
+    #endif
+
   }
 
 public:

@@ -68,6 +68,26 @@ AC_ARG_ENABLE(improved,
      	*) AC_MSG_ERROR([bad value ${enableval} for --enable-improved . Compiling with standard kernels.]) ;;
    esac],[improved_kernels=false])
 
+###################################################################
+# Enabling BlueGene Wilson improved version routines single thread
+AC_ARG_ENABLE(bgq-improved,
+	AC_HELP_STRING([--enable-bgq-improved], [Enable compilation of BlueGene/Q improved version of kernels. Single threaded version.]),
+	[case "${enableval}" in
+     	yes) bgq_kernels_nosmp=true  ;;
+     	no)  bgq_kernels_nosmp=false ;;
+     	*) AC_MSG_ERROR([bad value ${enableval} for --enable-bgq-improved . Compiling with standard kernels.]) ;;
+   esac],[bgq_kernels_nosmp=false])
+
+###################################################################
+# Enabling BlueGene Wilson improved version routines multi thread
+AC_ARG_ENABLE(bgq-improved-smp,
+	AC_HELP_STRING([--enable-bgq-improved-smp], [Enable compilation of BlueGene/Q improved version of kernels. Multithreaded SMP version.]),
+	[case "${enableval}" in
+     	yes) bgq_kernels_smp=true  ;;
+     	no)  bgq_kernels_smp=false ;;
+     	*) AC_MSG_ERROR([bad value ${enableval} for --enable-bgq-improved-smp . Compiling with standard kernels.]) ;;
+   esac],[bgq_kernels_smp=false])
+
 ######################################################################
 # many HPC systems are configured so that running parallel programs
 # interactively is disabled: on those systems, AC_PROG_F77 and AC_PROG_CC
@@ -121,7 +141,12 @@ bgq )
      mpi=true
      bluegeneq=true
      AC_MSG_NOTICE([forcing cross compilation on BG/Q])
-     use_cpp="bgxlC";
+     if [ $bgq_kernels_smp ]
+     then 
+     	use_cpp="bgxlC_r";
+     else
+	use_cpp="bgxlC";
+     fi
      use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -I/usr/local/bg/include -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
      ld_flags="${LDFLAGS} -L/usr/local/bg/lib -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib"
      use_ar_flags="cru"
@@ -153,6 +178,8 @@ echo configure: setting linker flags... $ARFLAGS
 AM_CONDITIONAL([USE_MPI], [(test x$mpi = xtrue)])
 AM_CONDITIONAL([HITACHI], [(test x$hitachi = xtrue)])
 AM_CONDITIONAL([IBM_BGQ], [(test x$bluegeneq = xtrue)])
+AM_CONDITIONAL([IBM_BGQWILSON_NOSMP], [(test x$bgq_kernels_nosmp = xtrue)])
+AM_CONDITIONAL([IBM_BGQWILSON_SMP], [(test x$bgq_kernels_smp = xtrue)])
 	 
 ###################################################################
 # Checks for libraries.
@@ -214,6 +241,12 @@ if [ $improved_kernels ]
 then 
 AC_DEFINE([IMPROVED_WILSON],[], [Enable improved Wilson kernel])
 fi
+
+# BGQ specifics - improved kernels
+if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
+then 
+AC_DEFINE([IBM_BGQ_WILSON],[], [Enable BlueGene/Q optimized Wilson kernel])
+fi
 ###################################################################
 # Checks for doxygen support
 # if present enables the "make doxyfile" command
@@ -247,7 +280,12 @@ The following features are enabled:
 - architecture                  : $arch
 - cross compilation             : `if test "x$cross_compiling" = xyes; then echo yes; else echo no; fi`
 - multicore MPI version enabled : $mpi
-- improved kernels compilation	: $improved_kernels
+`if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
+then 
+echo -ne "- IBM kernels compilation       : "; if test "x$bgq_kernels_nosmp" = xtrue; then echo single_threaded; else echo smp; fi
+else
+echo "- improved kernels compilation  : $improved_kernels"
+fi`
 - build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
 - graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
 

@@ -183,7 +183,7 @@ SolverOutput MultiShiftSolver_CG::solve(prop_t& xq,
   
   for(int i=0; i<Nshift; ++i) xq[i] = x[i];
 
-  Out.diff = diff;
+  Out.diff = sqrt(diff);
   TIMING_END(Out.timing);
   
   return Out;
