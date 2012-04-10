@@ -182,7 +182,12 @@ AM_CONDITIONAL([IBM_BGQWILSON_NOSMP], [(test x$bgq_kernels_nosmp = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_SMP], [(test x$bgq_kernels_smp = xtrue)])
 	 
 ###################################################################
-# Checks for libraries.
+# Checks for libraries and headers
+if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
+then
+AC_CHECK_HEADERS(bgqwilson.h)
+fi
+
 AC_CHECK_LIB([m], [pow])
 AC_CHECK_LIB([gslcblas],
 	[cblas_dgemm],,

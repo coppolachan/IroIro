@@ -12,7 +12,10 @@
 #include <vector>
 #include "macros.hpp"
 
+#ifdef IBM_BGQ_WILSON
 #include "bgqwilson.h"
+#endif
+
 /*!
  * @class Geometry
  * @brief Initializes several geometry related objects
