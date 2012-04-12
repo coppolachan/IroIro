@@ -53,7 +53,11 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
       break;
     }
   }
-  if(Out.Iterations == -1) throw "Not converged.";
+
+  if(Out.Iterations == -1) {
+    CCIO::cout<<" Not converged. Current residual: "<< rr*snorm << endl;
+    abort();
+  }
 
   p = opr_->mult(x);
   p -= b;

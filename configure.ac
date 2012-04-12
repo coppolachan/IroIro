@@ -284,14 +284,14 @@ The following features are enabled:
 
 - architecture                  : $arch
 - cross compilation             : `if test "x$cross_compiling" = xyes; then echo yes; else echo no; fi`
-- multicore MPI version enabled : $mpi
-`if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
+- multicore MPI version enabled : $mpi"
+if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
 then 
 echo -ne "- IBM kernels compilation       : "; if test "x$bgq_kernels_nosmp" = xtrue; then echo single_threaded; else echo smp; fi
 else
 echo "- improved kernels compilation  : $improved_kernels"
-fi`
-- build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
+fi
+echo "- build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
 - graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
 
 Directories:
