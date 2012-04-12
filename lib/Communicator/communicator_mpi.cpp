@@ -279,9 +279,6 @@ void Communicator::setup(){
   int NPEz = CommonPrms::instance()->NPEz();
   int NPEt = CommonPrms::instance()->NPEt();
 
-  CCIO::cout.init(&std::cout);
-  CCIO::cerr.init(&std::cerr);
-
   //Check number of nodes
   if (NPEx*NPEy*NPEz*NPEt != Nproc_) {
     if(my_rank_==0) 
@@ -312,6 +309,10 @@ void Communicator::setup(){
 
   if(my_rank_==0) cout << "Communicator initialized using BGNET with "
 		       << Nproc_ << " processes.\n";
+
+  BGNET_GlobalBarrier();
+  CCIO::cout.init(&std::cout);
+  CCIO::cerr.init(&std::cerr); 
 }
 
 Communicator::~Communicator(){  BGNET_Finalize();}
