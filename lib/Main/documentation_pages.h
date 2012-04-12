@@ -349,11 +349,11 @@
     - \b Fermion
          - \b TwoFlavors (Two flavors action, class Action_Nf2)
 	 - \b TwoFlavorsRatio (Two flavors ratio of operators, class Action_Nf2_ratio)
-	 - \b TwoFlavorsDomainWall_5D (%Action for two flavors of Domain Wall fermions, uses class Action_Nf2_Ratio)
+	 - \b TwoFlavorsDomainWall_5D (%Action for two flavors of Domain Wall fermions, uses class Action_Nf2_ratio)
 	 - \b TwoFlavorsEvenOdd (%Action for two flavors even-odd preconditioned, class Action_Nf2_EvenOdd)
 	 - \b NfFlavors (Any number of flavors action, class Action_Nf)
 	 - \b NfFlavorsRatio (Any number of flavors ratio of operators, class Action_Nf_ratio)
-	 - \b NfFlavorsDomainWall_5D (%Action for two flavors of Domain Wall fermions, uses class Action_Nf_Ratio)
+	 - \b NfFlavorsDomainWall_5D (%Action for two flavors of Domain Wall fermions, uses class Action_Nf_ratio)
 
     Each one of these will be explained in the following sections.
 
@@ -468,16 +468,19 @@
 
     @section FActionNfFlav Fermion - NfFlavors
 
-    The \c NfFlavors action is constructed in a way similar to the /c TwoFlavors with a section describing number of flavors and number of pseudofermions like in the following example
+    The \c NfFlavors action is constructed in a way similar to the \c TwoFlavors with a section describing number of flavors and number of pseudofermions like in the following example
 
     @verbatim
     <Action type="Fermion" name="NfFlavors">
-      <Flavors>2</Flavors>
+      <!-- The following lines set the approximation parameters -->
+      <Flavors>1</Flavors>
       <Pseudofermions>2</Pseudofermions>
       <ApproxDegree>10 10 10</ApproxDegree>
       <Precision>40 40 40</Precision>
       <BoundaryLow>0.1 0.1 0.1</BoundaryLow>
       <BoundaryHigh>4 4 4</BoundaryHigh>
+
+      <--! This is the usual section -->
       <Kernel name="DiracWilson">
         <mass>0.1</mass>
       </Kernel>
@@ -495,13 +498,51 @@
 
     where \f$N_f\f$ and \f$n_{\rm ps}\f$ are the number of flavors and pseudofermions respectively. The factor of 2 comes from the \f$(D^\dagger D)\f$ term.
 
-    \c \<%ApproxDegree\> declares the number of poles in the rational approximation of the exponential function.
+    \c \<%ApproxDegree\> declares the number of poles in the rational approximation of the exponential function, the number \f$N_{\rm max}\f$ in the following expansion
+
+    \f[ f(x)= r_0 + \sum_{i=1}^{N_{\rm max}} \frac{r_i}{x+ p_i} \f]
 
     \c \<%Precision\> fixes the number of digits in the calculation of the rational approximation.
 
     \c \<%BoundaryLow\> and  \c \<%BoundaryHigh\> are used to define the approximation interval, require some knowledge on the eigenmodes of the \f$(D^\dagger D)\f$ operator. 
 
     Three numbers are always used to define the parameters to allow the user some fine tuning in the rational approximations. They are used respectively for the pseudofermions calculation step, the molecular dynamics step and the Metropolis step. 
+
+    @section FActionNfFlavRatio Fermion - NfFlavorsRatio
+
+    This action is described in a way similar to its \ref FActionNf2ratio counterpart. The same preliminary section described just above for the \c NfFlavors is used to set approximation parameters. The same approximation parameters are used to numerator and denominator in the current implementation.
+    The rest goes as usual. 
+
+    See the following example for one single flavor of Ratio Wilson %Action with two pseudofermions:
+
+    @verbatim
+    <Action type="Fermion" name="NfFlavorsRatio">
+      <Flavors>1</Flavors>
+      <Pseudofermions>2</Pseudofermions>
+      <ApproxDegree>10 10 10</ApproxDegree>
+      <Precision>40 40 40</Precision>
+      <BoundaryLow>0.1 0.1 0.1</BoundaryLow>
+      <BoundaryHigh>4 4 4</BoundaryHigh>
+      <Numerator name="DiracWilson">
+        <mass>0.01</mass>
+      </Numerator>
+      <Denominator name="DiracWilson">
+        <mass>0.1</mass>
+      </Denominator>
+      <RationalSolverNumerator type="Rational_CG">
+        <MaxIter>2000</MaxIter>
+        <Precision>1e-14</Precision>
+      </RationalSolverNumerator>
+      <RationalSolverDenominator type="Rational_CG">
+        <MaxIter>2000</MaxIter>
+        <Precision>1e-14</Precision>
+      </RationalSolverDenominator>
+    </Action>@endverbatim
+    
+
+    @section FActionNfFlavDWF Fermion - NfFlavorsDomainWall_5D
+
+    Not implemented yet, use the \c NfFlavorsRatio action described above specifing the correct numerator and denominator.
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
