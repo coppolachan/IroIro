@@ -4297,6 +4297,10 @@ if test "x$ac_cv_header_bgqwilson_h" = xyes; then :
 #define HAVE_BGQWILSON_H 1
 _ACEOF
 
+else
+  as_fn_error $? "BGQ Wilson library not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries." "$LINENO" 5
 fi
 
 done

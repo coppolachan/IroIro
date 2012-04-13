@@ -185,7 +185,10 @@ AM_CONDITIONAL([IBM_BGQWILSON_SMP], [(test x$bgq_kernels_smp = xtrue)])
 # Checks for libraries and headers
 if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
 then
-AC_CHECK_HEADERS(bgqwilson.h)
+AC_CHECK_HEADERS([bgqwilson.h],,
+	[AC_MSG_ERROR(BGQ Wilson library not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries.)])
 fi
 
 AC_CHECK_LIB([m], [pow])

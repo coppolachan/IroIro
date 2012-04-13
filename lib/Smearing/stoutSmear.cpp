@@ -24,7 +24,6 @@ void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
   SUNmat ut;
 
   _Message(DEBUG_VERB_LEVEL, "Stout smearing started\n");
-
   SmearBase->smear(u_tmp1,u_in);
 
   for(int mu = 0; mu < NDIM_; ++mu){
