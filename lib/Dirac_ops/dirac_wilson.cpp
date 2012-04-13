@@ -41,14 +41,13 @@ void Dirac_Wilson::mult_offdiag(Field& w, const Field& f) const{
 void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
   #ifndef IBM_BGQ_WILSON
   mult_offdiag(w,f);
-  #else  
+  w += f; 
+ #else  
   double* pF = const_cast<Field&>(f).getaddr(0);
   double* pU = const_cast<Field *>(u_)->getaddr(0);
   double* pW = w.getaddr(0);
   BGWilson_Mult(pW, pU, pF, -kpp_ , BGWILSON_DIRAC);
   #endif
-  
-  w += f;
 }
 
 const Field Dirac_Wilson::mult(const Field& f) const{
