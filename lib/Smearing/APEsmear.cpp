@@ -7,7 +7,7 @@
 //====================================================================
 std::vector<double> Smear_APE::set_rho(const double common_rho)const{
 
-  std::vector<double> res(NDIM_*NDIM_);
+  std::vector<double> res;
 
   for(int mn=0; mn<NDIM_*NDIM_; ++mn) res.push_back(common_rho);
   for(int mu=0; mu<NDIM_; ++mu) res[mu + mu*NDIM_] = 0.0;

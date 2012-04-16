@@ -43,6 +43,8 @@ int Test_HMC::run(){
   SmartConf ThinField;//empty for thin links
   SmartConf FatField(Nsmear, AnalyticSmear);
 
+  CCIO::cout << "Created Smart conf\n";
+
   /////////////////////////////////////////////
 
   ActionLevel al_1, al_2;
@@ -63,6 +65,7 @@ int Test_HMC::run(){
   Action* Nf2Action = new Action_Nf2(FatField.select_conf(dosmear),
 				     OpNf2,
 				     SolvNf2,
+				     true,
 				     &FatField);
   al_2.push_back(Nf2Action);
   
