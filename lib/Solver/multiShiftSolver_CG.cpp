@@ -33,7 +33,6 @@ void MultiShiftSolver_CG::solve_init(vector<Field>& x,
   r = s;
   rr = r*r;  alphap = 0.0;
   betap  = 1.0;
-
   _Message(SOLV_ITER_VERB_LEVEL, "    | Initial residual |^2 = "<<rr<<"\n");
 }
 

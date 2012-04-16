@@ -445,6 +445,7 @@ void Communicator::send_1to1(valarray<double>& bin,
   if(p_to == p_from)    bin = data;
   else send_1to1(&(bin[0]),&(const_cast<valarray<double>& >(data))[0],
 		 size,p_to,p_from,tag);
+  BGNET_GlobalBarrier();
 }
 
 double Communicator::reduce_sum(double a) const{

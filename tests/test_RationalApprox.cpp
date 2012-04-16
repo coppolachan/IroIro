@@ -26,16 +26,21 @@
 #include <assert.h>
 #include <vector>
 
+#include "Communicator/communicator.h"
+
+
 using namespace std;
 
 int Test_RationalApprox::run(){
   CCIO::cout << "Starting Rational Approximation test" << std::endl;
-
+  
   RNG_Env::RNG = RNG_Env::createRNGfactory(RA_node);
 
+ 
+  
   // Test standard constructor
   RationalApprox_params PsParameters(10, 10, 1, 2, 40, 0.05, 60.0);
-  /*
+  
   PsParameters.numerator_deg   = 10;
   PsParameters.denominator_deg = 10;
   
@@ -45,9 +50,10 @@ int Test_RationalApprox::run(){
   PsParameters.gmp_remez_precision = 40;
   PsParameters.lambda_low          = 0.05;
   PsParameters.lambda_high         = 1.0;
-  */
+  
 
-  RationalApprox TestApprox(PsParameters);
+  
+  //RationalApprox TestApprox(PsParameters);
 
   // Test XML constructor
   RationalApprox TestXMLApprox(RA_node);
@@ -59,11 +65,8 @@ int Test_RationalApprox::run(){
   double reference = pow(x_test, exponent);
   
   CCIO::cout << "Reference = "<< reference << "\n";
-
- 
-
   
-
+  
   //Reconstruct rational expansion
 
   double result;
@@ -79,6 +82,10 @@ int Test_RationalApprox::run(){
 
   CCIO::cout << "Result = "<< result << "\n";
   CCIO::cout << "Difference = "<< result-reference << "\n";
+
+
+  
+ 
   
   // Testing the multishift solver
   CCIO::cout << "\n";
@@ -104,9 +111,9 @@ int Test_RationalApprox::run(){
   findMinMax* MinMax = new findMinMax(FoprKernel,RNG_Env::RNG->getRandomNumGenerator(),
 				      Kernel->fsize());
 
-  MinMaxOut MinMaxResult = MinMax->findExtrema();
+  // MinMaxOut MinMaxResult = MinMax->findExtrema();
   
-  TestXMLApprox.rescale(MinMaxResult.min, MinMaxResult.max);
+  //TestXMLApprox.rescale(MinMaxResult.min, MinMaxResult.max);
 
    // Definition of the Solver
   int    Niter= 2000;
@@ -119,8 +126,8 @@ int Test_RationalApprox::run(){
 
   RationalSolver* RASolver = new RationalSolver(Solver, TestXMLApprox);
 
-  Field solution(volume_size);
-  Field solution2(volume_size);
+  Field solution;
+  Field solution2;
   RASolver->solve(solution, Source.mksrc(0,0));
 
   // Apply again (M^dag M)^(1/2)
@@ -139,4 +146,6 @@ int Test_RationalApprox::run(){
 
   CCIO::cout << ":::::::: Check answer -- diff (norm) = "<< diff_field.norm() <<"\n";
 
+
+  
 }

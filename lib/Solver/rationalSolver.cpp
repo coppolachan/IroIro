@@ -17,12 +17,12 @@ SolverOutput RationalSolver::solve(Field& sol, const Field& source) const {
   Field temp;
   prop_t shifted_sol;
   shifted_sol.resize(Residuals.size());
-
+  sol.resize(source.size());
+  
   for (int i=0; i< shifted_sol.size(); ++i) {
     shifted_sol[i].resize(source.size());
   }
   temp.resize(source.size());
-  
   
   SolverOutput out = MS_Solver_->solve(shifted_sol, source, Poles, out.diff, out.Iterations);
 
@@ -35,7 +35,6 @@ SolverOutput RationalSolver::solve(Field& sol, const Field& source) const {
     temp *= Residuals[i];
     sol += temp;
   }
-
   return out;
 }
 
