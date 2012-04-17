@@ -130,9 +130,11 @@ void RandNum_MT19937::saveSeed(std::string& file) const {
 
 // load the seed config
 void RandNum_MT19937::loadSeed(std::string& file) {
-  CCIO::cout << "Loading Mersenne Twister seeds from file ["
+  if (Communicator::primaryNode()){
+  std::cout << "Loading Mersenne Twister seeds from file ["
 	     << file << "]\n";
-  
+  }
+
   std::ifstream reader(file.c_str());
   if (reader) {
     unsigned long int n;
