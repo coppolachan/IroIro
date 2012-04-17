@@ -111,9 +111,9 @@ int Test_RationalApprox::run(){
   findMinMax* MinMax = new findMinMax(FoprKernel,RNG_Env::RNG->getRandomNumGenerator(),
 				      Kernel->fsize());
 
-  // MinMaxOut MinMaxResult = MinMax->findExtrema();
+  MinMaxOut MinMaxResult = MinMax->findExtrema();
   
-  //TestXMLApprox.rescale(MinMaxResult.min, MinMaxResult.max);
+  TestXMLApprox.rescale(MinMaxResult.min, MinMaxResult.max);
 
    // Definition of the Solver
   int    Niter= 2000;
@@ -137,6 +137,10 @@ int Test_RationalApprox::run(){
   // Check answer
   // Compare with (M^dag M)
   Field reference_sol, diff_field,temp;
+  temp.resize(solution.size());
+  reference_sol.resize(solution.size());
+  diff_field.resize(solution.size());
+
   
   temp = Kernel->mult(Source.mksrc(0,0));
   reference_sol = Kernel->mult_dag(temp);
