@@ -45,7 +45,10 @@ public:
   MDIntegrator_LeapfrogFactory(XML::node node)
     :ActSetFactory(node),
      Integrator_node(node),
-     CommonField(new GaugeField){} 
+     CommonField(new GaugeField){
+    // here the smearing initialization
+
+  } 
 };
 
 #endif // MDEXEC_FACT_HPP_

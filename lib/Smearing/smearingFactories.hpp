@@ -7,6 +7,7 @@
 
 #include "Smearing/APEsmear.hpp"
 #include "Smearing/stoutSmear.hpp"
+#include "Smearing/smartConf.hpp"
 
 #include "Tools/RAIIFactory.hpp"
 #include "include/pugi_interface.h"
@@ -58,5 +59,29 @@ public:
   Smear_Stout* getSmearingOperator(){
     return new Smear_Stout(BaseSmearingObj.get()->getSmearingOperator()); }
 };
+
+
+/*! @brief Class for creating Smart Conf operators */
+class SmartConfFactory {
+  StoutSmearingFactory StoutSmearingObj;  
+  int smearing_lvls;
+
+public: 
+  SmartConfFactory(XML::node node):StoutSmearingObj(node) {
+    XML::read(node, "levels", smearing_lvls);
+  }
+
+  SmartConf* getSmartConfiguration(){
+    return new SmartConf(smearing_lvls, * StoutSmearingObj.getSmearingOperator());
+  }
+
+};
+
+namespace SmearingOperators {
+  static SmartConfFactory* SmartConfCreator;
+  SmartConfFactory* createSmartConfFactory(XML::node);
+
+}
+
 
 #endif

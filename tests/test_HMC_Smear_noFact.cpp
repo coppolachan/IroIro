@@ -32,7 +32,7 @@ int Test_HMC::run(){
   multip[0]= 1;
   multip[1]= 1;
   
-  GaugeField* CommonField = new GaugeField;
+  //GaugeField* CommonField = new GaugeField;
   // --------------------------------- Smearing
   Smear_APE* BaseAPE = new Smear_APE(0.1);
   Smear_Stout AnalyticSmear(BaseAPE);
@@ -43,7 +43,6 @@ int Test_HMC::run(){
   SmartConf ThinField;//empty for thin links
   SmartConf FatField(Nsmear, AnalyticSmear);
 
-  CCIO::cout << "Created Smart conf\n";
 
   /////////////////////////////////////////////
 
@@ -85,9 +84,6 @@ int Test_HMC::run(){
   // Note:
   // The line *U_=U in mdExec_leapfrog.cpp (init)
   // must be substituted by a call to SmartConf::set_GaugeField()
-
-  //Initialization
-  //HMCgeneral hmc_general(node);
 
   ////////////// HMC calculation /////////////////
   clock_t start_t = clock();

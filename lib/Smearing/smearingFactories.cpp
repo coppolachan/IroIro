@@ -24,4 +24,11 @@ namespace SmearingOperators {
       abort();
     }
   }
+
+  SmartConfFactory* createSmartConfFactory(XML::node node) {
+    XML::descend(node, "Smearing", MANDATORY);
+    return new SmartConfFactory(node);
+  }
+
+
 }

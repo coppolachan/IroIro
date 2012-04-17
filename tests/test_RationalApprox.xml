@@ -7,7 +7,7 @@
     <Nodes>1 1 1 1</Nodes>
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
+  <Configuration Type="Binary">Conf_500</Configuration> 
 
   <RationalApprox>
     <Num_deg>10</Num_deg>
@@ -15,7 +15,7 @@
     <Exp_num>1</Exp_num>
     <Exp_den>2</Exp_den>
     <Precision>50</Precision>
-    <Low>0.005</Low>
+    <Low>0.001</Low>
     <High>1</High>
 
     <RandomNumberGen name="Mersenne Twister">
