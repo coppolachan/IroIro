@@ -2,7 +2,7 @@
 #define ACTION_FACT_
 
 #include "action.hpp"
-#include "include/format_G.h"
+#include "Smearing/smearingFactories.hpp"
 
 /*!
  *@class ActionFactory
@@ -15,7 +15,7 @@ public:
   /*!
     Virtual function returning the %Action
   */
-  virtual Action* getAction(GaugeField* const) = 0;
+  virtual Action* getAction(GaugeField* const, SmartConf* const) = 0;
 };
 
 

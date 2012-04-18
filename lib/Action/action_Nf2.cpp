@@ -55,7 +55,7 @@ GaugeField Action_Nf2::md_force(){
   GaugeField fce(D_->md_force(eta,D_->mult(eta)));
   
   // [fce] is [U*SigmaTilde] in smearing language
-  if(smart_conf_) smart_conf_->smeared_force(fce);
+  if(smeared_) smart_conf_->smeared_force(fce);
   GaugeField force = FieldUtils::TracelessAntihermite(fce);
 
   _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "Action_Nf2");

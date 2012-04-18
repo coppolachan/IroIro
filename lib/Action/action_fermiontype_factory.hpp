@@ -19,7 +19,6 @@
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
 
-
 ///////////////////////////////////////////////////////////////////////
 
 class TwoFlavorActionFactory : public FermionActionFactory {
@@ -29,11 +28,16 @@ class TwoFlavorActionFactory : public FermionActionFactory {
   RaiiFactoryObj<DiracWilsonLike> Kernel;
   RaiiFactoryObj<Fopr_DdagD> HermitianOp;
   RaiiFactoryObj<Solver> Solv;
+
+  RaiiFactoryObj<SmartConf> SConf;  
  
   const XML::node Action_node;
+  bool smearing;
 
 public:
   TwoFlavorActionFactory(XML::node node):Action_node(node){
+    smearing = false; // default
+    XML::read(node, "smeared", smearing);
     XML::descend(node,"Kernel",MANDATORY);
     DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
     XML::next_sibling(node,"Solver", MANDATORY);
@@ -42,10 +46,11 @@ public:
 
   ~TwoFlavorActionFactory(){}
 private:
-  Action_Nf2* getFermionAction(GaugeField* const F){
+  Action_Nf2* getFermionAction(GaugeField* const F, SmartConf* const SC){
     Kernel.save(DiracObj.get()->getDiracOperator(&(F->data)));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
+    
     return new Action_Nf2(F, Kernel.get(), Solv.get());
   }
 };
@@ -72,7 +77,7 @@ public:
 
   ~NfFlavorsActionFactory(){}
 private: 
-  Action_Nf* getFermionAction(GaugeField* const F) {
+  Action_Nf* getFermionAction(GaugeField* const F, SmartConf* const SC) {
     Kernel.save(DiracObj.get()->getDiracOperator(&(F->data)));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
@@ -112,7 +117,7 @@ public:
   }
   
 private:  
-  Action_Nf2_ratio* getFermionAction(GaugeField* const F){
+  Action_Nf2_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
     DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(F->data)));
     DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(F->data)));
     
@@ -157,7 +162,7 @@ public:
   }
   
 private:  
-  Action_Nf_ratio* getFermionAction(GaugeField* const F){
+  Action_Nf_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
     DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(F->data)));
     DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(F->data)));
     
@@ -202,7 +207,7 @@ public:
   }
 
 private:  
-  Action_Nf2_ratio* getFermionAction(GaugeField* const F){
+  Action_Nf2_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
     DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(F->data)));
     DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(F->data)));
 
@@ -245,7 +250,7 @@ public:
   }
 
 private:  
-  Action_Nf_ratio* getFermionAction(GaugeField* const F){
+  Action_Nf_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
     DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(F->data)));
     DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(F->data)));
 

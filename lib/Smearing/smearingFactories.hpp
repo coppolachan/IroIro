@@ -1,5 +1,5 @@
 /*!
- * @file smearing_Factories.hpp 
+ * @file smearingFactories.hpp 
  * @brief Declaration of Smearing Operators factories
  */
 #ifndef SMEARING_FACT_H_
@@ -12,6 +12,7 @@
 #include "Tools/RAIIFactory.hpp"
 #include "include/pugi_interface.h"
 #include "Communicator/comm_io.hpp"
+
 /*!
  * @brief Abstract base class for creating smearing operators
  */
@@ -51,6 +52,8 @@ class StoutSmearingFactory: public SmearingOperatorFactory {
   RaiiFactoryObj<SmearingOperatorFactory> BaseSmearingObj;
 
 public:
+  StoutSmearingFactory(){}; //empty for no smearing
+
   StoutSmearingFactory(XML::node node){
     XML::descend(node, "Base", MANDATORY);
     BaseSmearingObj.save(SmearingOperators::createSmearingOperatorFactory(node));
@@ -63,25 +66,42 @@ public:
 
 /*! @brief Class for creating Smart Conf operators */
 class SmartConfFactory {
-  StoutSmearingFactory StoutSmearingObj;  
+  //  StoutSmearingFactory* StoutSmearingObj;  
+  RaiiFactoryObj<SmartConf> SmartConfObj;
   int smearing_lvls;
 
+
+
+  SmartConfFactory(const SmartConfFactory&);
 public: 
-  SmartConfFactory(XML::node node):StoutSmearingObj(node) {
-    XML::read(node, "levels", smearing_lvls);
+  SmartConfFactory(){};
+
+  SmartConfFactory(XML::node node){
+    smearing_lvls = 0; //assumes no smearing
+    XML::descend(node, "Smearing"); // It is not mandatory
+    if (node != NULL) {
+      CCIO::cout << "Creating SmartConf Factory\n";
+      XML::read(node, "levels", smearing_lvls, MANDATORY);
+      CCIO::cout << "LEVELS : "<< smearing_lvls << "\n";
+      StoutSmearingFactory* StoutSmearingObj = new StoutSmearingFactory(node); 
+      SmartConfObj.save(new SmartConf(smearing_lvls, *(StoutSmearingObj->getSmearingOperator())));
+      CCIO::cout << "Completed\n";
+      delete StoutSmearingObj;
+    }
   }
 
-  SmartConf* getSmartConfiguration(){
-    return new SmartConf(smearing_lvls, * StoutSmearingObj.getSmearingOperator());
+  SmartConf* getSmartConfiguration() {
+    CCIO::cout << "Getting SmartConf\n";
+    CCIO::cout << "LEVELS : "<< smearing_lvls << "\n";
+    if (smearing_lvls == 0) return NULL;
+    else
+      return SmartConfObj.get();
+  }
+
+  ~SmartConfFactory(){
+    CCIO::cout << "Deleting SmartConf Factory\n";
   }
 
 };
-
-namespace SmearingOperators {
-  static SmartConfFactory* SmartConfCreator;
-  SmartConfFactory* createSmartConfFactory(XML::node);
-
-}
-
 
 #endif

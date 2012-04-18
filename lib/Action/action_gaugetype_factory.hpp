@@ -16,7 +16,7 @@ public:
     Action_node(node){};
   
 private:  
-  ActionGaugeWilson* getGaugeAction(GaugeField* const G){
+  ActionGaugeWilson* getGaugeAction(GaugeField* const G, SmartConf* const SC){
     return new ActionGaugeWilson(Action_node,G); 
   }
 };
@@ -34,7 +34,7 @@ public:
     Action_node(node){};
   
 private:  
-  ActionGaugeRect* getGaugeAction(GaugeField* const G){
+  ActionGaugeRect* getGaugeAction(GaugeField* const G, SmartConf* const SC){
     return new ActionGaugeRect(Action_node,G); 
   }
 };
@@ -51,7 +51,7 @@ public:
     Action_node(node){};
   
 private:  
-  ActionGaugeRect* getGaugeAction(GaugeField* const G){
+  ActionGaugeRect* getGaugeAction(GaugeField* const G, SmartConf* const SC){
     return new ActionGaugeRect(Action_node,
 			       3.648,
 			       -0.331,
@@ -71,7 +71,7 @@ public:
     Action_node(node){};
   
 private:  
-  ActionGaugeRect* getGaugeAction(GaugeField* const G){
+  ActionGaugeRect* getGaugeAction(GaugeField* const G, SmartConf* const SC){
     return new ActionGaugeRect(Action_node,
 			       5.0/3.0,
 			       -1.0/12.0,
@@ -91,7 +91,7 @@ public:
     Action_node(node){};
   
 private:  
-  ActionGaugeRect* getGaugeAction(GaugeField* const G){
+  ActionGaugeRect* getGaugeAction(GaugeField* const G, SmartConf* const SC){
     return new ActionGaugeRect(Action_node,
 			       12.2704,
 			       -1.4088,

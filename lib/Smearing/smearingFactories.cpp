@@ -1,3 +1,8 @@
+/*!
+ * @file smearingFactories.cpp 
+ * @brief Definition of Smearing Operators switcher
+ */
+
 #include "smearingFactories.hpp"
 
 #include <string.h>
@@ -24,11 +29,5 @@ namespace SmearingOperators {
       abort();
     }
   }
-
-  SmartConfFactory* createSmartConfFactory(XML::node node) {
-    XML::descend(node, "Smearing", MANDATORY);
-    return new SmartConfFactory(node);
-  }
-
 
 }
