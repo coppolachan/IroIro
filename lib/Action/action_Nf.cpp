@@ -12,7 +12,7 @@
 
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf::observer_update() {
-  D_->update_internal_state();  
+  D_->update_internal_state(); 
 }
 //::::::::::::::::::::::::::::::::
 void Action_Nf::attach_smearing(SmartConf* SmearObj) {

@@ -34,7 +34,7 @@ void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
     }
   }
   exponentiate_iQ(u_tmp1, q_mu);
-  
+
   for(int mu = 0; mu < NDIM_; ++mu){
     U_mu = DirSlice(u_in, mu);
     for(int site = 0; site < Nvol; ++site){
@@ -42,6 +42,7 @@ void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
       SetMat(u_smr, ut, site, mu);
     }
   }
+
   _Message(DEBUG_VERB_LEVEL, "Stout smearing completed \n");
 }
 

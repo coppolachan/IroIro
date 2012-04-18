@@ -38,6 +38,7 @@ public:
   TwoFlavorActionFactory(XML::node node):Action_node(node){
     smearing = false; // default
     XML::read(node, "smeared", smearing);
+
     XML::descend(node,"Kernel",MANDATORY);
     DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
     XML::next_sibling(node,"Solver", MANDATORY);
@@ -70,9 +71,13 @@ class NfFlavorsActionFactory : public FermionActionFactory {
   RaiiFactoryObj<RationalSolver> Solv;
 
   const XML::node Action_node;
+  bool smearing;
   
 public:
   NfFlavorsActionFactory(XML::node node):Action_node(node) {
+    smearing = false; // default
+    XML::read(node, "smeared", smearing);
+
     XML::descend(node, "Kernel", MANDATORY);
     DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));  
     XML::next_sibling(node,"RationalSolver", MANDATORY);
@@ -82,11 +87,14 @@ public:
   ~NfFlavorsActionFactory(){}
 private: 
   Action_Nf* getFermionAction(GaugeField* const F, SmartConf* const SC) {
-    Kernel.save(DiracObj.get()->getDiracOperator(&(F->data)));
+   // select links according to smearing
+    GaugeField* Links = SC->select_conf(smearing);
+
+    Kernel.save(DiracObj.get()->getDiracOperator(&(Links->data)));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
-    return new Action_Nf(F, Kernel.get(), Solv.get(), 
-			 Action_Nf_params(Action_node));
+    return new Action_Nf(Links, Kernel.get(), Solv.get(), 
+			 Action_Nf_params(Action_node), smearing, SC);
   }
 
 };

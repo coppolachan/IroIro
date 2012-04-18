@@ -64,7 +64,7 @@ int Test_HMC::run(){
   Action* Nf2Action = new Action_Nf2(FatField.select_conf(dosmear),
 				     OpNf2,
 				     SolvNf2,
-				     false,
+				     true,
 				     &FatField);
   al_2.push_back(Nf2Action);
   
