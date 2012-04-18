@@ -32,7 +32,7 @@ class MDIntegrator_LeapfrogFactory : public MDIntegratorFactory {
 				 getActionSet(CommonField,
 					      SCFactory.getSmartConfiguration()), 
 				 ActSetFactory.getMultipliers(),
-				 CommonField);
+				 SCFactory.getSmartConfiguration());
     }catch(...){
       std::cerr << "Error in creating leapfrog" << std::endl;
       abort();
@@ -47,7 +47,7 @@ public:
     :ActSetFactory(node),
      Integrator_node(node),
      SCFactory(node),
-     CommonField(new GaugeField){} 
+     CommonField(SCFactory.getSmartConfiguration()->ThinLinks){  } 
 };
 
 #endif // MDEXEC_FACT_HPP_

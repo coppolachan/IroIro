@@ -9,7 +9,7 @@
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Unit">final_conf.bin</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>20</Nsweeps>
@@ -26,14 +26,14 @@
     </RandomNumberGen>
     
     <Integrator name="leapfrog_multistep">
-      <MDsteps>10</MDsteps>
+      <MDsteps>5</MDsteps>
       <step_size>0.02</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
 	<Action type="Fermion" name="TwoFlavors">
 	  <Kernel name="DiracWilson">
-	    <mass>0.1</mass>
+	    <mass>0.16666</mass>
 	  </Kernel>
 	  <Solver type="Solver_CG">
 	    <MaxIter>1000</MaxIter>
@@ -43,7 +43,7 @@
 	<step>
 	  <multiplier>2</multiplier>
 	  <Action type="Gauge" name="Wilson">
-	    <beta>5.0</beta>
+	    <beta>6.2</beta>
 	  </Action>
 	</step>
       </step>

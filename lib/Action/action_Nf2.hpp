@@ -35,8 +35,7 @@ public:
      fsize_(D->fsize()),
      phi_(fsize_),
      smeared_(smeared){
-    CCIO::cout << "Building Action Nf2\n";
-    if (smeared_ && smart_conf !=NULL) attach_smearing(smart_conf);
+     if (smeared_ && smart_conf !=NULL) attach_smearing(smart_conf);
   }
 
   ~Action_Nf2(){}

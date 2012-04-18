@@ -47,11 +47,15 @@ public:
   ~TwoFlavorActionFactory(){}
 private:
   Action_Nf2* getFermionAction(GaugeField* const F, SmartConf* const SC){
-    Kernel.save(DiracObj.get()->getDiracOperator(&(F->data)));
+    // select links according to smearing
+    GaugeField* Links = SC->select_conf(smearing);
+
+    Kernel.save(DiracObj.get()->getDiracOperator(&(Links->data)));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
+
+    return new Action_Nf2(Links, Kernel.get(), Solv.get(), smearing, SC);
     
-    return new Action_Nf2(F, Kernel.get(), Solv.get());
   }
 };
 

@@ -64,42 +64,28 @@ public:
 };
 
 
-/*! @brief Class for creating Smart Conf operators */
+/*! @brief Class for containing a Smart Conf operator instantiation */
 class SmartConfFactory {
-  //  StoutSmearingFactory* StoutSmearingObj;  
   RaiiFactoryObj<SmartConf> SmartConfObj;
   int smearing_lvls;
 
-
-
   SmartConfFactory(const SmartConfFactory&);
 public: 
-  SmartConfFactory(){};
-
   SmartConfFactory(XML::node node){
     smearing_lvls = 0; //assumes no smearing
     XML::descend(node, "Smearing"); // It is not mandatory
     if (node != NULL) {
-      CCIO::cout << "Creating SmartConf Factory\n";
-      XML::read(node, "levels", smearing_lvls, MANDATORY);
-      CCIO::cout << "LEVELS : "<< smearing_lvls << "\n";
       StoutSmearingFactory* StoutSmearingObj = new StoutSmearingFactory(node); 
       SmartConfObj.save(new SmartConf(smearing_lvls, *(StoutSmearingObj->getSmearingOperator())));
-      CCIO::cout << "Completed\n";
       delete StoutSmearingObj;
+    }
+    else {
+      SmartConfObj.save(new SmartConf()); // Just thin links
     }
   }
 
   SmartConf* getSmartConfiguration() {
-    CCIO::cout << "Getting SmartConf\n";
-    CCIO::cout << "LEVELS : "<< smearing_lvls << "\n";
-    if (smearing_lvls == 0) return NULL;
-    else
-      return SmartConfObj.get();
-  }
-
-  ~SmartConfFactory(){
-    CCIO::cout << "Deleting SmartConf Factory\n";
+    return SmartConfObj.get();
   }
 
 };

@@ -55,16 +55,16 @@ int Test_HMC::run(){
   //  DiracWilsonLike* OpNf2   
   //= new Dirac_Clover(1.0/6.0,1.0,FatField.select_conf(dosmear));
   DiracWilsonLike* OpNf2    
-    = new Dirac_Wilson(1.0/6.0,&(FatField.select_conf(dosmear)->data));
+    = new Dirac_Wilson(1.0/6.0,&(FatField.select_conf(nosmear)->data));
  
   Solver* SolvNf2 = new Solver_CG(1e-14,
 				  1000,
 				  new Fopr_DdagD(OpNf2));
   
-  Action* Nf2Action = new Action_Nf2(FatField.select_conf(dosmear),
+  Action* Nf2Action = new Action_Nf2(FatField.select_conf(nosmear),
 				     OpNf2,
 				     SolvNf2,
-				     true,
+				     false,
 				     &FatField);
   al_2.push_back(Nf2Action);
   
