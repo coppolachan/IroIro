@@ -75,6 +75,7 @@ public:
     smearing_lvls = 0; //assumes no smearing
     XML::descend(node, "Smearing"); // It is not mandatory
     if (node != NULL) {
+      XML::read(node, "levels" , smearing_lvls);
       StoutSmearingFactory* StoutSmearingObj = new StoutSmearingFactory(node); 
       SmartConfObj.save(new SmartConf(smearing_lvls, *(StoutSmearingObj->getSmearingOperator())));
       delete StoutSmearingObj;
