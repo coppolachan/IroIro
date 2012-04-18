@@ -83,7 +83,6 @@ GaugeField Action_Nf::md_force(){
 
   // Loop on pseudofermions
   for (int pf = 0; pf < Params_.n_pseudof_; ++pf){ 
-    
     //(M^dag M)^(-Nf/2n) <phi_>
     monitor =  slv_->solve_noReconstruct(eta, phi_[pf]); 
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
@@ -91,17 +90,14 @@ GaugeField Action_Nf::md_force(){
 #endif 
     
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
-      
       fce.data = D_->md_force(eta[i],D_->mult(eta[i]));
       fce.data *=  MolecularDynApprox_.InvResiduals()[i];
-      // [fce] is [U*SigmaTilde] in smearing language
-      if(smeared_) SmartField_->smeared_force(fce);
-      
-      force += FieldUtils::TracelessAntihermite(fce);
-      
+      force += fce;
     }
   }
-  
+  if(smeared_) SmartField_->smeared_force(force);  
+  force = FieldUtils::TracelessAntihermite(force);
+
   _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "Action_Nf");
   return force;
 }

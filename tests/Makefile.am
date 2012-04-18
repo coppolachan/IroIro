@@ -1,4 +1,4 @@
-# Time-stamp: <2012-04-10 10:17:33 neo>
+# Time-stamp: <2012-04-18 18:06:20 neo>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -27,11 +27,14 @@ AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
 EXTRA_DIST = 	testResults.info	\
-		test_HMC.xml	 	\
 		test_HMC.clover.xml	\
 		test_HMC.wilson.xml	\
+		test_HMC.wilson.smear.xml \
 		test_HMC.wilson.rational.xml	\
 		test_HMC.wilson.ratio.rational.xml	\
+		test_HMC.wilson.ratio.xml \
+		test_HMC.wilson.ratio.smeared.xml \
+		test_HMC.wilson.rational.smeared.xml \
 		test_HMC.DWF.rational.xml	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+    <!-- other params here -->
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  <!-- definition of HMC trajectory -->
+  <HMC>
+    <Nsweeps>1</Nsweeps>
+    <Thermalization>2</Thermalization>
+    <StartingConfig>0</StartingConfig>
+    <SaveInterval>0</SaveInterval>
+    <SavePrefix>HMCrect_</SavePrefix>
+    <RandomNumberGen name="Mersenne Twister">
+      <!--   <seedFile>seed_file</seedFile>
+	   Using seedFile superseeds the <init> line 
+           that can be safely omitted
+           It is ignored by factory in this case -->
+      <init>0x123 0x234 0x345 0x456</init> 
+    </RandomNumberGen>
+    
+    <Integrator name="leapfrog_multistep">
+      <MDsteps>10</MDsteps>
+      <step_size>0.02</step_size>
+      <exp_approx>8</exp_approx>
+
+      <Smearing>
+	<levels>1</levels>
+	<Base type="APE">
+	  <rho>0.1</rho>
+	</Base>
+      </Smearing>
+
+
+      <step>
+	<multiplier>1</multiplier>
+	<Action type="Fermion" name="TwoFlavorsRatio">
+	  <smeared>true</smeared>
+	  <Numerator name="DiracWilson">
+	    <mass>0.01</mass>
+	  </Numerator>
+	   <Denominator name="DiracWilson">
+	    <mass>0.1</mass>
+	  </Denominator>
+	  <SolverNumerator type="Solver_CG">
+	    <MaxIter>2000</MaxIter>
+	    <Precision>1e-14</Precision>
+	  </SolverNumerator>
+	  <SolverDenominator type="Solver_CG">
+	    <MaxIter>2000</MaxIter>
+	    <Precision>1e-14</Precision>
+	  </SolverDenominator>
+	</Action>
+
+	<Action type="Fermion" name="TwoFlavors">
+	  <Kernel name="DiracWilson">
+	    <mass>0.1</mass>
+	  </Kernel>
+	  <Solver type="Solver_CG">
+	    <MaxIter>2000</MaxIter>
+	    <Precision>1e-14</Precision>
+	  </Solver>
+	</Action>
+
+	<step>
+	  <multiplier>2</multiplier>
+	  <Action type="Gauge" name="Wilson">
+	    <beta>5.0</beta>
+	  </Action>
+	</step>
+      </step>
+      
+    </Integrator>
+  </HMC>
+  
+</Parameters>
+

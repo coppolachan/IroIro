@@ -6,6 +6,27 @@
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 
+//::::::::::::::::::::::::::::::::Observer
+void Action_Nf2_ratio::observer_update() {
+  D1_->update_internal_state();  
+  D2_->update_internal_state();  
+}
+
+void Action_Nf2_ratio::attach_smearing(SmartConf* SmearObj) {
+  // Checks that the pointer for gauge field u_ 
+  // points correctly to the smeared configuration
+  // otherwise falls back to standard update
+  if (u_ == SmearObj->get_current_conf()) {
+    smart_conf_= SmearObj; //set the configuration
+    CCIO::cout << "Succesfully attached smearing routines\n";
+  }else{
+    CCIO::cout << "Pointers disagree - Smearing not allowed\n";
+    smeared_ = false;
+  }
+}
+
+
+
 Field Action_Nf2_ratio::DdagD1_inv(const Field& src){
   Field sol(fsize_);
   SolverOutput monitor = slv1_->solve(sol,src);
@@ -38,17 +59,12 @@ double Action_Nf2_ratio::calc_H(){
   return H_nf2r;
 }
 
-void Action_Nf2_ratio::observer_update(){
-  D1_->update_internal_state();
-  D2_->update_internal_state();
-}
-  
 GaugeField Action_Nf2_ratio::md_force(){
   Field eta = DdagD1_inv(D2_->mult_dag(phi_));
   GaugeField fce(D1_->md_force(eta,D1_->mult(eta)));
   fce -= GaugeField(D2_->md_force(eta,phi_));
 
-  if(smart_conf_) smart_conf_->smeared_force(fce);
+  if(smeared_) smart_conf_->smeared_force(fce);
   GaugeField force = FieldUtils::TracelessAntihermite(fce); 
 
   _MonitorMsg(ACTION_VERB_LEVEL, Action,force,"Action_Nf2_ratio");

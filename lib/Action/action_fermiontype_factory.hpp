@@ -113,11 +113,15 @@ class TwoFlavorRatioActionFactory : public FermionActionFactory {
   RaiiFactoryObj<Solver> Solver2;
 
   const XML::node Action_node;
+  bool smearing;
 
 public:
   ~TwoFlavorRatioActionFactory(){}
 
   TwoFlavorRatioActionFactory(XML::node node):Action_node(node){
+    smearing = false; // default
+    XML::read(node, "smeared", smearing);
+
     XML::descend(node,"Numerator", MANDATORY);
     DiracNumObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node)); 
     XML::next_sibling(node,"Denominator", MANDATORY);
@@ -130,17 +134,21 @@ public:
   
 private:  
   Action_Nf2_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
-    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(F->data)));
-    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(F->data)));
+   // select links according to smearing
+    GaugeField* Links = SC->select_conf(smearing);
+
+    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(Links->data)));
+    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(Links->data)));
     
     Solver1.save(SolverNumObj.get()->getSolver(new Fopr_DdagD(DiracNumerator.get())));
     Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_DdagD(DiracDenominator.get())));
 
-    return new Action_Nf2_ratio(F,
+    return new Action_Nf2_ratio(Links,
 				DiracNumerator.get(),
 				DiracDenominator.get(),
 				Solver1.get(),
-				Solver2.get()); 
+				Solver2.get(),
+				smearing, SC); 
   }
 };
 
