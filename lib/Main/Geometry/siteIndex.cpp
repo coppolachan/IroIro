@@ -8,7 +8,8 @@
 #include "siteIndex.hpp"
 #include "Communicator/communicator.h"
 
-std::vector<int> SiteIndex::global_site_;
+
+//std::vector<int> SiteIndex::global_site_;
 
 SiteIndex::SiteIndex():Nx_(CommonPrms::instance()->Nx()),
 		       Ny_(CommonPrms::instance()->Ny()),

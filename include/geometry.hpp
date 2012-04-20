@@ -43,7 +43,7 @@ class Geometry {
     }
 #endif
     prms_= CommonPrms::instance(latt);
-    idx_= SiteIndex::instance();
+    //idx_= SiteIndex::instance();
 
     #ifdef IBM_BGQ_WILSON
     BGWilson_Init(Dim[XDIR],Dim[YDIR],Dim[ZDIR],Dim[TDIR],
@@ -56,11 +56,13 @@ public:
   //Lattice latt_; /*!< Lattice structure containing the lattice dimensions 
   //  		  * and MPI nodes distribution on 4 dimensions */ 
   CommonPrms* prms_; /*!< Singleton handling the general parameters */
-  SiteIndex* idx_;  /*!< Singleton containing the local geometry */
+  //SiteIndex* idx_;  /*!< Singleton containing the local geometry */
   
   /*! @brief Constructor - Initialized geometry object */
   Geometry(XML::node node){ 
     initialize(node.child("Geometry")); }  
+
+
 };
 
 #endif

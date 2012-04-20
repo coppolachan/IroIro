@@ -26,7 +26,8 @@ private:
   
   std::vector<int> Bdir_;
   std::vector<int> slsize_;
-  static std::vector<int> global_site_;
+  //static std::vector<int> global_site_;
+  std::vector<int> global_site_;
 
   // constructor
   SiteIndex();
