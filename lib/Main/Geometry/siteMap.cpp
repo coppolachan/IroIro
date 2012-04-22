@@ -99,7 +99,7 @@ namespace SiteMap{
     for(int x=ini; x<fin; ++x)
       for(int n=0; n<slice_size(x,dir);++n) 
 	bulk.push_back(xslice(x,n,dir));
-    sort(bulk.begin(),bulk.end());
+    //sort(bulk.begin(),bulk.end());
     return bulk;
   }
 
@@ -147,7 +147,7 @@ namespace SiteMap{
     for(int x=ini; x<fin; ++x)
       for(int n=0; n<slice_size(x,dir);++n) 
 	bulk.push_back(xslice(x,n,dir));
-    sort(bulk.begin(),bulk.end());
+    //sort(bulk.begin(),bulk.end());
     return bulk;
   }
 

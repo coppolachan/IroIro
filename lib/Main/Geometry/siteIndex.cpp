@@ -15,16 +15,16 @@ SiteIndex* SiteIndex::instance(){
 }
 
 int SiteIndex::global_x(int x){ 
-  Communicator::instance()->ipe(XDIR)*Nx_+x;}
+  return Communicator::instance()->ipe(XDIR)*Nx_+x;}
 
 int SiteIndex::global_y(int y){ 
-  Communicator::instance()->ipe(YDIR)*Ny_+y;}
+  return Communicator::instance()->ipe(YDIR)*Ny_+y;}
 
 int SiteIndex::global_z(int z){ 
-  Communicator::instance()->ipe(ZDIR)*Nz_+z;}
+  return Communicator::instance()->ipe(ZDIR)*Nz_+z;}
 
 int SiteIndex::global_t(int t){ 
-  Communicator::instance()->ipe(TDIR)*Nt_+t;}
+  return Communicator::instance()->ipe(TDIR)*Nt_+t;}
 
 // setup of the global list vector
 void SiteIndex::setup_global() {

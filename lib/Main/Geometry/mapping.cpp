@@ -16,14 +16,14 @@ namespace Mapping{
   void ShiftField_eo::init_maps(){
     if(maps_.size()==0){
       for(int dir=0; dir<NDIM_; ++dir)	
-	maps_.push_back(AutoMap(dir,EvenOdd_tag()));
+	maps_.push_back(AutoMap_EvenOdd(dir,EOtag()));
     }
   }
 
   void ShiftField_oe::init_maps(){
     if(maps_.size()==0){
       for(int dir=0; dir<NDIM_; ++dir)	
-	maps_.push_back(AutoMap(dir,OddEven_tag()));
+	maps_.push_back(AutoMap_EvenOdd(dir,OEtag()));
     }
   }
 

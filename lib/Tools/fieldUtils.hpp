@@ -12,6 +12,9 @@ class RandNum;
 namespace FieldUtils{
   const GaugeField TracelessAntihermite(const GaugeField&);
   const GaugeField1D TracelessAntihermite(const GaugeField1D&);
+  const GaugeField ReUnit(const GaugeField&);
+  const GaugeField1D ReUnit(const GaugeField1D&);
+
   const GaugeField1D field_oprod(const FermionField&,const FermionField&);
 
   void RandomGauge(GaugeField1D& G,const RandNum& rand);

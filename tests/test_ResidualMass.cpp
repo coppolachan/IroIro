@@ -22,14 +22,14 @@ int Test_ResMass::run() {
 
 // Prints plaquette (thin) link
   Staples Staple;
-  CCIO::cout << "Plaquette (thin): " << Staple.plaquette(conf_) << "\n";
-  ///////////////////////////////////////////////////////////////////////////////////////
+  CCIO::cout << "Plaquette (thin): " << Staple.plaquette(conf_) << std::endl;
+///////////////////////////////////////////////////////////////////////////////
   // Smearing objects
   Smear* SmearingObj;         // Empty pointer
   int Nsmear;                 // Number of smearing steps
-  XML::node SmearObjNode = node_;  // Copy the node ("descend" function updates it)
-                                   // and we want to use again for QuarkPropagator
-  XML::descend(SmearObjNode, "Smearing");   // SmearObjNode now points to <Smearing> node
+  XML::node SmearObjNode = node_;// Copy the node ("descend" function updates it)
+                                 // and we want to use again for QuarkPropagator
+  XML::descend(SmearObjNode, "Smearing");//SmearObjNode now points to <Smearing> node
   XML::read(SmearObjNode, "Nsmear", Nsmear, MANDATORY);  // Reads in <Nsmear>
 
   // Create smearing factory from node information
@@ -38,59 +38,71 @@ int Test_ResMass::run() {
   // Create smearing objects from the factory
   SmearingObj = Sm_Factory->getSmearingOperator();
 
-
   // Copy original configuration to smeared_u_ 
   // smeared_u_ will be passed to the operators
   smeared_u_ = conf_;
 
-
   // Do the actual smearing 
-  for (int i = 0; i < Nsmear; i++) {
-    previous_u_ = smeared_u_;
-    SmearingObj->smear(smeared_u_, previous_u_);
+  for(int i=0; i<Nsmear; i++) {
+    previous_u_= smeared_u_;
+    SmearingObj->smear(smeared_u_,previous_u_);
   }
-  CCIO::cout << "Plaquette (smeared): " << Staple.plaquette(smeared_u_) << std::endl;
-  //////////////////////////////////////////////////////////////////////////////////////
-  /*
+  CCIO::cout<<"Plaquette (smeared): "<< Staple.plaquette(smeared_u_)<<std::endl;
+  //////////////////////////////////////////////////////////////////////////////
   // Eigenvalue calculation
-  Format::Format_F ff(CommonPrms::instance()->Nvol());
-  double mq  = -1.6;
-  Fopr_H Hw(new Dirac_Wilson(mq, &(smeared_u_.U)));
-  SortEigen_low sort;
-  int    Nk = 20;
-  int    Np = 50;
-  double enorm = 1.e-22;
-  double vthrs = 0.15;
-  int    Niter = 500;
-  EigenModes_IRL eigen(&Hw,&sort,Nk,Np,enorm,vthrs,Niter);
-  Field b(ff.size());
+  XML::node eigen_node= node_;
+  XML::descend(eigen_node, "EigenModes");
+  const char* eigen= eigen_node.attribute("exec").value();
+  if(!strcmp(eigen,"DoCalc")){
 
-  int Nmm = 100;
-  int Nsbt = -1;
-  int Nconv = -100;
+    double mq,vthrs,enorm;
+    int Nk,Np,Niter;
+    
+    XML::read(eigen_node,"mq",mq,MANDATORY);
+    XML::read(eigen_node,"vthrs",vthrs,MANDATORY);
+    XML::read(eigen_node,"enorm",enorm,MANDATORY);
+    XML::read(eigen_node,"Nk",Nk,MANDATORY);
+    XML::read(eigen_node,"Np",Np,MANDATORY);
+    XML::read(eigen_node,"Niter",Niter,MANDATORY);
 
-  std::vector<double> lmd(Nmm);
-  std::vector<Field>  evec(Nmm);
-  
-  for(int k = 0; k < Nmm; ++k) evec[k].resize(ff.size());
-  eigen.calc(lmd,evec,b,Nsbt,Nconv);
+    Format::Format_F ff(CommonPrms::instance()->Nvol());
+    Fopr_H Hw(new Dirac_Wilson(mq, &(smeared_u_.data)));
+    SortEigen_low sort;
 
-  CCIO::cout << " --- Eigenvalues of H_W \n " << std::endl;
-  Field v(ff.size());
-  for(int i = 0; i< Nsbt + 1; ++i){
-    v       = Hw.mult(evec[i]);
-    v      -= lmd[i]*evec[i];
-    lmd[i] *= (4+mq);                // "re"normalize
-    CCIO::cout << "["<<i<<"] "<< lmd[i] << "  "<< v*v << "\n";
-  }
-  CCIO::cout << "\n";
-  */
-  //////////////////////////////////////////////////////////////////////////////////////
+    CCIO::cout << "Calculating eigenvalues of H_W" << std::endl;
+    CCIO::cout << " -- M0= " << mq << std::endl;
+    CCIO::cout << " -- vthrs= " << vthrs << std::endl;
+    EigenModes_IRL eigen(&Hw,&sort,Nk,Np,enorm,vthrs,Niter);
+    Field b(ff.size());
+    
+    int Nmm = 100;
+    int Nsbt = -1;
+    int Nconv = -100;
+    
+    std::vector<double> lmd(Nmm);
+    std::vector<Field>  evec(Nmm);
+    
+    for(int k = 0; k < Nmm; ++k) evec[k].resize(ff.size());
+    eigen.calc(lmd,evec,b,Nsbt,Nconv);
+    
+    CCIO::cout << " --- Eigenvalues of H_W" << std::endl;
+    Field v(ff.size());
+    for(int i = 0; i< Nsbt + 1; ++i){
+      v       = Hw.mult(evec[i]);
+      v      -= lmd[i]*evec[i];
+      lmd[i] *= (4+mq);                // "re"normalize
+      CCIO::cout << "["<<i<<"] "<< lmd[i] << "  "<< v*v << "\n";
+    }
+    CCIO::cout << std::endl;
+  }else if(!strcmp(eigen,"NoCalc")){ }
+
+/////////////////////////////////////////////////////////////////////////////
 
   // Quark Propagator and source creation 
   XML::descend(node_, "QuarkDWFProp");
   QPropDWFFactory QP_DomainWallFact(node_);
-  QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(smeared_u_));
+  QpropDWF* QuarkPropDW 
+    = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(smeared_u_));
 
   XML::next_sibling(node_, "Source");
   SourceFactory* Source_Factory 
@@ -103,14 +115,14 @@ int Test_ResMass::run() {
   //  CCIO::ReadFromDisk < Format::Format_F >(sq, "propagator.bin", 12);
   //  CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
 
-  //////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
   //Pion Correlator
   MesonCorrelator Meson(Pion);
   std::vector<double> corr =  Meson.calculate <Format::Format_F>(sq,sq);
   for(int i=0; i<corr.size(); ++i) 
     CCIO::cout << i << "  " << corr[i] << std::endl;
 
-  //////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
   // Residual mass calculation from quark propagator data
 
   // Cycle among Dirac and color indexes and contract

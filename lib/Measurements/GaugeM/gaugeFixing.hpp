@@ -10,7 +10,7 @@ class GaugeFixing{
 public:
   GaugeFixing(){}
   virtual ~GaugeFixing(){}
-  virtual const GaugeField fix(const GaugeField&)const = 0;
+  virtual const GaugeField do_fix(const GaugeField&)const = 0;
 };
 
 #endif

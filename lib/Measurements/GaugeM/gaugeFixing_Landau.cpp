@@ -14,47 +14,52 @@ using namespace FieldUtils;
 using namespace SUNmatUtils;
 using namespace Mapping;
 
-const GaugeField GaugeFixing_Landau::fix(const GaugeField& Uin)const{
-  assert(Uin.Nvol()==Nvh_);
+const GaugeField GaugeFixing_Landau::do_fix(const GaugeField& Uin)const{
+  assert(Uin.Nvol()==2*Nvh_);
 
   GaugeField Ue = get_even(Uin);
   GaugeField Uo = get_odd(Uin);
-  int Niter= 0;
+  int Nconv = -1;
 
-  for(int it=0; it<max_iter_; ++it){
+  CCIO::cout<<setw(8) <<" iter"<<setw(25)<<setiosflags(ios_base::left )
+	    <<"     residual"<<"        F_value"<<endl;
 
+  for(int it=0; it<Niter_; ++it){
     if(it%Nmeas_==0){
+      double gc = gauge_cond(Ue,Uo);
       double Fval = calc_F(Ue,Uo);
-      double sg = calc_SG(Ue,Uo);
-      Niter = it;
-      CCIO::cout<<" iter= "<<Niter<<" sg = "<<sg<<" Fval = "<<Fval<<endl;
-      if(sg < prec_) break;
-    }
 
-    double wp = (it%Nreset_<Niter_) ? wp_: 1.0;
+      CCIO::cout<< setiosflags(ios_base::scientific);
+      CCIO::cout<<setw(8) <<setiosflags(ios_base::right)<<it;
+      CCIO::cout<<setw(25)<<setiosflags(ios_base::left )<<gc;
+      CCIO::cout<<"  ";
+      CCIO::cout<<setw(25)<<setiosflags(ios_base::right)<<Fval<<endl;
+      CCIO::cout<< resetiosflags(ios_base::scientific);
+
+      if(gc < prec_){
+	Nconv = it;
+	break;
+      }
+    }
+    double wp = (it%Nreset_<Nor_) ? 1.0: wp_;
     gstep_->gfix_step(Ue,Uo,wp);
 
     if((it%Nreset_)== 0 && it>0) random_gtr(Ue,Uo);
   }
-  CCIO::cout<<"converged at iter = "<<Niter <<endl;;
+  if(Nconv<0){
+    CCIO::cout<<"did not converge."<<endl;
+    abort();
+  }else{
+    CCIO::cout<<"converged at iter = "<<Nconv <<endl;
+  }
   return combine_eo(Ue,Uo);
 }
 
-void GaugeFixing_Landau::random_gtr(GaugeField& Ue, GaugeField& Uo)const{
-  CCIO::cout<<"  random gauge transformation performed."<<std::endl;
-  GaugeField1D Gtr(2*Nvh_);
-  GaugeConf_rand gtr(Gtr.format,rnd_);
-  gtr.init_conf(Gtr.data);
-  gstep_->gauge_tr_even(Ue,Uo,get_even(Gtr));
-  gstep_->gauge_tr_odd( Ue,Uo,get_odd(Gtr));
-}
-
-double GaugeFixing_Landau::
-calc_F(const GaugeField& Ue,const GaugeField& Uo)const{
-  
+double GaugeFixing_Landau::calc_F(const GaugeField& Ue,
+				  const GaugeField& Uo)const{
   double Fval = 0.0;
   for(int mu=0; mu<NDIM_; ++mu){
-    for(int site=0; site<Nvh_; ++site){
+    for(int site=0; site<Ue.Nvol(); ++site){
       Fval += ReTr(mat(Ue,site,mu));
       Fval += ReTr(mat(Uo,site,mu));
     }
@@ -63,27 +68,32 @@ calc_F(const GaugeField& Ue,const GaugeField& Uo)const{
   return Fval/NDIM_/CommonPrms::instance()->Lvol();
 }
 
-double GaugeFixing_Landau::
-calc_SG(const GaugeField& Ue,const GaugeField& Uo)const{
+double GaugeFixing_Landau::gauge_cond(const GaugeField& Ue,
+				      const GaugeField& Uo)const{
+  GaugeField1D Dele(Nvh_),Delo(Nvh_);
 
-  // on even sites
-  GaugeField1D Delta(Nvh_);
   for(int mu=0; mu<NDIM_; ++mu){
-    Delta -= DirSlice(Ue,mu);
-    Delta += shiftField_eo(DirSlice(Uo,mu),mu,Forward());
-  }
-  GaugeField1D ta = TracelessAntihermite(Delta);
-  double sg = ta.data*ta.data;
+    Dele -= DirSlice(Ue,mu);
+    Dele += shiftField_eo(DirSlice(Uo,mu),mu,Backward());
 
-  // on odd sites  
-  Delta = 0.0;
-  for(int mu=0; mu<NDIM_; ++mu){
-    Delta -= DirSlice(Uo,mu);
-    Delta += shiftField_oe(DirSlice(Ue,mu),mu,Forward());
+    Delo -= DirSlice(Uo,mu);
+    Delo += shiftField_oe(DirSlice(Ue,mu),mu,Backward());
   }
-  ta = TracelessAntihermite(Delta);
-  sg += ta.data*ta.data;
+  GaugeField1D ta = TracelessAntihermite(Dele);
+  double gc = ta.data*ta.data;
+  ta = TracelessAntihermite(Delo);
+  gc += ta.data*ta.data;
   
-  return 4.0*sg/NDIM_/NC_/CommonPrms::instance()->Lvol();
+  return 4.0*gc/NDIM_/NC_/CommonPrms::instance()->Lvol();
+}
+
+void GaugeFixing_Landau::random_gtr(GaugeField& Ue,GaugeField& Uo)const{
+  CCIO::cout<<"  random gauge transformation performed."<<std::endl;
+
+  GaugeField1D Gtr(2*Nvh_);
+  GaugeConf_rand gtr(Gtr.format,rng_);
+  gtr.init_conf(Gtr.data);
+  gstep_->gauge_tr_even(Ue,Uo,get_even(Gtr));
+  gstep_->gauge_tr_odd( Ue,Uo,get_odd( Gtr));
 }
 

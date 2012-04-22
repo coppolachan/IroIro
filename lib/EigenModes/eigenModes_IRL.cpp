@@ -130,20 +130,23 @@ void EigenModes_IRL::calc(vector<double>& lmd,
     CCIO::cout << setiosflags(ios_base::scientific);
     for(int i=0; i<Nk_; ++i){
       v = opr_->mult(B[i]);
-      double vnum = B[i] * v;
-      double vden = B[i] * B[i];
+      //CCIO::cout<<"vv="<<v*v<<std::endl;
+
+      double vnum = B[i]*v;
+      double vden = B[i]*B[i];
       lmd2[i] = vnum/vden;
-      v -= lmd2[i] * B[i];
-      double vv = v * v;
+      v -= lmd2[i]*B[i];
+      double vv = v*v;
 
       CCIO::cout << " [" << setw(3)<< setiosflags(ios_base::right) <<i<<"] ";
       CCIO::cout << setw(25)<< setiosflags(ios_base::left)<< lmd2[i];
       CCIO::cout <<"  "<< setw(25)<< setiosflags(ios_base::right)<< vv<< endl;
- 
+
       if(vv<enorm_){
         Iconv[Kdis] = i;
         ++Kdis;
         if(sort_->saturated(lmd2[i],vthrs_)) ++Kthrs;
+	CCIO::cout<<"Kthrs="<<Kthrs<<endl;
       }
     }  // i-loop end
     CCIO::cout << resetiosflags(ios_base::scientific);

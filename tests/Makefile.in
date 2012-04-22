@@ -46,10 +46,11 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_Clover$(EXEEXT) \
 	test_Wilson_EvenOdd$(EXEEXT) test_DomainWall$(EXEEXT) \
 	test_QpropMom$(EXEEXT) test_ResMass$(EXEEXT) \
-	test_EigenModes$(EXEEXT) test_Smearing$(EXEEXT) \
-	test_Overlap$(EXEEXT) test_MultiShiftSolver$(EXEEXT) \
-	test_RNG$(EXEEXT) test_IO$(EXEEXT) \
-	test_RationalApprox$(EXEEXT) test_RHMC_noFactories$(EXEEXT)
+	test_MesonSpectrum$(EXEEXT) test_EigenModes$(EXEEXT) \
+	test_Smearing$(EXEEXT) test_Overlap$(EXEEXT) \
+	test_MultiShiftSolver$(EXEEXT) test_RNG$(EXEEXT) \
+	test_IO$(EXEEXT) test_RationalApprox$(EXEEXT) \
+	test_RHMC_noFactories$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -111,6 +112,11 @@ am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
 test_IO_LDADD = $(LDADD)
 test_IO_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_test_MesonSpectrum_OBJECTS = test_MesonSpectrum.$(OBJEXT) \
+	testerMesonSpectrum.$(OBJEXT)
+test_MesonSpectrum_OBJECTS = $(am_test_MesonSpectrum_OBJECTS)
+test_MesonSpectrum_LDADD = $(LDADD)
+test_MesonSpectrum_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_test_MultiShiftSolver_OBJECTS = test_MultiShiftSolver.$(OBJEXT) \
 	testerMultiShiftSolver.$(OBJEXT)
 test_MultiShiftSolver_OBJECTS = $(am_test_MultiShiftSolver_OBJECTS)
@@ -184,21 +190,23 @@ SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
-	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
-	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
-	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
-	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
-	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
+	$(test_MesonSpectrum_SOURCES) $(test_MultiShiftSolver_SOURCES) \
+	$(test_Overlap_SOURCES) $(test_QpropMom_SOURCES) \
+	$(test_RHMC_noFactories_SOURCES) $(test_RNG_SOURCES) \
+	$(test_RationalApprox_SOURCES) $(test_ResMass_SOURCES) \
+	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES) \
+	$(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_EigenModes_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
-	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
-	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
-	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
-	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
-	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
+	$(test_MesonSpectrum_SOURCES) $(test_MultiShiftSolver_SOURCES) \
+	$(test_Overlap_SOURCES) $(test_QpropMom_SOURCES) \
+	$(test_RHMC_noFactories_SOURCES) $(test_RNG_SOURCES) \
+	$(test_RationalApprox_SOURCES) $(test_ResMass_SOURCES) \
+	$(test_Smearing_SOURCES) $(test_Wilson_SOURCES) \
+	$(test_Wilson_EvenOdd_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -347,6 +355,7 @@ EXTRA_DIST = testResults.info	\
 		test_Wilson_EvenOdd.xml	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
+		test_GeneralMeas.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
@@ -394,6 +403,9 @@ test_DomainWall_SOURCES = test_DomainWall.cpp 		\
 test_QpropMom_SOURCES = test_QpropMom.cpp 		\
 				testerQpropMom.cpp
 
+test_MesonSpectrum_SOURCES = test_MesonSpectrum.cpp 		\
+				testerMesonSpectrum.cpp
+
 test_ResMass_SOURCES = test_ResidualMass.cpp 		\
 				testerResMass.cpp
 
@@ -431,6 +443,7 @@ include_HEADERS = tests.hpp			\
 				test_EigenModes_IRL.hpp		\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
+				test_MesonSpectrum.hpp		\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp
@@ -536,6 +549,9 @@ test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_
 test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES) 
 	@rm -f test_IO$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
+test_MesonSpectrum$(EXEEXT): $(test_MesonSpectrum_OBJECTS) $(test_MesonSpectrum_DEPENDENCIES) 
+	@rm -f test_MesonSpectrum$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_MesonSpectrum_OBJECTS) $(test_MesonSpectrum_LDADD) $(LIBS)
 test_MultiShiftSolver$(EXEEXT): $(test_MultiShiftSolver_OBJECTS) $(test_MultiShiftSolver_DEPENDENCIES) 
 	@rm -f test_MultiShiftSolver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_MultiShiftSolver_OBJECTS) $(test_MultiShiftSolver_LDADD) $(LIBS)
@@ -582,6 +598,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_Smear_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Overlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_QpropMom.Po@am__quote@
@@ -601,6 +618,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC_DWall_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMCeven-odd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerOverlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerQpropMom.Po@am__quote@

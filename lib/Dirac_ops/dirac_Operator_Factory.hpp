@@ -25,16 +25,19 @@
 class DiracWilsonLikeOperatorFactory {
 public:
   virtual DiracWilsonLike* getDiracOperator(Field* const) = 0;
+  virtual ~DiracWilsonLikeOperatorFactory(){}
 };
 
 class DiracDWF5dOperatorFactory :public DiracWilsonLikeOperatorFactory{
 public:
   virtual DiracWilsonLike* getDiracOperatorPV(Field* const) = 0;
+  virtual ~DiracDWF5dOperatorFactory(){}
 };
 
 class DiracDWF4dOperatorFactory :public DiracWilsonLikeOperatorFactory{
 public:
   virtual Dirac_optimalDomainWall_4D* getDiracOperator4D(Field* const) = 0;
+  virtual ~DiracDWF4dOperatorFactory(){}
 };
 /////////////////////////////////////////////////////////
 /*!

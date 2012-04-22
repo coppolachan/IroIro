@@ -1,10 +1,6 @@
-/*!
-  @file randNum_Factory.h
-  
-  @brief Defines the Factories for Random Number Generators
- 
+/*! @file randNum_Factory.h
+    @brief Defines the Factories for Random Number Generators
 */
-
 #ifndef RANDNUM_FACT_
 #define RANDNUM_FACT_
 
@@ -15,9 +11,7 @@
 
 /*!
  *@class RandomNumberCreator
- *
  *@brief Abstract Factory class for Random Number Generators
- *
  */
 class RandomNumberCreator {
 public:
@@ -37,17 +31,13 @@ class RandNum_MT19937_Creator : public RandomNumberCreator {
   bool fromfile;
   
 public:
-  RandNum* getRandomNumGenerator(){
-    return createRNG();
-  };
-  RandNum_MT19937_Creator(unsigned long *in, int l):
-    init(in),
-    length(l){};
+  RandNum* getRandomNumGenerator(){ return createRNG(); }
 
+  RandNum_MT19937_Creator(unsigned long *in, int l)
+    :init(in),length(l){}
   
   RandNum_MT19937_Creator(XML::node node) {
-    std::vector<unsigned long> inputs;
-    inputs.resize(4);
+    std::vector<unsigned long> inputs(4);
     int it;
     
     if(node.child("seedFile")!=NULL){
@@ -64,9 +54,7 @@ public:
       }
       length = inputs.size();
     }
-    
   }
-  
   
 private:  
   RandNum_MT19937* createRNG(){
@@ -75,8 +63,7 @@ private:
     } else {
       return new RandNum_MT19937(init, length); 
     }
-  };
-  
+  }
 };
 
 //////////////////////////////////////////////////////////////
