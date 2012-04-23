@@ -6,10 +6,10 @@
 
 
 class GaugeActionFactory : public ActionFactory {
-  virtual Action* getGaugeAction(GaugeField* const) = 0;
+  virtual Action* getGaugeAction(GaugeField* const, SmartConf* const SC) = 0;
 public:
-  Action* getAction(GaugeField* const G) {
-    return getGaugeAction(G);
+  Action* getAction(GaugeField* const G, SmartConf* const SC) {
+    return getGaugeAction(G, SC);
   }
 };
 ////////////////////////////////////////////////

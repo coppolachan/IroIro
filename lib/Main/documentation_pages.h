@@ -15,7 +15,7 @@
   Other topics in this page:
   * - \ref improved_kernels
   * - \ref verbosity
-  * - \ref GSL_lib
+  * - \ref dep_lib
   * - \ref testing
   * - \ref Silent
   * - \ref autotools_problems
@@ -31,10 +31,14 @@
   
   Anyway, in most cases, the configuration command line is very simple as explained in the following sections.
 
+  The two most relevant ones are
+  * - \c --enable-improved  Turns on faster Wilson kernels
+  * - \c --enable-mpi       Turns on MPI support on multicore pc, via openmpi libraries
+  
+  Note: MPI support is automatic on Hitachi and IBM platforms.
 
   @section simple Simple compilation
- 
-  
+   
   For a single core run just compile with
   
   @verbatim
@@ -43,11 +47,24 @@
   
   This is valid on x86_64 Linux systems as well as apple-darwin Unix environments.
 
+  Default optimization level is \c -O3 .
+
   To override the compiler flags use the environment variables in the <tt>./configure</tt> command line. See <tt>./configure --help</tt> for more informations.  
 
-
-  @section AIX-XLC Compilation on AIX with XLC
+  If you have a multicore platform you can speedup the compilation time
+  by using the command
   
+  @verbatim
+  make -j #processes@endverbatim
+  
+  Where #processes should be about 1.5x the number of your cores 
+  to keep all of them busy.
+
+
+  @section AIX-XLC Compilation on AIX with XLC 
+  
+  Supported platforms: \b Hitachi \b SR16000 and \b IBM \b BlueGene/Q
+
   Use the following lines
   
   @verbatim
@@ -100,10 +117,13 @@
   
   sets maximum verbosity. Allowed values from 0 to 5. Default is 1.
   
-  @section GSL_lib Installing and linking GSL
+  @section dep_lib Installing required dependencies
 
-  The <a href="http://www.gnu.org/software/gsl/">Gnu Scientific Library (GSL)</a> is required during compilation of Domain Wall routines. Configuration will fail if this is not found in your build system.
+  Required libraries
   
+  * - The Gnu Scientific Library (GSL) is required during compilation of Domain Wall routines. 
+  * - The Gnu Multiple Precision (GMP) and the MPFR libraries are required for Remez algorithm routines, in rational approximation of functions.  
+
   On AIX the default development environment is in 32 bit mode, but IroIro compilation forces 64 bit mode. In this case please check that GLS library
   is installed in 64 bit version otherwise clash on libraries names could occur. 
 
@@ -120,7 +140,7 @@
   among compilation flags (<tt>CFLAGS="-q64"</tt>).
 
   For non standard installation \c configure assumes that GSL can also reside in \c ~/gsl/ directory, so that you can just create a symbolic link to your preferred build. 
-
+  The same applies to ~/gmp and ~/mpfr
   
   @section testing Testing and debugging
 
@@ -143,7 +163,7 @@
   Sometime you need to refresh your configure script.
   In the case you need to regenerate the <tt>configure</tt> script by yourself the <tt>autoreconf</tt> command is most probably not going to work if you have an older version of autotools (<2.68).
 
-  In this case the workaround is just the following (tested on Linux with autoconf 2.63 and AIX 7.1): first delete the follwing files 
+  In this case the workaround is just the following (tested on Linux with autoconf 2.63 and AIX 7.1): first delete the following files 
 
   @verbatim
   aclocal.m4
@@ -157,6 +177,14 @@
   autoconf  @endverbatim
 
   Your brand new <tt>configure</tt> file should be generated without problems. 
+
+  A simple script, that has been tested on all supported platforms, can be used in case the user need to reconfigure the autotools. Use:
+ 
+  @verbatim
+  ./reconfigure_script  @endverbatim
+  
+  In the main directory of the source tree.
+
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -321,8 +349,11 @@
     - \b Fermion
          - \b TwoFlavors (Two flavors action, class Action_Nf2)
 	 - \b TwoFlavorsRatio (Two flavors ratio of operators, class Action_Nf2_ratio)
-	 - \b TwoFlavorsDomainWall (%Action for two flavors of Domain Wall fermions, class Action_Nf2_DomainWall)
+	 - \b TwoFlavorsDomainWall_5D (%Action for two flavors of Domain Wall fermions, uses class Action_Nf2_ratio)
 	 - \b TwoFlavorsEvenOdd (%Action for two flavors even-odd preconditioned, class Action_Nf2_EvenOdd)
+	 - \b NfFlavors (Any number of flavors action, class Action_Nf)
+	 - \b NfFlavorsRatio (Any number of flavors ratio of operators, class Action_Nf_ratio)
+	 - \b NfFlavorsDomainWall_5D (%Action for two flavors of Domain Wall fermions, uses class Action_Nf_ratio)
 
     Each one of these will be explained in the following sections.
 
@@ -415,13 +446,13 @@
     The meaning of the several sections is self-explanatory. Refer to \ref DiracOps and  \ref solversPage for details on Dirac Operators and linear Solvers.
 	
 
-    @section FActionDWF Fermion - TwoFlavorsDomainWall
+    @section FActionDWF Fermion - TwoFlavorsDomainWall_5D
 
     A simple example is better to explain how to construct this action
 
     @verbatim
-    <Action type="Fermion" name="TwoFlavorsDomainWall">
-      <Kernel5D>
+    <Action type="Fermion" name="TwoFlavorsDomainWall_5D">
+      <Kernel5D name="DiracOptimalDomainWall5d">
        ...
       </Kernel5D>
       <Solver type="your favourite solver name">
@@ -434,6 +465,84 @@
     For possible solver names and parameters to be provided please refer to the page for \ref solversPage . 
 
     @section FActionEO Fermion - TwoFlavorsEvenOdd
+
+    @section FActionNfFlav Fermion - NfFlavors
+
+    The \c NfFlavors action is constructed in a way similar to the \c TwoFlavors with a section describing number of flavors and number of pseudofermions like in the following example
+
+    @verbatim
+    <Action type="Fermion" name="NfFlavors">
+      <!-- The following lines set the approximation parameters -->
+      <Flavors>1</Flavors>
+      <Pseudofermions>2</Pseudofermions>
+      <ApproxDegree>10 10 10</ApproxDegree>
+      <Precision>40 40 40</Precision>
+      <BoundaryLow>0.1 0.1 0.1</BoundaryLow>
+      <BoundaryHigh>4 4 4</BoundaryHigh>
+
+      <--! This is the usual section -->
+      <Kernel name="DiracWilson">
+        <mass>0.1</mass>
+      </Kernel>
+      <RationalSolver type="Rational_CG">
+        <MaxIter>2000</MaxIter>
+        <Precision>1e-14</Precision>
+      </RationalSolver>
+    </Action>@endverbatim
+    
+    The \c \<%Flavors\> and \c \<%Pseudofermions\> sections are self-explanatory. Denoting the Kernel with the symbol \f$D\f$ the action will be:
+
+    \f[
+    (D^\dagger D)^{N_f/2 \cdot n_{\rm ps}}
+    \f]
+
+    where \f$N_f\f$ and \f$n_{\rm ps}\f$ are the number of flavors and pseudofermions respectively. The factor of 2 comes from the \f$(D^\dagger D)\f$ term.
+
+    \c \<%ApproxDegree\> declares the number of poles in the rational approximation of the exponential function, the number \f$N_{\rm max}\f$ in the following expansion
+
+    \f[ f(x)= r_0 + \sum_{i=1}^{N_{\rm max}} \frac{r_i}{x+ p_i} \f]
+
+    \c \<%Precision\> fixes the number of digits in the calculation of the rational approximation.
+
+    \c \<%BoundaryLow\> and  \c \<%BoundaryHigh\> are used to define the approximation interval, require some knowledge on the eigenmodes of the \f$(D^\dagger D)\f$ operator. 
+
+    Three numbers are always used to define the parameters to allow the user some fine tuning in the rational approximations. They are used respectively for the pseudofermions calculation step, the molecular dynamics step and the Metropolis step. 
+
+    @section FActionNfFlavRatio Fermion - NfFlavorsRatio
+
+    This action is described in a way similar to its \ref FActionNf2ratio counterpart. The same preliminary section described just above for the \c NfFlavors is used to set approximation parameters. The same approximation parameters are used to numerator and denominator in the current implementation.
+    The rest goes as usual. 
+
+    See the following example for one single flavor of Ratio Wilson %Action with two pseudofermions:
+
+    @verbatim
+    <Action type="Fermion" name="NfFlavorsRatio">
+      <Flavors>1</Flavors>
+      <Pseudofermions>2</Pseudofermions>
+      <ApproxDegree>10 10 10</ApproxDegree>
+      <Precision>40 40 40</Precision>
+      <BoundaryLow>0.1 0.1 0.1</BoundaryLow>
+      <BoundaryHigh>4 4 4</BoundaryHigh>
+      <Numerator name="DiracWilson">
+        <mass>0.01</mass>
+      </Numerator>
+      <Denominator name="DiracWilson">
+        <mass>0.1</mass>
+      </Denominator>
+      <RationalSolverNumerator type="Rational_CG">
+        <MaxIter>2000</MaxIter>
+        <Precision>1e-14</Precision>
+      </RationalSolverNumerator>
+      <RationalSolverDenominator type="Rational_CG">
+        <MaxIter>2000</MaxIter>
+        <Precision>1e-14</Precision>
+      </RationalSolverDenominator>
+    </Action>@endverbatim
+    
+
+    @section FActionNfFlavDWF Fermion - NfFlavorsDomainWall_5D
+
+    Not implemented yet, use the \c NfFlavorsRatio action described above specifing the correct numerator and denominator.
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -529,6 +638,8 @@
   - \b %Solver_CG_Precondition (Conjugate gradient linear solver with preconditioning, must be used together with a preconditioned Dirac operator otherwise no preconditioning is applied)
   - \b %Solver_BiCGStab (Bi-Conjugate gradient stabilized linear solver)
   
+  - \b %Rational_CG (Conjugate gradient multishifted linear solver that solves the exponential equation using rational approximations)
+
   @section SolvCG Solver_CG
   
   It uses the Conjugate gradient linear solver to invert matrices and requires the \c \<%MaxIter\> and \c \<%Precision\> sections like in the following example:
@@ -551,6 +662,19 @@
   @section SolvBiCGStab Solver_BiCGStab
 
   Refer to the Solver_CG for details, parameters to be declared are the same.
+
+  @section RationalCG Rational_CG
+  
+  It solves the equation 
+
+  \f[
+  (D^\dagger D)^{a/b} v = w
+  \f]
+
+  where \f$a,b\f$ are integers.
+
+  The parameters are the same as for the Solver_CG class, refer to the previous sections.
+
 
 
 */

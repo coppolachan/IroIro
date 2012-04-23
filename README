@@ -55,7 +55,7 @@ Use the following simple lines
 ./configure 
 make
 
-Compilation on AIX Hitachi SR16000 machine
+Compilation on AIX IBM Blue Gene Q machine
 ===================================================
 Same as Hitachi SR16000, use the following lines
  

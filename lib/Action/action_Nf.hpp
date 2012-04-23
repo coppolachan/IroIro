@@ -16,7 +16,6 @@
 #include "Smearing/smartConf.hpp"
 #include "Tools/RationalApprox/rationalapprox.hpp"
 
-enum {MetroStep, MDStep, PFStep};
 
 /*!
  * @brief Parameter container for Action_Nf class
@@ -119,6 +118,7 @@ public:
   {
     for(int i=0; i<Params_.n_pseudof_; ++i)
       phi_[i].resize(fermion_size_); //takes care of EvenOdd and 5D cases
+
     if (smeared_ && SmearObj !=NULL) attach_smearing(SmearObj);
     
     //It is assumed that the rational approximation is always

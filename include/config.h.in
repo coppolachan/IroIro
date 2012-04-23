@@ -3,6 +3,9 @@
 /* Using Big Endian machine type */
 #undef BIG_ENDIAN_TYPE
 
+/* Define to 1 if you have the <bgqwilson.h> header file. */
+#undef HAVE_BGQWILSON_H
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
@@ -62,6 +65,9 @@
 
 /* Specific tweaks for IBM BG/Q */
 #undef IBM_BGQ
+
+/* Enable BlueGene/Q optimized Wilson kernel */
+#undef IBM_BGQ_WILSON
 
 /* Enable improved Wilson kernel */
 #undef IMPROVED_WILSON

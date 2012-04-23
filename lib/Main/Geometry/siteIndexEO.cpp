@@ -1,15 +1,14 @@
 /*!
-  @file siteIndex.cpp
+  @file siteIndexEO.cpp
 
   @brief Declares the interface for site indexing 
 
-  LEXICOGRAPHIC
+  EVEN-ODD
 */
 #include "siteIndex.hpp"
 #include "Communicator/communicator.h"
 
-
-//std::vector<int> SiteIndex::global_site_;
+std::vector<int> SiteIndex::global_site_;
 
 SiteIndex::SiteIndex():Nx_(CommonPrms::instance()->Nx()),
 		       Ny_(CommonPrms::instance()->Ny()),
@@ -47,16 +46,16 @@ int SiteIndex::g_t(int gsite) const{ return gsite/LxLyLz_;}
 
 
 int SiteIndex::global_x(int x){ 
-  return Communicator::instance()->ipe(XDIR)*Nx_+x;}
+  Communicator::instance()->ipe(XDIR)*Nx_+x;}
 
 int SiteIndex::global_y(int y){ 
-  return Communicator::instance()->ipe(YDIR)*Ny_+y;}
+  Communicator::instance()->ipe(YDIR)*Ny_+y;}
 
 int SiteIndex::global_z(int z){ 
-  return Communicator::instance()->ipe(ZDIR)*Nz_+z;}
+  Communicator::instance()->ipe(ZDIR)*Nz_+z;}
 
 int SiteIndex::global_t(int t){ 
-  return Communicator::instance()->ipe(TDIR)*Nt_+t;}
+  Communicator::instance()->ipe(TDIR)*Nt_+t;}
 
 // indices with a step forward/backward (for bulk sites)
 int SiteIndex::p_x(int site) const{ return site+1;}

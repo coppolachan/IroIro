@@ -72,6 +72,7 @@ double findMinMax::findMin(const double& max) const {
   rand_->get_gauss(gauss_va); 
 
   Field gauss_vect(gauss_va), temp_vect;
+  temp_vect.resize(gauss_vect.size());
   old_norm = gauss_vect.norm();
   gauss_vect /= old_norm;
   old_norm = 1.0;

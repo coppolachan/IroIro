@@ -43,7 +43,6 @@ public:
     if(node.child("seedFile")!=NULL){
       fromfile = true; 
       XML::read(node, "seedFile", filename, MANDATORY); 
-      std::cout << "Loading seeds from file ["<<filename<<"]\n";
     } else { 
       fromfile = false;
       XML::read_array(node, "init", inputs, MANDATORY);

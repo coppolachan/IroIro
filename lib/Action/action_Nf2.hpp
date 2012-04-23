@@ -17,6 +17,7 @@ private:
   const Solver* slv_;        /*!< Linear solver operator */
   const size_t fsize_;  
   Field phi_;
+  bool smeared_;
   SmartConf* smart_conf_;
   
   Field DdagD_inv(const Field& src);
@@ -26,15 +27,15 @@ public:
   Action_Nf2(GaugeField* const GField,
 	     DiracWilsonLike* const D, 
 	     const Solver* Solv,
+	     bool smeared = false,
 	     SmartConf* smart_conf = NULL)
     :u_(GField),
      D_(D),
      slv_(Solv),
      fsize_(D->fsize()),
      phi_(fsize_),
-     smart_conf_(smart_conf){
-    if(smart_conf_) 
-      assert(u_== smart_conf_->get_current_conf());
+     smeared_(smeared){
+     if (smeared_ && smart_conf !=NULL) attach_smearing(smart_conf);
   }
 
   ~Action_Nf2(){}
@@ -42,7 +43,7 @@ public:
   void init(const RandNum& rand);
   double calc_H();
   GaugeField md_force();
-  void observer_update(){D_->update_internal_state(); }
+  void observer_update();
 
 };
 #endif

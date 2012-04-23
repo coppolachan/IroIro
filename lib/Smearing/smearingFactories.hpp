@@ -1,5 +1,5 @@
 /*!
- * @file smearing_Factories.hpp 
+ * @file smearingFactories.hpp 
  * @brief Declaration of Smearing Operators factories
  */
 #ifndef SMEARING_FACT_H_
@@ -7,10 +7,12 @@
 
 #include "Smearing/APEsmear.hpp"
 #include "Smearing/stoutSmear.hpp"
+#include "Smearing/smartConf.hpp"
 
 #include "Tools/RAIIFactory.hpp"
 #include "include/pugi_interface.h"
 #include "Communicator/comm_io.hpp"
+
 /*!
  * @brief Abstract base class for creating smearing operators
  */
@@ -50,6 +52,8 @@ class StoutSmearingFactory: public SmearingOperatorFactory {
   RaiiFactoryObj<SmearingOperatorFactory> BaseSmearingObj;
 
 public:
+  StoutSmearingFactory(){}; //empty for no smearing
+
   StoutSmearingFactory(XML::node node){
     XML::descend(node, "Base", MANDATORY);
     BaseSmearingObj.save(SmearingOperators::createSmearingOperatorFactory(node));
@@ -57,6 +61,34 @@ public:
   
   Smear_Stout* getSmearingOperator(){
     return new Smear_Stout(BaseSmearingObj.get()->getSmearingOperator()); }
+};
+
+
+/*! @brief Class for containing a Smart Conf operator instantiation */
+class SmartConfFactory {
+  RaiiFactoryObj<SmartConf> SmartConfObj;
+  int smearing_lvls;
+
+  SmartConfFactory(const SmartConfFactory&);
+public: 
+  SmartConfFactory(XML::node node){
+    smearing_lvls = 0; //assumes no smearing
+    XML::descend(node, "Smearing"); // It is not mandatory
+    if (node != NULL) {
+      XML::read(node, "levels" , smearing_lvls);
+      StoutSmearingFactory* StoutSmearingObj = new StoutSmearingFactory(node); 
+      SmartConfObj.save(new SmartConf(smearing_lvls, *(StoutSmearingObj->getSmearingOperator())));
+      delete StoutSmearingObj;
+    }
+    else {
+      SmartConfObj.save(new SmartConf()); // Just thin links
+    }
+  }
+
+  SmartConf* getSmartConfiguration() {
+    return SmartConfObj.get();
+  }
+
 };
 
 #endif

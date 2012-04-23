@@ -11,6 +11,11 @@
 #include <iostream>
 #include <vector>
 #include "macros.hpp"
+
+#ifdef IBM_BGQ_WILSON
+#include "bgqwilson.h"
+#endif
+
 /*!
  * @class Geometry
  * @brief Initializes several geometry related objects
@@ -38,18 +43,26 @@ class Geometry {
     }
 #endif
     prms_= CommonPrms::instance(latt);
-    idx_= SiteIndex::instance();
+    //idx_= SiteIndex::instance();
+
+    #ifdef IBM_BGQ_WILSON
+    BGWilson_Init(Dim[XDIR],Dim[YDIR],Dim[ZDIR],Dim[TDIR],
+    		  Node[XDIR],Node[YDIR],Node[ZDIR],Node[TDIR]);
+    #endif
+
   }
 
 public:
   //Lattice latt_; /*!< Lattice structure containing the lattice dimensions 
   //  		  * and MPI nodes distribution on 4 dimensions */ 
   CommonPrms* prms_; /*!< Singleton handling the general parameters */
-  SiteIndex* idx_;  /*!< Singleton containing the local geometry */
+  //SiteIndex* idx_;  /*!< Singleton containing the local geometry */
   
   /*! @brief Constructor - Initialized geometry object */
   Geometry(XML::node node){ 
     initialize(node.child("Geometry")); }  
+
+
 };
 
 #endif

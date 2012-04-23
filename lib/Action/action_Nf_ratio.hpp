@@ -13,10 +13,8 @@
 #include "Smearing/smartConf.hpp"
 #include "Tools/RationalApprox/rationalapprox.hpp"
 
-enum {MetroStep, MDStep, PFStep};
-
 /*!
- * @brief Parameter container for Action_Nf class
+ * @brief Parameter container for Action_Nf_ratio class
  */
 struct Action_Nf_ratio_params {
   int n_pseudof_;        /*!< @brief Number of pseudofermion fields */
@@ -56,15 +54,15 @@ struct Action_Nf_ratio_params {
 
 /*!
  * @class Action_Nf_ratio
- * @brief Class to calculate HMC action term \f$det(D1)/det(D2)\f$
+ * @brief Class to calculate RHMC action term \f$(det(D1)/det(D2))^\alpha\f$
  */
 class Action_Nf_ratio : public Action{
 private:
   GaugeField* const u_; /*!< @brief The gauge field */
   DiracWilsonLike* D1_; /*!< @brief The numerator kernel */
   DiracWilsonLike* D2_; /*!< @brief The denominator kernel */
-  RationalSolver* slv1_;  
-  RationalSolver* slv2_;
+  RationalSolver* slv1_;  /*!< @brief Rational solver for the numerator kernel */
+  RationalSolver* slv2_; /*!< @brief Rational solver for the denominator kernel */
   Action_Nf_ratio_params Params_;
   const size_t fermion_size_;
   std::vector<Field> phi_; /*!< @brief Vector of pseudofermion fields */
@@ -72,17 +70,19 @@ private:
   bool smeared_;
   SmartConf* smart_conf_;
 
-  // Rational approximations numerator
-  RationalApprox MetropolisApprox_;  
-  RationalApprox MolecularDynApprox_;
-  RationalApprox PseudoFermionsApprox_;
+  // Rational approximations - numerator
+  RationalApprox MetropolisApprox_;  /*!< @brief Rational approximation 
+				       for the Metropolis step - numerator */
+  RationalApprox MolecularDynApprox_; /*!< @brief Rational approximation 
+				       for the Molecular dynamics step - numerator */
+  RationalApprox PseudoFermionsApprox_; /*!< @brief Rational approximation 
+				       for the Pseudo fermions step - numerator */
 
-  // Rational approximations denominator
-  RationalApprox MetropolisApprox_Den_;  
-  RationalApprox MolecularDynApprox_Den_;
-
-  Field DdagD1_inv(const Field& src);
-  Field DdagD2_inv(const Field& src);
+  // Rational approximations - denominator
+  RationalApprox MetropolisApprox_Den_;  /*!< @brief Rational approximation 
+				       for the Metropolis step - denominator */
+  RationalApprox MolecularDynApprox_Den_;/*!< @brief Rational approximation 
+				       for the Molecular dynamics step - denominator */
 
   void attach_smearing(SmartConf*);
 public:

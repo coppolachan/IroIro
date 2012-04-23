@@ -49,6 +49,7 @@ void GaugeConf_txt::init_conf(Field& u){
   
   valarray<double> u_tmp(fg_.size());
   
+
   if(nodeid==0){
     fstream config; 
     try {

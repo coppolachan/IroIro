@@ -72,12 +72,8 @@ namespace CCIO {
       comm->sync();
       //copy one by one the local fields stored in the nodes into primary node
       comm->send_1to1(local, f.getva(), local.size(), 0, node, node);
-      
+
       global_site = SiteIndex::instance()->get_gsite();
-      /*
-      for (int site=0; site<format.Nvol(); ++site) 
-	global_site[site] = SiteIndex::instance()-> gsite(site);
-      */
       comm->sync();    
       //copy global index array on primary node
       comm->broadcast(format.Nvol(), global_site[0], node);
@@ -127,6 +123,8 @@ namespace CCIO {
       Outputfile.close();
       #endif
     }
+    CCIO::cout << "Write ended succesfully\n";
+
     return 0;
   }
   

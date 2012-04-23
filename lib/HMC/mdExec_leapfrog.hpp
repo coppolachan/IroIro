@@ -79,6 +79,19 @@ public:
     register_observers();
   }
   
+  MDexec_leapfrog(XML::node node,
+		  const ActionSet as,
+		  const std::vector<int> multipliers,
+		  SmartConf* const CommonU)
+    :as_(as),
+     Params(MDexec_leapfrogParams(node)),
+     Nrel_(multipliers),
+     U_(CommonU->ThinLinks){
+    observers_.push_back(CommonU);//Attach smearing as 1st observer
+    register_observers();
+  }
+
+
   void init(std::vector<int>& clock,const GaugeField& U,const RandNum& rand);
   void integrator(int level,std::vector<int>& clock);
   double calc_H() const;

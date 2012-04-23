@@ -12,7 +12,7 @@
 
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf::observer_update() {
-  D_->update_internal_state();  
+  D_->update_internal_state(); 
 }
 //::::::::::::::::::::::::::::::::
 void Action_Nf::attach_smearing(SmartConf* SmearObj) {
@@ -83,7 +83,6 @@ GaugeField Action_Nf::md_force(){
 
   // Loop on pseudofermions
   for (int pf = 0; pf < Params_.n_pseudof_; ++pf){ 
-    
     //(M^dag M)^(-Nf/2n) <phi_>
     monitor =  slv_->solve_noReconstruct(eta, phi_[pf]); 
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
@@ -91,16 +90,14 @@ GaugeField Action_Nf::md_force(){
 #endif 
     
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
-      
       fce.data = D_->md_force(eta[i],D_->mult(eta[i]));
-      // [fce] is [U*SigmaTilde] in smearing language
-      if(smeared_) SmartField_->smeared_force(fce);
-      
-      force += FieldUtils::TracelessAntihermite(fce);
-      
+      fce.data *=  MolecularDynApprox_.InvResiduals()[i];
+      force += fce;
     }
   }
-  
+  if(smeared_) SmartField_->smeared_force(force);  
+  force = FieldUtils::TracelessAntihermite(force);
+
   _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "Action_Nf");
   return force;
 }

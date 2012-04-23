@@ -1,3 +1,8 @@
+/*!
+ * @file smearingFactories.cpp 
+ * @brief Definition of Smearing Operators switcher
+ */
+
 #include "smearingFactories.hpp"
 
 #include <string.h>
@@ -24,4 +29,5 @@ namespace SmearingOperators {
       abort();
     }
   }
+
 }

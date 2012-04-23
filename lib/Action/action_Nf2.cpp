@@ -6,8 +6,12 @@
 #include "Tools/randNum_MP.h"
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
-/*
-//::::::::::::::::::::::::::::::::
+
+//::::::::::::::::::::::::::::::::Observer
+void Action_Nf2::observer_update() {
+  D_->update_internal_state();  
+}
+
 void Action_Nf2::attach_smearing(SmartConf* SmearObj) {
   // Checks that the pointer for gauge field u_ 
   // points correctly to the smeared configuration
@@ -17,12 +21,10 @@ void Action_Nf2::attach_smearing(SmartConf* SmearObj) {
     CCIO::cout << "Succesfully attached smearing routines\n";
   }else{
     CCIO::cout << "Pointers disagree - Smearing not allowed\n";
-    // in this case, really want to continue?
     smeared_ = false;
   }
 }
-//:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-*/
+
 
 Field Action_Nf2::DdagD_inv(const Field& src){
   Field sol(fsize_);
@@ -50,7 +52,7 @@ GaugeField Action_Nf2::md_force(){
   GaugeField fce(D_->md_force(eta,D_->mult(eta)));
   
   // [fce] is [U*SigmaTilde] in smearing language
-  if(smart_conf_) smart_conf_->smeared_force(fce);
+  if(smeared_) smart_conf_->smeared_force(fce);
   GaugeField force = FieldUtils::TracelessAntihermite(fce);
 
   _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "Action_Nf2");

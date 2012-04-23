@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
   CREATE_TEST(Test_HMC);
   RUN_TEST;
   CLEAR_TEST;  
-  
+
   return 0;
 }
 

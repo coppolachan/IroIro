@@ -23,24 +23,25 @@ private:
   const Solver* slv2_;
   const size_t fsize_;
   Field phi_;
+  bool smeared_;
   SmartConf* smart_conf_;
 
   Field DdagD1_inv(const Field& src);
   Field DdagD2_inv(const Field& src);
-  
+  void attach_smearing(SmartConf*);
  public:
   Action_Nf2_ratio(GaugeField* const GField, 
 		   DiracWilsonLike* const D1,DiracWilsonLike* const D2,
 		   const Solver* Solv1,const Solver* Solv2,
+		   bool smeared = false,
 		   SmartConf* smart_conf = NULL)
     :u_(GField),
      D1_(D1), D2_(D2),
      slv1_(Solv1), slv2_(Solv2),
      fsize_(D1->fsize()),
      phi_(fsize_),
-     smart_conf_(smart_conf){
-    if(smart_conf_!= NULL) 
-      assert(u_== smart_conf_->get_current_conf());
+     smeared_(smeared){
+    if (smeared_ && smart_conf !=NULL) attach_smearing(smart_conf);
   }
   
   ~Action_Nf2_ratio(){}

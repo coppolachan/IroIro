@@ -1,12 +1,25 @@
-# Time-stamp: <2012-04-05 11:42:25 neo>
+# Time-stamp: <2012-04-18 18:06:20 neo>
 
 testdir = $(bindir)/Test
+OPTLIB =
 
 if IBM_BGQ
  DRIVER=/bgsys/drivers/ppcfloor
  CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include
+
+if IBM_BGQWILSON_SMP
+CXXFLAGS += -qsmp
+endif
+
  LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/usr/local/bg/lib
- OPTLIB = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
+ OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
+
+if IBM_BGQWILSON_SMP
+OPTLIB += -lbgqwilson3x4smp
+else
+OPTLIB += -lbgqwilson3x4
+endif
+
 endif
 
 LDADD = -L../lib/ -lcommcode $(OPTLIB)
@@ -14,10 +27,15 @@ AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
 EXTRA_DIST = 	testResults.info	\
-		test_HMC.xml	 	\
 		test_HMC.clover.xml	\
 		test_HMC.wilson.xml	\
+		test_HMC.wilson.smear.xml \
 		test_HMC.wilson.rational.xml	\
+		test_HMC.wilson.ratio.rational.xml	\
+		test_HMC.wilson.ratio.xml \
+		test_HMC.wilson.ratio.smeared.xml \
+		test_HMC.wilson.rational.smeared.xml \
+		test_HMC.DWF.rational.xml	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\

@@ -17,7 +17,7 @@
 #include "Action/action_fermiontype_factory_abs.hpp"
 #include "Communicator/comm_io.hpp"
 #include "HMC/mdExec.hpp"
-
+#include "Smearing/smearingFactories.hpp"
 
 /*!
  *@class IntegratorFactory
@@ -30,7 +30,7 @@ public:
    */
   virtual MDexec* getMDIntegrator() = 0;
 };
-
+ 
 /*!
  *@class ActionSetFactory
  *@brief Factory class for grouping Action in levels
@@ -80,7 +80,7 @@ class ActionSetFactory {
   ActionSetFactory(const ActionSetFactory&){} //hide copy constructor
 
 public:  
-  ActionSet getActionSet(GaugeField* const G){
+  ActionSet getActionSet(GaugeField* const G, SmartConf* const SC){
     std::multimap<int, ActionFactory* >::iterator it;
 
     ActionSet Levels;
@@ -93,7 +93,7 @@ public:
     for(it = LevelMap.begin(); it != LevelMap.end(); it++)
       Levels[(*it).first-1].
 	push_back(ActionPointers.
-		  save((*it).second->getAction(G)));
+		  save((*it).second->getAction(G, SC)));
     return Levels;
   }
 

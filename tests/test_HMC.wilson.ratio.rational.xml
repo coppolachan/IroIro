@@ -9,11 +9,11 @@
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  <Configuration Type="Unit">final_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>20</Nsweeps>
-    <Thermalization>10</Thermalization>
+    <Nsweeps>1</Nsweeps>
+    <Thermalization>2</Thermalization>
     <StartingConfig>0</StartingConfig>
     <SaveInterval>0</SaveInterval>
     <SavePrefix>HMCrect_</SavePrefix>
@@ -26,24 +26,50 @@
     </RandomNumberGen>
     
     <Integrator name="leapfrog_multistep">
-      <MDsteps>5</MDsteps>
+      <MDsteps>10</MDsteps>
       <step_size>0.02</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
+	<Action type="Fermion" name="NfFlavorsRatio">
+
+	  <Flavors>2</Flavors>
+	  <Pseudofermions>2</Pseudofermions>
+	  <ApproxDegree>10 10 10</ApproxDegree>
+	  <Precision>40 40 40</Precision>
+	  <BoundaryLow>0.1 0.1 0.1</BoundaryLow>
+	  <BoundaryHigh>4 4 4</BoundaryHigh>
+
+	  <Numerator name="DiracWilson">
+	    <mass>0.01</mass>
+	  </Numerator>
+	   <Denominator name="DiracWilson">
+	    <mass>0.1</mass>
+	  </Denominator>
+	  <RationalSolverNumerator type="Rational_CG">
+	    <MaxIter>2000</MaxIter>
+	    <Precision>1e-14</Precision>
+	  </RationalSolverNumerator>
+	  <RationalSolverDenominator type="Rational_CG">
+	    <MaxIter>2000</MaxIter>
+	    <Precision>1e-14</Precision>
+	  </RationalSolverDenominator>
+	</Action>
+
 	<Action type="Fermion" name="TwoFlavors">
 	  <Kernel name="DiracWilson">
-	    <mass>0.16666</mass>
+	    <mass>0.1</mass>
 	  </Kernel>
 	  <Solver type="Solver_CG">
-	    <MaxIter>1000</MaxIter>
+	    <MaxIter>2000</MaxIter>
 	    <Precision>1e-14</Precision>
 	  </Solver>
 	</Action>
+
 	<step>
 	  <multiplier>2</multiplier>
 	  <Action type="Gauge" name="Wilson">
-	    <beta>6.2</beta>
+	    <beta>5.0</beta>
 	  </Action>
 	</step>
       </step>

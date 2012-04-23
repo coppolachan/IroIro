@@ -15,23 +15,24 @@
 #include "HMC/mdExec_factory_abs.hpp"
 #include "Communicator/comm_io.hpp"
 #include "HMC/mdExec_leapfrog.hpp"
-
+#include "Smearing/smearingFactories.hpp"
 /*
  * :::::::::::::::::::::   Concrete classes
  */
 class MDIntegrator_LeapfrogFactory : public MDIntegratorFactory {
   ActionSetFactory ActSetFactory;
   const XML::node Integrator_node;
+  SmartConfFactory SCFactory;
   GaugeField* CommonField;
 
   MDexec* createLeapfrog(){
-    //CommonField->data.resize(CommonField->format.size()); 
     try{
       return new MDexec_leapfrog(Integrator_node,
 				 ActSetFactory.
-				 getActionSet(CommonField), 
+				 getActionSet(CommonField,
+					      SCFactory.getSmartConfiguration()), 
 				 ActSetFactory.getMultipliers(),
-				 CommonField);
+				 SCFactory.getSmartConfiguration());
     }catch(...){
       std::cerr << "Error in creating leapfrog" << std::endl;
       abort();
@@ -45,7 +46,8 @@ public:
   MDIntegrator_LeapfrogFactory(XML::node node)
     :ActSetFactory(node),
      Integrator_node(node),
-     CommonField(new GaugeField){} 
+     SCFactory(node),
+     CommonField(SCFactory.getSmartConfiguration()->ThinLinks){  } 
 };
 
 #endif // MDEXEC_FACT_HPP_

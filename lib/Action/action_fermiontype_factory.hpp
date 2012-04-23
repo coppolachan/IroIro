@@ -13,11 +13,11 @@
 #include "Action/action_Nf2.hpp"
 #include "Action/action_Nf.hpp"
 #include "Action/action_Nf2_ratio.hpp"
+#include "Action/action_Nf_ratio.hpp"
 #include "Action/action_Nf2_DomainWall.hpp"
 #include "Solver/solver_CG.hpp"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Solver/solver_Factory.hpp"
-
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,11 +28,17 @@ class TwoFlavorActionFactory : public FermionActionFactory {
   RaiiFactoryObj<DiracWilsonLike> Kernel;
   RaiiFactoryObj<Fopr_DdagD> HermitianOp;
   RaiiFactoryObj<Solver> Solv;
+
+  RaiiFactoryObj<SmartConf> SConf;  
  
   const XML::node Action_node;
+  bool smearing;
 
 public:
   TwoFlavorActionFactory(XML::node node):Action_node(node){
+    smearing = false; // default
+    XML::read(node, "smeared", smearing);
+
     XML::descend(node,"Kernel",MANDATORY);
     DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
     XML::next_sibling(node,"Solver", MANDATORY);
@@ -41,11 +47,16 @@ public:
 
   ~TwoFlavorActionFactory(){}
 private:
-  Action_Nf2* getFermionAction(GaugeField* const F){
-    Kernel.save(DiracObj.get()->getDiracOperator(&(F->data)));
+  Action_Nf2* getFermionAction(GaugeField* const F, SmartConf* const SC){
+    // select links according to smearing
+    GaugeField* Links = SC->select_conf(smearing);
+
+    Kernel.save(DiracObj.get()->getDiracOperator(&(Links->data)));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
-    return new Action_Nf2(F, Kernel.get(), Solv.get());
+
+    return new Action_Nf2(Links, Kernel.get(), Solv.get(), smearing, SC);
+    
   }
 };
 
@@ -60,9 +71,13 @@ class NfFlavorsActionFactory : public FermionActionFactory {
   RaiiFactoryObj<RationalSolver> Solv;
 
   const XML::node Action_node;
+  bool smearing;
   
 public:
   NfFlavorsActionFactory(XML::node node):Action_node(node) {
+    smearing = false; // default
+    XML::read(node, "smeared", smearing);
+
     XML::descend(node, "Kernel", MANDATORY);
     DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));  
     XML::next_sibling(node,"RationalSolver", MANDATORY);
@@ -71,12 +86,15 @@ public:
 
   ~NfFlavorsActionFactory(){}
 private: 
-  Action_Nf* getFermionAction(GaugeField* const F) {
-    Kernel.save(DiracObj.get()->getDiracOperator(&(F->data)));
+  Action_Nf* getFermionAction(GaugeField* const F, SmartConf* const SC) {
+   // select links according to smearing
+    GaugeField* Links = SC->select_conf(smearing);
+
+    Kernel.save(DiracObj.get()->getDiracOperator(&(Links->data)));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
-    return new Action_Nf(F, Kernel.get(), Solv.get(), 
-			 Action_Nf_params(Action_node));
+    return new Action_Nf(Links, Kernel.get(), Solv.get(), 
+			 Action_Nf_params(Action_node), smearing, SC);
   }
 
 };
@@ -95,11 +113,15 @@ class TwoFlavorRatioActionFactory : public FermionActionFactory {
   RaiiFactoryObj<Solver> Solver2;
 
   const XML::node Action_node;
+  bool smearing;
 
 public:
   ~TwoFlavorRatioActionFactory(){}
 
   TwoFlavorRatioActionFactory(XML::node node):Action_node(node){
+    smearing = false; // default
+    XML::read(node, "smeared", smearing);
+
     XML::descend(node,"Numerator", MANDATORY);
     DiracNumObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node)); 
     XML::next_sibling(node,"Denominator", MANDATORY);
@@ -111,20 +133,73 @@ public:
   }
   
 private:  
-  Action_Nf2_ratio* getFermionAction(GaugeField* const F){
+  Action_Nf2_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
+   // select links according to smearing
+    GaugeField* Links = SC->select_conf(smearing);
+
+    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(Links->data)));
+    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(Links->data)));
+    
+    Solver1.save(SolverNumObj.get()->getSolver(new Fopr_DdagD(DiracNumerator.get())));
+    Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_DdagD(DiracDenominator.get())));
+
+    return new Action_Nf2_ratio(Links,
+				DiracNumerator.get(),
+				DiracDenominator.get(),
+				Solver1.get(),
+				Solver2.get(),
+				smearing, SC); 
+  }
+};
+
+////////////////////////////////////////////////////
+
+class NfFlavorRatioActionFactory : public FermionActionFactory {
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracNumObj;
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracDenomObj;
+  RaiiFactoryObj<RationalSolverOperatorFactory> SolverNumObj;
+  RaiiFactoryObj<RationalSolverOperatorFactory> SolverDenomObj;
+
+  RaiiFactoryObj<DiracWilsonLike> DiracNumerator;
+  RaiiFactoryObj<DiracWilsonLike> DiracDenominator;
+  RaiiFactoryObj<RationalSolver> Solver1;
+  RaiiFactoryObj<RationalSolver> Solver2;
+
+  const XML::node Action_node;
+
+public:
+  ~NfFlavorRatioActionFactory(){}
+
+  NfFlavorRatioActionFactory(XML::node node):Action_node(node){
+    XML::descend(node,"Numerator", MANDATORY);
+    DiracNumObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node)); 
+    XML::next_sibling(node,"Denominator", MANDATORY);
+    DiracDenomObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
+    XML::next_sibling(node,"RationalSolverNumerator", MANDATORY);
+    SolverNumObj.save(SolverOperators::createRationalSolverOperatorFactory(node));
+    XML::next_sibling(node,"RationalSolverDenominator", MANDATORY);
+    SolverDenomObj.save(SolverOperators::createRationalSolverOperatorFactory(node));
+  }
+  
+private:  
+  Action_Nf_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
     DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(F->data)));
     DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(F->data)));
     
     Solver1.save(SolverNumObj.get()->getSolver(new Fopr_DdagD(DiracNumerator.get())));
     Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_DdagD(DiracDenominator.get())));
 
-    return new Action_Nf2_ratio(F,
-				DiracNumerator.get(),
-				DiracDenominator.get(),
-				Solver1.get(),
-				Solver2.get()); 
+    return new Action_Nf_ratio(F,
+			       DiracNumerator.get(),
+			       DiracDenominator.get(),
+			       Solver1.get(),
+			       Solver2.get(),
+			       Action_Nf_ratio_params(Action_node)); 
   }
 };
+
+
+
 ////////////////////////////////////////////////////
 
 class TwoFlavorDomainWall5dActionFactory : public FermionActionFactory {
@@ -152,7 +227,7 @@ public:
   }
 
 private:  
-  Action_Nf2_ratio* getFermionAction(GaugeField* const F){
+  Action_Nf2_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
     DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(F->data)));
     DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(F->data)));
 
@@ -167,6 +242,51 @@ private:
 				SolvPV.get());
   }
 };
+
+////////////////////////////////////////////////////
+
+class NfFlavorDomainWall5dActionFactory : public FermionActionFactory {
+
+  RaiiFactoryObj<DiracDWF5dOperatorFactory> DiracObj;
+  RaiiFactoryObj<RationalSolverOperatorFactory> SolverObj;
+
+  RaiiFactoryObj<DiracWilsonLike> DWF5d_Kernel;
+  RaiiFactoryObj<DiracWilsonLike> DWF5d_KernelPV;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOp;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOpPV;
+  RaiiFactoryObj<RationalSolver> Solv;
+  RaiiFactoryObj<RationalSolver> SolvPV;
+  
+  const XML::node Action_node;
+
+public:
+  ~NfFlavorDomainWall5dActionFactory(){}
+
+  NfFlavorDomainWall5dActionFactory(XML::node node):Action_node(node){
+    XML::descend(node,"Kernel5D", MANDATORY);
+    DiracObj.save(DiracOperators::createDiracDWF5dOperatorFactory(node));
+    XML::next_sibling(node,"RationalSolver", MANDATORY);
+    SolverObj.save(SolverOperators::createRationalSolverOperatorFactory(node));
+  }
+
+private:  
+  Action_Nf_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
+    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(F->data)));
+    DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(F->data)));
+
+    HermitianOp.save(  new Fopr_DdagD_Precondition(DWF5d_Kernel.get()));
+    HermitianOpPV.save(new Fopr_DdagD_Precondition(DWF5d_KernelPV.get()));
+    Solv.save(  SolverObj.get()->getSolver(HermitianOp.get()));
+    SolvPV.save(SolverObj.get()->getSolver(HermitianOpPV.get()));
+    return new Action_Nf_ratio(F,
+			       DWF5d_Kernel.get(),
+			       DWF5d_KernelPV.get(),
+			       Solv.get(),
+			       SolvPV.get(),
+			       Action_Nf_ratio_params(Action_node));
+  }
+};
+
 
 //Add new factories here
 //....
