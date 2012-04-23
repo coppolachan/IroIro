@@ -191,6 +191,8 @@ public:
   void gamma5_mult(Field&, const Field&) const;
   const Field proj_p(const Field&) const;
   const Field proj_m(const Field&) const;
+  void proj_p(Field&, const Field&, int) const;
+  void proj_m(Field&, const Field&, int) const;
 
   const Field md_force(const Field& , const Field&)const;
   void md_force_p(Field&,const Field&,const Field&)const;
