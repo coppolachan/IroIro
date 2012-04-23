@@ -236,14 +236,18 @@ void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{
     if(s==N5_-1) lmf *= -mq_;
 
     get4d_c(v,f5,Params.bs_[s],s);
-    //Field v = get4d(f5,s);
-    //v *= Params.bs_[s];
-    v += Params.cs_[s]*(lpf +lmf);
+    lpf += lmf;
+    v += Params.cs_[s]*lpf;
 
-    Field w = Dw_.mult(v);          
+    Field w = Dw_.mult(v);
+    set5d_c(w5,w,4.0+M0_,s);
+    add5d_from5d(w5,f5,s);
+    add5d_c(w5,lpf,-1.0,s);
+    /*          
     w *= 4.0+M0_;
     w += get4d(f5,s) -lpf -lmf;
     set5d(w5,w,s);
+    */
   }
 }
 
@@ -442,7 +446,21 @@ void Dirac_optimalDomainWall::get4d(Field& f4,const Field& f5,int s) const{
 void Dirac_optimalDomainWall::get4d_c(Field& f4,const Field& f5,const double& c,int s) const{
   for (int i=0; i<f4size_; i++) f4.set(i,c*f5[s*f4size_+i]);
 }
-
+void Dirac_optimalDomainWall::set5d_c(Field& f5,const Field& f4,const double c,int s) const{
+  for (int i=0; i<f4size_; i++) f5.set(s*f4size_+i,c*f4[i]);
+}
+void Dirac_optimalDomainWall::add5d(Field& f5,const Field& f4_1, const Field& f4_2,int s) const{
+  for (int i=0; i<f4size_; i++) f5.add(s*f4size_+i,f4_1[i]+f4_2[i]);
+}
+void Dirac_optimalDomainWall::add5d_c(Field& f5,const Field& f4, double c,int s) const{
+  for (int i=0; i<f4size_; i++) f5.add(s*f4size_+i,c*f4[i]);
+}
+void Dirac_optimalDomainWall::add5d_from5d(Field& f5,const Field& f,int s) const{
+  for (int i=0; i<f4size_; i++) f5.add(s*f4size_+i,f[s*f4size_+i]);
+}
+void Dirac_optimalDomainWall::add5d(Field& f5,const Field& f4,int s) const{
+  f5.add(std::slice(s*f4size_,f4size_,1),f4.getva());
+}
 
 
 //

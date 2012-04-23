@@ -118,11 +118,14 @@ private:
   const Field get4d(const Field& f5,int s) const;
   void get4d(Field&, const Field& ,int ) const;
   void get4d_c(Field&, const Field& ,const double&, int ) const;
+  void set5d_c(Field& f5,const Field& f4,const double c,int s) const;  
+  void add5d(Field& f5,const Field& f4,int s) const;
+  void add5d(Field& f5,const Field& f4_1, const Field& f4_2,int s) const;
+  void add5d_c(Field& f5,const Field& f4, double c,int s) const;
+  void add5d_from5d(Field& f5,const Field& f,int s) const;
+
   void set5d(Field& f5,const Field& f4,int s) const{
     f5.set(std::slice(s*f4size_,f4size_,1),f4.getva());
-  }
-  void add5d(Field& f5,const Field& f4,int s) const{
-    f5.add(std::slice(s*f4size_,f4size_,1),f4.getva());
   }
 
   void mult_offdiag(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
