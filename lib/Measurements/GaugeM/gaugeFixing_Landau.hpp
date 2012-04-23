@@ -10,6 +10,7 @@
 #include "include/pugi_interface.h"
 #include "include/commonPrms.h"
 #include "Main/Geometry/mapping.hpp"
+#include <memory>
 /*
   This class fix the gauge of configuration to the Landau gauge.
   Overrelaxation is incorporated.
@@ -23,37 +24,44 @@ class RandNum;
 
 class GaugeFixing_Landau: public GaugeFixing{
  private:
-  int    max_iter_; // max iteration number
-  int    Niter_;    // number of naive iterations
-  int    Nmeas_;    // interval of measurements
-  int    Nreset_;   // Number of iteration to reset the config.
-  double prec_;     // convergence criterion
-  double wp_;       // overrelaxation parameter
+  int    Niter_; // max iteration number   
+  int    Nmeas_; // interval of measurements                         
+  int    Nreset_;// Number of iteration to reset the config 
+  int    Nor_;   // Number of iteration to start overrelaxation
+  double wp_;    // overrelaxation parameter             
+  double prec_;  // convergence criterion  
+
   int Nvh_;
 
-  const RandNum& rnd_;
+  const RandNum& rng_;
   const GaugeFixingStep* gstep_;
 
   double calc_F(const GaugeField& Ue,const GaugeField& Uo) const;
-  double calc_SG(const GaugeField& Ue,const GaugeField& Uo) const;
+  double gauge_cond(const GaugeField& Ue,const GaugeField& Uo) const;
   void random_gtr(GaugeField& Ue,GaugeField& Uo)const;
   
  public:
-  GaugeFixing_Landau(const RandNum& rnd,XML::node GFnode)
-    :rnd_(rnd),gstep_(new GaugeFixingStep(Landau)){
-    XML::read(GFnode,"max_iteration",max_iter_);
-    XML::read(GFnode,"naive_iteration",Niter_);
-    XML::read(GFnode,"reset_iteration",Nreset_);
-    XML::read(GFnode,"precision",prec_);
-    XML::read(GFnode,"overrelax_param",wp_);
+  GaugeFixing_Landau(const RandNum& rng,XML::node GFnode)
+    :rng_(rng),gstep_(new GaugeFixingStep(Landau)),
+     Nvh_(CommonPrms::instance()->Nvol()/2){
+    //
+    XML::read(GFnode,"max_iter",Niter_,MANDATORY);
+    XML::read(GFnode,"monitor_step",Nmeas_,MANDATORY);
+    XML::read(GFnode,"reset_step",Nreset_,MANDATORY);
+    XML::read(GFnode,"to_ovrlx",Nor_,MANDATORY);
+    XML::read(GFnode,"or_coeff",wp_,MANDATORY);
+    XML::read(GFnode,"precision",prec_,MANDATORY);
     //
     Mapping::init_shiftField_EvenOdd();
+    CCIO::cout<<"GaugeFixing_Landau generated"<<std::endl;
   }
 
-  GaugeFixing_Landau(const RandNum& rnd,int Niter,int Nnaive,int Nmeas,
-		     int Nreset,double prec,double wp)
-    :rnd_(rnd),gstep_(new GaugeFixingStep(Landau)),
-     Niter_(Niter),Nmeas_(Nmeas),Nreset_(Nreset),prec_(prec),wp_(wp),
+  GaugeFixing_Landau(const RandNum& rng,
+		     int Niter,int Nmeas,int Nreset,int Nor,
+		     double wp,double prec)
+    :rng_(rng),gstep_(new GaugeFixingStep(Landau)),
+     Niter_(Niter),Nmeas_(Nmeas),Nreset_(Nreset),Nor_(Nor),
+     prec_(prec),wp_(wp),
      Nvh_(CommonPrms::instance()->Nvol()/2){
     //
     Mapping::init_shiftField_EvenOdd();
@@ -61,7 +69,7 @@ class GaugeFixing_Landau: public GaugeFixing{
 
   ~GaugeFixing_Landau(){delete gstep_;}
 
-  const GaugeField fix(const GaugeField& Uin)const;
+  const GaugeField do_fix(const GaugeField& Uin)const;
 };
 
 #endif  

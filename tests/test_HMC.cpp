@@ -22,8 +22,7 @@ int Test_HMC::run(){
   
   RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
 
-  Integrators::Integr = 
-    Integrators::createIntegratorFactory(HMC_node);
+  Integrators::Integr = Integrators::createIntegratorFactory(HMC_node);
 
   //Initialization
   HMCgeneral hmc_general(HMC_node);

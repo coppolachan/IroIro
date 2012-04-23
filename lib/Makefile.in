@@ -118,6 +118,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Measurements/GaugeM/gaugeFixingStep.cpp \
 	Measurements/GaugeM/gaugeFixing_Coulomb.cpp \
 	Measurements/GaugeM/gaugeFixing_Landau.cpp \
+	Measurements/GaugeM/gfixFactory.cpp \
 	Measurements/FermionicM/qprop_MultiShift.cpp \
 	Measurements/FermionicM/qprop.cpp \
 	Measurements/FermionicM/qprop_mom.cpp \
@@ -160,12 +161,13 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	fopr_chebyshev_DdagD.$(OBJEXT) findminmax.$(OBJEXT) \
 	staples.$(OBJEXT) gaugeFixingStep.$(OBJEXT) \
 	gaugeFixing_Coulomb.$(OBJEXT) gaugeFixing_Landau.$(OBJEXT) \
-	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) qprop_mom.$(OBJEXT) \
-	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
-	utils_DWF4d.$(OBJEXT) quark_prop_meas_factory.$(OBJEXT) \
-	siteIndex.$(OBJEXT) siteIndex_EvenOdd.$(OBJEXT) \
-	mapping.$(OBJEXT) siteMap.$(OBJEXT) gaugeConf.$(OBJEXT) \
-	commandline.$(OBJEXT) hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
+	gfixFactory.$(OBJEXT) qprop_MultiShift.$(OBJEXT) \
+	qprop.$(OBJEXT) qprop_mom.$(OBJEXT) qprop_EvenOdd.$(OBJEXT) \
+	qprop_DomainWall.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
+	quark_prop_meas_factory.$(OBJEXT) siteIndex.$(OBJEXT) \
+	siteIndex_EvenOdd.$(OBJEXT) mapping.$(OBJEXT) \
+	siteMap.$(OBJEXT) gaugeConf.$(OBJEXT) commandline.$(OBJEXT) \
+	hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
 	mdExec_leapfrog.$(OBJEXT) mdExec_factory.$(OBJEXT) \
 	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
 	solver_BiCGStab.$(OBJEXT) solver_CG.$(OBJEXT) \
@@ -290,6 +292,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -403,6 +406,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
 		Measurements/GaugeM/gaugeFixing_Landau.cpp		\
+		Measurements/GaugeM/gfixFactory.cpp			\
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_mom.cpp 			\
@@ -487,6 +491,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Measurements/GaugeM/gaugeFixing_Coulomb.hpp	\
 			Measurements/GaugeM/gaugeFixing_Landau.hpp	\
 			Measurements/GaugeM/gaugeFixing_Free.hpp	\
+			Measurements/GaugeM/gfixFactory.hpp		\
 			Measurements/FermionicM/source.hpp		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\
@@ -714,6 +719,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeFixingStep.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeFixing_Coulomb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeFixing_Landau.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gfixFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hmc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapping.Po@am__quote@
@@ -1307,6 +1313,22 @@ gaugeFixing_Landau.obj: Measurements/GaugeM/gaugeFixing_Landau.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/gaugeFixing_Landau.cpp' object='gaugeFixing_Landau.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gaugeFixing_Landau.obj `if test -f 'Measurements/GaugeM/gaugeFixing_Landau.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/gaugeFixing_Landau.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/gaugeFixing_Landau.cpp'; fi`
+
+gfixFactory.o: Measurements/GaugeM/gfixFactory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gfixFactory.o -MD -MP -MF $(DEPDIR)/gfixFactory.Tpo -c -o gfixFactory.o `test -f 'Measurements/GaugeM/gfixFactory.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/gfixFactory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gfixFactory.Tpo $(DEPDIR)/gfixFactory.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/gfixFactory.cpp' object='gfixFactory.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gfixFactory.o `test -f 'Measurements/GaugeM/gfixFactory.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/gfixFactory.cpp
+
+gfixFactory.obj: Measurements/GaugeM/gfixFactory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gfixFactory.obj -MD -MP -MF $(DEPDIR)/gfixFactory.Tpo -c -o gfixFactory.obj `if test -f 'Measurements/GaugeM/gfixFactory.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/gfixFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/gfixFactory.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/gfixFactory.Tpo $(DEPDIR)/gfixFactory.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/gfixFactory.cpp' object='gfixFactory.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gfixFactory.obj `if test -f 'Measurements/GaugeM/gfixFactory.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/gfixFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/gfixFactory.cpp'; fi`
 
 qprop_MultiShift.o: Measurements/FermionicM/qprop_MultiShift.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qprop_MultiShift.o -MD -MP -MF $(DEPDIR)/qprop_MultiShift.Tpo -c -o qprop_MultiShift.o `test -f 'Measurements/FermionicM/qprop_MultiShift.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/qprop_MultiShift.cpp

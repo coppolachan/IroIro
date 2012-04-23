@@ -16,10 +16,12 @@ using namespace FieldExpression;
 int Test_EigenModes_IRL::run() {
   
   CCIO::header("Test EigenModes");
-  
+  CCIO::cout<<"*********** lowlying **************"<<endl;
   lowlying();
-  highest();
-  //chebyshev();
+  //CCIO::cout<<"highest"<<endl;
+  //highest();
+  CCIO::cout<<"********** chebyshev ************"<<endl;
+  chebyshev();
 
   return 0;
  }
@@ -69,7 +71,7 @@ int Test_EigenModes_IRL::highest(){
   SortEigen_high sort;
   int    Nk = 20;
   int    Np = 20;
-  double enorm = 1.e-26;
+  double enorm = 1.e-22;
   double vthrs = 10.0;
   int    Niter = 500;
 
@@ -104,7 +106,7 @@ int Test_EigenModes_IRL::chebyshev()
   int Npoly = 40;
   double vthrs = 0.16;
   double vmax = 2.50;
-  double mq  = 0.1666666666666666;
+  double mq  = -1.6;
 
   DiracWilsonLike* Kernel = new Dirac_Wilson(mq, &(u_.data));
 
@@ -112,16 +114,16 @@ int Test_EigenModes_IRL::chebyshev()
 				vthrs,
 				vmax,
 				Kernel);
-  
   int    Nk = 20;
   int    Np = 50;
-  double enorm_eigen = 1.e-26;
-  int    Niter_eigen = 500;
+  double enorm_eigen = 1.e-22;
   double vthrs_eigen = 0.15;
+  int    Niter_eigen = 500;
+
   double Tn_vthrs = Tn_DdagD.mult(vthrs_eigen);
   CCIO::cout << "Tn_vthrs = "<<Tn_vthrs<<std::endl;
 
-  SortEigen_high sort;
+  SortEigen_low sort;
 
   EigenModes_IRL eigen(&Tn_DdagD,&sort,Nk,Np,enorm_eigen,
 		       Tn_vthrs,Niter_eigen);

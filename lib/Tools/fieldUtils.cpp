@@ -26,6 +26,23 @@ namespace FieldUtils{
     return f;
   }
 
+  const GaugeField ReUnit(const GaugeField& U){
+    using namespace SUNmatUtils;
+    GaugeField Ur(U);
+    for(int mu=0; mu<U.Nex(); ++mu)
+      for(int site=0; site<U.Nvol(); ++site)
+	SetMat(Ur,reunit(mat(U,site,mu)),site,mu);
+    return Ur;
+  }
+
+  const GaugeField1D ReUnit(const GaugeField1D& G){
+    using namespace SUNmatUtils;
+    GaugeField1D Gr(G);
+    for(int site=0; site<G.Nvol(); ++site)
+      SetMat(Gr,reunit(mat(G,site)),site);
+    return Gr;
+  }
+
   const GaugeField TracelessAntihermite(const GaugeField& G){
     using namespace SUNmatUtils;
     GaugeField TAField;

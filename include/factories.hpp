@@ -10,3 +10,4 @@
 #include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
 #include "Measurements/FermionicM/sources_factory.hpp"
 #include "Smearing/smearingFactories.hpp"
+#include "Measurements/GaugeM/gfixFactory.hpp"

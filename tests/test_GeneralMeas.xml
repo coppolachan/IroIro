@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Input file for Residual Mass test -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  
+  <Measurement>
+    <RandomNumberGen name="Mersenne Twister"> 
+      <!--   <seedFile>seed_file</seedFile>                      
+	     Using seedFile superseeds the <init> line         
+             that can be safely omitted                 
+             It is ignored by factory in this case -->
+      <init>0x123 0x234 0x345 0x456</init>
+    </RandomNumberGen>
+    <Smearing type="Stout">
+      <Nsmear>0</Nsmear>
+      <Base type="APE">
+        <rho>0.1</rho>
+      </Base>
+    </Smearing>
+    <GaugeFixing name="Coulomb">
+      <max_iter>5000</max_iter>
+      <monitor_step>10</monitor_step> 
+      <reset_step>1000</reset_step>
+      <to_ovrlx>50</to_ovrlx>
+      <or_coeff>1.6</or_coeff>
+      <precision>1e-20</precision>
+    </GaugeFixing>
+    <QuarkProp name="QpropDWF" >
+      <Kernel4d name="DiracOptimalDomainWall4d_eo">
+	<Kernel5d>
+	  <Preconditioning>NoPreconditioner</Preconditioning>
+	  <wilson_mass>-1.6</wilson_mass>
+	  <N5d>8</N5d>
+	  <b>1.0</b>
+	  <c>1.0</c>
+	  <mass>0.025</mass>
+	  <approximation name="Zolotarev">
+	    <lambda_min>0.1</lambda_min>
+	    <lambda_max>1.5</lambda_max>
+	  </approximation>
+	</Kernel5d>
+	<SolverDWF type="Solver_CG">
+	  <MaxIter>10000</MaxIter>
+	  <Precision>1e-16</Precision>
+	</SolverDWF>
+      </Kernel4d>
+    </QuarkProp>
+    <Source type="Local">
+      <position>0 0 0 0</position>
+    </Source>
+  </Measurement>
+</Parameters>
+

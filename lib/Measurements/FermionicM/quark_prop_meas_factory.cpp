@@ -20,11 +20,11 @@ namespace QuarkPropagators {
       if (!strcmp(QuarkProp_name, "QpropDWF")) { 
         return new QPropDWFFactory(node);
       }
-      std::cerr << "No Quark Propagator available with name ["
+      CCIO::cerr << "No Quark Propagator available with name ["
 		<< QuarkProp_name << "]" << std::endl;
       abort();
     } else {
-      std::cout << "Requested node is missing in input file "
+      CCIO::cout << "Requested node is missing in input file "
 		 << "(QuarkPropagator Object)\n" 
 		 << "Request by " << node.parent().name() << std::endl;
       abort();

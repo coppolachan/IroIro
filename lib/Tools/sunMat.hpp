@@ -88,9 +88,18 @@ typedef SUNmatrix<3> SU3mat;
 typedef SUNmatrix<NC_> SUNmat;
 
 template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::unity(){
+  va_= 0.0;
+  for(int c=0; c<COLORS; ++c) va_[2*(COLORS*c+c)] = 1.0;
+  return *this;
+}
+
+template <size_t COLORS>
 inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::dag(){
-  for(int a = 0; a < COLORS; ++a){
-    for(int b = a; b < COLORS; ++b){
+  for(int a=0; a<COLORS; ++a){
+    va_[2*(COLORS*a+a)+1] = -va_[2*(COLORS*a+a)+1];
+    for(int b=a+1; b<COLORS; ++b){
+      //    for(int b=a; b<COLORS; ++b){
       
       int ab = 2*(COLORS*a+b);
       int ba = 2*(COLORS*b+a);
@@ -162,106 +171,95 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator-=(const double rhs){
 
 template <size_t COLORS>
 inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(const SUNmatrix& rhs){
+
   std::valarray<double> tmp(0.0,2*COLORS*COLORS);
-
-  for(int a = 0; a < COLORS; ++a){
-    for(int b = 0; b < COLORS; ++b){
+  for(int a=0; a<COLORS; ++a){
+    for(int b=0; b<COLORS; ++b){
       int ab = 2*(COLORS*a+b);
-
-      for(int c = 0; c < COLORS; ++c){
+      for(int c=0; c<COLORS; ++c){
 	int ac = 2*(COLORS*a+c);
 	int cb = 2*(COLORS*c+b);
-	
-	tmp[ab  ]+= va_[ac  ]*rhs.va_[cb  ];
-	tmp[ab  ]-= va_[ac+1]*rhs.va_[cb+1];
-	tmp[ab+1]+= va_[ac+1]*rhs.va_[cb  ];
-	tmp[ab+1]+= va_[ac  ]*rhs.va_[cb+1];
+	tmp[ab]  += va_[ac  ]*rhs.va_[cb] -va_[ac+1]*rhs.va_[cb+1];
+	tmp[ab+1]+= va_[ac+1]*rhs.va_[cb] +va_[ac  ]*rhs.va_[cb+1];
       }
     }
   }
   va_= tmp;
   return *this;
 }
-
+/*
 //specialization
 //total loop unrolling
 template <>
 inline SUNmatrix<3>& SUNmatrix<3>::operator*=(const SUNmatrix& rhs){
   std::valarray<double> matrix(18);
 
-  matrix[0]   = va_[0] * rhs.va_[0] - va_[1] * rhs.va_[1] +
-                va_[2] * rhs.va_[6] - va_[3] * rhs.va_[7] +
-                va_[4] * rhs.va_[12]- va_[5] * rhs.va_[13];
-  matrix[1]   = va_[0] * rhs.va_[1] + va_[1] * rhs.va_[0] +
-                va_[2] * rhs.va_[7] + va_[3] * rhs.va_[6] +
-                va_[4] * rhs.va_[13]+ va_[5] * rhs.va_[12];
+  matrix[0]   = va_[0]* rhs.va_[0] - va_[1]* rhs.va_[1] +
+                va_[2]* rhs.va_[6] - va_[3]* rhs.va_[7] +
+                va_[4]* rhs.va_[12]- va_[5]* rhs.va_[13];
+  matrix[1]   = va_[0]* rhs.va_[1] + va_[1]* rhs.va_[0] +
+                va_[2]* rhs.va_[7] + va_[3]* rhs.va_[6] +
+                va_[4]* rhs.va_[13]+ va_[5]* rhs.va_[12];
 
-  matrix[2]   = va_[0] * rhs.va_[2] - va_[1] * rhs.va_[3] +
-                va_[2] * rhs.va_[8] - va_[3] * rhs.va_[9] +
-                va_[4] * rhs.va_[14]- va_[5] * rhs.va_[15];
-  matrix[3]   = va_[0] * rhs.va_[3] + va_[1] * rhs.va_[2] +
-                va_[2] * rhs.va_[9] + va_[3] * rhs.va_[8] +
-                va_[4] * rhs.va_[15]+ va_[5] * rhs.va_[14];
+  matrix[2]   = va_[0]* rhs.va_[2] - va_[1]* rhs.va_[3] +
+                va_[2]* rhs.va_[8] - va_[3]* rhs.va_[9] +
+                va_[4]* rhs.va_[14]- va_[5]* rhs.va_[15];
+  matrix[3]   = va_[0]* rhs.va_[3] + va_[1]* rhs.va_[2] +
+                va_[2]* rhs.va_[9] + va_[3]* rhs.va_[8] +
+                va_[4]* rhs.va_[15]+ va_[5]* rhs.va_[14];
 
-  matrix[4]   = va_[0] * rhs.va_[4]  - va_[1] * rhs.va_[5] +
-                va_[2] * rhs.va_[10] - va_[3] * rhs.va_[11] +
-                va_[4] * rhs.va_[16] - va_[5] * rhs.va_[17];
-  matrix[5]   = va_[0] * rhs.va_[5]  + va_[1] * rhs.va_[4] +
-                va_[2] * rhs.va_[11] + va_[3] * rhs.va_[10] +
-                va_[4] * rhs.va_[17] + va_[5] * rhs.va_[16];
+  matrix[4]   = va_[0]* rhs.va_[4]  - va_[1]* rhs.va_[5] +
+                va_[2]* rhs.va_[10] - va_[3]* rhs.va_[11] +
+                va_[4]* rhs.va_[16] - va_[5]* rhs.va_[17];
+  matrix[5]   = va_[0]* rhs.va_[5]  + va_[1]* rhs.va_[4] +
+                va_[2]* rhs.va_[11] + va_[3]* rhs.va_[10] +
+                va_[4]* rhs.va_[17] + va_[5]* rhs.va_[16];
 
+  matrix[6]   = va_[6] * rhs.va_[0]  - va_[7] * rhs.va_[1] +
+                va_[8] * rhs.va_[6]  - va_[9] * rhs.va_[7] +
+                va_[10]* rhs.va_[12] - va_[11]* rhs.va_[13];
+  matrix[7]   = va_[6] * rhs.va_[1]  + va_[7] * rhs.va_[0] +
+                va_[8] * rhs.va_[7]  + va_[9] * rhs.va_[6] +
+                va_[10]* rhs.va_[13] + va_[11]* rhs.va_[12];
 
+  matrix[8]   = va_[6] * rhs.va_[2]  - va_[7] * rhs.va_[3] +
+                va_[8] * rhs.va_[8]  - va_[9] * rhs.va_[9] +
+                va_[10]* rhs.va_[14] - va_[11]* rhs.va_[15];
+  matrix[9]   = va_[6] * rhs.va_[3]  + va_[7] * rhs.va_[2] +
+                va_[8] * rhs.va_[9]  + va_[9] * rhs.va_[8] +
+                va_[10]* rhs.va_[15] + va_[11]* rhs.va_[14];
 
-  matrix[6]   = va_[6]  * rhs.va_[0]  - va_[7]  * rhs.va_[1] +
-                va_[8]  * rhs.va_[6]  - va_[9]  * rhs.va_[7] +
-                va_[10] * rhs.va_[12] - va_[11] * rhs.va_[13];
-  matrix[7]   = va_[6]  * rhs.va_[1]  + va_[7]  * rhs.va_[0] +
-                va_[8]  * rhs.va_[7]  + va_[9]  * rhs.va_[6] +
-                va_[10] * rhs.va_[13] + va_[11] * rhs.va_[12];
+  matrix[10]  = va_[6] * rhs.va_[4]  - va_[7] * rhs.va_[5] +
+                va_[8] * rhs.va_[10] - va_[9] * rhs.va_[11] +
+                va_[10]* rhs.va_[16] - va_[11]* rhs.va_[17];
+  matrix[11]  = va_[6] * rhs.va_[5]  + va_[7] * rhs.va_[4] +
+                va_[8] * rhs.va_[11] + va_[9] * rhs.va_[10] +
+                va_[10]* rhs.va_[17] + va_[11]* rhs.va_[16];
 
-  matrix[8]   = va_[6]  * rhs.va_[2]  - va_[7]  * rhs.va_[3] +
-                va_[8]  * rhs.va_[8]  - va_[9]  * rhs.va_[9] +
-                va_[10] * rhs.va_[14] - va_[11] * rhs.va_[15];
-  matrix[9]   = va_[6]  * rhs.va_[3]  + va_[7]  * rhs.va_[2] +
-                va_[8]  * rhs.va_[9]  + va_[9]  * rhs.va_[8] +
-                va_[10] * rhs.va_[15] + va_[11] * rhs.va_[14];
+  matrix[12]  = va_[12]* rhs.va_[0]  - va_[13]* rhs.va_[1] +
+                va_[14]* rhs.va_[6]  - va_[15]* rhs.va_[7] +
+                va_[16]* rhs.va_[12] - va_[17]* rhs.va_[13];
+  matrix[13]  = va_[12]* rhs.va_[1]  + va_[13]* rhs.va_[0] +
+                va_[14]* rhs.va_[7]  + va_[15]* rhs.va_[6] +
+                va_[16]* rhs.va_[13] + va_[17]* rhs.va_[12];
 
-  matrix[10]  = va_[6]  * rhs.va_[4]  - va_[7]  * rhs.va_[5] +
-                va_[8]  * rhs.va_[10] - va_[9]  * rhs.va_[11] +
-                va_[10] * rhs.va_[16] - va_[11] * rhs.va_[17];
-  matrix[11]  = va_[6]  * rhs.va_[5]  + va_[7]  * rhs.va_[4] +
-                va_[8]  * rhs.va_[11] + va_[9]  * rhs.va_[10] +
-                va_[10] * rhs.va_[17] + va_[11] * rhs.va_[16];
+  matrix[14]  = va_[12]* rhs.va_[2]  - va_[13]* rhs.va_[3] +
+                va_[14]* rhs.va_[8]  - va_[15]* rhs.va_[9] +
+                va_[16]* rhs.va_[14] - va_[17]* rhs.va_[15];
+  matrix[15]  = va_[12]* rhs.va_[3]  + va_[13]* rhs.va_[2] +
+                va_[14]* rhs.va_[9]  + va_[15]* rhs.va_[8] +
+                va_[16]* rhs.va_[15] + va_[17]* rhs.va_[14];
 
-
-
-  matrix[12]  = va_[12] * rhs.va_[0]  - va_[13] * rhs.va_[1] +
-                va_[14] * rhs.va_[6]  - va_[15] * rhs.va_[7] +
-                va_[16] * rhs.va_[12] - va_[17] * rhs.va_[13];
-  matrix[13]  = va_[12] * rhs.va_[1]  + va_[13] * rhs.va_[0] +
-                va_[14] * rhs.va_[7]  + va_[15] * rhs.va_[6] +
-                va_[16] * rhs.va_[13] + va_[17] * rhs.va_[12];
-
-  matrix[14]  = va_[12] * rhs.va_[2]  - va_[13] * rhs.va_[3] +
-                va_[14] * rhs.va_[8]  - va_[15] * rhs.va_[9] +
-                va_[16] * rhs.va_[14] - va_[17] * rhs.va_[15];
-  matrix[15]  = va_[12] * rhs.va_[3]  + va_[13] * rhs.va_[2] +
-                va_[14] * rhs.va_[9]  + va_[15] * rhs.va_[8] +
-                va_[16] * rhs.va_[15] + va_[17] * rhs.va_[14];
-
-  matrix[16]  = va_[12] * rhs.va_[4]  - va_[13] * rhs.va_[5] +
-                va_[14] * rhs.va_[10] - va_[15] * rhs.va_[11] +
-                va_[16] * rhs.va_[16] - va_[17] * rhs.va_[17];
-  matrix[17]  = va_[12] * rhs.va_[5]  + va_[13] * rhs.va_[4] +
-                va_[14] * rhs.va_[11] + va_[15] * rhs.va_[10] +
-                va_[16] * rhs.va_[17] + va_[17] * rhs.va_[16];
-
-
+  matrix[16]  = va_[12]* rhs.va_[4]  - va_[13]* rhs.va_[5] +
+                va_[14]* rhs.va_[10] - va_[15]* rhs.va_[11] +
+                va_[16]* rhs.va_[16] - va_[17]* rhs.va_[17];
+  matrix[17]  = va_[12]* rhs.va_[5]  + va_[13]* rhs.va_[4] +
+                va_[14]* rhs.va_[11] + va_[15]* rhs.va_[10] +
+                va_[16]* rhs.va_[17] + va_[17]* rhs.va_[16];
   va_= matrix;
   return *this;
 }
-
-
+*/
 template <size_t COLORS>
 inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(const double rhs){
   va_*= rhs;
@@ -276,46 +274,36 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator/=(const double rhs){
 
 template <size_t COLORS>
 SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
-  double nrm = 0.0;
-  for(int c = 0; c < COLORS; ++c) 
-    nrm += va_[2*c]*va_[2*c] +va_[2*c+1]*va_[2*c+1];
- 
-  double nrm_i = 1.0/nrm;
-  for(int c = 0; c < COLORS; ++c){
-    va_[2*c  ] *= nrm_i;
-    va_[2*c+1] *= nrm_i;
-  }
 
-  for(int a = 1; a < COLORS; ++a){
-    double pr = 0.0;
-    double pi = 0.0;
+  std::valarray<double> u(2*COLORS);
 
-    for(int b = 0; b < a; ++b){
-      for(int c = 0; c < COLORS; ++c){
-	int ac = a*COLORS+c;
+  for(int cc=0; cc<2*COLORS; ++cc) u[cc] = va_[cc];
+  double nrm_i = 1.0/sqrt((u*u).sum());
+
+  for(int cc=0; cc<2*COLORS; ++cc) va_[cc] = u[cc]*nrm_i;
+  
+  for(int a=1; a<COLORS; ++a){
+
+    std::valarray<double> u(2*COLORS);
+    for(int cc=0; cc<2*COLORS; ++cc) u[cc] = va_[a*2*COLORS +cc];
+
+    for(int b=0; b<a; ++b){
+      double pr = 0.0;
+      double pi = 0.0;
+      for(int c=0; c<COLORS; ++c){
 	int bc = b*COLORS+c;
-	pr += va_[2*bc]*va_[2*ac  ]+va_[2*bc+1]*va_[2*ac+1];
-	pi += va_[2*bc]*va_[2*ac+1]-va_[2*bc+1]*va_[2*ac  ];
+	int ac = a*COLORS+c;      
+	pr += va_[2*bc]*va_[2*ac  ] +va_[2*bc+1]*va_[2*ac+1];
+	pi += va_[2*bc]*va_[2*ac+1] -va_[2*bc+1]*va_[2*ac  ];
       }
-      for(int c = 0; c < COLORS; ++c){
-	int ac = a*COLORS+c;
+      for(int c=0; c<COLORS; ++c){
 	int bc = b*COLORS+c;
-	va_[2*ac  ] -= pr*va_[2*bc  ] -pi*va_[2*bc+1];
-	va_[2*ac+1] -= pr*va_[2*bc+1] +pi*va_[2*bc  ];
+	u[2*c]   -= pr*va_[2*bc  ] -pi*va_[2*bc+1];
+	u[2*c+1] -= pr*va_[2*bc+1] +pi*va_[2*bc  ];
       }
     }
-    double nrm = 0.0;
-    for(int c = 0; c < COLORS; ++c){
-      int ac = a*COLORS+c;
-      nrm += va_[2*ac]*va_[2*ac] +va_[2*ac+1]*va_[2*ac+1];
-    }
-    nrm_i = 1/nrm;
-    
-    for(int c = 0; c < COLORS; ++c){
-      int ac = a*COLORS+c;
-      va_[2*ac  ] *= nrm_i;
-      va_[2*ac+1] *= nrm_i;
-    }
+    double nrm_i = 1.0/sqrt((u*u).sum());
+    for(int cc=0; cc<2*COLORS; ++cc) va_[a*2*COLORS +cc] = u[cc]*nrm_i;
   }
   return *this;
 }

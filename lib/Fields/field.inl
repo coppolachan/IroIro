@@ -45,13 +45,11 @@ inline Field& Field::operator/=(const double rhs){
 
 inline double Field::operator*(const Field& rhs) const{
   double a = (field*rhs.field).sum();
-  //double b = Communicator::reduce_sum(a);
   double b = Communicator::instance()->reduce_sum(a);
   return b;
 }
 inline double Field::operator*(const std::valarray<double>& rhs) const{
   double a = (field*rhs).sum();
-  //double b = Communicator::reduce_sum(a);
   double b = Communicator::instance()->reduce_sum(a);
   return b;
 }
@@ -64,7 +62,6 @@ inline double Field::im_prod(const Field& rhs) const{
   std::valarray<double> lhs_re = field[re];
 
   double a = (lhs_re*rhs[im]).sum()-(lhs_im*rhs[re]).sum();
-  //double b = Communicator::reduce_sum(a);
   double b = Communicator::instance()->reduce_sum(a);
   return b;
 }
@@ -76,7 +73,6 @@ inline double Field::im_prod(const std::valarray<double>& rhs) const{
   std::valarray<double> lhs_re = field[re];
 
   double a = (lhs_re*rhs[im]).sum()-(lhs_im*rhs[re]).sum();
-  //double b =  Communicator::reduce_sum(a);
   double b =  Communicator::instance()->reduce_sum(a);
   return b;
 }

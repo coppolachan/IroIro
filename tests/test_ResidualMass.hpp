@@ -9,7 +9,7 @@
 
 #include "include/common_code.hpp"
 #include "tests/tests.hpp"
-
+#include "Dirac_ops/dirac.hpp"
 
 class Test_ResMass: public TestGeneral{
 private:

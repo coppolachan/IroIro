@@ -41,6 +41,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_Wilson_EvenOdd.xml	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
+		test_GeneralMeas.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
@@ -64,6 +65,7 @@ test_PROGRAMS = test_HMC 		\
 		test_DomainWall		\
 		test_QpropMom		\
 		test_ResMass 		\
+		test_MesonSpectrum	\
 		test_EigenModes		\
 		test_Smearing		\
 		test_Overlap		\
@@ -110,6 +112,9 @@ test_DomainWall_SOURCES = 	test_DomainWall.cpp 		\
 test_QpropMom_SOURCES 	= 	test_QpropMom.cpp 		\
 				testerQpropMom.cpp
 
+test_MesonSpectrum_SOURCES= 	test_MesonSpectrum.cpp 		\
+				testerMesonSpectrum.cpp
+
 test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 				testerResMass.cpp
 
@@ -149,6 +154,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_EigenModes_IRL.hpp		\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
+				test_MesonSpectrum.hpp		\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp

@@ -5,11 +5,11 @@
 #ifndef GAUGEFIXING_FREE_INCLUDED
 #define GAUGEFIXING_FREE_INCLUDED
 
-#include "include/common_fields.hpp"
+#include "gaugeFixing.hpp"
 
 class GaugeFixing_Free :public GaugeFixing{
 public:
-  const GaugeField fix(const GaugeField& U)const{ return U; }
+  const GaugeField do_fix(const GaugeField& U)const{ return U; }
 };
 
 #endif

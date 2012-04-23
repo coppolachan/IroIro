@@ -14,8 +14,8 @@
 class RandNum;
 
 namespace SUNmatUtils{
-  SUNmat unity();
-  SUNmat zero();
+  const SUNmat unity();
+  const SUNmat zero();
   double ReTr(const SUNmat&);  
   double ImTr(const SUNmat&);
   const SUNmat dag(const SUNmat&);  
