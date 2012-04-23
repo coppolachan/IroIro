@@ -227,14 +227,17 @@ void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{
   using namespace FieldExpression;
   assert(w5.size()==f5.size());
   
+  Field v(f4size_);
+
   for(int s=0; s<N5_; ++s) {
     Field lpf = proj_p(get4d(f5,(s+N5_-1)%N5_));
     if(s==0)     lpf *= -mq_;
     Field lmf = proj_m(get4d(f5,(s+1)%N5_));
     if(s==N5_-1) lmf *= -mq_;
 
-    Field v = get4d(f5,s);
-    v *= Params.bs_[s];
+    get4d_c(v,f5,Params.bs_[s],s);
+    //Field v = get4d(f5,s);
+    //v *= Params.bs_[s];
     v += Params.cs_[s]*(lpf +lmf);
 
     Field w = Dw_.mult(v);          
@@ -429,6 +432,18 @@ md_force(const Field& phi,const Field& psi) const{
   fce *= -0.5;
   return fce;
 }
+
+const Field Dirac_optimalDomainWall::get4d(const Field& f5,int s) const{
+  return Field(f5[std::slice(s*f4size_,f4size_,1)]);
+}
+void Dirac_optimalDomainWall::get4d(Field& f4,const Field& f5,int s) const{
+  for (int i=0; i<f4size_; i++) f4.set(i,f5[s*f4size_+i]);
+}
+void Dirac_optimalDomainWall::get4d_c(Field& f4,const Field& f5,const double& c,int s) const{
+  for (int i=0; i<f4size_; i++) f4.set(i,c*f5[s*f4size_+i]);
+}
+
+
 
 //
 Preconditioner* Dirac_optimalDomainWall::

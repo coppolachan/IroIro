@@ -188,6 +188,7 @@ public:
   //////////////////////////////////////////////////////////////
 
   const Field gamma5(const Field&) const;
+  void gamma5_mult(Field&, const Field&) const;
   const Field proj_p(const Field&) const;
   const Field proj_m(const Field&) const;
 

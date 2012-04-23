@@ -115,9 +115,9 @@ private:
 
   Preconditioner* choose_Preconditioner(int PrecondID);
 
-  const Field get4d(const Field& f5,int s) const{
-    return Field(f5[std::slice(s*f4size_,f4size_,1)]);
-  }
+  const Field get4d(const Field& f5,int s) const;
+  void get4d(Field&, const Field& ,int ) const;
+  void get4d_c(Field&, const Field& ,const double&, int ) const;
   void set5d(Field& f5,const Field& f4,int s) const{
     f5.set(std::slice(s*f4size_,f4size_,1),f4.getva());
   }

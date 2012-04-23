@@ -1,4 +1,4 @@
-# Time-stamp: <2012-04-18 18:06:20 neo>
+# Time-stamp: <2012-04-20 17:11:14 neo>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -22,7 +22,7 @@ endif
 
 endif
 
-LDADD = -L../lib/ -lcommcode $(OPTLIB)
+LDADD = -L../lib/ -lcommcode $(OPTLIB) -lrt
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 

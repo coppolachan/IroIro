@@ -15,7 +15,7 @@
 
 @SET_MAKE@
 
-# Time-stamp: <2012-04-18 18:06:20 neo>
+# Time-stamp: <2012-04-20 17:11:14 neo>
 
 
 VPATH = @srcdir@
@@ -271,6 +271,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -339,7 +340,7 @@ top_srcdir = @top_srcdir@
 testdir = $(bindir)/Test
 OPTLIB = $(am__append_4) $(am__append_5) $(am__append_6)
 @IBM_BGQ_TRUE@DRIVER = /bgsys/drivers/ppcfloor
-LDADD = -L../lib/ -lcommcode $(OPTLIB)
+LDADD = -L../lib/ -lcommcode $(OPTLIB) -lrt
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 EXTRA_DIST = testResults.info	\
