@@ -225,46 +225,75 @@ const Field Dirac_optimalDomainWall::mult_hop5_dinv(const Field& f5) const{
 /*! @brief definitions of D_dwf */
 void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{ 
   using namespace FieldExpression;
-  assert(w5.size()==f5.size());
+  //assert(w5.size()==f5.size());
   
   Field v(f4size_),lpf(f4size_), lmf(f4size_);
+  
+  double* v_ptr   = v.getaddr(0);
+  double* lpf_ptr = lpf.getaddr(0);
+  double* lmf_ptr = lmf.getaddr(0);
+
+  double mass_fact= 4.0+M0_;
 
   for(int s=0; s<N5_; ++s) {
+    double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
+    double* w5_ptr   = w5.getaddr(s*f4size_);
     proj_p(lpf,f5,(s+N5_-1)%N5_);
     if(s==0)     lpf *= -mq_;
     proj_m(lmf,f5,(s+1)%N5_);
     if(s==N5_-1) lmf *= -mq_;
 
-    get4d_c(v,f5,Params.bs_[s],s);
-    lpf += lmf;
-    v += Params.cs_[s]*lpf;
+    for (int i=0; i<f4size_; ++i) {
+      lpf_ptr[i] += lmf_ptr[i];
+      v_ptr[i] = Params.bs_[s]*f5_ptr[i]+Params.cs_[s]*lpf_ptr[i];
+    }
 
     Field w = Dw_.mult(v);
-    set5d_c(w5,w,4.0+M0_,s);
-    add5d_from5d(w5,f5,s);
-    add5d_c(w5,lpf,-1.0,s);
+    double* w_ptr = w.getaddr(0);
+
+    for (int i=0; i<f4size_; ++i) {
+      w5_ptr[i] = mass_fact*w_ptr[i]+ f5_ptr[i] - lpf_ptr[i];
+    }
+
   }
 }
 
 void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
-  assert(w5.size()==f5.size());
+  //assert(w5.size()==f5.size());
   Field v5(fsize_);
+  Field lpf(f4size_), lmf(f4size_);
+
+  int spin_idx;
+  double cs, bs;
   
   for(int s=0; s< N5_; ++s){
+    spin_idx = s*f4size_;
+    double* f5_ptr = const_cast<Field&>(f5).getaddr(spin_idx);
+    double* w5_ptr = w5.getaddr(spin_idx);
+    double* v5_ptr = v5.getaddr(spin_idx);
+    
+    bs = (4.0+M0_)*Params.bs_[s];
+    cs = (4.0+M0_)*Params.cs_[s];
     Field w = Dw_.mult_dag(get4d(f5,s));
-    set5d_c(w5,w,(4.0+M0_)*Params.bs_[s],s);
-    set5d_c(v5,w,(4.0+M0_)*Params.cs_[s],s);
+    double* w_ptr = w.getaddr(0);
+    
+    for (int i=0; i<f4size_; i++){
+      w5_ptr[i] = bs*w_ptr[i];
+      v5_ptr[i] = cs*w_ptr[i];
+    }
+    
+    // do not change this
+    for (int i=0; i<f4size_; i++){
+      w5_ptr[i] += f5_ptr[i];
+      v5_ptr[i] -= f5_ptr[i];
+    }
   }
-  w5 += f5;
-  v5 -= f5;
   
-  Field lpf(f4size_), lmf(f4size_);
+
   for(int s = 0; s < N5_; ++s){
     proj_p(lpf,v5,(s+1)%N5_);
-    //Field lpf = proj_p(get4d(v5,(s+1)%N5_));
     if(s == N5_-1) lpf *= -mq_;
     proj_m(lmf,v5,(s+N5_-1)%N5_);
-    //Field lmf = proj_m(get4d(v5,(s+N5_-1)%N5_));
     if(s == 0)     lmf *= -mq_;
     add5d(w5,lpf,lmf,s);
   }
@@ -439,21 +468,33 @@ md_force(const Field& phi,const Field& psi) const{
 
 const Field Dirac_optimalDomainWall::get4d(const Field& f5,int s) const{
   Field w(f4size_);
-  for (int i=0; i<f4size_; i++) w.set(i,f5[s*f4size_+i]);
+  for (int i=0; i<f4size_; ++i) w.set(i, f5[s*f4size_+i]);
   return w;
   //  return Field(f5[std::slice(s*f4size_,f4size_,1)]);
 }
 void Dirac_optimalDomainWall::get4d(Field& f4,const Field& f5,int s) const{
-  for (int i=0; i<f4size_; i++) f4.set(i,f5[s*f4size_+i]);
+  for (int i=0; i<f4size_; ++i) f4.set(i,f5[s*f4size_+i]);
 }
 void Dirac_optimalDomainWall::get4d_c(Field& f4,const Field& f5,const double& c,int s) const{
-  for (int i=0; i<f4size_; i++) f4.set(i,c*f5[s*f4size_+i]);
+  double* f4_ptr = f4.getaddr(0);
+  double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
+
+  for (int i=0; i<f4size_; ++i) {
+    //f4.set(i,c*f5[s*f4size_+i]);
+    f4_ptr[i] = c*f5_ptr[i];
+  }
 }
 void Dirac_optimalDomainWall::set5d(Field& f5,const Field& f4,int s) const{
   for (int i=0; i<f4size_; i++) f5.set(s*f4size_+i,f4[i]);
 }
 void Dirac_optimalDomainWall::set5d_c(Field& f5,const Field& f4,const double c,int s) const{
-  for (int i=0; i<f4size_; i++) f5.set(s*f4size_+i,c*f4[i]);
+  double* f5_ptr = f5.getaddr(s*f4size_);
+  double* f4_ptr = const_cast<Field&>(f4).getaddr(0);
+
+  for (int i=0; i<f4size_; i++){
+    //f5.set(s*f4size_+i,c*f4[i]);
+    f5_ptr[i] = c*f4_ptr[i];
+  }
 }
 void Dirac_optimalDomainWall::add5d(Field& f5,const Field& f4_1, const Field& f4_2,int s) const{
   for (int i=0; i<f4size_; i++) f5.add(s*f4size_+i,f4_1[i]+f4_2[i]);

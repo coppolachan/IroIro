@@ -72,21 +72,36 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
 }
 
 inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
-
   using namespace FieldExpression;
+  double* x_ptr = x.getaddr(0);
+  double* p_ptr = p.getaddr(0);
+  double* r_ptr = r.getaddr(0);
 
   Field s = opr_->mult(p);//Ap
+
+  double* s_ptr = s.getaddr(0);
 
   double pap = p*s;// (p,Ap)
   double rrp = rr;
   double cr = rrp/pap;// (r,r)/(p,Ap)
 
-  x += cr*p; // x = x + cr * p
-  r -= cr*s; // r_k = r_k - cr * Ap
-
-  rr = r*r; // rr = (r_k,r_k)
-  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
-  p += r; // p = p + p*(r_k,r_k)/(r,r)
+  // x = x + cr * p
+  // r_k = r_k - cr * Ap
+  // rr = (r_k,r_k)
+  rr = 0.0;
+  for (int i = 0; i < x.size(); ++i){
+    x_ptr[i] += cr * p_ptr[i];
+    r_ptr[i] -= cr * s_ptr[i];
+    rr += r_ptr[i]*r_ptr[i];
+  }
+  rr = Communicator::instance()->reduce_sum(rr);
+  cr = rr/rrp;
+  for (int i = 0; i < p.size(); ++i){
+    p_ptr[i] = p_ptr[i]*cr+r_ptr[i];
+  }
+  
+  //p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
+  //p += r; // p = p + p*(r_k,r_k)/(r,r)
 }
 
 //////////////////////////////////////////////////////////////////////////////////
