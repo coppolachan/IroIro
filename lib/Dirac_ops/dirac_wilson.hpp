@@ -177,6 +177,9 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
+  void mult_ptr(double* ,double* const )const;
+  void mult_dag_ptr(double* ,double* const )const;  
+
   ////////////////////////////////////////Preconditioned versions
   // Wilson operator has no defined preconditioner now 
   const Field mult_prec     (const Field&f)const{return f;}
@@ -189,6 +192,7 @@ public:
 
   const Field gamma5(const Field&) const;
   void gamma5_mult(Field&, const Field&) const;
+  void gamma5_ptr(double*, double* const) const;
   const Field proj_p(const Field&) const;
   const Field proj_m(const Field&) const;
   void proj_p(Field&, const Field&, int) const;

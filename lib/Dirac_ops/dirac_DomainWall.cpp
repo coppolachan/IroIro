@@ -224,15 +224,16 @@ const Field Dirac_optimalDomainWall::mult_hop5_dinv(const Field& f5) const{
 
 /*! @brief definitions of D_dwf */
 void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{ 
+#pragma disjoint
   using namespace FieldExpression;
   //assert(w5.size()==f5.size());
   
-  Field v(f4size_),lpf(f4size_), lmf(f4size_);
+  Field v(f4size_),lpf(f4size_), lmf(f4size_),w(f4size_);
   
   double* v_ptr   = v.getaddr(0);
   double* lpf_ptr = lpf.getaddr(0);
   double* lmf_ptr = lmf.getaddr(0);
-
+  double* w_ptr = w.getaddr(0);
   double mass_fact= 4.0+M0_;
 
   for(int s=0; s<N5_; ++s) {
@@ -248,8 +249,9 @@ void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{
       v_ptr[i] = Params.bs_[s]*f5_ptr[i]+Params.cs_[s]*lpf_ptr[i];
     }
 
-    Field w = Dw_.mult(v);
-    double* w_ptr = w.getaddr(0);
+    //Field w = Dw_.mult(v);
+    Dw_.mult_ptr(w_ptr, v_ptr);
+ 
 
     for (int i=0; i<f4size_; ++i) {
       w5_ptr[i] = mass_fact*w_ptr[i]+ f5_ptr[i] - lpf_ptr[i];
@@ -259,12 +261,15 @@ void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{
 }
 
 void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
+#pragma disjoint
   //assert(w5.size()==f5.size());
   Field v5(fsize_);
-  Field lpf(f4size_), lmf(f4size_);
+  Field lpf(f4size_), lmf(f4size_), w(f4size_);
 
   int spin_idx;
   double cs, bs;
+
+  double* w_ptr = w.getaddr(0);
   
   for(int s=0; s< N5_; ++s){
     spin_idx = s*f4size_;
@@ -274,8 +279,7 @@ void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
     
     bs = (4.0+M0_)*Params.bs_[s];
     cs = (4.0+M0_)*Params.cs_[s];
-    Field w = Dw_.mult_dag(get4d(f5,s));
-    double* w_ptr = w.getaddr(0);
+    Dw_.mult_dag_ptr(w_ptr, f5_ptr);
     
     for (int i=0; i<f4size_; i++){
       w5_ptr[i] = bs*w_ptr[i];
@@ -288,8 +292,6 @@ void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
       v5_ptr[i] -= f5_ptr[i];
     }
   }
-  
-
   for(int s = 0; s < N5_; ++s){
     proj_p(lpf,v5,(s+1)%N5_);
     if(s == N5_-1) lpf *= -mq_;

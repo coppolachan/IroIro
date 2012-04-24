@@ -686,6 +686,30 @@ const Field Dirac_Wilson::gamma5(const Field& f) const{
   return w;
 }
 
+void Dirac_Wilson::gamma5_ptr(double* w, double* const f) const{
+  //Field w(fsize_);
+  int Nin = ff_.Nin();
+  int id;
+  double* res;
+
+  for(int site=0; site<Nvol_*Nin; site+=Nin){
+    const double* ft = f+site;
+    res = w+site;    
+
+    for(int c=0; c <NC_; ++c){
+      short int col = 2*c;
+      short int col1 = 2*c+1;
+
+      res[ col]       = ft[col+4*NC_]; res[       col1] = ft[ col1+4*NC_];
+      res[ col+2*NC_] = ft[col+6*NC_]; res[ col1+2*NC_] = ft[ col1+6*NC_];
+      res[ col+4*NC_] = ft[col      ]; res[ col1+4*NC_] = ft[       col1];
+      res[ col+6*NC_] = ft[col+2*NC_]; res[ col1+6*NC_] = ft[ col1+2*NC_];
+
+    }
+  }
+}
+
+
 const Field Dirac_Wilson::proj_p(const Field& f) const{
   Field w(fsize_);
   for(int site=0; site<Nvol_; ++site){
