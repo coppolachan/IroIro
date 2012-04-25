@@ -11,6 +11,10 @@
 #include "Fields/field_expressions.hpp"
 #include "solver_CG.hpp"
 
+#ifdef IBM_BGQ_WILSON
+#include "bgqwilson.h"
+#endif
+
 using namespace std;
 
 /*!
@@ -73,27 +77,49 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
 
 inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
   using namespace FieldExpression;
-  double* x_ptr = x.getaddr(0);
-  double* p_ptr = p.getaddr(0);
-  double* r_ptr = r.getaddr(0);
 
   Field s = opr_->mult(p);//Ap
 
+#ifdef IBM_BGQ_WILSON
+  double pap;
+  BGWilsonLA_DotProd(&pap,p.getaddr(0),s.getaddr(0),p.size()/24);
+  pap = Communicator::instance()->reduce_sum(pap);
+  double rrp = rr;
+  double cr = rrp/pap;// (r,r)/(p,Ap)
+
+  //  x += cr*p; // x = x + cr * p
+  BGWilsonLA_MultAddScalar(x.getaddr(0),p.getaddr(0),cr,x.size()/24);
+  //  r -= cr*s; // r_k = r_k - cr * Ap
+  BGWilsonLA_MultAddScalar(r.getaddr(0),s.getaddr(0),-cr,r.size()/24);
+  
+  //  rr = r*r; // rr = (r_k,r_k)
+  BGWilsonLA_Norm(&rr,r.getaddr(0),r.size()/24);
+  rr = Communicator::instance()->reduce_sum(rr);
+  //  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
+  //  p += r; // p = p + p*(r_k,r_k)/(r,r)
+  BGWilsonLA_MultScalar_Add(p.getaddr(0),r.getaddr(0),rr/rrp,p.size()/24);
+#else
+  double* x_ptr = x.getaddr(0);
+  double* p_ptr = p.getaddr(0);
+  double* r_ptr = r.getaddr(0);
   double* s_ptr = s.getaddr(0);
 
   double pap = p*s;// (p,Ap)
   double rrp = rr;
-  double cr = rrp/pap;// (r,r)/(p,Ap)
+  register double cr = rrp/pap;// (r,r)/(p,Ap)
 
   // x = x + cr * p
   // r_k = r_k - cr * Ap
   // rr = (r_k,r_k)
   rr = 0.0;
+
   for (int i = 0; i < x.size(); ++i){
     x_ptr[i] += cr * p_ptr[i];
     r_ptr[i] -= cr * s_ptr[i];
     rr += r_ptr[i]*r_ptr[i];
   }
+
+
   rr = Communicator::instance()->reduce_sum(rr);
   cr = rr/rrp;
   for (int i = 0; i < p.size(); ++i){
@@ -102,6 +128,7 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
   
   //p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
   //p += r; // p = p + p*(r_k,r_k)/(r,r)
+#endif
 }
 
 //////////////////////////////////////////////////////////////////////////////////

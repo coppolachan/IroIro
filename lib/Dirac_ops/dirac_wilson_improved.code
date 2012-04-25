@@ -687,9 +687,7 @@ const Field Dirac_Wilson::gamma5(const Field& f) const{
 }
 
 void Dirac_Wilson::gamma5_ptr(double* w, double* const f) const{
-  //Field w(fsize_);
   int Nin = ff_.Nin();
-  int id;
   double* res;
 
   for(int site=0; site<Nvol_*Nin; site+=Nin){
