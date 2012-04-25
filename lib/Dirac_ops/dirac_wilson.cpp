@@ -60,6 +60,8 @@ const Field Dirac_Wilson::mult_dag(const Field& f)const{
   return gamma5(mult(gamma5(f)));
 }
 
+
+#ifdef IBM_BGQ_WILSON
 void Dirac_Wilson::mult_ptr(double* w, double* const f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);
   BGWilson_Mult(w, pU, f, -kpp_ , BGWILSON_DIRAC);
@@ -72,6 +74,7 @@ void Dirac_Wilson::mult_dag_ptr(double* w, double* const f) const{
   gamma5_ptr(w,temp);
   free(temp);
 }
+#endif
 
 
 /*!

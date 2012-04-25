@@ -9,7 +9,7 @@
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Unit">Thermalized_conf</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>200</Nsweeps>
@@ -31,54 +31,32 @@
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
-	<Action type="Fermion" name="NfFlavors">
+	<Action type="Fermion" name="NfFlavorsDomainWall_5D">
 	  <Flavors>2</Flavors>
 	  <Pseudofermions>2</Pseudofermions>
-	  <ApproxDegree>10 8 10</ApproxDegree>
-	  <Precision>40 40 40</Precision>
+	  <ApproxDegree>10 10 10</ApproxDegree>
+	  <Precision>50 50 50</Precision>
 	  <BoundaryLow>0.01 0.01 0.01</BoundaryLow>
 	  <BoundaryHigh>18.0 18.0 18.0</BoundaryHigh>
-	  <Kernel name="DiracOptimalDomainWall5d">
+	  <Kernel5D name="DiracOptimalDomainWall5d">
             <Preconditioning>NoPreconditioner</Preconditioning>
             <wilson_mass>-1.8</wilson_mass>
             <N5d>8</N5d>
             <b>1.0</b>
             <c>1.0</c>
-            <mass>0.1</mass>
+            <mass>0.2</mass>
             <approximation name="Tanh" />
-	  </Kernel>
+	  </Kernel5D>
 	  <RationalSolver type="Rational_CG">
 	    <MaxIter>2000</MaxIter>
-	    <Precision>1e-14</Precision>
-	  </RationalSolver>
-	</Action>
-
-	<Action type="Fermion" name="NfFlavors">
-	  <Flavors>2</Flavors>
-	  <Pseudofermions>2</Pseudofermions>
-	  <ApproxDegree>6 6 6</ApproxDegree>
-	  <Precision>40 40 40</Precision>
-	  <BoundaryLow>0.01 0.01 0.01</BoundaryLow>
-	  <BoundaryHigh>18.0 18.0 18.0</BoundaryHigh>
-	  <Kernel name="DiracOptimalDomainWall5d">
-            <Preconditioning>NoPreconditioner</Preconditioning>
-            <wilson_mass>-1.8</wilson_mass>
-            <N5d>8</N5d>
-            <b>1.0</b>
-            <c>1.0</c>
-            <mass>1.0</mass>
-            <approximation name="Tanh" />
-	  </Kernel>
-	  <RationalSolver type="Rational_CG">
-	    <MaxIter>2000</MaxIter>
-	    <Precision>1e-14</Precision>
+	    <Precision>1e-12</Precision>
 	  </RationalSolver>
 	</Action>
 
 	<step>
-	  <multiplier>4</multiplier>
+	  <multiplier>2</multiplier>
 	  <Action type="Gauge" name="Wilson">
-	    <beta>5.0</beta>
+	    <beta>6.0</beta>
 	  </Action>
 	</step>
       </step>

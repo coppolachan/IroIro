@@ -522,7 +522,7 @@
       <ApproxDegree>10 10 10</ApproxDegree>
       <Precision>40 40 40</Precision>
       <BoundaryLow>0.1 0.1 0.1</BoundaryLow>
-      <BoundaryHigh>4 4 4</BoundaryHigh>
+      <BoundaryHigh>4.0 4.0 4.0</BoundaryHigh>
       <Numerator name="DiracWilson">
         <mass>0.01</mass>
       </Numerator>
@@ -542,7 +542,36 @@
 
     @section FActionNfFlavDWF Fermion - NfFlavorsDomainWall_5D
 
-    Not implemented yet, use the \c NfFlavorsRatio action described above specifing the correct numerator and denominator.
+    This action is just a wrapper of the NfFlavorsRatio action to simplify the XML file construction and appearance when using the DomainWall action.
+
+    It follows a typical input (1 flavor), for details read the \ref FActionNfFlavRatio section
+
+    @verbatim
+    <Action type="Fermion" name="NfFlavorsDomainWall_5D">
+      <Flavors>1</Flavors>
+      <Pseudofermions>2</Pseudofermions>
+      <ApproxDegree>10 10 10</ApproxDegree>
+      <Precision>50 50 50</Precision>
+      <BoundaryLow>0.01 0.01 0.01</BoundaryLow>
+      <BoundaryHigh>18.0 18.0 18.0</BoundaryHigh>
+      <Kernel5D name="DiracOptimalDomainWall5d">
+        <Preconditioning>NoPreconditioner</Preconditioning>
+	<wilson_mass>-1.8</wilson_mass>
+	<N5d>8</N5d>
+	<b>1.0</b>
+	<c>1.0</c>
+	<mass>0.2</mass>
+	<approximation name="Tanh" />
+      </Kernel5D>
+      <RationalSolver type="Rational_CG">
+        <MaxIter>2000</MaxIter>
+	<Precision>1e-12</Precision>
+      </RationalSolver>
+    </Action>@endverbatim
+	
+    
+    Details on the operator \c DiracOptimalDomainWall5d can be found in \ref DDWF5d . 
+
 
 */
 ////////////////////////////////////////////////////////////////////////////////////////////////////////

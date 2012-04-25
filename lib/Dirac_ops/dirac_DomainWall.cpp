@@ -249,9 +249,11 @@ void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{
       v_ptr[i] = Params.bs_[s]*f5_ptr[i]+Params.cs_[s]*lpf_ptr[i];
     }
 
-    //Field w = Dw_.mult(v);
+    #ifdef IBM_BGQ_WILSON
     Dw_.mult_ptr(w_ptr, v_ptr);
- 
+    #else
+    w = Dw_.mult(v);
+    #endif
 
     for (int i=0; i<f4size_; ++i) {
       w5_ptr[i] = mass_fact*w_ptr[i]+ f5_ptr[i] - lpf_ptr[i];
@@ -279,8 +281,13 @@ void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
     
     bs = (4.0+M0_)*Params.bs_[s];
     cs = (4.0+M0_)*Params.cs_[s];
+#ifdef IBM_BGQ_WILSON
     Dw_.mult_dag_ptr(w_ptr, f5_ptr);
-    
+   #else
+    w = w = Dw_.mult_dag(get4d(f5,s));
+#endif
+
+
     for (int i=0; i<f4size_; i++){
       w5_ptr[i] = bs*w_ptr[i];
       v5_ptr[i] = cs*w_ptr[i];
