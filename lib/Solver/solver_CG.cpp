@@ -79,31 +79,32 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
   using namespace FieldExpression;
 
   Field s = opr_->mult(p);//Ap
-
-#ifdef IBM_BGQ_WILSON
-  double pap;
-  BGWilsonLA_DotProd(&pap,p.getaddr(0),s.getaddr(0),p.size()/24);
-  pap = Communicator::instance()->reduce_sum(pap);
-  double rrp = rr;
-  double cr = rrp/pap;// (r,r)/(p,Ap)
-
-  //  x += cr*p; // x = x + cr * p
-  BGWilsonLA_MultAddScalar(x.getaddr(0),p.getaddr(0),cr,x.size()/24);
-  //  r -= cr*s; // r_k = r_k - cr * Ap
-  BGWilsonLA_MultAddScalar(r.getaddr(0),s.getaddr(0),-cr,r.size()/24);
-  
-  //  rr = r*r; // rr = (r_k,r_k)
-  BGWilsonLA_Norm(&rr,r.getaddr(0),r.size()/24);
-  rr = Communicator::instance()->reduce_sum(rr);
-  //  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
-  //  p += r; // p = p + p*(r_k,r_k)/(r,r)
-  BGWilsonLA_MultScalar_Add(p.getaddr(0),r.getaddr(0),rr/rrp,p.size()/24);
-#else
   double* x_ptr = x.getaddr(0);
   double* p_ptr = p.getaddr(0);
   double* r_ptr = r.getaddr(0);
   double* s_ptr = s.getaddr(0);
 
+
+#ifdef IBM_BGQ_WILSON
+  int v_size = x.size()/24; // << assumes 24 elements
+  double pap;
+  BGWilsonLA_DotProd(&pap,p_ptr,s_ptr,v_size);
+  pap = Communicator::instance()->reduce_sum(pap);
+  double rrp = rr;
+  double cr = rrp/pap;// (r,r)/(p,Ap)
+
+  //  x += cr*p; // x = x + cr * p
+  BGWilsonLA_MultAddScalar(x_ptr,p_ptr,cr,v_size);
+  //  r -= cr*s; // r_k = r_k - cr * Ap
+  BGWilsonLA_MultAddScalar(r_ptr,s_ptr,-cr,v_size);
+  
+  //  rr = r*r; // rr = (r_k,r_k)
+  BGWilsonLA_Norm(&rr,r_ptr,v_size);
+  rr = Communicator::instance()->reduce_sum(rr);
+  //  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
+  //  p += r; // p = p + p*(r_k,r_k)/(r,r)
+  BGWilsonLA_MultScalar_Add(p_ptr,r_ptr,rr/rrp,v_size);
+#else
   double pap = p*s;// (p,Ap)
   double rrp = rr;
   register double cr = rrp/pap;// (r,r)/(p,Ap)
