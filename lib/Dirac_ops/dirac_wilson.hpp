@@ -15,8 +15,6 @@
 #include "Tools/sunVec.hpp"
 #include "dirac.hpp"
 
-#define IMPROVED_WILSON
-
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
 
@@ -177,8 +175,10 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
+#ifdef IBM_BGQ_WILSON
   void mult_ptr(double* ,double* const )const;
   void mult_dag_ptr(double* ,double* const )const;  
+#endif
 
   ////////////////////////////////////////Preconditioned versions
   // Wilson operator has no defined preconditioner now 
