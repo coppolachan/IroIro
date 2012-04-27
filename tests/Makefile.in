@@ -15,7 +15,7 @@
 
 @SET_MAKE@
 
-# Time-stamp: <2012-04-18 18:06:20 neo>
+# Time-stamp: <2012-04-20 17:11:14 neo>
 
 
 VPATH = @srcdir@
@@ -38,10 +38,10 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@IBM_BGQ_TRUE@am__append_1 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include
+@IBM_BGQ_TRUE@am__append_1 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_2 = -qsmp
-@IBM_BGQ_TRUE@am__append_3 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/usr/local/bg/lib
-@IBM_BGQ_TRUE@am__append_4 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lrt -lbgpm -lstdc++
+@IBM_BGQ_TRUE@am__append_3 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/bghome/scbadm/ibm-doi/lib
+@IBM_BGQ_TRUE@am__append_4 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_5 = -lbgqwilson3x4smp
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@am__append_6 = -lbgqwilson3x4
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
@@ -348,7 +348,7 @@ top_srcdir = @top_srcdir@
 testdir = $(bindir)/Test
 OPTLIB = $(am__append_4) $(am__append_5) $(am__append_6)
 @IBM_BGQ_TRUE@DRIVER = /bgsys/drivers/ppcfloor
-LDADD = -L../lib/ -lcommcode $(OPTLIB)
+LDADD = -L../lib/ -lcommcode $(OPTLIB) -lrt
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 EXTRA_DIST = testResults.info	\

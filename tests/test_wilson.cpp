@@ -17,9 +17,22 @@
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Tools/randNum_MT19937.h"
 #include <stdio.h>
-
+#include <time.h>
 using namespace std;
 using namespace Format;
+
+timespec diff(timespec start, timespec end)
+{
+	timespec temp;
+	if ((end.tv_nsec-start.tv_nsec)<0) {
+		temp.tv_sec = end.tv_sec-start.tv_sec-1;
+		temp.tv_nsec = 1000000000+end.tv_nsec-start.tv_nsec;
+	} else {
+		temp.tv_sec = end.tv_sec-start.tv_sec;
+		temp.tv_nsec = end.tv_nsec-start.tv_nsec;
+	}
+	return temp;
+}
 
 int Test_Wilson::run(){
   prop_t sq;// propagator
@@ -30,8 +43,7 @@ int Test_Wilson::run(){
   Staples Staple;
   CCIO::cout << "Plaquette : " << Staple.plaquette(conf_) << std::endl;
 
-
-  QuarkPropagatorFactory* QP_Factory = 
+   QuarkPropagatorFactory* QP_Factory = 
     QuarkPropagators::createQuarkPropagatorFactory(wilson_node_);
   //////////////////////////////////////
 
@@ -49,10 +61,34 @@ int Test_Wilson::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  Dirac* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.data));
+  Dirac_Wilson* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.data));
   //Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
-  //Kernel->update_internal_state();
 
+
+
+  // Test for mult and mult_new
+  /*
+  int calls = 100;
+  timespec ts1, ts2;
+  Field v2(Kernel->fsize());
+  clock_gettime(CLOCK_REALTIME, &ts1);
+  for (int i = 0; i < calls; ++i) {
+    v2 = Kernel->mult(src.mksrc(0,0));
+  }
+  clock_gettime(CLOCK_REALTIME, &ts2);
+  cout<<diff(ts1,ts2).tv_sec<<"."<<diff(ts1,ts2).tv_nsec<<endl;
+
+  clock_gettime(CLOCK_REALTIME, &ts1);
+  for (int i = 0; i < calls; ++i) {
+    Kernel->mult_new(v2,src.mksrc(0,0));
+  }
+  clock_gettime(CLOCK_REALTIME, &ts2);
+  cout<<diff(ts1,ts2).tv_sec<<"."<<diff(ts1,ts2).tv_nsec<<endl;
+  */
+
+
+
+  
   // Solver definition
   int    Niter= 1000;
   double stop_cond = 1.0e-24;

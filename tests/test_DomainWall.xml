@@ -24,8 +24,8 @@
     </DomainWall> 
 
     <QuarkPropagator>
-      <Kernel4d>
-	<Kernel5d>
+      <Kernel4d name="DiracOptimalDomainWall4d">
+	<Kernel5d >
 	  <Preconditioning>NoPreconditioner</Preconditioning>
 	  <wilson_mass>-1.6</wilson_mass>
 	  <N5d>6</N5d>

@@ -804,3 +804,38 @@ const Field Dirac_Wilson::proj_m(const Field& f) const{
   }
   return w;
 }
+void Dirac_Wilson::proj_p(Field& w, const Field& f, int s) const{
+  for(int site=0; site<Nvol_; ++site){
+    int id4 = ff_.index(0,site);
+    int id = ff_.index(0,site,s);
+    const double* ft = const_cast<Field&>(f).getaddr(id);
+    for(int c=0; c<NC_; ++c){
+      double fup_r = 0.5*(ft[r0(c)] +ft[r2(c)]);
+      double fup_i = 0.5*(ft[i0(c)] +ft[i2(c)]);
+      double fdn_r = 0.5*(ft[r1(c)] +ft[r3(c)]);
+      double fdn_i = 0.5*(ft[i1(c)] +ft[i3(c)]);
+      w.set(id4+r0(c), fup_r);   w.set(id4+i0(c), fup_i);
+      w.set(id4+r1(c), fdn_r);   w.set(id4+i1(c), fdn_i);
+      w.set(id4+r2(c), fup_r);   w.set(id4+i2(c), fup_i);
+      w.set(id4+r3(c), fdn_r);   w.set(id4+i3(c), fdn_i);
+    }
+  }
+}
+
+void Dirac_Wilson::proj_m(Field& w, const Field& f, int s) const{
+  for(int site=0; site<Nvol_; ++site){
+    int id4 = ff_.index(0,site);
+    int id = ff_.index(0,site,s);
+    const double* ft = const_cast<Field&>(f).getaddr(id);
+    for (int c=0; c<NC_; ++c){
+      double fup_r = 0.5*(ft[r0(c)] -ft[r2(c)]);
+      double fup_i = 0.5*(ft[i0(c)] -ft[i2(c)]);
+      double fdn_r = 0.5*(ft[r1(c)] -ft[r3(c)]);
+      double fdn_i = 0.5*(ft[i1(c)] -ft[i3(c)]);
+      w.set(id4+r0(c), fup_r);   w.set(id4+i0(c), fup_i);
+      w.set(id4+r1(c), fdn_r);   w.set(id4+i1(c), fdn_i);
+      w.set(id4+r2(c),-fup_r);   w.set(id4+i2(c),-fup_i);
+      w.set(id4+r3(c),-fdn_r);   w.set(id4+i3(c),-fdn_i);
+    }
+  }
+}

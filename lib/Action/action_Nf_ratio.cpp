@@ -55,6 +55,8 @@ double Action_Nf_ratio::calc_H(){
   temp.resize(fermion_size_);
   zeta.resize(fermion_size_);
 
+  CCIO::cout << "Ferm size : "<< fermion_size_ << "\n";
+
   slv1_->set_Approx(MetropolisApprox_);
   slv2_->set_Approx(MetropolisApprox_Den_);
 
