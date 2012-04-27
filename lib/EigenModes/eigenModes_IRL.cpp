@@ -22,7 +22,7 @@ void EigenModes_IRL::calc(vector<double>& lmd,
 			  int& Nsbt, 
 			  int& Nconv)const{
   using namespace FieldExpression;
-  size_t fsize = evec[0].size();
+  const size_t fsize = evec[0].size();
   
   Nconv = -1;
   Nsbt = 0;
@@ -47,7 +47,6 @@ void EigenModes_IRL::calc(vector<double>& lmd,
   Field f(fsize);
   Field v(fsize);
   
-
   int k1 = 1;
   int k2 = Nk_;
   int kconv = 0;
@@ -61,7 +60,6 @@ void EigenModes_IRL::calc(vector<double>& lmd,
   double vnorm = evec[0]*evec[0];
   evec[0] = 1.0/sqrt(vnorm);
   // (uniform vector)
-
 
   // Initial Nk steps
   for(int k=0; k<k2; ++k) step(lmd,lme,evec,f,Nm,k);
@@ -87,7 +85,7 @@ void EigenModes_IRL::calc(vector<double>& lmd,
     // Implicitly shifted QR transformations
     setUnit_Qt(Nm,Qt);
     for(int ip=k2; ip<Nm; ++ip) 
-      qr_decomp(lmd,lme,Nm,Nm,Qt,lmd2[ip],1,Nm);
+      qr_decomp(lmd,lme,Nm,Nm,Qt,lmd2[ip],k1,Nm);
     
     for(int i=0; i<(Nk_+1); ++i) B[i] = 0.0;
 
@@ -338,7 +336,6 @@ qr_decomp(vector<double>& lmd, vector<double>& lme,
     double tmpa1 = lmd[k];
     double tmpa2 = lmd[k+1];
     double tmpb  = lme[k];
-
 
     lmd[k]   = c*c*tmpa1 +s*s*tmpa2 -2.0*c*s*tmpb;
     lmd[k+1] = s*s*tmpa1 +c*c*tmpa2 +2.0*c*s*tmpb;

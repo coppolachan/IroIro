@@ -11,7 +11,6 @@
 #include "Measurements/FermionicM/source_types.hpp"
 /*!
  * @brief Abstract base class for creating Source
- *
  */
 class SourceFactory {
 public:
@@ -80,11 +79,11 @@ public:
     std::string Z2Type_name;
     XML::read(Source_node, "NoiseType", Z2Type_name, MANDATORY);
     if (!EnumString<Z2Type>::To( NoiseType, Z2Type_name )){
-      CCIO::cerr << "Error: string ["<< Z2Type_name <<"] not valid"  << std::endl;
-      CCIO::cerr << "Request from node [" << Source_node.name()<<"]\n";
+      CCIO::cerr<<"Error: string ["<< Z2Type_name <<"] not valid"<<std::endl;
+      CCIO::cerr<<"Request from node ["<< Source_node.name()<<"]\n";
       abort();
     } else {
-      CCIO::cout << "Choosing Z2Type type: "<< 	Z2Type_name << std::endl;
+      CCIO::cout<<"Choosing Z2Type type: "<< Z2Type_name << std::endl;
     }
     return new 
       Source_Z2noise<Index,Format>(*RNG_Env::RNG->getRandomNumGenerator(),
@@ -96,7 +95,6 @@ public:
 ///////////////////////////////////////////////////
 /*!
  * @brief Namespace for Sources factory caller
- *
  */
 namespace Sources{
   template <typename Index,typename Format>
@@ -120,7 +118,6 @@ namespace Sources{
       std::cerr << "No Source available with name ["
 		<< Source_name << "]" << std::endl;
       abort();
-      
     } else {
       std::cout << "Requested node is missing in input file "
 		<< "(Source Object)\n" 

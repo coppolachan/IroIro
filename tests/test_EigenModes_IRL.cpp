@@ -16,8 +16,8 @@ using namespace FieldExpression;
 int Test_EigenModes_IRL::run() {
   
   CCIO::header("Test EigenModes");
-  CCIO::cout<<"*********** lowlying **************"<<endl;
-  lowlying();
+  //CCIO::cout<<"*********** lowlying **************"<<endl;
+  //lowlying();
   //CCIO::cout<<"highest"<<endl;
   //highest();
   CCIO::cout<<"********** chebyshev ************"<<endl;
