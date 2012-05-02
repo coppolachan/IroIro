@@ -18,11 +18,19 @@ class SiteIndex{
 private:
   enum{Ndim_max_ = NDIM_};
 
+  // Local dimensions
   int Nx_,Ny_,Nz_,Nt_;
   int NxNy_,NxNyNz_;
   int Nvol_;
+
+  int Nvolh_, Nxh_;
+
+  // Global dimensions
   int Lx_,Ly_,Lz_,Lt_;
   int LxLy_,LxLyLz_;
+
+  int Lvolh_, Lxh_;
+
   
   std::vector<int> Bdir_;
   std::vector<int> slsize_;

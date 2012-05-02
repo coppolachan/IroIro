@@ -8,7 +8,7 @@
 
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
+  <Configuration Type="Unit">conf_08080808.txt</Configuration> 
 
   <TestWilson>
     <QuarkPropagator name="Qprop">

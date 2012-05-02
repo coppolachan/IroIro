@@ -23,7 +23,8 @@ if IBM_BGQWILSON_SMP
 CXXFLAGS += -qsmp
 endif
 
-LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/bghome/scbadm/ibm-doi/lib
+LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib \
+	 -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/bghome/scbadm/ibm-doi/lib
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 
 if IBM_BGQWILSON_SMP
@@ -94,7 +95,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
-		Main/Geometry/siteIndex.cpp	        \
+		Main/Geometry/siteIndexEO.cpp	        \
 		Main/Geometry/siteIndex_EvenOdd.cpp	\
 		Main/Geometry/mapping.cpp		\
 		Main/Geometry/siteMap.cpp		\
