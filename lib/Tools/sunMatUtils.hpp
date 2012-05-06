@@ -20,15 +20,18 @@ namespace SUNmatUtils{
   double ImTr(const SUNmat&);
   const SUNmat dag(const SUNmat&);  
   const SUNmat xI(const SUNmat&);  
-  const SUNmat operator+(const SUNmat&, const SUNmat&);
-  const SUNmat operator-(const SUNmat&, const SUNmat&);
-  const SUNmat operator*(const SUNmat&, const SUNmat&);
+  const SUNmat operator+(const SUNmat&,const SUNmat&);
+  const SUNmat operator-(const SUNmat&,const SUNmat&);
+  const SUNmat operator*(const SUNmat&,const SUNmat&);
+  const SUNmat operator*(const SUNmat&,double);
+  const SUNmat operator/(const SUNmat&,double);
   const SUNmat reunit(const SUNmat&);
   const std::valarray<double> trace_less(const SUNmat&);
   const SUNmat anti_hermite_traceless(const SUNmat&);
   const SUNmat anti_hermite(const SUNmat&);
   const SUNmat outer_prod(const SUNvec& v,const SUNvec& w);
   const SUNmat random_mat(const RandNum& rand);
+  const SUNmat exponential(const SUNmat& X,int N,int n);
 
   //BLAS style multiplications for optimization purposes
   // Matrix-matrix

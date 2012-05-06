@@ -272,34 +272,58 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator/=(const double rhs){
   return *this;
 }
 
+// modified Gram-Schmidt method
 template <size_t COLORS>
 SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
 
   std::valarray<double> u(2*COLORS);
+  for(int a=0; a<COLORS; ++a){
+    for(int cc=0; cc<2*COLORS; ++cc) u[cc] = va_[a*2*COLORS +cc];
+    double nrm_i = 1.0/sqrt((u*u).sum());
+    for(int cc=0; cc<2*COLORS; ++cc) va_[a*2*COLORS +cc] = u[cc]*nrm_i;
 
-  for(int cc=0; cc<2*COLORS; ++cc) u[cc] = va_[cc];
-  double nrm_i = 1.0/sqrt((u*u).sum());
+    for(int b=a+1; b<COLORS; ++b){
+      double prr = 0.0;
+      double pri = 0.0;
+      for(int c=0; c<COLORS; ++c){
+	int ac = a*COLORS+c;      
+	int bc = b*COLORS+c;
+	prr += va_[2*ac]*va_[2*bc  ] +va_[2*ac+1]*va_[2*bc+1];
+	pri += va_[2*ac]*va_[2*bc+1] -va_[2*ac+1]*va_[2*bc  ];
+      }
+      for(int c=0; c<COLORS; ++c){
+	int ac = a*COLORS+c;      
+	int bc = b*COLORS+c;
+	va_[2*bc  ] -= prr*va_[2*ac  ] -pri*va_[2*ac+1];
+	va_[2*bc+1] -= prr*va_[2*ac+1] +pri*va_[2*ac  ];
+      }
+    }
+  }
+  return *this;
+}
 
-  for(int cc=0; cc<2*COLORS; ++cc) va_[cc] = u[cc]*nrm_i;
-  
-  for(int a=1; a<COLORS; ++a){
+/*
+// classical Gram-Schmidt method
+template <size_t COLORS>
+SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
 
-    std::valarray<double> u(2*COLORS);
+  std::valarray<double> u(2*COLORS);
+  for(int a=0; a<COLORS; ++a){
     for(int cc=0; cc<2*COLORS; ++cc) u[cc] = va_[a*2*COLORS +cc];
 
     for(int b=0; b<a; ++b){
-      double pr = 0.0;
-      double pi = 0.0;
+      double prr = 0.0;
+      double pri = 0.0;
       for(int c=0; c<COLORS; ++c){
-	int bc = b*COLORS+c;
 	int ac = a*COLORS+c;      
-	pr += va_[2*bc]*va_[2*ac  ] +va_[2*bc+1]*va_[2*ac+1];
-	pi += va_[2*bc]*va_[2*ac+1] -va_[2*bc+1]*va_[2*ac  ];
+	int bc = b*COLORS+c;
+	prr += va_[2*bc]*va_[2*ac  ] +va_[2*bc+1]*va_[2*ac+1];
+	pri += va_[2*bc]*va_[2*ac+1] -va_[2*bc+1]*va_[2*ac  ];
       }
       for(int c=0; c<COLORS; ++c){
 	int bc = b*COLORS+c;
-	u[2*c]   -= pr*va_[2*bc  ] -pi*va_[2*bc+1];
-	u[2*c+1] -= pr*va_[2*bc+1] +pi*va_[2*bc  ];
+	u[2*c  ] -= prr*va_[2*bc  ] -pri*va_[2*bc+1];
+	u[2*c+1] -= prr*va_[2*bc+1] +pri*va_[2*bc  ];
       }
     }
     double nrm_i = 1.0/sqrt((u*u).sum());
@@ -307,5 +331,5 @@ SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
   }
   return *this;
 }
-
+*/
 #endif

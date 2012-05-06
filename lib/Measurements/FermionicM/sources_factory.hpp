@@ -1,6 +1,5 @@
 /*!
  * @file sources_factory.hpp 
- *
  * @brief Propagator Source factories
  */
 #ifndef SOURCES_FACT_
@@ -51,6 +50,39 @@ public:
     return new Source_exp<Format>(position,
 				  alpha,
 				  CommonPrms::instance()->Nvol());
+  }
+};
+
+template <typename Format>
+class GaussSourceFactory: public SourceFactory {
+  const XML::node Source_node;
+
+public:
+  GaussSourceFactory(XML::node node):Source_node(node){}
+
+  Source* getSource(){
+    std::vector<int> position;
+    double alpha;
+    XML::read_array(Source_node, "position", position, MANDATORY);
+    XML::read(Source_node, "alpha", alpha, MANDATORY);
+    return new Source_Gauss<Format>(position,
+				    alpha,
+				    CommonPrms::instance()->Nvol());
+  }
+};
+
+template <typename Format>
+class WallSourceFactory: public SourceFactory {
+  const XML::node Source_node;
+
+public:
+  WallSourceFactory(XML::node node):Source_node(node){}
+
+  Source* getSource(){
+    int position;
+    XML::read(Source_node, "position", position, MANDATORY);
+    return new Source_wall<Format>(position,
+				    CommonPrms::instance()->Nvol());
   }
 };
 
@@ -108,6 +140,15 @@ namespace Sources{
       }
       if (!strcmp(Source_name, "Exp")) { 
         return new ExpSourceFactory<Format>(node);
+      }
+      if (!strcmp(Source_name, "Gauss")) { 
+        return new GaussSourceFactory<Format>(node);
+      }
+      if (!strcmp(Source_name, "Z2noise")) { 
+        return new Z2noiseSourceFactory<Index,Format>(node);
+      }
+      if (!strcmp(Source_name, "Wall")) { 
+        return new WallSourceFactory<Format>(node);
       }
       if (!strcmp(Source_name, "WhiteNoise")) { 
         return new WhiteNoiseSourceFactory<Index,Format>(node);

@@ -1,6 +1,5 @@
 /*!
   @file siteIndex.cpp
-
   @brief Declares the interface for site indexing 
 
   LEXICOGRAPHIC

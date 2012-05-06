@@ -3,13 +3,13 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>4 4 4 8</Lattice>
+    <Lattice>8 8 8 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
-  
+  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
+  <!-- <Configuration Type="Binary">Conf_600</Configuration> -->
   <Measurement>
     <RandomNumberGen name="Mersenne Twister"> 
       <!--   <seedFile>seed_file</seedFile>                      
@@ -24,15 +24,29 @@
         <rho>0.1</rho>
       </Base>
     </Smearing>
-    <GaugeFixing name="Coulomb">
+<!--    <GaugeFixing name="NoFixing"> -->
+    <GaugeFixing name="Coulomb"> 
       <max_iter>5000</max_iter>
       <monitor_step>10</monitor_step> 
       <reset_step>1000</reset_step>
-      <to_ovrlx>50</to_ovrlx>
-      <or_coeff>1.6</or_coeff>
+      <or_step>50</or_step>
+      <or_prm>1.6</or_prm>
+      <sdm_step>400</sdm_step>
+      <sdm_prm>1.6</sdm_prm>
       <precision>1e-20</precision>
     </GaugeFixing>
-    <QuarkProp name="QpropDWF" >
+
+    <QuarkProp name="Qprop">
+      <Kernel name="DiracWilson">
+	<mass>0.16666666666666666</mass>
+      </Kernel>
+      <Solver type="Solver_BiCGStab">
+	<MaxIter>1000</MaxIter>
+	<Precision>1e-24</Precision>
+      </Solver>
+    </QuarkProp>
+<!--
+   <QuarkProp name="QpropDWF" >
       <Kernel4d name="DiracOptimalDomainWall4d_eo">
 	<Kernel5d>
 	  <Preconditioning>NoPreconditioner</Preconditioning>
@@ -51,10 +65,17 @@
 	  <Precision>1e-16</Precision>
 	</SolverDWF>
       </Kernel4d>
-    </QuarkProp>
+    </QuarkProp>  
+-->
     <Source type="Local">
       <position>0 0 0 0</position>
     </Source>
+<!--
+    <Source type="Exp">
+      <position>0 0 0 0</position>
+      <alpha>0.4</alpha>
+    </Source>
+-->
   </Measurement>
 </Parameters>
 
