@@ -52,14 +52,16 @@ void Source_local<FMT>::set_src(){
   }
 }
 
-template<typename FMT> const Field Source_local<FMT>::mksrc(int s,int c)const{
+template<typename FMT> const Field Source_local<FMT>::
+mksrc(int s,int c)const{
   Field src(ff_->size());
   if(has_source_) src.set(ff_->index_r(c,s,loc_),1.0);
   return src;
 }
 
 template<typename FMT> 
-const Field Source_local<FMT>::mksrc(const std::vector<int>& lv,int s,int c)const{
+const Field Source_local<FMT>::
+mksrc(const std::vector<int>& lv,int s,int c)const{
   return Field(mksrc(s,c)[ff_->get_sub(lv)]);
 }
 
@@ -68,12 +70,14 @@ template<typename FMT> class Source_exp :public Source{
 private:
   std::vector<int> sp_;
   FMT* ff_;
+  bool has_source_;
   std::valarray<double> smr_;
   double alpha_;
   void set_src();
 public:
-  Source_exp(std::vector<int> sp, double al, int Nvol)
-    :sp_(sp),ff_(new FMT(Nvol)),alpha_(al),smr_(ff_->Nvol()){
+  Source_exp(std::vector<int> sp,double al,int Nvol)
+    :sp_(sp),ff_(new FMT(Nvol)),has_source_(false),
+     alpha_(al),smr_(ff_->Nvol()){
     set_src();
   }
   ~Source_exp(){ delete ff_;}
@@ -83,37 +87,53 @@ public:
 
 template<typename FMT>
 void Source_exp<FMT>::set_src(){
-  int NPx =(Communicator::instance()->ipe(XDIR))*CommonPrms::instance()->NPEx();
-  int NPy =(Communicator::instance()->ipe(YDIR))*CommonPrms::instance()->NPEy();
-  int NPz =(Communicator::instance()->ipe(ZDIR))*CommonPrms::instance()->NPEz();
-  int NPt =(Communicator::instance()->ipe(TDIR))*CommonPrms::instance()->NPEt();
 
-  double nrm = 0.0;
-  for(int site= 0; site< ff_->Nvol(); ++site){
-    int x = NPx +SiteIndex::instance()->c_x(site);
-    int y = NPy +SiteIndex::instance()->c_y(site);
-    int z = NPz +SiteIndex::instance()->c_z(site);
-    int t = NPt +SiteIndex::instance()->c_t(site);
+  if(Communicator::instance()->ipe(TDIR) == 
+     sp_[TDIR]/CommonPrms::instance()->Nt()){
+    
+    has_source_= true;
 
-    double r = sqrt(double( (x-sp_[XDIR])*(x-sp_[XDIR]) 
-			   +(y-sp_[YDIR])*(y-sp_[YDIR])
-			   +(z-sp_[ZDIR])*(z-sp_[ZDIR]) 
-			   +(t-sp_[TDIR])*(t-sp_[TDIR])));
-    smr_[site] = exp(-alpha_*r);
+    int ti = sp_[TDIR]%CommonPrms::instance()->Nt();
+
+    for(int sl= 0; sl<SiteIndex::instance()->slsize(ti,TDIR); ++sl){
+
+      int site = SiteIndex::instance()->slice_t(ti,sl);
+      int gsite = SiteIndex::instance()->get_gsite(site);
+
+      int xi = SiteIndex::instance()->g_x(gsite) -sp_[XDIR];
+      int yi = SiteIndex::instance()->g_y(gsite) -sp_[YDIR];
+      int zi = SiteIndex::instance()->g_z(gsite) -sp_[ZDIR];
+
+      int xr = CommonPrms::instance()->Nx() -xi;
+      int yr = CommonPrms::instance()->Ny() -yi;
+      int zr = CommonPrms::instance()->Nz() -zi;
+     
+      smr_[site] = exp(-alpha_*sqrt(double(xi*xi +yi*yi +zi*zi)))
+	+          exp(-alpha_*sqrt(double(xr*xr +yi*yi +zi*zi)))
+	+          exp(-alpha_*sqrt(double(xi*xi +yr*yr +zi*zi)))
+	+          exp(-alpha_*sqrt(double(xi*xi +yi*yi +zr*zr)))
+	+          exp(-alpha_*sqrt(double(xi*xi +yr*yr +zr*zr)))
+	+          exp(-alpha_*sqrt(double(xr*xr +yi*yi +zr*zr)))
+	+          exp(-alpha_*sqrt(double(xr*xr +yr*yr +zi*zi)))
+	+          exp(-alpha_*sqrt(double(xr*xr +yr*yr +zr*zr)));
+    }
+    double nrm = (smr_*smr_).sum();
+    smr_/Communicator::instance()->reduce_sum(nrm);
   }
-  double nrm_sq = Communicator::instance()->reduce_sum((smr_*smr_).sum());
-  smr_/= sqrt(nrm_sq);
 }
 
-template<typename FMT> const Field Source_exp<FMT>::mksrc(int s,int c)const{
+template<typename FMT> const Field Source_exp<FMT>::
+mksrc(int s,int c)const{
   Field src(ff_->size());
-  for(int site=0; site<ff_->Nvol(); ++site)
-    src.set(ff_->index_r(c,s,site),smr_[site]);
+  if(has_source_){
+    for(int site=0; site<ff_->Nvol(); ++site)
+      src.set(ff_->index_r(c,s,site),smr_[site]);
+  }
   return src;
 }
 
-template<typename FMT> 
-const Field Source_exp<FMT>::mksrc(const std::vector<int>& lv,int s, int c)const{
+template<typename FMT> const Field Source_exp<FMT>::
+mksrc(const std::vector<int>& lv,int s,int c)const{
   return Field(mksrc(s,c)[ff_->get_sub(lv)]);
 }
 
@@ -122,49 +142,70 @@ template<typename FMT> class Source_Gauss :public Source{
 private:
   std::vector<int> sp_;
   FMT* ff_;
+  bool has_source_;
   std::valarray<double> smr_;
   double alpha_;
   void set_src();
 public:
   Source_Gauss(std::vector<int> source_position, double al, int Nvol)
-    :sp_(source_position),ff_(new FMT(Nvol)),alpha_(al),smr_(ff_->Nvol()){
+    :sp_(source_position),ff_(new FMT(Nvol)),has_source_(false),
+     alpha_(al),smr_(ff_->Nvol()){
     set_src();
   }
   ~Source_Gauss(){ delete ff_;}
-  const Field mksrc(int s, int c)const;
-  const Field mksrc(const std::vector<int>& lv, int s, int c)const;
+  const Field mksrc(int s,int c)const;
+  const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 };
 
 template<typename FMT>
 void Source_Gauss<FMT>::set_src(){
-  int NPx =(Communicator::instance()->ipe(XDIR))*CommonPrms::instance()->NPEx();
-  int NPy =(Communicator::instance()->ipe(YDIR))*CommonPrms::instance()->NPEy();
-  int NPz =(Communicator::instance()->ipe(ZDIR))*CommonPrms::instance()->NPEz();
-  int NPt =(Communicator::instance()->ipe(TDIR))*CommonPrms::instance()->NPEt();
 
-  for(int site=0; site<ff_->Nvol(); ++site){
-    int x = NPx +SiteIndex::instance()->c_x(site);
-    int y = NPy +SiteIndex::instance()->c_y(site);
-    int z = NPz +SiteIndex::instance()->c_z(site);
-    int t = NPt +SiteIndex::instance()->c_t(site);
+ if(Communicator::instance()->ipe(TDIR) == 
+    sp_[TDIR]/CommonPrms::instance()->Nt()){
+    
+    has_source_= true;
 
-    double rsq = (x-sp_[XDIR])*(x-sp_[XDIR]) +(y-sp_[YDIR])*(y-sp_[YDIR])
-                +(z-sp_[ZDIR])*(z-sp_[ZDIR]) +(t-sp_[TDIR])*(t-sp_[TDIR]);
-    smr_[site]= exp(-alpha_*rsq);
+    int ti = sp_[TDIR]%CommonPrms::instance()->Nt();
+
+    for(int sl= 0; sl<SiteIndex::instance()->slsize(ti,TDIR); ++sl){
+
+      int site = SiteIndex::instance()->slice_t(ti,sl);
+      int gsite = SiteIndex::instance()->get_gsite(site);
+
+      int xi = SiteIndex::instance()->g_x(gsite) -sp_[XDIR];
+      int yi = SiteIndex::instance()->g_y(gsite) -sp_[YDIR];
+      int zi = SiteIndex::instance()->g_z(gsite) -sp_[ZDIR];
+
+      int xr = CommonPrms::instance()->Nx() -xi;
+      int yr = CommonPrms::instance()->Ny() -yi;
+      int zr = CommonPrms::instance()->Nz() -zi;
+     
+      smr_[site] = exp(-alpha_*double(xi*xi +yi*yi +zi*zi))
+	+          exp(-alpha_*double(xr*xr +yi*yi +zi*zi))
+	+          exp(-alpha_*double(xi*xi +yr*yr +zi*zi))
+	+          exp(-alpha_*double(xi*xi +yi*yi +zr*zr))
+	+          exp(-alpha_*double(xi*xi +yr*yr +zr*zr))
+	+          exp(-alpha_*double(xr*xr +yi*yi +zr*zr))
+	+          exp(-alpha_*double(xr*xr +yr*yr +zi*zi))
+	+          exp(-alpha_*double(xr*xr +yr*yr +zr*zr));
+    }
+    double nrm = (smr_*smr_).sum();
+    smr_/Communicator::instance()->reduce_sum(nrm);
   }
-  double nrm_sq = Communicator::instance()->reduce_sum((smr_*smr_).sum());
-  smr_/= sqrt(nrm_sq);
 }
 
-template<typename FMT> const Field Source_Gauss<FMT>::mksrc(int s,int c)const{
+template<typename FMT> const Field Source_Gauss<FMT>::
+mksrc(int s,int c)const{
   Field src(ff_->size());
-  for(int site=0; site<ff_->Nvol(); ++site)
-    src.set(ff_->index_r(c,s,site),smr_[site]);
+  if(has_source_){
+    for(int site=0; site<ff_->Nvol(); ++site)
+      src.set(ff_->index_r(c,s,site),smr_[site]);
+  }
   return src;
 }
 
-template<typename FMT> 
-const Field Source_Gauss<FMT>::mksrc(const std::vector<int>& lv,int s,int c)const{
+template<typename FMT> const Field Source_Gauss<FMT>::
+mksrc(const std::vector<int>& lv,int s,int c)const{
   return Field(mksrc(s,c)[ff_->get_sub(lv)]);
 }
 
@@ -184,9 +225,9 @@ public:
 };
 
 template<typename FMT> void Source_wall<FMT>::set_src(){
-  int NPt = (Communicator::instance()->ipe(TDIR))*CommonPrms::instance()->NPEt();
   for(int site=0; site<ff_->Nvol(); ++site){
-    int t = NPt +SiteIndex::instance()->c_t(site);
+    int gsite = SiteIndex::instance()->get_gsite(site);
+    int t = SiteIndex::instance()->g_t(gsite);
     if(t == spt_) smr_[site] = 1.0;
   }
 }

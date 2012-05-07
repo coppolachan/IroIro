@@ -37,6 +37,12 @@ namespace SUNmatUtils{
   const SUNmat operator*(const SUNmat& m1,const SUNmat& m2){
     return SUNmat(m1)*= m2;  }
 
+  const SUNmat operator*(const SUNmat& m1,double x){
+    return SUNmat(m1)*= x;  }
+
+  const SUNmat operator/(const SUNmat& m1,double x){
+    return SUNmat(m1)/= x;  }
+
   const SUNmat reunit(const SUNmat& m){ return SUNmat(m).reunit(); }
 
   const valarray<double> trace_less(const SUNmat& m){
@@ -52,6 +58,10 @@ namespace SUNmatUtils{
       va[2*(NC_*c+c)+1]-= itr;
     }
     return va;
+  }
+
+  const SUNmat exponential(const SUNmat& X,int N,int n){
+    return N == n ? unity() : reunit(exponential(X,N,n+1)*X/n +unity());
   }
 
   const SUNmat anti_hermite_traceless(const SUNmat& m){

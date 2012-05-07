@@ -8,6 +8,7 @@
 #include "include/macros.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
+//#include "staples.hpp"
 
 using namespace std;
 using namespace FieldUtils;
@@ -17,6 +18,7 @@ using namespace Mapping;
 const GaugeField GaugeFixing_Landau::do_fix(const GaugeField& Uin)const{
   assert(Uin.Nvol()==2*Nvh_);
 
+  //Staples stpl;
   GaugeField Ue = get_even(Uin);
   GaugeField Uo = get_odd(Uin);
   int Nconv = -1;
@@ -26,6 +28,9 @@ const GaugeField GaugeFixing_Landau::do_fix(const GaugeField& Uin)const{
 
   for(int it=0; it<Niter_; ++it){
     if(it%Nmeas_==0){
+      //double plaq = stpl.plaquette(combine_eo(Ue,Uo));
+      //CCIO::cout<< "Plaquette = "<< plaq<<std::endl;
+
       double gc = gauge_cond(Ue,Uo);
       double Fval = calc_F(Ue,Uo);
 
@@ -41,10 +46,21 @@ const GaugeField GaugeFixing_Landau::do_fix(const GaugeField& Uin)const{
 	break;
       }
     }
-    double wp = (it%Nreset_<Nor_) ? 1.0: wp_;
-    gstep_->gfix_step(Ue,Uo,wp);
-
-    if((it%Nreset_)== 0 && it>0) random_gtr(Ue,Uo);
+    // iteration step 
+    if(it%Nreset_== 0 && it>0){
+      random_gtr(Ue,Uo);
+    }else{
+      if(it%Nreset_>=Nsdm_){
+	gstep_->step_sdm(  Ue,Uo);   
+      }else{ 
+	if(it%Nreset_>=Nor_){  
+	  gstep_->step_ovrlx(Ue,Uo);
+	}else{
+	  gstep_->step_naive(Ue,Uo);
+	}
+      }
+    }
+    //
   }
   if(Nconv<0){
     CCIO::cout<<"did not converge."<<endl;
@@ -64,25 +80,17 @@ double GaugeFixing_Landau::calc_F(const GaugeField& Ue,
       Fval += ReTr(mat(Uo,site,mu));
     }
   }
-  Communicator::instance()->reduce_sum(Fval);
-  return Fval/NDIM_/CommonPrms::instance()->Lvol();
+  return  Communicator::instance()->reduce_sum(Fval)
+    /NDIM_/CommonPrms::instance()->Lvol();
 }
 
 double GaugeFixing_Landau::gauge_cond(const GaugeField& Ue,
 				      const GaugeField& Uo)const{
-  GaugeField1D Dele(Nvh_),Delo(Nvh_);
 
-  for(int mu=0; mu<NDIM_; ++mu){
-    Dele -= DirSlice(Ue,mu);
-    Dele += shiftField_eo(DirSlice(Uo,mu),mu,Backward());
-
-    Delo -= DirSlice(Uo,mu);
-    Delo += shiftField_oe(DirSlice(Ue,mu),mu,Backward());
-  }
-  GaugeField1D ta = TracelessAntihermite(Dele);
-  double gc = ta.data*ta.data;
-  ta = TracelessAntihermite(Delo);
-  gc += ta.data*ta.data;
+  GaugeField1D dlt = TracelessAntihermite(gstep_->umu_even(Ue,Uo));
+  double gc = dlt.data*dlt.data;
+  dlt = TracelessAntihermite(gstep_->umu_odd( Ue,Uo));
+  gc += dlt.data*dlt.data;
   
   return 4.0*gc/NDIM_/NC_/CommonPrms::instance()->Lvol();
 }

@@ -18,15 +18,28 @@ private:
   void maxTrSU3_3(GaugeField1D& G,GaugeField1D& W)const;
   const GaugeField1D W_even(const GaugeField& Ue,const GaugeField& Uo)const;
   const GaugeField1D W_odd( const GaugeField& Ue,const GaugeField& Uo)const;
-  int Ndim_;
+
+  const GaugeField1D upu_even(const GaugeField& Ue,const GaugeField& Uo)const;
+  const GaugeField1D upu_odd( const GaugeField& Ue,const GaugeField& Uo)const;
+  const GaugeField1D gtr_sdm(const GaugeField1D& upu,const GaugeField1D& umu)const;
+  const SUNmat overrelax(const SUNmat&)const;
+  int Ndim_;  
+  double orp_,sdmp_;
 public:
-  GaugeFixingStep(Condition cond){
-    if(     cond == Coulomb) Ndim_=NDIM_-1;
+  GaugeFixingStep(Condition cond,double or_prm,double sdm_prm)
+    :orp_(or_prm),sdmp_(sdm_prm){
+    if(     cond == Coulomb) Ndim_= NDIM_-1;
     else if(cond == Landau)  Ndim_ = NDIM_;
     else abort();
   }
 
-  void gfix_step(GaugeField& Ue,GaugeField& Uo,double wp)const;
+  const GaugeField1D umu_even(const GaugeField& Ue,const GaugeField& Uo)const;
+  const GaugeField1D umu_odd( const GaugeField& Ue,const GaugeField& Uo)const;
+
+  void step_naive(GaugeField& Ue,GaugeField& Uo)const;
+  void step_ovrlx(GaugeField& Ue,GaugeField& Uo)const;
+  void step_sdm(  GaugeField& Ue,GaugeField& Uo)const;
+
   void gauge_tr(GaugeField& U,const GaugeField1D& G)const;
   void gauge_tr_even(GaugeField& Ue,GaugeField& Uo,
 		     const GaugeField1D& Ge)const;

@@ -19,7 +19,7 @@ using namespace SiteMap;
 
 const GaugeField GaugeFixing_Coulomb::do_fix(const GaugeField& Uin)const{
   assert(Uin.Nvol()==2*Nvh_);
-  
+
   //Staples stpl;
   GaugeField Ue = get_even(Uin);
   GaugeField Uo = get_odd(Uin);
@@ -30,8 +30,8 @@ const GaugeField GaugeFixing_Coulomb::do_fix(const GaugeField& Uin)const{
 
   for(int it=0; it<Niter_; ++it){
     if(it%Nmeas_==0){
-      //CCIO::cout<< "Plaquette (GaugeFixing_Coulomb)= "
-      //	<< stpl.plaquette(combine_eo(Ue,Uo)) << std::endl;
+      //double plaq =stpl.plaquette(combine_eo(Ue,Uo)); 
+      //CCIO::cout<< "Plaquette = "<< plaq << std::endl;
 
       vector<double> gc = gauge_cond(Ue,Uo);
       double gc_sum = accumulate(gc.begin(),gc.end(),0.0);
@@ -50,10 +50,21 @@ const GaugeField GaugeFixing_Coulomb::do_fix(const GaugeField& Uin)const{
       	break;
       }
     }
-    double wp = (it%Nreset_<Nor_) ? 1.0: wp_;
-    gstep_->gfix_step(Ue,Uo,wp);
-    
-    if((it%Nreset_)== 0 && it>0) random_gtr(Ue,Uo);
+    // iteration step 
+    if(it%Nreset_== 0 && it>0){
+      random_gtr(Ue,Uo);
+    }else{
+      if(it%Nreset_>=Nsdm_){
+	gstep_->step_sdm(Ue,Uo);   
+      }else{ 
+	if(it%Nreset_>=Nor_){
+	  gstep_->step_ovrlx(Ue,Uo);
+	}else{
+	  gstep_->step_naive(Ue,Uo);
+	}
+      }
+    }
+    //
   }
   if(Nconv<0){
     CCIO::cout<<"did not converge."<<endl;
@@ -75,12 +86,13 @@ const vector<double> GaugeFixing_Coulomb::calc_F(const GaugeField& Ue,
       for(int n=0; n<shiftSite_eo.slice_size(t,TDIR); ++n)
 	Fval[gt] += ReTr(mat(Ue,shiftSite_eo.xslice(t,n,TDIR),mu));
       for(int n=0; n<shiftSite_oe.slice_size(t,TDIR); ++n)
-	Fval[gt] += ReTr(mat(Uo,shiftSite_oe.xslice(t,n,TDIR),mu));
+      	Fval[gt] += ReTr(mat(Uo,shiftSite_oe.xslice(t,n,TDIR),mu));
     }
   }
   for(int gt=0; gt<Fval.size();++gt){
-    Communicator::instance()->reduce_sum(Fval[gt]);
-    Fval[gt] /= (NDIM_-1)*CommonPrms::instance()->Lvol();
+    double fval = Communicator::instance()->reduce_sum(Fval[gt]);
+    Fval[gt] = fval/(NDIM_-1)/CommonPrms::instance()->Lvol();
+    //CCIO::cout<<"Fval["<<gt<<"]="<<Fval[gt]<<endl;
   }
   return Fval;
 }
@@ -88,33 +100,24 @@ const vector<double> GaugeFixing_Coulomb::calc_F(const GaugeField& Ue,
 const vector<double> GaugeFixing_Coulomb::gauge_cond(const GaugeField& Ue,
 						     const GaugeField& Uo)const{
 
-  GaugeField1D Dele(Nvh_),Delo(Nvh_);
-
-  for(int mu=0; mu<NDIM_-1; ++mu){
-    Dele -= DirSlice(Ue,mu);
-    Dele += shiftField_eo(DirSlice(Uo,mu),mu,Backward());
-
-    Delo -= DirSlice(Uo,mu);
-    Delo += shiftField_oe(DirSlice(Ue,mu),mu,Backward());
-  }
-  GaugeField1D tae = TracelessAntihermite(Dele);
-  GaugeField1D tao = TracelessAntihermite(Delo);
+  GaugeField1D dle = TracelessAntihermite(gstep_->umu_even(Ue,Uo));
+  GaugeField1D dlo = TracelessAntihermite(gstep_->umu_odd( Ue,Uo));
 
   vector<double> gc(CommonPrms::instance()->Lt(),0.0);
 
   for(int t=0; t<CommonPrms::instance()->Nt(); ++t){
     int gt = SiteIndex::instance()->global_t(t);
-    Field fe(tae.data[tae.get_sub(shiftSite_eo.xslice_map(t,TDIR))]);
+    Field fe(dle.data[dle.get_sub(shiftSite_eo.xslice_map(t,TDIR))]);
     gc[gt] += fe*fe;
-    Field fo(tao.data[tao.get_sub(shiftSite_oe.xslice_map(t,TDIR))]);
+    Field fo(dlo.data[dlo.get_sub(shiftSite_oe.xslice_map(t,TDIR))]);
     gc[gt] += fo*fo;
   }
-
   for(int gt=0; gt<gc.size(); ++gt)
     gc[gt] *= 4.0/(NDIM_-1)/NC_/CommonPrms::instance()->Lvol();
 
   return gc;
 }
+
 void GaugeFixing_Coulomb::random_gtr(GaugeField& Ue,GaugeField& Uo)const{
   CCIO::cout<<"  random gauge transformation performed."<<std::endl;
   

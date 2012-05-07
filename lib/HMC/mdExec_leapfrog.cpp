@@ -39,17 +39,9 @@ void MDexec_leapfrog::update_U(double ep){
   int Ndim = CommonPrms::instance()->Ndim();
   int Nvol = CommonPrms::instance()->Nvol();
 
-  const SUNmat I = unity();
-  SUNmat au;
-
   for(int m=0; m<Ndim; ++m){
     for(int site=0; site<Nvol; ++site){
-      au = I;
-      for(int k=Params.Nexp; k>0; --k){
- 	au *= ep/k;
-	au *= mat(P_,site,m);
-	au += I;
-      }
+      SUNmat au = exponential(mat(P_,site,m)*ep,Params.Nexp,1);
       au *= mat(*U_,site,m);
       U_->data.set(U_->format.islice(site,m),au.reunit().getva());
     }

@@ -27,8 +27,8 @@ class GaugeFixing_Landau: public GaugeFixing{
   int    Niter_; // max iteration number   
   int    Nmeas_; // interval of measurements                         
   int    Nreset_;// Number of iteration to reset the config 
+  int    Nsdm_;  // Number of iteration to steepest descent method
   int    Nor_;   // Number of iteration to start overrelaxation
-  double wp_;    // overrelaxation parameter             
   double prec_;  // convergence criterion  
 
   int Nvh_;
@@ -42,27 +42,33 @@ class GaugeFixing_Landau: public GaugeFixing{
   
  public:
   GaugeFixing_Landau(const RandNum& rng,XML::node GFnode)
-    :rng_(rng),gstep_(new GaugeFixingStep(Landau)),
-     Nvh_(CommonPrms::instance()->Nvol()/2){
+    :rng_(rng),gstep_(NULL),Nvh_(CommonPrms::instance()->Nvol()/2){
+    double orp,sdmp;
     //
-    XML::read(GFnode,"max_iter",Niter_,MANDATORY);
-    XML::read(GFnode,"monitor_step",Nmeas_,MANDATORY);
-    XML::read(GFnode,"reset_step",Nreset_,MANDATORY);
-    XML::read(GFnode,"to_ovrlx",Nor_,MANDATORY);
-    XML::read(GFnode,"or_coeff",wp_,MANDATORY);
-    XML::read(GFnode,"precision",prec_,MANDATORY);
+    XML::read(GFnode,"max_iter",    Niter_, MANDATORY);
+    XML::read(GFnode,"monitor_step",Nmeas_, MANDATORY);
+    XML::read(GFnode,"reset_step",  Nreset_,MANDATORY);
+    XML::read(GFnode,"or_step",     Nor_,   MANDATORY);
+    XML::read(GFnode,"or_prm",      orp,    MANDATORY);
+    XML::read(GFnode,"sdm_step",    Nsdm_,  MANDATORY);
+    XML::read(GFnode,"sdm_prm",     sdmp,   MANDATORY);
+    XML::read(GFnode,"precision",   prec_,  MANDATORY);
     //
+    gstep_= new GaugeFixingStep(Landau,orp,sdmp);
+    if(!gstep_) abort();
+
     Mapping::init_shiftField_EvenOdd();
     CCIO::cout<<"GaugeFixing_Landau generated"<<std::endl;
   }
 
   GaugeFixing_Landau(const RandNum& rng,
-		     int Niter,int Nmeas,int Nreset,int Nor,
-		     double wp,double prec)
-    :rng_(rng),gstep_(new GaugeFixingStep(Landau)),
-     Niter_(Niter),Nmeas_(Nmeas),Nreset_(Nreset),Nor_(Nor),
-     prec_(prec),wp_(wp),
-     Nvh_(CommonPrms::instance()->Nvol()/2){
+		     int Niter,int Nmeas,int Nreset,
+		     int Nor,double orp,int Nsdm,double sdmp,
+		     double prec)
+    :rng_(rng),gstep_(new GaugeFixingStep(Landau,orp,sdmp)),
+     Niter_(Niter),Nmeas_(Nmeas),Nreset_(Nreset),
+     Nor_(Nor),Nsdm_(Nsdm),
+     prec_(prec),Nvh_(CommonPrms::instance()->Nvol()/2){
     //
     Mapping::init_shiftField_EvenOdd();
   }
