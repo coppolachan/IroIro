@@ -9,7 +9,7 @@
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Unit">final_conf.bin</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>1</Nsweeps>
@@ -49,7 +49,7 @@
 	<step>
 	  <multiplier>2</multiplier>
 	  <Action type="Gauge" name="Wilson">
-	    <beta>5.0</beta>
+	    <beta>6.2</beta>
 	  </Action>
 	</step>
       </step>

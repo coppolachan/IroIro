@@ -55,8 +55,6 @@ double Action_Nf_ratio::calc_H(){
   temp.resize(fermion_size_);
   zeta.resize(fermion_size_);
 
-  CCIO::cout << "Ferm size : "<< fermion_size_ << "\n";
-
   slv1_->set_Approx(MetropolisApprox_);
   slv2_->set_Approx(MetropolisApprox_Den_);
 
@@ -73,7 +71,7 @@ double Action_Nf_ratio::calc_H(){
 
     H_nf2r += zeta * temp;
   }
-  _Message(ACTION_VERB_LEVEL,"    [Action_Nf_ratio] H = "<<H_nf2r<<"\n");
+  _Message(ACTION_VERB_LEVEL,"    [Action_Nf_ratio] H = "<< H_nf2r <<"\n");
   
   return H_nf2r;
 }
@@ -147,10 +145,10 @@ GaugeField Action_Nf_ratio::md_force(){
      gauge_temp.data *= MolecularDynApprox_Den_.Residuals()[i];
      fce += gauge_temp;
     }
-
-    if(smart_conf_) smart_conf_->smeared_force(fce);
-    force += FieldUtils::TracelessAntihermite(fce); 
   }
+  if(smart_conf_) smart_conf_->smeared_force(fce);
+  force = FieldUtils::TracelessAntihermite(fce); 
+  
   
   _MonitorMsg(ACTION_VERB_LEVEL, Action,force,"Action_Nf_ratio");
   return force;
