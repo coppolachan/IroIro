@@ -1,11 +1,8 @@
 /*!
   @file siteIndex.hpp
-
   @brief Defines the interface for site indexing 
-
   At compile time is decided the if lexicographic or even-odd.
 */
-
 #ifndef SITEINDEX_INCLUDED
 #define SITEINDEX_INCLUDED
 
@@ -68,7 +65,6 @@ public:
   int global_y(int y);
   int global_z(int z);
   int global_t(int t);
-  
 
   // indices with a step forward/backward (for bulk sites)
   int p_x(int site) const;
