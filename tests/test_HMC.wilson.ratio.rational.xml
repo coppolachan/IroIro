@@ -4,16 +4,16 @@
   <!-- Geometry parameters here -->
   <Geometry>
     <Lattice>4 4 4 8</Lattice>
-    <Nodes>1 1 1 1</Nodes>
+    <Nodes>1 1 1 2</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Unit">final_conf.bin</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>1</Nsweeps>
-    <Thermalization>2</Thermalization>
+    <Nsweeps>5</Nsweeps>
+    <Thermalization>5</Thermalization>
     <StartingConfig>0</StartingConfig>
     <SaveInterval>0</SaveInterval>
     <SavePrefix>HMCrect_</SavePrefix>
@@ -26,8 +26,8 @@
     </RandomNumberGen>
     
     <Integrator name="leapfrog_multistep">
-      <MDsteps>10</MDsteps>
-      <step_size>0.02</step_size>
+      <MDsteps>5</MDsteps>
+      <step_size>0.05</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
@@ -35,13 +35,13 @@
 
 	  <Flavors>2</Flavors>
 	  <Pseudofermions>2</Pseudofermions>
-	  <ApproxDegree>10 10 10</ApproxDegree>
+	  <ApproxDegree>8 6 8</ApproxDegree>
 	  <Precision>40 40 40</Precision>
 	  <BoundaryLow>0.1 0.1 0.1</BoundaryLow>
 	  <BoundaryHigh>4 4 4</BoundaryHigh>
 
 	  <Numerator name="DiracWilson">
-	    <mass>0.01</mass>
+	    <mass>1.0</mass>
 	  </Numerator>
 	   <Denominator name="DiracWilson">
 	    <mass>0.1</mass>

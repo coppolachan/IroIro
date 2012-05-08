@@ -47,7 +47,7 @@ void SmartConf::smeared_force(GaugeField& SigmaTilde)const {
 	     mat_dag(SmearedSet[smearingLevels-1],site,mu)*mat(force,site,mu),
 	     site,mu);
   for(int ismr = smearingLevels - 1; ismr > 0; --ismr)
-    force = AnalyticSmearedForce(force,get_smeared_conf(ismr));
+    force = AnalyticSmearedForce(force,get_smeared_conf(ismr-1));
   
   force = AnalyticSmearedForce(force,*ThinLinks);
   

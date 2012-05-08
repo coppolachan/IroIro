@@ -45,7 +45,9 @@ target_triplet = @target@
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/comm/xl/include
 
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = -qsmp
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/bghome/scbadm/ibm-doi/lib
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib \
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@	 -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/bghome/scbadm/ibm-doi/lib
+
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_6 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_7 = -lbgqwilson3x4smp
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_8 = -lbgqwilson3x4
@@ -292,7 +294,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
-PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
