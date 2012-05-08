@@ -95,7 +95,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
-		Main/Geometry/siteIndex.cpp	        \
+		Main/Geometry/siteIndexEO.cpp	        \
 		Main/Geometry/siteIndex_EvenOdd.cpp	\
 		Main/Geometry/mapping.cpp		\
 		Main/Geometry/siteMap.cpp		\
