@@ -59,7 +59,22 @@ int Test_MesonSpectrum::run(){
   SourceFactory* SrcFactory 
     = Sources::createSourceFactory<SiteIndex,Format::Format_F>(node_);
   Source* src = SrcFactory->getSource();
+  /*
+  Field source = src->mksrc(0,0);
+  Format::Format_F ff(CommonPrms::instance()->Nvol());
 
+  for(int site=0;site<CommonPrms::instance()->Nvol();++site){
+    int x = SiteIndex::instance()->global_x(SiteIndex::instance()->c_x(site));
+    int y = SiteIndex::instance()->global_y(SiteIndex::instance()->c_y(site));
+    int z = SiteIndex::instance()->global_z(SiteIndex::instance()->c_z(site));
+    int t = SiteIndex::instance()->global_t(SiteIndex::instance()->c_t(site));
+
+    CCIO::cout<<x<<" "<<y<<" "<<z<<" "<<t
+	      <<" "<<source[ff.index_r(0,0,site)]
+	      <<" "<<source[ff.index_i(0,0,site)]
+	      <<std::endl;
+  }
+  */
   prop_t sq;  //Defines a vector of fields
   CCIO::cout << " ---- Calculating propagator\n";
   qprop->calc(sq,*src);

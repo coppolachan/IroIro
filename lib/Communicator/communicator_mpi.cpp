@@ -52,10 +52,10 @@ void Communicator::setup(){
     abort();
   }
 
-  int px =  nodeid %NPEx;
+  int px = nodeid %NPEx;
   int py = (nodeid/NPEx) %NPEy;
   int pz = (nodeid/(NPEx*NPEy)) %NPEz;
-  int pt = (nodeid/(NPEx*NPEy*NPEz)) %NPEt;
+  int pt = nodeid/(NPEx*NPEy*NPEz);
 
   ipe_[0] = px;
   ipe_[1] = py;
