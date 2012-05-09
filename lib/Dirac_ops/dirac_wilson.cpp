@@ -32,11 +32,18 @@ void (Dirac_Wilson::*Dirac_Wilson::mult_m[])
 			       &Dirac_Wilson::mult_tm,};
 
 void Dirac_Wilson::mult_offdiag(Field& w, const Field& f) const{
+#ifndef IBM_BGQ_WILSON
   for(int d=0; d <NDIM_; ++d){
     (this->*mult_p[d])(w,f);
     (this->*mult_m[d])(w,f);
   }
   w *= -kpp_;
+#else  
+  double* pF = const_cast<Field&>(f).getaddr(0);
+  double* pU = const_cast<Field *>(u_)->getaddr(0);
+  double* pW = w.getaddr(0);
+  BGWilson_MultEO(pW, pU, pF, -kpp_ , EO_BGWilson, BGWILSON_DIRAC);
+#endif
 }
 void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
   #ifndef IBM_BGQ_WILSON
@@ -47,7 +54,7 @@ void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);
   double* pW = w.getaddr(0);
   BGWilson_Mult(pW, pU, pF, -kpp_ , BGWILSON_DIRAC);
-  #endif
+ #endif
 }
 
 const Field Dirac_Wilson::mult(const Field& f) const{
@@ -73,14 +80,6 @@ void Dirac_Wilson::mult_dag_ptr(double* w, double* const f) const{
   BGWilson_Mult(temp, pU, w, -kpp_ , BGWILSON_DIRAC);
   gamma5_ptr(w,temp);
   free(temp);
-  
-  /*
- //#pragma omp parallel
-  //{
-    BGWilson_Mult_Dag(w, pU, f, -kpp_ , BGWILSON_DIRAC);
-    //}
-    */
-
 }
 #endif
 

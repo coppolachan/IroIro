@@ -22,15 +22,11 @@ private:
   /*!< @brief simple copy is prohibited */
 public:
   Dirac_Wilson_EvenOdd(double mass,const Field* u)
-  //:Deo_(mass,u,Dw::EOtag()),Doe_(mass,u,Dw::OEtag()),Dw_(mass,u){}
  :Deo_(mass,u,Dw::EOtag()),Doe_(mass,u,Dw::OEtag()){}
 
   Dirac_Wilson_EvenOdd(const XML::node& node,const Field* u)
     :Deo_(Dw::read_mass(node),u,Dw::EOtag()),
      Doe_(Dw::read_mass(node),u,Dw::OEtag()){
-     //Doe_(Dw::read_mass(node),u,Dw::OEtag()),
-     //Dw_(Dw::read_mass(node),u){
-    std::cout<<"Dirac_Wilson_EvenOdd created"<<std::endl;
   }
   
   size_t fsize() const{return Deo_.fsize();}

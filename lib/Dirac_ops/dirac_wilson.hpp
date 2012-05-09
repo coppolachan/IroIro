@@ -15,6 +15,10 @@
 #include "Tools/sunVec.hpp"
 #include "dirac.hpp"
 
+#ifdef IBM_BGQ_WILSON
+#include "bgqwilson.h"
+#endif
+
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
 
@@ -97,6 +101,9 @@ private:
 
   void(Dirac_Wilson::*mult_core)(Field&,const Field&)const;
 
+  int EO_BGWilson;
+
+
   Dirac_Wilson(const Dirac_Wilson&); /*!< @brief simple copy is prohibited.*/
 
 public:
@@ -114,7 +121,8 @@ public:
      slice_in(&Dirac_Wilson::xsl_o),slice_isize(&Dirac_Wilson::slsize_o),
      mult_core(&Dirac_Wilson::mult_offdiag),
      ff_(Nvol_),  fsize_(ff_.size()),
-     gf_(2*Nvol_),gsize_(gf_.size()){}
+     gf_(2*Nvol_),gsize_(gf_.size()),
+     EO_BGWilson(1){}
 
   Dirac_Wilson(double mass,const Field* u,Dw::OEtag)
     :kpp_(0.5/(4.0+mass)),u_(u),
@@ -129,7 +137,8 @@ public:
      slice_in(&Dirac_Wilson::xsl_e),slice_isize(&Dirac_Wilson::slsize_e),
      mult_core(&Dirac_Wilson::mult_offdiag),
      ff_(Nvol_),  fsize_(ff_.size()),
-     gf_(2*Nvol_),gsize_(gf_.size()){}
+     gf_(2*Nvol_),gsize_(gf_.size()),
+     EO_BGWilson(2){}
 
   /*! @brief constructor to create instance with normal site indexing */
   Dirac_Wilson(double mass,const Field* u)
