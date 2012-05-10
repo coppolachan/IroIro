@@ -187,6 +187,8 @@ public:
 #ifdef IBM_BGQ_WILSON
   void mult_ptr(double* ,double* const )const;
   void mult_dag_ptr(double* ,double* const )const;  
+  void mult_ptr_EO(double* ,double* const )const;
+  void mult_dag_ptr_EO(double* ,double* const )const;  
 #endif
 
   ////////////////////////////////////////Preconditioned versions
