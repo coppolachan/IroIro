@@ -123,9 +123,11 @@ const Field Dirac_optimalDomainWall::mult_hop5(const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::mult_hop5_dag(const Field& f5) const{
+#ifdef IBM_BGQ_WILSON
+  register int Nvol = CommonPrms::instance()->Nvol()/2;
 
-  assert(f5.size()==fsize_);
-  Field w5(fsize_);
+  Field w5(fsize_), v(f4size_);
+  double* v_ptr   = v.getaddr(0);
 
   for(int s=0; s<N5_; ++s){
     Field v = get4d(f5,s);
@@ -133,22 +135,50 @@ const Field Dirac_optimalDomainWall::mult_hop5_dag(const Field& f5) const{
     set5d(w5,v,s);
   }
   for(int s=0; s<N5_-1; ++s){
-    Field v = proj_p(get4d(f5,s+1));
-    v *= -Params.dm_[s+1];
-    add5d(w5,v,s);
+    double* w5_ptr   = w5.getaddr(s*f4size_);
+    BGWilsonLA_Proj_P(v_ptr,const_cast<Field&>(f5).getaddr(Dw_.get_fermionFormat().index(0,0,s+1)),Nvol);
+    BGWilsonLA_MultAddScalar(w5_ptr, v_ptr,-Params.dm_[s+1],Nvol);
   }
   for(int s=1; s<N5_; ++s){
-    Field v = proj_m(get4d(f5,s-1));
-    v *= -Params.dm_[s-1];
-    add5d(w5,v,s);
+    double* w5_ptr   = w5.getaddr(s*f4size_);
+    BGWilsonLA_Proj_M(v_ptr,const_cast<Field&>(f5).getaddr(Dw_.get_fermionFormat().index(0,0,s-1)),Nvol);
+    BGWilsonLA_MultAddScalar(w5_ptr, v_ptr,-Params.dm_[s-1],Nvol);
   }
-  Field v = proj_m(get4d(f5,N5_-1));
+  v = proj_m(get4d(f5,N5_-1));
   v *= mq_*Params.dm_[N5_-1];
   add5d(w5,v,0);
 
   v = proj_p(get4d(f5,0));
   v *= mq_*Params.dm_[0];
   add5d(w5,v,N5_-1);
+#else
+  assert(f5.size()==fsize_);
+  Field w5(fsize_);
+
+  for(int s=0; s<N5_; ++s){
+    v = get4d(f5,s);
+    v *= Params.dp_[s];
+    set5d(w5,v,s);
+  }
+  for(int s=0; s<N5_-1; ++s){
+    v = proj_p(get4d(f5,s+1));
+    v *= -Params.dm_[s+1];
+    add5d(w5,v,s);
+  }
+  for(int s=1; s<N5_; ++s){
+    v = proj_m(get4d(f5,s-1));
+    v *= -Params.dm_[s-1];
+    add5d(w5,v,s);
+  }
+  v = proj_m(get4d(f5,N5_-1));
+  v *= mq_*Params.dm_[N5_-1];
+  add5d(w5,v,0);
+
+  v = proj_p(get4d(f5,0));
+  v *= mq_*Params.dm_[0];
+  add5d(w5,v,N5_-1);
+#endif
+
 
   return w5;
 }
@@ -521,8 +551,8 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{
     BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr,
 		     Params.bs_[s],Params.cs_[s],Nvol);
     
-    //Dw_.mult_ptr(w_ptr, v_ptr);
-    w = Dw_.mult(v);
+    Dw_.mult_ptr_EO(w_ptr, v_ptr);
+    //w = Dw_.mult(v);
     BGWilsonLA_MultScalar(w5_ptr, w_ptr, mass_fact, Nvol);
     
   }
