@@ -42,16 +42,16 @@ int SiteIndex::g_z(int gsite) const{ return (gsite/LxLy_)%Lz_;}
 int SiteIndex::g_t(int gsite) const{ return gsite/LxLyLz_;}
 
 
-int SiteIndex::global_x(int x){ 
+int SiteIndex::global_x(int x) const{ 
   return Communicator::instance()->ipe(XDIR)*Nx_+x;}
 
-int SiteIndex::global_y(int y){ 
+int SiteIndex::global_y(int y) const { 
   return Communicator::instance()->ipe(YDIR)*Ny_+y;}
 
-int SiteIndex::global_z(int z){ 
+int SiteIndex::global_z(int z) const{ 
   return Communicator::instance()->ipe(ZDIR)*Nz_+z;}
 
-int SiteIndex::global_t(int t){ 
+int SiteIndex::global_t(int t) const { 
   return Communicator::instance()->ipe(TDIR)*Nt_+t;}
 
 // indices with a step forward/backward (for bulk sites)

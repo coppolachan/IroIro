@@ -91,9 +91,10 @@ void Dirac_optimalDomainWall_params::set_arrays(){
 
 const Field Dirac_optimalDomainWall::mult_hop5(const Field& f5) const{
   using namespace FieldExpression;
+  register int Nvol = CommonPrms::instance()->Nvol()/2;
 
-  assert(f5.size()==fsize_);
   Field w5(fsize_), v(f4size_);
+  double* v_ptr   = v.getaddr(0);
 
   for(int s=0; s<N5_; ++s) {
     Field v = get4d(f5,s);
@@ -130,9 +131,9 @@ const Field Dirac_optimalDomainWall::mult_hop5_dag(const Field& f5) const{
   double* v_ptr   = v.getaddr(0);
 
   for(int s=0; s<N5_; ++s){
-    Field v = get4d(f5,s);
-    v *= Params.dp_[s];
-    set5d(w5,v,s);
+    double* w5_ptr   = w5.getaddr(s*f4size_);
+    double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
+    BGWilsonLA_MultScalar(w5_ptr, f5_ptr,Params.dp_[s],Nvol);
   }
   for(int s=0; s<N5_-1; ++s){
     double* w5_ptr   = w5.getaddr(s*f4size_);
@@ -144,16 +145,17 @@ const Field Dirac_optimalDomainWall::mult_hop5_dag(const Field& f5) const{
     BGWilsonLA_Proj_M(v_ptr,const_cast<Field&>(f5).getaddr(Dw_.get_fermionFormat().index(0,0,s-1)),Nvol);
     BGWilsonLA_MultAddScalar(w5_ptr, v_ptr,-Params.dm_[s-1],Nvol);
   }
-  v = proj_m(get4d(f5,N5_-1));
-  v *= mq_*Params.dm_[N5_-1];
-  add5d(w5,v,0);
+  double* w5_ptr   = w5.getaddr(0);
+  BGWilsonLA_Proj_M(v_ptr,const_cast<Field&>(f5).getaddr(Dw_.get_fermionFormat().index(0,0,N5_-1)),Nvol);
+  BGWilsonLA_MultAddScalar(w5_ptr, v_ptr,mq_*Params.dm_[N5_-1],Nvol);
 
-  v = proj_p(get4d(f5,0));
-  v *= mq_*Params.dm_[0];
-  add5d(w5,v,N5_-1);
+  w5_ptr   = w5.getaddr((N5_-1)*f4size_);
+  BGWilsonLA_Proj_P(v_ptr,const_cast<Field&>(f5).getaddr(Dw_.get_fermionFormat().index(0,0,0)),Nvol);
+  BGWilsonLA_MultAddScalar(w5_ptr, v_ptr,mq_*Params.dm_[0],Nvol);
+
 #else
   assert(f5.size()==fsize_);
-  Field w5(fsize_);
+  Field w5(fsize_), v(f4size_);
 
   for(int s=0; s<N5_; ++s){
     v = get4d(f5,s);
@@ -277,11 +279,11 @@ const Field Dirac_optimalDomainWall::mult_hop5_dinv(const Field& f5) const{
 #ifdef IBM_BGQ_WILSON
   register int Nvol = CommonPrms::instance()->Nvol()/2;
   Field w5(f5), lpf(f4size_), ey(f4size_), lmf(f4size_), v(f4size_);
-  double* w5_ptr   = w5.getaddr(0);
+  double* w5_ptr  = w5.getaddr(0);
   double* v_ptr   = v.getaddr(0);
   double* lpf_ptr = lpf.getaddr(0);
   double* lmf_ptr = lmf.getaddr(0);
-  double* ey_ptr = ey.getaddr(0);
+  double* ey_ptr  = ey.getaddr(0);
 
   BGWilsonLA_MultScalar(w5_ptr, w5_ptr, 1.0/ Params.dp_[0], Nvol);
 
@@ -366,7 +368,7 @@ void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{
   double* v_ptr   = v.getaddr(0);
   double* lpf_ptr = lpf.getaddr(0);
   double* lmf_ptr = lmf.getaddr(0);
-  double* w_ptr = w.getaddr(0);
+  double* w_ptr   = w.getaddr(0);
 
   register int Nvol = CommonPrms::instance()->Nvol();
 
@@ -576,8 +578,8 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{
       lpf_ptr[i] += lmf_ptr[i];
       v_ptr[i] = Params.bs_[s]*f5_ptr[i]+Params.cs_[s]*lpf_ptr[i];
     }
-
-    Dw_.mult_ptr(w_ptr, v_ptr);   
+    w = Dw_.mult(v);
+    //    Dw_.mult_ptr(w_ptr, v_ptr);   
     for (int i=0; i<f4size_; ++i) {
       w5_ptr[i] = mass_fact*w_ptr[i];
     }
@@ -751,10 +753,12 @@ void Dirac_optimalDomainWall::
 md_force_p(Field& fce,const Field& phi,const Field& psi)const{
   using namespace FieldExpression;
 
+  Field lpf(f4size_), lmf(f4size_);
+
   for(int s=0; s<N5_; ++s){
-    Field lpf = proj_p(get4d(phi,(s+N5_-1)%N5_));
+    proj_p(lpf, phi,(s+N5_-1)%N5_);
     if(s == 0)     lpf *= -mq_;
-    Field lmf = proj_m(get4d(phi,(s+1    )%N5_));
+    proj_m(lmf, phi,(s+1    )%N5_);
     if(s == N5_-1) lmf *= -mq_;
 
     Field w = get4d(phi,s); 
@@ -770,11 +774,12 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
 void Dirac_optimalDomainWall::
 md_force_m(Field& fce,const Field& phi,const Field& psi)const{
   using namespace FieldExpression;
+  Field lpf(f4size_), lmf(f4size_);
 
   for(int s=0; s<N5_; ++s){
-    Field lpf = proj_p(get4d(phi,(s+N5_-1)%N5_));
+    proj_p(lpf, phi,(s+N5_-1)%N5_);
     if(s == 0)     lpf *= -mq_;
-    Field lmf = proj_m(get4d(phi,(s+1    )%N5_));
+    proj_m(lmf, phi,(s+1    )%N5_);
     if(s == N5_-1) lmf *= -mq_;
 
     Field w = get4d(phi,s); 

@@ -4,6 +4,7 @@
 #include "siteIndex.hpp"
 #include "siteIndex_EvenOdd.hpp"
 #include "Communicator/communicator.h"
+#include "Communicator/comm_io.hpp"
 
 using namespace std;
 
@@ -53,9 +54,11 @@ void SiteIndex_EvenOdd::setup(){
     int eo =( idx->g_x(gsite) +idx->g_y(gsite) 
 	     +idx->g_z(gsite) +idx->g_t(gsite))%2;
     if(!eo) Gev[gsite] = e++;
+    
   }
-  for(int hs=0; hs<Nvolh_; ++hs) 
+  for(int hs=0; hs<Nvolh_; ++hs) {
     global_even_.push_back(Gev[idx->get_gsite(esec_[hs])]);
+  }
 }    
 
 

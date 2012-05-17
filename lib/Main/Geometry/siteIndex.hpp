@@ -31,7 +31,6 @@ private:
   
   std::vector<int> Bdir_;
   std::vector<int> slsize_;
-  //static std::vector<int> global_site_;
   std::vector<int> global_site_;
 
   // constructor
@@ -61,10 +60,10 @@ public:
   int g_z(int gsite) const;
   int g_t(int gsite) const;
   
-  int global_x(int x);
-  int global_y(int y);
-  int global_z(int z);
-  int global_t(int t);
+  int global_x(int x) const;
+  int global_y(int y) const;
+  int global_z(int z) const;
+  int global_t(int t) const;
 
   // indices with a step forward/backward (for bulk sites)
   int p_x(int site) const;

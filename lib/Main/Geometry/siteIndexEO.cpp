@@ -46,26 +46,22 @@ int SiteIndex::c_y(int site) const{ return (site%(Nxh_*Ny_))/Nxh_;}
 int SiteIndex::c_z(int site) const{ return (site%(Nxh_*Ny_*Nz_))/(Ny_*Nxh_);}
 int SiteIndex::c_t(int site) const{ return (site%(Nxh_*Ny_*Nz_*Nt_))/(Nxh_*Ny_*Nz_);}
 
+int SiteIndex::g_x(int gsite) const{ return gsite%Lx_;}
+int SiteIndex::g_y(int gsite) const{ return (gsite/Lx_)%Ly_;}
+int SiteIndex::g_z(int gsite) const{ return (gsite/LxLy_)%Lz_;}
+int SiteIndex::g_t(int gsite) const{ return gsite/LxLyLz_;}
 
-int SiteIndex::g_x(int gsite) const{
- return ((gsite%Lxh_) << 1) + ((g_y(gsite)+g_z(gsite)+g_t(gsite) + (gsite/Lvolh_)) & 1);
-}
-int SiteIndex::g_y(int gsite) const{ return (gsite%(Lxh_*Ly_))/Lxh_;}
-int SiteIndex::g_z(int gsite) const{ return (gsite%(Lxh_*Ly_*Lz_))/(Ly_*Lxh_);}
-int SiteIndex::g_t(int gsite) const{ return (gsite%(Lxh_*Ly_*Lz_*Lt_))/(Lxh_*Ly_*Lz_);}
+int SiteIndex::global_x(int x) const{
+  return Communicator::instance()->ipe(XDIR)*Nx_+x;}
 
+int SiteIndex::global_y(int y) const{ 
+  return Communicator::instance()->ipe(YDIR)*Ny_+y;}
 
-int SiteIndex::global_x(int x){
-  Communicator::instance()->ipe(XDIR)*Nx_+x;}
+int SiteIndex::global_z(int z) const{ 
+  return Communicator::instance()->ipe(ZDIR)*Nz_+z;}
 
-int SiteIndex::global_y(int y){ 
-  Communicator::instance()->ipe(YDIR)*Ny_+y;}
-
-int SiteIndex::global_z(int z){ 
-  Communicator::instance()->ipe(ZDIR)*Nz_+z;}
-
-int SiteIndex::global_t(int t){ 
-  Communicator::instance()->ipe(TDIR)*Nt_+t;}
+int SiteIndex::global_t(int t) const{ 
+  return Communicator::instance()->ipe(TDIR)*Nt_+t;}
 
 // indices with a step forward/backward (for bulk sites)
 int SiteIndex::p_x(int site) const{ return (site+Nvolh_)%Nvol_ + (c_x(site) & 1);}

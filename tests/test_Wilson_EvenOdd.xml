@@ -3,12 +3,12 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
-    <Nodes>1 1 1 1</Nodes>
+    <Lattice>16 16 16 32</Lattice>
+    <Nodes>4 4 4 8</Nodes>
 
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
+  <Configuration Type="Binary">initial_conf.bin</Configuration> 
 
   <TestWilson_EvenOdd>
     <QuarkPropagator name="Qprop_EvenOdd">
