@@ -39,6 +39,14 @@ else
 COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 endif
 
+
+if USE_EVENODD
+SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
+else
+SITE_INDEXING_SRCS = Main/Geometry/siteIndex.cpp
+endif
+
+
 AM_CPPFLAGS=-I$(top_srcdir)
 AM_CFLAGS  =-I$(top_srcdir)
 AM_LDFLAGS =
@@ -56,6 +64,7 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
+		$(SITE_INDEXING_SRCS)			\
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
 		Action/action_gauge_rect.cpp            \
@@ -95,7 +104,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
-		Main/Geometry/siteIndexEO.cpp	        \
 		Main/Geometry/siteIndex_EvenOdd.cpp	\
 		Main/Geometry/mapping.cpp		\
 		Main/Geometry/siteMap.cpp		\

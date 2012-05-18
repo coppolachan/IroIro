@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [0.9.7], [cossu@post.kek.jp])
+AC_INIT([IroIro], [0.9.8], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility
@@ -87,6 +87,16 @@ AC_ARG_ENABLE(bgq-improved-smp,
      	no)  bgq_kernels_smp=false ;;
      	*) AC_MSG_ERROR([bad value ${enableval} for --enable-bgq-improved-smp . Compiling with standard kernels.]) ;;
    esac],[bgq_kernels_smp=false])
+
+###################################################################                                                                                                                          
+# Enabling Even Odd indexing 
+AC_ARG_ENABLE(evenodd-idx,
+        AC_HELP_STRING([--enable-evenodd-idx], [Enable even odd checkerboard indexing for the gauge field.]),
+        [case "${enableval}" in
+        yes) even_odd_idx=true  ;;
+        no)  even_odd_idx=false ;;
+        *) AC_MSG_ERROR([bad value ${enableval} for --enable-evenodd-idx . Using lexicographic indexing.]) ;;
+   esac],[even_odd_idx=false])
 
 ######################################################################
 # many HPC systems are configured so that running parallel programs
@@ -180,7 +190,8 @@ AM_CONDITIONAL([HITACHI], [(test x$hitachi = xtrue)])
 AM_CONDITIONAL([IBM_BGQ], [(test x$bluegeneq = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_NOSMP], [(test x$bgq_kernels_nosmp = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_SMP], [(test x$bgq_kernels_smp = xtrue)])
-	 
+AM_CONDITIONAL([USE_EVENODD], [(test x$even_odd_idx = xtrue)])	 
+
 ###################################################################
 # Checks for libraries and headers
 if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
@@ -287,6 +298,7 @@ The following features are enabled:
 
 - architecture                  : $arch
 - cross compilation             : `if test "x$cross_compiling" = xyes; then echo yes; else echo no; fi`
+- gauge field indexing          : `if test "x$even_odd_idx" = xtrue; then echo even-odd; else echo lexicographic; fi`
 - multicore MPI version enabled : $mpi"
 if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
 then 

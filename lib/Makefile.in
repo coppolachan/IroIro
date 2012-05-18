@@ -99,7 +99,8 @@ libcommcode_a_AR = $(AR) $(ARFLAGS)
 libcommcode_a_LIBADD =
 am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Communicator/communicator_dummy.cpp \
-	Communicator/communicator_mpi.cpp Action/action.cpp \
+	Communicator/communicator_mpi.cpp Main/Geometry/siteIndex.cpp \
+	Main/Geometry/siteIndexEO.cpp Action/action.cpp \
 	Action/action_gauge_wilson.cpp Action/action_gauge_rect.cpp \
 	Action/action_gaugetype_factory.cpp Action/action_Nf2.cpp \
 	Action/action_Nf.cpp Action/action_Nf2_ratio.cpp \
@@ -128,7 +129,6 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Measurements/FermionicM/qprop_DomainWall.cpp \
 	Measurements/FermionicM/utils_DWF4d.cpp \
 	Measurements/FermionicM/quark_prop_meas_factory.cpp \
-	Main/Geometry/siteIndexEO.cpp \
 	Main/Geometry/siteIndex_EvenOdd.cpp Main/Geometry/mapping.cpp \
 	Main/Geometry/siteMap.cpp Main/gaugeConf.cpp \
 	Main/commandline.cpp HMC/hmcGeneral.cpp HMC/mdExec.cpp \
@@ -145,12 +145,14 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/RationalApprox/rationalapprox.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
+@USE_EVENODD_FALSE@am__objects_2 = siteIndex.$(OBJEXT)
+@USE_EVENODD_TRUE@am__objects_2 = siteIndexEO.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
-	action.$(OBJEXT) action_gauge_wilson.$(OBJEXT) \
-	action_gauge_rect.$(OBJEXT) action_gaugetype_factory.$(OBJEXT) \
-	action_Nf2.$(OBJEXT) action_Nf.$(OBJEXT) \
-	action_Nf2_ratio.$(OBJEXT) action_Nf_ratio.$(OBJEXT) \
-	action_Nf2_DomainWall.$(OBJEXT) \
+	$(am__objects_2) action.$(OBJEXT) \
+	action_gauge_wilson.$(OBJEXT) action_gauge_rect.$(OBJEXT) \
+	action_gaugetype_factory.$(OBJEXT) action_Nf2.$(OBJEXT) \
+	action_Nf.$(OBJEXT) action_Nf2_ratio.$(OBJEXT) \
+	action_Nf_ratio.$(OBJEXT) action_Nf2_DomainWall.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	dirac_wilson.$(OBJEXT) dirac_wilson_EvenOdd.$(OBJEXT) \
 	dirac_clover.$(OBJEXT) fopr_signH_Zolotarev.$(OBJEXT) \
@@ -166,10 +168,9 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	gfixFactory.$(OBJEXT) qprop_MultiShift.$(OBJEXT) \
 	qprop.$(OBJEXT) qprop_mom.$(OBJEXT) qprop_EvenOdd.$(OBJEXT) \
 	qprop_DomainWall.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
-	quark_prop_meas_factory.$(OBJEXT) siteIndexEO.$(OBJEXT) \
-	siteIndex_EvenOdd.$(OBJEXT) mapping.$(OBJEXT) \
-	siteMap.$(OBJEXT) gaugeConf.$(OBJEXT) commandline.$(OBJEXT) \
-	hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
+	quark_prop_meas_factory.$(OBJEXT) siteIndex_EvenOdd.$(OBJEXT) \
+	mapping.$(OBJEXT) siteMap.$(OBJEXT) gaugeConf.$(OBJEXT) \
+	commandline.$(OBJEXT) hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
 	mdExec_leapfrog.$(OBJEXT) mdExec_factory.$(OBJEXT) \
 	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
 	solver_BiCGStab.$(OBJEXT) solver_CG.$(OBJEXT) \
@@ -364,6 +365,8 @@ OPTLIB = $(am__append_6) $(am__append_7) $(am__append_8)
 @USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 @USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@DRIVER = /bgsys/drivers/ppcfloor
+@USE_EVENODD_FALSE@SITE_INDEXING_SRCS = Main/Geometry/siteIndex.cpp
+@USE_EVENODD_TRUE@SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
 AM_CPPFLAGS = -I$(top_srcdir)
 AM_CFLAGS = -I$(top_srcdir)
 AM_LDFLAGS = 
@@ -376,6 +379,7 @@ EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
+		$(SITE_INDEXING_SRCS)			\
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
 		Action/action_gauge_rect.cpp            \
@@ -415,7 +419,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
-		Main/Geometry/siteIndexEO.cpp	        \
 		Main/Geometry/siteIndex_EvenOdd.cpp	\
 		Main/Geometry/mapping.cpp		\
 		Main/Geometry/siteMap.cpp		\
@@ -740,6 +743,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_MT19937.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalapprox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndexEO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteMap.Po@am__quote@
@@ -818,6 +822,38 @@ communicator_mpi.obj: Communicator/communicator_mpi.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Communicator/communicator_mpi.cpp' object='communicator_mpi.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o communicator_mpi.obj `if test -f 'Communicator/communicator_mpi.cpp'; then $(CYGPATH_W) 'Communicator/communicator_mpi.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/communicator_mpi.cpp'; fi`
+
+siteIndex.o: Main/Geometry/siteIndex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex.o -MD -MP -MF $(DEPDIR)/siteIndex.Tpo -c -o siteIndex.o `test -f 'Main/Geometry/siteIndex.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex.Tpo $(DEPDIR)/siteIndex.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex.cpp' object='siteIndex.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex.o `test -f 'Main/Geometry/siteIndex.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex.cpp
+
+siteIndex.obj: Main/Geometry/siteIndex.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex.obj -MD -MP -MF $(DEPDIR)/siteIndex.Tpo -c -o siteIndex.obj `if test -f 'Main/Geometry/siteIndex.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndex.Tpo $(DEPDIR)/siteIndex.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndex.cpp' object='siteIndex.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndex.obj `if test -f 'Main/Geometry/siteIndex.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndex.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndex.cpp'; fi`
+
+siteIndexEO.o: Main/Geometry/siteIndexEO.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndexEO.o -MD -MP -MF $(DEPDIR)/siteIndexEO.Tpo -c -o siteIndexEO.o `test -f 'Main/Geometry/siteIndexEO.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndexEO.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndexEO.Tpo $(DEPDIR)/siteIndexEO.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndexEO.cpp' object='siteIndexEO.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndexEO.o `test -f 'Main/Geometry/siteIndexEO.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndexEO.cpp
+
+siteIndexEO.obj: Main/Geometry/siteIndexEO.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndexEO.obj -MD -MP -MF $(DEPDIR)/siteIndexEO.Tpo -c -o siteIndexEO.obj `if test -f 'Main/Geometry/siteIndexEO.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndexEO.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndexEO.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndexEO.Tpo $(DEPDIR)/siteIndexEO.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndexEO.cpp' object='siteIndexEO.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndexEO.obj `if test -f 'Main/Geometry/siteIndexEO.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndexEO.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndexEO.cpp'; fi`
 
 action.o: Action/action.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action.o -MD -MP -MF $(DEPDIR)/action.Tpo -c -o action.o `test -f 'Action/action.cpp' || echo '$(srcdir)/'`Action/action.cpp
@@ -1442,22 +1478,6 @@ quark_prop_meas_factory.obj: Measurements/FermionicM/quark_prop_meas_factory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/quark_prop_meas_factory.cpp' object='quark_prop_meas_factory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o quark_prop_meas_factory.obj `if test -f 'Measurements/FermionicM/quark_prop_meas_factory.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/quark_prop_meas_factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/quark_prop_meas_factory.cpp'; fi`
-
-siteIndexEO.o: Main/Geometry/siteIndexEO.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndexEO.o -MD -MP -MF $(DEPDIR)/siteIndexEO.Tpo -c -o siteIndexEO.o `test -f 'Main/Geometry/siteIndexEO.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndexEO.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndexEO.Tpo $(DEPDIR)/siteIndexEO.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndexEO.cpp' object='siteIndexEO.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndexEO.o `test -f 'Main/Geometry/siteIndexEO.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndexEO.cpp
-
-siteIndexEO.obj: Main/Geometry/siteIndexEO.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndexEO.obj -MD -MP -MF $(DEPDIR)/siteIndexEO.Tpo -c -o siteIndexEO.obj `if test -f 'Main/Geometry/siteIndexEO.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndexEO.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndexEO.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/siteIndexEO.Tpo $(DEPDIR)/siteIndexEO.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/Geometry/siteIndexEO.cpp' object='siteIndexEO.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o siteIndexEO.obj `if test -f 'Main/Geometry/siteIndexEO.cpp'; then $(CYGPATH_W) 'Main/Geometry/siteIndexEO.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/Geometry/siteIndexEO.cpp'; fi`
 
 siteIndex_EvenOdd.o: Main/Geometry/siteIndex_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT siteIndex_EvenOdd.o -MD -MP -MF $(DEPDIR)/siteIndex_EvenOdd.Tpo -c -o siteIndex_EvenOdd.o `test -f 'Main/Geometry/siteIndex_EvenOdd.cpp' || echo '$(srcdir)/'`Main/Geometry/siteIndex_EvenOdd.cpp
