@@ -196,7 +196,7 @@ private:
     Solver1.save(SolverNumObj.get()->getSolver(new Fopr_DdagD(DiracNumerator.get())));
     Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_DdagD(DiracDenominator.get())));
 
-    return new Action_Nf_ratio(F,
+    return new Action_Nf_ratio(Links,
 			       DiracNumerator.get(),
 			       DiracDenominator.get(),
 			       Solver1.get(),
@@ -302,7 +302,7 @@ private:
     HermitianOpPV.save(new Fopr_DdagD_Precondition(DWF5d_KernelPV.get()));
     Solv.save(  SolverObj.get()->getSolver(HermitianOp.get()));
     SolvPV.save(SolverObj.get()->getSolver(HermitianOpPV.get()));
-    return new Action_Nf_ratio(F,
+    return new Action_Nf_ratio(Links,
 			       DWF5d_Kernel.get(),
 			       DWF5d_KernelPV.get(),
 			       Solv.get(),
