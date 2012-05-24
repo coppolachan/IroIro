@@ -166,11 +166,15 @@ class NfFlavorRatioActionFactory : public FermionActionFactory {
   RaiiFactoryObj<RationalSolver> Solver2;
 
   const XML::node Action_node;
+  bool smearing;
 
 public:
   ~NfFlavorRatioActionFactory(){}
 
   NfFlavorRatioActionFactory(XML::node node):Action_node(node){
+    smearing = false; // default
+    XML::read(node, "smeared", smearing);
+
     XML::descend(node,"Numerator", MANDATORY);
     DiracNumObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node)); 
     XML::next_sibling(node,"Denominator", MANDATORY);
@@ -183,8 +187,11 @@ public:
   
 private:  
   Action_Nf_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
-    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(F->data)));
-    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(F->data)));
+   // select links according to smearing
+    GaugeField* Links = SC->select_conf(smearing);
+
+    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(Links->data)));
+    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(Links->data)));
     
     Solver1.save(SolverNumObj.get()->getSolver(new Fopr_DdagD(DiracNumerator.get())));
     Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_DdagD(DiracDenominator.get())));
@@ -194,7 +201,8 @@ private:
 			       DiracDenominator.get(),
 			       Solver1.get(),
 			       Solver2.get(),
-			       Action_Nf_ratio_params(Action_node)); 
+			       Action_Nf_ratio_params(Action_node),
+			       smearing, SC);  
   }
 };
 
@@ -266,11 +274,15 @@ class NfFlavorDomainWall5dActionFactory : public FermionActionFactory {
   RaiiFactoryObj<RationalSolver> SolvPV;
   
   const XML::node Action_node;
+  bool smearing;
 
 public:
   ~NfFlavorDomainWall5dActionFactory(){}
 
   NfFlavorDomainWall5dActionFactory(XML::node node):Action_node(node){
+    smearing = false; // default
+    XML::read(node, "smeared", smearing);
+
     XML::descend(node,"Kernel5D", MANDATORY);
     DiracObj.save(DiracOperators::createDiracDWF5dOperatorFactory(node));
     XML::next_sibling(node,"RationalSolver", MANDATORY);
@@ -279,8 +291,12 @@ public:
 
 private:  
   Action_Nf_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
-    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(F->data)));
-    DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(F->data)));
+    // select links according to smearing
+    GaugeField* Links = SC->select_conf(smearing);
+
+
+    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(Links->data)));
+    DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(Links->data)));
 
     HermitianOp.save(  new Fopr_DdagD_Precondition(DWF5d_Kernel.get()));
     HermitianOpPV.save(new Fopr_DdagD_Precondition(DWF5d_KernelPV.get()));
@@ -291,7 +307,8 @@ private:
 			       DWF5d_KernelPV.get(),
 			       Solv.get(),
 			       SolvPV.get(),
-			       Action_Nf_ratio_params(Action_node));
+			       Action_Nf_ratio_params(Action_node),
+			       smearing, SC);
   }
 };
 

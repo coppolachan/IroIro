@@ -103,7 +103,6 @@ public:
      smeared_(smeared),
      fermion_size_(D1->fsize()),
      phi_(Params_.n_pseudof_),
-     smart_conf_(smart_conf),
      MetropolisApprox_(RationalApprox_params(Params_.degree_[MetroStep],
 					     Params_.degree_[MetroStep],
 					     Params_.n_flav_,
@@ -143,10 +142,7 @@ public:
     for(int i=0; i<Params_.n_pseudof_; ++i)
       phi_[i].resize(fermion_size_); //takes care of EvenOdd and 5D cases
 
-
-    //Temporary
-    if(smart_conf_!= NULL) 
-      assert(u_== smart_conf_->get_current_conf());
+    if (smeared_ && smart_conf !=NULL) attach_smearing(smart_conf);
 
     //It is assumed that the rational approximation is always
     //applied to (M^dag M)
