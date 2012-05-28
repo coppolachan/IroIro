@@ -15,11 +15,14 @@
 #include "Solver/rationalSolver.hpp"
 #include "include/format_F.h"
 #include "include/fopr.h"
+#include "include/factories.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/qprop_MultiShift.hpp"
-#include "Dirac_ops/dirac_wilson.hpp"
-#include "Dirac_ops/dirac_clover.hpp"
-#include "Dirac_ops/dirac_DomainWall.hpp"
+//#include "Dirac_ops/dirac_wilson.hpp"
+//#include "Dirac_ops/dirac_clover.hpp"
+//#include "Dirac_ops/dirac_DomainWall.hpp"
+//#include "Dirac_ops/dirac_Operator_Factory.hpp"
+
 
 #include "EigenModes/findminmax.hpp"
 #include "Tools/randNum_Factory.h"
@@ -82,8 +85,6 @@ int Test_RationalApprox::run(){
 
   CCIO::cout << "Result = "<< result << "\n";
   CCIO::cout << "Difference = "<< result-reference << "\n";
-
-
   
  
   
@@ -93,9 +94,6 @@ int Test_RationalApprox::run(){
   prop_t  xqs;
   vector<int> spos(4,0);
  
-  //Dirac* Kernel = new Dirac_Wilson(0.01, &(Gfield_.data));
-  //Dirac* Kernel = new Dirac_Clover(0.01, 1.0, &(Gfield_.data));
-
   int N5d   = 6;
   double M0 = -1.6;
   double c  = 1.0;
@@ -103,8 +101,13 @@ int Test_RationalApprox::run(){
   double mq = 0.01;
   vector<double> omega(N5d,1.0);
   int volume_size = CommonPrms::instance()->Nvol()*N5d;
-  Dirac_optimalDomainWall* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gfield_.data));
-  Source_local<Format::Format_F> Source(spos,volume_size); 
+  //Dirac* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gfield_.data));
+  
+  XML::node kernel_node = RA_node;
+  XML::descend(kernel_node, "Kernel");
+  DiracWilsonLikeOperatorFactory* KernelF = DiracOperators::createDiracWilsonLikeOperatorFactory(kernel_node);
+  DiracWilsonLike* Kernel = KernelF->getDiracOperator(&(Gfield_.data));
+
 
   // Find Max eigenvalue
   Fopr_DdagD* FoprKernel = new Fopr_DdagD(Kernel);
@@ -114,8 +117,8 @@ int Test_RationalApprox::run(){
   MinMaxOut MinMaxResult = MinMax->findExtrema();
   
   TestXMLApprox.rescale(MinMaxResult.min, MinMaxResult.max);
-
-   // Definition of the Solver
+  
+  // Definition of the Solver
   int    Niter= 2000;
   double stop_cond = 1.0e-24;
   MultiShiftSolver* Solver = 
@@ -123,16 +126,24 @@ int Test_RationalApprox::run(){
                             stop_cond,
                             Niter);
   
-
   RationalSolver* RASolver = new RationalSolver(Solver, TestXMLApprox);
+  //Source_local<Format::Format_F> Source(spos,volume_size); 
 
+  XML::next_sibling(kernel_node,"Source");
+  SourceFactory* SrcFactory 
+    = Sources::createSourceFactory<SiteIndex,Format::Format_F>(kernel_node);
+  Source* src = SrcFactory->getSource(Kernel->get_fermionFormat().Nvol()*
+				      Kernel->get_fermionFormat().Nex());
+
+  
   Field solution;
   Field solution2;
-  RASolver->solve(solution, Source.mksrc(0,0));
-
+  //RASolver->solve(solution, Source.mksrc(0,0));
+  RASolver->solve(solution, src->mksrc(0,0));
+  
   // Apply again (M^dag M)^(1/2)
   RASolver->solve(solution2, solution);  
-
+  
   ////////////////////////////////
   // Check answer
   // Compare with (M^dag M)
@@ -140,16 +151,12 @@ int Test_RationalApprox::run(){
   temp.resize(solution.size());
   reference_sol.resize(solution.size());
   diff_field.resize(solution.size());
-
   
-  temp = Kernel->mult(Source.mksrc(0,0));
+  temp = Kernel->mult(src->mksrc(0,0));
   reference_sol = Kernel->mult_dag(temp);
   
   diff_field = reference_sol;
   diff_field -= solution2;
-
-  CCIO::cout << ":::::::: Check answer -- diff (norm) = "<< diff_field.norm() <<"\n";
-
-
   
+  CCIO::cout << ":::::::: Check answer -- diff (norm) = "<< diff_field.norm() <<"\n";
 }
