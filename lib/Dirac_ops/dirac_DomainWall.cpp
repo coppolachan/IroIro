@@ -678,6 +678,81 @@ const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
   return w5;
 }
 
+
+void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
+  //Field w5(fsize_);
+  //  mult_offdiag(w5,f5);
+  Field lpf(f4size_), lmf(f4size_), w(f4size_), v(f4size_), ey(f4size_), fy(f4size_);
+  double* w_ptr = w.getaddr(0);
+  double* v_ptr = v.getaddr(0);
+  double* lpf_ptr = lpf.getaddr(0);
+  double* lmf_ptr = lmf.getaddr(0);
+  double* ey_ptr = ey.getaddr(0);
+  double mass_fact= 4.0+M0_;
+
+  for(int s=0; s<N5_; ++s) {
+    double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
+    double* w5_ptr   = w5.getaddr(s*f4size_);
+    proj_p(lpf , f5,(s+N5_-1)%N5_);
+    if(s==0)     lpf *= -mq_;
+    proj_m(lmf, f5,(s+1)%N5_);
+    if(s==N5_-1) lmf *= -mq_;
+
+    for (int i=0; i<f4size_; ++i) {
+      lpf_ptr[i] += lmf_ptr[i];
+      v_ptr[i] = Params.bs_[s]*f5_ptr[i]+Params.cs_[s]*lpf_ptr[i];
+    }
+    w = Dw_.mult(v);
+    for (int i=0; i<f4size_; ++i) {
+      w5_ptr[i] = mass_fact*w_ptr[i];
+    }
+  }
+
+  double* w5_ptr_bdry   = w5.getaddr((N5_-1)*f4size_);
+  proj_m(ey, w5, 0);
+  ey *= -mq_* Params.es_[0];
+  add5d(w5,ey,N5_-1);
+
+  for (int s=1; s<N5_-1; ++s) {
+    double* w5_ptr   = w5.getaddr(s*f4size_);
+    double fact_lpf = (Params.dm_[s]/Params.dp_[s-1]);
+    double fact_ey =  mq_*Params.es_[s];
+
+    proj_p(lpf, w5, s-1);
+    proj_m(ey, w5, s);
+
+    for (int i=0; i<f4size_; ++i) {
+      w5_ptr[i]      += fact_lpf*lpf_ptr[i];
+      w5_ptr_bdry[i] -=	fact_ey*ey_ptr[i];
+    }  
+
+  }
+  proj_p(lpf, w5, N5_-2);
+  lpf *= (Params.dm_[N5_-1]/Params.dp_[N5_-2]);
+  add5d(w5,lpf,N5_-1);
+
+  double fact= 1.0/(Params.dp_[N5_-1] +mq_*Params.dm_[N5_-2]*Params.es_[N5_-2]);
+  for (int i=0; i<f4size_; ++i) {
+    w5_ptr_bdry[i] = w5_ptr_bdry[i]*fact;
+  }
+
+
+  for(int s=N5_-2; s>=0; --s) {
+    proj_m(lmf, w5, s+1);
+    lmf *= Params.dm_[s];
+    add5d(w5,lmf,s);
+    proj_p(fy, w5,N5_-1);
+    fy *= -mq_*Params.fs_[s];
+    add5d(w5,fy,s);
+    Field v = get4d(w5,s);
+    v*= 1.0/ Params.dp_[s];
+    set5d(w5,v,s);
+  }
+
+  //return w5;
+}
+
+
 const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
   Field w5(fsize_);
   (this->*mult_dag_core)(w5,f5);
