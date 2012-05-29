@@ -16,13 +16,8 @@
 #include "include/format_F.h"
 #include "include/fopr.h"
 #include "include/factories.hpp"
-#include "Measurements/FermionicM/source_types.hpp"
+//#include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/qprop_MultiShift.hpp"
-//#include "Dirac_ops/dirac_wilson.hpp"
-//#include "Dirac_ops/dirac_clover.hpp"
-//#include "Dirac_ops/dirac_DomainWall.hpp"
-//#include "Dirac_ops/dirac_Operator_Factory.hpp"
-
 
 #include "EigenModes/findminmax.hpp"
 #include "Tools/randNum_Factory.h"
@@ -39,32 +34,13 @@ int Test_RationalApprox::run(){
   
   RNG_Env::RNG = RNG_Env::createRNGfactory(RA_node);
 
- 
-  
-  // Test standard constructor
-  RationalApprox_params PsParameters(10, 10, 1, 2, 40, 0.05, 60.0);
-  
-  PsParameters.numerator_deg   = 10;
-  PsParameters.denominator_deg = 10;
-  
-  PsParameters.exponent_num = 1;
-  PsParameters.exponent_den = 2;
-
-  PsParameters.gmp_remez_precision = 40;
-  PsParameters.lambda_low          = 0.05;
-  PsParameters.lambda_high         = 1.0;
-  
-
-  
-  //RationalApprox TestApprox(PsParameters);
-
   // Test XML constructor
   RationalApprox TestXMLApprox(RA_node);
 
   // Test output
   // Reconstruct and test against pow
   double x_test = 0.5;
-  double exponent = (double)PsParameters.exponent_num/(double)PsParameters.exponent_den;
+  double exponent = TestXMLApprox.exponent();
   double reference = pow(x_test, exponent);
   
   CCIO::cout << "Reference = "<< reference << "\n";
@@ -92,17 +68,7 @@ int Test_RationalApprox::run(){
   CCIO::cout << "\n";
   // Definition of source 
   prop_t  xqs;
-  vector<int> spos(4,0);
- 
-  int N5d   = 6;
-  double M0 = -1.6;
-  double c  = 1.0;
-  double b  = 1.0;
-  double mq = 0.01;
-  vector<double> omega(N5d,1.0);
-  int volume_size = CommonPrms::instance()->Nvol()*N5d;
-  //Dirac* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gfield_.data));
-  
+
   XML::node kernel_node = RA_node;
   XML::descend(kernel_node, "Kernel");
   DiracWilsonLikeOperatorFactory* KernelF = DiracOperators::createDiracWilsonLikeOperatorFactory(kernel_node);
@@ -119,7 +85,7 @@ int Test_RationalApprox::run(){
   TestXMLApprox.rescale(MinMaxResult.min, MinMaxResult.max);
   
   // Definition of the Solver
-  int    Niter= 2000;
+  int    Niter= 5000;
   double stop_cond = 1.0e-24;
   MultiShiftSolver* Solver = 
     new MultiShiftSolver_CG(FoprKernel,
@@ -127,7 +93,6 @@ int Test_RationalApprox::run(){
                             Niter);
   
   RationalSolver* RASolver = new RationalSolver(Solver, TestXMLApprox);
-  //Source_local<Format::Format_F> Source(spos,volume_size); 
 
   XML::next_sibling(kernel_node,"Source");
   SourceFactory* SrcFactory 
@@ -138,10 +103,8 @@ int Test_RationalApprox::run(){
   
   Field solution;
   Field solution2;
-  //RASolver->solve(solution, Source.mksrc(0,0));
   RASolver->solve(solution, src->mksrc(0,0));
   
-  // Apply again (M^dag M)^(1/2)
   RASolver->solve(solution2, solution);  
   
   ////////////////////////////////
