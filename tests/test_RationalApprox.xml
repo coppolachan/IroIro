@@ -3,11 +3,11 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
-    <Nodes>4 4 2 2</Nodes>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Binary">Conf_500</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
 
   <RationalApprox>
     <Num_deg>10</Num_deg>

@@ -16,7 +16,6 @@
 #include "include/format_F.h"
 #include "include/fopr.h"
 #include "include/factories.hpp"
-//#include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/qprop_MultiShift.hpp"
 
 #include "EigenModes/findminmax.hpp"
@@ -38,16 +37,15 @@ int Test_RationalApprox::run(){
   RationalApprox TestXMLApprox(RA_node);
 
   // Test output
+  CCIO::cout << " -- Simple numerical test - check against C functions\n";
   // Reconstruct and test against pow
   double x_test = 0.5;
   double exponent = TestXMLApprox.exponent();
   double reference = pow(x_test, exponent);
-  
-  CCIO::cout << "Reference = "<< reference << "\n";
-  
-  
-  //Reconstruct rational expansion
 
+  CCIO::cout << "Reference pow("<<x_test<<","<<exponent<<") = "<< reference << "\n";
+   
+  //Reconstruct rational expansion
   double result;
   vector<double> Res = TestXMLApprox.Residuals();
   vector<double> Poles = TestXMLApprox.Poles();
@@ -59,13 +57,11 @@ int Test_RationalApprox::run(){
     result += Res[i]/(x_test + Poles[i]);
   }
 
-  CCIO::cout << "Result = "<< result << "\n";
+  CCIO::cout << "Rational Approximation result = "<< result << "\n";
   CCIO::cout << "Difference = "<< result-reference << "\n";
   
- 
-  
   // Testing the multishift solver
-  CCIO::cout << "\n";
+  CCIO::cout << "------------------------ \n";
   // Definition of source 
   prop_t  xqs;
 
@@ -82,8 +78,10 @@ int Test_RationalApprox::run(){
 
   MinMaxOut MinMaxResult = MinMax->findExtrema();
   
+  CCIO::cout << "Rescaling rational approximation range... ";
   TestXMLApprox.rescale(MinMaxResult.min, MinMaxResult.max);
-  
+  CCIO::cout << "done\n";
+
   // Definition of the Solver
   int    Niter= 5000;
   double stop_cond = 1.0e-24;
@@ -103,10 +101,10 @@ int Test_RationalApprox::run(){
   
   Field solution;
   Field solution2;
+  CCIO::cout << "Applying rational approximation twice... ";
   RASolver->solve(solution, src->mksrc(0,0));
-  
   RASolver->solve(solution2, solution);  
-  
+  CCIO::cout << "done"<<std::endl;
   ////////////////////////////////
   // Check answer
   // Compare with (M^dag M)
@@ -121,5 +119,6 @@ int Test_RationalApprox::run(){
   diff_field = reference_sol;
   diff_field -= solution2;
   
+  CCIO::cout << ":::::::: Compare with (M^dag M) - meaningful only if exponent is 1/2 \n";
   CCIO::cout << ":::::::: Check answer -- diff (norm) = "<< diff_field.norm() <<"\n";
 }
