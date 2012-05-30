@@ -45,16 +45,21 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_oe_dag(const Field& f)const{
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{
+  
   Field w(f);
   w -= mult_eo(mult_oe(f));
   return w;
+  
+  
   /*
-  Field w5(Deo_.fsize()), res(Deo_.fsize());
-  Doe_.mult_hop(w5,f);
-  Deo_.mult_hop(res,w5);
-  res -= f;
+  // just slightly faster (only BGQ)
+  //  Field w5(Deo_.fsize());
+  Field res(Deo_.fsize());
+  Doe_.mult_hop(res,f);
+  //Deo_.mult_hop(res,w5);
+  //res -= f;
 
-  return -res;
+  return res;
   */
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{

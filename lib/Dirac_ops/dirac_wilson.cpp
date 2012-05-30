@@ -87,12 +87,15 @@ void Dirac_Wilson::mult_ptr_EO(double* w, double* const f) const{
 }
 void Dirac_Wilson::mult_dag_ptr_EO(double* w, double* const f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);
-  
+  BGWilson_MultEO_Dag(w, pU, f, -kpp_ , EO_BGWilson, BGWILSON_DIRAC);
+  /*
   double* temp = (double*) malloc(fsize_*sizeof(double));
   gamma5_ptr(w,f);
   BGWilson_MultEO(temp, pU, w, -kpp_ , EO_BGWilson, BGWILSON_DIRAC);
   gamma5_ptr(w,temp);
   free(temp);
+  */
+
 }
 #endif
 
