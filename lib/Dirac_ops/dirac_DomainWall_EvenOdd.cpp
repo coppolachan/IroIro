@@ -12,6 +12,7 @@
 
 using namespace std;
 
+
 //-----------------------------------------------------------------------------
 const Field Dirac_optimalDomainWall_EvenOdd::mult_ee(const Field& f)const{
   return Deo_.mult_hop5(f);
@@ -45,26 +46,41 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_oe_dag(const Field& f)const{
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{
-  
+  timeval start_, end_;
+  gettimeofday(&start_,NULL);
+
+  /*
   Field w(f);
   w -= mult_eo(mult_oe(f));
   return w;
+  */
   
   
-  /*
   // just slightly faster (only BGQ)
   //  Field w5(Deo_.fsize());
   Field res(Deo_.fsize());
   Doe_.mult_hop(res,f);
-  //Deo_.mult_hop(res,w5);
+  //Deo_.mult_hop(res,w5); 
   //res -= f;
 
+  gettimeofday(&end_,NULL);
+  mult_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
+  mult_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
+
   return res;
-  */
+  
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
+  timeval start_, end_;
+  gettimeofday(&start_,NULL);
+
   Field w(f);
   w -= mult_oe_dag(mult_eo_dag(f));
+
+  gettimeofday(&end_,NULL);
+  multdag_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
+  multdag_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
+
   return w;
 }
 

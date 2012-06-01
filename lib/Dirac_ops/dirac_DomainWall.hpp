@@ -17,6 +17,9 @@
 #include "dirac_wilson.hpp"
 #include "dirac_Preconditioners.hpp"
 
+static double wilson_mult_timer;
+static double wilson_multdag_timer;
+
 namespace DomainWallFermions {
   struct EvenOdd_tag{};
   const std::vector<double> 
@@ -218,6 +221,9 @@ public:
     CCIO::cout << "Deleting Dirac_optimalDomainWall" << std::endl;
     #endif
     delete Precond_; 
+
+    CCIO::cout << "Wilson Timer mult: "<< wilson_mult_timer << "\n";
+    CCIO::cout << "Wilson Timer multdag: "<< wilson_multdag_timer << "\n";   
   }
   
   size_t f4size() const{ return f4size_;}

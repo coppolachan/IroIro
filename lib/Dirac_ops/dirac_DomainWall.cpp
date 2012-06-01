@@ -431,9 +431,6 @@ void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{
 }
 
 void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
-#pragma disjoint
-  assert(w5.size()==f5.size());
-  
   
 #ifdef IBM_BGQ_WILSON
   Field v5(fsize_);
@@ -532,12 +529,11 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{
   double* lpf_ptr = lpf.getaddr(0);
   double* lmf_ptr = lmf.getaddr(0);
   double mass_fact= 4.0+M0_;
-
+  double* f5_ptr = const_cast<Field&>(f5).getaddr(0);
+  double* w5_ptr   = w5.getaddr(0);
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
   for(int s=0; s<N5_; ++s) {
-    double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
-    double* w5_ptr   = w5.getaddr(s*f4size_);
     BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Dw_.get_fermionFormat().index(0,0,(s+N5_-1)%N5_)),Nvol);
     BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Dw_.get_fermionFormat().index(0,0,(s+1)%N5_)),Nvol);
 
@@ -557,6 +553,8 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{
     //w = Dw_.mult(v);
     BGWilsonLA_MultScalar(w5_ptr, w_ptr, mass_fact, Nvol);
     
+    f5_ptr += f4size_;
+    w5_ptr += f4size_;
   }
 #else
   Field lpf(f4size_), lmf(f4size_), w(f4size_), v(f4size_);
@@ -590,6 +588,8 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{
 
 void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
 #ifdef IBM_BGQ_WILSON
+timeval start_, end_;
+
   assert(w5.size()==f5.size());
   Field v5(fsize_),lpf(f4size_), lmf(f4size_),w(f4size_);
   int spin_idx;
@@ -606,8 +606,12 @@ void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
     
     bs = (4.0+M0_)*Params.bs_[s];
     cs = (4.0+M0_)*Params.cs_[s];
-    
+
+    gettimeofday(&start_,NULL); 
     Dw_.mult_dag_ptr_EO(w_ptr, f5_ptr);
+    gettimeofday(&end_,NULL);
+    wilson_multdag_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
+    wilson_multdag_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
   
     BGWilsonLA_MultScalar(w5_ptr, w_ptr, bs,Nvol);
     BGWilsonLA_MultScalar(v5_ptr, w_ptr, cs,Nvol);
@@ -681,48 +685,71 @@ const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
 
 void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
 #ifdef IBM_BGQ_WILSON
-  Field lpf(f4size_), lmf(f4size_), w(f4size_), v(f4size_), ey(f4size_), fy(f4size_);
-  Field temp(fsize_);
-  double* w_ptr = w.getaddr(0);
-  double* v_ptr = v.getaddr(0);
-  double* lpf_ptr = lpf.getaddr(0);
-  double* lmf_ptr = lmf.getaddr(0);
-  double* ey_ptr = ey.getaddr(0);
-  double* fy_ptr = fy.getaddr(0);
+  timeval start_, end_;
+  
 
-  double mass_fact= 4.0+M0_;
+  Field lpf(f4size_);
+  Field lmf(f4size_), w(f4size_), v(f4size_), ey(f4size_), fy(f4size_);
+  Field temp(fsize_);
+
+  double* w_ptr    = w.getaddr(0);
+  double* v_ptr    = v.getaddr(0);
+  double* lpf_ptr  = lpf.getaddr(0);
+  double* lmf_ptr  = lmf.getaddr(0);
+  double* ey_ptr   = ey.getaddr(0);
+  double* fy_ptr   = fy.getaddr(0);
+  double* temp_ptr = temp.getaddr(0);
+
+  double mass_fact   = 4.0+M0_;
   double minus_kappa = -Dw_.getKappa();
 
-  double* pU = const_cast<Field *>(u_)->getaddr(0);
+  double* pU         = const_cast<Field *>(u_)->getaddr(0);
+  double* f5_ptr     = const_cast<Field&>(f5).getaddr(0);
+
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
   Format::Format_F Fformat = Dw_.get_fermionFormat();
 
-  //doe
-  for(int s=0; s<N5_; ++s) {
-    double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
-    double* temp_ptr   = temp.getaddr(s*f4size_);
-    BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,(s+N5_-1)%N5_)),Nvol);
-    BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,(s+1)%N5_)),Nvol);
+  ///////////////////////////////  doe
 
-    if(s==0){
-      BGWilsonLA_MultScalar_Add(lpf_ptr,lmf_ptr,-mq_,Nvol);
-    }
-    else if(s==N5_-1){
-      BGWilsonLA_MultAddScalar(lpf_ptr,lmf_ptr,-mq_,Nvol);
-    }
-    else{
-      BGWilsonLA_Add(lpf_ptr,lmf_ptr,Nvol);
-    }
-    BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr,
-		     Params.bs_[s],Params.cs_[s],Nvol);
+  // s = 0
+  BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,N5_-1)),Nvol);
+  BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,1)),Nvol);
+  BGWilsonLA_MultScalar_Add(lpf_ptr,lmf_ptr,-mq_,Nvol);
+  BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr, Params.bs_[0],Params.cs_[0],Nvol);
+  BGWilson_MultEO(w_ptr, pU, v_ptr, minus_kappa , 2, BGWILSON_DIRAC);
+  BGWilsonLA_MultScalar(temp_ptr, w_ptr, mass_fact, Nvol);
+
+  for(int s=1; s<N5_-1; ++s) {
+    f5_ptr   += f4size_;
+    temp_ptr += f4size_;
+
+    BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,s-1)),Nvol);
+    BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,s+1)),Nvol);
+    BGWilsonLA_Add(lpf_ptr,lmf_ptr,Nvol);
+    BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr, Params.bs_[s],Params.cs_[s],Nvol);
     
+    gettimeofday(&start_,NULL);
     BGWilson_MultEO(w_ptr, pU, v_ptr, minus_kappa , 2, BGWILSON_DIRAC);
+    gettimeofday(&end_,NULL);
+    wilson_mult_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
+    wilson_mult_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
+
+
     BGWilsonLA_MultScalar(temp_ptr, w_ptr, mass_fact, Nvol);
-    
   }
 
+  // s = N5-1
+  f5_ptr   += f4size_;
+  temp_ptr += f4size_;
+  BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,N5_-2)),Nvol);
+  BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,0)),Nvol);
+  BGWilsonLA_MultAddScalar(lpf_ptr,lmf_ptr,-mq_,Nvol);  
+  BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr, Params.bs_[N5_-1],Params.cs_[N5_-1],Nvol);
+  BGWilson_MultEO(w_ptr, pU, v_ptr, minus_kappa , 2, BGWILSON_DIRAC);
+  BGWilsonLA_MultScalar(temp_ptr, w_ptr, mass_fact, Nvol);
 
+  /// 5d hopping term
   double* temp_ptr_bdry   = temp.getaddr((N5_-1)*f4size_);
   BGWilsonLA_Proj_M(ey_ptr,temp.getaddr(Fformat.index(0,0,0)),Nvol);
   BGWilsonLA_MultAddScalar(temp_ptr_bdry,     ey_ptr,-mq_* Params.es_[0],Nvol);
@@ -755,7 +782,7 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
     BGWilsonLA_MultScalar(temp_ptr, temp_ptr, 1.0/ Params.dp_[s], Nvol);
   }
 
-  //deo
+  ////////////////deo
   for(int s=0; s<N5_; ++s) {
     double* temp_ptr = temp.getaddr(s*f4size_);
     double* w5_ptr   = w5.getaddr(s*f4size_);
@@ -774,7 +801,12 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
     BGWilsonLA_AXPBY(v_ptr, temp_ptr, lpf_ptr,
 		     Params.bs_[s],Params.cs_[s],Nvol);
     
+    gettimeofday(&start_,NULL);
     BGWilson_MultEO(w_ptr, pU, v_ptr, minus_kappa , 1, BGWILSON_DIRAC);
+    gettimeofday(&end_,NULL);
+    wilson_mult_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
+    wilson_mult_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
+
     BGWilsonLA_MultScalar(w5_ptr, w_ptr, mass_fact, Nvol);
   }
 
@@ -810,7 +842,6 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
   }
 
   BGWilsonLA_MultScalar_Add(w5.getaddr(0),const_cast<Field&>(f5).getaddr(0), -1.0, Nvol*N5_);
-
 #else
   Field lpf(f4size_), lmf(f4size_), w(f4size_), v(f4size_), ey(f4size_), fy(f4size_);
   double* w_ptr = w.getaddr(0);

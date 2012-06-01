@@ -51,6 +51,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_HMC_DWF.xml	\
 		test_MultiShiftSolver.xml	\
 		test_RationalApprox.xml	\
+		test_Solver_Perf.xml	\
 		input.xml
 
 test_PROGRAMS = test_HMC 		\
@@ -70,6 +71,7 @@ test_PROGRAMS = test_HMC 		\
 		test_Smearing		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
+		test_Solver_Perf	\
 		test_RNG 		\
 		test_IO			\
 		test_RationalApprox	\
@@ -114,6 +116,9 @@ test_QpropMom_SOURCES 	= 	test_QpropMom.cpp 		\
 
 test_MesonSpectrum_SOURCES= 	test_MesonSpectrum.cpp 		\
 				testerMesonSpectrum.cpp
+
+test_Solver_Perf_SOURCES = 	test_Solver_Perf.cpp		\
+				testerSolver_Perf.cpp
 
 test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 				testerResMass.cpp

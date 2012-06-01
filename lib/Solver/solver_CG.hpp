@@ -46,7 +46,7 @@ private:
   const Solver_CG_Prms Params;/*!< @brief Inputs container */
   const int nodeid_;
 
-  void solve_step(Field&, Field&, Field&, double&) const;
+  void solve_step(Field&, Field&, Field&, double&, double&) const;
 
 public:
   Solver_CG(const double prec,const int MaxIterations,const Fopr_Herm* fopr)

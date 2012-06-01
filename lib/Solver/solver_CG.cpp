@@ -31,6 +31,7 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   SolverOutput Out;
   Out.Msg = "CG solver";
   Out.Iterations = -1;
+  double kernel_timing = 0.0;
 
   TIMING_START;
   
@@ -47,7 +48,7 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   CCIO::cout<<" Init  = "<< rr*snorm<< endl;
 #endif
   for(int it = 0; it < Params.MaxIter; ++it){
-    solve_step(r,p,x,rr);
+    solve_step(r,p,x,rr, kernel_timing);
 #if VERBOSITY>1
     CCIO::cout<< std::setw(5)<< "["<<it<<"] "
 	      << std::setw(20) << rr*snorm<< "\n";
@@ -70,22 +71,34 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   xq = x;
 
   TIMING_END(Out.timing);
-    
+  CCIO::cout << "Kernel section timing: "<< kernel_timing << "\n";
 
   return Out;
 }
 
-inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
+inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr, 
+				  double& opr_timing)const {
   using namespace FieldExpression;
 
-  Field s = opr_->mult(p);//Ap
   double* x_ptr = x.getaddr(0);
   double* p_ptr = p.getaddr(0);
   double* r_ptr = r.getaddr(0);
+
+  timeval start, end;                
+  gettimeofday(&start,NULL);
+
+  Field s = opr_->mult(p);//Ap
+
+  gettimeofday(&end,NULL);
+
+  opr_timing += (end.tv_sec - start.tv_sec)*1000.0;
+  opr_timing += (end.tv_usec - start.tv_usec) / 1000.0;   // us to ms
+
+
+
   double* s_ptr = s.getaddr(0);
-
-
 #ifdef IBM_BGQ_WILSON
+  ///////////////////////////////////////////////////
   int v_size = x.size()/24; // << assumes 24 elements
   double pap;
   BGWilsonLA_DotProd(&pap,p_ptr,s_ptr,v_size);
@@ -104,6 +117,7 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr)const {
   //  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
   //  p += r; // p = p + p*(r_k,r_k)/(r,r)
   BGWilsonLA_MultScalar_Add(p_ptr,r_ptr,rr/rrp,v_size);
+  /////////////////////////////////////////////////////
 #else
   double pap = p*s;// (p,Ap)
   double rrp = rr;

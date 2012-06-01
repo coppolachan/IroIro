@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>16 16 16 32</Lattice>
+    <Nodes>4 4 2 2</Nodes>
+  </Geometry>
+  <!-- Input configuration -->
+
+  <Configuration Type="Binary">Conf_500</Configuration> 
+  
+  <Test_Performance>
+    <QuarkPropagator>
+      <Kernel4d name="DiracOptimalDomainWall4d_eo">
+	<Kernel5d >
+	  <Preconditioning>NoPreconditioner</Preconditioning>
+	  <wilson_mass>-1.6</wilson_mass>
+	  <N5d>10</N5d>
+	  <b>1.0</b>
+	  <c>1.0</c>
+	  <mass>0.02</mass>
+	  <approximation name="Tanh">
+	    <lambda_min>0.1</lambda_min>
+	    <lambda_max>1.5</lambda_max>
+	  </approximation>
+	</Kernel5d>
+	<SolverDWF type="Solver_CG">
+	  <MaxIter>50000</MaxIter>
+	  <Precision>1e-20</Precision>
+	</SolverDWF>
+      </Kernel4d>
+    </QuarkPropagator>
+  </Test_Performance>
+</Parameters>
+

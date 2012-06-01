@@ -42,13 +42,14 @@ target_triplet = @target@
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_3 = -q64 -qarch=qp -qtune=qp -I$(DRIVER) \
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/spi/include/kernel/cnk \
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/spi/include/mu/default \
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/comm/xl/include
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/comm/xl/include	
 
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = -qsmp
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = -qsmp=omp:auto
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib \
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@	 -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/bghome/scbadm/ibm-doi/lib
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@	 -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib \
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@	 -L/bghome/scbadm/ibm-doi/lib
 
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_6 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_6 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_7 = -lbgqwilson3x4smp
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_8 = -lbgqwilson3x4
 bin_PROGRAMS = main_hmc$(EXEEXT)

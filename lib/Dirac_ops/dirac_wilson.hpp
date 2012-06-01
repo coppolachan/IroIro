@@ -22,6 +22,8 @@
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
 
+
+
 namespace Dw{
   struct EOtag{};    
   struct OEtag{};    
@@ -176,7 +178,7 @@ public:
     kpp_= 0.5/(4.0+mass);
   }
 
-  virtual ~Dirac_Wilson(){}
+  virtual ~Dirac_Wilson(){  }
   
   size_t fsize() const{return fsize_;}
   size_t gsize() const{return gsize_;}
