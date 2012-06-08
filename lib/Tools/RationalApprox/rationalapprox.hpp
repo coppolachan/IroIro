@@ -104,6 +104,7 @@ public:
   std::vector<double> InvPoles() const { return I_RA_pole; }
   double InvConst() const { return I_RA_a0; }
 
+  double exponent() { return (double)Params.exponent_num/(double)Params.exponent_den; }
 
 };
 

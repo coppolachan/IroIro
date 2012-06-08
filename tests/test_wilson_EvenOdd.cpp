@@ -58,6 +58,7 @@ int Test_Wilson_EvenOdd::run(){
   int Ny = CommonPrms::instance()->Ny();
   int Nz = CommonPrms::instance()->Nz();
 
+  /*
   //////// test of manual shift (forward)////////////
 
   // full site
@@ -98,14 +99,14 @@ int Test_Wilson_EvenOdd::run(){
     ebdry_u.push_back(shiftSite_eo.xslice(Nx-1,n,XDIR));
   for(int n=0;n<shiftSite_oe.slice_size(Nx-1,XDIR);++n)
     obdry_u.push_back(shiftSite_oe.xslice(Nx-1,n,XDIR));
-  /*
+  
   for(int i=0; i<ebdry_b.size();++i)
     CCIO::cout<<i
 	      <<" ebdry_b= "<<ebdry_b[i]
 	      <<" ebdry_u= "<<ebdry_u[i]
 	      <<" obdry_b= "<<obdry_b[i]
 	      <<" obdry_u= "<<obdry_u[i]<<std::endl;
-  */
+  
   // transfer
   recv_e.resize(fmh.Nin()*ebdry_b.size());
   Communicator::instance()->transfer_fw(recv_e,fo[fmh.get_sub(obdry_b)],XDIR);
@@ -140,7 +141,7 @@ int Test_Wilson_EvenOdd::run(){
     CCIO::cout<<" (we["<<i<<"],wf["<<ie[i]<<"])=("<<we[i]<<","<<wf[ie[i]]<<")"
 	      <<" (wo["<<i<<"],wf["<<io[i]<<"])=("<<wo[i]<<","<<wf[io[i]]<<")"
 	      <<std::endl;  
-
+*/
   //------------ e/o preconditioned solver ------------------
   int    Niter= 1000;
   double stop_cond = 1.0e-24;

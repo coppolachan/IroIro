@@ -3,20 +3,20 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>4 4 4 8</Lattice>
-    <Nodes>1 1 1 2</Nodes>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>1 2 2 2</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  <Configuration Type="Binary">Ref_conf_2.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>0</Nsweeps>
-    <Thermalization>2</Thermalization>
+    <Nsweeps>10</Nsweeps>
+    <Thermalization>0</Thermalization>
     <StartingConfig>0</StartingConfig>
     <SaveInterval>0</SaveInterval>
-    <SavePrefix>HMCrect_</SavePrefix>
+    <SavePrefix>HMC_ratio_</SavePrefix>
     <RandomNumberGen name="Mersenne Twister">
       <!--   <seedFile>seed_file</seedFile>
 	   Using seedFile superseeds the <init> line 
@@ -26,7 +26,7 @@
     </RandomNumberGen>
     
     <Integrator name="leapfrog_multistep">
-      <MDsteps>5</MDsteps>
+      <MDsteps>10</MDsteps>
       <step_size>0.05</step_size>
       <exp_approx>8</exp_approx>
       <step>

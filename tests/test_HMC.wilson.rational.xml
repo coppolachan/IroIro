@@ -3,20 +3,20 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>4 4 4 8</Lattice>
-    <Nodes>1 1 1 1</Nodes>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>1 2 2 2</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  <Configuration Type="Binary">Test_conf_3.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>1</Nsweeps>
-    <Thermalization>2</Thermalization>
+    <Nsweeps>500</Nsweeps>
+    <Thermalization>0</Thermalization>
     <StartingConfig>0</StartingConfig>
     <SaveInterval>0</SaveInterval>
-    <SavePrefix>HMCrect_</SavePrefix>
+    <SavePrefix>HMC_ratio_</SavePrefix>
     <RandomNumberGen name="Mersenne Twister">
       <!--   <seedFile>seed_file</seedFile>
 	   Using seedFile superseeds the <init> line 
@@ -26,30 +26,30 @@
     </RandomNumberGen>
     
     <Integrator name="leapfrog_multistep">
-      <MDsteps>10</MDsteps>
-      <step_size>0.02</step_size>
+      <MDsteps>12</MDsteps>
+      <step_size>0.08</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
 	<Action type="Fermion" name="NfFlavors">
 	  <Flavors>2</Flavors>
 	  <Pseudofermions>2</Pseudofermions>
-	  <ApproxDegree>10 10 10</ApproxDegree>
+	  <ApproxDegree>4 4 4</ApproxDegree>
 	  <Precision>40 40 40</Precision>
 	  <BoundaryLow>0.1 0.1 0.1</BoundaryLow>
 	  <BoundaryHigh>4 4 4</BoundaryHigh>
 	  <Kernel name="DiracWilson">
-	    <mass>0.1</mass>
+	    <mass>0.2</mass>
 	  </Kernel>
 	  <RationalSolver type="Rational_CG">
 	    <MaxIter>2000</MaxIter>
-	    <Precision>1e-14</Precision>
+	    <Precision>1e-16</Precision>
 	  </RationalSolver>
 	</Action>
 	<step>
-	  <multiplier>2</multiplier>
+	  <multiplier>6</multiplier>
 	  <Action type="Gauge" name="Wilson">
-	    <beta>6.2</beta>
+	    <beta>5.0</beta>
 	  </Action>
 	</step>
       </step>

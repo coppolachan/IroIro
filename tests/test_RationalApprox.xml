@@ -3,11 +3,11 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
+    <Lattice>4 4 4 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Binary">Conf_500</Configuration> 
+  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
 
   <RationalApprox>
     <Num_deg>10</Num_deg>
@@ -22,10 +22,25 @@
       <init>0x123 0x234 0x345 0x456</init> 
     </RandomNumberGen>
     
+    <Kernel name="DiracOptimalDomainWall5dEvenOdd">
+      <Preconditioning>NoPreconditioner</Preconditioning>
+      <wilson_mass>-1.6</wilson_mass>
+      <N5d>12</N5d>
+      <b>1.0</b>
+      <c>1.0</c>
+      <mass>0.20</mass>
+      <approximation name="Tanh">
+        <lambda_min>0.30</lambda_min>
+        <lambda_max>6.20</lambda_max>
+      </approximation>
+    </Kernel>
+    <Source type="Local">
+      <position>0 0 0 0</position>
+    </Source>
+ 
+   </RationalApprox>
 
-  </RationalApprox>
-
-
+  
 
 </Parameters>
 

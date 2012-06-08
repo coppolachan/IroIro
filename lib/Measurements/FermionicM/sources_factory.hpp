@@ -13,7 +13,7 @@
  */
 class SourceFactory {
 public:
-  virtual Source* getSource() = 0;
+  virtual Source* getSource(int Local_Dim = CommonPrms::instance()->Nvol()) = 0;
   virtual ~SourceFactory(){}
 };
 /////////////////////////////////////////////////
@@ -27,12 +27,13 @@ class LocalSourceFactory: public SourceFactory {
 public:
   LocalSourceFactory(XML::node node):Source_node(node){}
 
-  Source* getSource(){
+  Source* getSource(int Local_Dim = CommonPrms::instance()->Nvol()){
     std::vector<int> position;
     XML::read_array(Source_node, "position", position, MANDATORY);
     return new Source_local<Format>(position,
-				    CommonPrms::instance()->Nvol());
+				    Local_Dim);
   }
+
 };
 
 template <typename Format>
@@ -42,14 +43,14 @@ class ExpSourceFactory: public SourceFactory {
 public:
   ExpSourceFactory(XML::node node):Source_node(node){}
 
-  Source* getSource(){
+  Source* getSource(int Local_Dim = CommonPrms::instance()->Nvol()){
     std::vector<int> position;
     double alpha;
     XML::read_array(Source_node, "position", position, MANDATORY);
     XML::read(Source_node, "alpha", alpha, MANDATORY);
     return new Source_exp<Format>(position,
 				  alpha,
-				  CommonPrms::instance()->Nvol());
+				  Local_Dim);
   }
 };
 
@@ -60,14 +61,14 @@ class GaussSourceFactory: public SourceFactory {
 public:
   GaussSourceFactory(XML::node node):Source_node(node){}
 
-  Source* getSource(){
+  Source* getSource(int Local_Dim = CommonPrms::instance()->Nvol()){
     std::vector<int> position;
     double alpha;
     XML::read_array(Source_node, "position", position, MANDATORY);
     XML::read(Source_node, "alpha", alpha, MANDATORY);
     return new Source_Gauss<Format>(position,
 				    alpha,
-				    CommonPrms::instance()->Nvol());
+				    Local_Dim);
   }
 };
 
@@ -78,11 +79,11 @@ class WallSourceFactory: public SourceFactory {
 public:
   WallSourceFactory(XML::node node):Source_node(node){}
 
-  Source* getSource(){
+  Source* getSource(int Local_Dim = CommonPrms::instance()->Nvol()){
     int position;
     XML::read(Source_node, "position", position, MANDATORY);
     return new Source_wall<Format>(position,
-				    CommonPrms::instance()->Nvol());
+				   Local_Dim);
   }
 };
 
@@ -93,9 +94,9 @@ class WhiteNoiseSourceFactory: public SourceFactory {
 public:
   WhiteNoiseSourceFactory(XML::node node):Source_node(node){}
 
-  Source* getSource(){
+  Source* getSource(int Local_Dim = CommonPrms::instance()->Nvol()){
     return new Source_wnoise<Index,Format>(*RNG_Env::RNG->getRandomNumGenerator(),
-					   CommonPrms::instance()->Nvol());
+					   Local_Dim);
   }
 };
 
@@ -106,7 +107,7 @@ class Z2noiseSourceFactory: public SourceFactory {
 public:
   Z2noiseSourceFactory(XML::node node):Source_node(node){}
 
-  Source* getSource(){
+  Source* getSource(int Local_Dim = CommonPrms::instance()->Nvol()){
     Z2Type NoiseType;
     std::string Z2Type_name;
     XML::read(Source_node, "NoiseType", Z2Type_name, MANDATORY);
@@ -119,7 +120,7 @@ public:
     }
     return new 
       Source_Z2noise<Index,Format>(*RNG_Env::RNG->getRandomNumGenerator(),
-				   CommonPrms::instance()->Nvol(),
+				   Local_Dim,
 				   NoiseType);
   }
 };

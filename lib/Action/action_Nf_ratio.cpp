@@ -16,7 +16,18 @@ void Action_Nf_ratio::observer_update(){
   D2_->update_internal_state();
 }
 //::::::::::::::::::::::::::::::::
-void Action_Nf_ratio::attach_smearing(SmartConf* SmearObj) {}
+void Action_Nf_ratio::attach_smearing(SmartConf* SmearObj) {
+ // Checks that the pointer for gauge field u_ 
+  // points correctly to the smeared configuration
+  // otherwise falls back to standard update
+  if (u_ == SmearObj->get_current_conf()) {
+    smart_conf_= SmearObj; //set the configuration
+    CCIO::cout << "Succesfully attached smearing routines\n";
+  }else{
+    CCIO::cout << "Pointers disagree - Smearing not allowed\n";
+    smeared_ = false;
+  }
+}
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 void Action_Nf_ratio::init(const RandNum& rand){
@@ -146,9 +157,9 @@ GaugeField Action_Nf_ratio::md_force(){
      fce += gauge_temp;
     }
   }
-  if(smart_conf_) smart_conf_->smeared_force(fce);
+
+  if(smeared_) smart_conf_->smeared_force(fce);
   force = FieldUtils::TracelessAntihermite(fce); 
-  
   
   _MonitorMsg(ACTION_VERB_LEVEL, Action,force,"Action_Nf_ratio");
   return force;

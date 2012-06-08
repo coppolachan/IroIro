@@ -64,6 +64,12 @@ public:
 
   const Field md_force( const Field& eta,const Field& zeta) const;
 
+
+  ////
+  const Field mult_hop5_inv(const Field& f5) const;
+
+  ////
+
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 
   const Field mult_eo_dag(const Field& f) const;

@@ -46,26 +46,22 @@ int SiteIndex::c_y(int site) const{ return (site%(Nxh_*Ny_))/Nxh_;}
 int SiteIndex::c_z(int site) const{ return (site%(Nxh_*Ny_*Nz_))/(Ny_*Nxh_);}
 int SiteIndex::c_t(int site) const{ return (site%(Nxh_*Ny_*Nz_*Nt_))/(Nxh_*Ny_*Nz_);}
 
+int SiteIndex::g_x(int gsite) const{ return gsite%Lx_;}
+int SiteIndex::g_y(int gsite) const{ return (gsite/Lx_)%Ly_;}
+int SiteIndex::g_z(int gsite) const{ return (gsite/LxLy_)%Lz_;}
+int SiteIndex::g_t(int gsite) const{ return gsite/LxLyLz_;}
 
-int SiteIndex::g_x(int gsite) const{
- return ((gsite%Lxh_) << 1) + ((g_y(gsite)+g_z(gsite)+g_t(gsite) + (gsite/Lvolh_)) & 1);
-}
-int SiteIndex::g_y(int gsite) const{ return (gsite%(Lxh_*Ly_))/Lxh_;}
-int SiteIndex::g_z(int gsite) const{ return (gsite%(Lxh_*Ly_*Lz_))/(Ly_*Lxh_);}
-int SiteIndex::g_t(int gsite) const{ return (gsite%(Lxh_*Ly_*Lz_*Lt_))/(Lxh_*Ly_*Lz_);}
+int SiteIndex::global_x(int x) const{
+  return Communicator::instance()->ipe(XDIR)*Nx_+x;}
 
+int SiteIndex::global_y(int y) const{ 
+  return Communicator::instance()->ipe(YDIR)*Ny_+y;}
 
-int SiteIndex::global_x(int x){
-  Communicator::instance()->ipe(XDIR)*Nx_+x;}
+int SiteIndex::global_z(int z) const{ 
+  return Communicator::instance()->ipe(ZDIR)*Nz_+z;}
 
-int SiteIndex::global_y(int y){ 
-  Communicator::instance()->ipe(YDIR)*Ny_+y;}
-
-int SiteIndex::global_z(int z){ 
-  Communicator::instance()->ipe(ZDIR)*Nz_+z;}
-
-int SiteIndex::global_t(int t){ 
-  Communicator::instance()->ipe(TDIR)*Nt_+t;}
+int SiteIndex::global_t(int t) const{ 
+  return Communicator::instance()->ipe(TDIR)*Nt_+t;}
 
 // indices with a step forward/backward (for bulk sites)
 int SiteIndex::p_x(int site) const{ return (site+Nvolh_)%Nvol_ + (c_x(site) & 1);}
@@ -79,13 +75,19 @@ int SiteIndex::m_z(int site) const{ return (site+Nvolh_)%Nvol_-Nxh_*Ny_;}
 int SiteIndex::m_t(int site) const{ return (site+Nvolh_)%Nvol_-Nxh_*Ny_*Nz_;}
 
 int SiteIndex::slice_x(int x,int n) const{
-  int parity = 2*n/(Ny_*Nz_*Nt_);
-  int idx = 2*n-parity*(Ny_*Nz_*Nt_);
-  return idx*Nxh_+ ((x+parity+idx%(Nz_*Ny_)/Nz_+idx%Ny_+idx/(Ny_*Nz_)) & 1)*Nxh_+parity*Nvolh_+(x >> 1);}
+  int n1 = (x&1)*((Ny_*Nz_*Nt_)/2+n)%((Ny_*Nz_*Nt_))+(1-x&1)*n;
+  int parity = 2*n1/(Ny_*Nz_*Nt_);
+  int idx = 2*n1-parity*(Ny_*Nz_*Nt_);
+  return idx*Nxh_+ ((x+parity+idx%(Nz_*Ny_)/Nz_+idx%Ny_+idx/(Ny_*Nz_)) %2)*Nxh_+parity*Nvolh_+(x/2);}
 int SiteIndex::slice_y(int y,int n) const{
-  return (n/Nxh_)*Nxh_*Ny_+y*Nxh_+n%Nxh_;}
-int SiteIndex::slice_z(int z,int n) const{ return (n/(Nxh_*Ny_))*Nxh_*Ny_*Nz_+z*Nxh_*Ny_+n%(Nxh_*Ny_);}
-int SiteIndex::slice_t(int t,int n) const{ return t*NxNyNz_+n;}
+  int n1 = (y&1)*((Nxh_*Nz_*Nt_)+n)%((Nx_*Nz_*Nt_))+(1-y&1)*n;
+  return (n1/Nxh_)*Nxh_*Ny_+y*Nxh_+n1%Nxh_;}
+int SiteIndex::slice_z(int z,int n) const{
+  int n1 = (z&1)*((Nxh_*Ny_*Nt_)+n)%((Nx_*Ny_*Nt_))+(1-z&1)*n;
+  return (n1/(Nxh_*Ny_))*Nxh_*Ny_*Nz_+z*Nxh_*Ny_+n1%(Nxh_*Ny_);}
+int SiteIndex::slice_t(int t,int n) const{
+  int n1 = (t&1)*((Nxh_*Ny_*Nz_)+n)%((Nx_*Ny_*Nz_))+(1-t&1)*n;
+  return (n1/(Nxh_*Ny_*Nz_))*Nxh_*Ny_*Nz_*Nt_+n1%(Nxh_*Ny_*Nz_)+t*(Nxh_*Ny_*Nz_);}
 
 int SiteIndex::slsize(int x,int dir)const{ return slsize_[dir];}
 

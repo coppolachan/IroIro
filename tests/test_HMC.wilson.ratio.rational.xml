@@ -3,13 +3,13 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>4 4 4 8</Lattice>
-    <Nodes>1 1 1 2</Nodes>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>1 2 2 2</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">conf_04040408.txt</Configuration> 
+  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
     <Nsweeps>5</Nsweeps>
@@ -26,8 +26,8 @@
     </RandomNumberGen>
     
     <Integrator name="leapfrog_multistep">
-      <MDsteps>5</MDsteps>
-      <step_size>0.05</step_size>
+      <MDsteps>10</MDsteps>
+      <step_size>0.01</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
