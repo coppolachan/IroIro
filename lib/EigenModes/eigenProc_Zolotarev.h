@@ -68,18 +68,16 @@ public:
 
 void EigenProc_Zolotarev::calc(EigenData& ed){
 
-  Field b(fsize_);
   int Nlow, Nhigh;
-  int Nconv;
 
   ed.lmd.resize(Nmm_);
   ed.evec.resize(Nmm_);
   for(int k=0;k<Nmm_;++k) ed.evec[k].resize(fsize_);
   
-  eigen_high_->calc(ed.lmd,ed.evec,b,Nhigh,Nconv);
+  eigen_high_->calc(ed.lmd,ed.evec,Nhigh);
   double lmd_max = ed.lmd[0];
   
-  eigen_low_->calc(ed.lmd,ed.evec,b,Nlow,Nconv);
+  eigen_low_->calc(ed.lmd,ed.evec,Nlow);
   double lmd_min = ed.lmd[0];
   
   Zolotarev_coeffs(ed.bl,ed.cl,ed.sigma,Np_,lmd_max,lmd_min);

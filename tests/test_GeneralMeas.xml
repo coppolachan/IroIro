@@ -24,14 +24,14 @@
         <rho>0.1</rho>
       </Base>
     </Smearing>
-<!--    <GaugeFixing name="NoFixing"> -->
-    <GaugeFixing name="Coulomb"> 
+<!-- <GaugeFixing name="NoFixing">-->
+<GaugeFixing name="Coulomb">
       <max_iter>5000</max_iter>
       <monitor_step>10</monitor_step> 
-      <reset_step>1000</reset_step>
+      <reset_step>10000</reset_step>
       <or_step>50</or_step>
-      <or_prm>1.6</or_prm>
-      <sdm_step>400</sdm_step>
+      <or_prm>1.7</or_prm>
+      <sdm_step>4000</sdm_step>
       <sdm_prm>1.6</sdm_prm>
       <precision>1e-20</precision>
     </GaugeFixing>
@@ -66,14 +66,24 @@
 	</SolverDWF>
       </Kernel4d>
     </QuarkProp>  
--->
+
+<!--
     <Source type="Local">
       <position>0 0 0 0</position>
     </Source>
-<!--
+
     <Source type="Exp">
       <position>0 0 0 0</position>
       <alpha>0.4</alpha>
+    </Source>
+-->
+    <Source type="Wall">
+      <position>0</position>
+    </Source>
+<!--
+    <Source type="Gauss">
+      <position>0 0 0 0</position>
+      <alpha>0.5</alpha>
     </Source>
 -->
   </Measurement>

@@ -41,17 +41,15 @@ int Test_EigenModes_IRL::lowlying(){
   int    Niter = 500;
 
   EigenModes_IRL eigen(&Hw,&sort,Nk,Np,enorm,vthrs,Niter);
-  Field b(ff.size());
 
   int Nmm = 100;
   int Nsbt = -1;
-  int Nconv = -100;
 
   vector<double> lmd(Nmm);
   vector<Field>  evec(Nmm);
   for(int k=0; k<Nmm; ++k) evec[k].resize(ff.size());
 
-  eigen.calc(lmd,evec,b,Nsbt,Nconv);
+  eigen.calc(lmd,evec,Nsbt);
 
   Field v(ff.size());
   for(int i=0; i<Nsbt+1; ++i){
@@ -76,17 +74,15 @@ int Test_EigenModes_IRL::highest(){
   int    Niter = 500;
 
   EigenModes_IRL eigen(&Hw,&sort,Nk,Np,enorm,vthrs,Niter);
-  Field b(ff.size());
 
   int Nmm = 100;
   int Nsbt = -1;
-  int Nconv = -100;
 
   vector<double> lmd(Nmm);
   vector<Field>  evec(Nmm);
-  for(int k=0; k<Nmm; ++k){evec[k].resize(ff.size());}
+  for(int k=0; k<Nmm; ++k) evec[k].resize(ff.size());
 
-  eigen.calc(lmd,evec,b,Nsbt,Nconv);
+  eigen.calc(lmd,evec,Nsbt);
 
   Field v(ff.size());
   for(int i=0; i<Nsbt+1; ++i){
@@ -129,14 +125,12 @@ int Test_EigenModes_IRL::chebyshev()
 		       Tn_vthrs,Niter_eigen);
   int Nmm = 100;
   int Nsbt = -1;
-  int Nconv = -100;
 
-  Field b(ff.size());
   vector<double> lmd(Nmm);
   vector<Field>  evec(Nmm);
   for(int k=0; k<Nmm; ++k) evec[k].resize(ff.size());
 
-  eigen.calc(lmd,evec,b,Nsbt,Nconv);
+  eigen.calc(lmd,evec,Nsbt);
 
   Fopr_H Hw(Kernel);
 
@@ -149,8 +143,6 @@ int Test_EigenModes_IRL::chebyshev()
     printf(" %4d %20.14f  %10.4e  %10.4e\n",i,lmd[i],v*v,vden-1.0);
   }
   
-
   return 0;
-
 }
 
