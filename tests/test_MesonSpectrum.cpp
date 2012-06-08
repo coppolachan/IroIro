@@ -70,16 +70,33 @@ int Test_MesonSpectrum::run(){
   //  CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
 
   //// Meson correlators ////
-  GammaMatrices::Unit Gamma; //pion
-  MesonCorrelator meson(Gamma,Gamma);
+  //GammaMatrices::Unit Gamma; //pion
+  //MesonCorrelator meson(Gamma,Gamma);
+  
+  
+  {// pion correlation function 
+    MesonCorrelator meson(Pion);
+    
+    std::vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
+    CCIO::cout<<"---pp meson correlator---"<<endl;
+    for(int t=0; t<mcorr.size(); ++t){
+      CCIO::cout<< setiosflags(  ios_base::scientific);
+      CCIO::cout<< setw(3) <<setiosflags(ios_base::right)<< t;
+      CCIO::cout<< setw(25)<<setiosflags(ios_base::left )<< mcorr[t]<<endl;
+      CCIO::cout<< resetiosflags(ios_base::scientific);
+    }
+  }
+  {// vector1 correlation function 
+    MesonCorrelator meson(Vector1);
 
-  std::vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
-  CCIO::cout<<"---pp meson correlator---"<<endl;
-  for(int t=0; t<mcorr.size(); ++t){
-    CCIO::cout<< setiosflags(ios_base::scientific);
-    CCIO::cout<< setw(3) <<setiosflags(ios_base::right)<<t;
-    CCIO::cout<< setw(25)<<setiosflags(ios_base::left )<< mcorr[t]<<endl;
-    CCIO::cout<< resetiosflags(ios_base::scientific);
+    std::vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
+    CCIO::cout<<"---v1v1 meson correlator---"<<endl;
+    for(int t=0; t<mcorr.size(); ++t){
+      CCIO::cout<< setiosflags(  ios_base::scientific);
+      CCIO::cout<< setw(3) <<setiosflags(ios_base::right)<< t;
+      CCIO::cout<< setw(25)<<setiosflags(ios_base::left )<< mcorr[t]<<endl;
+      CCIO::cout<< resetiosflags(ios_base::scientific);
+    }
   }
   return 0;
 }
