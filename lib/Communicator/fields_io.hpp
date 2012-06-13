@@ -150,27 +150,34 @@ namespace CCIO {
 
   template <typename T>
   int ReadFromDisk(Field& f, const char* filename, int offset = 0, StoringFormat storeFormat = ILDGBinFormat) {
-    T format(CommonPrms::instance()->Nvol());
-    Field Global;
     Communicator* comm = Communicator::instance();
+    if(comm->primaryNode()) {std::cout << "Format initialization... " << std::endl;}
+    T format(CommonPrms::instance()->Nvol());
     size_t local_index, global_index;
     int num_nodes, total_volume, local_volume;
     
-    
+    if(comm->primaryNode()) {std::cout << "Lattice constants initialization... " << std::endl;}
     total_volume = CommonPrms::instance()->Lvol();
     local_volume = CommonPrms::instance()->Nvol();
     num_nodes    = CommonPrms::instance()->NP();
     
+    if(comm->primaryNode()) {std::cout << "Global field initialization... " << std::endl;}
+    Field Global;
+
+
     //Read data from single file on disk
     if(comm->primaryNode()) {
       std::ifstream Inputfile;
+      std::cout << "Global resize "  << format.size() << "*" << num_nodes << std::endl;
       Global.resize(format.size()*num_nodes);
       
+      std::cout << "Opening file" << std::endl;
       Inputfile.open(filename, std::ios::binary);
+      
       if (Inputfile.good()) {
 	
 	std::cout << "Binary reading "<<Global.size()*sizeof(double)
-		  <<" bytes on "<< filename << " with offset "<< offset <<"\n";
+		  <<" bytes on "<< filename << " with offset "<< offset <<"... ";
 	Inputfile.seekg(offset, std::ios::beg);
 	if (storeFormat== ILDGBinFormat) {
 	  Global.read_stream(Inputfile);
@@ -190,24 +197,26 @@ namespace CCIO {
 	std::cout<< "Error in opening file [" << filename << "]\n";
 	abort();
       }
+      std::cout << "done\n";
+      std::cout.flush();
       Inputfile.close();
     }
     
     std::vector<int> global_site(local_volume);
-    std::vector< std::valarray<double>* > primaryField;//for accumulation
+    //    std::vector< std::valarray<double>* > primaryField;//for accumulation
     std::valarray<double> local(format.size());
-    
+    std::valarray<double>* primaryField = new std::valarray<double>(format.size());   
+
+    if(comm->primaryNode()) {std::cout << "Broadcasting on nodes... ";}
     for (int node=0; node < num_nodes; ++node) {
-      primaryField.push_back(new std::valarray<double>(format.size()));
+      //if(comm->primaryNode()) {std::cout << "node "<< node <<" starting loop \n";}
+      //primaryField.push_back(new std::valarray<double>(format.size()));
       
       global_site = SiteIndex::instance()->get_gsite();
-      /*
-      for (int site = 0; site < local_volume; ++site)
-	global_site[site] = SiteIndex::instance()-> gsite(site);
-      */
       comm->sync();    
       //copy global index array on primary node
       comm->broadcast(local_volume, global_site[0], node);//1to1 enough but int not provided
+      //if(comm->primaryNode()) {std::cout << "node "<< node <<" broadcasting \n";}
       if(comm->primaryNode()) {	  
 	for (int site=0; site < format.Nvol(); ++site) {
 	  for (int internal =0; internal < format.Nin(); ++internal) {
@@ -215,20 +224,26 @@ namespace CCIO {
 	      local_index = format.index(internal, site, external);
 	      global_index = storeFormat(global_site[site], internal, external, 
 					 total_volume, format.Nin(), format.Nex());
-	      (*primaryField[node])[local_index] = Global[global_index];
+	      //(*primaryField[node])[local_index] = Global[global_index];
+	      (*primaryField)[local_index] = Global[global_index];
 	      
 	    }
 	  }
 	}
-      }
+      } // end of index translation on primary Node
+      comm->sync();
+      comm->send_1to1(local, *primaryField, local.size(),node, 0, node);
+      f = Field(local);
+      //close node for loop
     }
-    //closing loop among processing nodes
-    comm->sync();
+    if(comm->primaryNode()) {std::cout << "done\n";}
+    //closing loop among processing nodes - older version
+    //comm->sync();
     //copy one by one the local fields stored in the nodes into primary node
-    for (int node=0; node < num_nodes; ++node) 
-      comm->send_1to1(local, *(primaryField[node]), local.size(),node, 0, node);	
+    //for (int node=0; node < num_nodes; ++node) 
+    //  comm->send_1to1(local, *(primaryField[node]), local.size(),node, 0, node);	
     
-    f = Field(local);
+    //f = Field(local);
     return 0;
   }
   

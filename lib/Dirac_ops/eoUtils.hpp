@@ -31,6 +31,7 @@ namespace EvenOddUtils{
        osub_(ff_.get_sub(idx_->osec())){}
 
     void invert(Field& sol,const Field& src) const;
+    Field mult(const Field& in) const;
     void test(Field& Df, const Field& f) const;
   };
 }

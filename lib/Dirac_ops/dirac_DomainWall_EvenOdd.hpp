@@ -78,6 +78,7 @@ public:
 
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 
+
   const Field mult_eo_dag(const Field& f) const;
   const Field mult_oe_dag(const Field& f) const;
 
@@ -94,6 +95,11 @@ public:
     return SiteIndex_EvenOdd::instance()->get_gsite();}
 
   void update_internal_state(){} 
+
+  ////////////////////////////
+#ifdef IBM_BGQ_WILSON
+  void BGQ_EO_mult(Field&, const Field&) const;
+#endif
 };
 
 

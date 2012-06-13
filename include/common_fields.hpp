@@ -305,6 +305,8 @@ public:
       }
     } catch(...) {
       std::cout << "Error in initialization of gauge field "<< std::endl;
+      abort();
+
     }
     return 0;
   }
