@@ -92,6 +92,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/sortEigen.cpp		\
 		EigenModes/fopr_chebyshev_DdagD.cpp	\
 		EigenModes/findminmax.cpp		\
+		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
@@ -177,6 +178,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Action/action_Nf2_ratio.hpp			\
 			Action/action_Nf_ratio.hpp			\
 			Action/action_Nf2_DomainWall.hpp		\
+			Measurements/measGeneral.hpp			\
 			Measurements/GaugeM/staples.hpp			\
 			Measurements/GaugeM/gaugeFixing.hpp		\
 			Measurements/GaugeM/gaugeFixingStep.hpp		\

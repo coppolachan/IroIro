@@ -113,7 +113,7 @@ double RandNum_MT19937::rand_res53()const{
 }
 
 // save the seed config
-void RandNum_MT19937::saveSeed(std::string& file) const {
+void RandNum_MT19937::saveSeed(const std::string& file) const {
   if (Communicator::instance()->primaryNode()) {
     CCIO::cout << "Saving Mersenne Twister in file ["
 	       << file << "]\n";
@@ -129,7 +129,7 @@ void RandNum_MT19937::saveSeed(std::string& file) const {
 }
 
 // load the seed config
-void RandNum_MT19937::loadSeed(std::string& file) {
+void RandNum_MT19937::loadSeed(const std::string& file) {
   if (Communicator::primaryNode()){
   std::cout << "Loading Mersenne Twister seeds from file ["
 	     << file << "]\n";

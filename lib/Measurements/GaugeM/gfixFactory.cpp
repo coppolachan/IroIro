@@ -5,8 +5,8 @@
 #include <string.h>
 
 namespace GaugeFix{
+
   GFixFactory* createGaugeFixingFactory(XML::node& node){
-    XML::descend(node, "GaugeFixing");
 
     if(node != NULL){
       const char* Gfix_name = node.attribute("name").value();

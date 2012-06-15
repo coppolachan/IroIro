@@ -11,16 +11,11 @@ class Test_MesonSpectrum: public TestGeneral{
 private:
   XML::node node_;
   GaugeField conf_;
-  GaugeField smeared_u_;
-  GaugeField fixed_u_;
+  std::string output_;
 public:
-  Test_MesonSpectrum(XML::node node,GaugeField conf)
-    :node_(node),conf_(conf),
-     smeared_u_(conf.Nvol()),
-     fixed_u_(conf.Nvol()){
-    XML::descend(node_,"Measurement");
-  }
-
+  Test_MesonSpectrum(XML::node node,GaugeField conf,
+		     const RandNum&,std::string file)
+    :node_(node),conf_(conf),output_(file){}
   int run();
 };
 
