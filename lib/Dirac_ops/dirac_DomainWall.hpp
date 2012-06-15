@@ -17,6 +17,9 @@
 #include "dirac_wilson.hpp"
 #include "dirac_Preconditioners.hpp"
 
+static double wilson_mult_timer;
+static double wilson_multdag_timer;
+
 namespace DomainWallFermions {
   struct EvenOdd_tag{};
   const std::vector<double> 

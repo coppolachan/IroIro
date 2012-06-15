@@ -16,6 +16,7 @@ int GaugeConf::getid(int x,int y,int z,int t){
 }
 
 void GaugeConf_bin::init_conf(Field& U){
+  CCIO::cout << "Init from binary file\n";
   CCIO::ReadFromDisk< Format::Format_G >(U,file.c_str());
 }
 

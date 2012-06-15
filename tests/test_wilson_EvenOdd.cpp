@@ -143,7 +143,7 @@ int Test_Wilson_EvenOdd::run(){
 	      <<std::endl;  
 */
   //------------ e/o preconditioned solver ------------------
-  int    Niter= 1000;
+  int    Niter= 2000;
   double stop_cond = 1.0e-24;
 
   CCIO::cout<<"e/o-index: calc of quark propagator starts "<<std::endl;
@@ -161,7 +161,9 @@ int Test_Wilson_EvenOdd::run(){
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
   while(it!=mcorr.end()) CCIO::cout<<t++<<" "<< *it++ << std::endl;
+  
 
+  /*
   //---------------- full-index solver ------------------
   Niter= 1000;
   stop_cond = 1.0e-24;
@@ -179,6 +181,8 @@ int Test_Wilson_EvenOdd::run(){
   it=mcorr.begin();
   t=0;
   while(it!=mcorr.end()) CCIO::cout<<t++<<" "<< *it++ << std::endl;
+  */
+
 
   return 0;
 }

@@ -8,12 +8,15 @@
 
 #include "dirac_DomainWall.hpp"
 
+static  double mult_timer;
+static  double multdag_timer;
 /*!
  * @brief Defines the 5d Domain Wall operator with even/odd site indexing
  */
 class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
   const Dirac_optimalDomainWall Deo_;
   const Dirac_optimalDomainWall Doe_;
+
 
   void md_force_eo(Field&,const Field&,const Field&)const;
   void md_force_oe(Field&,const Field&,const Field&)const;
@@ -40,7 +43,10 @@ public:
     :Deo_(b,c,M0,mq,omega,u,Dw::EOtag()),
      Doe_(b,c,M0,mq,omega,u,Dw::OEtag()){}
   
-  ~Dirac_optimalDomainWall_EvenOdd(){}
+  ~Dirac_optimalDomainWall_EvenOdd(){
+    CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";
+    CCIO::cout << "DWF Timer multdag: "<< multdag_timer << "\n";
+}
   
   size_t f4size()const{ return Deo_.f4size();}
   size_t fsize() const{ return Deo_.fsize(); }
@@ -72,6 +78,7 @@ public:
 
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 
+
   const Field mult_eo_dag(const Field& f) const;
   const Field mult_oe_dag(const Field& f) const;
 
@@ -88,6 +95,11 @@ public:
     return SiteIndex_EvenOdd::instance()->get_gsite();}
 
   void update_internal_state(){} 
+
+  ////////////////////////////
+#ifdef IBM_BGQ_WILSON
+  void BGQ_EO_mult(Field&, const Field&) const;
+#endif
 };
 
 

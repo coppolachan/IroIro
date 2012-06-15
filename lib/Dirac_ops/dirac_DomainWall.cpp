@@ -17,6 +17,7 @@
 
 #ifdef IBM_BGQ_WILSON
 #include "bgqwilson.h"
+#include <omp.h>
 #endif
 
 using namespace std;
@@ -361,7 +362,6 @@ const Field Dirac_optimalDomainWall::mult_hop5_dinv(const Field& f5) const{
 void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{ 
 #pragma disjoint
   using namespace FieldExpression;
-  
 #ifdef IBM_BGQ_WILSON
   Field lpf(f4size_), lmf(f4size_), v(f4size_),w(f4size_);
 
@@ -392,7 +392,7 @@ void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{
     BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr,
 		     Params.bs_[s],Params.cs_[s],Nvol);
     
-    Dw_.mult_ptr(w_ptr, v_ptr);    
+    Dw_.mult_ptr(w_ptr, v_ptr);  
     BGWilsonLA_AXPBYPZ(w5_ptr, w_ptr, lpf_ptr, f5_ptr,
 		       4.0+M0_,-1.0,Nvol);
   }
@@ -418,16 +418,14 @@ void Dirac_optimalDomainWall::mult_full(Field& w5, const Field& f5) const{
       lpf_ptr[i] += lmf_ptr[i];
       v_ptr[i] = Params.bs_[s]*f5_ptr[i]+Params.cs_[s]*lpf_ptr[i];
     }
-
     w = Dw_.mult(v);
-
+  
     for (int i=0; i<f4size_; ++i) {
       w5_ptr[i] = mass_fact*w_ptr[i]+ f5_ptr[i] - lpf_ptr[i];
     }
 
   }
 #endif
-
 }
 
 void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
@@ -524,20 +522,18 @@ void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
 
 void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{ 
 #pragma disjoint
-
-#ifdef IBM_BGQ_WILSON
+  #ifdef IBM_BGQ_WILSON
   Field lpf(f4size_), lmf(f4size_), w(f4size_), v(f4size_);
   double* w_ptr = w.getaddr(0);
   double* v_ptr = v.getaddr(0);
   double* lpf_ptr = lpf.getaddr(0);
   double* lmf_ptr = lmf.getaddr(0);
   double mass_fact= 4.0+M0_;
-
+  double* f5_ptr = const_cast<Field&>(f5).getaddr(0);
+  double* w5_ptr   = w5.getaddr(0);
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
   for(int s=0; s<N5_; ++s) {
-    double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
-    double* w5_ptr   = w5.getaddr(s*f4size_);
     BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Dw_.get_fermionFormat().index(0,0,(s+N5_-1)%N5_)),Nvol);
     BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Dw_.get_fermionFormat().index(0,0,(s+1)%N5_)),Nvol);
 
@@ -554,9 +550,11 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{
 		     Params.bs_[s],Params.cs_[s],Nvol);
     
     Dw_.mult_ptr_EO(w_ptr, v_ptr);
-    //w = Dw_.mult(v);
+
     BGWilsonLA_MultScalar(w5_ptr, w_ptr, mass_fact, Nvol);
     
+    f5_ptr += f4size_;
+    w5_ptr += f4size_;
   }
 #else
   Field lpf(f4size_), lmf(f4size_), w(f4size_), v(f4size_);
@@ -579,18 +577,15 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{
       v_ptr[i] = Params.bs_[s]*f5_ptr[i]+Params.cs_[s]*lpf_ptr[i];
     }
     w = Dw_.mult(v);
-    //    Dw_.mult_ptr(w_ptr, v_ptr);   
     for (int i=0; i<f4size_; ++i) {
       w5_ptr[i] = mass_fact*w_ptr[i];
     }
   }
 #endif
-
-}
+  }
 
 void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
 #ifdef IBM_BGQ_WILSON
-  assert(w5.size()==f5.size());
   Field v5(fsize_),lpf(f4size_), lmf(f4size_),w(f4size_);
   int spin_idx;
   double cs, bs;
@@ -606,7 +601,7 @@ void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
     
     bs = (4.0+M0_)*Params.bs_[s];
     cs = (4.0+M0_)*Params.cs_[s];
-    
+
     Dw_.mult_dag_ptr_EO(w_ptr, f5_ptr);
   
     BGWilsonLA_MultScalar(w5_ptr, w_ptr, bs,Nvol);
@@ -681,48 +676,97 @@ const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
 
 void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
 #ifdef IBM_BGQ_WILSON
-  Field lpf(f4size_), lmf(f4size_), w(f4size_), v(f4size_), ey(f4size_), fy(f4size_);
-  Field temp(fsize_);
-  double* w_ptr = w.getaddr(0);
-  double* v_ptr = v.getaddr(0);
-  double* lpf_ptr = lpf.getaddr(0);
-  double* lmf_ptr = lmf.getaddr(0);
-  double* ey_ptr = ey.getaddr(0);
-  double* fy_ptr = fy.getaddr(0);
+  timeval start_, end_;
+  
+  typedef struct FermionSpinor{
+    double _Complex v[12];
+  }Spinor;
+  typedef struct GaugeConf{
+    double _Complex v[9];
+  }GaugePtr;
 
-  double mass_fact= 4.0+M0_;
+  Field lpf(f4size_);
+  Field lmf(f4size_), w(f4size_), v(f4size_), ey(f4size_), fy(f4size_);
+  Field temp(fsize_);
+
+  //Spinor* w_ptr    = (Spinor*)w.getaddr(0);
+  Spinor* w_ptr    = (Spinor*)malloc(sizeof(double)*f4size_);
+  //Spinor* v_ptr    = (Spinor*)v.getaddr(0);
+  Spinor* v_ptr    = (Spinor*)malloc(sizeof(double)*f4size_);
+  Spinor* lpf_ptr  = (Spinor*)lpf.getaddr(0);
+  Spinor* lmf_ptr  = (Spinor*)lmf.getaddr(0);
+  Spinor* ey_ptr   = (Spinor*)ey.getaddr(0);
+  Spinor* fy_ptr   = (Spinor*)fy.getaddr(0);
+  Spinor* temp_ptr = (Spinor*)temp.getaddr(0);
+
+  GaugePtr* pU       = (GaugePtr*)(const_cast<Field *>(u_)->getaddr(0));
+  Spinor* f5_ptr     = (Spinor*)(const_cast<Field&>(f5).getaddr(0));
+
+  double mass_fact   = 4.0+M0_;
   double minus_kappa = -Dw_.getKappa();
 
-  double* pU = const_cast<Field *>(u_)->getaddr(0);
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
   Format::Format_F Fformat = Dw_.get_fermionFormat();
 
-  //doe
-  for(int s=0; s<N5_; ++s) {
-    double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
-    double* temp_ptr   = temp.getaddr(s*f4size_);
-    BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,(s+N5_-1)%N5_)),Nvol);
-    BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,(s+1)%N5_)),Nvol);
+  int tid, nid;
+  int is, ns;
 
-    if(s==0){
-      BGWilsonLA_MultScalar_Add(lpf_ptr,lmf_ptr,-mq_,Nvol);
-    }
-    else if(s==N5_-1){
-      BGWilsonLA_MultAddScalar(lpf_ptr,lmf_ptr,-mq_,Nvol);
-    }
-    else{
-      BGWilsonLA_Add(lpf_ptr,lmf_ptr,Nvol);
-    }
-    BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr,
-		     Params.bs_[s],Params.cs_[s],Nvol);
+  ///////////////////////////////  doe
+  BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,N5_-1)),Nvol);
+  BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,1)),Nvol);
+  BGWilsonLA_MultScalar_Add(lpf_ptr,lmf_ptr,-mq_,Nvol);
+  BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr, Params.bs_[0],Params.cs_[0],Nvol);
+
+#pragma omp parallel private(tid,nid,is,ns) 
+  {
+    nid = omp_get_num_threads();
+    tid = omp_get_thread_num();
+    is = (Nvol * tid / nid);
+    ns = Nvol/nid;
+    
+    // s = 0
+    //BGWilsonLA_Proj_P(lpf_ptr + is,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,N5_-1))+is,ns);
+    //BGWilsonLA_Proj_M(lmf_ptr + is,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,1))+is,ns);
+    //BGWilsonLA_MultScalar_Add(lpf_ptr + is,lmf_ptr + is,-mq_,ns);
+    //BGWilsonLA_AXPBY(v_ptr + is, f5_ptr + is, lpf_ptr + is, Params.bs_[0], Params.cs_[0], ns);
+
+    BGWilson_MultEO(w_ptr, pU, v_ptr, minus_kappa , 2, BGWILSON_DIRAC);
+    
+    //BGWilsonLA_MultScalar(temp_ptr+is, w_ptr+is, mass_fact, ns);
+  }
+  //BGWilson_MultEO(w_ptr, pU, v_ptr, minus_kappa , 2, BGWILSON_DIRAC);
+  //CCIO::cout << "w : "<< w.norm() << "  v: "<< v.norm() << "\n";
+  BGWilsonLA_MultScalar(temp_ptr, w_ptr, mass_fact, Nvol);
+
+  for(int s=1; s<N5_-1; ++s) {
+    f5_ptr   += Nvol;
+    temp_ptr += Nvol;
+    
+    BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,s-1)),Nvol);
+    BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,s+1)),Nvol);
+    BGWilsonLA_Add(lpf_ptr,lmf_ptr,Nvol);
+    BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr, Params.bs_[s],Params.cs_[s],Nvol);
     
     BGWilson_MultEO(w_ptr, pU, v_ptr, minus_kappa , 2, BGWILSON_DIRAC);
     BGWilsonLA_MultScalar(temp_ptr, w_ptr, mass_fact, Nvol);
-    
   }
+  
+  // s = N5-1
+  f5_ptr   += Nvol;
+  temp_ptr += Nvol;
+  
+  BGWilsonLA_Proj_P(lpf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,N5_-2)),Nvol);
+  BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(f5).getaddr(Fformat.index(0,0,0)),Nvol);
+  BGWilsonLA_MultAddScalar(lpf_ptr,lmf_ptr,-mq_,Nvol);  
+  BGWilsonLA_AXPBY(v_ptr, f5_ptr, lpf_ptr, Params.bs_[N5_-1],Params.cs_[N5_-1],Nvol);
+  BGWilson_MultEO(w_ptr, pU, v_ptr, minus_kappa , 2, BGWILSON_DIRAC);
+  BGWilsonLA_MultScalar(temp_ptr, w_ptr, mass_fact, Nvol);
+  
+  
 
 
+  /// 5d hopping term
   double* temp_ptr_bdry   = temp.getaddr((N5_-1)*f4size_);
   BGWilsonLA_Proj_M(ey_ptr,temp.getaddr(Fformat.index(0,0,0)),Nvol);
   BGWilsonLA_MultAddScalar(temp_ptr_bdry,     ey_ptr,-mq_* Params.es_[0],Nvol);
@@ -755,7 +799,7 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
     BGWilsonLA_MultScalar(temp_ptr, temp_ptr, 1.0/ Params.dp_[s], Nvol);
   }
 
-  //deo
+  ////////////////deo
   for(int s=0; s<N5_; ++s) {
     double* temp_ptr = temp.getaddr(s*f4size_);
     double* w5_ptr   = w5.getaddr(s*f4size_);
@@ -775,6 +819,7 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
 		     Params.bs_[s],Params.cs_[s],Nvol);
     
     BGWilson_MultEO(w_ptr, pU, v_ptr, minus_kappa , 1, BGWILSON_DIRAC);
+
     BGWilsonLA_MultScalar(w5_ptr, w_ptr, mass_fact, Nvol);
   }
 
@@ -810,6 +855,9 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
   }
 
   BGWilsonLA_MultScalar_Add(w5.getaddr(0),const_cast<Field&>(f5).getaddr(0), -1.0, Nvol*N5_);
+
+  free(v_ptr);
+  free(w_ptr);
 
 #else
   Field lpf(f4size_), lmf(f4size_), w(f4size_), v(f4size_), ey(f4size_), fy(f4size_);
@@ -1010,7 +1058,6 @@ const Field Dirac_optimalDomainWall::get4d(const Field& f5,int s) const{
   Field w(f4size_);
   for (int i=0; i<f4size_; ++i) w.set(i, f5[s*f4size_+i]);
   return w;
-  //  return Field(f5[std::slice(s*f4size_,f4size_,1)]);
 }
 void Dirac_optimalDomainWall::get4d(Field& f4,const Field& f5,int s) const{
   for (int i=0; i<f4size_; ++i) f4.set(i,f5[s*f4size_+i]);
@@ -1020,7 +1067,6 @@ void Dirac_optimalDomainWall::get4d_c(Field& f4,const Field& f5,const double& c,
   double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
 
   for (int i=0; i<f4size_; ++i) {
-    //f4.set(i,c*f5[s*f4size_+i]);
     f4_ptr[i] = c*f5_ptr[i];
   }
 }
@@ -1032,7 +1078,6 @@ void Dirac_optimalDomainWall::set5d_c(Field& f5,const Field& f4,const double c,i
   double* f4_ptr = const_cast<Field&>(f4).getaddr(0);
 
   for (int i=0; i<f4size_; i++){
-    //f5.set(s*f4size_+i,c*f4[i]);
     f5_ptr[i] = c*f4_ptr[i];
   }
 }
@@ -1097,3 +1142,5 @@ namespace DomainWallFermions {
     return omegas;
   }
 }
+
+
