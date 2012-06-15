@@ -162,4 +162,5 @@ include_HEADERS 	=	tests.hpp			\
 				test_MesonSpectrum.hpp		\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
-				test_RationalApprox.hpp
+				test_RationalApprox.hpp		\
+	                        test_Solver_Perf.hpp

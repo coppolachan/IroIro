@@ -4,8 +4,8 @@
 #ifndef MEASGENERAL_INCLUDED
 #define MEASGENERAL_INCLUDED
 
-#include "pugi_interface.h"
-#include "common_fields.hpp"
+#include "include/pugi_interface.h"
+#include "include/common_fields.hpp"
 #include "Tools/randNum_Factory.h"
 #include <string>
 #include <vector>
