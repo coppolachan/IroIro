@@ -9,9 +9,10 @@
 class Field;
 class SortEigen;
 
-/*
-  @brief Class to calculate EigenModes using Implicit restarted Lanzcos method
+/*!@brief Class to calculate EigenModes using Implicit 
+   restarted Lanzcos method
 */
+
 class EigenModes_IRL{
 private:
   const Fopr* opr_;
@@ -21,24 +22,31 @@ private:
   double enorm_;
   double vthrs_;
   int Niter_;
-
+  
   void setUnit(std::vector<double>& Qt)const;
 
-  void decomp_Lanczos(std::vector<double>& lmda,
-		      std::vector<double>& lmdb, 
-		      Field& f,
-		      std::vector<Field>& v,int k)const;
+  void lanczos_init(std::vector<double>& ta,
+		    std::vector<double>& tb, 
+		    std::vector<Field>& V)const;
 
- void qr_decomp(std::vector<double>& lmda,
-		std::vector<double>& lmdb,
-		std::vector<double>& Qt,
-		int Nk,double sft,int k_min,int k_max)const;
+  void lanczos_ext(std::vector<double>& ta,
+		   std::vector<double>& tb, 
+		   std::vector<Field>& V,Field& f)const;
 
-  void diagonalize(std::vector<double>& lmda,
-		   std::vector<double>& lmdb, 
+ void QRdecomp_Givens(std::vector<double>& ta,
+		      std::vector<double>& tb,
+		      std::vector<double>& Qt,
+		      int Nk,double sft,int k_min,int k_max)const;
+
+  void diagonalize(std::vector<double>& ta,
+		   std::vector<double>& tb, 
 		   std::vector<double>& Qt,int Nk)const;
 
   void orthogonalize(Field& w,const std::vector<Field>& evec,int k)const;
+  
+  void step(int Nm, int k, std::vector<double>& TDa,
+	    std::vector<double>& TDb,
+	    std::vector<Field>& vk, Field& w)const;
 public:
   EigenModes_IRL(const Fopr* fopr,const SortEigen* sort,
 		 int Nk,int Np,double enorm,double vthrs,int Niter)
@@ -46,7 +54,8 @@ public:
      Nk_(Nk),Nm_(Nk+Np),enorm_(enorm),vthrs_(vthrs),
      Niter_(Niter){}
 
-  void calc(std::vector<double>& lmd,std::vector<Field>& evec,int& Nsbt)const;
+  void calc(std::vector<double>& lmd,
+	    std::vector<Field>& evec,int& Nsbt)const;
 };
 
 #endif
