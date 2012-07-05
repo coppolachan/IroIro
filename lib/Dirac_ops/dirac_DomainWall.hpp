@@ -235,7 +235,7 @@ public:
   const Field mult_dag(const Field&)const;
 
   void mult_hop(Field&, const Field&)const;
-
+  void mult_hop_dag(Field&, const Field&)const;
 
   // mult in the heavy quark limit
   const Field mult_hop5(const Field& f5) const;    /*! @brief mult in the heavy M0 limit*/

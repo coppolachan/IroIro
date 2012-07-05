@@ -187,7 +187,7 @@ namespace CCIO {
 	    std::cout << "JLQCDLegacyFormat ";
 	    Inputfile.read((char*)storage, sizeof(double)*Global.size());
 	    #ifdef BIG_ENDIAN_TYPE
-	    byte_swap_double(storage, Global.size());
+	    //byte_swap_double(storage, Global.size());
 	    #endif
 	    Global = Field(std::valarray<double>(storage,Global.size())); 
 	    delete[] storage;
