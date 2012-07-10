@@ -9,86 +9,50 @@
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 
+using namespace std;
+
 int Test_MesonSpectrum::run(){
-  Staples Staple;
-  CCIO::cout<< "Plaquette (thin): "<< Staple.plaquette(conf_) <<"\n";
-
-
-  //// smearing ////
-  XML::node smr_node = node_; 
-  XML::descend(smr_node,"Smearing"); 
-
-  int Nsmear;                                    
-  XML::read(smr_node,"Nsmear",Nsmear,MANDATORY);  
-
-  SmearingOperatorFactory* SmrFactory = 
-    SmearingOperators::createSmearingOperatorFactory(smr_node);
-  Smear* SmearingObj = SmrFactory->getSmearingOperator();
-
-  smeared_u_= conf_; // Copy original configuration to smeared_u_ 
-  for(int i=0; i<Nsmear; ++i){ // Do the actual smearing 
-    GaugeField previous_u_= smeared_u_;
-    SmearingObj->smear(smeared_u_,previous_u_);
-  }
-  CCIO::cout<< "Plaquette (smeared): "<< Staple.plaquette(smeared_u_)
-    	    << std::endl;
-
-  //// random number generator ////
-  XML::node rng_node = node_;  // copy of the root node
-  RNG_Env::RNG = RNG_Env::createRNGfactory(rng_node);
-
-  //// gauge fixing ////
-  XML::node gfix_node = node_;
-  GFixFactory* gffctry = GaugeFix::createGaugeFixingFactory(gfix_node);
-  GaugeFixing* gfix 
-    = gffctry->getGaugeFixing(*(RNG_Env::RNG->getRandomNumGenerator()));
-
-  fixed_u_= gfix->do_fix(smeared_u_);
-
-  CCIO::cout<< "Plaquette (gauge fixed): "<< Staple.plaquette(fixed_u_)
-	    << std::endl;
-  
   //// Quark Propagator ////
   XML::descend(node_,"QuarkProp");
   QuarkPropagatorFactory* 
     qpfact = QuarkPropagators::createQuarkPropagatorFactory(node_);
-  QuarkPropagator* qprop = qpfact->getQuarkProp(fixed_u_);
-
+  QuarkPropagator* qprop = qpfact->getQuarkProp(conf_);
+  
   //// source creation ////
   XML::next_sibling(node_,"Source");
   SourceFactory* SrcFactory 
     = Sources::createSourceFactory<SiteIndex,Format::Format_F>(node_);
   Source* src = SrcFactory->getSource();
-  /*
-  Field source = src->mksrc(0,0);
-  Format::Format_F ff(CommonPrms::instance()->Nvol());
 
-  for(int site=0;site<CommonPrms::instance()->Nvol();++site){
-    int x = SiteIndex::instance()->global_x(SiteIndex::instance()->c_x(site));
-    int y = SiteIndex::instance()->global_y(SiteIndex::instance()->c_y(site));
-    int z = SiteIndex::instance()->global_z(SiteIndex::instance()->c_z(site));
-    int t = SiteIndex::instance()->global_t(SiteIndex::instance()->c_t(site));
-
-    CCIO::cout<<x<<" "<<y<<" "<<z<<" "<<t
-	      <<" "<<source[ff.index_r(0,0,site)]
-	      <<" "<<source[ff.index_i(0,0,site)]
-	      <<std::endl;
-  }
-  */
   prop_t sq;  //Defines a vector of fields
   CCIO::cout << " ---- Calculating propagator\n";
   qprop->calc(sq,*src);
 
-  //  CCIO::ReadFromDisk < Format::Format_F >(sq, "propagator.bin", 12);
-  //  CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
+  // meson correlators
+  CCIO::cout << " ---- Making up meson correlators\n";
+  MesonCorrelator pp(Pion), v1v1(Vector1);
+  vector<double> Cpp   = pp.calculate<Format::Format_F>(sq,sq);  
+  vector<double> Cv1v1 = v1v1.calculate<Format::Format_F>(sq,sq);  
 
-  //// Meson correlators ////
-  GammaMatrices::Unit Gamma; //pion
-  MesonCorrelator meson(Gamma,Gamma);
+  // output
+  CCIO::cout << " ---- Output in "<< output_.c_str()<<"\n";
+  if(Communicator::instance()->primaryNode()){
+    ofstream writer(output_.c_str());
 
-  std::vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
-  for(int t=0; t<mcorr.size(); ++t)
-    CCIO::cout<< t <<" "<< mcorr[t] <<std::endl;
-
+    writer<< setiosflags(  ios_base::scientific);
+    writer<<"---pp meson correlator---"<<endl;
+    for(int t=0; t<Cpp.size(); ++t){
+      writer<< setw(2) <<setiosflags(ios_base::right)<< t;
+      writer<< setw(20)<<setiosflags(ios_base::left )<< Cpp[t]<<endl;
+    }
+    writer<<"---v1v1 meson correlator---"<<endl;
+    for(int t=0; t<Cv1v1.size(); ++t){
+      writer<< setw(2) <<setiosflags(ios_base::right)<< t;
+      writer<< setw(20)<<setiosflags(ios_base::left )<< Cv1v1[t]<<endl;
+    }
+    writer<< resetiosflags(ios_base::scientific);
+    writer.close();
+  }
+  Communicator::instance()->sync();
   return 0;
 }

@@ -4,8 +4,6 @@
 #ifndef EIGENMODES_IRL_INCLUDED
 #define EIGENMODES_IRL_INCLUDED
 #include <vector>
-#include <algorithm>
-
 #include "include/fopr.h"
 
 class Field;
@@ -19,56 +17,36 @@ private:
   const Fopr* opr_;
   const SortEigen* sort_;
   int Nk_;
-  int Np_;
+  int Nm_;
   double enorm_;
   double vthrs_;
   int Niter_;
 
-  void setUnit_Qt(int Nn, std::vector<double>& Qt)const;
-  void step(std::vector<double>& lmda,
-	    std::vector<double>& lmdb, 
-	    std::vector<Field>& evec,
-	    Field& f,int Nm,int k)const;
+  void setUnit(std::vector<double>& Qt)const;
+
+  void decomp_Lanczos(std::vector<double>& lmda,
+		      std::vector<double>& lmdb, 
+		      Field& f,
+		      std::vector<Field>& v,int k)const;
 
  void qr_decomp(std::vector<double>& lmda,
 		std::vector<double>& lmdb,
-		int Nk,
-		int Nm,
 		std::vector<double>& Qt,
-		double Dsft, 
-		int kmin,
-		int kmax)const;
+		int Nk,double sft,int k_min,int k_max)const;
 
   void diagonalize(std::vector<double>& lmda,
 		   std::vector<double>& lmdb, 
-		   int Nm2,
-		   int Nm,
-		   std::vector<double>& Qt)const;
+		   std::vector<double>& Qt,int Nk)const;
 
-  void orthogonalize(Field& w,
-		     const std::vector<Field>& evec,
-		     int k)const;
-
+  void orthogonalize(Field& w,const std::vector<Field>& evec,int k)const;
 public:
-  EigenModes_IRL(const Fopr* fopr,
-		 const SortEigen* sort,
-		 int Nk,
-		 int Np,
-		 double enorm,
-		 double vthrs,
-		 int Niter)
+  EigenModes_IRL(const Fopr* fopr,const SortEigen* sort,
+		 int Nk,int Np,double enorm,double vthrs,int Niter)
     :opr_(fopr),sort_(sort),
-     Nk_(Nk),
-     Np_(Np),
-     enorm_(enorm),
-     vthrs_(vthrs),
+     Nk_(Nk),Nm_(Nk+Np),enorm_(enorm),vthrs_(vthrs),
      Niter_(Niter){}
 
-  void calc(std::vector<double>& lmd,
-	    std::vector<Field>& evec,
-	    const Field& b,
-	    int& Nsbt,
-	    int& Nconv) const;
+  void calc(std::vector<double>& lmd,std::vector<Field>& evec,int& Nsbt)const;
 };
 
 #endif

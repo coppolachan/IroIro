@@ -16,6 +16,7 @@ namespace XML
 {
   typedef pugi::xml_document document;
   typedef pugi::xml_node node;
+  typedef pugi::xml_node_iterator iterator;
 
   typedef Singleton<document> ParamsXML;
 

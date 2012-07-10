@@ -1,10 +1,6 @@
-/*!
- * @file tests.hpp
- *
+/*! @file tests.hpp
  * @brief Abstract class for tests
- *
  */
-
 #ifndef TESTS_GEN_H_
 #define TESTS_GEN_H_
 
@@ -12,6 +8,7 @@
 #define TEST_FAILED 0
 
 #include "include/commandline.hpp"
+#include "lib/Measurements/measGeneral.hpp"
 
 class TestGeneral {
 public:
@@ -35,7 +32,20 @@ namespace TestEnv{
     CCIO::cout<<"GaugeF initialized"<<std::endl;
     return TestClass(top_node, GaugeF);
   }
+
+  template <class TestClass>
+  void StartRun(int argc, char* argv[]){
+    CommandOptions Options = ReadCmdLine(argc, argv);
+    //Reading input file
+    XML::node top_node = XML::getInputXML(Options.filename);  
+
+    MeasGeneral meas(top_node);
+    meas.do_meas<TestClass>();
+  }
 }
+
+#define CREATE_RUN_TEST(Class){ TestEnv::StartRun<Class>(argc,argv)
+#define CLEAR_TEST }
 
 #define CREATE_TEST(Class) { Class TestObject = TestEnv::StartUp<Class>(argc, argv)
 #define RUN_TEST TestObject.run()

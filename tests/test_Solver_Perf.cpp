@@ -1,8 +1,6 @@
 /*!
  * @file test_Solver_Perf.cpp
- *
  * @brief Definition of classes for testing the Dirac_optimalDomainWall classes and factories
- *
  */
 #include "test_Solver_Perf.hpp"
 #include "Measurements/FermionicM/quark_prop_meas_factory.hpp"

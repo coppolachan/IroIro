@@ -62,7 +62,7 @@ public:
 template <typename F>
 const std::vector<double> MesonCorrelator::calculate(const prop_t& q1, 
 						     const prop_t& q2){
-  CCIO::cout <<"Contraction to make up meson correlator\n";
+  //CCIO::cout <<"Contraction to make up meson correlator\n";
 
   F fmt(CommonPrms::instance()->Nvol());
   int Nt = CommonPrms::instance()->Nt();

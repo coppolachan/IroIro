@@ -120,7 +120,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	EigenModes/eigenModes_IRL.cpp \
 	EigenModes/eigenProc_Zolotarev.cpp EigenModes/sortEigen.cpp \
 	EigenModes/fopr_chebyshev_DdagD.cpp EigenModes/findminmax.cpp \
-	Measurements/GaugeM/staples.cpp \
+	Measurements/measGeneral.cpp Measurements/GaugeM/staples.cpp \
 	Measurements/GaugeM/gaugeFixingStep.cpp \
 	Measurements/GaugeM/gaugeFixing_Coulomb.cpp \
 	Measurements/GaugeM/gaugeFixing_Landau.cpp \
@@ -169,14 +169,15 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_Operator_Factory.$(OBJEXT) eigenModes_IRL.$(OBJEXT) \
 	eigenProc_Zolotarev.$(OBJEXT) sortEigen.$(OBJEXT) \
 	fopr_chebyshev_DdagD.$(OBJEXT) findminmax.$(OBJEXT) \
-	staples.$(OBJEXT) gaugeFixingStep.$(OBJEXT) \
-	gaugeFixing_Coulomb.$(OBJEXT) gaugeFixing_Landau.$(OBJEXT) \
-	gfixFactory.$(OBJEXT) qprop_MultiShift.$(OBJEXT) \
-	qprop.$(OBJEXT) qprop_mom.$(OBJEXT) qprop_EvenOdd.$(OBJEXT) \
-	qprop_DomainWall.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
-	quark_prop_meas_factory.$(OBJEXT) siteIndex_EvenOdd.$(OBJEXT) \
-	mapping.$(OBJEXT) siteMap.$(OBJEXT) gaugeConf.$(OBJEXT) \
-	commandline.$(OBJEXT) hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
+	measGeneral.$(OBJEXT) staples.$(OBJEXT) \
+	gaugeFixingStep.$(OBJEXT) gaugeFixing_Coulomb.$(OBJEXT) \
+	gaugeFixing_Landau.$(OBJEXT) gfixFactory.$(OBJEXT) \
+	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) qprop_mom.$(OBJEXT) \
+	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
+	utils_DWF4d.$(OBJEXT) quark_prop_meas_factory.$(OBJEXT) \
+	siteIndex_EvenOdd.$(OBJEXT) mapping.$(OBJEXT) \
+	siteMap.$(OBJEXT) gaugeConf.$(OBJEXT) commandline.$(OBJEXT) \
+	hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
 	mdExec_leapfrog.$(OBJEXT) mdExec_factory.$(OBJEXT) \
 	pugixml.$(OBJEXT) pugi_interface.$(OBJEXT) \
 	solver_BiCGStab.$(OBJEXT) solver_CG.$(OBJEXT) \
@@ -301,6 +302,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -415,6 +417,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/sortEigen.cpp		\
 		EigenModes/fopr_chebyshev_DdagD.cpp	\
 		EigenModes/findminmax.cpp		\
+		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
@@ -497,6 +500,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Action/action_Nf2_ratio.hpp			\
 			Action/action_Nf_ratio.hpp			\
 			Action/action_Nf2_DomainWall.hpp		\
+			Measurements/measGeneral.hpp			\
 			Measurements/GaugeM/staples.hpp			\
 			Measurements/GaugeM/gaugeFixing.hpp		\
 			Measurements/GaugeM/gaugeFixingStep.hpp		\
@@ -739,6 +743,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_leapfrog.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/measGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multiShiftSolver_CG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pugi_interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pugixml.Po@am__quote@
@@ -1311,6 +1316,22 @@ findminmax.obj: EigenModes/findminmax.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/findminmax.cpp' object='findminmax.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o findminmax.obj `if test -f 'EigenModes/findminmax.cpp'; then $(CYGPATH_W) 'EigenModes/findminmax.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/findminmax.cpp'; fi`
+
+measGeneral.o: Measurements/measGeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT measGeneral.o -MD -MP -MF $(DEPDIR)/measGeneral.Tpo -c -o measGeneral.o `test -f 'Measurements/measGeneral.cpp' || echo '$(srcdir)/'`Measurements/measGeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/measGeneral.Tpo $(DEPDIR)/measGeneral.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/measGeneral.cpp' object='measGeneral.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o measGeneral.o `test -f 'Measurements/measGeneral.cpp' || echo '$(srcdir)/'`Measurements/measGeneral.cpp
+
+measGeneral.obj: Measurements/measGeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT measGeneral.obj -MD -MP -MF $(DEPDIR)/measGeneral.Tpo -c -o measGeneral.obj `if test -f 'Measurements/measGeneral.cpp'; then $(CYGPATH_W) 'Measurements/measGeneral.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/measGeneral.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/measGeneral.Tpo $(DEPDIR)/measGeneral.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/measGeneral.cpp' object='measGeneral.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o measGeneral.obj `if test -f 'Measurements/measGeneral.cpp'; then $(CYGPATH_W) 'Measurements/measGeneral.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/measGeneral.cpp'; fi`
 
 staples.o: Measurements/GaugeM/staples.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT staples.o -MD -MP -MF $(DEPDIR)/staples.Tpo -c -o staples.o `test -f 'Measurements/GaugeM/staples.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/staples.cpp

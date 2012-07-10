@@ -310,6 +310,28 @@ public:
     }
     return 0;
   }
+
+  int initialize(XML::node node,std::string filename){
+    try {
+      XML::descend(node,"Configuration");
+      if (!XML::attribute_compare(node,"Type","TextFile")){
+	initializeTxt(filename);
+	return 0;
+      }
+      if (!XML::attribute_compare(node,"Type","Binary")){
+	initializeBin(filename);
+	return 0;
+      }
+      if (!XML::attribute_compare(node,"Type","JLQCDlegacy")){
+	initializeJLQCDlegacy(filename);
+	return 0;
+      }
+    } catch(...) {
+      std::cout << "Error in initialization of gauge field "<< std::endl;
+    }
+    return 0;
+  }
+
 private:
   GaugeGlobal(const GaugeGlobal&);//hide copy constructor
 };

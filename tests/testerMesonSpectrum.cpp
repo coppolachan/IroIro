@@ -7,8 +7,7 @@
 
 int main(int argc, char* argv[]){
  
-  CREATE_TEST(Test_MesonSpectrum);
-  RUN_TEST;
+  CREATE_RUN_TEST(Test_MesonSpectrum);
   CLEAR_TEST;
   
   return 0;

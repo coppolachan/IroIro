@@ -73,17 +73,15 @@ int Test_ResMass::run() {
     CCIO::cout << " -- M0= " << mq << std::endl;
     CCIO::cout << " -- vthrs= " << vthrs << std::endl;
     EigenModes_IRL eigen(&Hw,&sort,Nk,Np,enorm,vthrs,Niter);
-    Field b(ff.size());
     
     int Nmm = 100;
     int Nsbt = -1;
-    int Nconv = -100;
     
     std::vector<double> lmd(Nmm);
     std::vector<Field>  evec(Nmm);
     
     for(int k = 0; k < Nmm; ++k) evec[k].resize(ff.size());
-    eigen.calc(lmd,evec,b,Nsbt,Nconv);
+    eigen.calc(lmd,evec,Nsbt);
     
     CCIO::cout << " --- Eigenvalues of H_W" << std::endl;
     Field v(ff.size());

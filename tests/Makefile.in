@@ -284,6 +284,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -465,7 +466,8 @@ include_HEADERS = tests.hpp			\
 				test_MesonSpectrum.hpp		\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
-				test_RationalApprox.hpp
+				test_RationalApprox.hpp		\
+	                        test_Solver_Perf.hpp
 
 all: all-am
 
