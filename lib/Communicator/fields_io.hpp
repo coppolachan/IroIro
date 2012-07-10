@@ -51,11 +51,94 @@ namespace CCIO {
   int SaveOnDisk(const Field& f, const char* filename, bool append_mode = false) 
   {
     T format(CommonPrms::instance()->Nvol());
-    Field Global;
     Communicator* comm = Communicator::instance();
     size_t local_index, global_index;
     int num_nodes, total_volume;
+   
 
+    
+    std::vector<int> block_x(CommonPrms::instance()->Nx());
+    std::valarray<double> copy(format.Nin()*block_x.size()*format.Nex());
+    std::valarray<double> local(format.Nin()*block_x.size()*format.Nex());
+
+    // Open the output file
+    FILE * outFile;
+    if(comm->primaryNode()) {
+      if(append_mode) 
+	outFile = fopen (filename,"a");
+      else
+	outFile = fopen (filename,"w");
+
+      std::cout << "Binary writing "<<f.size()*comm->size()*sizeof(double)
+		<<" bytes on "<< filename << " - BGQ hack\n";
+    }
+      
+    //Loop among nodes (master node)   
+    for (int node_t = 0; node_t < CommonPrms::instance()->NPEt(); ++node_t) {
+      for (int t_slice = 0; t_slice < CommonPrms::instance()->Nt(); ++t_slice){
+	
+	for (int node_z = 0; node_z < CommonPrms::instance()->NPEz(); ++node_z) {
+	  for (int z_slice = 0; z_slice < CommonPrms::instance()->Nz(); ++z_slice){
+	    
+	    for (int node_y = 0; node_y < CommonPrms::instance()->NPEy(); ++node_y) {
+	      for (int y_slice = 0; y_slice < CommonPrms::instance()->Ny(); ++y_slice){
+		
+		for (int node_x = 0; node_x < CommonPrms::instance()->NPEx(); ++node_x) {
+		  int node = comm->nodeid(node_x, node_y, node_z, node_t);
+		  //Copy a block of dimension Nx into the master node and save
+
+		  //Fill vector with indices
+		  for (int x_idx = 0; x_idx < block_x.size(); ++x_idx){
+		    block_x[x_idx] = SiteIndex::instance()->site(x_idx, y_slice, z_slice, t_slice);
+		  }
+		  copy = f[format.get_sub(block_x)];
+	
+		  comm->send_1to1(local, copy, local.size(), 0, node, node);//copy to master node
+	
+		  comm->sync();    
+		  //Save to file sequentially
+		  if (comm->primaryNode()){
+		 
+
+		    for (int x_idx = 0; x_idx < block_x.size(); ++x_idx){
+		      //std::cout << "block_x["<<x_idx<<"]  ="<<  block_x[x_idx] <<"\n";
+
+		      for (int external =0; external < format.Nex(); ++external) {	      
+			for (int internal =0; internal < format.Nin(); ++internal) {
+			  local_index = internal +format.Nin()*(x_idx + block_x.size()*external);//Breaks universality
+			  global_index = internal +format.Nin()*(external+ format.Nex()*x_idx);//ILDG
+			  copy[global_index] = local[local_index];
+			}
+		      }
+		    }
+		    //for (int gl = 0 ; gl < copy.size(); ++gl){
+		    //  std::cout << node << "- Copy_Field["<<gl<<"] = "<<copy[gl]<< "\n";
+		    //}
+		    if (outFile!=NULL) {
+		      fwrite((const char*)&copy[0], sizeof(double), local.size(), outFile);
+		    }
+		  }
+		  
+		}
+	      }
+	      
+	    }
+	  }
+	}
+      }
+    }
+    comm->sync();    
+    if(comm->primaryNode()) 
+      fclose(outFile);
+   
+
+
+
+
+
+
+    /*
+    Field Global;
     std::vector<int> global_site(format.Nvol());
     
     total_volume = CommonPrms::instance()->Lvol();
@@ -63,7 +146,7 @@ namespace CCIO {
     
     //Initializations
     std::valarray<double> local(f.size());
-    
+
     if(comm->primaryNode()) 
       Global.resize(f.size()*num_nodes);
     
@@ -106,6 +189,7 @@ namespace CCIO {
 	std::cout << "Binary writing "<<f.size()*comm->size()*sizeof(double)
 		  <<" bytes on "<< filename << " - BGQ hack\n";
 	Global.write_buffer(outFile);
+
       }
       fclose(outFile);
       #else
@@ -123,6 +207,8 @@ namespace CCIO {
       Outputfile.close();
       #endif
     }
+    */
+
     CCIO::cout << "Write ended succesfully\n";
 
     return 0;
@@ -226,7 +312,6 @@ namespace CCIO {
 					 total_volume, format.Nin(), format.Nex());
 	      //(*primaryField[node])[local_index] = Global[global_index];
 	      (*primaryField)[local_index] = Global[global_index];
-	      
 	    }
 	  }
 	}
@@ -237,13 +322,6 @@ namespace CCIO {
       //close node for loop
     }
     if(comm->primaryNode()) {std::cout << "done\n";}
-    //closing loop among processing nodes - older version
-    //comm->sync();
-    //copy one by one the local fields stored in the nodes into primary node
-    //for (int node=0; node < num_nodes; ++node) 
-    //  comm->send_1to1(local, *(primaryField[node]), local.size(),node, 0, node);	
-    
-    //f = Field(local);
     return 0;
   }
   

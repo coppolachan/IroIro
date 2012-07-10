@@ -20,6 +20,10 @@
 static double wilson_mult_timer;
 static double wilson_multdag_timer;
 
+#ifdef IBM_BGQ_WILSON
+struct SolverOutput;
+#endif
+
 namespace DomainWallFermions {
   struct EvenOdd_tag{};
   const std::vector<double> 
@@ -235,7 +239,9 @@ public:
   const Field mult_dag(const Field&)const;
 
   void mult_hop(Field&, const Field&)const;
+  void mult_hop_omp(Field&, const void*)const;
   void mult_hop_dag(Field&, const Field&)const;
+  void mult_hop_dag_omp(Field&, const Field&)const;
 
   // mult in the heavy quark limit
   const Field mult_hop5(const Field& f5) const;    /*! @brief mult in the heavy M0 limit*/
@@ -280,6 +286,12 @@ public:
   const std::vector<int> get_gsite() const { return Dw_.get_gsite();}
 
   void update_internal_state(){}
+
+
+  // BGQ optimizations
+  #ifdef IBM_BGQ_WILSON
+  void solve_eo_5d(Field&, const Field&, SolverOutput&, int, double) const;
+  #endif
 };
 
 

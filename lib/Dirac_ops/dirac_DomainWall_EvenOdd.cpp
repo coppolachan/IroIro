@@ -103,6 +103,13 @@ md_force(const Field& eta,const Field& zeta) const{
 
 ///////////////////////////////////////////////////////////////////////
 // OPTIMIZED LIBRARIES
+void  Dirac_optimalDomainWall_EvenOdd::solve_eo(Field& out, 
+						const Field& in, 
+						SolverOutput& SO, 
+						int Niter, 
+						double stop_cond) const{
+  Deo_.solve_eo_5d(out, in, SO, Niter, stop_cond);
+}
 ///////////////////////////////////////////////////////////////////////
 
 

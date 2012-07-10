@@ -4,6 +4,8 @@ CXXFLAGS +=
 LDFLAGS +=
 OPTLIB =
 
+DWF_BGQ_SRC = 
+
 if USE_MPI
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 
@@ -18,6 +20,8 @@ CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) \
 	-I$(DRIVER)/spi/include/kernel/cnk \
 	-I$(DRIVER)/spi/include/mu/default \
 	-I$(DRIVER)/comm/xl/include	
+
+DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
 
 if IBM_BGQWILSON_SMP
 CXXFLAGS += -qsmp=omp:auto
@@ -83,6 +87,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
 		Dirac_ops/dirac_DomainWall.cpp   	\
+		$(DWF_BGQ_SRC)				\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  \
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \

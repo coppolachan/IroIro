@@ -84,14 +84,15 @@ int Test_optimalDomainWall::run(){
   vector<double> omega(N5d,1.0);
 
   Dirac_optimalDomainWall Ddwf_5d(b,c,M0,mq,omega,&(conf_.data));
+  Dirac_optimalDomainWall_EvenOdd Ddwf_5d_eo(b,c,M0,mq,omega,&(conf_.data));
   /////////////////////////////
   XML::node QuarkProp_node = DWFnode;
   // operator using factories
   XML::descend(DWFnode, "DomainWall");
   DiracDWF5dFactory DWF_Factory(DWFnode);
   DiracODWF = DWF_Factory.getDiracOperator(&(conf_.data));
+ 
 
-  
   XML::descend(QuarkProp_node, "QuarkPropagator");
   QPropDWFFactory  QP_DomainWallFact(QuarkProp_node);//uses specific factory (this is a test program specific for DWF)
   QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(conf_));
@@ -161,7 +162,25 @@ int Test_optimalDomainWall::run(){
   
   // quark propagator
   double stop_cond = 1.0e-24;
-  int    Niter     = 10000;
+  int    Niter     = 5000;
+
+  ///////////////////////////////////////////// Test solver eo
+  Fopr_DdagD DdagD_EO(&Ddwf_5d_eo);
+  Solver_CG SolvEO(stop_cond,Niter,&DdagD_EO);
+
+  Field sol_eo(Ddwf1.fsize()/2);
+  valarray<double> vphi2(Ddwf1.fsize()/2);
+  rand.get(vphi2);
+  Field phi_eo(vphi2);    // phi: generated from random numbers
+
+  CCIO::cout << ".::: Test Dirac_optimalDomainWall solver eo Standard version \n";
+  monitor = SolvEO.solve(sol_eo,phi_eo);
+  monitor.print();
+  CCIO::cout << ".::: Test Dirac_optimalDomainWall solver eo BGQ version \n";
+  Ddwf_5d_eo.solve_eo(sol_eo, phi_eo, monitor,  Niter, stop_cond);
+  monitor.print();
+  ////////////////////////////////////////////////////////////////////
+
 
   // It follows a standard construction (factories will use a similar one)
   //Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
@@ -184,6 +203,8 @@ int Test_optimalDomainWall::run(){
   prop_t sq;
   //QuarkPropagator.calc(sq,src);
   QuarkPropDW->calc(sq,src);
+
+ 
   
   GammaMatrices::Unit Gamma;
   MesonCorrelator meson(Pion);
