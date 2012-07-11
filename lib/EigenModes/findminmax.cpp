@@ -1,8 +1,6 @@
 /*! 
   @file findminmax.cpp
-
   @brief Find the minimum and maximum eigenmode of a real matrix
-
 */
 
 #include "findminmax.hpp"

@@ -4,6 +4,7 @@
 #include "Communicator/comm_io.hpp"
 
 namespace DiracOperators {
+
   DiracWilsonLikeOperatorFactory* 
   createDiracWilsonLikeOperatorFactory(const XML::node node){
     if (node !=NULL) {
@@ -50,7 +51,6 @@ namespace DiracOperators {
     }
   }
 
-
   // this one forces to have a PauliVillars operator
   // useful in the case of the DomainWall5d action
   DiracDWF5dOperatorFactory* 
@@ -75,5 +75,40 @@ namespace DiracOperators {
       std::cout<<"Mandatory node is missing in input file (DWF Dirac Object)\n";
       abort();
     }
+  }
+  
+  // another clasification of the operator where inversion is not considered
+  // like in the case of eigenmode calculation.
+  DiracOperatorFactory* createGeneralDiracOperatorFactory(const XML::node node){
+    // temporal hack
+    return createGeneralDiracWilsonLikeOperatorFactory(node);
+  }
+
+  DiracWilsonLikeOperatorFactory* 
+  createGeneralDiracWilsonLikeOperatorFactory(const XML::node node){
+    if (node !=NULL) {
+      const char* DWL_name = node.attribute("name").value();
+
+      if (!strcmp(DWL_name, "")) {
+	std::cerr << "No name provided for DiracWilsonLike Operator. Request by <"
+		  << node.name() << ">\n";
+	abort();
+      }
+      if (!strcmp(DWL_name, "DiracWilson"))  
+	return new DiracWilsonFactory(node);
+      if (!strcmp(DWL_name, "DiracClover"))  
+	return new DiracCloverFactory(node);
+      if (!strcmp(DWL_name, "DiracOptimalDomainWall5d"))  
+	return new DiracDWF5dFactory(node);
+      if (!strcmp(DWL_name, "DiracOptimalDomainWall4d"))  
+	return new DiracDWF4DfullFactory(node);
+      std::cerr<<"No DiracWilsonLike Operator available with name ["
+	       << DWL_name << "]. Request by <" << node.name() << ">\n";
+      abort();
+    }else{
+      std::cout<<"Mandatory node is missing in input file (Dirac Object)\n";
+      abort();
+    }
+    
   }
 }

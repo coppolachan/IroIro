@@ -1,8 +1,5 @@
-/*!
- * @file fopr_chebyshev_DdagD.h
- *
+/*! @file fopr_chebyshev_DdagD.h
  * @brief Definition of Chebyshev operator
- *
  */
 
 #ifndef FOPR_CHEBYSHEV_INCLUDED
@@ -18,47 +15,40 @@ struct Fopr_Chebyshev_DdagDParams{
   int Npoly;
   double Fcb1,Fcb2;
 
-  Fopr_Chebyshev_DdagDParams(XML::node node) {
-    double vthrs, vmax;
-    XML::read(node, "NumPolynomials", Npoly);
-    XML::read(node, "Threshold", vthrs);
-    XML::read(node, "MaxEigenmode", vmax);
+  Fopr_Chebyshev_DdagDParams(XML::node node){
+    double vmin, vmax;
+    XML::read(node, "Npoly", Npoly);
+    XML::read(node, "vmin", vmin);
+    XML::read(node, "vmax", vmax);
     
-    Fcb1 = 2.0/(vmax*vmax-vthrs*vthrs);
-    Fcb2 = -(vmax*vmax+vthrs*vthrs)/(vmax*vmax-vthrs*vthrs);
+    Fcb1 = 2.0/(vmax*vmax-vmin*vmin);
+    Fcb2 = -(vmax*vmax+vmin*vmin)/(vmax*vmax-vmin*vmin);
   }
 
-  Fopr_Chebyshev_DdagDParams(int Npoly_, 
-			     double vthrs_, 
-			     double vmax_) {
+  Fopr_Chebyshev_DdagDParams(int Npoly_,double vmin_,double vmax_){
     Npoly = Npoly_;
-    Fcb1 = 2.0/(vmax_*vmax_-vthrs_*vthrs_);
-    Fcb2 = -(vmax_*vmax_+vthrs_*vthrs_)/(vmax_*vmax_-vthrs_*vthrs_);
+    Fcb1 = 2.0/(vmax_*vmax_-vmin_*vmin_);
+    Fcb2 = -(vmax_*vmax_+vmin_*vmin_)/(vmax_*vmax_-vmin_*vmin_);
   }
 };
 
-class Fopr_Chebyshev_DdagD : public Fopr {
+class Fopr_Chebyshev_DdagD : public Fopr_Herm {
 private:
   const Fopr_Chebyshev_DdagDParams Params;
   const Dirac* D_;
 public:
-  Fopr_Chebyshev_DdagD(int Npoly,
-		       double vthrs,
-		       double vmax,
-		       const Dirac* D)
-    :Params(Npoly, vthrs, vmax),
-     D_(D){}
+  Fopr_Chebyshev_DdagD(int Npoly,double vmin,double vmax,const Dirac* D)
+    :Params(Npoly,vmin,vmax),D_(D){}
 
-  Fopr_Chebyshev_DdagD(XML::node Chebyshev_node,
-		       const Dirac* D)
-    :Params(Chebyshev_node),
-     D_(D){}
+  Fopr_Chebyshev_DdagD(XML::node Chebyshev_node,const Dirac* D)
+    :Params(Chebyshev_node),D_(D){}
+  
+  ~Fopr_Chebyshev_DdagD(){}
 
-  ~Fopr_Chebyshev_DdagD(){delete D_;}
-
+  double func(double x) const;
   const Field mult(const Field& f) const;
   const Field mult_dag(const Field& f) const{ return mult(f);}
-  double mult(double x) const;
+
   size_t fsize()const {return D_->fsize();}
 };
 #endif

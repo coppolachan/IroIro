@@ -50,7 +50,7 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_Clover$(EXEEXT) \
 	test_Wilson_EvenOdd$(EXEEXT) test_DomainWall$(EXEEXT) \
 	test_QpropMom$(EXEEXT) test_ResMass$(EXEEXT) \
-	test_MesonSpectrum$(EXEEXT) test_EigenModes$(EXEEXT) \
+	test_MesonSpectrum$(EXEEXT) test_EigenModesSolver$(EXEEXT) \
 	test_Smearing$(EXEEXT) test_Overlap$(EXEEXT) \
 	test_MultiShiftSolver$(EXEEXT) test_Solver_Perf$(EXEEXT) \
 	test_RNG$(EXEEXT) test_IO$(EXEEXT) \
@@ -81,11 +81,11 @@ am_test_DomainWall_OBJECTS = test_DomainWall.$(OBJEXT) \
 test_DomainWall_OBJECTS = $(am_test_DomainWall_OBJECTS)
 test_DomainWall_LDADD = $(LDADD)
 test_DomainWall_DEPENDENCIES = $(am__DEPENDENCIES_2)
-am_test_EigenModes_OBJECTS = test_EigenModes_IRL.$(OBJEXT) \
-	testerEigenModes.$(OBJEXT)
-test_EigenModes_OBJECTS = $(am_test_EigenModes_OBJECTS)
-test_EigenModes_LDADD = $(LDADD)
-test_EigenModes_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am_test_EigenModesSolver_OBJECTS = test_EigenModesSolver.$(OBJEXT) \
+	testerEigenModesSolver.$(OBJEXT)
+test_EigenModesSolver_OBJECTS = $(am_test_EigenModesSolver_OBJECTS)
+test_EigenModesSolver_LDADD = $(LDADD)
+test_EigenModesSolver_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_Gauge_OBJECTS = test_Gauge.$(OBJEXT) testerGauge.$(OBJEXT)
 test_Gauge_OBJECTS = $(am_test_Gauge_OBJECTS)
 test_Gauge_LDADD = $(LDADD)
@@ -197,7 +197,7 @@ AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
-	$(test_EigenModes_SOURCES) $(test_Gauge_SOURCES) \
+	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
@@ -208,7 +208,7 @@ SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_Smearing_SOURCES) $(test_Solver_Perf_SOURCES) \
 	$(test_Wilson_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
-	$(test_EigenModes_SOURCES) $(test_Gauge_SOURCES) \
+	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
@@ -429,8 +429,8 @@ test_Solver_Perf_SOURCES = test_Solver_Perf.cpp		\
 test_ResMass_SOURCES = test_ResidualMass.cpp 		\
 				testerResMass.cpp
 
-test_EigenModes_SOURCES = test_EigenModes_IRL.cpp		\
-				testerEigenModes.cpp
+test_EigenModesSolver_SOURCES = test_EigenModesSolver.cpp	\
+				testerEigenModesSolver.cpp
 
 test_Overlap_SOURCES = test_Overlap.cpp		\
 				testerOverlap.cpp
@@ -460,7 +460,7 @@ include_HEADERS = tests.hpp			\
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
 				test_IO.hpp			\
-				test_EigenModes_IRL.hpp		\
+				test_EigenModesSolver.hpp		\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
@@ -546,9 +546,9 @@ test_Clover$(EXEEXT): $(test_Clover_OBJECTS) $(test_Clover_DEPENDENCIES)
 test_DomainWall$(EXEEXT): $(test_DomainWall_OBJECTS) $(test_DomainWall_DEPENDENCIES) 
 	@rm -f test_DomainWall$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_DomainWall_OBJECTS) $(test_DomainWall_LDADD) $(LIBS)
-test_EigenModes$(EXEEXT): $(test_EigenModes_OBJECTS) $(test_EigenModes_DEPENDENCIES) 
-	@rm -f test_EigenModes$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModes_OBJECTS) $(test_EigenModes_LDADD) $(LIBS)
+test_EigenModesSolver$(EXEEXT): $(test_EigenModesSolver_OBJECTS) $(test_EigenModesSolver_DEPENDENCIES) 
+	@rm -f test_EigenModesSolver$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModesSolver_OBJECTS) $(test_EigenModesSolver_LDADD) $(LIBS)
 test_Gauge$(EXEEXT): $(test_Gauge_OBJECTS) $(test_Gauge_DEPENDENCIES) 
 	@rm -f test_Gauge$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Gauge_OBJECTS) $(test_Gauge_LDADD) $(LIBS)
@@ -614,7 +614,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DomainWall.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModes_IRL.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_DWall_noFact.Po@am__quote@
@@ -637,7 +637,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerClover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerDWF.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerEigenModes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerEigenModesSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerGauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC_DWall_noFact.Po@am__quote@

@@ -9,19 +9,19 @@ namespace QuarkPropagators {
   QuarkPropagatorFactory* createQuarkPropagatorFactory(XML::node node) {
     
     if (node !=NULL) {
-      const char* QuarkProp_name = node.attribute("name").value();
+      const char* qprop_name = node.attribute("name").value();
       
-      if (!strcmp(QuarkProp_name, "Qprop")) { 
+      if (!strcmp(qprop_name, "Qprop")) { 
         return new QPropFactory(node);
       }
-      if (!strcmp(QuarkProp_name, "Qprop_EvenOdd")) { 
+      if (!strcmp(qprop_name, "Qprop_EvenOdd")) { 
         return new QPropFactory_EvenOdd(node);
       }
-      if (!strcmp(QuarkProp_name, "QpropDWF")) { 
+      if (!strcmp(qprop_name, "QpropDWF")) { 
         return new QPropDWFFactory(node);
       }
       CCIO::cerr << "No Quark Propagator available with name ["
-		<< QuarkProp_name << "]" << std::endl;
+		<< qprop_name << "]" << std::endl;
       abort();
     } else {
       CCIO::cout << "Requested node is missing in input file "

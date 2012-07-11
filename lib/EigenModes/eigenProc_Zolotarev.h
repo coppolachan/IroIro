@@ -7,8 +7,8 @@
 #ifndef EIGENMONITOR_INCLUDED
 #define EIGENMONITOR_INCLUDED
 
-#ifndef EIGENMODES_IRL_INCLUDED
-#include "eigenModes_IRL.h"
+#ifndef EIGENMODESSOLVER_IRL_INCLUDED
+#include "eigenModesSolver_IRL.hpp"
 #endif
 
 #ifndef FOPR_INCLUDED
@@ -25,11 +25,11 @@ class Field;
 class EigenProc_Zolotarev{
 private:
   Fopr_H* H_;
-  SortEigen_low* sort_low_;
-  SortEigen_high* sort_high_;
+  EigenSorter_low* sort_low_;
+  EigenSorter_high* sort_high_;
 
-  EigenModes_IRL* eigen_low_;
-  EigenModes_IRL* eigen_high_;
+  EigenModesSolver_IRL* eigen_low_;
+  EigenModesSolver_IRL* eigen_high_;
   size_t fsize_;    
   int Nmm_;
   int Np_;
@@ -39,15 +39,12 @@ public:
 		      const EigenPrms& Eprms)
     :H_(new Fopr_H(D)),
      fsize_(H_->fsize()),
-     sort_low_(new SortEigen_low),
-     eigen_low_(new EigenModes_IRL(H_,sort_low_,
-				   Eprms.Nk_l,Eprms.Np_l,Eprms.enorm_l,
-				   Eprms.vthrs_l,Eprms.Niter_l)),
-     sort_high_(new SortEigen_high),
-     eigen_high_(new EigenModes_IRL(H_,sort_high_,
-				    Eprms.Nk_h,Eprms.Np_h,Eprms.enorm_h,
-				    Eprms.vthrs_h,Eprms.Niter_h)),
-    Nmm_(Eprms.Nmm),Np_(Eprms.Npoly){}
+     eigen_low_(new EigenModesSolver_IRL(H_,Eprms.Nk_l,Eprms.Np_l,Eprms.enorm_l,
+					 Eprms.vthrs_l,Eprms.Niter_l,EigenModes::LowestModes())),
+     sort_high_(new EigenSorter_high),
+     eigen_high_(new EigenModesSolver_IRL(H_,Eprms.Nk_h,Eprms.Np_h,Eprms.enorm_h,
+					  Eprms.vthrs_h,Eprms.Niter_h,EigenModes::HighestModes())),
+     Nmm_(Eprms.Nmm),Np_(Eprms.Npoly){}
   
   ~EigenProc_Zolotarev(){
     delete eigen_high_;

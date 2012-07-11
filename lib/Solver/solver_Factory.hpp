@@ -1,6 +1,5 @@
 /*!
  * @file solver_Factory.hpp 
- *
  * @brief Declaration of Solver operators factories
  */
 
@@ -16,10 +15,8 @@
 #include "Solver/rationalSolver.hpp"
 #include "Solver/multiShiftSolver_CG.hpp"
 
-
 /*!
  * @brief Abstract base class for creating Solver operators
- *
  */
 class SolverOperatorFactory {
 public:
@@ -34,7 +31,6 @@ public:
 
 /*!
  * @brief Abstract base class for creating RationalSolver operators
- *
  * It serves as a type definition to distinguish this class of solvers
  */
 class RationalSolverOperatorFactory{
@@ -120,7 +116,6 @@ public:
   }
 };
 
-
 /*!
  @brief Concrete class for creating Rational Conjugate Gradient Solver
  operator 
@@ -129,7 +124,6 @@ class RationalSolverCGFactory: public RationalSolverOperatorFactory {
   RaiiFactoryObj<MultiShiftSolver> MS_Solver;
 
   const XML::node Solver_node;
-
 public:
   RationalSolverCGFactory(const XML::node node):Solver_node(node){}
 
@@ -145,15 +139,12 @@ public:
     return new RationalSolver(MS_Solver.get());
   }
 
-
   RationalSolver*  getSolver(const Fopr* LinearOperator){
     std::cerr<< "getSolver Error: RationalSolver requires Hermitian Operator" 
 	     << std::endl;
     abort();
   }
-
 };
-
 
 ///////////////////////////////////////////////////
 
@@ -161,6 +152,5 @@ namespace SolverOperators{
   SolverOperatorFactory* createSolverOperatorFactory(const XML::node);
   RationalSolverOperatorFactory* createRationalSolverOperatorFactory(const XML::node);
 }
-
 
 #endif 

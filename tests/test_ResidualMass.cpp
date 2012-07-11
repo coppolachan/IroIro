@@ -9,9 +9,9 @@
 #include "Measurements/FermionicM/utils_DWF4d.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Measurements/GaugeM/staples.hpp"
-#include "EigenModes/eigenModes_IRL.hpp"
+#include "EigenModes/eigenModesSolver_IRL.hpp"
 #include "Fields/field_expressions.hpp"
-#include "EigenModes/sortEigen.h"
+#include "EigenModes/eigenSorter.hpp"
 #include <vector>
 
 using namespace FieldExpression;
@@ -67,12 +67,11 @@ int Test_ResMass::run() {
 
     Format::Format_F ff(CommonPrms::instance()->Nvol());
     Fopr_H Hw(new Dirac_Wilson(mq, &(smeared_u_.data)));
-    SortEigen_low sort;
 
     CCIO::cout << "Calculating eigenvalues of H_W" << std::endl;
     CCIO::cout << " -- M0= " << mq << std::endl;
     CCIO::cout << " -- vthrs= " << vthrs << std::endl;
-    EigenModes_IRL eigen(&Hw,&sort,Nk,Np,enorm,vthrs,Niter);
+    EigenModesSolver_IRL eigen(&Hw,Nk,Np,enorm,vthrs,Niter,EigenModes::LowestModes());
     
     int Nmm = 100;
     int Nsbt = -1;

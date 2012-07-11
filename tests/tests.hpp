@@ -19,13 +19,12 @@ namespace TestEnv{
   template <class TestClass>
   TestClass StartUp(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);
-    
     //Reading input file
     XML::node top_node = XML::getInputXML(Options.filename);  
-    
+
     //Initializing geometry using XML input
     Geometry geom(top_node);
-    
+
     //Initialize GaugeField using XML input
     GaugeGlobal GaugeF(geom);
     GaugeF.initialize(top_node);
@@ -36,9 +35,10 @@ namespace TestEnv{
   template <class TestClass>
   void StartRun(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);
+    CCIO::cout<<"StartRun called"<<std::endl;
     //Reading input file
     XML::node top_node = XML::getInputXML(Options.filename);  
-
+    CCIO::cout<<"top_node obtained"<<std::endl;
     MeasGeneral meas(top_node);
     meas.do_meas<TestClass>();
   }

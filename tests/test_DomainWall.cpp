@@ -89,7 +89,7 @@ int Test_optimalDomainWall::run(){
   // operator using factories
   XML::descend(DWFnode, "DomainWall");
   DiracDWF5dFactory DWF_Factory(DWFnode);
-  DiracODWF = DWF_Factory.getDiracOperator(&(conf_.data));
+  DiracODWF = DWF_Factory.getDiracOperatorWL(&(conf_.data));
 
   
   XML::descend(QuarkProp_node, "QuarkPropagator");
