@@ -5,10 +5,8 @@
 #define EIGENMODESSOLVER_FACTORY_INCLUDED
 
 #include "include/common_fields.hpp"
-#include "eigenModesSolver.hpp"
 #include "eigenModesSolver_IRL.hpp"
-#include "eigenSorter_Factory.hpp"
-#include "foprHermFactory.hpp"
+#include "include/foprHermFactory.hpp"
 #include "include/pugi_interface.h"
 
 class EigenSolverFactory{
