@@ -8,6 +8,10 @@
 
 #include "dirac_DomainWall.hpp"
 
+#ifdef IBM_BGQ_WILSON
+struct SolverOutput;
+#endif
+
 static  double mult_timer;
 static  double multdag_timer;
 /*!
@@ -98,7 +102,7 @@ public:
 
   ////////////////////////////
 #ifdef IBM_BGQ_WILSON
-  void BGQ_EO_mult(Field&, const Field&) const;
+  void solve_eo(Field&, const Field&, SolverOutput&, int, double) const;
 #endif
 };
 
