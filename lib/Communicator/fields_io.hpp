@@ -39,8 +39,44 @@ namespace CCIO {
 			       int tot_external)  {
     return (internal +tot_internal*(gsite+ tot_volume*external));
   }
+
+
+  
+  inline void ReadILDGBFormat(double* buffer,
+			     FILE *inputFile,
+			     int block_size,
+			     int tot_volume,
+			     int tot_internal, 
+			     int tot_external) {
+    //Read just as it is
+    //order is (internal, external, sites)  
+    fread(buffer, sizeof(double), block_size, inputFile);
+  }
+
+  inline void ReadJLQCDLegacyFormat(double* buffer,
+				    FILE *inputFile,
+				    int block_size,
+				    int tot_volume,
+				    int tot_internal, 
+				    int tot_external) {
+    //order is (internal, sites, external)
+    //Read #tot_external blocks
+    int chunk = block_size/tot_external;
+    fpos_t pos;
+    fgetpos(inputFile, &pos);
+    for (int ext=0; ext<tot_external; ++ext){
+      //reads the external blocks
+      fread((buffer+ext*chunk), sizeof(double), chunk, inputFile);
+      fseek(inputFile, sizeof(double)*tot_volume*tot_internal , SEEK_CUR);
+    }
+    fsetpos(inputFile, &pos);
+    fseek(inputFile, sizeof(double)*chunk, SEEK_CUR);
+  }
+  
+
   
   typedef int (*StoringFormat)(int, int, int , int, int, int);
+
 
   /*!
    * @brief Saves a Field on the disk 
@@ -250,7 +286,89 @@ namespace CCIO {
     if(comm->primaryNode()) {std::cout << "Global field initialization... " << std::endl;}
     Field Global;
 
+    /*
+    std::vector<int> block_x(CommonPrms::instance()->Nx());
+    std::valarray<double> copy(format.Nin()*block_x.size()*format.Nex());
+    std::valarray<double> local(format.Nin()*block_x.size()*format.Nex());
+    
+    // Open the output file
+    FILE * inFile;
+    if(comm->primaryNode()) {
+	inFile = fopen (filename,"r");
+	
+	std::cout << "Binary reading "<<f.size()*comm->size()*sizeof(double)
+		  <<" bytes on "<< filename << "\n";
+	fseek(inFile, offset, SEEK_SET);
+    }
+    
 
+    //Loop among nodes (master node)   
+    for (int node_t = 0; node_t < CommonPrms::instance()->NPEt(); ++node_t) {
+      for (int t_slice = 0; t_slice < CommonPrms::instance()->Nt(); ++t_slice){
+	
+	for (int node_z = 0; node_z < CommonPrms::instance()->NPEz(); ++node_z) {
+	  for (int z_slice = 0; z_slice < CommonPrms::instance()->Nz(); ++z_slice){
+	    
+	    for (int node_y = 0; node_y < CommonPrms::instance()->NPEy(); ++node_y) {
+	      for (int y_slice = 0; y_slice < CommonPrms::instance()->Ny(); ++y_slice){
+		
+		for (int node_x = 0; node_x < CommonPrms::instance()->NPEx(); ++node_x) {
+		  int node = comm->nodeid(node_x, node_y, node_z, node_t);
+		  //Copy a block of dimension Nx into the master node and save
+
+		  //Read from file sequentially
+		  if (comm->primaryNode()){
+		    std::cout << "Reading at location "<< ftell(inFile)<< "\n";
+		    if (inFile!=NULL) {
+		      if (storeFormat == JLQCDLegacyFormat) {
+			ReadJLQCDLegacyFormat((double*)&copy[0], inFile, copy.size(), total_volume, format.Nin(), format.Nex());
+		      }
+		      if (storeFormat == ILDGBinFormat) {
+			ReadILDGBFormat((double*)&copy[0], inFile, copy.size(), total_volume, format.Nin(), format.Nex());
+		      }
+		      
+		    }
+
+		    for (int x_idx = 0; x_idx < block_x.size(); ++x_idx){
+		      //std::cout << "block_x["<<x_idx<<"]  ="<<  block_x[x_idx] <<"\n";
+
+		      for (int external =0; external < format.Nex(); ++external) {	      
+			for (int internal =0; internal < format.Nin(); ++internal) {
+			  local_index = internal +format.Nin()*(x_idx + block_x.size()*external);//Breaks universality
+			  global_index = storeFormat(x_idx, internal, external, 
+						     block_x.size(), format.Nin(), format.Nex());
+			  local[local_index] = copy[global_index];
+			}
+		      }
+		    }
+		  }//end primaryNode
+
+		  comm->send_1to1(copy, local, local.size(), node, 0, node);//copy to master node
+
+		  //Fill vector with indices
+		  for (int x_idx = 0; x_idx < block_x.size(); ++x_idx){
+		    block_x[x_idx] = SiteIndex::instance()->site(x_idx, y_slice, z_slice, t_slice);
+		  }
+		  f[format.get_sub(block_x)] = copy;
+
+	
+		  comm->sync();    
+		  
+		}
+	      }
+	      
+	    }
+	  }
+	}
+      }
+    }
+    comm->sync();    
+    if(comm->primaryNode()) 
+      fclose(inFile);
+    */
+
+
+    
     //Read data from single file on disk
     if(comm->primaryNode()) {
       std::ifstream Inputfile;
@@ -321,6 +439,10 @@ namespace CCIO {
       f = Field(local);
       //close node for loop
     }
+
+        
+
+
     if(comm->primaryNode()) {std::cout << "done\n";}
     return 0;
   }
