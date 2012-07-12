@@ -25,10 +25,8 @@ class QPropFactory : public QuarkPropagatorFactory {
 
   RaiiFactoryObj<DiracWilsonLike> Kernel;
   RaiiFactoryObj<Solver> Solv;
-  const XML::node Qprop_node;
-
 public:
-  QPropFactory(XML::node node):Qprop_node(node){
+  QPropFactory(XML::node node){
     //some leaking expected - check!
     XML::descend(node,"Kernel");
     DiracObj.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
@@ -37,7 +35,7 @@ public:
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
-    Kernel.save(DiracObj.get()->getDiracOperator(&(Field.data)));
+    Kernel.save(DiracObj.get()->getDiracOperatorWL(&(Field.data)));
     Solv.save(SolverObj.get()->getSolver(new Fopr_DdagD(Kernel.get())));
 
     return new Qprop(Kernel.get(), Solv.get());
@@ -53,10 +51,8 @@ class QPropFactory_EvenOdd : public QuarkPropagatorFactory {
 
   RaiiFactoryObj<DiracWilsonLike_EvenOdd> Kernel;
   RaiiFactoryObj<Solver> Solv;
-  const XML::node Qprop_node;
-
 public:
-  QPropFactory_EvenOdd(XML::node node):Qprop_node(node){
+  QPropFactory_EvenOdd(XML::node node){
     XML::descend(node,"Kernel");
     DiracObj.save(new DiracWilsonEvenOddFactory(node));
     XML::next_sibling(node,"Solver");
@@ -64,7 +60,7 @@ public:
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
-    Kernel.save(DiracObj.get()->getDiracOperator(&(Field.data)));
+    Kernel.save(DiracObj.get()->getDiracOperatorWL(&(Field.data)));
     Solv.save(SolverObj.get()->getSolver(new Fopr_DdagD(Kernel.get())));
     return new Qprop_EvenOdd(Kernel.get(), Solv.get());
   }
@@ -76,10 +72,9 @@ public:
 class QPropDWFFactory : public QuarkPropagatorFactory {
   RaiiFactoryObj<DiracDWF4dOperatorFactory> DiracFactory_;
   RaiiFactoryObj<Dirac_optimalDomainWall_4D> DWF4D_;
-  const XML::node Qprop_node_;
 
 public:
-  QPropDWFFactory(XML::node node):Qprop_node_(node){
+  QPropDWFFactory(XML::node node){
     XML::descend(node,"Kernel4d");
     DiracFactory_.save(DiracOperators::createDiracDWF4dOperatorFactory(node));
   }

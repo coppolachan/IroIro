@@ -1,9 +1,6 @@
 /*!
-
   @file fermion_meas_factory.hpp 
-
   @brief Fermionic measurements operators factories
-
 */
 #ifndef FERMION_MEAS_ABS_FACT_
 #define FERMION_MEAS_ABS_FACT_
@@ -31,7 +28,5 @@ public:
 namespace QuarkPropagators{
   QuarkPropagatorFactory* createQuarkPropagatorFactory(const XML::node);
 }
-
-
 
 #endif

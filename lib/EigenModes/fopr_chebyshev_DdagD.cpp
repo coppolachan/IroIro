@@ -1,10 +1,7 @@
 /*!
  * @file fopr_chebyshev_DdagD.h
- *
  * @brief Definition of Chebyshev operator
- *
  */
-
 #include "include/fopr_chebyshev_DdagD.h"
 #include "Fields/field_expressions.hpp"
 
@@ -22,19 +19,19 @@ const Field Fopr_Chebyshev_DdagD::mult(const Field& f) const{
   int jp2 = 0;
 
   for(int j=Params.Npoly; j>=2; --j){  
-    dj[jn] = 2.0*(Params.Fcb1*D_->mult_dag(D_->mult(dj[jp1])) +Params.Fcb2*dj[jp1])
-      -dj[jp2];
-    jn  = (jn +1) % 3;         
-    jp1 = (jp1+1) % 3;         
-    jp2 = (jp2+1) % 3;         
+    dj[jn] = 2.0*(Params.Fcb1*D_->mult_dag(D_->mult(dj[jp1])) 
+		  +Params.Fcb2*dj[jp1]) -dj[jp2];
+    jn  = (jn +1)%3;         
+    jp1 = (jp1+1)%3;         
+    jp2 = (jp2+1)%3;         
   }            
   Field v(f.size());
-  v = Params.Fcb1*D_->mult_dag(D_->mult(dj[jp1])) +Params.Fcb2*dj[jp1] -dj[jp2]; 
-             
+  v = Params.Fcb1*D_->mult_dag(D_->mult(dj[jp1]))+Params.Fcb2*dj[jp1]-dj[jp2];
+  
   return v;
 }
 
-double Fopr_Chebyshev_DdagD::mult(double x) const{
+double Fopr_Chebyshev_DdagD::func(double x) const{
 
   std::vector<double> dj(3);
   dj[0] = -1.0;
@@ -46,10 +43,9 @@ double Fopr_Chebyshev_DdagD::mult(double x) const{
   for(int j=Params.Npoly; j>=2; --j){  
     dj[jn] = 2.0*(x*x*Params.Fcb1+Params.Fcb2)*dj[jp1] -dj[jp2];
 
-    jn  = (jn +1) % 3;         
-    jp1 = (jp1+1) % 3;         
-    jp2 = (jp2+1) % 3;         
+    jn  = (jn +1)%3;         
+    jp1 = (jp1+1)%3;         
+    jp2 = (jp2+1)%3;         
   }                            
   return (x*x*Params.Fcb1+Params.Fcb2)*dj[jp1] -dj[jp2];              
-
 }

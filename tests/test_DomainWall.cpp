@@ -1,6 +1,5 @@
 /*!
  * @file test_DomainWall.cpp
- *
  * @brief Definition of classes for testing the Dirac_optimalDomainWall classes and factories
  *
  */
@@ -90,8 +89,8 @@ int Test_optimalDomainWall::run(){
   // operator using factories
   XML::descend(DWFnode, "DomainWall");
   DiracDWF5dFactory DWF_Factory(DWFnode);
-  DiracODWF = DWF_Factory.getDiracOperator(&(conf_.data));
- 
+
+  DiracODWF = DWF_Factory.getDiracOperatorWL(&(conf_.data));
 
   XML::descend(QuarkProp_node, "QuarkPropagator");
   QPropDWFFactory  QP_DomainWallFact(QuarkProp_node);//uses specific factory (this is a test program specific for DWF)
@@ -164,7 +163,9 @@ int Test_optimalDomainWall::run(){
   double stop_cond = 1.0e-24;
   int    Niter     = 5000;
 
+
   ///////////////////////////////////////////// Test solver eo
+#ifdef IBM_BGQ_WILSON
   Fopr_DdagD DdagD_EO(&Ddwf_5d_eo);
   Solver_CG SolvEO(stop_cond,Niter,&DdagD_EO);
 
@@ -179,6 +180,7 @@ int Test_optimalDomainWall::run(){
   CCIO::cout << ".::: Test Dirac_optimalDomainWall solver eo BGQ version \n";
   Ddwf_5d_eo.solve_eo(sol_eo, phi_eo, monitor,  Niter, stop_cond);
   monitor.print();
+#endif  
   ////////////////////////////////////////////////////////////////////
 
 

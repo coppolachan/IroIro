@@ -89,8 +89,6 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     Uin_.initialize(node_,config_list_[c]);
     CCIO::cout<<"Uin_ initialized from "<<config_list_[c]<<std::endl;
     
-    id += c*increment_;
-
     pre_process(Uin_,*rng,id);  // monitoring + smr + gfix
     //------- actual measurement -------
     std::stringstream outfile;
@@ -103,6 +101,8 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     //----------------------------------
     post_process(Uin_,*rng,id); // seed saving
     CCIO::cout<<"\n";
+
+    id += increment_;
   }
 }
 #endif

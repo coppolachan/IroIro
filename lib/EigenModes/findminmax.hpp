@@ -1,15 +1,12 @@
 /*! 
   @file findminmax.hpp
-
   @brief Find the minimum and maximum eigenmode of a real matrix
-
 */
 
 #include <memory>
 
 #include "include/fopr.h"
 #include "Tools/randNum.h"
-
 
 struct MinMaxOut {
   double min;

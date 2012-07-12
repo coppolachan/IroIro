@@ -117,9 +117,11 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp Dirac_ops/eoUtils.cpp \
 	Dirac_ops/dirac_Operator_Factory.cpp \
-	EigenModes/eigenModes_IRL.cpp \
-	EigenModes/eigenProc_Zolotarev.cpp EigenModes/sortEigen.cpp \
-	EigenModes/fopr_chebyshev_DdagD.cpp EigenModes/findminmax.cpp \
+	EigenModes/eigenModesSolver_Factory.cpp \
+	EigenModes/eigenModesSolver_IRL.cpp \
+	EigenModes/eigenProc_Zolotarev.cpp EigenModes/eigenSorter.cpp \
+	EigenModes/fopr_chebyshev_DdagD.cpp \
+	EigenModes/foprHermFactory.cpp EigenModes/findminmax.cpp \
 	Measurements/measGeneral.cpp Measurements/GaugeM/staples.cpp \
 	Measurements/GaugeM/gaugeFixingStep.cpp \
 	Measurements/GaugeM/gaugeFixing_Coulomb.cpp \
@@ -166,9 +168,11 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_4) dirac_DomainWall_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
 	dirac_DomainWall_4D_eoSolv.$(OBJEXT) eoUtils.$(OBJEXT) \
-	dirac_Operator_Factory.$(OBJEXT) eigenModes_IRL.$(OBJEXT) \
-	eigenProc_Zolotarev.$(OBJEXT) sortEigen.$(OBJEXT) \
-	fopr_chebyshev_DdagD.$(OBJEXT) findminmax.$(OBJEXT) \
+	dirac_Operator_Factory.$(OBJEXT) \
+	eigenModesSolver_Factory.$(OBJEXT) \
+	eigenModesSolver_IRL.$(OBJEXT) eigenProc_Zolotarev.$(OBJEXT) \
+	eigenSorter.$(OBJEXT) fopr_chebyshev_DdagD.$(OBJEXT) \
+	foprHermFactory.$(OBJEXT) findminmax.$(OBJEXT) \
 	measGeneral.$(OBJEXT) staples.$(OBJEXT) \
 	gaugeFixingStep.$(OBJEXT) gaugeFixing_Coulomb.$(OBJEXT) \
 	gaugeFixing_Landau.$(OBJEXT) gfixFactory.$(OBJEXT) \
@@ -411,10 +415,12 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
 		Dirac_ops/eoUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
-		EigenModes/eigenModes_IRL.cpp		\
+		EigenModes/eigenModesSolver_Factory.cpp	\
+		EigenModes/eigenModesSolver_IRL.cpp	\
 		EigenModes/eigenProc_Zolotarev.cpp	\
-		EigenModes/sortEigen.cpp		\
+		EigenModes/eigenSorter.cpp		\
 		EigenModes/fopr_chebyshev_DdagD.cpp	\
+		EigenModes/foprHermFactory.cpp   	\
 		EigenModes/findminmax.cpp		\
 		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
@@ -474,6 +480,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/fopr_eo_wilson.h		\
 			$(top_srcdir)/include/fopr.h			\
 			$(top_srcdir)/include/fopr_signH_Zolotarev.h	\
+			$(top_srcdir)/include/foprHermFactory.hpp	\
 			$(top_srcdir)/include/format_A.h		\
 			$(top_srcdir)/include/format_F.h		\
 			$(top_srcdir)/include/format_G.h		\
@@ -540,8 +547,10 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Dirac_ops/eoUtils.hpp            	\
-			EigenModes/eigenModes_IRL.hpp		\
-			EigenModes/sortEigen.h			\
+			EigenModes/eigenModesSolver_Factory.hpp	\
+			EigenModes/eigenModesSolver.hpp  	\
+			EigenModes/eigenModesSolver_IRL.hpp	\
+			EigenModes/eigenSorter.hpp		\
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/findminmax.hpp		\
 			Fields/field_expressions.hpp		\
@@ -723,11 +732,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_overlap_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_EvenOdd.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModes_IRL.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_Factory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenProc_Zolotarev.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenSorter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eoUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fieldUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/findminmax.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/foprHermFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fopr_chebyshev_DdagD.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fopr_signH_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gammaMatrices.Po@am__quote@
@@ -766,7 +778,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver_BiCGStab.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver_CG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver_Factory.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sortEigen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/staples.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stoutSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunMatUtils.Po@am__quote@
@@ -1236,21 +1247,37 @@ dirac_Operator_Factory.obj: Dirac_ops/dirac_Operator_Factory.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_Operator_Factory.obj `if test -f 'Dirac_ops/dirac_Operator_Factory.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_Operator_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_Operator_Factory.cpp'; fi`
 
-eigenModes_IRL.o: EigenModes/eigenModes_IRL.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenModes_IRL.o -MD -MP -MF $(DEPDIR)/eigenModes_IRL.Tpo -c -o eigenModes_IRL.o `test -f 'EigenModes/eigenModes_IRL.cpp' || echo '$(srcdir)/'`EigenModes/eigenModes_IRL.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenModes_IRL.Tpo $(DEPDIR)/eigenModes_IRL.Po
+eigenModesSolver_Factory.o: EigenModes/eigenModesSolver_Factory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenModesSolver_Factory.o -MD -MP -MF $(DEPDIR)/eigenModesSolver_Factory.Tpo -c -o eigenModesSolver_Factory.o `test -f 'EigenModes/eigenModesSolver_Factory.cpp' || echo '$(srcdir)/'`EigenModes/eigenModesSolver_Factory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenModesSolver_Factory.Tpo $(DEPDIR)/eigenModesSolver_Factory.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenModes_IRL.cpp' object='eigenModes_IRL.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenModesSolver_Factory.cpp' object='eigenModesSolver_Factory.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenModes_IRL.o `test -f 'EigenModes/eigenModes_IRL.cpp' || echo '$(srcdir)/'`EigenModes/eigenModes_IRL.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenModesSolver_Factory.o `test -f 'EigenModes/eigenModesSolver_Factory.cpp' || echo '$(srcdir)/'`EigenModes/eigenModesSolver_Factory.cpp
 
-eigenModes_IRL.obj: EigenModes/eigenModes_IRL.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenModes_IRL.obj -MD -MP -MF $(DEPDIR)/eigenModes_IRL.Tpo -c -o eigenModes_IRL.obj `if test -f 'EigenModes/eigenModes_IRL.cpp'; then $(CYGPATH_W) 'EigenModes/eigenModes_IRL.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenModes_IRL.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenModes_IRL.Tpo $(DEPDIR)/eigenModes_IRL.Po
+eigenModesSolver_Factory.obj: EigenModes/eigenModesSolver_Factory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenModesSolver_Factory.obj -MD -MP -MF $(DEPDIR)/eigenModesSolver_Factory.Tpo -c -o eigenModesSolver_Factory.obj `if test -f 'EigenModes/eigenModesSolver_Factory.cpp'; then $(CYGPATH_W) 'EigenModes/eigenModesSolver_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenModesSolver_Factory.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenModesSolver_Factory.Tpo $(DEPDIR)/eigenModesSolver_Factory.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenModes_IRL.cpp' object='eigenModes_IRL.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenModesSolver_Factory.cpp' object='eigenModesSolver_Factory.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenModes_IRL.obj `if test -f 'EigenModes/eigenModes_IRL.cpp'; then $(CYGPATH_W) 'EigenModes/eigenModes_IRL.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenModes_IRL.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenModesSolver_Factory.obj `if test -f 'EigenModes/eigenModesSolver_Factory.cpp'; then $(CYGPATH_W) 'EigenModes/eigenModesSolver_Factory.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenModesSolver_Factory.cpp'; fi`
+
+eigenModesSolver_IRL.o: EigenModes/eigenModesSolver_IRL.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenModesSolver_IRL.o -MD -MP -MF $(DEPDIR)/eigenModesSolver_IRL.Tpo -c -o eigenModesSolver_IRL.o `test -f 'EigenModes/eigenModesSolver_IRL.cpp' || echo '$(srcdir)/'`EigenModes/eigenModesSolver_IRL.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenModesSolver_IRL.Tpo $(DEPDIR)/eigenModesSolver_IRL.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenModesSolver_IRL.cpp' object='eigenModesSolver_IRL.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenModesSolver_IRL.o `test -f 'EigenModes/eigenModesSolver_IRL.cpp' || echo '$(srcdir)/'`EigenModes/eigenModesSolver_IRL.cpp
+
+eigenModesSolver_IRL.obj: EigenModes/eigenModesSolver_IRL.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenModesSolver_IRL.obj -MD -MP -MF $(DEPDIR)/eigenModesSolver_IRL.Tpo -c -o eigenModesSolver_IRL.obj `if test -f 'EigenModes/eigenModesSolver_IRL.cpp'; then $(CYGPATH_W) 'EigenModes/eigenModesSolver_IRL.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenModesSolver_IRL.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenModesSolver_IRL.Tpo $(DEPDIR)/eigenModesSolver_IRL.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenModesSolver_IRL.cpp' object='eigenModesSolver_IRL.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenModesSolver_IRL.obj `if test -f 'EigenModes/eigenModesSolver_IRL.cpp'; then $(CYGPATH_W) 'EigenModes/eigenModesSolver_IRL.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenModesSolver_IRL.cpp'; fi`
 
 eigenProc_Zolotarev.o: EigenModes/eigenProc_Zolotarev.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenProc_Zolotarev.o -MD -MP -MF $(DEPDIR)/eigenProc_Zolotarev.Tpo -c -o eigenProc_Zolotarev.o `test -f 'EigenModes/eigenProc_Zolotarev.cpp' || echo '$(srcdir)/'`EigenModes/eigenProc_Zolotarev.cpp
@@ -1268,21 +1295,21 @@ eigenProc_Zolotarev.obj: EigenModes/eigenProc_Zolotarev.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenProc_Zolotarev.obj `if test -f 'EigenModes/eigenProc_Zolotarev.cpp'; then $(CYGPATH_W) 'EigenModes/eigenProc_Zolotarev.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenProc_Zolotarev.cpp'; fi`
 
-sortEigen.o: EigenModes/sortEigen.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sortEigen.o -MD -MP -MF $(DEPDIR)/sortEigen.Tpo -c -o sortEigen.o `test -f 'EigenModes/sortEigen.cpp' || echo '$(srcdir)/'`EigenModes/sortEigen.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sortEigen.Tpo $(DEPDIR)/sortEigen.Po
+eigenSorter.o: EigenModes/eigenSorter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenSorter.o -MD -MP -MF $(DEPDIR)/eigenSorter.Tpo -c -o eigenSorter.o `test -f 'EigenModes/eigenSorter.cpp' || echo '$(srcdir)/'`EigenModes/eigenSorter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenSorter.Tpo $(DEPDIR)/eigenSorter.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/sortEigen.cpp' object='sortEigen.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenSorter.cpp' object='eigenSorter.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sortEigen.o `test -f 'EigenModes/sortEigen.cpp' || echo '$(srcdir)/'`EigenModes/sortEigen.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenSorter.o `test -f 'EigenModes/eigenSorter.cpp' || echo '$(srcdir)/'`EigenModes/eigenSorter.cpp
 
-sortEigen.obj: EigenModes/sortEigen.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sortEigen.obj -MD -MP -MF $(DEPDIR)/sortEigen.Tpo -c -o sortEigen.obj `if test -f 'EigenModes/sortEigen.cpp'; then $(CYGPATH_W) 'EigenModes/sortEigen.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/sortEigen.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/sortEigen.Tpo $(DEPDIR)/sortEigen.Po
+eigenSorter.obj: EigenModes/eigenSorter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenSorter.obj -MD -MP -MF $(DEPDIR)/eigenSorter.Tpo -c -o eigenSorter.obj `if test -f 'EigenModes/eigenSorter.cpp'; then $(CYGPATH_W) 'EigenModes/eigenSorter.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenSorter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenSorter.Tpo $(DEPDIR)/eigenSorter.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/sortEigen.cpp' object='sortEigen.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenSorter.cpp' object='eigenSorter.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sortEigen.obj `if test -f 'EigenModes/sortEigen.cpp'; then $(CYGPATH_W) 'EigenModes/sortEigen.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/sortEigen.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenSorter.obj `if test -f 'EigenModes/eigenSorter.cpp'; then $(CYGPATH_W) 'EigenModes/eigenSorter.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenSorter.cpp'; fi`
 
 fopr_chebyshev_DdagD.o: EigenModes/fopr_chebyshev_DdagD.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fopr_chebyshev_DdagD.o -MD -MP -MF $(DEPDIR)/fopr_chebyshev_DdagD.Tpo -c -o fopr_chebyshev_DdagD.o `test -f 'EigenModes/fopr_chebyshev_DdagD.cpp' || echo '$(srcdir)/'`EigenModes/fopr_chebyshev_DdagD.cpp
@@ -1299,6 +1326,22 @@ fopr_chebyshev_DdagD.obj: EigenModes/fopr_chebyshev_DdagD.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/fopr_chebyshev_DdagD.cpp' object='fopr_chebyshev_DdagD.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o fopr_chebyshev_DdagD.obj `if test -f 'EigenModes/fopr_chebyshev_DdagD.cpp'; then $(CYGPATH_W) 'EigenModes/fopr_chebyshev_DdagD.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/fopr_chebyshev_DdagD.cpp'; fi`
+
+foprHermFactory.o: EigenModes/foprHermFactory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT foprHermFactory.o -MD -MP -MF $(DEPDIR)/foprHermFactory.Tpo -c -o foprHermFactory.o `test -f 'EigenModes/foprHermFactory.cpp' || echo '$(srcdir)/'`EigenModes/foprHermFactory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/foprHermFactory.Tpo $(DEPDIR)/foprHermFactory.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/foprHermFactory.cpp' object='foprHermFactory.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o foprHermFactory.o `test -f 'EigenModes/foprHermFactory.cpp' || echo '$(srcdir)/'`EigenModes/foprHermFactory.cpp
+
+foprHermFactory.obj: EigenModes/foprHermFactory.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT foprHermFactory.obj -MD -MP -MF $(DEPDIR)/foprHermFactory.Tpo -c -o foprHermFactory.obj `if test -f 'EigenModes/foprHermFactory.cpp'; then $(CYGPATH_W) 'EigenModes/foprHermFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/foprHermFactory.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/foprHermFactory.Tpo $(DEPDIR)/foprHermFactory.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/foprHermFactory.cpp' object='foprHermFactory.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o foprHermFactory.obj `if test -f 'EigenModes/foprHermFactory.cpp'; then $(CYGPATH_W) 'EigenModes/foprHermFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/foprHermFactory.cpp'; fi`
 
 findminmax.o: EigenModes/findminmax.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT findminmax.o -MD -MP -MF $(DEPDIR)/findminmax.Tpo -c -o findminmax.o `test -f 'EigenModes/findminmax.cpp' || echo '$(srcdir)/'`EigenModes/findminmax.cpp

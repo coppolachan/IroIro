@@ -68,7 +68,7 @@ int Test_RationalApprox::run(){
   XML::node kernel_node = RA_node;
   XML::descend(kernel_node, "Kernel");
   DiracWilsonLikeOperatorFactory* KernelF = DiracOperators::createDiracWilsonLikeOperatorFactory(kernel_node);
-  DiracWilsonLike* Kernel = KernelF->getDiracOperator(&(Gfield_.data));
+  DiracWilsonLike* Kernel = KernelF->getDiracOperatorWL(&(Gfield_.data));
 
 
   // Find Max eigenvalue

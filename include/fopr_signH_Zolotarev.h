@@ -9,8 +9,8 @@
 #include "include/fopr.h"
 #include "include/field.h"
 #include "Solver/multiShiftSolver_CG.hpp"
-#include "EigenModes/eigenModes_IRL.hpp"
-#include "EigenModes/sortEigen.h"
+#include "EigenModes/eigenModesSolver.hpp"
+#include "EigenModes/eigenSorter.hpp"
 #include "include/format_F.h"
 
 

@@ -66,7 +66,6 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_wilson_standard.code    \
 		Fields/field.inl
 
-
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
 		$(SITE_INDEXING_SRCS)			\
@@ -93,10 +92,12 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
 		Dirac_ops/eoUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
-		EigenModes/eigenModes_IRL.cpp		\
+		EigenModes/eigenModesSolver_Factory.cpp	\
+		EigenModes/eigenModesSolver_IRL.cpp	\
 		EigenModes/eigenProc_Zolotarev.cpp	\
-		EigenModes/sortEigen.cpp		\
+		EigenModes/eigenSorter.cpp		\
 		EigenModes/fopr_chebyshev_DdagD.cpp	\
+		EigenModes/foprHermFactory.cpp   	\
 		EigenModes/findminmax.cpp		\
 		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
@@ -159,6 +160,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/fopr_eo_wilson.h		\
 			$(top_srcdir)/include/fopr.h			\
 			$(top_srcdir)/include/fopr_signH_Zolotarev.h	\
+			$(top_srcdir)/include/foprHermFactory.hpp	\
 			$(top_srcdir)/include/format_A.h		\
 			$(top_srcdir)/include/format_F.h		\
 			$(top_srcdir)/include/format_G.h		\
@@ -225,8 +227,10 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Dirac_ops/eoUtils.hpp            	\
-			EigenModes/eigenModes_IRL.hpp		\
-			EigenModes/sortEigen.h			\
+			EigenModes/eigenModesSolver_Factory.hpp	\
+			EigenModes/eigenModesSolver.hpp  	\
+			EigenModes/eigenModesSolver_IRL.hpp	\
+			EigenModes/eigenSorter.hpp		\
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/findminmax.hpp		\
 			Fields/field_expressions.hpp		\

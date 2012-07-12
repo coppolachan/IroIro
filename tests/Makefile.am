@@ -67,7 +67,7 @@ test_PROGRAMS = test_HMC 		\
 		test_QpropMom		\
 		test_ResMass 		\
 		test_MesonSpectrum	\
-		test_EigenModes		\
+		test_EigenModesSolver	\
 		test_Smearing		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
@@ -123,8 +123,8 @@ test_Solver_Perf_SOURCES = 	test_Solver_Perf.cpp		\
 test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 				testerResMass.cpp
 
-test_EigenModes_SOURCES = 	test_EigenModes_IRL.cpp		\
-				testerEigenModes.cpp
+test_EigenModesSolver_SOURCES =	test_EigenModesSolver.cpp	\
+				testerEigenModesSolver.cpp
 
 test_Overlap_SOURCES 	= 	test_Overlap.cpp		\
 				testerOverlap.cpp
@@ -156,7 +156,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
 				test_IO.hpp			\
-				test_EigenModes_IRL.hpp		\
+				test_EigenModesSolver.hpp		\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\

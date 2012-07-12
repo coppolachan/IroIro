@@ -13,7 +13,7 @@ private:
   GaugeField conf_;
   std::string output_;
 public:
-  Test_MesonSpectrum(XML::node node,GaugeField conf,
+  Test_MesonSpectrum(XML::node node,const GaugeField& conf,
 		     const RandNum&,std::string file)
     :node_(node),conf_(conf),output_(file){}
   int run();

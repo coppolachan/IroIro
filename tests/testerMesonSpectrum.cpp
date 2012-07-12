@@ -13,3 +13,9 @@ int main(int argc, char* argv[]){
   return 0;
 }
 
+/*
+int main(int argc, char* argv[]){
+  TestEnv::StartRun<Test_MesonSpectrum>(argc,argv);
+  return 0;
+}
+*/

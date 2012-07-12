@@ -51,7 +51,7 @@ private:
     // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
-    Kernel.save(DiracObj.get()->getDiracOperator(&(Links->data)));
+    Kernel.save(DiracObj.get()->getDiracOperatorWL(&(Links->data)));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
 
@@ -90,7 +90,7 @@ private:
    // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
-    Kernel.save(DiracObj.get()->getDiracOperator(&(Links->data)));
+    Kernel.save(DiracObj.get()->getDiracOperatorWL(&(Links->data)));
     HermitianOp.save(new Fopr_DdagD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
     return new Action_Nf(Links, Kernel.get(), Solv.get(), 
@@ -137,8 +137,8 @@ private:
    // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
-    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(Links->data)));
-    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(Links->data)));
+    DiracNumerator.save(DiracNumObj.get()->getDiracOperatorWL(&(Links->data)));
+    DiracDenominator.save(DiracDenomObj.get()->getDiracOperatorWL(&(Links->data)));
     
     Solver1.save(SolverNumObj.get()->getSolver(new Fopr_DdagD(DiracNumerator.get())));
     Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_DdagD(DiracDenominator.get())));
@@ -190,8 +190,8 @@ private:
    // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
-    DiracNumerator.save(DiracNumObj.get()->getDiracOperator(&(Links->data)));
-    DiracDenominator.save(DiracDenomObj.get()->getDiracOperator(&(Links->data)));
+    DiracNumerator.save(DiracNumObj.get()->getDiracOperatorWL(&(Links->data)));
+    DiracDenominator.save(DiracDenomObj.get()->getDiracOperatorWL(&(Links->data)));
     
     Solver1.save(SolverNumObj.get()->getSolver(new Fopr_DdagD(DiracNumerator.get())));
     Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_DdagD(DiracDenominator.get())));
@@ -243,7 +243,7 @@ private:
     // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
-    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(Links->data)));
+    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperatorWL(&(Links->data)));
     DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(Links->data)));
 
     HermitianOp.save(  new Fopr_DdagD_Precondition(DWF5d_Kernel.get()));
@@ -295,7 +295,7 @@ private:
     GaugeField* Links = SC->select_conf(smearing);
 
 
-    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperator(&(Links->data)));
+    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperatorWL(&(Links->data)));
     DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(Links->data)));
 
     HermitianOp.save(  new Fopr_DdagD_Precondition(DWF5d_Kernel.get()));

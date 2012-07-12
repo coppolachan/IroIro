@@ -17,7 +17,7 @@
 
 typedef std::vector<Field> prop_t;
  
-enum MesonType {Pion, Scalar, Vector1};
+enum MesonType {Pion, Scalar, Vector1, Vector2, Vector3};
 
 class MesonCorrelator {
   const int Nc_;
@@ -44,6 +44,14 @@ public:
     case Vector1:
       G1_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma1_5);
       G2_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma1_5);
+      break;
+    case Vector2:
+      G1_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma2_5);
+      G2_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma2_5);
+      break;
+    case Vector3:
+      G1_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma3_5);
+      G2_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma3_5);
       break;
     }
   }
