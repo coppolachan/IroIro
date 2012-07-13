@@ -12,6 +12,7 @@
 
 using namespace std;
 
+
 //-----------------------------------------------------------------------------
 const Field Dirac_optimalDomainWall_EvenOdd::mult_ee(const Field& f)const{
   return Deo_.mult_hop5(f);
@@ -45,22 +46,29 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_oe_dag(const Field& f)const{
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{
-#ifdef IBM_BGQ_WILSON
-  Field res(Deo_.fsize());
-  Doe_.mult_hop(res, f);
-  return res;
-#else
+  /*
   Field w(f);
   w -= mult_eo(mult_oe(f));
   return w;
-#endif
-}
+  */
 
+  
+  // just slightly faster (but only BGQ)
+  Field res(Deo_.fsize());
+  Doe_.mult_hop(res, f);
+  return res;
+}
 const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
   timeval start_, end_;
   gettimeofday(&start_,NULL);
+  /*
+    Field w(f);
+    w -= mult_oe_dag(mult_eo_dag(f));
+    return w;
+  */
 
-#ifdef IBM_BGQ_WILSON
+  
+  //BGQ
   Field res(Deo_.fsize());
   Deo_.mult_hop_dag(res,f);
 
@@ -69,11 +77,7 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
   multdag_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
 
   return res;
-#else
-  Field w(f);
-  w -= mult_oe_dag(mult_eo_dag(f));
-  return w;
-#endif
+   
 }
 
 void Dirac_optimalDomainWall_EvenOdd::
@@ -98,7 +102,6 @@ md_force(const Field& eta,const Field& zeta) const{
 }
 
 ///////////////////////////////////////////////////////////////////////
-#ifdef IBM_BGQ_WILSON
 // OPTIMIZED LIBRARIES
 void  Dirac_optimalDomainWall_EvenOdd::solve_eo(Field& out, 
 						const Field& in, 
@@ -107,8 +110,6 @@ void  Dirac_optimalDomainWall_EvenOdd::solve_eo(Field& out,
 						double stop_cond) const{
   Deo_.solve_eo_5d(out, in, SO, Niter, stop_cond);
 }
-#endif
 ///////////////////////////////////////////////////////////////////////
-
 
 

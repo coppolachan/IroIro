@@ -1,21 +1,17 @@
 /*! 
  * @file fields_io.hpp 
- * @brief Definition of MPI safe input/output routines for fields
+ * @brief Definition of MPI safe read/write routines for fields
  *
- * These are the parallel versions of the STL cout,cerr,cin.
- * The user can control which nodes are involved in output/input.
  */
 
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
 
 #include "include/field.h"
+#include "include/messages_macros.hpp"
 #include "Main/Geometry/siteIndex.hpp"
 #include "Tools/byteswap.hpp"
-
-#ifdef IBM_BGQ
 #include <stdio.h>
-#endif
 
 #define CCIO_FILE_APPEND_MODE true
 #define FORTRAN_CONTROL_WORDS 4  //number of fortran bytes for control
@@ -86,14 +82,14 @@ namespace CCIO {
   template <typename T>
   int SaveOnDisk(const Field& f, const char* filename, bool append_mode = false) 
   {
-    T format(CommonPrms::instance()->Nvol());
     Communicator* comm = Communicator::instance();
+    CommonPrms* cmprms = CommonPrms::instance();
+    T format(cmprms->Nvol());
+
     size_t local_index, global_index;
     int num_nodes, total_volume;
-   
-
-    
-    std::vector<int> block_x(CommonPrms::instance()->Nx());
+     
+    std::vector<int> block_x(cmprms->Nx());
     std::valarray<double> copy(format.Nin()*block_x.size()*format.Nex());
     std::valarray<double> local(format.Nin()*block_x.size()*format.Nex());
 
@@ -106,20 +102,20 @@ namespace CCIO {
 	outFile = fopen (filename,"w");
 
       std::cout << "Binary writing "<<f.size()*comm->size()*sizeof(double)
-		<<" bytes on "<< filename << " - BGQ hack\n";
+		<<" bytes on "<< filename << "... ";
     }
       
     //Loop among nodes (master node)   
-    for (int node_t = 0; node_t < CommonPrms::instance()->NPEt(); ++node_t) {
-      for (int t_slice = 0; t_slice < CommonPrms::instance()->Nt(); ++t_slice){
+    for (int node_t = 0; node_t < cmprms->NPEt(); ++node_t) {
+      for (int t_slice = 0; t_slice < cmprms->Nt(); ++t_slice){
 	
-	for (int node_z = 0; node_z < CommonPrms::instance()->NPEz(); ++node_z) {
-	  for (int z_slice = 0; z_slice < CommonPrms::instance()->Nz(); ++z_slice){
+	for (int node_z = 0; node_z < cmprms->NPEz(); ++node_z) {
+	  for (int z_slice = 0; z_slice <cmprms->Nz(); ++z_slice){
 	    
-	    for (int node_y = 0; node_y < CommonPrms::instance()->NPEy(); ++node_y) {
-	      for (int y_slice = 0; y_slice < CommonPrms::instance()->Ny(); ++y_slice){
+	    for (int node_y = 0; node_y < cmprms->NPEy(); ++node_y) {
+	      for (int y_slice = 0; y_slice < cmprms->Ny(); ++y_slice){
 		
-		for (int node_x = 0; node_x < CommonPrms::instance()->NPEx(); ++node_x) {
+		for (int node_x = 0; node_x < cmprms->NPEx(); ++node_x) {
 		  int node = comm->nodeid(node_x, node_y, node_z, node_t);
 		  //Copy a block of dimension Nx into the master node and save
 
@@ -134,11 +130,7 @@ namespace CCIO {
 		  comm->sync();    
 		  //Save to file sequentially
 		  if (comm->primaryNode()){
-		 
-
 		    for (int x_idx = 0; x_idx < block_x.size(); ++x_idx){
-		      //std::cout << "block_x["<<x_idx<<"]  ="<<  block_x[x_idx] <<"\n";
-
 		      for (int external =0; external < format.Nex(); ++external) {	      
 			for (int internal =0; internal < format.Nin(); ++internal) {
 			  local_index = internal +format.Nin()*(x_idx + block_x.size()*external);//Breaks universality
@@ -147,9 +139,6 @@ namespace CCIO {
 			}
 		      }
 		    }
-		    //for (int gl = 0 ; gl < copy.size(); ++gl){
-		    //  std::cout << node << "- Copy_Field["<<gl<<"] = "<<copy[gl]<< "\n";
-		    //}
 		    if (outFile!=NULL) {
 		      fwrite((const char*)&copy[0], sizeof(double), local.size(), outFile);
 		    }
@@ -164,88 +153,10 @@ namespace CCIO {
       }
     }
     comm->sync();    
-    if(comm->primaryNode()) 
-      fclose(outFile);
-   
-
-
-
-
-
-
-    /*
-    Field Global;
-    std::vector<int> global_site(format.Nvol());
-    
-    total_volume = CommonPrms::instance()->Lvol();
-    num_nodes    = CommonPrms::instance()->NP();
-    
-    //Initializations
-    std::valarray<double> local(f.size());
-
-    if(comm->primaryNode()) 
-      Global.resize(f.size()*num_nodes);
-    
-    //Gather information
-    for (int node=0; node < num_nodes; ++node) {
-      comm->sync();
-      //copy one by one the local fields stored in the nodes into primary node
-      comm->send_1to1(local, f.getva(), local.size(), 0, node, node);
-
-      global_site = SiteIndex::instance()->get_gsite();
-      comm->sync();    
-      //copy global index array on primary node
-      comm->broadcast(format.Nvol(), global_site[0], node);
-      if(comm->primaryNode())
-	{	  
-	  for (int site=0; site < format.Nvol(); ++site) {
-	    for (int internal =0; internal < format.Nin(); ++internal) {
-	      for (int external =0; external < format.Nex(); ++external) {
-		local_index = format.index(internal, site, external);
-		//lime format: nb  external and site index are reverted from original order
-		global_index = internal +format.Nin()*(external+ format.Nex()*global_site[site]);
-		
-		Global.set(global_index, local[local_index]);
-	      }
-	    }
-	  }
-	}
-    }
-    // closing loop among processing nodes
-    
     if(comm->primaryNode()) {
-      #ifdef IBM_BGQ //hopefully temporary hack
-      FILE * outFile;
-      if(append_mode) 
-	outFile = fopen (filename,"a");
-      else
-	outFile = fopen (filename,"w");
-
-      if (outFile!=NULL) {
-	std::cout << "Binary writing "<<f.size()*comm->size()*sizeof(double)
-		  <<" bytes on "<< filename << " - BGQ hack\n";
-	Global.write_buffer(outFile);
-
-      }
       fclose(outFile);
-      #else
-      std::ofstream Outputfile;
-      if(append_mode) 
-	Outputfile.open(filename, std::ios::binary | std::ios::app);
-      else
-	Outputfile.open(filename, std::ios::binary);
-      
-      if (Outputfile.good()) {
-	std::cout << "Binary writing "<<f.size()*comm->size()*sizeof(double)
-		  <<" bytes on "<< filename << "\n";
-	Global.write_stream(Outputfile);
-      }
-      Outputfile.close();
-      #endif
+      std::cout << "write completed succesfully\n";
     }
-    */
-
-    CCIO::cout << "Write ended succesfully\n";
 
     return 0;
   }
@@ -270,25 +181,21 @@ namespace CCIO {
    * @param offset Starting point in file reading (byte offset)
    */
 
-  //  #define OLD_READ_VERSION
-
   template <typename T>
   int ReadFromDisk(Field& f, const char* filename, int offset = 0, StoringFormat storeFormat = ILDGBinFormat) {
     Communicator* comm = Communicator::instance();
-    if(comm->primaryNode()) {std::cout << "Format initialization... " << std::endl;}
+    _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");
     T format(CommonPrms::instance()->Nvol());
     size_t local_index, global_index;
     int num_nodes, total_volume, local_volume;
     
-    if(comm->primaryNode()) {std::cout << "Lattice constants initialization... " << std::endl;}
+    _Message(DEBUG_VERB_LEVEL, "Lattice constants initialization...\n");
     total_volume = CommonPrms::instance()->Lvol();
     local_volume = CommonPrms::instance()->Nvol();
     num_nodes    = CommonPrms::instance()->NP();
-    
-    if(comm->primaryNode()) {std::cout << "Global field initialization... " << std::endl;}
-    Field Global;
+ 
 
-    #ifndef OLD_READ_VERSION
+    /*   
     std::vector<int> block_x(CommonPrms::instance()->Nx());
     std::valarray<double> copy(format.Nin()*block_x.size()*format.Nex());
     std::valarray<double> local(format.Nin()*block_x.size()*format.Nex());
@@ -299,7 +206,7 @@ namespace CCIO {
 	inFile = fopen (filename,"r");
 	
 	std::cout << "Binary reading "<<f.size()*comm->size()*sizeof(double)
-		  <<" bytes on "<< filename << " with offset "<< offset <<"... ";
+		  <<" bytes from "<< filename << " with offset "<< offset <<"... ";
 	fseek(inFile, offset, SEEK_SET);
     }
     
@@ -320,7 +227,6 @@ namespace CCIO {
 
 		  //Read from file sequentially
 		  if (comm->primaryNode()){
-		    //std::cout << "Reading at location "<< ftell(inFile)<< "\n";
 		    if (inFile!=NULL) {
 		      if (storeFormat == JLQCDLegacyFormat) {
 			ReadJLQCDLegacyFormat((double*)&copy[0], inFile, copy.size(), total_volume, format.Nin(), format.Nex());
@@ -366,13 +272,14 @@ namespace CCIO {
       }
     }
     comm->sync();    
-    if(comm->primaryNode()) 
+    if(comm->primaryNode()) {
       fclose(inFile);
-    
+      std::cout << "done\n";
+    }
+*/
 
-
-    #else
     //Read data from single file on disk
+    Field Global;
     if(comm->primaryNode()) {
       std::ifstream Inputfile;
       std::cout << "Global resize "  << format.size() << "*" << num_nodes << std::endl;
@@ -443,10 +350,9 @@ namespace CCIO {
       //close node for loop
     }
 
-    #endif    
 
 
-    if(comm->primaryNode()) {std::cout << "done\n";}
+
     return 0;
   }
   

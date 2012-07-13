@@ -303,6 +303,8 @@ public:
 	initializeJLQCDlegacy(filename);
 	return 0;
       }
+      std::cout << "Configuration type unknown\n";
+      exit(1);
     } catch(...) {
       std::cout << "Error in initialization of gauge field "<< std::endl;
       abort();
@@ -326,6 +328,8 @@ public:
 	initializeJLQCDlegacy(filename);
 	return 0;
       }
+      std::cout << "Configuration type unknown\n";
+      exit(1);
     } catch(...) {
       std::cout << "Error in initialization of gauge field "<< std::endl;
     }
