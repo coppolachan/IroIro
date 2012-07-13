@@ -270,6 +270,8 @@ namespace CCIO {
    * @param offset Starting point in file reading (byte offset)
    */
 
+  //  #define OLD_READ_VERSION
+
   template <typename T>
   int ReadFromDisk(Field& f, const char* filename, int offset = 0, StoringFormat storeFormat = ILDGBinFormat) {
     Communicator* comm = Communicator::instance();
@@ -286,7 +288,7 @@ namespace CCIO {
     if(comm->primaryNode()) {std::cout << "Global field initialization... " << std::endl;}
     Field Global;
 
-    /*
+    #ifndef OLD_READ_VERSION
     std::vector<int> block_x(CommonPrms::instance()->Nx());
     std::valarray<double> copy(format.Nin()*block_x.size()*format.Nex());
     std::valarray<double> local(format.Nin()*block_x.size()*format.Nex());
@@ -297,7 +299,7 @@ namespace CCIO {
 	inFile = fopen (filename,"r");
 	
 	std::cout << "Binary reading "<<f.size()*comm->size()*sizeof(double)
-		  <<" bytes on "<< filename << "\n";
+		  <<" bytes on "<< filename << " with offset "<< offset <<"... ";
 	fseek(inFile, offset, SEEK_SET);
     }
     
@@ -318,7 +320,7 @@ namespace CCIO {
 
 		  //Read from file sequentially
 		  if (comm->primaryNode()){
-		    std::cout << "Reading at location "<< ftell(inFile)<< "\n";
+		    //std::cout << "Reading at location "<< ftell(inFile)<< "\n";
 		    if (inFile!=NULL) {
 		      if (storeFormat == JLQCDLegacyFormat) {
 			ReadJLQCDLegacyFormat((double*)&copy[0], inFile, copy.size(), total_volume, format.Nin(), format.Nex());
@@ -330,8 +332,6 @@ namespace CCIO {
 		    }
 
 		    for (int x_idx = 0; x_idx < block_x.size(); ++x_idx){
-		      //std::cout << "block_x["<<x_idx<<"]  ="<<  block_x[x_idx] <<"\n";
-
 		      for (int external =0; external < format.Nex(); ++external) {	      
 			for (int internal =0; internal < format.Nin(); ++internal) {
 			  local_index = internal +format.Nin()*(x_idx + block_x.size()*external);//Breaks universality
@@ -342,17 +342,20 @@ namespace CCIO {
 		      }
 		    }
 		  }//end primaryNode
-
-		  comm->send_1to1(copy, local, local.size(), node, 0, node);//copy to master node
-
-		  //Fill vector with indices
-		  for (int x_idx = 0; x_idx < block_x.size(); ++x_idx){
-		    block_x[x_idx] = SiteIndex::instance()->site(x_idx, y_slice, z_slice, t_slice);
-		  }
-		  f[format.get_sub(block_x)] = copy;
-
-	
 		  comm->sync();    
+		  comm->send_1to1(copy, local, local.size(), node, 0, node);//copy to master node
+		  comm->sync();    
+		  if(comm->nodeid() == node){
+		    //Fill vector with indices
+		    for (int x_idx = 0; x_idx < block_x.size(); ++x_idx){
+		      block_x[x_idx] = SiteIndex::instance()->site(x_idx, y_slice, z_slice, t_slice);
+		    }
+		    
+		    f.set(format.get_sub(block_x),copy);
+		    
+		  }
+
+
 		  
 		}
 	      }
@@ -365,10 +368,10 @@ namespace CCIO {
     comm->sync();    
     if(comm->primaryNode()) 
       fclose(inFile);
-    */
-
-
     
+
+
+    #else
     //Read data from single file on disk
     if(comm->primaryNode()) {
       std::ifstream Inputfile;
@@ -380,7 +383,7 @@ namespace CCIO {
       
       if (Inputfile.good()) {
 	
-	std::cout << "Binary reading "<<Global.size()*sizeof(double)
+	std::cout << "OLD - Binary reading "<<Global.size()*sizeof(double)
 		  <<" bytes on "<< filename << " with offset "<< offset <<"... ";
 	Inputfile.seekg(offset, std::ios::beg);
 	if (storeFormat== ILDGBinFormat) {
@@ -440,7 +443,7 @@ namespace CCIO {
       //close node for loop
     }
 
-        
+    #endif    
 
 
     if(comm->primaryNode()) {std::cout << "done\n";}
