@@ -42,6 +42,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_GeneralMeas.xml 	\
+		test_MesonSpectrum_Nf2p1.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
@@ -67,6 +68,7 @@ test_PROGRAMS = test_HMC 		\
 		test_QpropMom		\
 		test_ResMass 		\
 		test_MesonSpectrum	\
+		test_MesonSpectrum_Nf2p1\
 		test_EigenModesSolver	\
 		test_Smearing		\
 		test_Overlap		\
@@ -116,6 +118,9 @@ test_QpropMom_SOURCES 	= 	test_QpropMom.cpp 		\
 
 test_MesonSpectrum_SOURCES= 	test_MesonSpectrum.cpp 		\
 				testerMesonSpectrum.cpp
+
+test_MesonSpectrum_Nf2p1_SOURCES= test_MesonSpectrum_Nf2p1.cpp 	\
+				testerMesonSpectrumNf2p1.cpp
 
 test_Solver_Perf_SOURCES = 	test_Solver_Perf.cpp		\
 				testerSolver_Perf.cpp

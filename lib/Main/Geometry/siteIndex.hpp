@@ -13,7 +13,7 @@ enum site_dir{XDIR,YDIR,ZDIR,TDIR};
 
 class SiteIndex{
 private:
-  enum{Ndim_max_ = NDIM_};
+  enum{Ndim_max_= NDIM_};
 
   // Local dimensions
   int Nx_,Ny_,Nz_,Nt_;

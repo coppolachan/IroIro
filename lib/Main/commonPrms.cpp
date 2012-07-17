@@ -1,9 +1,6 @@
 /*! 
-
   @file commonPrms.cpp  
-
   @brief Defines CommonPrms class
-
 */
 
 #include "include/commonPrms.h"
@@ -30,6 +27,9 @@ int CommonPrms::NPEy_;
 int CommonPrms::NPEz_;
 int CommonPrms::NPEt_;
 int CommonPrms::NP_;
+
+vector<int> CommonPrms::Lsize_(NDIM_);
+vector<int> CommonPrms::Nsize_(NDIM_); 
 
 CommonPrms* CommonPrms::instance_= NULL;
 
@@ -63,6 +63,7 @@ CommonPrms::CommonPrms(const Lattice& latt){
     NPEz_= latt.NPEz;
     NPEt_= latt.NPEt;
   }
+
   Lvol_= Lx_*Ly_*Lz_*Lt_;
   NP_= NPEx_*NPEy_*NPEz_*NPEt_;
 
@@ -71,4 +72,14 @@ CommonPrms::CommonPrms(const Lattice& latt){
   Nz_= Lz_/NPEz_;
   Nt_= Lt_/NPEt_;
   Nvol_= Lvol_/NP_;
+
+  Lsize_.push_back(Lx_);
+  Lsize_.push_back(Ly_);
+  Lsize_.push_back(Lz_);
+  Lsize_.push_back(Lt_);
+
+  Nsize_.push_back(Nx_);
+  Nsize_.push_back(Ny_);
+  Nsize_.push_back(Nz_);
+  Nsize_.push_back(Nt_);
 }
