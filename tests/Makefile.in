@@ -42,7 +42,7 @@ target_triplet = @target@
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_2 = -qsmp
 @IBM_BGQ_TRUE@am__append_3 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/bghome/scbadm/ibm-doi/lib
 @IBM_BGQ_TRUE@am__append_4 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_5 = -lbgqwilson3x4smp
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_5 = -lbgqwilson3x4smp -lbgqthread
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@am__append_6 = -lbgqwilson3x4
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_HMC_EvenOdd$(EXEEXT) test_HMC_smear_noF$(EXEEXT) \

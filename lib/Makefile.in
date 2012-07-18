@@ -51,7 +51,7 @@ target_triplet = @target@
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@	 -L/bghome/scbadm/ibm-doi/lib
 
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_7 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_8 = -lbgqwilson3x4smp
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_8 = -lbgqwilson3x4smp -lbgqthread
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_9 = -lbgqwilson3x4
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib

@@ -15,7 +15,7 @@ endif
  OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 
 if IBM_BGQWILSON_SMP
-OPTLIB += -lbgqwilson3x4smp
+OPTLIB += -lbgqwilson3x4smp -lbgqthread
 else
 OPTLIB += -lbgqwilson3x4
 endif
