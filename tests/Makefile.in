@@ -475,10 +475,11 @@ include_HEADERS = tests.hpp			\
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
 				test_IO.hpp			\
-				test_EigenModesSolver.hpp		\
+				test_EigenModesSolver.hpp	\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
+				test_MesonSpectrum_Nf2p1.hpp	\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\

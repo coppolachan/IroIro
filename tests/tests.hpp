@@ -9,6 +9,7 @@
 
 #include "include/commandline.hpp"
 #include "lib/Measurements/measGeneral.hpp"
+#include "lib/Tools/jobUtils.hpp"
 
 class TestGeneral {
 public:
@@ -16,9 +17,14 @@ public:
 };
 
 namespace TestEnv{
+
+  void echo_input(const char* file_name);
+
   template <class TestClass>
   TestClass StartUp(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);
+    JobUtils::echo_input(Options.filename);
+
     //Reading input file
     XML::node top_node = XML::getInputXML(Options.filename);  
 
@@ -35,7 +41,8 @@ namespace TestEnv{
   template <class TestClass>
   int StartRun(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);
-    CCIO::cout<<"StartRun called"<<std::endl;
+    JobUtils::echo_input(Options.filename);
+
     //Reading input file   
     XML::node top_node = XML::getInputXML(Options.filename);  
     CCIO::cout<<"top_node obtained"<<std::endl;

@@ -134,6 +134,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/smartConf.cpp			\
 		Smearing/smearingFactories.cpp		\
 		Tools/fieldUtils.cpp			\
+		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
@@ -253,6 +254,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
 			Tools/sunMat.hpp			\
+			Tools/jobUtils.hpp			\
 			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\

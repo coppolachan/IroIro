@@ -144,7 +144,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Solver/rationalSolver.cpp Solver/solver.cpp \
 	Smearing/APEsmear.cpp Smearing/stoutSmear.cpp \
 	Smearing/smartConf.cpp Smearing/smearingFactories.cpp \
-	Tools/fieldUtils.cpp Tools/sunMatUtils.cpp \
+	Tools/fieldUtils.cpp Tools/jobUtils.cpp Tools/sunMatUtils.cpp \
 	Tools/randNum_MT19937.cpp Tools/randNum_Factory.cpp \
 	Tools/gammaMatrices.cpp Tools/Remez/alg_remez.cpp \
 	Tools/RationalApprox/rationalapprox.cpp
@@ -189,9 +189,10 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	rationalSolver.$(OBJEXT) solver.$(OBJEXT) APEsmear.$(OBJEXT) \
 	stoutSmear.$(OBJEXT) smartConf.$(OBJEXT) \
 	smearingFactories.$(OBJEXT) fieldUtils.$(OBJEXT) \
-	sunMatUtils.$(OBJEXT) randNum_MT19937.$(OBJEXT) \
-	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT) \
-	alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT)
+	jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
+	randNum_MT19937.$(OBJEXT) randNum_Factory.$(OBJEXT) \
+	gammaMatrices.$(OBJEXT) alg_remez.$(OBJEXT) \
+	rationalapprox.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -306,6 +307,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -457,6 +459,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/smartConf.cpp			\
 		Smearing/smearingFactories.cpp		\
 		Tools/fieldUtils.cpp			\
+		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
@@ -573,6 +576,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
 			Tools/sunMat.hpp			\
+			Tools/jobUtils.hpp			\
 			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
@@ -749,6 +753,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeFixing_Landau.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gfixFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcGeneral.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jobUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hmc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapping.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec.Po@am__quote@
@@ -1918,6 +1923,22 @@ fieldUtils.obj: Tools/fieldUtils.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/fieldUtils.cpp' object='fieldUtils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o fieldUtils.obj `if test -f 'Tools/fieldUtils.cpp'; then $(CYGPATH_W) 'Tools/fieldUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/fieldUtils.cpp'; fi`
+
+jobUtils.o: Tools/jobUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT jobUtils.o -MD -MP -MF $(DEPDIR)/jobUtils.Tpo -c -o jobUtils.o `test -f 'Tools/jobUtils.cpp' || echo '$(srcdir)/'`Tools/jobUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/jobUtils.Tpo $(DEPDIR)/jobUtils.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/jobUtils.cpp' object='jobUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jobUtils.o `test -f 'Tools/jobUtils.cpp' || echo '$(srcdir)/'`Tools/jobUtils.cpp
+
+jobUtils.obj: Tools/jobUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT jobUtils.obj -MD -MP -MF $(DEPDIR)/jobUtils.Tpo -c -o jobUtils.obj `if test -f 'Tools/jobUtils.cpp'; then $(CYGPATH_W) 'Tools/jobUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/jobUtils.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/jobUtils.Tpo $(DEPDIR)/jobUtils.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/jobUtils.cpp' object='jobUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o jobUtils.obj `if test -f 'Tools/jobUtils.cpp'; then $(CYGPATH_W) 'Tools/jobUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/jobUtils.cpp'; fi`
 
 sunMatUtils.o: Tools/sunMatUtils.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT sunMatUtils.o -MD -MP -MF $(DEPDIR)/sunMatUtils.Tpo -c -o sunMatUtils.o `test -f 'Tools/sunMatUtils.cpp' || echo '$(srcdir)/'`Tools/sunMatUtils.cpp
