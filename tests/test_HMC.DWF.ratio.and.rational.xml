@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>16 16 16 32</Lattice>
+    <Nodes>4 4 4 8</Nodes>
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="Binary">Conf_16x32.bin</Configuration> 
+  <!-- definition of HMC trajectory -->
+  <HMC>
+    <Nsweeps>1</Nsweeps>
+    <Thermalization>0</Thermalization>
+    <StartingConfig>0</StartingConfig>
+    <SavePrefix>Conf_</SavePrefix> 
+    <SaveInterval>0</SaveInterval>
+
+    <RandomNumberGen name="Mersenne Twister">
+      <!-- seedFile>seed_file</seedFile> -->
+      <init>0x123 0x234 0x345 0x456</init>
+    </RandomNumberGen>
+
+    <Integrator name="leapfrog_multistep">
+      <MDsteps>10</MDsteps>
+      <step_size>0.1</step_size>
+      <exp_approx>8</exp_approx>
+
+      <Smearing>
+	<levels>3</levels>
+	<Base type="APE">
+	  <rho>0.1</rho>
+	</Base>
+      </Smearing>
+
+      <!-- PF3 step : Hasenbusch preconditioned --> 
+      <step>
+        <multiplier>1</multiplier>
+
+	<Action type="Fermion" name="TwoFlavorsRatio">
+	  <smeared>true</smeared>
+
+	  <Numerator name="DiracOptimalDomainWall5dEvenOdd">
+	    <Preconditioning>NoPreconditioner</Preconditioning>
+	    <wilson_mass>-1.0</wilson_mass>
+	    <N5d>10</N5d>
+	    <b>2.0</b>
+	    <c>1.0</c>
+	    <mass>0.019</mass>
+	    <approximation name="Tanh"/>
+	  </Numerator>
+
+	  <Denominator name="DiracOptimalDomainWall5dEvenOdd">
+	    <Preconditioning>NoPreconditioner</Preconditioning>
+	    <wilson_mass>-1.0</wilson_mass>
+	    <N5d>10</N5d>
+	    <b>2.0</b>
+	    <c>1.0</c>
+	    <mass>0.150</mass>
+	    <approximation name="Tanh" />
+	  </Denominator>
+
+	  <SolverNumerator type="Solver_CG">
+	    <MaxIter>10000</MaxIter>
+	    <Precision>10e-16</Precision>
+	  </SolverNumerator>
+	  <SolverDenominator type="Solver_CG">
+	    <MaxIter>10000</MaxIter>
+	    <Precision>10e-16</Precision>
+	  </SolverDenominator>
+	</Action>
+	  
+      <!-- PF2 step : strange-flavor -->
+      <step>
+	<multiplier>2</multiplier>
+        <Action type="Fermion" name="NfFlavorsDomainWall_5D">
+          <smeared>true</smeared>
+
+	  <Flavors>1</Flavors>
+          <Pseudofermions>1</Pseudofermions>
+          <ApproxDegree>10 10 10</ApproxDegree>
+          <Precision>50 50 50</Precision>
+          <BoundaryLow>0.005 0.005 0.005</BoundaryLow>
+          <BoundaryHigh>10.0 10.0 10.0</BoundaryHigh>
+
+          <Kernel5D name="DiracOptimalDomainWall5dEvenOdd">
+	    <Preconditioning>NoPreconditioner</Preconditioning>
+	    <wilson_mass>-1.0</wilson_mass>
+	    <N5d>10</N5d>
+	    <b>2.0</b>
+	    <c>1.0</c>
+	    <mass>0.039</mass>
+	    <approximation name="Tanh" />
+          </Kernel5D>
+
+          <RationalSolver type="Rational_CG">
+	    <MaxIter>10000</MaxIter>
+	    <Precision>1e-16</Precision>
+          </RationalSolver>
+	  
+        </Action>
+
+      <!-- PF1 : Hasenbusch preconditioner -->
+      <step>
+        <multiplier>3</multiplier>
+        <Action type="Fermion" name="TwoFlavorsDomainWall_5D">
+	  <smeared>true</smeared>
+
+	  <Kernel5D name="DiracOptimalDomainWall5dEvenOdd">
+	    <Preconditioning>NoPreconditioner</Preconditioning>
+	    <wilson_mass>-1.0</wilson_mass>
+	    <N5d>10</N5d>
+	    <b>2.0</b>
+	    <c>1.0</c>
+	    <mass>0.150</mass>
+	    <approximation name="Tanh" />
+	  </Kernel5D>
+	  <Solver type="Solver_CG">
+	    <MaxIter>10000</MaxIter>
+	    <Precision>10e-16</Precision>
+	  </Solver>
+        </Action>
+	      
+      <!-- gauge step --> 
+      <step>
+	<multiplier>6</multiplier>
+	<Action type="Gauge" name="Symanzik">
+	  <beta>4.26</beta>
+	</Action>
+      </step>
+
+      </step>
+      </step>
+      </step>
+
+    </Integrator>
+  </HMC>
+</Parameters>
+

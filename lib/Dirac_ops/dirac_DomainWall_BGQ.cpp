@@ -22,7 +22,7 @@ typedef struct GaugeConf{
 }GaugePtr;
 
 
-//#define ENABLE_THREADING
+#define ENABLE_THREADING
 
 void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
   typedef struct FermionSpinor{
@@ -637,43 +637,47 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
 ///////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////
 #ifdef ENABLE_THREADING
-void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const Field& f5) const{
+void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const void* f5) const{
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
-  Field temp(f5);
-  Field v5(fsize_);
+  //threading control variables
+  int tid, nid;
+  int is, is5, ns, ns5;
+  nid = omp_get_num_threads();
+  tid = omp_get_thread_num();
+
+  is  = (Nvol * tid / nid);
+  is5 = (Nvol * N5_* tid / nid);
+  ns  =  Nvol/nid;
+  ns5 = (Nvol * N5_)/nid;
 
   // 4d vectors
-  Spinor* w_ptr    = (Spinor*)malloc(sizeof(double)*f4size_);
-  Spinor* v_ptr    = (Spinor*)malloc(sizeof(double)*f4size_);
-  Spinor* lpf_ptr  = (Spinor*)malloc(sizeof(double)*f4size_);
-  Spinor* lmf_ptr  = (Spinor*)malloc(sizeof(double)*f4size_);
-  Spinor* ey_ptr   = (Spinor*)malloc(sizeof(double)*f4size_);
+  Spinor* w_ptr    = (Spinor*)BGQThread_Malloc(sizeof(double)*f4size_, nid);
+  Spinor* v_ptr    = (Spinor*)BGQThread_Malloc(sizeof(double)*f4size_, nid);
+  Spinor* lpf_ptr  = (Spinor*)BGQThread_Malloc(sizeof(double)*f4size_, nid);
+  Spinor* lmf_ptr  = (Spinor*)BGQThread_Malloc(sizeof(double)*f4size_, nid);
+  Spinor* ey_ptr   = (Spinor*)BGQThread_Malloc(sizeof(double)*f4size_, nid);
 
-  // 5d vector
-  Spinor* v5_ptr_base =  (Spinor*)v5.getaddr(0);
-  //Spinor* v5_ptr_base = (Spinor*)malloc(sizeof(double)*fsize_);
 
-  Spinor* w5_ptr  = (Spinor*)w5.getaddr(0);
-  Spinor* temp_ptr_base = (Spinor*)temp.getaddr(0);
-  Spinor* temp_ptr = temp_ptr_base;
-  Spinor* f5_ptr   = (Spinor*)(const_cast<Field&>(f5).getaddr(0));
-  
+  // 5d vectors
+  Spinor* v5_ptr_base   = (Spinor*)BGQThread_Malloc(sizeof(double)*fsize_, nid);
+  Spinor* temp_ptr_base = (Spinor*)BGQThread_Malloc(sizeof(double)*fsize_, nid);
+
+
+  Spinor* f5_ptr        = (Spinor*)f5;
+  Spinor* w5_ptr        = (Spinor*)w5.getaddr(0);
+  Spinor* temp_ptr      = temp_ptr_base;
+
+  //#pragma omp single
+  //{
+  memcpy(temp_ptr_base+is5, f5_ptr+is5, sizeof(Spinor)*ns5);
+  //}
+
   int spin_idx;
   double cs, bs;
   double minus_kappa = -Dw_.getKappa();
-  double* pU       = const_cast<Field *>(u_)->getaddr(0);
+  double* pU = const_cast<Field *>(u_)->getaddr(0);
 
-  int tid, nid;
-  int is, ns;
-
-
-  ///////////////////////////////  doe
-  nid = omp_get_num_threads();
-  tid = omp_get_thread_num();
-  is = (Nvol * tid / nid);
-  ns = Nvol/nid;
-    
   // 5d hopping term
   BGWilsonLA_MultScalar(temp_ptr+is, temp_ptr+is, 1.0/ Params.dp_[0], ns);
     
@@ -719,7 +723,7 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const Field& f5) const
     spin_idx = s*f4size_;
     Spinor* temp_ptr = temp_ptr_base+s*Nvol;
     Spinor* w5_ptr = (Spinor*)w5.getaddr(spin_idx);
-    Spinor* v5_ptr = v5_ptr_base+s*Nvol;//(Spinor*)v5.getaddr(spin_idx);
+    Spinor* v5_ptr = v5_ptr_base+s*Nvol;
       
     bs = (4.0+M0_)*Params.bs_[s];
     cs = (4.0+M0_)*Params.cs_[s];
@@ -734,15 +738,13 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const Field& f5) const
   for(int s = 0; s < N5_; ++s){
     spin_idx = s*f4size_;
     Spinor* w5_ptr = (Spinor*)w5.getaddr(spin_idx);
-    Spinor* v5_ptr = v5_ptr_base+s*Nvol;//(Spinor*)v5.getaddr(spin_idx);
+    Spinor* v5_ptr = v5_ptr_base+s*Nvol;
 
     BGWilsonLA_Proj_P(lpf_ptr+is,
 		      v5_ptr_base+((s+1)%N5_)*Nvol+is,
-		      //(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_.get_fermionFormat().index(0,0,(s+1)%N5_)))+is,
 		      ns);
     BGWilsonLA_Proj_M(lmf_ptr+is,
 		      v5_ptr_base+((s+N5_-1)%N5_)*Nvol+is,
-		      //(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_.get_fermionFormat().index(0,0,(s+N5_-1)%N5_)))+is,
 		      ns);
     
     if(s == N5_-1){
@@ -798,7 +800,7 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const Field& f5) const
   for(int s=0; s<N5_; ++s){
     spin_idx = s*f4size_;
     Spinor* w5_ptr = (Spinor*)w5.getaddr(spin_idx);
-    Spinor* v5_ptr = (Spinor*)v5.getaddr(spin_idx);
+    Spinor* v5_ptr = v5_ptr_base+s*Nvol;
     
     bs = (4.0+M0_)*Params.bs_[s];
     cs = (4.0+M0_)*Params.cs_[s];
@@ -813,13 +815,13 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const Field& f5) const
   for(int s = 0; s < N5_; ++s){
     spin_idx = s*f4size_;
     Spinor* w5_ptr = (Spinor*)w5.getaddr(spin_idx);
-    Spinor* v5_ptr = (Spinor*)v5.getaddr(spin_idx);
+    Spinor* v5_ptr = v5_ptr_base+s*Nvol;
 
     BGWilsonLA_Proj_P(lpf_ptr+is,
-		      (Spinor*)(const_cast<Field&>(v5).getaddr(Dw_.get_fermionFormat().index(0,0,(s+1)%N5_)))+is,
+		      v5_ptr_base+((s+1)%N5_)*Nvol+is,
 		      ns);
     BGWilsonLA_Proj_M(lmf_ptr+is,
-		      (Spinor*)(const_cast<Field&>(v5).getaddr(Dw_.get_fermionFormat().index(0,0,(s+N5_-1)%N5_)))+is,
+		      v5_ptr_base+((s+N5_-1)%N5_)*Nvol+is,
 		      ns);
     
     if(s == N5_-1){
@@ -844,13 +846,16 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const Field& f5) const
     f5_ptr += Nvol;
   }    
   
-  
+#pragma omp single
+  {  
   free(w_ptr);
   free(v_ptr);
   free(lpf_ptr);
   free(lmf_ptr);
   free(ey_ptr);
-  
+  free(v5_ptr_base);
+  free(temp_ptr_base);
+  }
 
 }
 #endif
@@ -861,9 +866,9 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const Field& f5) const
 // CG solver optimized for BGQ
 void Dirac_optimalDomainWall::solve_eo_5d(Field& w5, const Field& b, SolverOutput& Out, int MaxIter, double GoalPrecision) const{
   
-  //#if VERBOSITY>=SOLV_ITER_VERB_LEVEL
+  #if VERBOSITY>=SOLV_ITER_VERB_LEVEL
   CCIO::header("CG_BGQ solver start");
-  //#endif
+  #endif
 
 #ifdef ENABLE_THREADING
 
@@ -883,17 +888,20 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5, const Field& b, SolverOutpu
   Field x = b;//initial condition
   Field r = b;//initial residual
 
+  double threadNorm[16];
 
-  double* x_ptr = x.getaddr(0);
-  double* r_ptr = r.getaddr(0);
-  double* s_ptr = s.getaddr(0);
-  double* temp_ptr = temp.getaddr(0);
+  Spinor* x_ptr = (Spinor*)x.getaddr(0);
+  Spinor* r_ptr = (Spinor*)r.getaddr(0);
+  Spinor* s_ptr = (Spinor*)s.getaddr(0);
+  Spinor* temp_ptr = (Spinor*)temp.getaddr(0);
+
+  double pap, rrp, cr;
   #pragma omp parallel 
   { 
   mult_hop_omp(temp,x_ptr);
+  
+  mult_hop_dag_omp(temp2,temp_ptr);
   }
-  mult_hop_dag_omp(temp2,temp);
-  //}
 
   r -= temp2;
 
@@ -902,55 +910,88 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5, const Field& b, SolverOutpu
   double snorm = b.norm();
   snorm = 1.0/snorm;
 
-  double* p_ptr = p.getaddr(0);
-  int v_size = x.size()/24; // << assumes 24 elements
+  Spinor* p_ptr = (Spinor*)p.getaddr(0);
+  int v_size = Nvol*N5_; // << assumes 24 elements
 
-  //#if VERBOSITY>1
+  #if VERBOSITY>1
   CCIO::cout<<" Snorm = "<< snorm << std::endl;
   CCIO::cout<<" Init  = "<< rr*snorm<< std::endl;
-  //#endif
+  #endif
 
-  nid = 1;//omp_get_num_threads();
-  tid = 0;//omp_get_thread_num();
-  is = (v_size * tid / nid);
-  ns = v_size/nid;
+#pragma omp parallel private(tid,nid,is,ns)
+    {
 
+      for(int it = 0; it < MaxIter; ++it){
+    
+      double tPAP;
+      pap = 0.0;
 
-  for(int it = 0; it < MaxIter; ++it){
-    mult_hop_omp(temp,p_ptr);
-    mult_hop_dag_omp(s,temp);
+      nid = omp_get_num_threads();
+      tid = omp_get_thread_num();
+      is = (v_size * tid / nid);
+      ns = v_size/nid;
 
-    ///////////////////////////////////////////////////
- 
-    double pap;
-    BGWilsonLA_DotProd(&pap,p_ptr,s_ptr,v_size);
-    pap = Communicator::instance()->reduce_sum(pap);
-    double rrp = rr;
-    double cr = rrp/pap;// (r,r)/(p,Ap)
+      mult_hop_omp(temp,p_ptr);
+      mult_hop_dag_omp(s,temp_ptr);
 
-    //  x += cr*p; // x = x + cr * p
-    BGWilsonLA_MultAddScalar(x_ptr,p_ptr,cr,v_size);
-    //  r -= cr*s; // r_k = r_k - cr * Ap
-    BGWilsonLA_MultAddScalar(r_ptr,s_ptr,-cr,v_size);
-  
-    //  rr = r*r; // rr = (r_k,r_k)
-    BGWilsonLA_Norm(&rr,r_ptr,v_size);
-    rr = Communicator::instance()->reduce_sum(rr);
-    //  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
-    //  p += r; // p = p + p*(r_k,r_k)/(r,r)
-    BGWilsonLA_MultScalar_Add(p_ptr,r_ptr,rr/rrp,v_size);
-    /////////////////////////////////////////////////////
-    //#if VERBOSITY>1
-    CCIO::cout<< std::setw(5)<< "["<<it<<"] "
-	      << std::setw(20) << rr*snorm<< "\n";
-    //#endif    
-    if(rr*snorm < GoalPrecision){
-      Out.Iterations = it;
-      break;
-    }
+      ///////////////////////////////////////////////////
+      BGWilsonLA_DotProd(&threadNorm[tid],p_ptr+is,s_ptr+is,ns);
+#pragma omp single 
+      {
+	pap = 0.0;
+      }
+      BGQThread_Lock(0);
+      pap = pap + threadNorm[tid];
+      BGQThread_Unlock(0);
+      BGQThread_Barrier(0,nid);
+      
+#pragma omp single 
+      {
+	pap = Communicator::instance()->reduce_sum(pap);
+	rrp = rr;
+	cr = rrp/pap;// (r,r)/(p,Ap)
+      }
+
+      //  x += cr*p; // x = x + cr * p
+      BGWilsonLA_MultAddScalar(x_ptr+is,p_ptr+is,cr,ns);
+      //  r -= cr*s; // r_k = r_k - cr * Ap
+      BGWilsonLA_MultAddScalar(r_ptr+is,s_ptr+is,-cr,ns);
+
+      //  rr = r*r; // rr = (r_k,r_k)
+      BGWilsonLA_Norm(&threadNorm[tid],r_ptr+is,ns);
+#pragma omp single 
+      {
+	rr = 0.0;
+      }
+      BGQThread_Lock(0);
+      rr = rr + threadNorm[tid];
+      BGQThread_Unlock(0);
+      BGQThread_Barrier(0,nid);
+      
+#pragma omp single 
+      {
+	rr = Communicator::instance()->reduce_sum(rr);
+      }
+
+      //  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
+      //  p += r; // p = p + p*(r_k,r_k)/(r,r)
+      BGWilsonLA_MultScalar_Add(p_ptr+is,r_ptr+is,rr/rrp,ns);
+      
+      if (tid==0) {
+#if VERBOSITY>1
+	CCIO::cout<< std::setw(5)<< "["<<it<<"] "
+		  << std::setw(20) << rr*snorm<<"\n";
+#endif   
+      } 
+      BGQThread_Barrier(0,nid);
+      if(rr*snorm < GoalPrecision){
+	if (tid==0) Out.Iterations = it;
+	break;
+      }
+
+    }//end of iterations loop      
   }
-
-  
+ 
 
   if(Out.Iterations == -1) {
     CCIO::cout<<" Not converged. Current residual: "<< rr*snorm << "\n";
