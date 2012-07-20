@@ -13,8 +13,10 @@
 using namespace std;
 
 int Test_MesonSpectrum::run(){
+
   //// Quark Propagator ////
   XML::descend(node_,"QuarkProp");
+  
   auto_ptr<QuarkPropagatorFactory> qpfact(QuarkPropagators::createQuarkPropagatorFactory(node_));
   auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(conf_));
   
@@ -65,5 +67,6 @@ int Test_MesonSpectrum::run(){
     writer.close();
   }
   Communicator::instance()->sync();
+  
   return 0;
 }

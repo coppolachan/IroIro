@@ -93,7 +93,8 @@ int Test_optimalDomainWall::run(){
   DiracODWF = DWF_Factory.getDiracOperatorWL(&(conf_.data));
 
   XML::descend(QuarkProp_node, "QuarkPropagator");
-  QPropDWFFactory  QP_DomainWallFact(QuarkProp_node);//uses specific factory (this is a test program specific for DWF)
+  QPropDWFFactory  QP_DomainWallFact(QuarkProp_node);//uses specific factory 
+                                                     //(this is a test program for DWF)
   QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(conf_));
   // the prevoius static_cast is absolutely safe since we know exaclty what class we are creating
   
@@ -178,8 +179,10 @@ int Test_optimalDomainWall::run(){
   monitor = SolvEO.solve(sol_eo,phi_eo);
   monitor.print();
   CCIO::cout << ".::: Test Dirac_optimalDomainWall solver eo BGQ version \n";
+  for (int test= 0; test< 12 ; ++test){
   Ddwf_5d_eo.solve_eo(sol_eo, phi_eo, monitor,  Niter, stop_cond);
   monitor.print();
+  }
 #endif  
   ////////////////////////////////////////////////////////////////////
 
@@ -193,7 +196,7 @@ int Test_optimalDomainWall::run(){
   Dirac_optimalDomainWall_4D_fullSolv Ddwf4(DiracODWF,&Ddwf_PV,SolvDWF, SolvPV);
   QpropDWF QuarkPropagator(Ddwf4);
   //////////////////////////////////// 
- 
+  /*
   CCIO::cout << ".::: Test Dirac_optimalDomainWall meson correlator" 
 	     <<std::endl;
   // Here uses the default constructor with default solver
@@ -214,7 +217,7 @@ int Test_optimalDomainWall::run(){
   vector<double>::const_iterator it=mcorr.begin();
   int t=0;
   while(it!=mcorr.end()) CCIO::cout << t++ << " " << *it++ << "\n";
-  
+  */
 
   return 0;
 }

@@ -195,7 +195,7 @@ namespace CCIO {
     num_nodes    = CommonPrms::instance()->NP();
  
 
-    /*   
+       
     std::vector<int> block_x(CommonPrms::instance()->Nx());
     std::valarray<double> copy(format.Nin()*block_x.size()*format.Nex());
     std::valarray<double> local(format.Nin()*block_x.size()*format.Nex());
@@ -276,8 +276,8 @@ namespace CCIO {
       fclose(inFile);
       std::cout << "done\n";
     }
-*/
 
+    /*
     //Read data from single file on disk
     Field Global;
     if(comm->primaryNode()) {
@@ -349,7 +349,7 @@ namespace CCIO {
       f = Field(local);
       //close node for loop
     }
-
+    */
 
 
 

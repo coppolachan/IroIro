@@ -35,10 +35,10 @@ namespace TestEnv{
   template <class TestClass>
   int StartRun(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);
-    CCIO::cout<<"StartRun called"<<std::endl;
+    
     //Reading input file   
     XML::node top_node = XML::getInputXML(Options.filename);  
-    CCIO::cout<<"top_node obtained"<<std::endl;
+        
     MeasGeneral meas(top_node);
     meas.do_meas<TestClass>();
     
@@ -46,7 +46,7 @@ namespace TestEnv{
   }
 }
 
-#define CREATE_RUN_TEST(Class){ TestEnv::StartRun<Class>(argc,argv)
+#define CREATE_RUN_TEST(Class){ int result = TestEnv::StartRun<Class>(argc,argv)
 #define CLEAR_TEST }
 
 #define CREATE_TEST(Class) { Class TestObject = TestEnv::StartUp<Class>(argc, argv)

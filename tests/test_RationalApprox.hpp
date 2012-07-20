@@ -18,6 +18,8 @@ private:
   const char* test_name;
   XML::node RA_node;
   GaugeField Gfield_;
+
+
 public:
   Test_RationalApprox(XML::node node,GaugeField& Gfield):RA_node(node),
 							 Gfield_(Gfield){

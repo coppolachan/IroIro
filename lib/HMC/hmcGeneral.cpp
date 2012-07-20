@@ -14,7 +14,9 @@
 
 void HMCgeneral::evolve(GaugeField& Uin)const{
   double Hdiff;
-  std::string seedfile = "seed_file";
+  std::string seedfile_base = "seed_file_";
+  std::string seedfile;
+  std::stringstream seedfile_string;
   // Thermalizations
   for(int iter=1; iter <= Params.ThermalizationSteps; ++iter){
     CCIO::cout << "-- # Thermalization step = "<< iter <<  "\n";
@@ -48,10 +50,14 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
       if(CCIO::SaveOnDisk<Format::Format_G> (Uin.data, file.str().c_str())){
 	CCIO::cout << "Some error occurred in saving file\n";
       }
-      rand_->saveSeed(seedfile);
+      seedfile_string.str("");//clears up the string
+      seedfile_string << seedfile_base << iter;
+      rand_->saveSeed(seedfile_string.str());
     }
   }
-  rand_->saveSeed(seedfile);
+  seedfile_string.str("");//clears up the string
+  seedfile_string << seedfile_base << "last";
+  rand_->saveSeed(seedfile_string.str());
 }
 
 double HMCgeneral::evolve_step(GaugeField& Uin)const{

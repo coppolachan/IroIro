@@ -41,6 +41,7 @@ int Test_HMC::run(){
   TIMING_END(elapsed_time);
   CCIO::cout << "Total elapsed time (s): "<< elapsed_time/1000.0 << "\n";
 
+  sleep(5);// Hack to avoid concurrency problems
   CCIO::cout << "Saving configuration on disk in binary format\n";
   CCIO::SaveOnDisk< Format::Format_G >(Gfield_.data, "final_conf.bin");
   return 0;

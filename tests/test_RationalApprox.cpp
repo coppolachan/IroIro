@@ -17,6 +17,8 @@
 #include "include/fopr.h"
 #include "include/factories.hpp"
 #include "Measurements/FermionicM/qprop_MultiShift.hpp"
+#include "Measurements/GaugeM/staples.hpp"
+#include "Smearing/smearingFactories.hpp"
 
 #include "EigenModes/findminmax.hpp"
 #include "Tools/randNum_Factory.h"
@@ -29,9 +31,50 @@
 using namespace std;
 
 int Test_RationalApprox::run(){
-  CCIO::cout << "Starting Rational Approximation test" << std::endl;
+  CCIO::cout << "Starting Rational Approximation test "
+	     <<"with smearing support (devel)\n";
   
   RNG_Env::RNG = RNG_Env::createRNGfactory(RA_node);
+
+// Prints plaquette (thin) link
+  Staples Staple;
+  CCIO::cout << "Plaquette (thin): " << Staple.plaquette(Gfield_) << std::endl;
+  
+///////////////////////////////////////////////////////////////////////////////
+  // Smearing objects
+  GaugeField smeared_u_;
+  GaugeField previous_u_;
+
+  Smear* SmearingObj;         // Empty pointer
+  int Nsmear;                 // Number of smearing steps
+  XML::node SmearObjNode = RA_node;// Copy the node ("descend" function updates it)
+                                 // and we want to use again for RationalApproximation
+  CCIO::cout<<"XML read...\n";
+  XML::descend(SmearObjNode, "Smearing");//SmearObjNode now points to <Smearing> node
+  XML::read(SmearObjNode, "Nsmear", Nsmear, MANDATORY);  // Reads in <Nsmear>
+  
+  // Create smearing factory from node information
+  CCIO::cout<<"SmearingFactory...\n";
+  SmearingOperatorFactory* Sm_Factory = 
+    SmearingOperators::createSmearingOperatorFactory(SmearObjNode);
+  
+  CCIO::cout<<"SmearingObject...\n";
+  // Create smearing objects from the factory
+  SmearingObj = Sm_Factory->getSmearingOperator();
+  
+  // Copy original configuration to smeared_u_ 
+  // smeared_u_ will be passed to the operators
+  smeared_u_ = Gfield_;
+
+  
+  // Do the actual smearing 
+  for(int i=0; i<Nsmear; i++) {
+    previous_u_= smeared_u_;
+    SmearingObj->smear(smeared_u_,previous_u_);
+  }
+  CCIO::cout<<"Plaquette (smeared): "<< Staple.plaquette(smeared_u_)<<std::endl;
+  //////////////////////////////////////////////////////////////////////////////
+  
 
   // Test XML constructor
   RationalApprox TestXMLApprox(RA_node);
@@ -43,7 +86,8 @@ int Test_RationalApprox::run(){
   double exponent = TestXMLApprox.exponent();
   double reference = pow(x_test, exponent);
 
-  CCIO::cout << "Reference pow("<<x_test<<","<<exponent<<") = "<< reference << "\n";
+  CCIO::cout << "Reference pow("<<x_test<<","<<exponent<<") = "
+	     << reference << "\n";
    
   //Reconstruct rational expansion
   double result;
@@ -67,13 +111,15 @@ int Test_RationalApprox::run(){
 
   XML::node kernel_node = RA_node;
   XML::descend(kernel_node, "Kernel");
-  DiracWilsonLikeOperatorFactory* KernelF = DiracOperators::createDiracWilsonLikeOperatorFactory(kernel_node);
-  DiracWilsonLike* Kernel = KernelF->getDiracOperatorWL(&(Gfield_.data));
+  DiracWilsonLikeOperatorFactory* KernelF = 
+    DiracOperators::createDiracWilsonLikeOperatorFactory(kernel_node);
+  DiracWilsonLike* Kernel = KernelF->getDiracOperatorWL(&(smeared_u_.data));
 
 
   // Find Max eigenvalue
   Fopr_DdagD* FoprKernel = new Fopr_DdagD(Kernel);
-  findMinMax* MinMax = new findMinMax(FoprKernel,RNG_Env::RNG->getRandomNumGenerator(),
+  findMinMax* MinMax = new findMinMax(FoprKernel,
+				      RNG_Env::RNG->getRandomNumGenerator(),
 				      Kernel->fsize());
 
   MinMaxOut MinMaxResult = MinMax->findExtrema();
