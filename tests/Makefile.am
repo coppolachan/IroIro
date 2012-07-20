@@ -42,6 +42,8 @@ EXTRA_DIST = 	testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_GeneralMeas.xml 	\
+		test_WilsonFlow.xml	\
+		test_MesonSpectrum_Nf2p1.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
@@ -60,6 +62,7 @@ test_PROGRAMS = test_HMC 		\
 		test_HMC_smear_noF	\
 		test_HMC_DWall_noF	\
 		test_Gauge		\
+		test_WilsonFlow		\
 		test_Wilson 		\
 		test_Clover 		\
 		test_Wilson_EvenOdd 	\
@@ -67,6 +70,7 @@ test_PROGRAMS = test_HMC 		\
 		test_QpropMom		\
 		test_ResMass 		\
 		test_MesonSpectrum	\
+		test_MesonSpectrum_Nf2p1\
 		test_EigenModesSolver	\
 		test_Smearing		\
 		test_Overlap		\
@@ -117,6 +121,9 @@ test_QpropMom_SOURCES 	= 	test_QpropMom.cpp 		\
 test_MesonSpectrum_SOURCES= 	test_MesonSpectrum.cpp 		\
 				testerMesonSpectrum.cpp
 
+test_MesonSpectrum_Nf2p1_SOURCES= test_MesonSpectrum_Nf2p1.cpp 	\
+				testerMesonSpectrumNf2p1.cpp
+
 test_Solver_Perf_SOURCES = 	test_Solver_Perf.cpp		\
 				testerSolver_Perf.cpp
 
@@ -143,6 +150,8 @@ test_IO_SOURCES 	= 	test_IO.cpp 			\
 test_RationalApprox_SOURCES 	= 	test_RationalApprox.cpp	\
 				testerRationalApprox.cpp
 
+test_WilsonFlow_SOURCES 	= 	test_WilsonFlow.cpp	\
+				testerWilsonFlow.cpp
 
 include_HEADERS 	=	tests.hpp			\
 				tests_all.hpp			\
@@ -152,14 +161,16 @@ include_HEADERS 	=	tests.hpp			\
 				test_wilson.hpp 		\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
+				test_WilsonFlow.hpp     	\
 				test_DomainWall.hpp 		\
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
 				test_IO.hpp			\
-				test_EigenModesSolver.hpp		\
+				test_EigenModesSolver.hpp	\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
+				test_MesonSpectrum_Nf2p1.hpp	\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\

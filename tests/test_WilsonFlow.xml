@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Input file for Residual Mass test -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="TextFile">
+    <filename>conf_08080808.txt</filename>
+  </Configuration> 
+  <RandomNumberGen name="Mersenne Twister"> 
+    <!--   <seedFile>seed_file</seedFile>                      
+	   Using seedFile superseeds the <init> line         
+           that can be safely omitted                 
+           It is ignored by factory in this case -->
+    <init>0x123 0x234 0x345 0x456</init>
+  </RandomNumberGen>
+  <Smearing type="Stout">
+    <Nsmear>0</Nsmear>
+    <Base type="APE">
+      <rho>0.1</rho>
+    </Base>
+  </Smearing>
+  <GaugeFixing name="NoFixing">
+<!--  <GaugeFixing name="Coulomb">-->
+      <max_iter>5000</max_iter>
+      <monitor_step>10</monitor_step> 
+      <reset_step>10000</reset_step>
+      <or_step>50</or_step>
+      <or_prm>1.7</or_prm>
+      <sdm_step>4000</sdm_step>
+      <sdm_prm>1.6</sdm_prm>
+      <precision>1e-20</precision>
+  </GaugeFixing>
+  <Output>
+    <starting_idx>0</starting_idx>
+    <idx_increment>1</idx_increment>
+    <output_prefix>Output/output_</output_prefix>
+    <gauge_prefix>Output/smr_gtr_</gauge_prefix>
+    <seed_prefix>Output/rng_seed_</seed_prefix>
+  </Output>
+  <Measurement>
+    <WilsonFlow>
+      <Nexp>8</Nexp>
+      <Nstep>20</Nstep>
+      <estep>0.05</estep>
+    </WilsonFlow>
+  </Measurement>
+</Parameters>
+

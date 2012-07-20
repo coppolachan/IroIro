@@ -12,9 +12,8 @@
 #define TEST_HMC_H_
 
 #include "include/common_code.hpp"
-#include "tests/tests.hpp"
 
-class Test_HMC: TestGeneral{
+class Test_HMC{
 private:
   const char* test_name;
   XML::node HMC_node;

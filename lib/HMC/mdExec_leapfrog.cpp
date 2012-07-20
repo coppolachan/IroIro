@@ -41,7 +41,7 @@ void MDexec_leapfrog::update_U(double ep){
 
   for(int m=0; m<Ndim; ++m){
     for(int site=0; site<Nvol; ++site){
-      SUNmat au = exponential(mat(P_,site,m)*ep,Params.Nexp,1);
+      SUNmat au = exponential(mat(P_,site,m)*ep,Params.Nexp);
       au *= mat(*U_,site,m);
       U_->data.set(U_->format.islice(site,m),au.reunit().getva());
     }

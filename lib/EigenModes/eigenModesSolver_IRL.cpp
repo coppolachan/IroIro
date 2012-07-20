@@ -56,9 +56,10 @@ calc(vector<double>& ta,vector<Field>& V,int& Nin)const{
 	     << endl;
 
   ta.resize(Nm_);  V.resize(Nm_);
-  for(int i=0; i<Nm_; ++i) V[i].resize(fsize);
-
-  V[0] = 1.0/sqrt(double(fsize));   /*!< @brief initial vector (uniform)*/
+  for(int i=0; i<Nm_; ++i) V[i].resize(fsize,1.0);
+  
+  double nv = V[0].norm();
+  V[0] /= nv;                       /*!< @brief initial vector (uniform)*/
 
   vector<double> tb(Nm_);
   lanczos_init(ta,tb,V);            /*!< @brief initial Lanczos-decomp */
@@ -169,7 +170,13 @@ void EigenModesSolver_IRL::
 lanczos_init(vector<double>& ta,vector<double>& tb,vector<Field>& V)const{
   using namespace FieldExpression;
   
+  double nv = V[0].norm();
+  CCIO::cout<<"nf="<<nv<<endl;
+
   Field f = opr_->mult(V[0]);
+  nv = f.norm();
+  CCIO::cout<<"nf="<<nv<<endl;
+  //for(int i=0; i<f.size();++i) CCIO::cout<<i<<" "<<f[i]<<endl;
   double ab = V[0]*f;
   f -= ab*V[0];
   ta[0] = ab;

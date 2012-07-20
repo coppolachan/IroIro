@@ -6,7 +6,7 @@
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
-
+#include "tests.hpp"
 #include "test_HMC.hpp"
 
 int main(int argc, char* argv[]){

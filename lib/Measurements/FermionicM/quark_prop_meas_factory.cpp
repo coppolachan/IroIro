@@ -10,6 +10,7 @@ namespace QuarkPropagators {
     
     if (node !=NULL) {
       const char* qprop_name = node.attribute("name").value();
+      //CCIO::cout<<"qprop_name="<<qprop_name<<std::endl;
       
       if (!strcmp(qprop_name, "Qprop")) { 
         return new QPropFactory(node);

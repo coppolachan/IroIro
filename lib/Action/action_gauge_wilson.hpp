@@ -37,7 +37,7 @@ public:
   void  init(const RandNum&){}
   double calc_H();
   GaugeField  md_force();
-  void observer_update(){}; 
+  void observer_update(){}
   
   ActionGaugeWilson(const double beta, 
 		    GaugeField* const GField)

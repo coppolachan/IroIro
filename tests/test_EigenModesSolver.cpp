@@ -27,6 +27,13 @@ int Test_EigenModesSolver::run(){
   auto_ptr<DiracWilsonLikeOperatorFactory> 
     dfact(DiracOperators::createGeneralDiracWilsonLikeOperatorFactory(node_));
 
+  Dirac* dtest = dfact->getDiracOperatorWL(&(conf_.data));
+  Field f(dtest->fsize(),1.0);
+  double nf = f.norm();
+  Field w = dtest->mult(f);
+  double nw = w.norm();
+  CCIO::cout<<"nf="<<nf<<"  nw="<<nw<<endl;
+
   //// creating Objects ////  
   auto_ptr<DiracWilsonLike>  dirac(dfact->getDiracOperatorWL(&(conf_.data)));
   auto_ptr<Fopr_Herm>        opr(aofact->getFoprHerm(dirac.get()));

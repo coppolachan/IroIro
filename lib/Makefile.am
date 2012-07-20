@@ -101,6 +101,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/findminmax.cpp		\
 		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
+		Measurements/GaugeM/wilsonFlow.cpp	\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
 		Measurements/GaugeM/gaugeFixing_Landau.cpp		\
@@ -134,6 +135,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/smartConf.cpp			\
 		Smearing/smearingFactories.cpp		\
 		Tools/fieldUtils.cpp			\
+		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
@@ -194,6 +196,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/GaugeM/gaugeFixing_Landau.hpp	\
 			Measurements/GaugeM/gaugeFixing_Free.hpp	\
 			Measurements/GaugeM/gfixFactory.hpp		\
+			Measurements/GaugeM/wilsonFlow.hpp		\
 			Measurements/FermionicM/source.hpp		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\
@@ -253,6 +256,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
 			Tools/sunMat.hpp			\
+			Tools/jobUtils.hpp			\
 			Tools/sunMatUtils.hpp			\
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\

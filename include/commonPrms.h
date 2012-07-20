@@ -5,6 +5,7 @@
 #ifndef COMMONPRMS_INCLUDED
 #define COMMONPRMS_INCLUDED
 #include "macros.hpp"
+#include <vector>
 
 struct Lattice{
   bool stdinput;
@@ -22,12 +23,14 @@ class CommonPrms{
 private:
   // global lattice size
   static int Lx_,Ly_,Lz_,Lt_,Lvol_;
+  static std::vector<int> Lsize_;
 
   // Number of processors assigined in each direction
   static int NPEx_,NPEy_,NPEz_,NPEt_,NP_;
 
   // local lattice size
   static int Nx_,Ny_,Nz_,Nt_,Nvol_;
+  static std::vector<int> Nsize_;
 
   CommonPrms(const Lattice&);
   CommonPrms(const CommonPrms&){}
@@ -62,6 +65,9 @@ public:
   static int Nc(){return NC_;}
   static int Nd(){return ND_;}
   static int Ndim(){return NDIM_;}
+  
+  static int global_size(int mu){return Lsize_[mu];}
+  static int local_size(int mu){return Nsize_[mu];}
 };
 
 #endif

@@ -54,6 +54,7 @@ public:
   GeneralField& operator-=(const std::valarray<double>&);
 
   GeneralField& operator*=(double);
+  GeneralField& operator/=(double);
   
   double norm();
   int size()const { return data.size(); }
@@ -211,6 +212,13 @@ template <class DATA,class FORMAT,typename TAG>
 inline GeneralField<DATA,FORMAT,TAG>&
 GeneralField<DATA,FORMAT,TAG>::operator*=(double rhs){
   data *= rhs;
+  return *this;
+}
+
+template <class DATA,class FORMAT,typename TAG> 
+inline GeneralField<DATA,FORMAT,TAG>&
+GeneralField<DATA,FORMAT,TAG>::operator/=(double rhs){
+  data /= rhs;
   return *this;
 }
 

@@ -5,10 +5,9 @@
 #define TEST_EIGENMODESSOLVER_INCLUDED
 
 #include "include/common_code.hpp"
-#include "tests/tests.hpp"
 #include "Communicator/comm_io.hpp"
 
-class Test_EigenModesSolver: public TestGeneral{
+class Test_EigenModesSolver{
  private:
   XML::node node_;
   GaugeField conf_;

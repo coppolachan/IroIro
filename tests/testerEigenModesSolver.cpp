@@ -1,7 +1,7 @@
 /*! @file testerEigenModesSolver.cpp                                        
  *  @brief Main source code for testing the EigenModesSolver classes  
  */
-
+#include "tests.hpp"
 #include "test_EigenModesSolver.hpp"
 
 int main(int argc, char* argv[]){                                             
