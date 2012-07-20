@@ -21,7 +21,13 @@ CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) \
 	-I$(DRIVER)/spi/include/mu/default \
 	-I$(DRIVER)/comm/xl/include	
 
+if IBM_BGQWILSON_NOSMP  
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
+endif
+
+if IBM_BGQWILSON_SMP
+DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
+endif
 
 if IBM_BGQWILSON_SMP
 CXXFLAGS += -qsmp=omp:auto
