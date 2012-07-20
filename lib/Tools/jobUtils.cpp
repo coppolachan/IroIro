@@ -1,15 +1,13 @@
 /*! @file jobUtils.cpp
  * @brief implementation of member functions of JobUtils
  */
-
 #include "jobUtils.hpp"
 #include "lib/Communicator/comm_io.hpp"
-//#include <iostream>
 #include <fstream>
-//#include <string>
 
 namespace JobUtils{
   void echo_input(const char* file_name){
+
     std::ifstream input(file_name);
     std::string buf;
     CCIO::cout<<"==== [begin] Contents of the input file "

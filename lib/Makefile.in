@@ -123,6 +123,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	EigenModes/fopr_chebyshev_DdagD.cpp \
 	EigenModes/foprHermFactory.cpp EigenModes/findminmax.cpp \
 	Measurements/measGeneral.cpp Measurements/GaugeM/staples.cpp \
+	Measurements/GaugeM/wilsonFlow.cpp \
 	Measurements/GaugeM/gaugeFixingStep.cpp \
 	Measurements/GaugeM/gaugeFixing_Coulomb.cpp \
 	Measurements/GaugeM/gaugeFixing_Landau.cpp \
@@ -173,7 +174,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	eigenModesSolver_IRL.$(OBJEXT) eigenProc_Zolotarev.$(OBJEXT) \
 	eigenSorter.$(OBJEXT) fopr_chebyshev_DdagD.$(OBJEXT) \
 	foprHermFactory.$(OBJEXT) findminmax.$(OBJEXT) \
-	measGeneral.$(OBJEXT) staples.$(OBJEXT) \
+	measGeneral.$(OBJEXT) staples.$(OBJEXT) wilsonFlow.$(OBJEXT) \
 	gaugeFixingStep.$(OBJEXT) gaugeFixing_Coulomb.$(OBJEXT) \
 	gaugeFixing_Landau.$(OBJEXT) gfixFactory.$(OBJEXT) \
 	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) qprop_mom.$(OBJEXT) \
@@ -426,6 +427,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/findminmax.cpp		\
 		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
+		Measurements/GaugeM/wilsonFlow.cpp	\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
 		Measurements/GaugeM/gaugeFixing_Landau.cpp		\
@@ -517,6 +519,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Measurements/GaugeM/gaugeFixing_Landau.hpp	\
 			Measurements/GaugeM/gaugeFixing_Free.hpp	\
 			Measurements/GaugeM/gfixFactory.hpp		\
+			Measurements/GaugeM/wilsonFlow.hpp		\
 			Measurements/FermionicM/source.hpp		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\
@@ -787,6 +790,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/stoutSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunMatUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wilsonFlow.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1395,6 +1399,22 @@ staples.obj: Measurements/GaugeM/staples.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/staples.cpp' object='staples.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o staples.obj `if test -f 'Measurements/GaugeM/staples.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/staples.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/staples.cpp'; fi`
+
+wilsonFlow.o: Measurements/GaugeM/wilsonFlow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT wilsonFlow.o -MD -MP -MF $(DEPDIR)/wilsonFlow.Tpo -c -o wilsonFlow.o `test -f 'Measurements/GaugeM/wilsonFlow.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/wilsonFlow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wilsonFlow.Tpo $(DEPDIR)/wilsonFlow.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/wilsonFlow.cpp' object='wilsonFlow.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o wilsonFlow.o `test -f 'Measurements/GaugeM/wilsonFlow.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/wilsonFlow.cpp
+
+wilsonFlow.obj: Measurements/GaugeM/wilsonFlow.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT wilsonFlow.obj -MD -MP -MF $(DEPDIR)/wilsonFlow.Tpo -c -o wilsonFlow.obj `if test -f 'Measurements/GaugeM/wilsonFlow.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/wilsonFlow.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/wilsonFlow.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wilsonFlow.Tpo $(DEPDIR)/wilsonFlow.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/GaugeM/wilsonFlow.cpp' object='wilsonFlow.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o wilsonFlow.obj `if test -f 'Measurements/GaugeM/wilsonFlow.cpp'; then $(CYGPATH_W) 'Measurements/GaugeM/wilsonFlow.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/GaugeM/wilsonFlow.cpp'; fi`
 
 gaugeFixingStep.o: Measurements/GaugeM/gaugeFixingStep.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT gaugeFixingStep.o -MD -MP -MF $(DEPDIR)/gaugeFixingStep.Tpo -c -o gaugeFixingStep.o `test -f 'Measurements/GaugeM/gaugeFixingStep.cpp' || echo '$(srcdir)/'`Measurements/GaugeM/gaugeFixingStep.cpp

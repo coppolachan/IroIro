@@ -5,9 +5,8 @@
 #define TEST_MESONSPECTRUM_INCLUDED
 
 #include "include/common_code.hpp"
-#include "tests/tests.hpp"
 
-class Test_MesonSpectrum: public TestGeneral{
+class Test_MesonSpectrum {
 private:
   XML::node node_;
   GaugeField conf_;

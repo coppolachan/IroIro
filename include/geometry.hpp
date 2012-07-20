@@ -38,7 +38,7 @@ class Geometry {
     // Check on number of cores - should be 1,1,1,1
     // for single core compilation
     if(latt.NPEx!=1 || latt.NPEy!=1 || latt.NPEz!=1 || latt.NPEt!=1){
-      std::cerr << "Number of nodes uncorrect for a single core" << std::endl;
+      std::cerr << "Number of nodes incorrect for a single core" << std::endl;
       exit(1);
     }
 #endif

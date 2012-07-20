@@ -18,12 +18,9 @@ public:
 
 namespace TestEnv{
 
-  void echo_input(const char* file_name);
-
   template <class TestClass>
   TestClass StartUp(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);
-    JobUtils::echo_input(Options.filename);
 
     //Reading input file
     XML::node top_node = XML::getInputXML(Options.filename);  
@@ -35,18 +32,25 @@ namespace TestEnv{
     GaugeGlobal GaugeF(geom);
     GaugeF.initialize(top_node);
     CCIO::cout<<"GaugeF initialized"<<std::endl;
+
+    // Echo of input xml
+    JobUtils::echo_input(Options.filename);
+    
     return TestClass(top_node, GaugeF);
   }
 
   template <class TestClass>
   int StartRun(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);
-    JobUtils::echo_input(Options.filename);
 
     //Reading input file   
     XML::node top_node = XML::getInputXML(Options.filename);  
-    CCIO::cout<<"top_node obtained"<<std::endl;
+
     MeasGeneral meas(top_node);
+
+    // Echo of input xml
+    JobUtils::echo_input(Options.filename);
+
     meas.do_meas<TestClass>();
     
     return 0;

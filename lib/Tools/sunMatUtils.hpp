@@ -31,7 +31,7 @@ namespace SUNmatUtils{
   const SUNmat anti_hermite(const SUNmat&);
   const SUNmat outer_prod(const SUNvec& v,const SUNvec& w);
   const SUNmat random_mat(const RandNum& rand);
-  const SUNmat exponential(const SUNmat& X,int N,int n);
+  const SUNmat exponential(const SUNmat& X,int N,int n=1);
 
   //BLAS style multiplications for optimization purposes
   // Matrix-matrix

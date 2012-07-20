@@ -101,6 +101,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/findminmax.cpp		\
 		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
+		Measurements/GaugeM/wilsonFlow.cpp	\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
 		Measurements/GaugeM/gaugeFixing_Landau.cpp		\
@@ -195,6 +196,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/GaugeM/gaugeFixing_Landau.hpp	\
 			Measurements/GaugeM/gaugeFixing_Free.hpp	\
 			Measurements/GaugeM/gfixFactory.hpp		\
+			Measurements/GaugeM/wilsonFlow.hpp		\
 			Measurements/FermionicM/source.hpp		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\
