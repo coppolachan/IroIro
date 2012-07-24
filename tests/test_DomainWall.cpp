@@ -162,7 +162,7 @@ int Test_optimalDomainWall::run(){
   
   // quark propagator
   double stop_cond = 1.0e-24;
-  int    Niter     = 5000;
+  int    Niter     = 2000;
 
 
   ///////////////////////////////////////////// Test solver eo
