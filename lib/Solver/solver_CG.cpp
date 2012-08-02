@@ -219,3 +219,11 @@ inline void Solver_CG_Precondition::solve_step(Field& r,Field& p,Field& x,double
   p *= rr/rrp;
   p += r;
 }
+
+#ifdef IBM_BGQ_WILSON
+SolverOutput Solver_CG_DWF_Optimized::solve(Field& xq,const Field& b) const{ 
+  SolverOutput Out;
+  opr_->solve_eo(xq, b, Out, Params.MaxIter,Params.GoalPrecision);
+  return Out;
+}
+#endif

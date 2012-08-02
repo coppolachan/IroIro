@@ -294,7 +294,7 @@ const Field Dirac_optimalDomainWall::mult_hop5_dinv(const Field& f5) const{
     BGWilsonLA_Proj_M(lmf_ptr,const_cast<Field&>(w5).getaddr(Dw_.get_fermionFormat().index(0,0,s-1)),Nvol);
     BGWilsonLA_MultAddScalar(w5_ptr,     lmf_ptr,Params.dm_[s-1],Nvol);
     BGWilsonLA_MultScalar(w5_ptr, w5_ptr, 1.0/ Params.dp_[s], Nvol);   
-  } 
+  }
   w5_ptr   = w5.getaddr((N5_-1)*f4size_); 
   BGWilsonLA_Proj_M(v_ptr,const_cast<Field&>(w5).getaddr(Dw_.get_fermionFormat().index(0,0,N5_-2)),Nvol);   
   BGWilsonLA_MultAddScalar(w5_ptr, v_ptr,Params.dm_[N5_-2],Nvol);
@@ -303,7 +303,8 @@ const Field Dirac_optimalDomainWall::mult_hop5_dinv(const Field& f5) const{
     BGWilsonLA_MultAddScalar(w5_ptr, ey_ptr,-mq_*Params.fs_[s],Nvol);
   }
   BGWilsonLA_MultScalar(w5_ptr, w5_ptr,1.0/(Params.dp_[N5_-1] +mq_*Params.dm_[N5_-2]*Params.es_[N5_-2]),Nvol);
-                                                                                
+
+  
   for(int s=N5_-2; s>=0; --s){ 
     double* w5_ptr   = w5.getaddr(s*f4size_);
     double fact_lpf = (Params.dm_[s+1]/Params.dp_[s]);
@@ -604,11 +605,13 @@ void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
     cs = (4.0+M0_)*Params.cs_[s];
 
     Dw_.mult_dag_ptr_EO(w_ptr, f5_ptr);
-  
+ 
     BGWilsonLA_MultScalar(w5_ptr, w_ptr, bs,Nvol);
     BGWilsonLA_MultScalar(v5_ptr, w_ptr, cs,Nvol);
   
   }
+
+
   for(int s = 0; s < N5_; ++s){
     spin_idx = s*f4size_;
     double* w5_ptr = w5.getaddr(spin_idx);
@@ -634,7 +637,8 @@ void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
 	                         1.0,1.0,Nvol);
     }
   }
-  
+
+
 #else
   assert(w5.size()==f5.size());
   Field v5(fsize_),lpf(f4size_), lmf(f4size_);

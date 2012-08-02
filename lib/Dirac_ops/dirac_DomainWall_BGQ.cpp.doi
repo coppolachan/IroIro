@@ -1064,14 +1064,10 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
   	snorm = threadNorm[0];
 	snorm = sqrt(snorm);
 	snorm = 1.0/snorm;
-
-#pragma omp single
-	{
-#if VERBOSITY>1
-	  CCIO::cout<<" Snorm = "<< snorm << std::endl;
-	  CCIO::cout<<" Init  = "<< rr*snorm<< std::endl;
-#endif
-	}
+  #if VERBOSITY>1
+  CCIO::cout<<" Snorm = "<< snorm << std::endl;
+  CCIO::cout<<" Init  = "<< rr*snorm<< std::endl;
+  #endif
 
     for(int it = 0; it < MaxIter; ++it){
       double tPAP;

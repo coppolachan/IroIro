@@ -240,8 +240,10 @@ public:
 
   void mult_hop(Field&, const Field&)const;
   void mult_hop_omp(Field&, const void*)const;
+  void mult_hop_omp_allocated(Field&, const void*, void*, void*,  int, int)const;
   void mult_hop_dag(Field&, const Field&)const;
   void mult_hop_dag_omp(Field&, const void*)const;
+  void mult_hop_dag_omp_allocated(Field&, const void*, void*, void*, int, int)const;
 
   // mult in the heavy quark limit
   const Field mult_hop5(const Field& f5) const;    /*! @brief mult in the heavy M0 limit*/
