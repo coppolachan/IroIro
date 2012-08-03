@@ -49,8 +49,14 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{
   // just slightly faster (but only BGQ)
   Field res(Deo_.fsize());
   //Doe_.mult_hop(res, f);
-  double* f_ptr = const_cast<Field&>(f).getaddr(0);
-  Doe_.mult_hop_omp(res, f_ptr);
+
+  
+   double* f_ptr = const_cast<Field&>(f).getaddr(0);
+#pragma omp parallel
+   {
+     Deo_.mult_hop_omp(res, f_ptr);
+   }
+  
   return res;
   #else
   Field w(f);
@@ -66,7 +72,10 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
   Field res(Deo_.fsize());
   //Deo_.mult_hop_dag(res,f);
   double* f_ptr = const_cast<Field&>(f).getaddr(0);
-  Deo_.mult_hop_dag_omp(res,f_ptr);
+#pragma omp parallel
+  {
+    Deo_.mult_hop_dag_omp(res,f_ptr);
+  }
 
   gettimeofday(&end_,NULL);
   multdag_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
