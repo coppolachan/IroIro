@@ -47,11 +47,13 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
     if (Params.SaveInterval!=0 && iter%Params.SaveInterval == 0) {
       std::stringstream file;
       file << Params.Filename_prefix << iter;
+      CCIO::cout << "Saving configuration on: "<< file << "\n";
       if(CCIO::SaveOnDisk<Format::Format_G> (Uin.data, file.str().c_str())){
 	CCIO::cout << "Some error occurred in saving file\n";
       }
       seedfile_string.str("");//clears up the string
       seedfile_string << seedfile_base << iter;
+      CCIO::cout << "Saving seed file\n";
       rand_->saveSeed(seedfile_string.str());
     }
   }

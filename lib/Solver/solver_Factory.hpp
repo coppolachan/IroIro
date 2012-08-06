@@ -93,6 +93,25 @@ public:
   }
 };
 
+
+#ifdef IBM_BGQ_WILSON
+#include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
+/*!
+ @brief Concrete class for creating Conjugate Gradient Solver operator [Optimized version]
+*/
+class SolverCG_DWF_opt_Factory {
+  const XML::node Solver_node;
+public:
+  SolverCG_DWF_opt_Factory(const XML::node node):Solver_node(node){}
+
+  Solver_CG_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr){
+    return new Solver_CG_DWF_Optimized(Solver_node, DWFopr);
+  }
+
+};
+#endif
+
+
 /*!
  @brief Concrete class for creating BiConjugate Gradient Stabilized Solver
  operator 

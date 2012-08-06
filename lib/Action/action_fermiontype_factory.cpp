@@ -23,6 +23,11 @@ namespace FermionAction {
 
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D")) 
 	return new TwoFlavorDomainWall5dActionFactory(node);
+      if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D-EO_BGQ"))
+	return new TwoFlavorDomainWall5dEO_BGQ_ActionFactory(node);
+      if (!strcmp(Action_name, "TwoFlavorsRatioDomainWall_5D-EO_BGQ"))
+	return new TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory(node);
+
       if (!strcmp(Action_name, "NfFlavorsDomainWall_5D")) 
 	return new NfFlavorDomainWall5dActionFactory(node);
 

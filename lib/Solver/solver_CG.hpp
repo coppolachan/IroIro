@@ -20,6 +20,7 @@
 struct Solver_CG_Prms{
   int MaxIter;/*!< Maximum number of iteration for the solver */
   double GoalPrecision; /*!< Threshold for the final residual */
+
   
   Solver_CG_Prms(const XML::node node){
     XML::read(node, "MaxIter", MaxIter);
@@ -167,5 +168,46 @@ public:
   }
 };
 
+
+#ifdef IBM_BGQ_WILSON
+#include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
+/*!
+ * @brief Solves \f$Dx = b\f$ using 
+ * <a href="http://en.wikipedia.org/wiki/Conjugate_gradient_method">Conjugate Gradient method</a>
+ *
+ * Domain Wall fermions optimized operator for BGQ
+ * Wrapper class
+ * 
+ * WARNING: Never use with (non trivially) preconditioned operators
+ */
+class Solver_CG_DWF_Optimized: public Solver{
+private:
+  const Dirac_optimalDomainWall_EvenOdd* opr_;
+  const Solver_CG_Prms Params;/*!< @brief Inputs container */
+  const int nodeid_;
+
+public:
+  Solver_CG_DWF_Optimized(const double prec,const int MaxIterations,
+			  const Dirac_optimalDomainWall_EvenOdd* DWFopr)
+    :opr_(DWFopr),
+     nodeid_(Communicator::instance()->nodeid()),
+     Params(Solver_CG_Prms(prec, MaxIterations)){}
+
+  Solver_CG_DWF_Optimized(const XML::node Solver_node,
+			  const Dirac_optimalDomainWall_EvenOdd* DWFopr)
+    :opr_(DWFopr),
+     Params(Solver_CG_Prms(Solver_node)),
+     nodeid_(Communicator::instance()->nodeid()){}
+
+  ~Solver_CG_DWF_Optimized(){}
+
+  SolverOutput solve(Field& solution, const Field& source) const;
+
+  bool check_DdagD() const {
+    //empty in this case
+    return 1;
+  }
+};
+#endif
 
 #endif    

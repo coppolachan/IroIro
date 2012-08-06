@@ -45,35 +45,48 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_oe_dag(const Field& f)const{
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{
-#ifdef  IBM_BGQ_WILSON
+  #ifdef  IBM_BGQ_WILSON
   // just slightly faster (but only BGQ)
   Field res(Deo_.fsize());
-  Doe_.mult_hop(res, f);
+  //Doe_.mult_hop(res, f);
+
+  
+   double* f_ptr = const_cast<Field&>(f).getaddr(0);
+#pragma omp parallel
+   {
+     Deo_.mult_hop_omp(res, f_ptr);
+   }
+  
   return res;
-#else
+  #else
   Field w(f);
   w -= mult_eo(mult_oe(f));
   return w;
-#endif
+  #endif
 }
 const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
-#ifdef IBM_BGQ_WILSON  
+  #ifdef IBM_BGQ_WILSON  
   timeval start_, end_;
   gettimeofday(&start_,NULL);
 
   Field res(Deo_.fsize());
-  Deo_.mult_hop_dag(res,f);
+  //Deo_.mult_hop_dag(res,f);
+  double* f_ptr = const_cast<Field&>(f).getaddr(0);
+#pragma omp parallel
+  {
+    Deo_.mult_hop_dag_omp(res,f_ptr);
+  }
 
   gettimeofday(&end_,NULL);
   multdag_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
   multdag_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
 
   return res;
-#else
+  #else
   Field w(f);
   w -= mult_oe_dag(mult_eo_dag(f));
   return w;
-#endif   
+  #endif   
 }
 
 void Dirac_optimalDomainWall_EvenOdd::

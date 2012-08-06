@@ -125,8 +125,9 @@ int Test_optimalDomainWall::run(){
 
   CCIO::cout<<"phi_ norm   =" <<sqrt(phinorm) << "\n";
   CCIO::cout<<"typeid(D1_) =" <<typeid(Ddwf1).name()<< "\n";
-
+  
   SolverOutput monitor;
+  
   Field sol(Ddwf1.fsize());
   monitor = SolvR2.solve(sol,D1phi);
   monitor.print();
@@ -162,9 +163,9 @@ int Test_optimalDomainWall::run(){
   
   // quark propagator
   double stop_cond = 1.0e-24;
-  int    Niter     = 5000;
+  int    Niter     = 2000;
 
-
+  
   ///////////////////////////////////////////// Test solver eo
 #ifdef IBM_BGQ_WILSON
   Fopr_DdagD DdagD_EO(&Ddwf_5d_eo);
@@ -179,7 +180,7 @@ int Test_optimalDomainWall::run(){
   monitor = SolvEO.solve(sol_eo,phi_eo);
   monitor.print();
   CCIO::cout << ".::: Test Dirac_optimalDomainWall solver eo BGQ version \n";
-  for (int test= 0; test< 12 ; ++test){
+  for (int test= 0; test< 30 ; ++test){
   Ddwf_5d_eo.solve_eo(sol_eo, phi_eo, monitor,  Niter, stop_cond);
   monitor.print();
   }

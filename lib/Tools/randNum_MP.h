@@ -9,6 +9,7 @@
 #endif
 
 #include "include/commonPrms.h"
+#include "Communicator/communicator.h"
 #include "Communicator/comm_io.hpp"
 #include <cassert>
 
@@ -53,11 +54,31 @@ namespace MPrand{
     int NP = CommonPrms::instance()->NP();
     int Lvol = NP*Nvol;
 
-    std::valarray<double> Rn(NP*rn.size());
+    //CCIO::cout << "MP_GET_GAUSS valarray allocation\n";
+      /*
+    std::valarray<double> Rn(NP*rn.size());// too big.
+    CCIO::cout << "MP_GET_GAUSS get_gauss\n";
     rand.get_gauss(Rn);	
     
     FMT Fmt(Lvol,Nex);
+    CCIO::cout << "MP_GET_GAUSS distribute\n";
     rn = Rn[Fmt.get_sub(gsite)];
+
+      */
+    //    FMT Fmt(Lvol,Nex);
+    std::valarray<double> Rn_source(rn.size());
+    for (int node = 0; node < NP; ++node) {
+      
+      //CCIO::cout << "MP_GET_GAUSS get_gauss "<< node << "\n";
+      if (Communicator::instance()->primaryNode()) {
+	rand.get_gauss(Rn_source);	
+      } 
+      Communicator::instance()->sync();
+      Communicator::instance()->send_1to1(rn, Rn_source, rn.size(), node, 0, node);
+      //rn = Rn_node[Fmt.get_sub(gsite)];
+      
+    }
+    
   }
 
   void mp_get(std::valarray<double>& rn,const RandNum& rand);
