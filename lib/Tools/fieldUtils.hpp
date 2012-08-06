@@ -50,6 +50,7 @@ namespace FieldUtils{
   inline SUNvec vec(const FermionField& F,int spin,int site){
     return SUNvec(F.data[F.format.cslice(spin,site)]);  }
 
+  // function templates
   template<typename GF>
   GF get_even(const GF& Fin){
     GF Fout(Fin.Nvol()/2);

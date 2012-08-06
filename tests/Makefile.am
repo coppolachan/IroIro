@@ -42,6 +42,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_GeneralMeas.xml 	\
+		test_PolyakovLoop.xml	\
 		test_WilsonFlow.xml	\
 		test_MesonSpectrum_Nf2p1.xml 	\
 		test_ResMass_full.xml 	\
@@ -62,6 +63,7 @@ test_PROGRAMS = test_HMC 		\
 		test_HMC_smear_noF	\
 		test_HMC_DWall_noF	\
 		test_Gauge		\
+		test_PolyakovLoop	\
 		test_WilsonFlow		\
 		test_Wilson 		\
 		test_Clover 		\
@@ -148,10 +150,12 @@ test_IO_SOURCES 	= 	test_IO.cpp 			\
 				testerIO.cpp
 
 test_RationalApprox_SOURCES 	= 	test_RationalApprox.cpp	\
-				testerRationalApprox.cpp
+					testerRationalApprox.cpp
 
 test_WilsonFlow_SOURCES 	= 	test_WilsonFlow.cpp	\
-				testerWilsonFlow.cpp
+					testerWilsonFlow.cpp
+test_PolyakovLoop_SOURCES 	= 	test_PolyakovLoop.cpp	\
+	 				testerPolyakovLoop.cpp
 
 include_HEADERS 	=	tests.hpp			\
 				tests_all.hpp			\
@@ -162,6 +166,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
 				test_WilsonFlow.hpp     	\
+				test_PolyakovLoop.hpp     	\
 				test_DomainWall.hpp 		\
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\

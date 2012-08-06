@@ -347,7 +347,7 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
       }
     }
     //int tp = (this->*xp)(site,3);
-    int tp = map.xp(site,3);
+    int tp = map_->xp(site,3);
     for(int c=0; c<NC_; ++c){
       w1r[c] = f[ff_.index_r(c,2,tp)]*2.0;
       w1i[c] = f[ff_.index_i(c,2,tp)]*2.0;

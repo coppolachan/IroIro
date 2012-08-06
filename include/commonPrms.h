@@ -21,15 +21,15 @@ struct Lattice{
  */
 class CommonPrms{
 private:
+  static int Lvol_, Nvol_, NP_;
+
   // global lattice size
-  static int Lx_,Ly_,Lz_,Lt_,Lvol_;
   static std::vector<int> Lsize_;
 
   // Number of processors assigined in each direction
-  static int NPEx_,NPEy_,NPEz_,NPEt_,NP_;
+  static std::vector<int> Nnodes_;
 
   // local lattice size
-  static int Nx_,Ny_,Nz_,Nt_,Nvol_;
   static std::vector<int> Nsize_;
 
   CommonPrms(const Lattice&);
@@ -44,22 +44,22 @@ public:
   static CommonPrms* instance(const Lattice & latt);
   static CommonPrms* instance();
 
-  static int Lx(){return Lx_;}
-  static int Ly(){return Ly_;}
-  static int Lz(){return Lz_;}
-  static int Lt(){return Lt_;}
+  static int Lx(){return Lsize_[0];}
+  static int Ly(){return Lsize_[1];}
+  static int Lz(){return Lsize_[2];}
+  static int Lt(){return Lsize_[3];}
   static int Lvol(){return Lvol_;}
 
-  static int NPEx(){return NPEx_;}
-  static int NPEy(){return NPEy_;}
-  static int NPEz(){return NPEz_;}
-  static int NPEt(){return NPEt_;}
+  static int NPEx(){return Nnodes_[0];}
+  static int NPEy(){return Nnodes_[1];}
+  static int NPEz(){return Nnodes_[2];}
+  static int NPEt(){return Nnodes_[3];}
   static int NP(){return NP_;}
 
-  static int Nx(){return Nx_;}
-  static int Ny(){return Ny_;}
-  static int Nz(){return Nz_;}
-  static int Nt(){return Nt_;}
+  static int Nx(){return Nsize_[0];}
+  static int Ny(){return Nsize_[1];}
+  static int Nz(){return Nsize_[2];}
+  static int Nt(){return Nsize_[3];}
   static int Nvol(){return Nvol_;}
 
   static int Nc(){return NC_;}
@@ -68,6 +68,7 @@ public:
   
   static int global_size(int mu){return Lsize_[mu];}
   static int local_size(int mu){return Nsize_[mu];}
+  static int node_num(int mu){return Nnodes_[mu];}
 };
 
 #endif

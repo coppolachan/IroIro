@@ -47,11 +47,11 @@ target_triplet = @target@
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_HMC_EvenOdd$(EXEEXT) test_HMC_smear_noF$(EXEEXT) \
 	test_HMC_DWall_noF$(EXEEXT) test_Gauge$(EXEEXT) \
-	test_WilsonFlow$(EXEEXT) test_Wilson$(EXEEXT) \
-	test_Clover$(EXEEXT) test_Wilson_EvenOdd$(EXEEXT) \
-	test_DomainWall$(EXEEXT) test_QpropMom$(EXEEXT) \
-	test_ResMass$(EXEEXT) test_MesonSpectrum$(EXEEXT) \
-	test_MesonSpectrum_Nf2p1$(EXEEXT) \
+	test_PolyakovLoop$(EXEEXT) test_WilsonFlow$(EXEEXT) \
+	test_Wilson$(EXEEXT) test_Clover$(EXEEXT) \
+	test_Wilson_EvenOdd$(EXEEXT) test_DomainWall$(EXEEXT) \
+	test_QpropMom$(EXEEXT) test_ResMass$(EXEEXT) \
+	test_MesonSpectrum$(EXEEXT) test_MesonSpectrum_Nf2p1$(EXEEXT) \
 	test_EigenModesSolver$(EXEEXT) test_Smearing$(EXEEXT) \
 	test_Overlap$(EXEEXT) test_MultiShiftSolver$(EXEEXT) \
 	test_Solver_Perf$(EXEEXT) test_RNG$(EXEEXT) test_IO$(EXEEXT) \
@@ -141,6 +141,11 @@ am_test_Overlap_OBJECTS = test_Overlap.$(OBJEXT) \
 test_Overlap_OBJECTS = $(am_test_Overlap_OBJECTS)
 test_Overlap_LDADD = $(LDADD)
 test_Overlap_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am_test_PolyakovLoop_OBJECTS = test_PolyakovLoop.$(OBJEXT) \
+	testerPolyakovLoop.$(OBJEXT)
+test_PolyakovLoop_OBJECTS = $(am_test_PolyakovLoop_OBJECTS)
+test_PolyakovLoop_LDADD = $(LDADD)
+test_PolyakovLoop_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_QpropMom_OBJECTS = test_QpropMom.$(OBJEXT) \
 	testerQpropMom.$(OBJEXT)
 test_QpropMom_OBJECTS = $(am_test_QpropMom_OBJECTS)
@@ -217,11 +222,12 @@ SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
-	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
-	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
-	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
-	$(test_Solver_Perf_SOURCES) $(test_Wilson_SOURCES) \
-	$(test_WilsonFlow_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
+	$(test_PolyakovLoop_SOURCES) $(test_QpropMom_SOURCES) \
+	$(test_RHMC_noFactories_SOURCES) $(test_RNG_SOURCES) \
+	$(test_RationalApprox_SOURCES) $(test_ResMass_SOURCES) \
+	$(test_Smearing_SOURCES) $(test_Solver_Perf_SOURCES) \
+	$(test_Wilson_SOURCES) $(test_WilsonFlow_SOURCES) \
+	$(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
@@ -230,11 +236,12 @@ DIST_SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
-	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
-	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
-	$(test_ResMass_SOURCES) $(test_Smearing_SOURCES) \
-	$(test_Solver_Perf_SOURCES) $(test_Wilson_SOURCES) \
-	$(test_WilsonFlow_SOURCES) $(test_Wilson_EvenOdd_SOURCES)
+	$(test_PolyakovLoop_SOURCES) $(test_QpropMom_SOURCES) \
+	$(test_RHMC_noFactories_SOURCES) $(test_RNG_SOURCES) \
+	$(test_RationalApprox_SOURCES) $(test_ResMass_SOURCES) \
+	$(test_Smearing_SOURCES) $(test_Solver_Perf_SOURCES) \
+	$(test_Wilson_SOURCES) $(test_WilsonFlow_SOURCES) \
+	$(test_Wilson_EvenOdd_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -389,6 +396,7 @@ EXTRA_DIST = testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_GeneralMeas.xml 	\
+		test_PolyakovLoop.xml	\
 		test_WilsonFlow.xml	\
 		test_MesonSpectrum_Nf2p1.xml 	\
 		test_ResMass_full.xml 	\
@@ -468,10 +476,13 @@ test_IO_SOURCES = test_IO.cpp 			\
 				testerIO.cpp
 
 test_RationalApprox_SOURCES = test_RationalApprox.cpp	\
-				testerRationalApprox.cpp
+					testerRationalApprox.cpp
 
 test_WilsonFlow_SOURCES = test_WilsonFlow.cpp	\
-				testerWilsonFlow.cpp
+					testerWilsonFlow.cpp
+
+test_PolyakovLoop_SOURCES = test_PolyakovLoop.cpp	\
+	 				testerPolyakovLoop.cpp
 
 include_HEADERS = tests.hpp			\
 				tests_all.hpp			\
@@ -482,6 +493,7 @@ include_HEADERS = tests.hpp			\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
 				test_WilsonFlow.hpp     	\
+				test_PolyakovLoop.hpp     	\
 				test_DomainWall.hpp 		\
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
@@ -609,6 +621,9 @@ test_MultiShiftSolver$(EXEEXT): $(test_MultiShiftSolver_OBJECTS) $(test_MultiShi
 test_Overlap$(EXEEXT): $(test_Overlap_OBJECTS) $(test_Overlap_DEPENDENCIES) 
 	@rm -f test_Overlap$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Overlap_OBJECTS) $(test_Overlap_LDADD) $(LIBS)
+test_PolyakovLoop$(EXEEXT): $(test_PolyakovLoop_OBJECTS) $(test_PolyakovLoop_DEPENDENCIES) 
+	@rm -f test_PolyakovLoop$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_PolyakovLoop_OBJECTS) $(test_PolyakovLoop_LDADD) $(LIBS)
 test_QpropMom$(EXEEXT): $(test_QpropMom_OBJECTS) $(test_QpropMom_DEPENDENCIES) 
 	@rm -f test_QpropMom$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_QpropMom_OBJECTS) $(test_QpropMom_LDADD) $(LIBS)
@@ -659,6 +674,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum_Nf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Overlap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_PolyakovLoop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_QpropMom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RHMC_noFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_RNG.Po@am__quote@
@@ -682,6 +698,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrumNf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerOverlap.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerPolyakovLoop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerQpropMom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerRationalApprox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerResMass.Po@am__quote@

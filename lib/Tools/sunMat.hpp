@@ -14,7 +14,7 @@
 
 #include "include/macros.hpp"
 
-template <size_t COLORS>
+template <size_t COLORS = NC_>
 class SUNmatrix{
 private:
   std::valarray<double> va_;
@@ -83,9 +83,8 @@ public:
   void mult(int c1,int c2,double re, double im){ mult(COLORS*c1+c2, re, im);}
 };
 
-
 typedef SUNmatrix<3> SU3mat;
-typedef SUNmatrix<NC_> SUNmat;
+typedef SUNmatrix<> SUNmat;
 
 template <size_t COLORS>
 inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::unity(){

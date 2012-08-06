@@ -5,7 +5,6 @@
 #include "eigenSorter.hpp"
 #include "include/fopr.h"
 #include "Fields/field_expressions.hpp"
-//#include "commonPrms.h"
 #include <cassert>
 #include <iostream>
 #include <iomanip>
