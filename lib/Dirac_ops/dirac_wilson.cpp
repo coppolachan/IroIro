@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
-
+#include "Tools/sunVec.hpp"
 using namespace SUNvec_utils;
 using namespace std;
 
@@ -182,10 +182,3 @@ const vector<int> Dirac_Wilson::get_gsite() const {
   return SiteIndex::instance()->get_gsite();
 }
 
-namespace Dw{
-  double read_mass(const XML::node& node){
-    double mass;
-    XML::read(node, "mass", mass);
-    return mass;
-  }
-}

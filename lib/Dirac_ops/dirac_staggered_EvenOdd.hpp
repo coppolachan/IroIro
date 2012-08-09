@@ -1,29 +1,29 @@
-//---------------------------------------------------------
-/*
-  @file dirac_wilson_EvenOdd.hpp
-  @brief Definition of Even Odd wilson operator
-*/
-//---------------------------------------------------------
-#ifndef DIRAC_WILSON_EVENODD_INCLUDED
-#define DIRAC_WILSON_EVENODD_INCLUDED
+//------------------------------------------------------------------
+/*!@file   dirac_staggered_EvenOdd.hpp
+ * @brief  Definition of the staggered operator on even/odd sites
+ */
+//------------------------------------------------------------------
+#ifndef DIRAC_STAGGERED_EVENODD_INCLUDED
+#define DIRAC_STAGGERED_EVENODD_INCLUDED
 
-#include "dirac_wilson.hpp"
+#include "dirac_wilson_EvenOdd.hpp"
 
-class Dirac_Wilson_EvenOdd:public DiracWilsonLike_EvenOdd {
+class Dirac_staggered_EvenOdd :public DiracStaggeredLike_EvenOdd{
 private:
-  const Dirac_Wilson Deo_;
-  const Dirac_Wilson Doe_;
-  //const Dirac_Wilson Dw_;
-
+  const Dirac_staggered Deo_;
+  const Dirac_staggered Doe_;
+  
   void md_force_eo(Field&,const Field&,const Field&)const;
   void md_force_oe(Field&,const Field&,const Field&)const;
 
-  Dirac_Wilson_EvenOdd(const Dirac_Wilson_EvenOdd&);
+  Dirac_staggered_EvenOdd(const Dirac_staggered_EvenOdd&);
   /*!< @brief simple copy is prohibited */
 public:
-  Dirac_Wilson_EvenOdd(double mass,const Field* u)
+  // manual construction
+  Dirac_staggered_EvenOdd(double mass,const Field* u)
     :Deo_(mass,u,Dop::EOtag()),Doe_(mass,u,Dop:OEtag()){}
 
+  // xml construction 
   Dirac_Wilson_EvenOdd(const XML::node& node,const Field* u)
     :Deo_(Dop::read_mass(node),u,Dop::EOtag()),
      Doe_(Dop::read_mass(node),u,Dop::OEtag()){}
@@ -31,11 +31,9 @@ public:
   size_t fsize() const{return Deo_.fsize();}
   size_t gsize() const{return Deo_.gsize();}
 
-  const Field gamma5(const Field& f) const{return Deo_.gamma5(f);}
-
   const Field mult(const Field&) const;
   const Field mult_dag(const Field&) const;
-
+  
   ////////////////////////////////////////Preconditioned versions
   // EvenOdd operator has no preconditioner now 
   const Field mult_prec     (const Field&f)const{return f;}
@@ -58,9 +56,7 @@ public:
   const Field mult_oo_inv(const Field& f)const {return f;}
   const Field mult_ee_inv(const Field& f)const {return f;}
 
-  const ffmt_t get_fermionFormat() const{ return Deo_.get_fermionFormat();}
+  double get_mq()const{ return Deo_.get_mq();}
   const std::vector<int> get_gsite() const;
-  double getKappa()const { return Deo_.getKappa();}
 };
-
 #endif

@@ -258,7 +258,9 @@ private:
 				smearing, SC);
   }
 };
+
 ////////////////////////////////////////////////////
+#ifdef IBM_BGQ_WILSON
 
 class TwoFlavorDomainWall5dEO_BGQ_ActionFactory : public FermionActionFactory {
 
@@ -358,6 +360,8 @@ private:
 				smearing, SC); 
   }
 };
+#endif
+
 ////////////////////////////////////////////////////
 
 class NfFlavorDomainWall5dActionFactory : public FermionActionFactory {
