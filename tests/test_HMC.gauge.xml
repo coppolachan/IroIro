@@ -24,9 +24,9 @@
       <init>0x123 0x234 0x345 0x456</init> 
     </RandomNumberGen>
     
-    <Integrator name="leapfrog_multistep">
-      <MDsteps>50</MDsteps>
-      <step_size>0.01</step_size>
+    <Integrator name="2MN_multistep">
+      <MDsteps>20</MDsteps>
+      <step_size>0.025</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>

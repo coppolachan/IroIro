@@ -10,6 +10,10 @@ namespace Integrators{
       if(!strcmp(Int_name, "leapfrog_multistep")) 
 	return  new MDIntegrator_LeapfrogFactory(node);
 
+      if(!strcmp(Int_name, "2MN_multistep")) 
+	return  new MDIntegrator_2MN_Factory(node);
+
+
       std::cerr << "No Integrator available with name ["
 		<< Int_name << "]" << std::endl;
       abort();
