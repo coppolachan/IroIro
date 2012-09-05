@@ -21,7 +21,13 @@ CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) \
 	-I$(DRIVER)/spi/include/mu/default \
 	-I$(DRIVER)/comm/xl/include	
 
+if IBM_BGQWILSON_NOSMP  
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
+endif
+
+if IBM_BGQWILSON_SMP
+DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
+endif
 
 if IBM_BGQWILSON_SMP
 CXXFLAGS += -qsmp=omp:auto
@@ -102,6 +108,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
 		Measurements/GaugeM/wilsonFlow.cpp	\
+		Measurements/GaugeM/polyakovLoop.cpp			\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
 		Measurements/GaugeM/gaugeFixing_Landau.cpp		\
@@ -121,6 +128,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		HMC/hmcGeneral.cpp                      \
 		HMC/mdExec.cpp		                \
 		HMC/mdExec_leapfrog.cpp                 \
+		HMC/mdExec_2MN.cpp	                \
 		HMC/mdExec_factory.cpp                  \
 		PugiXML/pugixml.cpp			\
 		PugiXML/pugi_interface.cpp		\
@@ -137,6 +145,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
+		Tools/sunAdjMatUtils.cpp		\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
@@ -197,6 +206,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/GaugeM/gaugeFixing_Free.hpp	\
 			Measurements/GaugeM/gfixFactory.hpp		\
 			Measurements/GaugeM/wilsonFlow.hpp		\
+			Measurements/GaugeM/polyakovLoop.hpp		\
 			Measurements/FermionicM/source.hpp		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\
@@ -255,12 +265,14 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Smearing/stoutSmear.hpp			\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
-			Tools/sunMat.hpp			\
 			Tools/jobUtils.hpp			\
-			Tools/sunMatUtils.hpp			\
+			Tools/sunMat.hpp			\
+			Tools/sunMatUtils.hpp   		\
+			Tools/sunAdjMat.hpp			\
+			Tools/sunAdjMatUtils.hpp		\
+			Tools/sunVec.hpp			\
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
-			Tools/sunVec.hpp			\
 			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
 			Tools/fieldUtils.hpp			\

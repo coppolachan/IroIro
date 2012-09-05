@@ -15,6 +15,7 @@
 #include "HMC/mdExec_factory_abs.hpp"
 #include "Communicator/comm_io.hpp"
 #include "HMC/mdExec_leapfrog.hpp"
+#include "HMC/mdExec_2MN.hpp"
 #include "Smearing/smearingFactories.hpp"
 /*
  * :::::::::::::::::::::   Concrete classes
@@ -34,7 +35,7 @@ class MDIntegrator_LeapfrogFactory : public MDIntegratorFactory {
 				 ActSetFactory.getMultipliers(),
 				 SCFactory.getSmartConfiguration());
     }catch(...){
-      std::cerr << "Error in creating leapfrog" << std::endl;
+      std::cerr << "Error in creating leapfrog integrator" << std::endl;
       abort();
     }
   }
@@ -44,6 +45,37 @@ public:
   ~MDIntegrator_LeapfrogFactory(){delete CommonField;}
 
   MDIntegrator_LeapfrogFactory(XML::node node)
+    :ActSetFactory(node),
+     Integrator_node(node),
+     SCFactory(node),
+     CommonField(SCFactory.getSmartConfiguration()->ThinLinks){  } 
+};
+
+class MDIntegrator_2MN_Factory : public MDIntegratorFactory {
+  ActionSetFactory ActSetFactory;
+  const XML::node Integrator_node;
+  SmartConfFactory SCFactory;
+  GaugeField* CommonField;
+
+  MDexec* create_2MN(){
+    try{
+      return new MDexec_2MN(Integrator_node,
+			    ActSetFactory.
+			    getActionSet(CommonField,
+					 SCFactory.getSmartConfiguration()), 
+			    ActSetFactory.getMultipliers(),
+			    SCFactory.getSmartConfiguration());
+    }catch(...){
+      std::cerr << "Error in creating 2MN integrator" << std::endl;
+      abort();
+    }
+  }
+public:
+  MDexec* getMDIntegrator(){return create_2MN();}
+  
+  ~MDIntegrator_2MN_Factory(){delete CommonField;}
+
+  MDIntegrator_2MN_Factory(XML::node node)
     :ActSetFactory(node),
      Integrator_node(node),
      SCFactory(node),

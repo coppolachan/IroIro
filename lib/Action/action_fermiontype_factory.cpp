@@ -14,22 +14,31 @@ namespace FermionAction {
       }
       if (!strcmp(Action_name, "TwoFlavors")) 
 	return new TwoFlavorActionFactory(node);
+
       if (!strcmp(Action_name, "NfFlavors")) 
 	return new NfFlavorsActionFactory(node);
+
       if (!strcmp(Action_name, "TwoFlavorsRatio")) 
 	return new TwoFlavorRatioActionFactory(node);
+
       if (!strcmp(Action_name, "NfFlavorsRatio")) 
 	return new NfFlavorRatioActionFactory(node);
 
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D")) 
 	return new TwoFlavorDomainWall5dActionFactory(node);
+
+      if (!strcmp(Action_name, "NfFlavorsDomainWall_5D")) 
+	return new NfFlavorDomainWall5dActionFactory(node);
+
+
+      //BGQ specific improved routines
+      #ifdef IBM_BGQ_WILSON
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D-EO_BGQ"))
 	return new TwoFlavorDomainWall5dEO_BGQ_ActionFactory(node);
       if (!strcmp(Action_name, "TwoFlavorsRatioDomainWall_5D-EO_BGQ"))
 	return new TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory(node);
+      #endif
 
-      if (!strcmp(Action_name, "NfFlavorsDomainWall_5D")) 
-	return new NfFlavorDomainWall5dActionFactory(node);
 
       std::cerr << "No Fermionic Action available with name ["
 		<< Action_name << "]. Request by <" << node.name() << ">\n";

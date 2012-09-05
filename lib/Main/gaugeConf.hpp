@@ -12,6 +12,7 @@
 class Field;
 class SiteIndex;
 
+// GaugeConf class and its subclasses are more like "GaugeConfInitializer"
 class GaugeConf{
 protected:
   const Format::Format_G& fg_;
@@ -33,26 +34,36 @@ public:
 };  
 
 class GaugeConf_bin:public GaugeConf{
-  std::string file;
+  std::string file_;
 public:
   GaugeConf_bin(const Format::Format_G& fg, const std::string& fname)
-    :GaugeConf(fg), file(fname){}
+    :GaugeConf(fg), file_(fname){}
   void init_conf(Field&);
 };
 
 class GaugeConf_JLQCDLegacy:public GaugeConf{
-  std::string file;
+  std::string file_;
 public:
   GaugeConf_JLQCDLegacy(const Format::Format_G& fg, const std::string& fname)
-    :GaugeConf(fg), file(fname){}
+    :GaugeConf(fg), file_(fname){}
+  void init_conf(Field&);
+};
+
+// this class is for temporal hack. Its usage is very limited
+class GaugeConf_csdt:public GaugeConf{
+  std::string file_;
+  double conv_endian(double);
+public:
+  GaugeConf_csdt(const Format::Format_G& fg, const std::string& fname)
+    :GaugeConf(fg), file_(fname){}
   void init_conf(Field&);
 };
 
 class GaugeConf_txt:public GaugeConf{
-  std::string file;
+  std::string file_;
 public:
   GaugeConf_txt(const Format::Format_G& fg, const std::string& fname)
-    :GaugeConf(fg),file(fname){}
+    :GaugeConf(fg),file_(fname){}
   void init_conf(Field&);
 };
 

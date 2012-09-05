@@ -10,26 +10,13 @@
 
 using namespace std;
 
-int CommonPrms::Lx_;
-int CommonPrms::Ly_;
-int CommonPrms::Lz_;
-int CommonPrms::Lt_;
 int CommonPrms::Lvol_;
-
-int CommonPrms::Nx_;
-int CommonPrms::Ny_;
-int CommonPrms::Nz_;
-int CommonPrms::Nt_;
 int CommonPrms::Nvol_;
-
-int CommonPrms::NPEx_;
-int CommonPrms::NPEy_;
-int CommonPrms::NPEz_;
-int CommonPrms::NPEt_;
 int CommonPrms::NP_;
 
 vector<int> CommonPrms::Lsize_(NDIM_);
 vector<int> CommonPrms::Nsize_(NDIM_); 
+vector<int> CommonPrms::Nnodes_(NDIM_); 
 
 CommonPrms* CommonPrms::instance_= NULL;
 
@@ -46,40 +33,33 @@ CommonPrms* CommonPrms::instance(){
 }
 
 CommonPrms::CommonPrms(const Lattice& latt){
+
   if(latt.stdinput){
-    cin >> Lx_>> Ly_>> Lz_>> Lt_;
-    NPEx_ = 1;
-    NPEy_ = 1;
-    NPEz_ = 1;
-    NPEt_ = 1;
+    cin >> Lsize_[0]>> Lsize_[1]>> Lsize_[2]>> Lsize_[3];
+
+    Nnodes_[0] = 1;
+    Nnodes_[1] = 1;
+    Nnodes_[2] = 1;
+    Nnodes_[3] = 1;
   }else{
-    Lx_= latt.Lx;
-    Ly_= latt.Ly;
-    Lz_= latt.Lz;
-    Lt_= latt.Lt;
+
+    Lsize_[0] = latt.Lx;
+    Lsize_[1] = latt.Ly;
+    Lsize_[2] = latt.Lz;
+    Lsize_[3] = latt.Lt;
     
-    NPEx_= latt.NPEx;
-    NPEy_= latt.NPEy;
-    NPEz_= latt.NPEz;
-    NPEt_= latt.NPEt;
+    Nnodes_[0] = latt.NPEx;
+    Nnodes_[1] = latt.NPEy;
+    Nnodes_[2] = latt.NPEz;
+    Nnodes_[3] = latt.NPEt;
   }
+  Lvol_= Lsize_[0]*Lsize_[1]*Lsize_[2]*Lsize_[3];
+  NP_= Nnodes_[0]*Nnodes_[1]*Nnodes_[2]*Nnodes_[3];
 
-  Lvol_= Lx_*Ly_*Lz_*Lt_;
-  NP_= NPEx_*NPEy_*NPEz_*NPEt_;
+  Nsize_[0] = Lsize_[0]/Nnodes_[0];
+  Nsize_[1] = Lsize_[1]/Nnodes_[1];
+  Nsize_[2] = Lsize_[2]/Nnodes_[2];
+  Nsize_[3] = Lsize_[3]/Nnodes_[3];
 
-  Nx_= Lx_/NPEx_;
-  Ny_= Ly_/NPEy_;
-  Nz_= Lz_/NPEz_;
-  Nt_= Lt_/NPEt_;
   Nvol_= Lvol_/NP_;
-
-  Lsize_.push_back(Lx_);
-  Lsize_.push_back(Ly_);
-  Lsize_.push_back(Lz_);
-  Lsize_.push_back(Lt_);
-
-  Nsize_.push_back(Nx_);
-  Nsize_.push_back(Ny_);
-  Nsize_.push_back(Nz_);
-  Nsize_.push_back(Nt_);
 }

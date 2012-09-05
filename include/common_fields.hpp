@@ -275,13 +275,16 @@ public:
     GaugeConf_bin gconf(format,Filename);
     gconf.init_conf(data);
   }
+  void initializeCSDTbin(const std::string &Filename){
+    GaugeConf_csdt gconf(format,Filename);
+    gconf.init_conf(data);
+  }
   void initializeJLQCDlegacy(const std::string &Filename) {
     GaugeConf_JLQCDLegacy gconf(format,Filename);
     gconf.init_conf(data);
   }
 
- /*! @brief Initializes the gauge field with \n unit matrices
-   *
+ /*! @brief Initializes the gauge field with unit matrices
    * Configuration type in XML: Unit
    */
   void initializeUnit(){
@@ -304,6 +307,11 @@ public:
       if (!XML::attribute_compare(node,"Type","Binary")){
 	std::string filename(node.child_value());
 	initializeBin(filename);
+	return 0;
+      }
+      if (!XML::attribute_compare(node,"Type","CSDTbinary")){
+	std::string filename(node.child_value());
+	initializeCSDTbin(filename);
 	return 0;
       }
       if (!XML::attribute_compare(node,"Type","JLQCDlegacy")){
@@ -330,6 +338,10 @@ public:
       }
       if (!XML::attribute_compare(node,"Type","Binary")){
 	initializeBin(filename);
+	return 0;
+      }
+      if (!XML::attribute_compare(node,"Type","CSDTbinary")){
+	initializeCSDTbin(filename);
 	return 0;
       }
       if (!XML::attribute_compare(node,"Type","JLQCDlegacy")){

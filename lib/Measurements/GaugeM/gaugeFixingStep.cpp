@@ -89,7 +89,7 @@ const GaugeField1D GaugeFixingStep::gtr_sdm(const GaugeField1D& upu,
     double alpha = ReTr(dx*mat(umu,site));
     alpha /= ReTr(dx*dx*mat(upu,site));
     dx*= alpha*sdmp_;
-    SetMat(Gtr,reunit(exponential(dx,12,1)),site);
+    SetMat(Gtr,reunit(exponential(dx,12)),site);
   }
   return Gtr;
 }
