@@ -52,14 +52,31 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
   // nu,w_dag|     |w(site+mu,nu) 
   //     site+-->--+ 
   //           mu,v              
+
   GaugeField1D v = DirSlice(G,mu);
   GaugeField1D w = DirSlice(G,nu);
   GaugeField1D c(G.Nvol());
+  GaugeField1D temp(G.Nvol());
   GaugeField1D WupMu = shiftField(w,mu,Forward());
-  for(int site=0; site<Nvol_; ++site) 
-    c.data[c.format.islice(site)] 
-      = (mat_dag(w,site)*mat(v,site)*mat(WupMu,site)).getva();
-    return shiftField(c,nu,Backward());
+
+  double* c_ptr = c.data.getaddr(0);
+  double* v_ptr = v.data.getaddr(0);
+  double* temp_ptr = temp.data.getaddr(0);
+  double* WupMu_ptr = WupMu.data.getaddr(0);
+  double* w_ptr = w.data.getaddr(0);
+ 
+  BGWilsonSU3_MatMult_NN(temp_ptr, v_ptr, WupMu_ptr, Nvol_);
+  BGWilsonSU3_MatMult_DN(c_ptr, w_ptr, temp_ptr, Nvol_);
+
+  /*
+  for(int site=0; site<Nvol_; ++site) {
+    //c.data[c.format.islice(site)] = (mat_dag(w,site)*mat(v,site)*mat(WupMu,site)).getva();
+    c.data[c.format.islice(site)] = mat(v,site).getva();
+  }
+  */
+ 
+
+  return shiftField(c,nu,Backward());
 }
 //------------------------------------------------------------
 GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
@@ -74,9 +91,21 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
   GaugeField1D c(G.Nvol());
   GaugeField1D WupMu = shiftField(w,mu,Forward());
   GaugeField1D VupNu = shiftField(v,nu,Forward());
-  for(int site=0; site<Nvol_; ++site)
-    c.data[c.format.islice(site)] 
-      = (mat(w,site)*mat(VupNu,site)*mat_dag(WupMu,site)).getva();
+
+  double* c_ptr = c.data.getaddr(0);
+  double* VupNu_ptr = VupNu.data.getaddr(0);
+  double* v_ptr = v.data.getaddr(0);
+  double* WupMu_ptr = WupMu.data.getaddr(0);
+  double* w_ptr = w.data.getaddr(0);
+
+  BGWilsonSU3_MatMult_ND(v_ptr, VupNu_ptr, WupMu_ptr, Nvol_);
+  BGWilsonSU3_MatMult_NN(c_ptr, w_ptr, v_ptr, Nvol_);
+  /*
+  for(int site=0; site<Nvol_; ++site){
+    //c.data[c.format.islice(site)] = (mat(w,site)*mat(VupNu,site)*mat_dag(WupMu,site)).getva();
+    c.data[c.format.islice(site)] = mat(v,site).getva();
+    }*/
+
   return c;
 }
 //------------------------------------------------------------
