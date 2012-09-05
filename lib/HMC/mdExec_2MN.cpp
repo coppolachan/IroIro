@@ -104,43 +104,60 @@ integrator_step(int cl,std::vector<int>& clock){
   int fl = as_.size() -1;
   double eps = Params.step_size;
   
-  for(int l=0; l<=cl; ++l) eps/= Nrel_[l];
+  for(int l=0; l<=cl; ++l) eps/= 2*Nrel_[l];
   
   int fin = 1;
   for(int l=0; l<=cl; ++l) fin*= Nrel_[l];
-  fin = 2*Params.MDsteps*fin -1;
+  fin = (cl+1)*3*Params.MDsteps*fin -1;
   
+
   for(int e=0; e<Nrel_[cl]; ++e){
     
     if(clock[cl] == 0){    // initial half step 
       update_P(cl,Params.lambda*eps);
       ++clock[cl];
       for(int l=0; l<cl;++l) CCIO::cout<<"   ";
-      CCIO::cout<<"P "<< 0.5*clock[cl] <<endl;
+      CCIO::cout<<"P "<< clock[cl] <<endl;
     }
-    if(cl == fl){          // lowest level 
 
-      update_U(0.5*eps);
-      update_P(cl,(1.0-2.0*Params.lambda)*eps);
+    if(cl == fl){          // lowest level 
       update_U(0.5*eps);
 
       for(int l=0; l<cl;++l) CCIO::cout<<"   ";
-      CCIO::cout<<"U "<< 0.5*(clock[cl]+1) <<endl;
+      CCIO::cout<<"U "<< (clock[cl]+1) <<endl;
     }else{                 // recursive function call 
       integrator_step(cl+1,clock);
     }
+
+    update_P(cl,(1.0-2.0*Params.lambda)*eps);
+    ++clock[cl];
+    for(int l=0; l<cl;++l) CCIO::cout<<"   ";
+    CCIO::cout<<"P "<< (clock[cl]) <<endl;
+
+    if(cl == fl){          // lowest level 
+      update_U(0.5*eps);
+      
+      for(int l=0; l<cl;++l) CCIO::cout<<"   ";
+      CCIO::cout<<"U "<< (clock[cl]+1) <<endl;
+    }else{                 // recursive function call 
+      integrator_step(cl+1,clock);
+    }    
+    
+
+
+
     if(clock[cl] == fin){  // final half step
       update_P(cl,Params.lambda*eps);
       
       ++clock[cl];
       for(int l=0; l<cl;++l) CCIO::cout<<"   ";
-      CCIO::cout<<"P "<< 0.5*clock[cl] <<endl;
+      CCIO::cout<<"P "<< clock[cl] <<endl;
     }else{                  // bulk step
       update_P(cl,Params.lambda*2.0*eps);
       
       clock[cl]+=2;
       for(int l=0; l<cl;++l) CCIO::cout<<"   ";
-      CCIO::cout<<"P "<< 0.5*clock[cl] <<endl;
+      CCIO::cout<<"P "<< clock[cl] <<endl;
     }
   }
 }
