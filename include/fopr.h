@@ -76,6 +76,17 @@ public:
   const Field mult_dag_prec(const Field& f) const{return mult_prec(f);}
 };
 
+/*!@brief use this when D is already hermitian */
+class Fopr_HD : public Fopr_Herm{
+private:
+  const Dirac* D_;
+public:
+  Fopr_HD(const Dirac* D):D_(D){}  
+  double func(double x)const{return x;}
+  const Field mult(const Field& f)const{ return D_->mult(f);}
+  size_t fsize()const{return D_->fsize();}
+};
+
 class Fopr_H : public Fopr_Herm{
 private:
   const DiracWilsonLike* D_;
@@ -84,7 +95,6 @@ public:
   double func(double x)const{return x;}
 
   const Field mult(const Field& f)const{ return D_->gamma5(D_->mult(f));}
-  const Field mult_dag(const Field& f)const{ return mult(f);}
   const Field gamma5(const Field&f)const{ return D_->gamma5(f);}
 
   size_t fsize()const{ return D_->fsize();}

@@ -9,6 +9,7 @@
 #include "include/pugi_interface.h"
 #include "Main/Geometry/siteIndex.hpp"
 #include <iostream>
+#include <stdlib.h>
 #include <vector>
 #include "macros.hpp"
 

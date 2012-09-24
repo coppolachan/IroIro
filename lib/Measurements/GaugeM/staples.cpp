@@ -69,11 +69,13 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
   //      +-->--+                                                    
   // nu,w |     |t_dag(site+mu,nu)
   //  site+     +                                                          
-  GaugeField1D v = DirSlice(G,mu);
+
+  //GaugeField1D v = DirSlice(G,mu);
   GaugeField1D w = DirSlice(G,nu);
   GaugeField1D c(G.Nvol());
+
   GaugeField1D WupMu = shiftField(w,mu,Forward());
-  GaugeField1D VupNu = shiftField(v,nu,Forward());
+  GaugeField1D VupNu = shiftField(DirSlice(G,mu),nu,Forward());
   for(int site=0; site<Nvol_; ++site)
     c.data[c.format.islice(site)] 
       = (mat(w,site)*mat(VupNu,site)*mat_dag(WupMu,site)).getva();

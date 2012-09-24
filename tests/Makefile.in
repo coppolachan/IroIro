@@ -49,9 +49,10 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_HMC_DWall_noF$(EXEEXT) test_Gauge$(EXEEXT) \
 	test_PolyakovLoop$(EXEEXT) test_WilsonFlow$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_Clover$(EXEEXT) \
-	test_Wilson_EvenOdd$(EXEEXT) test_DomainWall$(EXEEXT) \
-	test_QpropMom$(EXEEXT) test_ResMass$(EXEEXT) \
-	test_MesonSpectrum$(EXEEXT) test_MesonSpectrum_Nf2p1$(EXEEXT) \
+	test_Wilson_EvenOdd$(EXEEXT) test_Wilson_Brillouin$(EXEEXT) \
+	test_DomainWall$(EXEEXT) test_QpropMom$(EXEEXT) \
+	test_ResMass$(EXEEXT) test_MesonSpectrum$(EXEEXT) \
+	test_MesonSpectrum_Nf2p1$(EXEEXT) \
 	test_EigenModesSolver$(EXEEXT) test_Smearing$(EXEEXT) \
 	test_Overlap$(EXEEXT) test_MultiShiftSolver$(EXEEXT) \
 	test_Solver_Perf$(EXEEXT) test_RNG$(EXEEXT) test_IO$(EXEEXT) \
@@ -188,6 +189,11 @@ am_test_WilsonFlow_OBJECTS = test_WilsonFlow.$(OBJEXT) \
 test_WilsonFlow_OBJECTS = $(am_test_WilsonFlow_OBJECTS)
 test_WilsonFlow_LDADD = $(LDADD)
 test_WilsonFlow_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am_test_Wilson_Brillouin_OBJECTS = test_wilson_Brillouin.$(OBJEXT) \
+	testerWilsonBrillouin.$(OBJEXT)
+test_Wilson_Brillouin_OBJECTS = $(am_test_Wilson_Brillouin_OBJECTS)
+test_Wilson_Brillouin_LDADD = $(LDADD)
+test_Wilson_Brillouin_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_Wilson_EvenOdd_OBJECTS = test_wilson_EvenOdd.$(OBJEXT) \
 	testerWilson_EvenOdd.$(OBJEXT)
 test_Wilson_EvenOdd_OBJECTS = $(am_test_Wilson_EvenOdd_OBJECTS)
@@ -227,6 +233,7 @@ SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_RationalApprox_SOURCES) $(test_ResMass_SOURCES) \
 	$(test_Smearing_SOURCES) $(test_Solver_Perf_SOURCES) \
 	$(test_Wilson_SOURCES) $(test_WilsonFlow_SOURCES) \
+	$(test_Wilson_Brillouin_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
@@ -241,6 +248,7 @@ DIST_SOURCES = $(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
 	$(test_RationalApprox_SOURCES) $(test_ResMass_SOURCES) \
 	$(test_Smearing_SOURCES) $(test_Solver_Perf_SOURCES) \
 	$(test_Wilson_SOURCES) $(test_WilsonFlow_SOURCES) \
+	$(test_Wilson_Brillouin_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES)
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
@@ -393,6 +401,7 @@ EXTRA_DIST = testResults.info	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\
+		test_Wilson_Brillouin.xml	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_GeneralMeas.xml 	\
@@ -440,6 +449,9 @@ test_Clover_SOURCES = test_clover.cpp 		\
 
 test_Wilson_EvenOdd_SOURCES = test_wilson_EvenOdd.cpp 	\
 		        	testerWilson_EvenOdd.cpp
+
+test_Wilson_Brillouin_SOURCES = test_wilson_Brillouin.cpp 	\
+		        	testerWilsonBrillouin.cpp
 
 test_DomainWall_SOURCES = test_DomainWall.cpp 		\
 				testerDWF.cpp
@@ -492,6 +504,7 @@ include_HEADERS = tests.hpp			\
 				test_wilson.hpp 		\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
+				test_wilson_Brillouin.hpp 	\
 				test_WilsonFlow.hpp     	\
 				test_PolyakovLoop.hpp     	\
 				test_DomainWall.hpp 		\
@@ -651,6 +664,9 @@ test_Wilson$(EXEEXT): $(test_Wilson_OBJECTS) $(test_Wilson_DEPENDENCIES)
 test_WilsonFlow$(EXEEXT): $(test_WilsonFlow_OBJECTS) $(test_WilsonFlow_DEPENDENCIES) 
 	@rm -f test_WilsonFlow$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_WilsonFlow_OBJECTS) $(test_WilsonFlow_LDADD) $(LIBS)
+test_Wilson_Brillouin$(EXEEXT): $(test_Wilson_Brillouin_OBJECTS) $(test_Wilson_Brillouin_DEPENDENCIES) 
+	@rm -f test_Wilson_Brillouin$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Wilson_Brillouin_OBJECTS) $(test_Wilson_Brillouin_LDADD) $(LIBS)
 test_Wilson_EvenOdd$(EXEEXT): $(test_Wilson_EvenOdd_OBJECTS) $(test_Wilson_EvenOdd_DEPENDENCIES) 
 	@rm -f test_Wilson_EvenOdd$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Wilson_EvenOdd_OBJECTS) $(test_Wilson_EvenOdd_LDADD) $(LIBS)
@@ -685,6 +701,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_clover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_Brillouin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerClover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerDWF.Po@am__quote@
@@ -705,6 +722,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSolver_Perf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilsonBrillouin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilsonFlow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson_EvenOdd.Po@am__quote@
 

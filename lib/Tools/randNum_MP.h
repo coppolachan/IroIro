@@ -44,7 +44,7 @@ namespace MPrand{
 		    const std::vector<int>& gsite,
 		    const FMT& fmt){
     rn=0.0;
-
+    
     assert(rn.size()==fmt.size());
 
     int Nvol = fmt.Nvol();
@@ -67,23 +67,18 @@ namespace MPrand{
       */
     //    FMT Fmt(Lvol,Nex);
     std::valarray<double> Rn_source(rn.size());
-    for (int node = 0; node < NP; ++node) {
-      
+    for(int node=0; node<NP; ++node){
       //CCIO::cout << "MP_GET_GAUSS get_gauss "<< node << "\n";
-      if (Communicator::instance()->primaryNode()) {
-	rand.get_gauss(Rn_source);	
-      } 
+      if(Communicator::instance()->primaryNode()) rand.get_gauss(Rn_source);	
       Communicator::instance()->sync();
-      Communicator::instance()->send_1to1(rn, Rn_source, rn.size(), node, 0, node);
+      Communicator::instance()->send_1to1(rn,Rn_source,rn.size(),node,0,node);
       //rn = Rn_node[Fmt.get_sub(gsite)];
-      
     }
-    
+    //CCIO::cout << "MP_GET_GAUSS valarray allocation done\n";
   }
 
   void mp_get(std::valarray<double>& rn,const RandNum& rand);
   void mp_get_gauss(std::valarray<double>& rn,const RandNum& rand);
-
 }
 
 #endif 

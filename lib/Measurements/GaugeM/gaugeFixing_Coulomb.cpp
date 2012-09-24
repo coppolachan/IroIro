@@ -4,6 +4,7 @@
 */
 #include "gaugeFixing_Coulomb.hpp"
 #include "Main/Geometry/mapping.hpp"
+#include "Main/gaugeConf.hpp"
 #include "Communicator/communicator.h"
 #include "include/macros.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -32,7 +33,7 @@ const GaugeField GaugeFixing_Coulomb::do_fix(const GaugeField& Uin)const{
     if(it%Nmeas_==0){
       //double plaq =stpl.plaquette(combine_eo(Ue,Uo)); 
       //CCIO::cout<< "Plaquette = "<< plaq << std::endl;
-
+      
       vector<double> gc = gauge_cond(Ue,Uo);
       double gc_sum = accumulate(gc.begin(),gc.end(),0.0);
       vector<double> Fval = calc_F(Ue,Uo);

@@ -4,6 +4,7 @@
 #ifndef FIELDUTILS_INCLUDED
 #define FIELDUTILS_INCLUDED
 
+#include "sunVec.hpp"
 #include "include/common_fields.hpp"
 #include "Main/Geometry/siteIndex_EvenOdd.hpp"
 
@@ -49,6 +50,9 @@ namespace FieldUtils{
 
   inline SUNvec vec(const FermionField& F,int spin,int site){
     return SUNvec(F.data[F.format.cslice(spin,site)]);  }
+
+  inline SUNvec vec(const FermionField1sp& F,int site){
+    return SUNvec(F.data[F.format.islice(site)]);  }
 
   // function templates
   template<typename GF>

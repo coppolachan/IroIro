@@ -13,6 +13,7 @@
 #include "dirac_DomainWall_4D_eoSolv.hpp"
 #include "dirac_DomainWall.hpp"
 #include "dirac_DomainWall_EvenOdd.hpp"
+#include "dirac_staggered_EvenOdd.hpp"
 #include "Solver/solver_Factory.hpp"
 #include "eoUtils.hpp"
 
@@ -44,6 +45,16 @@ public:
   virtual Dirac_optimalDomainWall_4D* getDiracOperator4D(Field* const) = 0;
   virtual ~DiracDWF4dOperatorFactory(){}
 };
+
+class DiracStaggeredEvenOddLikeOperatorFactory :public DiracOperatorFactory{
+public:
+  virtual DiracStaggeredEvenOddLike* getDiracOperatorSTG(Field* const) = 0;
+  Dirac* getDiracOperator(Field* const Gfield){
+    return getDiracOperatorSTG(Gfield);
+  }
+  virtual ~DiracStaggeredEvenOddLikeOperatorFactory(){}
+};
+
 
 /*! @brief Concrete class for creating Dirac Wilson operators */
 class DiracWilsonFactory : public DiracWilsonLikeOperatorFactory {
@@ -210,19 +221,40 @@ public:
   ~DiracDWF4DeoFactory(){}
 };
 
+/*! @brief Concrete class for creating Dirac_staggered_EvenOdd */
+class DiracStaggeredEvenOddFactory
+  : public DiracStaggeredEvenOddLikeOperatorFactory{
+
+  const XML::node Dirac_node;
+public:
+  DiracStaggeredEvenOddFactory(const XML::node node):Dirac_node(node){}
+  Dirac_staggered_EvenOdd* getDiracOperatorSTG(Field* const Gfield){
+    return new Dirac_staggered_EvenOdd(Dirac_node,Gfield);
+  }
+};
+
 //Add new factories here
 //....
 
 //////////////////////////////////////////////////////////////
 namespace DiracOperators {
-  DiracWilsonLikeOperatorFactory* createDiracWilsonLikeOperatorFactory(const XML::node);
+  DiracOperatorFactory* 
+  createGeneralDiracOperatorFactory(const XML::node);
 
-  DiracDWF4dOperatorFactory* createDiracDWF4dOperatorFactory(const XML::node);
+  DiracWilsonLikeOperatorFactory* 
+  createDiracWilsonLikeOperatorFactory(const XML::node);
 
-  DiracDWF5dOperatorFactory* createDiracDWF5dOperatorFactory(const XML::node);
+  DiracDWF4dOperatorFactory* 
+  createDiracDWF4dOperatorFactory(const XML::node);
 
-  DiracWilsonLikeOperatorFactory* createGeneralDiracWilsonLikeOperatorFactory(const XML::node);
-  DiracOperatorFactory* createGeneralDiracOperatorFactory(const XML::node);
+  DiracDWF5dOperatorFactory* 
+  createDiracDWF5dOperatorFactory(const XML::node);
+
+  DiracWilsonLikeOperatorFactory* 
+  createGeneralDiracWilsonLikeOperatorFactory(const XML::node);
+  
+  DiracStaggeredEvenOddLikeOperatorFactory* 
+  createDiracStaggeredEvenOddLikeOperatorFactory(const XML::node);
 }
 
 #endif

@@ -22,7 +22,7 @@ private:
   /*!< @brief simple copy is prohibited */
 public:
   Dirac_Wilson_EvenOdd(double mass,const Field* u)
-    :Deo_(mass,u,Dop::EOtag()),Doe_(mass,u,Dop:OEtag()){}
+    :Deo_(mass,u,Dop::EOtag()),Doe_(mass,u,Dop::OEtag()){}
 
   Dirac_Wilson_EvenOdd(const XML::node& node,const Field* u)
     :Deo_(Dop::read_mass(node),u,Dop::EOtag()),

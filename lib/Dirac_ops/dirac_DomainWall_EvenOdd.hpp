@@ -30,8 +30,8 @@ class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
 public:
   Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,const Field* u,
 				  DWFType Type=Standard)
-    :Deo_(DWF_node,u,Dw::EOtag(),Type),
-     Doe_(DWF_node,u,Dw::OEtag(),Type){
+    :Deo_(DWF_node,u,Dop::EOtag(),Type),
+     Doe_(DWF_node,u,Dop::OEtag(),Type){
 #if VERBOSITY>4
     CCIO::cout<<"Dirac_optimalDomainWall_Evenodd created"<<std::endl;
 #endif
@@ -44,8 +44,8 @@ public:
   Dirac_optimalDomainWall_EvenOdd(double b,double c,double M0,double mq,
 				  const std::vector<double>& omega,
 				  const Field* u)
-    :Deo_(b,c,M0,mq,omega,u,Dw::EOtag()),
-     Doe_(b,c,M0,mq,omega,u,Dw::OEtag()){}
+    :Deo_(b,c,M0,mq,omega,u,Dop::EOtag()),
+     Doe_(b,c,M0,mq,omega,u,Dop::OEtag()){}
   
   ~Dirac_optimalDomainWall_EvenOdd(){
     CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";

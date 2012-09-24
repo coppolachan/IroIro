@@ -28,73 +28,71 @@ namespace GammaMatrices {
   class Unit: public Gamma{
   public:
     Unit();
-    ~Unit(){};
+    ~Unit(){}
   };
 
   class Gamma1: public Gamma{
   public:
     Gamma1();
-    ~Gamma1(){};
+    ~Gamma1(){}
   };
 
   class Gamma2: public Gamma{
   public:
     Gamma2();
-    ~Gamma2(){};
+    ~Gamma2(){}
   };
 
   class Gamma3: public Gamma{
   public:
     Gamma3();
-    ~Gamma3(){};
+    ~Gamma3(){}
   };
 
   class Gamma4: public Gamma{
   public:
     Gamma4();
-    ~Gamma4(){};
+    ~Gamma4(){}
   };
 
   class Gamma5: public Gamma{
   public:
     Gamma5();
-    ~Gamma5(){};
+    ~Gamma5(){}
   };
 
   class Gamma1_5: public Gamma {
   public:
     Gamma1_5();
-    ~Gamma1_5(){};
+    ~Gamma1_5(){}
 
   };
 
   class Gamma2_5: public Gamma {
   public:
     Gamma2_5();
-    ~Gamma2_5(){};
+    ~Gamma2_5(){}
 
   };
 
   class Gamma3_5: public Gamma {
   public:
     Gamma3_5();
-    ~Gamma3_5(){};
+    ~Gamma3_5(){}
 
   };
 
   class Gamma4_5: public Gamma {
   public:
     Gamma4_5();
-    ~Gamma4_5(){};
-
+    ~Gamma4_5(){}
   };
 
   class ChargeConj: public Gamma {
     //Gamma4*Gamma2*Gamma5
   public:
     ChargeConj();
-    ~ChargeConj(){};
-
+    ~ChargeConj(){}
   };
 
 }

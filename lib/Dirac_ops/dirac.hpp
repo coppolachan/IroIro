@@ -7,6 +7,8 @@
 
 #include "include/field.h"
 #include "include/format_F.h"
+#include "include/format_S.h"
+#include "include/pugi_interface.h"
 
 enum {Op, Dag};
 
@@ -94,16 +96,17 @@ public:
  */
 class DiracStaggeredLike : public Dirac {
  public:
-    virtual ~DiracStaggeredLike(){}
+  virtual ~DiracStaggeredLike(){}
+  virtual const Format::Format_S get_fermionFormat() const =0;
 };
 
 /*!
  * @class DiracStaggeredLike_EvenOdd
  * @brief Declaration of abstract base class for Dirac operators of Staggered type
  */
-class DiracStaggeredLike_EvenOdd : public DiracStaggeredLike {
+class DiracStaggeredEvenOddLike : public DiracStaggeredLike {
 public:
-  virtual ~DiracStaggeredLike_EvenOdd(){}
+  virtual ~DiracStaggeredEvenOddLike(){}
 
   virtual const Field mult_eo(const Field&) const =0;
   virtual const Field mult_oe(const Field&) const =0;

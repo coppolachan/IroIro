@@ -1,6 +1,6 @@
 //----------------------------------------------------------------------
-/*! @file format_F.h
-  @brief Defines the Format_F class
+/*! @file format_S.h
+  @brief Defines the Format_S class
 */
 //----------------------------------------------------------------------
 #ifndef FORMAT_S_INCLUDED
@@ -48,11 +48,18 @@ namespace Format{
     std::slice ex_slice(int ex) const{
       return std::slice(index(0,0,ex),Nin_*Nvol_,1);
     }
-    std::gslice c_slice(int c,int ex=0) const{
+    std::slice c_slice(int c,int ex=0) const{
       return std::slice(index_r(c,0,ex),Nvol_,Nin_);
     }
 
     /*! @brief returns subset of indices corresponding to given vector*/
+    const std::valarray<size_t> get_sub(const std::vector<int>& sv,int e)const{
+      std::valarray<size_t> sub(Nin_*sv.size());
+      int j=0;
+      for(int v=0;v<sv.size();++v)
+	for(int i=0;i<Nin_;++i) sub[j++] = index(i,sv[v],e);
+      return sub;
+    }
     const std::valarray<size_t> get_sub(const std::vector<int>& sv)const{
       std::valarray<size_t> sub(Nin_*sv.size()*Nex_);
       int j=0;

@@ -20,7 +20,6 @@ private:
   int NyNz_;
   
   std::vector<int> Bdir_;
-  std::vector<int> slsize_;
   static std::vector<int> esec_;
   static std::vector<int> osec_;
   static std::vector<int> global_even_;

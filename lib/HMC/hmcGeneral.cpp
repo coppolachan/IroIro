@@ -63,10 +63,9 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
 }
 
 double HMCgeneral::evolve_step(GaugeField& Uin)const{
-    
   std::vector<int> clock;
   md_->init(clock,Uin,*rand_);     // set U and initialize P and phi's 
-  
+
   int init_level = 0;
   double H0 = md_->calc_H();     // current state            
   CCIO::cout<<"total H_before = "<< H0 << "\n";

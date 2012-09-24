@@ -20,7 +20,10 @@ namespace FermionAction {
 	return new TwoFlavorRatioActionFactory(node);
       if (!strcmp(Action_name, "NfFlavorsRatio")) 
 	return new NfFlavorRatioActionFactory(node);
-
+      if (!strcmp(Action_name, "FourFlavorStaggered")) 
+	return new FourFlavorStaggeredActionFactory(node);
+      if (!strcmp(Action_name, "FourFlavorStaggeredRatio")) 
+	return new FourFlavorStaggeredRatioActionFactory(node);
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D")) 
 	return new TwoFlavorDomainWall5dActionFactory(node);
 #ifdef IBM_BGQ_WILSON

@@ -4,7 +4,8 @@
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunVec.hpp"
-using namespace SUNvec_utils;
+
+using namespace SUNvecUtils;
 using namespace std;
 
 #ifdef IMPROVED_WILSON
@@ -91,42 +92,23 @@ void Dirac_Wilson::mult_dag_ptr_EO(double* w, double* const f) const{
 }
 #endif
 
-
 /*!
  *  @brief MD-force contribution: \f$\zeta^\dagger\frac{dH_W}{d\tau}\eta\f$
  */
 void Dirac_Wilson::md_force_p(Field& fce,
 			      const Field& eta,const Field& zeta)const{
   using namespace SUNmatUtils;
-  SUNmat f;
-
   for(int mu=0; mu<NDIM_; ++mu){
     Field xie(fsize_);
-
-    (this->*mult_p[mu])(xie, eta);
+    (this->*mult_p[mu])(xie,eta);
 
     for(int site=0; site<Nvol_; ++site){
-      f = 0.0;
-      for(int a=0; a<NC_; ++a){
-        for(int b=0; b<NC_; ++b){
-          double fre = 0.0;
-          double fim = 0.0;
-          for(int s=0; s<ND_; ++s){
+      slice xmu = gf_.islice((this->*gp)(site),mu);
 
-	    size_t ra =ff_.index_r(a,s,site);
-	    size_t ia =ff_.index_i(a,s,site);
-
-	    size_t rb =ff_.index_r(b,s,site);
-	    size_t ib =ff_.index_i(b,s,site);
-
-	    fre += zeta[rb]*xie[ra] +zeta[ib]*xie[ia];
-	    fim += zeta[rb]*xie[ia] -zeta[ib]*xie[ra];
-          }
-          f.set(a,b,fre,fim);
-        }
+      for(int s=0; s<ND_; ++s){
+	slice csl = ff_.cslice(s,site);
+	fce.add(xmu,outer_prod_t(SUNvec(zeta[csl]),SUNvec(xie[csl])).getva());
       }
-      int gsite = (this->*gp)(site);
-      fce.add(gf_.cslice(0,gsite,mu),f.getva());
     }
   }
 }
@@ -134,43 +116,25 @@ void Dirac_Wilson::md_force_p(Field& fce,
 void Dirac_Wilson::md_force_m(Field& fce,
 			      const Field& eta,const Field& zeta)const{
   using namespace SUNmatUtils;
-  SUNmat f;
   Field et5 = gamma5(eta);
   Field zt5 = gamma5(zeta);
 
   for(int mu=0; mu<NDIM_; ++mu){
     Field xz5(fsize_);
-    (this->*mult_p[mu])(xz5, zt5);
+    (this->*mult_p[mu])(xz5,zt5);
 
     for(int site=0; site<Nvol_; ++site){
-      f=0.0;
-      for(int a=0; a<NC_; ++a){
-        for(int b=0; b<NC_; ++b){
-          double fre = 0.0;
-          double fim = 0.0;
-          for(int s=0; s<ND_; ++s){
-
-	    size_t ra =ff_.index_r(a,s,site);
-	    size_t ia =ff_.index_i(a,s,site);
-
-	    size_t rb =ff_.index_r(b,s,site);
-	    size_t ib =ff_.index_i(b,s,site);
-
-	    fre -= xz5[rb]*et5[ra] +xz5[ib]*et5[ia];
-	    fim -= xz5[rb]*et5[ia] -xz5[ib]*et5[ra];
-          }
-          f.set(a,b,fre,fim);
-        }
+      slice xmu = gf_.islice((this->*gp)(site),mu);
+      
+      for(int s=0; s<ND_; ++s){
+	slice csl = ff_.cslice(s,site);
+	fce.add(xmu,-outer_prod_t(SUNvec(xz5[csl]),SUNvec(et5[csl])).getva());
       }
-      int gsite = (this->*gp)(site);
-      fce.add(gf_.cslice(0,gsite,mu),f.getva());
     }
   }
 }
 
-const Field Dirac_Wilson::
-md_force(const Field& eta,const Field& zeta)const{
-  
+const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
   Field fp(gf_.size());
   md_force_p(fp,eta,zeta);
   md_force_m(fp,eta,zeta);
@@ -181,4 +145,3 @@ md_force(const Field& eta,const Field& zeta)const{
 const vector<int> Dirac_Wilson::get_gsite() const {
   return SiteIndex::instance()->get_gsite();
 }
-

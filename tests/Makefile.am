@@ -39,6 +39,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\
+		test_Wilson_Brillouin.xml	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_GeneralMeas.xml 	\
@@ -68,6 +69,7 @@ test_PROGRAMS = test_HMC 		\
 		test_Wilson 		\
 		test_Clover 		\
 		test_Wilson_EvenOdd 	\
+		test_Wilson_Brillouin 	\
 		test_DomainWall		\
 		test_QpropMom		\
 		test_ResMass 		\
@@ -113,6 +115,9 @@ test_Clover_SOURCES 	=	test_clover.cpp 		\
 
 test_Wilson_EvenOdd_SOURCES =	test_wilson_EvenOdd.cpp 	\
 		        	testerWilson_EvenOdd.cpp
+
+test_Wilson_Brillouin_SOURCES =	test_wilson_Brillouin.cpp 	\
+		        	testerWilsonBrillouin.cpp
 
 test_DomainWall_SOURCES = 	test_DomainWall.cpp 		\
 				testerDWF.cpp
@@ -165,6 +170,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_wilson.hpp 		\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
+				test_wilson_Brillouin.hpp 	\
 				test_WilsonFlow.hpp     	\
 				test_PolyakovLoop.hpp     	\
 				test_DomainWall.hpp 		\

@@ -9,7 +9,8 @@
 #include "gaugeFixingStep.hpp"
 #include "include/pugi_interface.h"
 #include "include/commonPrms.h"
-#include "Main/Geometry/mapping.hpp"
+#include "Main/Geometry/shiftField.hpp"
+//#include "Main/Geometry/mapping.hpp"
 #include "Tools/randNum_Factory.h"
 #include <memory>
 /*

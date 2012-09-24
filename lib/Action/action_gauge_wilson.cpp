@@ -13,8 +13,8 @@ double ActionGaugeWilson::calc_H(){
   double plaq = stpl_.plaquette(*u_);
   double Hgauge = Params.beta * Nplaq * (1.0 - plaq);
 
-  _Message(ACTION_VERB_LEVEL,"    [ActionGaugeWilson] H = "<< Hgauge <<"\n");
-  _Message(ACTION_VERB_LEVEL,"    [ActionGaugeWilson] Plaquette = "<< plaq <<"\n");
+  _Message(ACTION_VERB_LEVEL,"    [ActionGaugeWilson] H = "<<Hgauge <<"\n");
+  _Message(ACTION_VERB_LEVEL,"    [ActionGaugeWilson] Plaquette = "<<plaq<<"\n");
   
   return Hgauge;
 }

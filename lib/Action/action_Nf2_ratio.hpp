@@ -2,8 +2,8 @@
  * @file action_Nf2_ratio.h
  * @brief Declaration of Action_Nf2_ratio class
  */
-#ifndef ACTION_RATIO_INCLUDED
-#define ACTION_RATIO_INCLUDED
+#ifndef ACTION_NF2_RATIO_INCLUDED
+#define ACTION_NF2_RATIO_INCLUDED
 
 #include "Tools/randNum_MP.h"
 #include "Action/action.hpp"

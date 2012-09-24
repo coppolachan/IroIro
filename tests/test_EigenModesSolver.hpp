@@ -6,6 +6,7 @@
 
 #include "include/common_code.hpp"
 #include "Communicator/comm_io.hpp"
+class RandNum;
 
 class Test_EigenModesSolver{
  private:
