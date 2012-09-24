@@ -237,7 +237,6 @@ private:
 
 ////////////////////////////////////////////////////
 #ifdef IBM_BGQ_WILSON
-
 class TwoFlavorDomainWall5dEO_BGQ_ActionFactory : public FermionActionFactory {
 
   RaiiFactoryObj<DiracDWF5dEvenOddFactory> DiracObj;
@@ -328,6 +327,7 @@ private:
 				smearing, SC); 
   }
 };
+
 #endif
 
 ////////////////////////////////////////////////////

@@ -74,13 +74,14 @@ void GaugeConf_csdt::init_conf(Field& u){
     }
     
     CCIO::cout<< "Reading gauge configuration from " << file_.c_str() << endl;
-    for(int t = 0; t < Lt; ++t){
+    
+    
+    for(int t = 0; t < Lt; ++t){    
       for(int dir = 0; dir < Ndim_; ++dir){
-
 	for(int z = 0; z < Lz; ++z){
 	  for(int y = 0; y < Ly; ++y){
 	    for(int x = 0; x < Lx; ++x){
-	    
+	      
 	      int id = getid(x,y,z,t);
 	      int site = SiteIndex::instance()->site(x%Nx_,y%Ny_,z%Nz_,t%Nt_);
 
@@ -93,7 +94,7 @@ void GaugeConf_csdt::init_conf(Field& u){
 		  cplx[0] = conv_endian(real);
 		  cplx[1] = conv_endian(imag);
 
-                  (*(u_all[id]))[fg_.cplx_slice(c1,c2,site,dir)] = cplx;	  
+		  (*(u_all[id]))[fg_.cplx_slice(c1,c2,site,dir)] = cplx;	  
                 }
               }
             }
@@ -147,14 +148,16 @@ void GaugeConf_txt::init_conf(Field& u){
     }
     
     CCIO::cout<< "Reading gauge configuration from " << file_.c_str() << endl;
-    for(int t = 0; t < Lt; ++t){
-      for(int z = 0; z < Lz; ++z){
-        for(int y = 0; y < Ly; ++y){
-          for(int x = 0; x < Lx; ++x){
-	    
-	    int id = getid(x,y,z,t);
-            int site = SiteIndex::instance()->site(x%Nx_,y%Ny_,z%Nz_,t%Nt_);
-            for(int dir = 0; dir < Ndim_; ++dir){
+    for(int dir = 0; dir < Ndim_; ++dir){
+
+      for(int t = 0; t < Lt; ++t){
+	for(int z = 0; z < Lz; ++z){
+	  for(int y = 0; y < Ly; ++y){
+	    for(int x = 0; x < Lx; ++x){
+	      
+	      int id = getid(x,y,z,t);
+	      int site = SiteIndex::instance()->site(x%Nx_,y%Ny_,z%Nz_,t%Nt_);
+	      
               for(int c1 = 0; c1 < Nc_; ++c1){
                 for(int c2 = 0; c2 < Nc_; ++c2){
                   config >> cplx[0]; 

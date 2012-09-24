@@ -134,6 +134,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		HMC/hmcGeneral.cpp                      \
 		HMC/mdExec.cpp		                \
 		HMC/mdExec_leapfrog.cpp                 \
+		HMC/mdExec_2MN.cpp	                \
 		HMC/mdExec_factory.cpp                  \
 		PugiXML/pugixml.cpp			\
 		PugiXML/pugi_interface.cpp		\
