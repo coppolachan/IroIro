@@ -260,6 +260,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/mdExec.hpp		                \
 			HMC/mdExec_leapfrog.hpp			\
+			HMC/mdExec_2MN.hpp	                \
 			HMC/mdExec_leapfrog_eigen.hpp		\
 			HMC/mdExec_factory.hpp			\
 			HMC/mdExec_factory_abs.hpp		\
