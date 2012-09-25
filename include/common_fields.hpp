@@ -32,12 +32,16 @@ public:
   FORMAT format;
   DATA data;
 
-  explicit GeneralField(int LocalVol = CommonPrms::instance()->Nvol())
-    :format(LocalVol),data(format.size()){}
+  GeneralField():format(CommonPrms::instance()->Nvol()),data(format.size()){}
 
-  explicit GeneralField(const Field& Fin,
-			int LocalVol = CommonPrms::instance()->Nvol())
-    :format(LocalVol),data(Fin){ assert(Fin.size()== format.size());}
+  explicit GeneralField(int LocalVol):format(LocalVol),data(format.size()){}
+  explicit GeneralField(const Field& Fin)
+    :format(CommonPrms::instance()->Nvol()),data(Fin){
+    assert(Fin.size()== format.size());}
+
+  GeneralField(const Field& Fin,int LocalVol)
+    :format(LocalVol),data(Fin){
+    assert(Fin.size()== format.size());}
 
   GeneralField(const GeneralField& Fin):format(Fin.format),data(Fin.data){}
 
@@ -114,19 +118,31 @@ typedef GeneralField<Field,Format::Format_S,OneDimTag>    FermionField1sp;
 typedef GeneralField<std::vector<Field>,Format::Format_F> PropagatorField;
 
 template <> 
+inline GaugeField1D::GeneralField()
+  :format(CommonPrms::instance()->Nvol(),1),data(format.size()){}
+template <> 
+inline FermionField1sp::GeneralField()
+  :format(CommonPrms::instance()->Nvol(),1),data(format.size()){}
+
+template <> 
 inline GaugeField1D::GeneralField(int LocalVol)
+  :format(LocalVol,1),data(format.size()){}
+template <> 
+inline FermionField1sp::GeneralField(int LocalVol)
   :format(LocalVol,1),data(format.size()){}
 
 /*! Since Nex is fixed to be 1 in this case, Nvol can be determined 
   as Fin.size()/Format::Format_G::Nin(), then e/o-field is also possible */
 template <> 
-inline GaugeField1D::GeneralField(const Field& Fin,int LocalVol)
+inline GaugeField1D::GeneralField(const Field& Fin)
   :format(Fin.size()/Format::Format_G::Nin(),1),data(Fin){}
+
 template <> 
-inline FermionField::GeneralField(const Field& Fin,int LocalVol)
+inline FermionField::GeneralField(const Field& Fin)
   :format(Fin.size()/Format::Format_F::Nin(),1),data(Fin){}
+
 template <> 
-inline FermionField1sp::GeneralField(const Field& Fin,int LocalVol)
+inline FermionField1sp::GeneralField(const Field& Fin)
   :format(Fin.size()/Format::Format_S::Nin(),1),data(Fin){}
 
 #endif //COMMON_FIELDS_H_
