@@ -12,6 +12,11 @@
 using namespace SUNmatUtils;
 using namespace FieldUtils;
 
+typedef struct GaugeConfigType{
+  double _Complex v[9];
+}GaugePtr;
+
+
 double ActionGaugeRect::calc_H(){
   using namespace Mapping;
 
@@ -24,54 +29,76 @@ double ActionGaugeRect::calc_H(){
   GaugeField1D U_nu, U_mu, res;
   GaugeField1D UpNu, UpMu;
 
+#ifdef IBM_BGQ_WILSON
+  double* UpMu_ptr = UpMu.data.getaddr(0);
+  double* UpNu_ptr = UpNu.data.getaddr(0);
+  //double* temp_ptr = temp.data.getaddr(0);
+  double* res_ptr = res.data.getaddr(0);
+  double* U_nu_ptr = U_nu.data.getaddr(0);
+  double* U_mu_ptr = U_mu.data.getaddr(0);
+  double* Cup1_ptr = Cup1.data.getaddr(0);
+  double* Cup2_ptr = Cup2.data.getaddr(0);
+#endif
+
+
+  
   // From Matsufuru-san code
   for(int mu = 0; mu < NDIM_; ++mu){
-
-   for(int nu = mu+1; nu < NDIM_; ++nu){  
-     Cup1 = stpl_.upper(*u_,mu,nu);
-     Cup2 = stpl_.upper(*u_,nu,mu);
-     
-     // plaquette term
-     for(int site=0; site<Nvol_; ++site){
-       plaqF += ReTr(mat(*u_,site,mu)*mat_dag(Cup1,site) );
-     }
-     // rectangular terms
-     //       mu,U_mu (UpNu) 
-     //         +-->--+-->--+
-     // nu,U_nu |           |Cup2_dag(site+mu) (UpMu)
-     //     site+     +--<--+                               
- 
-     U_nu = DirSlice(*u_,nu);
-     U_mu = DirSlice(*u_,mu); 
-     UpNu = shiftField(U_mu,nu,Forward());      //U_mu(x+nu)
-     UpMu = shiftField(Cup2,mu,Forward());      //Cup2(x+mu)     
-
-     res = 0.0;
-     for(int site = 0; site<Nvol_; ++site){
-       res.data[res.format.cslice(0,site)] = 
-	 (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-       rectF += ReTr(mat(*u_,site,mu)*mat_dag(res,site));
-     }
-     //        Cup1(site+nu)
-     //          +-->--+
-     //          |     |
-     //          +     +
-     // nu,U_nu  |     | U_nu+mu (UpMu)
-     //    site  +     +
-     UpNu = shiftField(Cup1,nu,Forward());   //Cup1(x+nu)
-     UpMu = shiftField(U_nu,mu,Forward());   //U_nu(x+mu)
-  
-     res = 0.0;
-     for(int site = 0; site<Nvol_; ++site){
-       res.data[res.format.cslice(0,site)] =
-	 (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-       rectF += ReTr(mat(*u_,site,mu)*mat_dag(res,site));
-     } 
-   }
+    U_mu = DirSlice(*u_,mu); 
+    
+    for(int nu = mu+1; nu < NDIM_; ++nu){  
+      Cup1 = stpl_.upper(*u_,mu,nu);
+      Cup2 = stpl_.upper(*u_,nu,mu);
+      
+      // plaquette term
+      for(int site=0; site<Nvol_; ++site){
+	plaqF += ReTr(mat(*u_,site,mu)*mat_dag(Cup1,site) );
+      }
+      // rectangular terms
+      //       mu,U_mu (UpNu) 
+      //         +-->--+-->--+
+      // nu,U_nu |           |Cup2_dag(site+mu) (UpMu)
+      //     site+     +--<--+                               
+      
+      U_nu = DirSlice(*u_,nu);
+      
+      UpNu = shiftField(U_mu,nu,Forward());      //U_mu(x+nu)
+      UpMu = shiftField(Cup2,mu,Forward());      //Cup2(x+mu)     
+      
+      res = 0.0;
+#ifdef IBM_BGQ_WILSON
+      BGWilsonSU3_MatMult_NND(res_ptr, U_nu_ptr, UpNu_ptr, UpMu_ptr, Nvol_);
+      for(int site = 0; site<Nvol_; ++site){
+	rectF += ReTr(mat(*u_,site,mu)*mat_dag(res,site));
+      }
+#else
+      for(int site = 0; site<Nvol_; ++site){
+	res.data[res.format.cslice(0,site)] = 
+	  (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
+	rectF += ReTr(mat(*u_,site,mu)*mat_dag(res,site));
+      }
+#endif
+      
+      //        Cup1(site+nu)
+      //          +-->--+
+      //          |     |
+      //          +     +
+      // nu,U_nu  |     | U_nu+mu (UpMu)
+      //    site  +     +
+      UpNu = shiftField(Cup1,nu,Forward());   //Cup1(x+nu)
+      UpMu = shiftField(U_nu,mu,Forward());   //U_nu(x+mu)
+      
+      res = 0.0;
+      for(int site = 0; site<Nvol_; ++site){
+	res.data[res.format.cslice(0,site)] =
+	  (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
+	rectF += ReTr(mat(*u_,site,mu)*mat_dag(res,site));
+      } 
+    }
   }
   plaqF = Communicator::instance()->reduce_sum(plaqF);
   rectF = Communicator::instance()->reduce_sum(rectF);
-
+  
   double plaq = plaqF/NC_;
   double rect = rectF/NC_;
   double Hgauge = Params.c_plaq*(Nvol_*NP*NDIM_*(NDIM_-1.0)/2.0 -plaq)
@@ -102,14 +129,29 @@ GaugeField ActionGaugeRect::md_force(){
   GaugeField1D U_mu, U_nu, res;
   GaugeField1D UpMu, UpNu;
 
+  // GaugeField1D temp;
+#ifdef IBM_BGQ_WILSON
+  GaugePtr* force_rect_ptr = (GaugePtr*)force_rect.data.getaddr(0);
+  double* UpMu_ptr = UpMu.data.getaddr(0);
+  double* UpNu_ptr = UpNu.data.getaddr(0);
+  //double* temp_ptr = temp.data.getaddr(0);
+  GaugePtr* res_ptr = (GaugePtr*)res.data.getaddr(0);
+  double* U_nu_ptr = U_nu.data.getaddr(0);
+  double* U_mu_ptr = U_mu.data.getaddr(0);
+  double* Cdn1_ptr = Cdn1.data.getaddr(0);
+  double* Cdn2_ptr = Cdn2.data.getaddr(0);
+#endif
+
+ CCIO::cout<< "Starting\n";
+
   for(int mu=0; mu<NDIM_; ++mu){
     force_pl   = 0.0;
     force_rect = 0.0;
-    //FieldUP UpMu(sf_, mu);//shifter Up in mu direction
+
+    U_mu = DirSlice(*u_, mu);   //U_mu links
+
     for(int nu=0; nu<NDIM_; ++nu){
       if (nu == mu) continue;
-      //FieldUP UpNu(sf_, nu);//shifter Up in nu direction
-      //FieldDN DnNu(sf_, nu);//shifter Down in nu direction
 
       Cup1 = stpl_.upper(*u_,mu,nu);
       Cup2 = stpl_.upper(*u_,nu,mu);
@@ -126,7 +168,6 @@ GaugeField ActionGaugeRect::md_force(){
       // +-->mu
       //
       // (x) is the site position
-      U_mu = DirSlice(*u_, mu);   //U_mu links
       U_nu = DirSlice(*u_, nu);   //U_nu links    
       //          U_mu
       //         +-->--+-->--+
@@ -136,11 +177,15 @@ GaugeField ActionGaugeRect::md_force(){
       UpNu = shiftField(U_mu, nu, Forward()); // U_mu(x+nu)
 
       res = 0.0;
+#ifdef IBM_BGQ_WILSON
+      BGWilsonSU3_MatMult_NND(res_ptr, U_nu_ptr, UpNu_ptr, UpMu_ptr, Nvol_);
+#else
       for(int site=0; site<Nvol_; ++site){
-	res.data[res.format.cslice(0,site)] = 
-	  (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-      }       
-      force_rect += res;
+        res.data[res.format.cslice(0,site)] = 
+          (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
+      }
+#endif     
+      force_rect += res;  
       //         +-->--+
       //         |     |
       //         +     +   term
@@ -150,10 +195,14 @@ GaugeField ActionGaugeRect::md_force(){
       UpNu = shiftField(Cup1, nu, Forward());    // Cup1(x+nu)
       
       res = 0.0;
+#ifdef IBM_BGQ_WILSON
+    	BGWilsonSU3_MatMult_NND(res_ptr, U_nu_ptr, UpNu_ptr, UpMu_ptr, Nvol_);
+#else
       for(int site=0; site<Nvol_; ++site){
 	res.data[res.format.cslice(0,site)] =
 	  (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
       }       
+#endif
       force_rect += res;     
       //           U_mu(x+nu)
       //      +-->--+-->--+
@@ -162,10 +211,14 @@ GaugeField ActionGaugeRect::md_force(){
       UpNu = shiftField(U_mu, nu, Forward()); // U_mu(x+nu)
   
       res = 0.0;
+#ifdef IBM_BGQ_WILSON
+    	BGWilsonSU3_MatMult_NND(res_ptr, Cdn2_ptr, UpNu_ptr, UpMu_ptr, Nvol_);
+#else
       for(int site=0; site<Nvol_; ++site){
 	res.data[res.format.cslice(0,site)] = 
 	  (mat(Cdn2,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
       }       
+#endif
       force_rect += res;
       //     (x)    +--<--+
       //      |           |   term
@@ -173,10 +226,14 @@ GaugeField ActionGaugeRect::md_force(){
       UpMu = shiftField(Cup2, mu, Forward());
 
       res = 0.0;
+#ifdef IBM_BGQ_WILSON
+    	BGWilsonSU3_MatMult_DNN(res_ptr, U_nu_ptr, U_mu_ptr, UpMu_ptr, Nvol_);
+#else
       for(int site=0; site<Nvol_; ++site){
 	res.data[res.format.cslice(0,site)] = 
 	  (mat_dag(U_nu,site)*mat(U_mu,site)*mat(UpMu,site)).getva();
       } 
+#endif
       force_rect += shiftField(res,nu,Backward()); //+=res(x-nu)
       //     (x)    ^
       //      |     |
@@ -186,19 +243,27 @@ GaugeField ActionGaugeRect::md_force(){
       UpMu = shiftField(U_nu, mu, Forward()); //U_nu(x+mu)
 
       res = 0.0;
+#ifdef IBM_BGQ_WILSON
+    	BGWilsonSU3_MatMult_DNN(res_ptr, U_nu_ptr, Cdn1_ptr, UpMu_ptr, Nvol_);
+#else
       for(int site=0; site<Nvol_; ++site){
 	res.data[res.format.cslice(0,site)] = 
 	  (mat_dag(U_nu,site)*mat(Cdn1,site)*mat(UpMu,site)).getva();
       } 
+#endif
       force_rect += shiftField(res,nu,Backward());//+=res(x-nu)    
       //      +--<-(x)    ^
       //      |           |   term
       //      +--<--+--<--+
       res = 0.0;
+#ifdef IBM_BGQ_WILSON
+    	BGWilsonSU3_MatMult_DNN(res_ptr, Cdn2_ptr, U_mu_ptr, UpMu_ptr, Nvol_);
+#else
       for(int site = 0; site<Nvol_; ++site){
 	res.data[res.format.cslice(0,site)] = 
 	  (mat_dag(Cdn2,site)*mat(U_mu,site)*mat(UpMu,site)).getva();
       }       
+#endif
       force_rect += shiftField(res,nu,Backward());//+=res(x-nu)  
     }
     force_pl   *= Params.c_plaq;
@@ -211,5 +276,8 @@ GaugeField ActionGaugeRect::md_force(){
   }
   force *= 0.5*Params.beta/NC_;
   _MonitorMsg(ACTION_VERB_LEVEL,Action,force,"ActionGaugeRect");
+
+  
+  CCIO::cout<< "Returning\n";
   return force;
 }

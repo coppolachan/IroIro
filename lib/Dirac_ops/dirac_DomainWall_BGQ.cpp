@@ -236,12 +236,12 @@ void Dirac_optimalDomainWall::mult_hop_omp(Field& w5, const void* f5) const
 
 	BGQThread_Barrier(0, nid);
 	if(tid == 0){
-		BGWilson_DW_Init(N5_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
+	  BGWilson_DW_Init(N5_,mq_, M0_, (double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
 	}
 	BGQThread_Barrier(0, nid);
 
 	BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-							Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+							Dw_.getKappa(),BGWILSON_DIRAC);
 
 	/*
   //Allocate fields
@@ -723,12 +723,12 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const void* f5) const
 
 	BGQThread_Barrier(0, nid);
 	if(tid == 0){
-		BGWilson_DW_Init(N5_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
+	  BGWilson_DW_Init(N5_,mq_, M0_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
 	}
 	BGQThread_Barrier(0, nid);
 
 	BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-								Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+								Dw_.getKappa(),BGWILSON_DIRAC);
 
 	/*
   //Allocate fields
@@ -1067,7 +1067,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
 //  void* aux2_ptr  = malloc(sizeof(double)*f4size_);
   //void* aux3_ptr  = malloc(sizeof(double)*fsize_);
 
- 	BGWilson_DW_Init(N5_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
+  BGWilson_DW_Init(N5_,mq_,M0_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
 
 #pragma omp parallel 
 	{
@@ -1084,9 +1084,9 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
 		ns = ie - is;
 
 		BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
-								Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+								Dw_.getKappa(),BGWILSON_DIRAC);
 		BGWilson_DW_Mult_hop_dag(temp2_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-								Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+								Dw_.getKappa(),BGWILSON_DIRAC);
 
 		/*
 		mult_hop_omp_allocated(temp,x_ptr, aux1_ptr, aux2_ptr, nid, tid);
@@ -1135,9 +1135,9 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
 		for(int it = 0; it < MaxIter; ++it){
 			double tPAP;
 			BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),p_ptr,
-								Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+								Dw_.getKappa(),BGWILSON_DIRAC);
 			BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-								Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+								Dw_.getKappa(),BGWILSON_DIRAC);
 
 			/*
 			//      mult_hop_omp(temp,p_ptr);
@@ -1210,9 +1210,9 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
 		//p = opr_->mult(x);
 
 		BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
-							Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+							Dw_.getKappa(),BGWILSON_DIRAC);
 		BGWilson_DW_Mult_hop_dag(p_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-							Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+							Dw_.getKappa(),BGWILSON_DIRAC);
 		/*
 		mult_hop_omp_allocated(temp,x_ptr, aux1_ptr, aux2_ptr, nid, tid);
 		mult_hop_dag_omp_allocated(p,temp_ptr, aux1_ptr, aux2_ptr, nid, tid);
