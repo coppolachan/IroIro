@@ -19,6 +19,8 @@ namespace DiracOperators {
 	return new DiracWilsonFactory(node);
       if (!strcmp(Dirac_name, "DiracWilson_EvenOdd")) 
 	return new DiracWilsonEvenOddFactory(node);
+      if (!strcmp(Dirac_name, "DiracWilson_Brillouin")) 
+	return new DiracWilsonBrillouinFactory(node);
       if (!strcmp(Dirac_name, "DiracClover"))  
 	return new DiracCloverFactory(node);
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  

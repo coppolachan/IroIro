@@ -54,6 +54,11 @@ void Dirac_staggered_EvenOdd::set_ustag(){
   bdry_->apply_bc(ue_,uo_);
 }
 
+#if 1
+#include "dirac_staggered_EvenOdd_improved.code"
+#endif 
+
+#if 0
 void Dirac_staggered_EvenOdd::multPeo(Field& we,const Field& fo,int mu)const{
   FermionField1sp ft = shiftField_eo(FermionField1sp(fo),mu,Forward());
   for(int hs=0; hs<Nvh_; ++hs) 
@@ -75,7 +80,6 @@ const Field Dirac_staggered_EvenOdd::mult_eo(const Field& fo)const{
     for(int hs=0; hs<Nvh_; ++hs) //backward differenciation
       ft.data.set(ff_.islice(hs),
 		  (mat_dag(uo_,hs,mu)*SUNvec(fo[ff_.islice(hs)])).getva());
-
     we -= shiftField_eo(ft,mu,Backward()).data;
   }
   we *= 0.5/mq_;
@@ -97,6 +101,7 @@ const Field Dirac_staggered_EvenOdd::mult_oe(const Field& fe)const{
   wo *= 0.5/mq_;
   return wo;
 }
+#endif 0
 
 const Field Dirac_staggered_EvenOdd::mult_eo_dag(const Field& fe) const{
   Field wo = mult_oe(fe);

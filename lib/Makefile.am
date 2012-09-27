@@ -68,6 +68,7 @@ lib_LIBRARIES = libcommcode.a
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		Main/documentation_pages.h	\
                 Dirac_ops/dirac_wilson_improved.code    \
+                Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_wilson_standard.code    \
 		Fields/field.inl
 

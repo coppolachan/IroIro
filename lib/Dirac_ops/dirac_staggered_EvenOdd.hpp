@@ -49,6 +49,9 @@ private:
   void multPoe(Field&,const Field&,int)const;
   void multPeo(Field&,const Field&,int)const;
 
+  int re(int c1,int c2)const{return 2*(NC_*c1+c2);}
+  int im(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
+
 public:
   Dirac_staggered_EvenOdd(double mass,const Field* u,
 			  const BoundaryCond* bdry = NULL)

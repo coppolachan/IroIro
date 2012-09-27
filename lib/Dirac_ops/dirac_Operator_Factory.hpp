@@ -8,6 +8,7 @@
 #include "Tools/RAIIFactory.hpp"
 #include "dirac_wilson.hpp"
 #include "dirac_wilson_EvenOdd.hpp"
+#include "dirac_wilson_Brillouin.hpp"
 #include "dirac_clover.hpp"
 #include "dirac_DomainWall_4D_fullSolv.hpp"
 #include "dirac_DomainWall_4D_eoSolv.hpp"
@@ -75,6 +76,17 @@ public:
 
   Dirac_Wilson_EvenOdd* getDiracOperatorWL(Field* const Gfield){
     return new Dirac_Wilson_EvenOdd(Dirac_node,Gfield);
+  }
+};
+
+/*! @brief Concrete class for creating Dirac Wilson Brillouin operators */
+class DiracWilsonBrillouinFactory : public DiracWilsonLikeOperatorFactory {
+  const XML::node Dirac_node;
+public:
+  DiracWilsonBrillouinFactory(const XML::node node):Dirac_node(node){}
+
+  Dirac_Wilson_Brillouin* getDiracOperatorWL(Field* const Gfield){
+    return new Dirac_Wilson_Brillouin(Dirac_node,Gfield);
   }
 };
 

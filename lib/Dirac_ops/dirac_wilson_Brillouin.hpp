@@ -46,8 +46,8 @@ private:
   
   // full site operation
   int xsl(int x,int n,int dir)const{return SiteMap::shiftSite.xslice(x,n,dir);}
-  int slsize(int dir)const{return SiteIndex::instance()->slsize(0,dir);}
-  
+  int slsize(int dir)const{return SiteMap::shiftSite.slice_size(0,dir);}
+
   const Field sft_p(const Field& f,int dir)const;
   const Field sft_m(const Field& f,int dir)const;
   const Field delg(const Field& f,int dir,double a,double b)const;
@@ -86,7 +86,7 @@ public:
      gf_(Nvol_),gsize_(gf_.size()){
     //
     double mass;
-    XML::read(node, "mass", mass);
+    XML::read(node,"mass",mass);
     kbr_= 1.0/(15.0/8.0 +mass);
   }
   

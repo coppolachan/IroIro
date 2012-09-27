@@ -11,9 +11,10 @@ using namespace std;
 
 /////////////////////////////////////////////////////////////////////////
 
-int Dirac_Wilson_Brillouin::sgm(int mu,int nu,int rho)const{
-  for(int sigma=0; sigma<NDIM_; ++sigma)
+int Dirac_Wilson_Brillouin::sgm(int mu,int nu, int rho)const{
+  for(int sigma=0; sigma<NDIM_; ++sigma){
     if(sigma !=mu && sigma !=nu && sigma !=rho) return sigma;
+  }
 }
 
 const Field (Dirac_Wilson_Brillouin::*Dirac_Wilson_Brillouin::gm[])
@@ -34,14 +35,14 @@ const vector<int> Dirac_Wilson_Brillouin::get_gsite() const {
 const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
   Field fp(fsize_);
   int Ni = 2*ND_*NC_; /*!< @brief num of elements of a spinor */
-  int Nslice = slsize(dir);
-
+  Format::Format_F ff = get_fermionFormat();
+  
   /// boundary part ///
   int is = 0;
   int Xb = 0;
-
-  double vbd[Ni*Nslice]; /*!< @brief data on the lower slice */   
-  for(int k=0; k<Nslice; ++k){
+  int Nbdry = slsize(dir);
+  double vbd[Ni*Nbdry]; /*!< @brief data on the lower slice */   
+  for(int k=0; k<Nbdry; ++k){
     const double* v = const_cast<Field&>(f).getaddr(ff_.index(0,xsl(Xb,k,dir)));
     for(int s=0; s<ND_; ++s){
       for(int c=0; c<NC_; ++c){
@@ -51,11 +52,14 @@ const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
     }
     is += Ni;
   }
-  double vbc[Ni*Nslice]; /*!< @brief data on the upper slice */   
-  comm_->transfer_fw(vbc,vbd,Ni*Nslice,dir);
-  is = 0;
+  double vbc[Ni*Nbdry]; /*!< @brief data on the upper slice */   
+  comm_->transfer_fw(vbc,vbd,Ni*Nbdry,dir);
 
-  for(int k=0; k<Nslice; ++k){  /*!< @brief calc on the upper boundary */   
+  is = 0;
+  Xb = SiteIndex::instance()->Bdir(dir);
+  Nbdry = slsize(dir);
+
+  for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
 
     int xc = xsl(Xb,k,dir);
     const double* U = const_cast<Field*>(u_)->getaddr(gf_.index(0,xc,dir));
@@ -76,9 +80,8 @@ const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
     is += Ni;
   }
   /// bulk part ///
-  Xb = SiteIndex::instance()->Bdir(dir);
-
   for(int x=0; x<Xb; ++x){
+    int Nslice = slsize(dir);
     for(int k=0; k<Nslice; ++k){   
       const double* v = const_cast<Field&>(f).getaddr(ff_.index(0,xsl(x+1,k,dir)));
       const double* U = const_cast<Field*>(u_)->getaddr(gf_.index(0,xsl(x,k,dir),dir));
@@ -106,13 +109,14 @@ const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
 const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
   Field fm(fsize_);
   int Ni = 2*ND_*NC_; /*!< @brief num ob elements of a spinor */
-  int Nslice = slsize(dir);
+  Format::Format_F ff = get_fermionFormat();
+
   /// boundary part ///
   int is = 0;
   int Xb = SiteIndex::instance()->Bdir(dir);
-
-  double vbd[Ni*Nslice]; /*!< @brief data on the upper boundary */
-  for(int k=0; k<Nslice; ++k){
+  int Nbdry = slsize(dir);
+  double vbd[Ni*Nbdry]; /*!< @brief data on the upper boundary */
+  for(int k=0; k<Nbdry; ++k){
     int xc = xsl(Xb,k,dir);
     const double* v = const_cast<Field&>(f).getaddr(ff_.index(0,xc));
     const double* U = const_cast<Field*>(u_)->getaddr(gf_.index(0,xc,dir));
@@ -130,11 +134,12 @@ const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
     }
     is += Ni;
   }
-  double vbc[Ni*Nslice];  //Copy vbd from backward processor
-  comm_->transfer_bk(vbc,vbd,Ni*Nslice,dir);
+  double vbc[Ni*Nbdry];  //Copy vbd from backward processor
+  comm_->transfer_bk(vbc,vbd,Ni*Nbdry,dir);
   is = 0;
+  Nbdry = slsize(dir);
   
-  for(int k=0; k<Nslice; ++k){
+  for(int k=0; k<Nbdry; ++k){
     double* res = fm.getaddr(ff_.index(0,xsl(0,k,dir)));
     
     for(int s=0; s<ND_; ++s){  
@@ -148,6 +153,7 @@ const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
 
   /// bulk part ///
   for(int x=1; x<Xb+1; ++x){
+    int Nslice = slsize(dir);
     for(int k=0; k<Nslice; ++k){
       int xm = xsl(x-1,k,dir);
       const double* v = const_cast<Field&>(f).getaddr(ff_.index(0,xm));
@@ -181,7 +187,8 @@ const Field Dirac_Wilson_Brillouin::delg(const Field& f,int dir,double a,double 
 }  
 
 const Field Dirac_Wilson_Brillouin::lap(const Field& f,int dir,double a,double b)const{
-  using namespace FieldExpression;
+  using  namespace FieldExpression;
+  Format::Format_F ff = get_fermionFormat();
   Field w = sft_p(f,dir);
   w += sft_m(f,dir);
   w *= a;
@@ -191,27 +198,32 @@ const Field Dirac_Wilson_Brillouin::lap(const Field& f,int dir,double a,double b
 
 const Field Dirac_Wilson_Brillouin::mult(const Field& f)const{
   using namespace FieldExpression;
+  Format::Format_F ff = get_fermionFormat();
   Field w(fsize_);
 
   for(int mu=0; mu<NDIM_; ++mu){
-    Field dn(fsize_),fn(fsize_);
-
+    Field fn(fsize_),dn(fsize_);
     for(int nu=0; nu<NDIM_; ++nu){
-      Field dr(fsize_),fr(fsize_);
-
       if(nu !=mu){
+	Field fr(fsize_),dr(fsize_);
 	for(int rho=0; rho<NDIM_; ++rho){
 	  if(rho !=nu && rho != mu){
+	    Field ft(fsize_),dt(fsize_);
 	    int dir = sgm(mu,nu,rho);
 
-	    Field ft = lap(f,dir,0.25,4.0);
-	    dr += lap(ft,rho,1.0/3,16.0);
-	    ft -= 2.0*f;
-	    fr += lap(ft,rho,1.0/3,4.0);
+	    ft += lap(f,dir,0.25,2.0);
+	    dt += lap(f,dir,1.0/3,4.0);
+
+	    fr += lap(ft,rho,1.0/3,0.0);
+	    fr += (4.0/2)*f;
+	    dr += lap(dt,rho,1.0/2,0.0);
+	    dr += (16.0/2)*f;
 	  }
 	}
-	dn += lap(dr,nu,0.5,64.0);
-	fn += lap(fr,nu,0.5,8.0);
+	fn += lap(fr,nu,0.5,0.0);
+	fn += (8.0/3)*f;
+	dn += lap(dr,nu,1.0,0.0);
+	dn += (64.0/3)*f;
       }
     }
     w += delg(dn,mu,1.0/432,0.0);
