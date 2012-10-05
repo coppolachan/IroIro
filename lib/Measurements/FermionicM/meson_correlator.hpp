@@ -22,16 +22,19 @@ enum MesonType {Pion, Scalar, Vector1, Vector2, Vector3};
 class MesonCorrelator {
   const int Nc_;
   const int Nd_; 
+  const int Nvol_; 
   std::auto_ptr<GammaMatrices::Gamma> G1_;
   std::auto_ptr<GammaMatrices::Gamma> G2_;
 public:
   MesonCorrelator(GammaMatrices::Gamma& G1, GammaMatrices::Gamma& G2)
  :Nc_(CommonPrms::instance()->Nc()),
   Nd_(CommonPrms::instance()->Nd()),
+  Nvol_(CommonPrms::instance()->Nvol()),
   G1_(&G1), G2_(&G2){}
 
   MesonCorrelator(MesonType Type = Pion):Nc_(CommonPrms::instance()->Nc()),
-					 Nd_(CommonPrms::instance()->Nd()) {
+					 Nd_(CommonPrms::instance()->Nd()),
+					 Nvol_(CommonPrms::instance()->Nvol()){
     switch (Type) {
     case Pion:
       G1_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Unit);
@@ -84,13 +87,12 @@ const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
     //Cycle among spinor and color indexes
     for(s4=0; s4<Nd_; ++s4){
       // s4 -> s1
-      s1 = (*G2_)(s4).spinor_index; 
+      s1 = (*G2_)(s4).spn;
       for(s2=0; s2<Nd_; ++s2){
 	// s2 -> s3
-	s3 = (*G1_)(s2).spinor_index; 
-	gamma_factor 
-	  = (*G2_)(s4).complex_factor[0]*(*G1_)(s2).complex_factor[0]
-	   -(*G2_)(s4).complex_factor[1]*(*G1_)(s2).complex_factor[1]; 
+	s3 = (*G1_)(s2).spn;
+	gamma_factor = (*G2_)(s4).facr*(*G1_)(s2).facr
+               	      -(*G2_)(s4).faci*(*G1_)(s2).faci; 
 	//is always a real number
 	for(int c1=0; c1<Nc_; ++c1){//Contracts colors
 	  // following contraction is Re[q1*(q2~)] 
@@ -104,10 +106,10 @@ const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
   }
   
   int Lt = CommonPrms::instance()->Lt();
-  int ipet = Communicator::instance()->ipe(3);
 
   std::vector<double> correl_tmp(Lt,0.0);
-  for(int t = 0; t< Nt; ++t) correl_tmp[t +ipet*Nt] = correl_local[t];
+  for(int t = 0; t< Nt; ++t) 
+    correl_tmp[SiteIndex::instance()->global_t(t)] = correl_local[t];
 
   std::vector<double> correl(Lt);
   for(int t = 0; t< Lt; ++t) 

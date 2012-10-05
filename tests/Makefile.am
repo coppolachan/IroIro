@@ -46,6 +46,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_PolyakovLoop.xml	\
 		test_WilsonFlow.xml	\
 		test_MesonSpectrum_Nf2p1.xml 	\
+		test_BaryonSpectrum_Nf2p1.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
@@ -75,6 +76,7 @@ test_PROGRAMS = test_HMC 		\
 		test_ResMass 		\
 		test_MesonSpectrum	\
 		test_MesonSpectrum_Nf2p1\
+		test_BaryonSpectrum_Nf2p1\
 		test_EigenModesSolver	\
 		test_Smearing		\
 		test_Overlap		\
@@ -131,6 +133,9 @@ test_MesonSpectrum_SOURCES= 	test_MesonSpectrum.cpp 		\
 test_MesonSpectrum_Nf2p1_SOURCES= test_MesonSpectrum_Nf2p1.cpp 	\
 				testerMesonSpectrumNf2p1.cpp
 
+test_BaryonSpectrum_Nf2p1_SOURCES= test_BaryonSpectrum_Nf2p1.cpp 	\
+				testerBaryonSpectrumNf2p1.cpp
+
 test_Solver_Perf_SOURCES = 	test_Solver_Perf.cpp		\
 				testerSolver_Perf.cpp
 
@@ -182,6 +187,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
 				test_MesonSpectrum_Nf2p1.hpp	\
+				test_BaryonSpectrum_Nf2p1.hpp	\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\

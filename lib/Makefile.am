@@ -126,6 +126,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/qprop_DomainWall.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
+		Measurements/FermionicM/baryonCorrelator.cpp	        \
 		Main/Geometry/siteIndex_EvenOdd.cpp	\
 		Main/Geometry/siteMap.cpp		\
 		Main/Geometry/shiftField.cpp		\
@@ -223,6 +224,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/FermionicM/quark_propagators.hpp	\
 			Measurements/FermionicM/sources_factory.hpp	\
 			Measurements/FermionicM/meson_correlator.hpp	\
+			Measurements/FermionicM/baryonCorrelator.hpp	\
 			Measurements/FermionicM/fermion_meas_factory_abs.hpp \
 			Measurements/FermionicM/quark_prop_meas_factory.hpp \
                         Measurements/FermionicM/utils_DWF4d.hpp \
@@ -283,6 +285,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/sunAdjMat.hpp			\
 			Tools/sunAdjMatUtils.hpp		\
 			Tools/sunVec.hpp			\
+			Tools/colorEpsilon.hpp	                \
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
 			Tools/randNum_MT19937.h			\

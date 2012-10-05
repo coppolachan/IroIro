@@ -38,15 +38,8 @@ void Action_staggered::init(const RandNum& rand){
   std::valarray<double> ph(fsize_);
   MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
   phi_= ph;
-
-  double norm = phi_.norm();
-  CCIO::cout<<"phi_.norm()="<<norm <<"\n";
-
   MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
   phi_-= D_->mult_eo(Field(ph));
-  
-  norm = phi_.norm();
-  CCIO::cout<<"phi_.norm()="<<norm <<"\n";
 }
 
 double Action_staggered::calc_H(){ 

@@ -101,7 +101,7 @@ const Field Dirac_staggered_EvenOdd::mult_oe(const Field& fe)const{
   wo *= 0.5/mq_;
   return wo;
 }
-#endif 0
+#endif //0
 
 const Field Dirac_staggered_EvenOdd::mult_eo_dag(const Field& fe) const{
   Field wo = mult_oe(fe);
