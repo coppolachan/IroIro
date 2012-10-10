@@ -10,16 +10,20 @@ void WilsonFlow::update_U(const GaugeField& Z)const{
   using namespace SUNmatUtils;
   using namespace FieldUtils;
 
+  double eps = -2.0*estep_;
+  int Nvol = CommonPrms::instance()->Nvol();
+
   for(int m=0; m<NDIM_; ++m){
-    for(int site=0; site<Nvol_; ++site){
-      SUNmat au = exponential(mat(Z,site,m)*estep_*g0q_,Nexp_);
+    for(int site=0; site<Nvol; ++site){
+      SUNmat au = exponential(mat(Z,site,m)*eps,Nexp_);
+      au.reunit();
       au *= mat(U_,site,m);
-      U_.data.set(U_.format.islice(site,m),au.reunit().getva());
+      U_.data.set(U_.format.islice(site,m),au.getva());
     }
   }
 }
 
-void WilsonFlow::gradFlow()const{
+void WilsonFlow::flow_step()const{
                                    // W0 = U_
   GaugeField Z = Sg_->md_force();  // Z0
   Z *= 0.25;
@@ -37,7 +41,7 @@ void WilsonFlow::gradFlow()const{
 }
 
 /*
-void WilsonFlow::gradFlow()const{
+void WilsonFlow::flow_step()const{
                                     // W0 = U_
   GaugeField Z0 = Sg_->md_force();  // Z0
   Z0 *= 0.5;
@@ -70,13 +74,19 @@ void WilsonFlow::gradFlow()const{
 }
 */
 
-std::vector<double> WilsonFlow::evolve()const{
+std::vector<double> WilsonFlow::get_t()const{
+  std::vector<double> tau;
+  for(int t=0; t<Nstep_; ++t) tau.push_back(estep_*(t+1.0));
+  return tau;
+}
 
+std::vector<double> WilsonFlow::evolve()const{
+  std::vector<double> tau = get_t();
   std::vector<double> ttE(Nstep_);
-  for(int t=0; t< Nstep_; ++t){
-    gradFlow();
-    double tau = estep_*(t+1);
-    ttE[t] = tau*tau*fabs(g0q_)*Sg_->calc_H()/double(Lvol_);
+  for(int t=0; t<Nstep_; ++t){
+    flow_step();
+    ttE[t] = 2.0*tau[t]*tau[t]*Sg_->calc_H()
+      /double(CommonPrms::instance()->Lvol());
   }
   return ttE;
 }

@@ -67,8 +67,13 @@ namespace SUNmatUtils{
   }
   */
 
+  /*
   const SUNmat exponential(const SUNmat& X,int N,int n){
     return N == n ? unity() : reunit(exponential(X,N,n+1)*X/n +unity());
+  }
+  */
+  const SUNmat exponential(const SUNmat& X,int N,int n){
+    return N == n ? unity() : exponential(X,N,n+1)*X/n +unity();
   }
 
   const SUNmat anti_hermite_traceless(const SUNmat& m){
