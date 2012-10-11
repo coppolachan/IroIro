@@ -94,6 +94,7 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     std::stringstream outfile;
     outfile << output_prefix_<< id;
 
+    
     MeasObj meas(meas_node_,Uin_,*rng,outfile.str()); 
 
     CCIO::cout<<"Starting measurement"<<std::endl;
@@ -101,6 +102,7 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     //----------------------------------
     post_process(Uin_,*rng,id); // seed saving
     CCIO::cout<<"\n";
+    
 
     id += increment_;
   }
