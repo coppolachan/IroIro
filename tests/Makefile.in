@@ -54,6 +54,7 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_ResMass$(EXEEXT) test_MesonSpectrum$(EXEEXT) \
 	test_MesonSpectrum_Nf2p1$(EXEEXT) \
 	test_BaryonSpectrum_Nf2p1$(EXEEXT) \
+	test_HadronSpectrum_Nf2p1$(EXEEXT) \
 	test_EigenModesSolver$(EXEEXT) test_Smearing$(EXEEXT) \
 	test_Overlap$(EXEEXT) test_MultiShiftSolver$(EXEEXT) \
 	test_Solver_Perf$(EXEEXT) test_RNG$(EXEEXT) test_IO$(EXEEXT) \
@@ -124,6 +125,13 @@ am_test_HMC_smear_noF_OBJECTS = test_HMC_Smear_noFact.$(OBJEXT) \
 test_HMC_smear_noF_OBJECTS = $(am_test_HMC_smear_noF_OBJECTS)
 test_HMC_smear_noF_LDADD = $(LDADD)
 test_HMC_smear_noF_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am_test_HadronSpectrum_Nf2p1_OBJECTS =  \
+	test_HadronSpectrum_Nf2p1.$(OBJEXT) \
+	testerHadronSpectrumNf2p1.$(OBJEXT)
+test_HadronSpectrum_Nf2p1_OBJECTS =  \
+	$(am_test_HadronSpectrum_Nf2p1_OBJECTS)
+test_HadronSpectrum_Nf2p1_LDADD = $(LDADD)
+test_HadronSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
 test_IO_LDADD = $(LDADD)
@@ -233,7 +241,8 @@ SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
 	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
 	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
-	$(test_IO_SOURCES) $(test_MesonSpectrum_SOURCES) \
+	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_IO_SOURCES) \
+	$(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
 	$(test_PolyakovLoop_SOURCES) $(test_QpropMom_SOURCES) \
@@ -248,7 +257,8 @@ DIST_SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) \
 	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
-	$(test_HMC_smear_noF_SOURCES) $(test_IO_SOURCES) \
+	$(test_HMC_smear_noF_SOURCES) \
+	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_IO_SOURCES) \
 	$(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
@@ -418,6 +428,7 @@ EXTRA_DIST = testResults.info	\
 		test_WilsonFlow.xml	\
 		test_MesonSpectrum_Nf2p1.xml 	\
 		test_BaryonSpectrum_Nf2p1.xml 	\
+		test_HadronSpectrum_Nf2p1.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
@@ -478,6 +489,9 @@ test_MesonSpectrum_Nf2p1_SOURCES = test_MesonSpectrum_Nf2p1.cpp 	\
 test_BaryonSpectrum_Nf2p1_SOURCES = test_BaryonSpectrum_Nf2p1.cpp 	\
 				testerBaryonSpectrumNf2p1.cpp
 
+test_HadronSpectrum_Nf2p1_SOURCES = test_HadronSpectrum_Nf2p1.cpp 	\
+				testerHadronSpectrumNf2p1.cpp
+
 test_Solver_Perf_SOURCES = test_Solver_Perf.cpp		\
 				testerSolver_Perf.cpp
 
@@ -530,6 +544,7 @@ include_HEADERS = tests.hpp			\
 				test_MesonSpectrum.hpp		\
 				test_MesonSpectrum_Nf2p1.hpp	\
 				test_BaryonSpectrum_Nf2p1.hpp	\
+				test_HadronSpectrum_Nf2p1.hpp	\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\
@@ -636,6 +651,9 @@ test_HMC_noFactories$(EXEEXT): $(test_HMC_noFactories_OBJECTS) $(test_HMC_noFact
 test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_DEPENDENCIES) 
 	@rm -f test_HMC_smear_noF$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_LDADD) $(LIBS)
+test_HadronSpectrum_Nf2p1$(EXEEXT): $(test_HadronSpectrum_Nf2p1_OBJECTS) $(test_HadronSpectrum_Nf2p1_DEPENDENCIES) 
+	@rm -f test_HadronSpectrum_Nf2p1$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HadronSpectrum_Nf2p1_OBJECTS) $(test_HadronSpectrum_Nf2p1_LDADD) $(LIBS)
 test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES) 
 	@rm -f test_IO$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
@@ -703,6 +721,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_Smear_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HadronSpectrum_Nf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum_Nf2p1.Po@am__quote@
@@ -729,6 +748,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC_DWall_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMCeven-odd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHadronSpectrumNf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrumNf2p1.Po@am__quote@

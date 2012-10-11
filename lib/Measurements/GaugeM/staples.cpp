@@ -58,7 +58,7 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
   GaugeField1D w = DirSlice(G,nu);
   GaugeField1D c(G.Nvol());
   GaugeField1D WupMu = shiftField(w,mu,Forward());
-
+  /*
 #ifdef IBM_BGQ_WILSON 
   GaugeField1D temp(G.Nvol());
   double* c_ptr = c.data.getaddr(0);
@@ -77,6 +77,10 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
     c.data[c.format.islice(site)] 
       = (mat_dag(w,site)*mat(v,site)*mat(WupMu,site)).getva();
 #endif
+  */
+  for(int site=0; site<Nvol_; ++site) 
+    c.data[c.format.islice(site)] = (mat_dag(w,site)*mat(v,site)*mat(WupMu,site)).getva();
+
   return shiftField(c,nu,Backward());
 }
 //------------------------------------------------------------
@@ -94,7 +98,7 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
 
   GaugeField1D WupMu = shiftField(w,mu,Forward());
   GaugeField1D VupNu = shiftField(v,nu,Forward());
-
+  /*
 #ifdef IBM_BGQ_WILSON 
   double* c_ptr = c.data.getaddr(0);
   double* VupNu_ptr = VupNu.data.getaddr(0);
@@ -112,6 +116,10 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
     c.data[c.format.islice(site)]
       = (mat(w,site)*mat(VupNu,site)*mat_dag(WupMu,site)).getva();
 #endif
+  */
+  for(int site=0; site<Nvol_; ++site)
+    c.data[c.format.islice(site)]
+      = (mat(w,site)*mat(VupNu,site)*mat_dag(WupMu,site)).getva();
   return c;
 }
 

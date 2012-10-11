@@ -23,8 +23,8 @@ int Test_WilsonFlow::run(){
 
     //writer<< setiosflags(  ios_base::scientific);
     for(int t=0; t<ttE.size(); ++t)
-      writer<<setw(10)<<setprecision( 6)<<setiosflags(ios_base::left)<<tau[t]
-	    <<setw(20)<<setprecision(16)<<setiosflags(ios_base::left)<<ttE[t]
+      writer<<setw(10)<<fixed<<setprecision( 6)<<setiosflags(ios_base::left)<<tau[t]
+	    <<setw(20)<<fixed<<setprecision(16)<<setiosflags(ios_base::left)<<ttE[t]
 	    <<endl;
     //writer<< resetiosflags(ios_base::scientific);
     writer.close();
