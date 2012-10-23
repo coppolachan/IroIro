@@ -43,6 +43,41 @@ namespace FieldUtils{
     return Gr;
   }
 
+  const GaugeField Exponentiate(const GaugeField& G, const double d, const int N) {
+    using namespace SUNmatUtils;
+    GaugeField temp;
+
+#ifdef IBM_BGQ_WILSON
+    ///////////////////////////////////////////
+    GaugeField unit, temp2;
+    for(int mu=0; mu<G.Nex(); ++mu)
+      for(int site=0; site<G.Nvol(); ++site)
+	SetMat(unit, unity(),site,mu);
+
+    temp = unit;
+    double* temp_ptr  = temp.data.getaddr(0);
+    double* G_ptr  = const_cast<GaugeField&>(G).data.getaddr(0);
+    double* temp2_ptr = temp2.data.getaddr(0);
+    double* unit_ptr = unit.data.getaddr(0);
+
+    for (int i = N; i>=1;--i){
+      temp *= d/i;
+      BGWilsonSU3_MatMultAdd_NN(temp2_ptr,unit_ptr, temp_ptr, G_ptr, G.Nvol()*G.Nex());
+      temp = temp2;
+     }
+    temp = ReUnit(temp2);
+    ///////////////////////////////////////////   
+#else
+    for(int mu=0; mu<G.Nex(); ++mu)
+      for(int site=0; site<G.Nvol(); ++site)
+	SetMat(temp, exponential(mat(G,site,mu)*d, site, mu);
+	
+#endif
+
+    return temp;
+  }
+
+
   const GaugeField TracelessAntihermite(const GaugeField& G){
     using namespace SUNmatUtils;
     GaugeField TAField;
