@@ -3,6 +3,7 @@
 //----------------------------------------------------------------------
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Tools/sunVec.hpp"
 
 using namespace SUNvecUtils;
 using namespace std;
@@ -91,7 +92,6 @@ void Dirac_Wilson::mult_dag_ptr_EO(double* w, double* const f) const{
 }
 #endif
 
-
 /*!
  *  @brief MD-force contribution: \f$\zeta^\dagger\frac{dH_W}{d\tau}\eta\f$
  */
@@ -168,9 +168,7 @@ void Dirac_Wilson::md_force_m(Field& fce,
   }
 }
 
-const Field Dirac_Wilson::
-md_force(const Field& eta,const Field& zeta)const{
-  
+const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
   Field fp(gf_.size());
   md_force_p(fp,eta,zeta);
   md_force_m(fp,eta,zeta);
@@ -180,12 +178,4 @@ md_force(const Field& eta,const Field& zeta)const{
 
 const vector<int> Dirac_Wilson::get_gsite() const {
   return SiteIndex::instance()->get_gsite();
-}
-
-namespace Dw{
-  double read_mass(const XML::node& node){
-    double mass;
-    XML::read(node, "mass", mass);
-    return mass;
-  }
 }

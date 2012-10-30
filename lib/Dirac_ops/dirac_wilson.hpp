@@ -4,6 +4,7 @@
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
 
+#include "dirac.hpp"
 #include "include/format_F.h"
 #include "include/format_G.h"
 #include "include/pugi_interface.h"
@@ -11,9 +12,6 @@
 #include "Main/Geometry/siteIndex_EvenOdd.hpp"
 #include "Main/Geometry/siteIndex.hpp"
 #include "Main/Geometry/siteMap.hpp"
-#include "Tools/sunMat.hpp"
-#include "Tools/sunVec.hpp"
-#include "dirac.hpp"
 
 #ifdef IBM_BGQ_WILSON
 #include "bgqwilson.h"
@@ -21,15 +19,6 @@
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;
-
-
-
-namespace Dw{
-  struct EOtag{};    
-  struct OEtag{};    
-
-  double read_mass(const XML::node& node);
-}
 
 class Dirac_Wilson: public DiracWilsonLike{
 
@@ -73,8 +62,8 @@ private:
   int re(int c1,int c2)const{return 2*(NC_*c1+c2);}
   int im(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
 
-  void mult_full(Field&,const Field&)const;   /*! @brief  -kpp*D*f */
-  void mult_offdiag(Field&,const Field&)const;/*! @brief  (1-kpp*D)*f */
+  void mult_full(Field&,const Field&)const;   /*! @brief  (1-kpp*D)*f */
+  void mult_offdiag(Field&,const Field&)const;/*! @brief  -kpp*D*f */
 
   int gsite(int site)const {return site;}
   int esec(int hs)const {return SiteIndex_EvenOdd::instance()->esec(hs);}
@@ -110,7 +99,7 @@ private:
 
 public:
   /*! @brief constructor to create instance with e/o site indexing */
-  Dirac_Wilson(double mass,const Field* u,Dw::EOtag)
+  Dirac_Wilson(double mass,const Field* u,Dop::EOtag)
     :kpp_(0.5/(4.0+mass)),u_(u),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
@@ -126,7 +115,7 @@ public:
      gf_(2*Nvol_),gsize_(gf_.size()),
      EO_BGWilson(1){}
 
-  Dirac_Wilson(double mass,const Field* u,Dw::OEtag)
+  Dirac_Wilson(double mass,const Field* u,Dop::OEtag)
     :kpp_(0.5/(4.0+mass)),u_(u),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
@@ -195,12 +184,12 @@ public:
 
   ////////////////////////////////////////Preconditioned versions
   // Wilson operator has no defined preconditioner now 
-  const Field mult_prec     (const Field&f)const{return f;}
-  const Field mult_dag_prec (const Field&f)const{return f;}
-  const Field left_prec     (const Field&f)const{return f;}
-  const Field right_prec    (const Field&f)const{return f;}
-  const Field left_dag_prec (const Field&f)const{return f;}
-  const Field right_dag_prec(const Field&f)const{return f;}
+  const Field mult_prec     (const Field& f)const{return f;}
+  const Field mult_dag_prec (const Field& f)const{return f;}
+  const Field left_prec     (const Field& f)const{return f;}
+  const Field right_prec    (const Field& f)const{return f;}
+  const Field left_dag_prec (const Field& f)const{return f;}
+  const Field right_dag_prec(const Field& f)const{return f;}
   //////////////////////////////////////////////////////////////
 
   const Field gamma5(const Field&) const;
