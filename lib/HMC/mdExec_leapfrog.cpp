@@ -39,7 +39,7 @@ void MDexec_leapfrog::update_U(double ep){
   int Ndim = CommonPrms::instance()->Ndim();
   int Nvol = CommonPrms::instance()->Nvol();
 
-
+#ifdef IBM_BGQ_WILSON
   GaugeField eiP = Exponentiate(P_, ep, Params.Nexp);
   GaugeField aux;
   double* eiP_ptr  = eiP.data.getaddr(0);
@@ -47,17 +47,15 @@ void MDexec_leapfrog::update_U(double ep){
   double* aux_ptr  = aux.data.getaddr(0);
   BGWilsonSU3_MatMult_NN(aux_ptr, eiP_ptr, U_ptr, Nvol*Ndim);
   *U_ = ReUnit(aux);
-    
-  /*
+#else
   for(int m=0; m<Ndim; ++m){
     for(int site=0; site<Nvol; ++site){
-      //SUNmat au = exponential(mat(P_,site,m)*ep,Params.Nexp);
-      //SUNmat au = mat(eiP, site,m)*mat(*U_,site,m);
-      //au *= mat(*U_,site,m);
+      SUNmat au = exponential(mat(P_,site,m)*ep,Params.Nexp);
+      au *= mat(*U_,site,m);
       U_->data.set(U_->format.islice(site,m),au.reunit().getva());
     }
   }
-  */
+#endif
   notify_observers();
 }
 

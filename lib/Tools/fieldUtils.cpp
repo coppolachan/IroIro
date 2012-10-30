@@ -70,8 +70,8 @@ namespace FieldUtils{
 #else
     for(int mu=0; mu<G.Nex(); ++mu)
       for(int site=0; site<G.Nvol(); ++site)
-	SetMat(temp, exponential(mat(G,site,mu)*d, site, mu);
-	
+	SetMat(temp, exponential(mat(G,site,mu)*d,N), site, mu);
+	       
 #endif
 
     return temp;
