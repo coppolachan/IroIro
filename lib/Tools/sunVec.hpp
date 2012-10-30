@@ -137,7 +137,7 @@ typedef SUNvector<NC_> SUNvec;
 
 
 
-namespace SUNvec_utils{
+namespace SUNvecUtils{
   inline const SUNvec Ix(const SUNvec& u){
     SUNvec tmp;
     for(int c = 0; c < NC_; ++c)

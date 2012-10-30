@@ -5,7 +5,8 @@
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "include/macros.hpp"
-#include "lib/Main/Geometry/mapping.hpp"
+#include "lib/Main/Geometry/shiftField.hpp"
+//#include "lib/Main/Geometry/mapping.hpp"
 using namespace SUNmatUtils;
 using namespace FieldUtils;
 using namespace Mapping;
@@ -166,10 +167,10 @@ const GaugeField1D GaugeFixingStep::max_trace(const GaugeField1D& W)const{
 
   GaugeField1D Wt = W;
   //for(int iter=0; iter<2; ++iter){
-    maxTrSU3_1(G,Wt);
-    maxTrSU3_2(G,Wt);
-    maxTrSU3_3(G,Wt);
-    //}
+  maxTrSU3_1(G,Wt);
+  maxTrSU3_2(G,Wt);
+  maxTrSU3_3(G,Wt);
+  //}
   return G;
 }
 

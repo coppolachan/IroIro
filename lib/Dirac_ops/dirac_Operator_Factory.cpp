@@ -19,6 +19,8 @@ namespace DiracOperators {
 	return new DiracWilsonFactory(node);
       if (!strcmp(Dirac_name, "DiracWilson_EvenOdd")) 
 	return new DiracWilsonEvenOddFactory(node);
+      if (!strcmp(Dirac_name, "DiracWilson_Brillouin")) 
+	return new DiracWilsonBrillouinFactory(node);
       if (!strcmp(Dirac_name, "DiracClover"))  
 	return new DiracCloverFactory(node);
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
@@ -109,6 +111,25 @@ namespace DiracOperators {
       std::cout<<"Mandatory node is missing in input file (Dirac Object)\n";
       abort();
     }
-    
   }
-}
+
+  DiracStaggeredEvenOddLikeOperatorFactory* 
+  createDiracStaggeredEvenOddLikeOperatorFactory(const XML::node node){
+    if (node !=NULL) {
+      const char* Dirac_name = node.attribute("name").value();
+
+      if (!strcmp(Dirac_name, "")) {
+	std::cerr<<"No name provided for DiracStaggeredLike Operator. Request by <"
+		 << node.name() << ">\n";
+	abort();
+      }
+      if (!strcmp(Dirac_name, "DiracStaggeredEvenOdd"))  
+	return new DiracStaggeredEvenOddFactory(node);
+      abort();
+    }else{
+      std::cout<<"Mandatory node is missing in input file (DiracStaggered Object)\n";
+      abort();
+    }
+  }
+
+} //end of namespace

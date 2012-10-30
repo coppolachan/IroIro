@@ -4,6 +4,7 @@
 */
 #include "gaugeFixing_Landau.hpp"
 #include "Main/Geometry/mapping.hpp"
+#include "Main/gaugeConf.hpp"
 #include "Communicator/communicator.h"
 #include "include/macros.hpp"
 #include "Tools/sunMatUtils.hpp"

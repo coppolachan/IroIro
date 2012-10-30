@@ -1,7 +1,6 @@
 //--------------------------------------------------------------
-/*
-  @file dirac_wilson_EvenOdd.cpp
-  @brief Definition of Even Odd wilson operator
+/*! @file dirac_wilson_EvenOdd.cpp
+ *  @brief Definition of Even Odd wilson operator
 */
 //--------------------------------------------------------------
 #include "dirac_wilson_EvenOdd.hpp"

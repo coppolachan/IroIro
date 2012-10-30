@@ -8,11 +8,12 @@
 #include "include/commonPrms.h"
 #include "include/common_fields.hpp"
 #include "include/pugi_interface.h"
+#include "include/macros.hpp"
+
 #include "Action/action_gauge_wilson.hpp"
 
 class WilsonFlow{
 private:
-  int Lvol_,Nvol_;
   int Nexp_;
   int Nstep_;
   double estep_;
@@ -20,27 +21,25 @@ private:
   ActionGaugeWilson* Sg_;
 
   void update_U(const GaugeField& Z) const;
-  void gradFlow() const;
+  void flow_step() const;
 public:
   WilsonFlow(XML::node node,const GaugeField& U)
-    :U_(U),
-     Sg_(new ActionGaugeWilson(NC_,&U_)),
-     Nvol_(CommonPrms::instance()->Nvol()),
-     Lvol_(CommonPrms::instance()->Lvol()){
-    XML::read(node,"Nexp",Nexp_,MANDATORY);
+    :U_(U),Sg_(new ActionGaugeWilson(3.0,&U_)){
+    /*! @brief set beta=3.0 to reuse ActionGaugeWilson */
+
+    XML::read(node,"Nexp", Nexp_, MANDATORY);
     XML::read(node,"Nstep",Nstep_,MANDATORY);
     XML::read(node,"estep",estep_,MANDATORY);
   }
 
-  WilsonFlow(int Nexp,int Nstep,double estep,const GaugeField& U)
+  WilsonFlow(double beta,int Nexp,int Nstep,double estep,const GaugeField& U)
     :Nexp_(Nexp),Nstep_(Nstep),estep_(estep),U_(U),
-     Sg_(new ActionGaugeWilson(NC_,&U_)),
-     Nvol_(CommonPrms::instance()->Nvol()),
-     Lvol_(CommonPrms::instance()->Lvol()){}
+     Sg_(new ActionGaugeWilson(3.0,&U_)){}
   
   ~WilsonFlow(){if(Sg_) delete Sg_;}
-
+  
   std::vector<double> evolve()const;
+  std::vector<double> get_t()const;
 };
 
 #endif

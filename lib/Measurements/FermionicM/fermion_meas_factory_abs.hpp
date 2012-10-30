@@ -7,6 +7,7 @@
 
 #include "include/common_fields.hpp"
 #include "quark_propagators.hpp"
+#include "include/pugi_interface.h"
 /*!
  * @brief Abstract base class for creating QuarkPropagators
  */

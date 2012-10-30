@@ -63,64 +63,76 @@ int Test_MesonSpectrum_Nf2p1::run(){
     writer<<"---pp correlator---"<<endl;
     for(int t=0; t<Cpp.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Cpp[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Cpp[t]<<endl;
     }
     writer<<"---v1v1 correlator---"<<endl;
     for(int t=0; t<Cv1v1.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Cv1v1[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Cv1v1[t]<<endl;
     }
     writer<<"---v2v2 correlator---"<<endl;
     for(int t=0; t<Cv2v2.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Cv2v2[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Cv2v2[t]<<endl;
     }
     writer<<"---v3v3 correlator---"<<endl;
     for(int t=0; t<Cv3v3.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Cv3v3[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Cv3v3[t]<<endl;
     }
     writer<<"==== ud-s content ===="<<endl;
     writer<<"---pp correlator---"<<endl;
     for(int t=0; t<Kpp.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Kpp[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Kpp[t]<<endl;
     }
     writer<<"---v1v1 correlator---"<<endl;
     for(int t=0; t<Kv1v1.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Kv1v1[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Kv1v1[t]<<endl;
     }
     writer<<"---v2v2 correlator---"<<endl;
     for(int t=0; t<Kv2v2.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Kv2v2[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Kv2v2[t]<<endl;
     }
     writer<<"---v3v3 correlator---"<<endl;
     for(int t=0; t<Kv3v3.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Kv3v3[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Kv3v3[t]<<endl;
     }
     writer<<"==== s-s content ===="<<endl;
     writer<<"---pp correlator---"<<endl;
     for(int t=0; t<Spp.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Spp[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Spp[t]<<endl;
     }
     writer<<"---v1v1 correlator---"<<endl;
     for(int t=0; t<Sv1v1.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Sv1v1[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Sv1v1[t]<<endl;
     }
     writer<<"---v2v2 correlator---"<<endl;
     for(int t=0; t<Sv2v2.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Sv2v2[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Sv2v2[t]<<endl;
     }
     writer<<"---v3v3 correlator---"<<endl;
     for(int t=0; t<Sv3v3.size(); ++t){
       writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(25)<<setiosflags(ios_base::left )<< Sv3v3[t]<<endl;
+      writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Sv3v3[t]<<endl;
     }
     writer<< resetiosflags(ios_base::scientific);
     writer.close();

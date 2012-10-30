@@ -7,6 +7,7 @@
 #include "include/pugi_interface.h"
 #include "include/common_fields.hpp"
 #include "Tools/randNum_Factory.h"
+#include "Main/gaugeGlobal.hpp"
 #include <string>
 #include <vector>
 #include <sstream>

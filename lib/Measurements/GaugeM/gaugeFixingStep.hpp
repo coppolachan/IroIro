@@ -7,6 +7,7 @@
 
 #include "include/common_fields.hpp"
 #include "include/macros.hpp"
+#include "Tools/sunMat.hpp"
 
 enum Condition{Coulomb,Landau};
 

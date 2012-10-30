@@ -726,7 +726,7 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const void* f5) const
     BGWilson_DW_Init(N5_,mq_, M0_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
   }
   BGQThread_Barrier(0, nid);
-
+  
   BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
 			   Dw_.getKappa(),BGWILSON_DIRAC);
 
@@ -1129,6 +1129,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
     snorm = 1.0/snorm;
     //CCIO::cout<<" inverse = "<< snorm << std::endl;
 
+
 #if VERBOSITY>1
 #pragma omp single
     {
@@ -1245,6 +1246,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
     for(s5=0;s5<N5_;s5++)
       BGWilsonLA_Equate(w5_ptr+s5*Nvol+is, x_ptr+s5*Nvol+is, ns);
   }
+
 
   TIMING_END(Out.timing);
   CCIO::cout << "Kernel section timing: "<< kernel_timing << "\n";

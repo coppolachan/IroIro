@@ -20,7 +20,7 @@ namespace FieldUtils{
     for(int site=0; site<Nvol; ++site){
       mat.zero();
       for(int s=0; s<Nd; ++s)
-	mat += outer_prod(vec(f1,s,site), vec(f2,s,site));
+	mat += outer_prod_t(vec(f1,s,site), vec(f2,s,site));
       SetMat(f,mat,site);
     }
     return f;

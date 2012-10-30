@@ -665,48 +665,42 @@ void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
 const Field Dirac_Wilson::gamma5(const Field& f) const{
   Field w(fsize_);
   int Nin = ff_.Nin();
-  int id;
-  double* res;
 
   for(int site=0; site<Nvol_*Nin; site+=Nin){
     const double* ft = const_cast<Field&>(f).getaddr(site);
-    res = w.getaddr(site);    
+    double* res = w.getaddr(site);    
 
     for(int c=0; c <NC_; ++c){
-      short int col = 2*c;
-      short int col1 = 2*c+1;
+      short int cc = 2*c;
+      short int cc1 = 2*c+1;
 
-      res[ col]       = ft[col+4*NC_]; res[       col1] = ft[ col1+4*NC_];
-      res[ col+2*NC_] = ft[col+6*NC_]; res[ col1+2*NC_] = ft[ col1+6*NC_];
-      res[ col+4*NC_] = ft[col      ]; res[ col1+4*NC_] = ft[       col1];
-      res[ col+6*NC_] = ft[col+2*NC_]; res[ col1+6*NC_] = ft[ col1+2*NC_];
-
+      res[      cc] = ft[4*NC_+cc];  res[      cc1] = ft[4*NC_+cc1];
+      res[2*NC_+cc] = ft[6*NC_+cc];  res[2*NC_+cc1] = ft[6*NC_+cc1];
+      res[4*NC_+cc] = ft[      cc];  res[4*NC_+cc1] = ft[      cc1];
+      res[6*NC_+cc] = ft[2*NC_+cc];  res[6*NC_+cc1] = ft[2*NC_+cc1];
     }
   }
   return w;
 }
 
-void Dirac_Wilson::gamma5_ptr(double* w, double* const f) const{
+void Dirac_Wilson::gamma5_ptr(double* w,double* const f) const{
   int Nin = ff_.Nin();
-  double* res;
-
+  
   for(int site=0; site<Nvol_*Nin; site+=Nin){
     const double* ft = f+site;
-    res = w+site;    
+    double* res = w+site;    
 
     for(int c=0; c <NC_; ++c){
-      short int col = 2*c;
-      short int col1 = 2*c+1;
+      short int cc = 2*c;
+      short int cc1 = 2*c+1;
 
-      res[ col]       = ft[col+4*NC_]; res[       col1] = ft[ col1+4*NC_];
-      res[ col+2*NC_] = ft[col+6*NC_]; res[ col1+2*NC_] = ft[ col1+6*NC_];
-      res[ col+4*NC_] = ft[col      ]; res[ col1+4*NC_] = ft[       col1];
-      res[ col+6*NC_] = ft[col+2*NC_]; res[ col1+6*NC_] = ft[ col1+2*NC_];
-
+      res[      cc] = ft[4*NC_+cc];  res[      cc1] = ft[4*NC_+cc1];
+      res[2*NC_+cc] = ft[6*NC_+cc];  res[2*NC_+cc1] = ft[6*NC_+cc1];
+      res[4*NC_+cc] = ft[      cc];  res[4*NC_+cc1] = ft[      cc1];
+      res[6*NC_+cc] = ft[2*NC_+cc];  res[6*NC_+cc1] = ft[2*NC_+cc1];
     }
   }
 }
-
 
 const Field Dirac_Wilson::proj_p(const Field& f) const{
   Field w(fsize_);
@@ -716,19 +710,18 @@ const Field Dirac_Wilson::proj_p(const Field& f) const{
     double* res = w.getaddr(id);    
 
     for(int c=0; c<NC_; ++c){
-      short int col = 2*c;
-      short int col1 = 2*c+1;
+      short int cc = 2*c;
+      short int cc1 = 2*c+1;
 
-      double fup_r = 0.5*(ft[        col] +ft[  col+4*NC_]);
-      double fup_i = 0.5*(ft[       col1] +ft[ col1+4*NC_]);
-      double fdn_r = 0.5*(ft[  col+2*NC_] +ft[  col+6*NC_]);
-      double fdn_i = 0.5*(ft[ col1+2*NC_] +ft[ col1+6*NC_]);
+      double fup_r = 0.5*(ft[      cc ] +ft[4*NC_+cc ]);
+      double fup_i = 0.5*(ft[      cc1] +ft[4*NC_+cc1]);
+      double fdn_r = 0.5*(ft[2*NC_+cc ] +ft[6*NC_+cc ]);
+      double fdn_i = 0.5*(ft[2*NC_+cc1] +ft[6*NC_+cc1]);
 
-      res[      col] =  fup_r; res[      col1] =  fup_i;
-      res[2*NC_+col] =  fdn_r; res[2*NC_+col1] =  fdn_i;
-      res[4*NC_+col] =  fup_r; res[4*NC_+col1] =  fup_i;
-      res[6*NC_+col] =  fdn_r; res[6*NC_+col1] =  fdn_i;
-
+      res[      cc] =  fup_r;  res[      cc1] = fup_i;
+      res[2*NC_+cc] =  fdn_r;  res[2*NC_+cc1] = fdn_i;
+      res[4*NC_+cc] =  fup_r;  res[4*NC_+cc1] = fup_i;
+      res[6*NC_+cc] =  fdn_r;  res[6*NC_+cc1] = fdn_i;
     }
   }
   return w;
@@ -742,66 +735,63 @@ const Field Dirac_Wilson::proj_m(const Field& f) const{
     double* res = w.getaddr(id);    
 
     for (int c=0; c<NC_; ++c){
-      short int col = 2*c;
-      short int col1 = 2*c+1;
+      short int cc = 2*c;
+      short int cc1 = 2*c+1;
 
-      double fup_r = 0.5*(ft[        col] -ft[  col+4*NC_]);
-      double fup_i = 0.5*(ft[       col1] -ft[ col1+4*NC_]);
-      double fdn_r = 0.5*(ft[  col+2*NC_] -ft[  col+6*NC_]);
-      double fdn_i = 0.5*(ft[ col1+2*NC_] -ft[ col1+6*NC_]);
+      double fup_r = 0.5*(ft[      cc ] -ft[4*NC_+cc ]);
+      double fup_i = 0.5*(ft[      cc1] -ft[4*NC_+cc1]);
+      double fdn_r = 0.5*(ft[2*NC_+cc ] -ft[6*NC_+cc ]);
+      double fdn_i = 0.5*(ft[2*NC_+cc1] -ft[6*NC_+cc1]);
 
-      res[      col] =  fup_r; res[      col1] =  fup_i;
-      res[2*NC_+col] =  fdn_r; res[2*NC_+col1] =  fdn_i;
-      res[4*NC_+col] = -fup_r; res[4*NC_+col1] = -fup_i;
-      res[6*NC_+col] = -fdn_r; res[6*NC_+col1] = -fdn_i;
+      res[      cc] = fup_r;  res[      cc1] = fup_i;
+      res[2*NC_+cc] = fdn_r;  res[2*NC_+cc1] = fdn_i;
+      res[4*NC_+cc] =-fup_r;  res[4*NC_+cc1] =-fup_i;
+      res[6*NC_+cc] =-fdn_r;  res[6*NC_+cc1] =-fdn_i;
     }
   }
   return w;
 }
-void Dirac_Wilson::proj_p(Field& w, const Field& f, int s) const{
+
+void Dirac_Wilson::proj_p(Field& w,const Field& f,int s) const{
   for(int site=0; site<Nvol_; ++site){
-    int id4 = ff_.index(0,site);
-    int id = ff_.index(0,site,s);
-    const double* ft = const_cast<Field&>(f).getaddr(id);
-    double* res = w.getaddr(id4);
+    const double* ft = const_cast<Field&>(f).getaddr(ff_.index(0,site,s));
+    double* res = w.getaddr(ff_.index(0,site));
 
     for(int c=0; c<NC_; ++c){
-      short int col = 2*c;
-      short int col1 = 2*c+1;
+      short int cc = 2*c;
+      short int cc1 = 2*c+1;
 
-      double fup_r = 0.5*(ft[        col] +ft[  col+4*NC_]);
-      double fup_i = 0.5*(ft[       col1] +ft[ col1+4*NC_]);
-      double fdn_r = 0.5*(ft[  col+2*NC_] +ft[  col+6*NC_]);
-      double fdn_i = 0.5*(ft[ col1+2*NC_] +ft[ col1+6*NC_]);
+      double fup_r = 0.5*(ft[      cc ] +ft[4*NC_+cc ]);
+      double fup_i = 0.5*(ft[      cc1] +ft[4*NC_+cc1]);
+      double fdn_r = 0.5*(ft[2*NC_+cc ] +ft[6*NC_+cc ]);
+      double fdn_i = 0.5*(ft[2*NC_+cc1] +ft[6*NC_+cc1]);
 
-      res[      col] =  fup_r; res[      col1] =  fup_i;
-      res[2*NC_+col] =  fdn_r; res[2*NC_+col1] =  fdn_i;
-      res[4*NC_+col] =  fup_r; res[4*NC_+col1] =  fup_i;
-      res[6*NC_+col] =  fdn_r; res[6*NC_+col1] =  fdn_i;
+      res[      cc] = fup_r;  res[      cc1] = fup_i;
+      res[2*NC_+cc] = fdn_r;  res[2*NC_+cc1] = fdn_i;
+      res[4*NC_+cc] = fup_r;  res[4*NC_+cc1] = fup_i;
+      res[6*NC_+cc] = fdn_r;  res[6*NC_+cc1] = fdn_i;
     }
   }
 }
 
-void Dirac_Wilson::proj_m(Field& w, const Field& f, int s) const{
+void Dirac_Wilson::proj_m(Field& w,const Field& f,int s) const{
   for(int site=0; site<Nvol_; ++site){
-    int id4 = ff_.index(0,site);
-    int id = ff_.index(0,site,s);
-    const double* ft = const_cast<Field&>(f).getaddr(id);
-    double* res = w.getaddr(id4);
+    const double* ft = const_cast<Field&>(f).getaddr(ff_.index(0,site,s));
+    double* res = w.getaddr(ff_.index(0,site));
 
     for (int c=0; c<NC_; ++c){
-      short int col = 2*c;
-      short int col1 = 2*c+1;
+      short int cc = 2*c;
+      short int cc1 = 2*c+1;
 
-      double fup_r = 0.5*(ft[        col] -ft[  col+4*NC_]);
-      double fup_i = 0.5*(ft[       col1] -ft[ col1+4*NC_]);
-      double fdn_r = 0.5*(ft[  col+2*NC_] -ft[  col+6*NC_]);
-      double fdn_i = 0.5*(ft[ col1+2*NC_] -ft[ col1+6*NC_]);
+      double fup_r = 0.5*(ft[      cc ] -ft[4*NC_+cc ]);
+      double fup_i = 0.5*(ft[      cc1] -ft[4*NC_+cc1]);
+      double fdn_r = 0.5*(ft[2*NC_+cc ] -ft[6*NC_+cc ]);
+      double fdn_i = 0.5*(ft[2*NC_+cc1] -ft[6*NC_+cc1]);
 
-      res[      col] =  fup_r; res[      col1] =  fup_i;
-      res[2*NC_+col] =  fdn_r; res[2*NC_+col1] =  fdn_i;
-      res[4*NC_+col] = -fup_r; res[4*NC_+col1] = -fup_i;
-      res[6*NC_+col] = -fdn_r; res[6*NC_+col1] = -fdn_i;
+      res[      cc] = fup_r;  res[      cc1] = fup_i;
+      res[2*NC_+cc] = fdn_r;  res[2*NC_+cc1] = fdn_i;
+      res[4*NC_+cc] =-fup_r;  res[4*NC_+cc1] =-fup_i;
+      res[6*NC_+cc] =-fdn_r;  res[6*NC_+cc1] =-fdn_i;
     }
   }
 }

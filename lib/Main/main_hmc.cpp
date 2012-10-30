@@ -38,11 +38,10 @@
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
-
-
-
 #include "include/common_code.hpp"
 #include "include/commandline.hpp"
+#include "include/geometry.hpp"
+#include "Main/gaugeGlobal.hpp"
 //#include "HMC/hmcGeneral.hpp"
 
 using namespace XML;

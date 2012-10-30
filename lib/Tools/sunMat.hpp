@@ -260,13 +260,13 @@ inline SUNmatrix<3>& SUNmatrix<3>::operator*=(const SUNmatrix& rhs){
 }
 */
 template <size_t COLORS>
-inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(const double rhs){
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(double rhs){
   va_*= rhs;
   return *this;
 }
 
 template <size_t COLORS>
-inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator/=(const double rhs){
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator/=(double rhs){
   va_ /= rhs;
   return *this;
 }

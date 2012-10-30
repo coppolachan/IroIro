@@ -39,12 +39,15 @@ EXTRA_DIST = 	testResults.info	\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\
+		test_Wilson_Brillouin.xml	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_GeneralMeas.xml 	\
 		test_PolyakovLoop.xml	\
 		test_WilsonFlow.xml	\
 		test_MesonSpectrum_Nf2p1.xml 	\
+		test_BaryonSpectrum_Nf2p1.xml 	\
+		test_HadronSpectrum_Nf2p1.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
@@ -68,11 +71,14 @@ test_PROGRAMS = test_HMC 		\
 		test_Wilson 		\
 		test_Clover 		\
 		test_Wilson_EvenOdd 	\
+		test_Wilson_Brillouin 	\
 		test_DomainWall		\
 		test_QpropMom		\
 		test_ResMass 		\
 		test_MesonSpectrum	\
 		test_MesonSpectrum_Nf2p1\
+		test_BaryonSpectrum_Nf2p1\
+		test_HadronSpectrum_Nf2p1\
 		test_EigenModesSolver	\
 		test_Smearing		\
 		test_Overlap		\
@@ -114,6 +120,9 @@ test_Clover_SOURCES 	=	test_clover.cpp 		\
 test_Wilson_EvenOdd_SOURCES =	test_wilson_EvenOdd.cpp 	\
 		        	testerWilson_EvenOdd.cpp
 
+test_Wilson_Brillouin_SOURCES =	test_wilson_Brillouin.cpp 	\
+		        	testerWilsonBrillouin.cpp
+
 test_DomainWall_SOURCES = 	test_DomainWall.cpp 		\
 				testerDWF.cpp
 
@@ -125,6 +134,12 @@ test_MesonSpectrum_SOURCES= 	test_MesonSpectrum.cpp 		\
 
 test_MesonSpectrum_Nf2p1_SOURCES= test_MesonSpectrum_Nf2p1.cpp 	\
 				testerMesonSpectrumNf2p1.cpp
+
+test_BaryonSpectrum_Nf2p1_SOURCES= test_BaryonSpectrum_Nf2p1.cpp 	\
+				testerBaryonSpectrumNf2p1.cpp
+
+test_HadronSpectrum_Nf2p1_SOURCES= test_HadronSpectrum_Nf2p1.cpp 	\
+				testerHadronSpectrumNf2p1.cpp
 
 test_Solver_Perf_SOURCES = 	test_Solver_Perf.cpp		\
 				testerSolver_Perf.cpp
@@ -165,6 +180,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_wilson.hpp 		\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
+				test_wilson_Brillouin.hpp 	\
 				test_WilsonFlow.hpp     	\
 				test_PolyakovLoop.hpp     	\
 				test_DomainWall.hpp 		\
@@ -176,6 +192,8 @@ include_HEADERS 	=	tests.hpp			\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
 				test_MesonSpectrum_Nf2p1.hpp	\
+				test_BaryonSpectrum_Nf2p1.hpp	\
+				test_HadronSpectrum_Nf2p1.hpp	\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\

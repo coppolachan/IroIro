@@ -5,10 +5,11 @@
 #ifndef SMART_CONF_H_
 #define SMART_CONF_H_
 
-#include <complex>
+#include "Tools/sunMat.hpp"
 #include "stoutSmear.hpp"
 #include "include/observer.hpp"
 #include "include/common_fields.hpp"
+#include <complex>
 
 class Action;
 /*!

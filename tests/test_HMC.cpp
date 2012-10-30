@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"

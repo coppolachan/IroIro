@@ -38,7 +38,7 @@ void Dirac_Clover::isigma_diag(FermionField&,const FermionField&) const{
 
 void Dirac_Clover::mult_sw(FermionField& v_out, const FermionField& w) const {
   using namespace SUNmatUtils;
-  using namespace SUNvec_utils;
+  using namespace SUNvecUtils;
   using namespace FieldUtils;
 
   //Temporary variable declarations
@@ -289,7 +289,7 @@ const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
 const Field Dirac_Clover::md_force_block(const FermionField& eta,
 					 const FermionField& zeta)const{
   using namespace SUNmatUtils;
-  using namespace SUNvec_utils;
+  using namespace SUNvecUtils;
   using namespace FieldUtils;
   using namespace Mapping;
 

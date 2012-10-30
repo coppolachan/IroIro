@@ -4,7 +4,7 @@
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
 
-using namespace SUNvec_utils;
+using namespace SUNvecUtils;
 using namespace std;
 
 #ifdef IMPROVED_WILSON

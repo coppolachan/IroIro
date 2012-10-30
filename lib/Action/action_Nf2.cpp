@@ -25,7 +25,6 @@ void Action_Nf2::attach_smearing(SmartConf* SmearObj) {
   }
 }
 
-
 Field Action_Nf2::DdagD_inv(const Field& src){
   Field sol(fsize_);
   SolverOutput monitor = slv_->solve(sol,src);

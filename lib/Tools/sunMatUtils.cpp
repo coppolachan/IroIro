@@ -9,8 +9,8 @@
 using namespace std;
 
 namespace SUNmatUtils{
-  const SUNmat unity(){ return SUNmat().unity();}
-  const SUNmat zero(){  return SUNmat(); }
+  SUNmat unity(){ return SUNmat().unity();}
+  SUNmat zero(){  return SUNmat(); }
 
   double ReTr(const SUNmat& m){
     double tr = 0.0;
@@ -37,6 +37,11 @@ namespace SUNmatUtils{
   const SUNmat operator*(const SUNmat& m1,const SUNmat& m2){
     return SUNmat(m1)*= m2;  }
 
+  const SUNmat operator*(const SUNmat& m1,const complex<double>& cp){
+    SUNmat m = m1*cp.real();
+    return m.xI()*cp.imag();
+  }
+
   const SUNmat operator*(const SUNmat& m1,double x){
     return SUNmat(m1)*= x;  }
 
@@ -45,6 +50,7 @@ namespace SUNmatUtils{
 
   const SUNmat reunit(const SUNmat& m){ return SUNmat(m).reunit(); }
 
+  /*
   const valarray<double> trace_less(const SUNmat& m){
     
     double rtr = ReTr(m);
@@ -59,7 +65,9 @@ namespace SUNmatUtils{
     }
     return va;
   }
+  */
 
+  /*
   const SUNmat exponential(const SUNmat& X,int N,int n){
     //return N == n ? unity() : reunit(exponential(X,N,n+1)*X/n +unity());
    
@@ -73,38 +81,29 @@ namespace SUNmatUtils{
     return temp;
     
   }
+  */
+  const SUNmat exponential(const SUNmat& X,int N,int n){
+    return N == n ? unity() : exponential(X,N,n+1)*X/n +unity();
+  }
 
   const SUNmat anti_hermite_traceless(const SUNmat& m){
-    double trace = ImTr(m);
-    trace /= NC_;
-
-    SUNmat out = m;
-
-    for(int a=0; a<NC_; ++a){
-      out.setr(a,a, 0.0);
-      out.add(a,a, 0.0, -trace);
-       for(int b=0; b<a; ++b){
-	out.add(a,b, -out.r(b,a), out.i(b,a));
-	out.mult(a,b,0.5,0.5);
-	out.set(b,a, -out.r(a,b), out.i(a,b));
-      }
-    }
+    SUNmat out = unity().xI();
+    out *= -ImTr(m)/NC_;
+    out += anti_hermite(m);
     return out;
   }
 
   const SUNmat anti_hermite(const SUNmat& m){
-    std::valarray<double> va(m.getva());
+    SUNmat out;
     for(int a=0; a<NC_; ++a){
       for(int b=a; b<NC_; ++b){
-	double re = va[2*(NC_*a+b)  ] -va[2*(NC_*b+a)  ];
-	double im = va[2*(NC_*a+b)+1] +va[2*(NC_*b+a)+1];
-	va[2*(NC_*a+b)  ] =  0.5*re;
-	va[2*(NC_*a+b)+1] =  0.5*im;
-	va[2*(NC_*b+a)  ] = -0.5*re;
-	va[2*(NC_*b+a)+1] =  0.5*im;
+	double re = 0.5*(m.r(a,b) -m.r(b,a));
+	double im = 0.5*(m.i(a,b) +m.i(b,a));
+	out.set(a,b, re,im);
+	out.set(b,a,-re,im);
       }
     }
-    return SUNmat(va);
+    return out;
   }
 
   void SUNprint(const SUNmat& mat) {
@@ -116,16 +115,15 @@ namespace SUNmatUtils{
     }
   }
 
-  /*! @brief Calculates the outer product of two vectors
-    \f[(A^\dagger \circ B)_{ab} = A^*_a B_b \f]  
+  /*! @brief Transverse of the outer product of two vectors
+    \f[(A^\dagger \circ B)_{ab}^T = A^*_b B_a \f]  
   */
-  const SUNmat outer_prod(const SUNvec& v,const SUNvec& w){
+  const SUNmat outer_prod_t(const SUNvec& v,const SUNvec& w){
     SUNmat f;
     for(int a=0; a<NC_; ++a){
       for(int b=0; b<NC_; ++b){
-	f.set(a,b,
-	      v.r(b)*w.r(a) +v.i(b)*w.i(a),
-	      v.r(b)*w.i(a) -v.i(b)*w.r(a));
+	f.set(a,b,v.r(b)*w.r(a) +v.i(b)*w.i(a),
+	          v.r(b)*w.i(a) -v.i(b)*w.r(a));
       }
     }
     return f;

@@ -23,8 +23,8 @@ public:
   std::size_t size() const {return field.size();}
   void resize(std::size_t size, double val=0.0){field.resize(size,val);}
 
-  double operator[](const size_t i) const { return field[i]; }
-  const double& operator[](const size_t i) { return field[i]; }
+  double operator[](size_t i) const { return field[i]; }
+  const double& operator[](size_t i) { return field[i]; }
 
   std::valarray<double> operator[](const std::slice& sl) const { 
     return field[sl];}
@@ -42,10 +42,9 @@ public:
   const std::valarray<double>& getva()const{ return field;}
   
   //direct address access
-  double* getaddr(const size_t i){return &field[i];} 
+  double* getaddr(size_t i){return &field[i];} 
   
-
-  void set(const std::size_t i, double val){field[i]= val;}
+  void set(std::size_t i, double val){field[i]= val;}
   void set(const std::slice& sl, const std::valarray<double>& va){ 
     field[sl]= va;}
   void set(const std::gslice& sl, const std::valarray<double>& va){ 
@@ -54,7 +53,7 @@ public:
 	   const std::valarray<double>& va){ 
     field[idx]= va;
   }
-  void add(const std::size_t i, double val){ field[i]+= val;}
+  void add(std::size_t i, double val){ field[i]+= val;}
   void add(const std::slice& sl, const std::valarray<double>& va){
     field[sl]+= va;}
   void add(const std::gslice& sl, const std::valarray<double>& va){ 

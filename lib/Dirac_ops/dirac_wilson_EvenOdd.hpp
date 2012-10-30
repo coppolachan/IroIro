@@ -1,6 +1,6 @@
 //---------------------------------------------------------
 /*
-  @file dirac_wilson_EvenOdd.h
+  @file dirac_wilson_EvenOdd.hpp
   @brief Definition of Even Odd wilson operator
 */
 //---------------------------------------------------------
@@ -22,12 +22,11 @@ private:
   /*!< @brief simple copy is prohibited */
 public:
   Dirac_Wilson_EvenOdd(double mass,const Field* u)
- :Deo_(mass,u,Dw::EOtag()),Doe_(mass,u,Dw::OEtag()){}
+    :Deo_(mass,u,Dop::EOtag()),Doe_(mass,u,Dop::OEtag()){}
 
   Dirac_Wilson_EvenOdd(const XML::node& node,const Field* u)
-    :Deo_(Dw::read_mass(node),u,Dw::EOtag()),
-     Doe_(Dw::read_mass(node),u,Dw::OEtag()){
-  }
+    :Deo_(Dop::read_mass(node),u,Dop::EOtag()),
+     Doe_(Dop::read_mass(node),u,Dop::OEtag()){}
   
   size_t fsize() const{return Deo_.fsize();}
   size_t gsize() const{return Deo_.gsize();}

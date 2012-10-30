@@ -5,6 +5,7 @@
 #define TEST_MESONSPECTRUM_INCLUDED
 
 #include "include/common_code.hpp"
+class RandNum;
 
 class Test_MesonSpectrum {
 private:

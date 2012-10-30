@@ -1,11 +1,11 @@
 /*!
  * @file gammaMatrices.hpp
- *
  * @brief Declares gamma matrices classes 
- *
  */
 #ifndef GAMMA_MATR_HPP_
 #define GAMMA_MATR_HPP_
+#include "include/macros.hpp"
+#include <vector>
 
 namespace GammaMatrices {
   //Chiral representation
@@ -13,90 +13,37 @@ namespace GammaMatrices {
   //maybe decided at compile time
 
   struct GammaResult{
-    int spinor_index;
-    double complex_factor[2];
+    int spn;
+    double facr,faci;
   };
   
   class Gamma {
   protected:
-    int indexes[4];
-    double factors[8];
+    std::vector<int> idx_;
+    std::vector<double> fac_;
   public:
-    GammaResult operator() (int spinor_in) const;
+    Gamma():fac_(2*NDIM_,0.0){}
+    GammaResult operator() (int sp) const;
   };
 
-  class Unit: public Gamma{
-  public:
-    Unit();
-    ~Unit(){};
-  };
+  struct Unit: public Gamma{Unit();};
+  struct Gamma1: public Gamma{Gamma1();};
+  struct Gamma2: public Gamma{Gamma2();};
+  struct Gamma3: public Gamma{Gamma3();};
+  struct Gamma4: public Gamma{Gamma4();};
+  struct Gamma5: public Gamma{Gamma5();};
 
-  class Gamma1: public Gamma{
-  public:
-    Gamma1();
-    ~Gamma1(){};
-  };
+  struct Gamma1_5: public Gamma {Gamma1_5();};
+  struct Gamma2_5: public Gamma {Gamma2_5();};
+  struct Gamma3_5: public Gamma {Gamma3_5();};
+  struct Gamma4_5: public Gamma {Gamma4_5();};
 
-  class Gamma2: public Gamma{
-  public:
-    Gamma2();
-    ~Gamma2(){};
-  };
+  struct CConj:   public Gamma {CConj();};     //C= Gamma2*Gamma4
+  struct CGamma1: public Gamma {CGamma1();};   //C*Gamma1
+  struct CGamma2: public Gamma {CGamma2();};   //C*Gamma2
+  struct CGamma3: public Gamma {CGamma3();};   //C*Gamma3
 
-  class Gamma3: public Gamma{
-  public:
-    Gamma3();
-    ~Gamma3(){};
-  };
-
-  class Gamma4: public Gamma{
-  public:
-    Gamma4();
-    ~Gamma4(){};
-  };
-
-  class Gamma5: public Gamma{
-  public:
-    Gamma5();
-    ~Gamma5(){};
-  };
-
-  class Gamma1_5: public Gamma {
-  public:
-    Gamma1_5();
-    ~Gamma1_5(){};
-
-  };
-
-  class Gamma2_5: public Gamma {
-  public:
-    Gamma2_5();
-    ~Gamma2_5(){};
-
-  };
-
-  class Gamma3_5: public Gamma {
-  public:
-    Gamma3_5();
-    ~Gamma3_5(){};
-
-  };
-
-  class Gamma4_5: public Gamma {
-  public:
-    Gamma4_5();
-    ~Gamma4_5(){};
-
-  };
-
-  class ChargeConj: public Gamma {
-    //Gamma4*Gamma2*Gamma5
-  public:
-    ChargeConj();
-    ~ChargeConj(){};
-
-  };
-
+  struct CGamma5: public Gamma {CGamma5();};   //C*Gamma5
 }
 
 #endif // GAMMA_MATR_HPP_
