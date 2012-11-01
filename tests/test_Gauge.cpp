@@ -35,12 +35,12 @@ int Test_Gauge::map_test(){
 
   GaugeField test_u;
   test_u = d_conf;               //create from existing data
-  GaugeField1D test_u_1D(200);   //passing the lattice dimension
+  //GaugeField1D test_u_1D(test_u.data.size()/4);   //passing the lattice dimension
   FermionField test_v;
 
   CCIO::cout<<"\n Testing common field templates\n Local sizes:\n";
   CCIO::cout<<" GaugeFieldType size   : "<< test_u.data.size()   <<"\n";
-  CCIO::cout<<" GaugeField1DType size : "<< test_u_1D.data.size()<<"\n";
+  //CCIO::cout<<" GaugeField1DType size : "<< test_u_1D.data.size()<<"\n";
   CCIO::cout<<" FermionField size     : "<< test_v.data.size()   <<"\n";
 
   CCIO::cout<<" plaq (original) = "

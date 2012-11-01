@@ -15,6 +15,7 @@ namespace FieldUtils{
   const GaugeField1D TracelessAntihermite(const GaugeField1D&);
   const GaugeField ReUnit(const GaugeField&);
   const GaugeField1D ReUnit(const GaugeField1D&);
+  const GaugeField Exponentiate(const GaugeField&, const double, const int);
 
   const GaugeField1D field_oprod(const FermionField&,const FermionField&);
 

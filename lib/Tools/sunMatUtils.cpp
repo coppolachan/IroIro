@@ -69,7 +69,17 @@ namespace SUNmatUtils{
 
   /*
   const SUNmat exponential(const SUNmat& X,int N,int n){
-    return N == n ? unity() : reunit(exponential(X,N,n+1)*X/n +unity());
+    //return N == n ? unity() : reunit(exponential(X,N,n+1)*X/n +unity());
+   
+    //faster
+    SUNmat un = unity();
+    SUNmat temp = un;
+    for (int i = N; i>=n;--i){
+      temp = un+temp*(X/i);
+      temp.reunit();
+    } 
+    return temp;
+    
   }
   */
   const SUNmat exponential(const SUNmat& X,int N,int n){

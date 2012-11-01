@@ -25,17 +25,17 @@ typedef struct GaugeConf{
 #define ENABLE_THREADING
 
 double omp_norm(Spinor* pointer, int is, int ns, int nid, int tid){
-	double tSum;
+  double tSum;
 
-	BGWilsonLA_Norm(&tSum,pointer+is,ns);
+  BGWilsonLA_Norm(&tSum,pointer+is,ns);
 
-	tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-	if(tid == 0){
-		tSum = Communicator::instance()->reduce_sum(tSum);
-	}
-	tSum = BGQThread_ScatterDouble(tSum,0,tid,nid);
+  tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+  if(tid == 0){
+    tSum = Communicator::instance()->reduce_sum(tSum);
+  }
+  tSum = BGQThread_ScatterDouble(tSum,0,tid,nid);
 
-	return sqrt(tSum);
+  return sqrt(tSum);
 }
 
 
@@ -230,20 +230,20 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
 #ifdef ENABLE_THREADING
 void Dirac_optimalDomainWall::mult_hop_omp(Field& w5, const void* f5) const
 {
-	int tid, nid;
-	nid = omp_get_num_threads();
-	tid = omp_get_thread_num();
+  int tid, nid;
+  nid = omp_get_num_threads();
+  tid = omp_get_thread_num();
 
-	BGQThread_Barrier(0, nid);
-	if(tid == 0){
-	  BGWilson_DW_Init(N5_,mq_, M0_, (double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
-	}
-	BGQThread_Barrier(0, nid);
+  BGQThread_Barrier(0, nid);
+  if(tid == 0){
+    BGWilson_DW_Init(N5_,mq_, M0_, (double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
+  }
+  BGQThread_Barrier(0, nid);
 
-	BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-							Dw_.getKappa(),BGWILSON_DIRAC);
+  BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
+		       Dw_.getKappa(),BGWILSON_DIRAC);
 
-	/*
+  /*
   //Allocate fields
   int tid, nid;
   nid = omp_get_num_threads();
@@ -258,14 +258,14 @@ void Dirac_optimalDomainWall::mult_hop_omp(Field& w5, const void* f5) const
     
   //Free fields
   BGQThread_Barrier(0, nid);
-//  if (tid==0){
-//    free(lpf_ptr);
-//    free(lmf_ptr);
-//  }
-	BGQThread_Free(lpf_ptr,tid);
-	BGQThread_Free(lmf_ptr,tid);
+  //  if (tid==0){
+  //    free(lpf_ptr);
+  //    free(lmf_ptr);
+  //  }
+  BGQThread_Free(lpf_ptr,tid);
+  BGQThread_Free(lmf_ptr,tid);
   BGQThread_Barrier(0, nid);
-	*/
+  */
 }
 
 
@@ -277,10 +277,10 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
 						     int tid) const
 {
 
-	/*
-	BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-							Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
-	*/
+  /*
+    BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
+    Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+  */
 
 
   register int Nvol = CommonPrms::instance()->Nvol()/2;
@@ -492,9 +492,9 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   
   BGQThread_Barrier(0, nid);
   
-//  if (tid==0)
-//    free(temp_ptr_base);
-	BGQThread_Free(temp_ptr_base,tid);
+  //  if (tid==0)
+  //    free(temp_ptr_base);
+  BGQThread_Free(temp_ptr_base,tid);
     
   
   BGQThread_Barrier(0, nid);
@@ -717,20 +717,20 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
 #ifdef ENABLE_THREADING
 void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const void* f5) const
 {
-	int tid, nid;
-	nid = omp_get_num_threads();
-	tid = omp_get_thread_num();
+  int tid, nid;
+  nid = omp_get_num_threads();
+  tid = omp_get_thread_num();
 
-	BGQThread_Barrier(0, nid);
-	if(tid == 0){
-	  BGWilson_DW_Init(N5_,mq_, M0_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
-	}
-	BGQThread_Barrier(0, nid);
+  BGQThread_Barrier(0, nid);
+  if(tid == 0){
+    BGWilson_DW_Init(N5_,mq_, M0_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
+  }
+  BGQThread_Barrier(0, nid);
+  
+  BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
+			   Dw_.getKappa(),BGWILSON_DIRAC);
 
-	BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-								Dw_.getKappa(),BGWILSON_DIRAC);
-
-	/*
+  /*
   //Allocate fields
   int tid, nid;
   nid = omp_get_num_threads();
@@ -745,14 +745,14 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const void* f5) const
 
   //Free fields
   BGQThread_Barrier(0, nid);
-//  if (tid==0){
-//    free(lpf_ptr);
-//    free(lmf_ptr);
-//  }
-	BGQThread_Free(lpf_ptr,tid);
-	BGQThread_Free(lmf_ptr,tid);
+  //  if (tid==0){
+  //    free(lpf_ptr);
+  //    free(lmf_ptr);
+  //  }
+  BGQThread_Free(lpf_ptr,tid);
+  BGQThread_Free(lmf_ptr,tid);
   BGQThread_Barrier(0, nid);
-	*/
+  */
 }
 
 
@@ -765,10 +765,10 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp_allocated(Field& w5,
 							 int tid) const
 {
 
-	/*
-	BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-								Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
-	*/
+  /*
+    BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
+    Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
+  */
 
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
@@ -780,8 +780,8 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp_allocated(Field& w5,
 
   is  = (Nvol * tid / nid);
   is5 = (Nvol * N5_* tid / nid);
-//  ns  =  Nvol/nid;
-//  ns5 = (Nvol * N5_)/nid;
+  //  ns  =  Nvol/nid;
+  //  ns5 = (Nvol * N5_)/nid;
   ie  = (Nvol * (tid+1) / nid);
   ie5 = (Nvol * N5_* (tid+1) / nid);
   ns = ie - is;
@@ -998,14 +998,14 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp_allocated(Field& w5,
     f5_ptr += Nvol;
   } 
    
- BGQThread_Barrier(0,nid);  
- //#pragma omp single
-// if(tid==0)
-//  {  
-    //free(lpf_ptr);
-    //free(lmf_ptr);
-//  free(temp_ptr_base);
-//  }
+  BGQThread_Barrier(0,nid);  
+  //#pragma omp single
+  // if(tid==0)
+  //  {  
+  //free(lpf_ptr);
+  //free(lmf_ptr);
+  //  free(temp_ptr_base);
+  //  }
   BGQThread_Free(temp_ptr_base,tid);
   BGQThread_Barrier(0,nid);
 
@@ -1025,9 +1025,9 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
 					  double GoalPrecision) const
 {
   
-  #if VERBOSITY>=SOLV_ITER_VERB_LEVEL
+#if VERBOSITY>=SOLV_ITER_VERB_LEVEL
   CCIO::header("CG_BGQ solver start");
-  #endif
+#endif
 
 #ifdef ENABLE_THREADING
 
@@ -1046,7 +1046,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
   Field p(fsize_);
   int v_size = Nvol*N5_; // << assumes 24 elements
 
-//  double threadNorm[64];
+  //  double threadNorm[64];
   double pap, rrp, cr, rr, snorm;
 
   TIMING_START;
@@ -1063,66 +1063,72 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
   Spinor* temp2_ptr = (Spinor*)temp2.getaddr(0);
   Spinor* p_ptr = (Spinor*)p.getaddr(0);
 
-//  void* aux1_ptr  = malloc(sizeof(double)*f4size_);
-//  void* aux2_ptr  = malloc(sizeof(double)*f4size_);
-  //void* aux3_ptr  = malloc(sizeof(double)*fsize_);
+  //  void* aux1_ptr  = malloc(sizeof(double)*f4size_);
+  //  void* aux2_ptr  = malloc(sizeof(double)*f4size_);
+  //  void* aux3_ptr  = malloc(sizeof(double)*fsize_);
 
   BGWilson_DW_Init(N5_,mq_,M0_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
 
 #pragma omp parallel 
-	{
-		int tid, nid;
-		int is, ie, ns,s5;
-		double pap, rrp, cr, rr, snorm;
-		double tSum,t;
+  {
+    int tid, nid;
+    int is, ie, ns,s5;
+    double pap, rrp, cr, rr, snorm;
+    double tSum,t, temp;
+    
+    nid = omp_get_num_threads();
+    tid = omp_get_thread_num();
+    
+    is = tid*Nvol / nid;
+    ie = (tid + 1)*Nvol / nid;
+    ns = ie - is;
 
-		nid = omp_get_num_threads();
-		tid = omp_get_thread_num();
+    BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
+			 Dw_.getKappa(),BGWILSON_DIRAC);
+    BGWilson_DW_Mult_hop_dag(temp2_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
+			     Dw_.getKappa(),BGWILSON_DIRAC);
 
-		is = tid*Nvol / nid;
-		ie = (tid + 1)*Nvol / nid;
-		ns = ie - is;
+    /*
+      mult_hop_omp_allocated(temp,x_ptr, aux1_ptr, aux2_ptr, nid, tid);
+      mult_hop_dag_omp_allocated(temp2,temp_ptr, aux1_ptr, aux2_ptr,nid, tid);
+    */
 
-		BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
-								Dw_.getKappa(),BGWILSON_DIRAC);
-		BGWilson_DW_Mult_hop_dag(temp2_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-								Dw_.getKappa(),BGWILSON_DIRAC);
+    for(s5=0;s5<N5_;s5++)
+      BGWilsonLA_Sub(r_ptr+s5*Nvol+is, temp2_ptr+s5*Nvol+is, ns);
 
-		/*
-		mult_hop_omp_allocated(temp,x_ptr, aux1_ptr, aux2_ptr, nid, tid);
-		mult_hop_dag_omp_allocated(temp2,temp_ptr, aux1_ptr, aux2_ptr,nid, tid);
-		*/
+    for(s5=0;s5<N5_;s5++)
+      BGWilsonLA_Equate(p_ptr+s5*Nvol+is, r_ptr+s5*Nvol+is, ns);
 
-		for(s5=0;s5<N5_;s5++)
-			BGWilsonLA_Sub(r_ptr+s5*Nvol+is, temp2_ptr+s5*Nvol+is, ns);
+    tSum = 0.0;
+    for(s5=0;s5<N5_;s5++){
+      BGWilsonLA_Norm(&t,r_ptr+s5*Nvol+is,ns);
+      tSum += t;
+    }
 
-		for(s5=0;s5<N5_;s5++)
-			BGWilsonLA_Equate(p_ptr+s5*Nvol+is, r_ptr+s5*Nvol+is, ns);
+    tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+    if(tid == 0){
+      tSum = Communicator::instance()->reduce_sum(tSum);
+    }
+    rr = BGQThread_ScatterDouble(tSum,0,tid,nid);
 
-		tSum = 0.0;
-		for(s5=0;s5<N5_;s5++){
-			BGWilsonLA_Norm(&t,r_ptr+s5*Nvol+is,ns);
-			tSum += t;
-		}
+    tSum = 0.0;
+    for(s5=0;s5<N5_;s5++){
+      BGWilsonLA_Norm(&t,b_ptr+s5*Nvol+is,ns);
+      tSum += t;
+    }
+    
+    //CCIO::cout<<" tsum before = "<< tSum << std::endl;
+    tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+    if(tid == 0){
+      tSum = Communicator::instance()->reduce_sum(tSum);
+    }
+    //CCIO::cout<<" tsum after = "<< tSum << std::endl;
+    snorm = BGQThread_ScatterDouble(tSum,0,tid,nid);
+    snorm = sqrt(snorm);
+    //CCIO::cout<<" square root = "<< snorm << std::endl;
+    snorm = 1.0/snorm;
+    //CCIO::cout<<" inverse = "<< snorm << std::endl;
 
-		tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-		if(tid == 0){
-			tSum = Communicator::instance()->reduce_sum(tSum);
-		}
-		rr = BGQThread_ScatterDouble(tSum,0,tid,nid);
-
-		tSum = 0.0;
-		for(s5=0;s5<N5_;s5++){
-			BGWilsonLA_Norm(&t,b_ptr+s5*Nvol+is,ns);
-			tSum += t;
-		}
-		tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-		if(tid == 0){
-			tSum = Communicator::instance()->reduce_sum(tSum);
-		}
-		snorm = BGQThread_ScatterDouble(tSum,0,tid,nid);
-		snorm = sqrt(snorm);
-		snorm = 1.0/snorm;
 
 #if VERBOSITY>1
 #pragma omp single
@@ -1132,120 +1138,121 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
     }
 #endif
 
-		for(int it = 0; it < MaxIter; ++it){
-			double tPAP;
-			BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),p_ptr,
-								Dw_.getKappa(),BGWILSON_DIRAC);
-			BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-								Dw_.getKappa(),BGWILSON_DIRAC);
+    for(int it = 0; it < MaxIter; ++it){
+      double tPAP;
+      BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),p_ptr,
+			   Dw_.getKappa(),BGWILSON_DIRAC);
+      BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
+			       Dw_.getKappa(),BGWILSON_DIRAC);
 
-			/*
-			//      mult_hop_omp(temp,p_ptr);
-			mult_hop_omp_allocated(temp,p_ptr, aux1_ptr, aux2_ptr, nid, tid);
-			//mult_hop_dag_omp(s,temp_ptr);
-			mult_hop_dag_omp_allocated(s,temp_ptr, aux1_ptr, aux2_ptr,nid, tid);
-			*/
+      /*
+      //      mult_hop_omp(temp,p_ptr);
+      mult_hop_omp_allocated(temp,p_ptr, aux1_ptr, aux2_ptr, nid, tid);
+      //mult_hop_dag_omp(s,temp_ptr);
+      mult_hop_dag_omp_allocated(s,temp_ptr, aux1_ptr, aux2_ptr,nid, tid);
+      */
 
-			///////////////////////////////////////////////////
-			tSum = 0.0;
-			for(s5=0;s5<N5_;s5++){
-				BGWilsonLA_DotProd(&t,p_ptr+s5*Nvol+is,s_ptr+s5*Nvol+is,ns);
-				tSum += t;
-			}
-			tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-			if(tid == 0){
-				tSum = Communicator::instance()->reduce_sum(tSum);
-			}
-			pap = BGQThread_ScatterDouble(tSum,0,tid,nid);
-			rrp = rr;
-			cr = rrp/pap;// (r,r)/(p,Ap)
+      ///////////////////////////////////////////////////
+      tSum = 0.0;
+      for(s5=0;s5<N5_;s5++){
+	BGWilsonLA_DotProd(&t,p_ptr+s5*Nvol+is,s_ptr+s5*Nvol+is,ns);
+	tSum += t;
+      }
+      tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+      if(tid == 0){
+	tSum = Communicator::instance()->reduce_sum(tSum);
+      }
+      pap = BGQThread_ScatterDouble(tSum,0,tid,nid);
+      rrp = rr;
+      cr = rrp/pap;// (r,r)/(p,Ap)
 
-			//  x += cr*p; // x = x + cr * p
-			for(s5=0;s5<N5_;s5++)
-				BGWilsonLA_MultAddScalar(x_ptr+s5*Nvol+is,p_ptr+s5*Nvol+is,cr,ns);
-			//  r -= cr*s; // r_k = r_k - cr * Ap
-			for(s5=0;s5<N5_;s5++)
-				BGWilsonLA_MultAddScalar(r_ptr+s5*Nvol+is,s_ptr+s5*Nvol+is,-cr,ns);
-			//  rr = r*r; // rr = (r_k,r_k)
-			tSum = 0.0;
-			for(s5=0;s5<N5_;s5++){
-				BGWilsonLA_Norm(&t,r_ptr+s5*Nvol+is,ns);
-				tSum += t;
-			}
+      //  x += cr*p; // x = x + cr * p
+      for(s5=0;s5<N5_;s5++)
+	BGWilsonLA_MultAddScalar(x_ptr+s5*Nvol+is,p_ptr+s5*Nvol+is,cr,ns);
+      //  r -= cr*s; // r_k = r_k - cr * Ap
+      for(s5=0;s5<N5_;s5++)
+	BGWilsonLA_MultAddScalar(r_ptr+s5*Nvol+is,s_ptr+s5*Nvol+is,-cr,ns);
+      //  rr = r*r; // rr = (r_k,r_k)
+      tSum = 0.0;
+      for(s5=0;s5<N5_;s5++){
+	BGWilsonLA_Norm(&t,r_ptr+s5*Nvol+is,ns);
+	tSum += t;
+      }
 
-			tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-			if(tid == 0){
-				tSum = Communicator::instance()->reduce_sum(tSum);
-			}
-			rr = BGQThread_ScatterDouble(tSum,0,tid,nid);
+      tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+      if(tid == 0){
+	tSum = Communicator::instance()->reduce_sum(tSum);
+      }
+      rr = BGQThread_ScatterDouble(tSum,0,tid,nid);
 
-			//  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
-			//  p += r; // p = p + p*(r_k,r_k)/(r,r)
-			for(s5=0;s5<N5_;s5++)
-				BGWilsonLA_MultScalar_Add(p_ptr+s5*Nvol+is,r_ptr+s5*Nvol+is,rr/rrp,ns);
+      //  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
+      //  p += r; // p = p + p*(r_k,r_k)/(r,r)
+      for(s5=0;s5<N5_;s5++)
+	BGWilsonLA_MultScalar_Add(p_ptr+s5*Nvol+is,r_ptr+s5*Nvol+is,rr/rrp,ns);
 
-			//BGQThread_Barrier(0,nid);
+      //BGQThread_Barrier(0,nid);
 
 #if VERBOSITY>1
-			if (tid==0) {
-				CCIO::cout<< std::setw(5)<< "["<<it<<"] "
-				<< std::setw(20) << rr*snorm<<"\n";
-			} 
+      if (tid==0) {
+	CCIO::cout<< std::setw(5)<< "["<<it<<"] "
+		  << std::setw(20) << rr*snorm<<"\n";
+      } 
 #endif
-			BGQThread_Barrier(0,nid);
-			if(rr*snorm < GoalPrecision){
-				if (tid==0) Out.Iterations = it;
-				break;
-			}
-		}//end of iterations loop      
+      BGQThread_Barrier(0,nid);
+      if(rr*snorm < GoalPrecision){
+	if (tid==0) Out.Iterations = it;
+	break;
+      }
+    }//end of iterations loop      
 
 #pragma omp single
-		{
-			if(Out.Iterations == -1) {
-				CCIO::cout<<" Not converged. Current residual: "<< rr*snorm << "\n";
-				abort();
-			}
-		}
-		BGQThread_Barrier(0,nid);//after loop
-		//p = opr_->mult(x);
+    {
+      if(Out.Iterations == -1) {
+	CCIO::cout<<" Not converged. Current residual: "<< rr*snorm << "\n";
+	abort();
+      }
+    }
+    BGQThread_Barrier(0,nid);//after loop
+    //p = opr_->mult(x);
 
-		BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
-							Dw_.getKappa(),BGWILSON_DIRAC);
-		BGWilson_DW_Mult_hop_dag(p_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-							Dw_.getKappa(),BGWILSON_DIRAC);
-		/*
-		mult_hop_omp_allocated(temp,x_ptr, aux1_ptr, aux2_ptr, nid, tid);
-		mult_hop_dag_omp_allocated(p,temp_ptr, aux1_ptr, aux2_ptr, nid, tid);
-		*/
+    BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
+			 Dw_.getKappa(),BGWILSON_DIRAC);
+    BGWilson_DW_Mult_hop_dag(p_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
+			     Dw_.getKappa(),BGWILSON_DIRAC);
+    /*
+      mult_hop_omp_allocated(temp,x_ptr, aux1_ptr, aux2_ptr, nid, tid);
+      mult_hop_dag_omp_allocated(p,temp_ptr, aux1_ptr, aux2_ptr, nid, tid);
+    */
 
-		//  p -= b;
-		for(s5=0;s5<N5_;s5++)
-			BGWilsonLA_Sub(p_ptr+s5*Nvol+is, b_ptr+s5*Nvol+is, ns);
+    //  p -= b;
+    for(s5=0;s5<N5_;s5++)
+      BGWilsonLA_Sub(p_ptr+s5*Nvol+is, b_ptr+s5*Nvol+is, ns);
 
-		//Out.diff = p.norm();  
-		tSum = 0.0;
-		for(s5=0;s5<N5_;s5++){
-			BGWilsonLA_Norm(&t,p_ptr+s5*Nvol+is,ns);
-			tSum += t;
-		}
+    //Out.diff = p.norm();  
+    tSum = 0.0;
+    for(s5=0;s5<N5_;s5++){
+      BGWilsonLA_Norm(&t,p_ptr+s5*Nvol+is,ns);
+      tSum += t;
+    }
 
-		tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-		if(tid == 0){
-			tSum = Communicator::instance()->reduce_sum(tSum);
-			Out.diff = sqrt(tSum);
-		}
-		rr = BGQThread_ScatterDouble(tSum,0,tid,nid);
+    tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+    if(tid == 0){
+      tSum = Communicator::instance()->reduce_sum(tSum);
+      Out.diff = sqrt(tSum);
+    }
+    rr = BGQThread_ScatterDouble(tSum,0,tid,nid);
 
-		//w5 = x;  
-		for(s5=0;s5<N5_;s5++)
-			BGWilsonLA_Equate(w5_ptr+s5*Nvol+is, x_ptr+s5*Nvol+is, ns);
-	}
+    //w5 = x;  
+    for(s5=0;s5<N5_;s5++)
+      BGWilsonLA_Equate(w5_ptr+s5*Nvol+is, x_ptr+s5*Nvol+is, ns);
+  }
+
 
   TIMING_END(Out.timing);
   CCIO::cout << "Kernel section timing: "<< kernel_timing << "\n";
 
-//  free(aux1_ptr);
-//  free(aux2_ptr);
+  //  free(aux1_ptr);
+  //  free(aux2_ptr);
   //free(aux3_ptr);
 #endif
 

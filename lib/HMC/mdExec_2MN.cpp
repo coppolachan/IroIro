@@ -38,6 +38,15 @@ void MDexec_2MN::update_U(double ep){
   int Ndim = CommonPrms::instance()->Ndim();
   int Nvol = CommonPrms::instance()->Nvol();
 
+#ifdef IBM_BGQ_WILSON
+  GaugeField eiP = Exponentiate(P_, ep, Params.Nexp);
+  GaugeField aux;
+  double* eiP_ptr  = eiP.data.getaddr(0);
+  double* U_ptr  = U_->data.getaddr(0);
+  double* aux_ptr  = aux.data.getaddr(0);
+  BGWilsonSU3_MatMult_NN(aux_ptr, eiP_ptr, U_ptr, Nvol*Ndim);
+  *U_ = ReUnit(aux);
+#else    
   for(int m=0; m<Ndim; ++m){
     for(int site=0; site<Nvol; ++site){
       SUNmat au = exponential(mat(P_,site,m)*ep,Params.Nexp);
@@ -45,6 +54,9 @@ void MDexec_2MN::update_U(double ep){
       U_->data.set(U_->format.islice(site,m),au.reunit().getva());
     }
   }
+#endif  
+
+
   notify_observers();
 }
 
@@ -106,9 +118,9 @@ integrator_step(int cl,std::vector<int>& clock){
   
   for(int l=0; l<=cl; ++l) eps/= 2*Nrel_[l];
   
-  int fin = 1;
-  for(int l=0; l<=cl; ++l) fin*= Nrel_[l];
-  fin = (cl+1)*3*Params.MDsteps*fin -1;
+  int fin = Nrel_[0];
+  for(int l=1; l<=cl; ++l) fin*= 2*Nrel_[l];
+  fin = 3*Params.MDsteps*fin -1;
   
 
   for(int e=0; e<Nrel_[cl]; ++e){

@@ -16,6 +16,7 @@
 @SET_MAKE@
 
 
+
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -53,6 +54,7 @@ target_triplet = @target@
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_8 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_9 = -lbgqwilson3x4smp -lbgqthread
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_10 = -lbgqwilson3x4
+bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -86,7 +88,8 @@ am__nobase_list = $(am__nobase_strip_setup); \
 am__base_list = \
   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
-am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"
+am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" \
+	"$(DESTDIR)$(includedir)"
 LIBRARIES = $(lib_LIBRARIES)
 AR = ar
 AM_V_AR = $(am__v_AR_$(V))
@@ -209,6 +212,13 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT) \
 	alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
+PROGRAMS = $(bin_PROGRAMS)
+am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
+main_hmc_OBJECTS = $(am_main_hmc_OBJECTS)
+am__DEPENDENCIES_1 =
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+main_hmc_DEPENDENCIES = libcommcode.a $(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -230,8 +240,8 @@ am__v_CXXLD_0 = @echo "  CXXLD " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(libcommcode_a_SOURCES)
-DIST_SOURCES = $(am__libcommcode_a_SOURCES_DIST)
+SOURCES = $(libcommcode_a_SOURCES) $(main_hmc_SOURCES)
+DIST_SOURCES = $(am__libcommcode_a_SOURCES_DIST) $(main_hmc_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -315,7 +325,6 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
-PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -488,6 +497,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	
 
+main_hmc_SOURCES = Main/main_hmc.cpp 				
+main_hmc_LDADD = libcommcode.a $(OPTLIB)
 include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
                         $(top_srcdir)/include/commandline.hpp           \
 			$(top_srcdir)/include/common_code.hpp		\
@@ -592,6 +603,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			HMC/mdExec_leapfrog.hpp			\
 			HMC/mdExec_2MN.hpp	                \
 			HMC/mdExec_leapfrog_eigen.hpp		\
+			HMC/mdExec_2MN.hpp	                \
 			HMC/mdExec_factory.hpp			\
 			HMC/mdExec_factory_abs.hpp		\
 			Solver/solver_Factory.hpp		\
@@ -696,6 +708,46 @@ libcommcode.a: $(libcommcode_a_OBJECTS) $(libcommcode_a_DEPENDENCIES)
 	$(AM_V_at)-rm -f libcommcode.a
 	$(AM_V_AR)$(libcommcode_a_AR) libcommcode.a $(libcommcode_a_OBJECTS) $(libcommcode_a_LIBADD)
 	$(AM_V_at)$(RANLIB) libcommcode.a
+install-binPROGRAMS: $(bin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
+	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
+	for p in $$list; do echo "$$p $$p"; done | \
+	sed 's/$(EXEEXT)$$//' | \
+	while read p p1; do if test -f $$p; \
+	  then echo "$$p"; echo "$$p"; else :; fi; \
+	done | \
+	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
+	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
+	sed 'N;N;N;s,\n, ,g' | \
+	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
+	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
+	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
+	    else { print "f", $$3 "/" $$4, $$1; } } \
+	  END { for (d in files) print "f", d, files[d] }' | \
+	while read type dir files; do \
+	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+	    test -z "$$files" || { \
+	      echo " $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+	      $(INSTALL_PROGRAM_ENV) $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+	    } \
+	; done
+
+uninstall-binPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
+	files=`for p in $$list; do echo "$$p"; done | \
+	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
+	      -e 's/$$/$(EXEEXT)/' `; \
+	test -n "$$list" || exit 0; \
+	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
+	cd "$(DESTDIR)$(bindir)" && rm -f $$files
+
+clean-binPROGRAMS:
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+main_hmc$(EXEEXT): $(main_hmc_OBJECTS) $(main_hmc_DEPENDENCIES) 
+	@rm -f main_hmc$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(main_hmc_OBJECTS) $(main_hmc_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -756,6 +808,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gfixFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jobUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hmc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_2MN.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_factory.Po@am__quote@
@@ -2232,6 +2285,22 @@ rationalapprox.obj: Tools/RationalApprox/rationalapprox.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/RationalApprox/rationalapprox.cpp' object='rationalapprox.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalapprox.obj `if test -f 'Tools/RationalApprox/rationalapprox.cpp'; then $(CYGPATH_W) 'Tools/RationalApprox/rationalapprox.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RationalApprox/rationalapprox.cpp'; fi`
+
+main_hmc.o: Main/main_hmc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hmc.o -MD -MP -MF $(DEPDIR)/main_hmc.Tpo -c -o main_hmc.o `test -f 'Main/main_hmc.cpp' || echo '$(srcdir)/'`Main/main_hmc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/main_hmc.Tpo $(DEPDIR)/main_hmc.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/main_hmc.cpp' object='main_hmc.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o main_hmc.o `test -f 'Main/main_hmc.cpp' || echo '$(srcdir)/'`Main/main_hmc.cpp
+
+main_hmc.obj: Main/main_hmc.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hmc.obj -MD -MP -MF $(DEPDIR)/main_hmc.Tpo -c -o main_hmc.obj `if test -f 'Main/main_hmc.cpp'; then $(CYGPATH_W) 'Main/main_hmc.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/main_hmc.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/main_hmc.Tpo $(DEPDIR)/main_hmc.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/main_hmc.cpp' object='main_hmc.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o main_hmc.obj `if test -f 'Main/main_hmc.cpp'; then $(CYGPATH_W) 'Main/main_hmc.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/main_hmc.cpp'; fi`
 install-includeHEADERS: $(include_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"
@@ -2448,10 +2517,10 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(LIBRARIES) $(HEADERS)
+all-am: Makefile $(LIBRARIES) $(PROGRAMS) $(HEADERS)
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(includedir)"; do \
+	for dir in "$(DESTDIR)$(libdir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-recursive
@@ -2481,7 +2550,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-generic clean-libLIBRARIES mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-libLIBRARIES \
+	mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -rf ./$(DEPDIR)
@@ -2507,7 +2577,7 @@ install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-libLIBRARIES
+install-exec-am: install-binPROGRAMS install-libLIBRARIES
 
 install-html: install-html-recursive
 
@@ -2546,25 +2616,27 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-includeHEADERS uninstall-libLIBRARIES
+uninstall-am: uninstall-binPROGRAMS uninstall-includeHEADERS \
+	uninstall-libLIBRARIES
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) ctags-recursive \
 	install-am install-strip tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am check check-am clean clean-generic \
-	clean-libLIBRARIES ctags ctags-recursive distclean \
-	distclean-compile distclean-generic distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-includeHEADERS install-info install-info-am \
-	install-libLIBRARIES install-man install-pdf install-pdf-am \
-	install-ps install-ps-am install-strip installcheck \
-	installcheck-am installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am uninstall-includeHEADERS \
+	all all-am check check-am clean clean-binPROGRAMS \
+	clean-generic clean-libLIBRARIES ctags ctags-recursive \
+	distclean distclean-compile distclean-generic distclean-tags \
+	distdir dvi dvi-am html html-am info info-am install \
+	install-am install-binPROGRAMS install-data install-data-am \
+	install-dvi install-dvi-am install-exec install-exec-am \
+	install-html install-html-am install-includeHEADERS \
+	install-info install-info-am install-libLIBRARIES install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am \
+	uninstall-binPROGRAMS uninstall-includeHEADERS \
 	uninstall-libLIBRARIES
 
 
