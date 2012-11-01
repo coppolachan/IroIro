@@ -47,6 +47,45 @@ double Staples::plaq_t(const GaugeField& F)const {
   return plaq/(Lvol_*NC_*3.0);
 }
 //------------------------------------------------------------
+GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu) const{
+  _Message(DEBUG_VERB_LEVEL, "Staples::upper_lower called\n");
+  using namespace Mapping;
+  //       mu,v                               
+  //      +-->--+                                                    
+  // nu,w |     |t_dag(site+mu,nu)
+  //  site+     +                                                          
+  GaugeField1D v = DirSlice(G,mu);
+  GaugeField1D w = DirSlice(G,nu);
+  GaugeField1D c(G.Nvol());
+  GaugeField1D WupMu = shiftField(w,mu,Forward());
+  GaugeField1D VupNu = shiftField(v,nu,Forward());
+
+#ifdef IBM_BGQ_WILSON   
+  double* c_ptr = c.data.getaddr(0);
+  double* VupNu_ptr = VupNu.data.getaddr(0);
+  double* v_ptr = v.data.getaddr(0);
+  double* WupMu_ptr = WupMu.data.getaddr(0);
+  double* w_ptr = w.data.getaddr(0);
+
+  BGWilsonSU3_MatMult_NND(c_ptr, w_ptr, VupNu_ptr, WupMu_ptr, Nvol_);
+  BGWilsonSU3_MatMult_DNN(VupNu_ptr, w_ptr, v_ptr, WupMu_ptr, Nvol_);
+  c += shiftField(VupNu,nu,Backward());
+#else
+  for(int site=0; site<Nvol_; ++site){
+    c.data[c.format.islice(site)] = (mat(w,site)*mat(VupNu,site)*mat_dag(WupMu,site)).getva();
+  }
+
+  for(int site=0; site<Nvol_; ++site) {
+    VupNu.data[c.format.islice(site)] = (mat_dag(w,site)*mat(v,site)*mat(WupMu,site)).getva();
+  }
+  c += shiftField(VupNu,nu,Backward());
+#endif
+
+  return c;
+
+}
+
+
 GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
   _Message(DEBUG_VERB_LEVEL, "Staples::lower called\n");
   using namespace Mapping;

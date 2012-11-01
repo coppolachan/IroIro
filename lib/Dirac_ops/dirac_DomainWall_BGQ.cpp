@@ -208,8 +208,6 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
       BGWilsonLA_MultScalar(w5_ptr+is, w5_ptr+is, 1.0/ Params.dp_[s], ns);
     }
      
-    //BGWilsonLA_MultScalar_Add((Spinor*)(w5.getaddr(0))+is*N5_,(Spinor*)(const_cast<Field&>(f5).getaddr(0))+is*N5_, -1.0, ns*N5_);
-  
     Spinor* f5_ptr   = (Spinor*)(const_cast<Field&>(f5).getaddr(0));
     Spinor* w5_ptr   = (Spinor*)w5.getaddr(0);
     for(int s=0; s<N5_; ++s) {
@@ -243,29 +241,6 @@ void Dirac_optimalDomainWall::mult_hop_omp(Field& w5, const void* f5) const
   BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
 		       Dw_.getKappa(),BGWILSON_DIRAC);
 
-  /*
-  //Allocate fields
-  int tid, nid;
-  nid = omp_get_num_threads();
-  tid = omp_get_thread_num();
-
-  BGQThread_Barrier(0, nid);
-  void* lpf_ptr  = BGQThread_Malloc(sizeof(double)*f4size_, nid);
-  void* lmf_ptr  = BGQThread_Malloc(sizeof(double)*f4size_, nid);
-  BGQThread_Barrier(0, nid);
-    
-  mult_hop_omp_allocated(w5, f5, lpf_ptr, lmf_ptr,nid, tid);
-    
-  //Free fields
-  BGQThread_Barrier(0, nid);
-  //  if (tid==0){
-  //    free(lpf_ptr);
-  //    free(lmf_ptr);
-  //  }
-  BGQThread_Free(lpf_ptr,tid);
-  BGQThread_Free(lmf_ptr,tid);
-  BGQThread_Barrier(0, nid);
-  */
 }
 
 
@@ -277,14 +252,7 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
 						     int tid) const
 {
 
-  /*
-    BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-    Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
-  */
-
-
   register int Nvol = CommonPrms::instance()->Nvol()/2;
-  //int tid, nid;
   int is, ie, ns;
   is = (Nvol * tid / nid);
   ie = (Nvol * (tid + 1) / nid);
@@ -328,9 +296,6 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
  
  
   double norm = omp_norm(temp_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "1- norm :" << norm << "\n";
-   
   
   for(int s=1; s<N5_-1; ++s) {
     f5_ptr   += Nvol;
@@ -346,8 +311,6 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   }
 
   norm = omp_norm(temp_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "2- norm :" << norm<< "\n";
  
   // s = N5-1
   f5_ptr   += Nvol;
@@ -362,8 +325,6 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   BGWilson_MultEO(temp_ptr, pU, lmf_ptr, doe_factor , 2, BGWILSON_DIRAC); 
 
   norm = omp_norm(temp_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "3- norm :" << norm<< "\n";
 
   //////////////////////////////////////////////////////////////////////////////////
   /// 5d hopping term 
@@ -371,9 +332,6 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   BGWilsonLA_MultAddScalar(temp_ptr_bdry+is,     lmf_ptr+is,-mq_* Params.es_[0],ns);
 
   norm = omp_norm(temp_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "4- norm :" << norm<< "\n";
-
 
   for (int s=1; s<N5_-1; ++s) {
     double fact_lpf = (Params.dm_[s]/Params.dp_[s-1]);
@@ -392,9 +350,6 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   BGWilsonLA_MultScalar(temp_ptr_bdry+is, temp_ptr_bdry+is, fact, ns);
 
   norm = omp_norm(temp_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "5- norm :" << norm<< "\n";
-
     
   for(int s=N5_-2; s>=0; --s) {
     temp_ptr   = temp_ptr_base+s*Nvol;
@@ -406,10 +361,6 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   }
 
   norm = omp_norm(temp_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "6- norm :" << norm<< "\n";
-
-
   //////////////////////////////////////////////// deo
   for(int s=0; s<N5_; ++s) {
     Spinor* temp_ptr   = temp_ptr_base+s*Nvol;
@@ -434,9 +385,6 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   }
 
   norm = omp_norm(w5_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "7- norm :" << norm<< "\n";
-
 
   BGWilsonLA_Proj_M(lmf_ptr+is,w5_ptr_base+is,ns);
   BGWilsonLA_MultAddScalar(w5_ptr_bdry+is,     lmf_ptr+is,-mq_* Params.es_[0],ns);
@@ -454,9 +402,6 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   }
    
   norm = omp_norm(w5_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "8- norm :" << norm<< "\n";
-
    
   BGWilsonLA_Proj_P(lpf_ptr+is,w5_ptr_base + Nvol*(N5_-2)+is,ns);
   BGWilsonLA_MultAddScalar(w5_ptr_bdry+is,     lpf_ptr+is,(Params.dm_[N5_-1]/Params.dp_[N5_-2]),ns);
@@ -472,10 +417,6 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   }
  
   norm = omp_norm(w5_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "9- norm :" << norm<< "\n";
-    
-  //BGWilsonLA_MultScalar_Add((Spinor*)(w5.getaddr(0))+is*N5_,(Spinor*)(const_cast<Field&>(f5).getaddr(0))+is*N5_, -1.0, ns*N5_);
   
   f5_ptr   = (Spinor*)f5;
   Spinor* w5_ptr   = w5_ptr_base;
@@ -486,25 +427,12 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   }    
 
   norm = omp_norm(w5_ptr_base, is*N5_, ns*N5_, nid, tid);
-  if (tid==0)
-    CCIO::cout << "10- norm :" << norm<< "\n";
-
   
   BGQThread_Barrier(0, nid);
-  
-  //  if (tid==0)
-  //    free(temp_ptr_base);
   BGQThread_Free(temp_ptr_base,tid);
-    
-  
   BGQThread_Barrier(0, nid);
-  
-
 }
-
-
 #endif
-
 
 void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
   typedef struct FermionSpinor{
@@ -730,29 +658,6 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const void* f5) const
   BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
 			   Dw_.getKappa(),BGWILSON_DIRAC);
 
-  /*
-  //Allocate fields
-  int tid, nid;
-  nid = omp_get_num_threads();
-  tid = omp_get_thread_num();
-  BGQThread_Barrier(0, nid);
-  void* lpf_ptr  = BGQThread_Malloc(sizeof(double)*f4size_, nid);
-  void* lmf_ptr  = BGQThread_Malloc(sizeof(double)*f4size_, nid);
-  BGQThread_Barrier(0, nid);
-
-  mult_hop_dag_omp_allocated(w5,f5,lpf_ptr, lmf_ptr, nid,tid);
-  
-
-  //Free fields
-  BGQThread_Barrier(0, nid);
-  //  if (tid==0){
-  //    free(lpf_ptr);
-  //    free(lmf_ptr);
-  //  }
-  BGQThread_Free(lpf_ptr,tid);
-  BGQThread_Free(lmf_ptr,tid);
-  BGQThread_Barrier(0, nid);
-  */
 }
 
 
@@ -765,32 +670,20 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp_allocated(Field& w5,
 							 int tid) const
 {
 
-  /*
-    BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-    Dw_.getKappa(),mq_,M0_,BGWILSON_DIRAC);
-  */
-
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
   //threading control variables
-  //int tid, nid;
   int is, is5, ns, ns5 , ie, ie5;
-  //nid = omp_get_num_threads();
-  //tid = omp_get_thread_num();
 
   is  = (Nvol * tid / nid);
   is5 = (Nvol * N5_* tid / nid);
-  //  ns  =  Nvol/nid;
-  //  ns5 = (Nvol * N5_)/nid;
   ie  = (Nvol * (tid+1) / nid);
   ie5 = (Nvol * N5_* (tid+1) / nid);
   ns = ie - is;
   ns5 = ie5-is5;
 
   // 4d vectors
-  //Spinor* lpf_ptr  = (Spinor*)BGQThread_Malloc(sizeof(double)*f4size_, nid);
   Spinor* lpf_ptr  = (Spinor*)lpf_ptr_void;
-  //Spinor* lmf_ptr  = (Spinor*)BGQThread_Malloc(sizeof(double)*f4size_, nid);
   Spinor* lmf_ptr  = (Spinor*)lmf_ptr_void;
 
   // 5d vectors
@@ -821,7 +714,6 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp_allocated(Field& w5,
     BGWilsonLA_MultScalar(temp_ptr+is, temp_ptr+is, 1.0/ Params.dp_[s], ns);   
   } 
     
-  // temp_ptr   += (N5_-1)*Nvol;
   temp_ptr   += Nvol;
   BGWilsonLA_Proj_M(lpf_ptr+is,
 		    temp_ptr_base+(N5_-2)*Nvol+is,
@@ -999,24 +891,13 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp_allocated(Field& w5,
   } 
    
   BGQThread_Barrier(0,nid);  
-  //#pragma omp single
-  // if(tid==0)
-  //  {  
-  //free(lpf_ptr);
-  //free(lmf_ptr);
-  //  free(temp_ptr_base);
-  //  }
   BGQThread_Free(temp_ptr_base,tid);
   BGQThread_Barrier(0,nid);
 
 }
 #endif
-
-
-
+///////////////////////////////////////////////////////////////////////////////
 #ifdef IBM_BGQ_WILSON
-
-
 // CG solver optimized for BGQ
 void Dirac_optimalDomainWall::solve_eo_5d(Field& w5, 
 					  const Field& b, 
@@ -1046,7 +927,6 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
   Field p(fsize_);
   int v_size = Nvol*N5_; // << assumes 24 elements
 
-  //  double threadNorm[64];
   double pap, rrp, cr, rr, snorm;
 
   TIMING_START;
@@ -1062,10 +942,6 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
   Spinor* temp_ptr = (Spinor*)temp.getaddr(0);
   Spinor* temp2_ptr = (Spinor*)temp2.getaddr(0);
   Spinor* p_ptr = (Spinor*)p.getaddr(0);
-
-  //  void* aux1_ptr  = malloc(sizeof(double)*f4size_);
-  //  void* aux2_ptr  = malloc(sizeof(double)*f4size_);
-  //  void* aux3_ptr  = malloc(sizeof(double)*fsize_);
 
   BGWilson_DW_Init(N5_,mq_,M0_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
 
@@ -1087,11 +963,6 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
 			 Dw_.getKappa(),BGWILSON_DIRAC);
     BGWilson_DW_Mult_hop_dag(temp2_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
 			     Dw_.getKappa(),BGWILSON_DIRAC);
-
-    /*
-      mult_hop_omp_allocated(temp,x_ptr, aux1_ptr, aux2_ptr, nid, tid);
-      mult_hop_dag_omp_allocated(temp2,temp_ptr, aux1_ptr, aux2_ptr,nid, tid);
-    */
 
     for(s5=0;s5<N5_;s5++)
       BGWilsonLA_Sub(r_ptr+s5*Nvol+is, temp2_ptr+s5*Nvol+is, ns);
@@ -1117,18 +988,13 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
       tSum += t;
     }
     
-    //CCIO::cout<<" tsum before = "<< tSum << std::endl;
     tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
     if(tid == 0){
       tSum = Communicator::instance()->reduce_sum(tSum);
     }
-    //CCIO::cout<<" tsum after = "<< tSum << std::endl;
     snorm = BGQThread_ScatterDouble(tSum,0,tid,nid);
     snorm = sqrt(snorm);
-    //CCIO::cout<<" square root = "<< snorm << std::endl;
     snorm = 1.0/snorm;
-    //CCIO::cout<<" inverse = "<< snorm << std::endl;
-
 
 #if VERBOSITY>1
 #pragma omp single
@@ -1144,13 +1010,6 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
 			   Dw_.getKappa(),BGWILSON_DIRAC);
       BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
 			       Dw_.getKappa(),BGWILSON_DIRAC);
-
-      /*
-      //      mult_hop_omp(temp,p_ptr);
-      mult_hop_omp_allocated(temp,p_ptr, aux1_ptr, aux2_ptr, nid, tid);
-      //mult_hop_dag_omp(s,temp_ptr);
-      mult_hop_dag_omp_allocated(s,temp_ptr, aux1_ptr, aux2_ptr,nid, tid);
-      */
 
       ///////////////////////////////////////////////////
       tSum = 0.0;
@@ -1185,12 +1044,8 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
       }
       rr = BGQThread_ScatterDouble(tSum,0,tid,nid);
 
-      //  p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
-      //  p += r; // p = p + p*(r_k,r_k)/(r,r)
       for(s5=0;s5<N5_;s5++)
 	BGWilsonLA_MultScalar_Add(p_ptr+s5*Nvol+is,r_ptr+s5*Nvol+is,rr/rrp,ns);
-
-      //BGQThread_Barrier(0,nid);
 
 #if VERBOSITY>1
       if (tid==0) {
@@ -1213,22 +1068,16 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
       }
     }
     BGQThread_Barrier(0,nid);//after loop
-    //p = opr_->mult(x);
 
     BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
 			 Dw_.getKappa(),BGWILSON_DIRAC);
     BGWilson_DW_Mult_hop_dag(p_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
 			     Dw_.getKappa(),BGWILSON_DIRAC);
-    /*
-      mult_hop_omp_allocated(temp,x_ptr, aux1_ptr, aux2_ptr, nid, tid);
-      mult_hop_dag_omp_allocated(p,temp_ptr, aux1_ptr, aux2_ptr, nid, tid);
-    */
 
     //  p -= b;
     for(s5=0;s5<N5_;s5++)
       BGWilsonLA_Sub(p_ptr+s5*Nvol+is, b_ptr+s5*Nvol+is, ns);
 
-    //Out.diff = p.norm();  
     tSum = 0.0;
     for(s5=0;s5<N5_;s5++){
       BGWilsonLA_Norm(&t,p_ptr+s5*Nvol+is,ns);
@@ -1251,14 +1100,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
   TIMING_END(Out.timing);
   CCIO::cout << "Kernel section timing: "<< kernel_timing << "\n";
 
-  //  free(aux1_ptr);
-  //  free(aux2_ptr);
-  //free(aux3_ptr);
 #endif
 
 }
-
-
-
-
 #endif

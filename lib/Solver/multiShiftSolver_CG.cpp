@@ -186,5 +186,4 @@ SolverOutput MultiShiftSolver_CG::solve(prop_t& xq,
   TIMING_END(Out.timing);
   
   return Out;
-
 }
