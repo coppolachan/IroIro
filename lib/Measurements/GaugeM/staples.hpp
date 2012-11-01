@@ -27,6 +27,7 @@ public:
   double plaq_t   (const GaugeField&) const;
   GaugeField1D lower(const GaugeField&, int, int) const;
   GaugeField1D upper(const GaugeField&, int, int) const;
+  GaugeField1D upper_lower(const GaugeField&, int, int) const;
   void staple(GaugeField1D&, const GaugeField&, int) const;
   //////////////////////////////////////////////////
 };

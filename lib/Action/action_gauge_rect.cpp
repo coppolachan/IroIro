@@ -32,15 +32,12 @@ double ActionGaugeRect::calc_H(){
 #ifdef IBM_BGQ_WILSON
   double* UpMu_ptr = UpMu.data.getaddr(0);
   double* UpNu_ptr = UpNu.data.getaddr(0);
-  //double* temp_ptr = temp.data.getaddr(0);
   double* res_ptr = res.data.getaddr(0);
   double* U_nu_ptr = U_nu.data.getaddr(0);
   double* U_mu_ptr = U_mu.data.getaddr(0);
   double* Cup1_ptr = Cup1.data.getaddr(0);
   double* Cup2_ptr = Cup2.data.getaddr(0);
 #endif
-
-
   
   // From Matsufuru-san code
   for(int mu = 0; mu < NDIM_; ++mu){
@@ -134,15 +131,12 @@ GaugeField ActionGaugeRect::md_force(){
   GaugePtr* force_rect_ptr = (GaugePtr*)force_rect.data.getaddr(0);
   double* UpMu_ptr = UpMu.data.getaddr(0);
   double* UpNu_ptr = UpNu.data.getaddr(0);
-  //double* temp_ptr = temp.data.getaddr(0);
   GaugePtr* res_ptr = (GaugePtr*)res.data.getaddr(0);
   double* U_nu_ptr = U_nu.data.getaddr(0);
   double* U_mu_ptr = U_mu.data.getaddr(0);
   double* Cdn1_ptr = Cdn1.data.getaddr(0);
   double* Cdn2_ptr = Cdn2.data.getaddr(0);
 #endif
-
- CCIO::cout<< "Starting\n";
 
   for(int mu=0; mu<NDIM_; ++mu){
     force_pl   = 0.0;
@@ -277,7 +271,5 @@ GaugeField ActionGaugeRect::md_force(){
   force *= 0.5*Params.beta/NC_;
   _MonitorMsg(ACTION_VERB_LEVEL,Action,force,"ActionGaugeRect");
 
-  
-  CCIO::cout<< "Returning\n";
   return force;
 }
