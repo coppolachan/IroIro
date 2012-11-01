@@ -28,6 +28,7 @@ public:
 
   double norm();
   double operator*(const SUNvector&);
+  double im_prod(const SUNvector&);
   int nc() const { return COLORS; };
   SUNvector& dag();
   SUNvector& zero();
@@ -66,6 +67,17 @@ template <size_t COLORS>
 inline double SUNvector<COLORS>::operator*(const SUNvector& rhs){
   //std::valarray<double> tmp = va_*rhs.va_;
   return (va_*rhs.va_).sum();
+}
+
+template <size_t COLORS> 
+inline double SUNvector<COLORS>::im_prod(const SUNvector& rhs){
+  std::slice re(0,COLORS,2);
+  std::slice im(1,COLORS,2);
+
+  std::valarray<double> lhs_im = va_[im];
+  std::valarray<double> lhs_re = va_[re];
+
+  return (lhs_re*rhs.va_[im]).sum()-(lhs_im*rhs.va_[re]).sum();
 }
 
 template <size_t COLORS> 
