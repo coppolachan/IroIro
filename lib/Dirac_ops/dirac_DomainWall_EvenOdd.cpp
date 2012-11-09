@@ -124,6 +124,16 @@ void  Dirac_optimalDomainWall_EvenOdd::solve_eo(Field& out,
 						double stop_cond) const{
   Deo_.solve_eo_5d(out, in, SO, Niter, stop_cond);
 }
+void Dirac_optimalDomainWall_EvenOdd::solve_ms_eo(prop_t& xq,
+						  const Field& b,
+						  SolverOutput& SO, 
+						  const vector<double>& sigma,
+						  int MaxIter, 
+						  double GoalPrecision) const
+{
+  Deo_.solve_ms_eo_5d(xq, b, SO, sigma, MaxIter, GoalPrecision);
+}
+
 #endif
 ///////////////////////////////////////////////////////////////////////
 

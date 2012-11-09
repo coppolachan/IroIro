@@ -35,11 +35,12 @@ namespace FermionAction {
 
       //BGQ specific improved routines
 #ifdef IBM_BGQ_WILSON
-
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D-EO_BGQ"))
 	return new TwoFlavorDomainWall5dEO_BGQ_ActionFactory(node);
       if (!strcmp(Action_name, "TwoFlavorsRatioDomainWall_5D-EO_BGQ"))
 	return new TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory(node);
+      if (!strcmp(Action_name, "NfFlavorsDomainWall_5D-EO_BGQ")) 
+	return new NfFlavorDomainWall5d_EO_BGQ_ActionFactory(node);
 #endif
 
       std::cerr << "No Fermionic Action available with name ["

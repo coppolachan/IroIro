@@ -101,8 +101,13 @@ public:
   void update_internal_state(){} 
 
   ////////////////////////////
+
 #ifdef IBM_BGQ_WILSON
+
+ typedef std::vector<Field> prop_t;
   void solve_eo(Field&, const Field&, SolverOutput&, int, double) const;
+  void solve_ms_eo(prop_t& , const Field& , SolverOutput&, 
+		   const std::vector<double>&, int, double)const;
 #endif
 };
 

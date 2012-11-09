@@ -146,24 +146,42 @@ class RationalSolverCGFactory: public RationalSolverOperatorFactory {
 public:
   RationalSolverCGFactory(const XML::node node):Solver_node(node){}
 
-  RationalSolver* getSolver(const Fopr_Herm* HermitianOperator) {
+  RationalSolver_CG* getSolver(const Fopr_Herm* HermitianOperator) {
     MS_Solver.save(new MultiShiftSolver_CG(HermitianOperator,
 					   Solver_node));
-    return new RationalSolver(MS_Solver.get());
+    return new RationalSolver_CG(MS_Solver.get());
   }
 
-  RationalSolver* getSolver(const Fopr_Herm_Precondition* HermitianOperator) {
+  RationalSolver_CG* getSolver(const Fopr_Herm_Precondition* HermitianOperator) {
     MS_Solver.save(new MultiShiftSolver_CG(HermitianOperator,
 					   Solver_node));
-    return new RationalSolver(MS_Solver.get());
+    return new RationalSolver_CG(MS_Solver.get());
   }
 
-  RationalSolver*  getSolver(const Fopr* LinearOperator){
+  RationalSolver_CG*  getSolver(const Fopr* LinearOperator){
     std::cerr<< "getSolver Error: RationalSolver requires Hermitian Operator" 
 	     << std::endl;
     abort();
   }
 };
+
+/*!
+ @brief Concrete class for creating Rational Conjugate Gradient Solver
+ operator optimized version for DWF on BGQ
+ */
+#ifdef IBM_BGQ_WILSON
+#include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
+class RationalSolverCGFactory_DWF_Optimized {
+   const XML::node Solver_node;
+public:
+  RationalSolverCGFactory_DWF_Optimized(const XML::node node):Solver_node(node){}
+
+  RationalSolver_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr) {
+    return new RationalSolver_DWF_Optimized(DWFopr, Solver_node);
+  }
+
+};
+#endif
 
 ///////////////////////////////////////////////////
 

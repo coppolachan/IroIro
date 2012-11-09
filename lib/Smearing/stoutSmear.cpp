@@ -52,7 +52,8 @@ void Smear_Stout::BaseSmear(GaugeField& C, const GaugeField& u_in)const{
 void Smear_Stout::derivative(GaugeField& SigmaTerm, 
 			     const GaugeField& iLambda,
 			     const GaugeField& Gauge)const{
-  SmearBase->derivative(SigmaTerm, iLambda, Gauge);}
+  SmearBase->derivative(SigmaTerm, iLambda, Gauge);
+}
 
 void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ,const GaugeField& iQ)const{
   using namespace SUNmatUtils;
