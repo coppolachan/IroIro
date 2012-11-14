@@ -1127,178 +1127,6 @@ void Dirac_optimalDomainWall::solve_ms_init(std::vector<Field>& x,
   _Message(SOLV_ITER_VERB_LEVEL, "    | Initial residual |^2 = "<<rr<<"\n");
 }
 
-void Dirac_optimalDomainWall::solve_ms_step(std::vector<Field>& x,
-					    std::vector<Field>& p,
-					    Field& r,
-					    Field& s,
-					    void* ptr,
-					    double& rr,
-					    std::vector<double>& zeta1,
-					    std::vector<double>& zeta2,
-					    const std::vector<double>& sigma,
-					    std::vector<double>& csh2,
-					    double& alphap,
-					    double& betap,
-					    int& Nshift2, 
-					    double& snorm, 
-					    double GoalPrecision) const{
-  
-  using namespace FieldExpression;
-  BGQThread_Init(); //initializing BGQ fast threading routines
-  //note: only sigma[0] is needed...
-  
-  register int Nvol = CommonPrms::instance()->Nvol()/2;
-  Spinor* s_ptr = (Spinor*)s.getaddr(0);
-  Spinor* r_ptr = (Spinor*)r.getaddr(0);
-  Spinor* p_ptr = (Spinor*)(p[0].getaddr(0));
-  Spinor* x_ptr = (Spinor*)(x[0].getaddr(0));
-  Spinor* temp_ptr = (Spinor*)ptr;
-
-#pragma omp parallel 
-  {
-    int tid, nid;
-    int is, ie, ns,s5, ish;
-    double t, tSum, rrp;
-    double alpha, alphah, beta, pap;
-    double zeta, zetas, alphas, betas, zr;
-
-    nid = omp_get_num_threads();
-    tid = omp_get_thread_num();
-    
-    is = tid*Nvol / nid;
-    ie = (tid + 1)*Nvol / nid;
-    ns = ie - is;
-  
-    double* pp = (double*)BGQThread_Malloc(sizeof(double)*sigma.size(), nid);
-
-    
-    BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),p_ptr,
-			 Dw_.getKappa(),BGWILSON_DIRAC);
-    BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-			     Dw_.getKappa(),BGWILSON_DIRAC);
-    
-    //s = opr_->mult(p[0]);
-    for(s5=0;s5<N5_;s5++)
-      BGWilsonLA_MultAddScalar(s_ptr + s5*Nvol+is, p_ptr + s5*Nvol+is, sigma[0], ns);
-    //s += sigma[0]*p[0];   
-    
-    ///////////////////////////
-    //pap = s*p[0]; c++ code
-    tSum = 0.0;
-    for(s5=0;s5<N5_;s5++){
-      BGWilsonLA_DotProd(&t, s_ptr + s5*Nvol + is, p_ptr + s5*Nvol + is, ns);
-      tSum += t;
-    }
-    tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-    if(tid == 0){
-      tSum = Communicator::instance()->reduce_sum(tSum);
-    }
-    pap = BGQThread_ScatterDouble(tSum,0,tid,nid);
-    ////////////////////////////  
-  
-    rrp = rr;
-    beta = -rrp/pap;
-
-    
-    ///////////////////////////
-    //  x[0] -= beta*p[0]; c++ code
-    for(s5=0;s5<N5_;s5++)
-      BGWilsonLA_MultAddScalar(x_ptr + s5*Nvol+is, p_ptr + s5*Nvol+is, -beta, ns);
-    
-    ///////////////////////////
-    //  r += beta*s; c++ code
-    for(s5=0;s5<N5_;s5++)
-      BGWilsonLA_MultAddScalar(r_ptr + s5*Nvol+is, s_ptr + s5*Nvol+is, beta, ns);  
-  
-    BGQThread_Barrier(0,nid);
-    ///////////////////////////
-    //  rr = r*r; c++ code
-    tSum = 0.0;
-    for(s5=0;s5<N5_;s5++){
-      BGWilsonLA_Norm(&t,r_ptr+s5*Nvol+is,ns);
-      tSum += t;
-    }
-    
-    tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-    if(tid == 0){
-      tSum = Communicator::instance()->reduce_sum(tSum);
-    }
-    rr = BGQThread_ScatterDouble(tSum,0,tid,nid);
-
-    alpha = rr/rrp;
-    
-    ///////////////////////////
-    // p[0] *= alpha; p[0] += r;
-    for(s5=0;s5<N5_;s5++)
-      BGWilsonLA_MultScalar_Add(p_ptr + s5*Nvol+is,r_ptr + s5*Nvol+is,alpha,ns);
-    
-    pp[0] = rr; 
-
-    alphah = 1.0 + alphap*beta/betap;
- 
-    BGQThread_Barrier(0,nid);
- 
-    for(ish = 1; ish<Nshift2; ++ish){
-      p_ptr = (Spinor*)(p[ish].getaddr(0));
-      x_ptr = (Spinor*)(x[ish].getaddr(0));
-
-      zeta =(alphah-csh2[ish]*beta)/zeta1[ish]+(1.0-alphah)/zeta2[ish];
-      zeta = 1.0/zeta;
-      zr = zeta/zeta1[ish];
-      betas  = beta  *  zr;
-      alphas = alpha * zr*zr;
-
-      ///////////////////////////
-      //x[ish] -= betas * p[ish];
-      for(s5=0;s5<N5_;s5++)
-	BGWilsonLA_MultAddScalar(x_ptr + s5*Nvol+is, p_ptr + s5*Nvol+is, -betas, ns);
-      
-      ///////////////////////////
-      // p[ish] *= alphas;
-      // p[ish] += zeta * r;
-      // pp[ish] = p[ish] * p[ish];
-      for(s5=0;s5<N5_;s5++){
-	BGWilsonLA_MultScalar(p_ptr + s5*Nvol+is, p_ptr + s5*Nvol+is, alphas, ns);
-      }
-      for(s5=0;s5<N5_;s5++){
-	BGWilsonLA_MultAddScalar(p_ptr + s5*Nvol+is, r_ptr + s5*Nvol+is, zeta, ns);
-      }
-      
-      tSum = 0.0;
-      for(s5=0;s5<N5_;s5++){
-	BGWilsonLA_Norm(&t,p_ptr+s5*Nvol+is,ns);
-	tSum += t;
-      }
-      tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-      if(tid == 0){
-	tSum = Communicator::instance()->reduce_sum(tSum);
-      }
-      pp[ish] = BGQThread_ScatterDouble(tSum,0,tid,nid);   
-      pp[ish] *= snorm;
-
-#pragma omp single 
-      {
-	// it is critical to update these variables in the right sequence
-	zeta2[ish] = zeta1[ish];
-	zeta1[ish] = zeta;
-      }
-    }
-    BGQThread_Barrier(0,nid);    
-    
-    for(ish = Nshift2-1; ish>=0; --ish){
-      if(pp[ish]> GoalPrecision){
-	Nshift2 = ish+1;
-	break;
-      }
-    }
-    
-    alphap = alpha;
-    betap  = beta;
-
-    BGQThread_Free(pp,tid);
-  }
-}
-
 void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq, 
 					     const Field& b,
 					     SolverOutput& Out, 
@@ -1336,11 +1164,22 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
   double alphap, betap, rrp;
   int Nshift2 = Nshift;
 
-
   Field temp(fsize_);
-  Spinor* temp_ptr = (Spinor*)temp.getaddr(0);
+
+  //////////////////
+  BGQThread_Init(); //initializing BGQ fast threading routines
+  //note: only sigma[0] is needed...
+  
+  register int Nvol = CommonPrms::instance()->Nvol()/2;
   Spinor* s_ptr = (Spinor*)s.getaddr(0);
-  Spinor* x_ptr;;
+  Spinor* b_ptr = (Spinor*)const_cast<Field&>(b).getaddr(0);
+  Spinor* r_ptr = (Spinor*)r.getaddr(0);
+  Spinor* p_ptr;
+  Spinor* x_ptr;
+  Spinor* temp_ptr = (Spinor*)temp.getaddr(0);
+  ////////////////////////////////////////
+
+
   // Initial messages
   _Message(SOLV_ITER_VERB_LEVEL, "    -------------------\n");
   _Message(SOLV_ITER_VERB_LEVEL, "    Number of shifts = "<< Nshift<<"\n");
@@ -1359,47 +1198,233 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
   
   solve_ms_init(x,p,r,s,rr,zeta1,zeta2,csh2,alphap,betap);
   _Message(SOLV_ITER_VERB_LEVEL, "    | Init | = "<<rr*snorm<<"\n");
-  
-  for(int it = 0; it < MaxIter; it++){
-    solve_ms_step(x,p,r,s,temp_ptr, rr, zeta1,zeta2,sigma,csh2,alphap,betap,
-		  Nshift2,snorm, GoalPrecision);
 
+#pragma omp parallel 
+  {
+    int tid, nid;
+    int is, ie, ns,s5, ish;
+    double t, tSum, rrp;
+    double alpha, alphah, beta, pap;
+    double zeta, zetas, alphas, betas, zr;
+    double residual, diff1;
 
-
-
-
-    double residual = rr*snorm; 
-    _Message(SOLV_ITER_VERB_LEVEL, "   "<<std::setw(5)<<"["<<it<<"]  "
-    	     <<std::setw(20)<<residual<<"     Left: "<<Nshift2<<" \n");
+    nid = omp_get_num_threads();
+    tid = omp_get_thread_num();
     
-    if(residual < GoalPrecision){
-      Out.Iterations = it;
-      break;
+    is = tid*Nvol / nid;
+    ie = (tid + 1)*Nvol / nid;
+    ns = ie - is;
+  
+    double* pp = (double*)BGQThread_Malloc(sizeof(double)*sigma.size(), nid);
+
+    for(int it = 0; it < MaxIter; it++){
+      //   solve_ms_step(x,p,r,s,temp_ptr, rr, zeta1,zeta2,sigma,csh2,alphap,betap,
+      //		  Nshift2,snorm, GoalPrecision);
+      
+      ////////////////////////////
+      p_ptr = (Spinor*)(p[0].getaddr(0));
+      x_ptr = (Spinor*)(x[0].getaddr(0));
+        
+      BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),p_ptr,
+			   Dw_.getKappa(),BGWILSON_DIRAC);
+      BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
+			       Dw_.getKappa(),BGWILSON_DIRAC);
+      
+      //s = opr_->mult(p[0]);
+      for(s5=0;s5<N5_;s5++)
+	BGWilsonLA_MultAddScalar(s_ptr + s5*Nvol+is, p_ptr + s5*Nvol+is, sigma[0], ns);
+      //s += sigma[0]*p[0];   
+      
+      ///////////////////////////
+      //pap = s*p[0]; c++ code
+      tSum = 0.0;
+      for(s5=0;s5<N5_;s5++){
+	BGWilsonLA_DotProd(&t, s_ptr + s5*Nvol + is, p_ptr + s5*Nvol + is, ns);
+	tSum += t;
+      }
+      tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+      if(tid == 0){
+	tSum = Communicator::instance()->reduce_sum(tSum);
+      }
+      pap = BGQThread_ScatterDouble(tSum,0,tid,nid);
+      ////////////////////////////  
+      
+      rrp = rr;
+      beta = -rrp/pap;
+      
+      
+      ///////////////////////////
+      //  x[0] -= beta*p[0]; c++ code
+      for(s5=0;s5<N5_;s5++)
+	BGWilsonLA_MultAddScalar(x_ptr + s5*Nvol+is, p_ptr + s5*Nvol+is, -beta, ns);
+      
+      ///////////////////////////
+      //  r += beta*s; c++ code
+      //  rr = r*r; c++ code
+      tSum = 0.0;
+      for(s5=0;s5<N5_;s5++){
+	BGWilsonLA_MultAddScalar_Norm(r_ptr + s5*Nvol+is, &t, s_ptr + s5*Nvol+is, beta, ns);  
+	tSum += t;
+      }
+
+      //      for(s5=0;s5<N5_;s5++){
+      //	BGWilsonLA_Norm(&t,r_ptr+s5*Nvol+is,ns);
+      //}
+      
+      tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+      if(tid == 0){
+	tSum = Communicator::instance()->reduce_sum(tSum);
+      }
+      rr = BGQThread_ScatterDouble(tSum,0,tid,nid);
+      
+      alpha = rr/rrp;
+      
+      ///////////////////////////
+      // p[0] *= alpha; p[0] += r;
+      for(s5=0;s5<N5_;s5++)
+	BGWilsonLA_MultScalar_Add(p_ptr + s5*Nvol+is,r_ptr + s5*Nvol+is,alpha,ns);
+      
+      pp[0] = rr; 
+      
+      alphah = 1.0 + alphap*beta/betap;
+      
+      // BGQThread_Barrier(0,nid);
+
+
+      for(ish = 1; ish<Nshift2; ++ish){
+	p_ptr = (Spinor*)(p[ish].getaddr(0));
+	x_ptr = (Spinor*)(x[ish].getaddr(0));
+	
+	zeta =(alphah-csh2[ish]*beta)/zeta1[ish]+(1.0-alphah)/zeta2[ish];
+	zeta = 1.0/zeta;
+	zr = zeta/zeta1[ish];
+	betas  = beta  *  zr;
+	alphas = alpha * zr*zr;
+	
+	///////////////////////////
+	//x[ish] -= betas * p[ish];
+	for(s5=0;s5<N5_;s5++)
+	  BGWilsonLA_MultAddScalar(x_ptr + s5*Nvol+is, p_ptr + s5*Nvol+is, -betas, ns);
+	
+	///////////////////////////
+	// p[ish] *= alphas;
+	// p[ish] += zeta * r;
+	// pp[ish] = p[ish] * p[ish];
+	for(s5=0;s5<N5_;s5++){
+	  BGWilsonLA_MultScalar(p_ptr + s5*Nvol+is, p_ptr + s5*Nvol+is, alphas, ns);
+	}
+	tSum = 0.0;
+	for(s5=0;s5<N5_;s5++){
+	  BGWilsonLA_MultAddScalar_Norm(p_ptr + s5*Nvol+is, &t, r_ptr + s5*Nvol+is, zeta, ns);
+	  tSum += t;
+	}
+	
+	tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+	if(tid == 0){
+	  tSum = Communicator::instance()->reduce_sum(tSum);
+	}
+	pp[ish] = BGQThread_ScatterDouble(tSum,0,tid,nid);   
+	pp[ish] *= snorm;
+	
+#pragma omp single 
+	{
+	  // it is critical to update these variables in the right sequence
+	  zeta2[ish] = zeta1[ish];
+	  zeta1[ish] = zeta;
+	}
+      }
+      //end of loop
+      BGQThread_Barrier(0,nid);    
+
+      for(ish = Nshift2-1; ish>=0; --ish){
+	if(pp[ish]> GoalPrecision){
+	  Nshift2 = ish+1;
+	  break;
+	}
+      }
+    
+      alphap = alpha;
+      betap  = beta;
+
+  
+      ///////////////////////////
+      residual = rr*snorm; 
+      if(tid==0) {
+	_Message(SOLV_ITER_VERB_LEVEL, "   "<<std::setw(5)<<"["<<it<<"]  "
+		 <<std::setw(20)<<residual<<"     Left: "<<Nshift2<<" \n");
+      }
+
+      if(residual < GoalPrecision){
+	if (tid==0) Out.Iterations = it;
+	break;
+      }
+
     }
-  }
-  if(Out.Iterations == -1) throw "Not converged.";
-  
-  _Message(SOLV_ITER_VERB_LEVEL, "  --- Summary of true residuals\n");
-  Out.diff = -1.0;
-  for(int i=0; i<Nshift; ++i){
-    x_ptr  = (Spinor*)x[i].getaddr(0);
-    BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
-			 Dw_.getKappa(),BGWILSON_DIRAC);
-    BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-			     Dw_.getKappa(),BGWILSON_DIRAC);
+    BGQThread_Barrier(0,nid);    
 
-  //s = opr_->mult(x[i]);
-    s += sigma[i]*x[i];
-    s -= b;
-    double diff1 = s * s;
-    diff1 *= snorm;
-    _Message(SOLV_ITER_VERB_LEVEL, "       ["<<i<<"]  "<<diff1<<"\n");
-    if(diff1>Out.diff) Out.diff = diff1;
-  }
-  _Message(SOLV_ITER_VERB_LEVEL, " Maximum residual  = "<<Out.diff<<"\n");
-  
-  for(int i=0; i<Nshift; ++i) xq[i] = x[i];
+    if (tid==0){
+      if(Out.Iterations == -1) {
+	CCIO::cout << "Not converged.\n";
+	exit(1);
+      }
+    
+      _Message(SOLV_ITER_VERB_LEVEL, "  --- Summary of true residuals\n");
+    }
 
+    Out.diff = -1.0;
+    
+    
+    for(int i=0; i<Nshift; ++i){
+      x_ptr  = (Spinor*)x[i].getaddr(0);
+      BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
+			   Dw_.getKappa(),BGWILSON_DIRAC);
+      BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
+			       Dw_.getKappa(),BGWILSON_DIRAC);
+      
+      //s = opr_->mult(x[i]);
+      //s += sigma[i]*x[i];
+      for(s5=0;s5<N5_;s5++)
+	BGWilsonLA_MultAddScalar(s_ptr + s5*Nvol+is, x_ptr + s5*Nvol+is, sigma[i], ns);
+
+      // s -= b;
+      for(s5=0;s5<N5_;s5++)
+	BGWilsonLA_Sub(s_ptr + s5*Nvol+is, b_ptr + s5*Nvol+is,ns);
+
+      // diff1 = s * s;
+      tSum = 0.0;
+      for(s5=0;s5<N5_;s5++){
+	BGWilsonLA_Norm(&t,s_ptr+s5*Nvol+is,ns);
+	tSum += t;
+      }
+      
+      tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
+      if(tid == 0){
+	tSum = Communicator::instance()->reduce_sum(tSum);
+      }
+      diff1 = BGQThread_ScatterDouble(tSum,0,tid,nid);
+      diff1 *= snorm;
+
+      if(tid==0)
+	_Message(SOLV_ITER_VERB_LEVEL, "       ["<<i<<"]  "<<diff1<<"\n");
+      
+      if(diff1>Out.diff) Out.diff = diff1;
+      
+    }
+    if(tid==0)
+      _Message(SOLV_ITER_VERB_LEVEL, " Maximum residual  = "<<Out.diff<<"\n");
+    
+    for(int i=0; i<Nshift; ++i){
+      //xq[i] = x[i];
+      x_ptr  = (Spinor*)x[i].getaddr(0);
+      Spinor* xqi_ptr = (Spinor*)(xq[i].getaddr(0));
+      for(s5=0;s5<N5_;s5++)
+	BGWilsonLA_Equate(xqi_ptr + s5*Nvol+is, x_ptr + s5*Nvol+is, ns);
+    }
+    
+    BGQThread_Free(pp,tid);
+
+  }
+  
   Out.diff = sqrt(Out.diff);
   TIMING_END(Out.timing);
   

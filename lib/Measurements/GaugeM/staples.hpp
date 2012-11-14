@@ -7,7 +7,6 @@
 #include "include/commonPrms.h"
 #include "include/common_fields.hpp"
 #include "Communicator/communicator.h"
-//#include "lib/Main/Geometry/mapping.hpp"
 #include "lib/Main/Geometry/shiftField.hpp"
 
 class Staples {
@@ -20,6 +19,7 @@ public:
 	    com_(Communicator::instance()){
     Mapping::init_shiftField();
   }
+
 
   /////////////////////////////////////////////////
   double plaquette(const GaugeField&) const;

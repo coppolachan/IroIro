@@ -87,8 +87,7 @@ void MultiShiftSolver_CG::solve_step(vector<Field>& x,
 
     pp[ish] = p[ish] * p[ish];
     pp[ish] *= snorm;
-    CCIO::cout << "pp["<<ish<<"] = " << pp[ish] << "\n";
-
+ 
     zeta2[ish] = zeta1[ish];
     zeta1[ish] = zeta;
   }

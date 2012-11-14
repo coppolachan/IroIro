@@ -15,6 +15,9 @@ namespace Mapping{
     template<typename DATA,typename FB>
     DATA operator()(const DATA& F,int dir,FB fb)const{return maps_[dir](F,fb);}
     void init_maps();
+    template <typename FB>
+    void operator()(GaugeField1D& Fout,const double* Fin,int dir,FB fb)const{
+      maps_[dir](Fout,Fin,fb); }
   };
 
   class ShiftField_eo{

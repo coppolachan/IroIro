@@ -24,6 +24,10 @@ namespace FieldUtils{
 
   // Field type-type transformations
   GaugeField1D DirSlice(const GaugeField& F, int dir);
+#ifdef IBM_BGQ_WILSON
+  void DirSliceBGQ(GaugeField1D &G, const GaugeField& F, int dir);
+#endif
+
   void SetSlice(GaugeField&, const GaugeField1D&, int dir);
   void AddSlice(GaugeField&, const GaugeField1D&, int dir);
 
