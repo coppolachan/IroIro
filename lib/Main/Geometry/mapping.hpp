@@ -70,7 +70,7 @@ namespace Mapping{
       return Fout;
     }
 
-    //////// for temporal use ///////
+    //////// for temporal use on BGQ ///////
     void operator()(GaugeField1D& Fout,const double* Fin,Forward)const{
       int Nin = Fout.Nin();
       int bdsize = Nin*bdry_t_.size();
@@ -81,7 +81,8 @@ namespace Mapping{
           send_bdry[b*Nin+i] = Fin[bdry_b_[b]*Nin+i];
           
       Communicator::instance()->transfer_fw(recv_bdry,send_bdry,bdsize,dir_);
-      
+      Communicator::instance()->sync();
+
       for(int b=0; b<bdry_t_.size(); ++b)      
         for(int i=0; i<Nin; ++i)
           Fout.data.set(Fout.format.index(i,bdry_t_[b]),recv_bdry[b*Nin+i]);
@@ -148,6 +149,7 @@ namespace Mapping{
           send_bdry[b*Nin+i] = Fin[bdry_t_[b]*Nin+i];
       
       Communicator::instance()->transfer_bk(recv_bdry,send_bdry,bdsize,dir_);
+      Communicator::instance()->sync();
 
       for(int b=0; b<bdry_b_.size(); ++b)      
         for(int i=0; i<Nin; ++i)
@@ -157,10 +159,6 @@ namespace Mapping{
         for(int i=0; i<Nin; ++i)
           Fout.data.set(Fout.format.index(i,bulk_b_[b]),Fin[bulk_t_[b]*Nin+i]);
     }
-
-
-
-
   };
 
   class AutoMap_EvenOdd{

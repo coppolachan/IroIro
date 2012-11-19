@@ -1136,7 +1136,9 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
 { 
   using namespace FieldExpression;
  
-  BGWilson_DW_Init(N5_,mq_,M0_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],(double*)&Params.bs_[0],(double*)&Params.cs_[0],(double*)&Params.es_[0],(double*)&Params.fs_[0]);
+  BGWilson_DW_Init(N5_,mq_,M0_,(double*)&Params.dp_[0],(double*)&Params.dm_[0],
+		   (double*)&Params.bs_[0],(double*)&Params.cs_[0],
+		   (double*)&Params.es_[0],(double*)&Params.fs_[0]);
 
   _Message(SOLV_ITER_VERB_LEVEL, "Multi-shift solver Conjugate Gradient start\n");
   CCIO::cout << " --------- optimized version\n"; 

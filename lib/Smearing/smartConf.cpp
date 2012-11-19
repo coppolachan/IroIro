@@ -85,12 +85,24 @@ GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
   
   StoutSmearing.BaseSmear(C,GaugeK);
 
-  for(int mu = 0; mu < NDIM_; ++mu)
+  for(int mu = 0; mu < NDIM_; ++mu){
+#ifdef IBM_BGQ_WILSON  
+    BGWilsonSU3_MatMult_ND(e_iQ.data.getaddr(0)+ 18*Nvol*mu, 
+			   C.data.getaddr(0) + 18*Nvol*mu, 
+			   const_cast<Field&>(GaugeK.data).getaddr(0)+ 18*Nvol*mu, 
+			   Nvol);
+  }
+  iQ = TracelessAntihermite(e_iQ);
+#else
     for(int site = 0; site < Nvol; ++site)
       SetMat(iQ, 
 	     anti_hermite_traceless(mat(C,site,mu)*mat_dag(GaugeK,site,mu)), 
 	     site, mu);  // created iQ
+
+  }
+#endif
   
+
   set_iLambda(iLambda, e_iQ, iQ, SigmaKPrime, GaugeK);
 
 #ifdef IBM_BGQ_WILSON  

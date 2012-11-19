@@ -126,7 +126,6 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
 GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
   _Message(DEBUG_VERB_LEVEL, "Staples::upper called\n");
   using namespace Mapping;
-  static status = 0;
   //       mu,v                               
   //      +-->--+                                                    
   // nu,w |     |t_dag(site+mu,nu)
