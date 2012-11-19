@@ -190,6 +190,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
 				test_wilson_Brillouin.hpp 	\
+				test_wilson_Brillouin_Imp.hpp 	\
 				test_WilsonFlow.hpp     	\
 				test_PolyakovLoop.hpp     	\
 				test_DomainWall.hpp 		\
@@ -201,6 +202,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
 				test_MesonSpectrum_Nf2p1.hpp	\
+	                        test_MesonSpectrum_SpMom.hpp    \
 				test_BaryonSpectrum_Nf2p1.hpp	\
 				test_HadronSpectrum_Nf2p1.hpp	\
 				test_Overlap.hpp		\

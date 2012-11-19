@@ -110,8 +110,10 @@ SolverOutput RationalSolver_CG::solve_noReconstruct_inv(std::vector<Field>& shif
   return out;
 }
 
+
 ////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
+#ifdef IBM_BGQ_WILSON
 SolverOutput RationalSolver_DWF_Optimized::solve(Field& sol, const Field& source) const {
  SolverOutput out;
   if (Residuals.size() == 0)  {
@@ -218,3 +220,4 @@ SolverOutput RationalSolver_DWF_Optimized::solve_noReconstruct_inv(std::vector<F
   return out;
 }
 
+#endif
