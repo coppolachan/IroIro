@@ -70,6 +70,30 @@ namespace Mapping{
       return Fout;
     }
 
+    //////// for temporal use on BGQ ///////
+    void operator()(GaugeField1D& Fout,const double* Fin,Forward)const{
+      int Nin = Fout.Nin();
+      int bdsize = Nin*bdry_t_.size();
+      double send_bdry[bdsize],recv_bdry[bdsize];
+
+      for(int b=0; b<bdry_t_.size(); ++b)
+        for(int i=0; i<Nin; ++i)
+          send_bdry[b*Nin+i] = Fin[bdry_b_[b]*Nin+i];
+          
+      Communicator::instance()->transfer_fw(recv_bdry,send_bdry,bdsize,dir_);
+      Communicator::instance()->sync();
+
+      for(int b=0; b<bdry_t_.size(); ++b)      
+        for(int i=0; i<Nin; ++i)
+          Fout.data.set(Fout.format.index(i,bdry_t_[b]),recv_bdry[b*Nin+i]);
+      
+      for(int b=0; b<bulk_b_.size(); ++b)      
+        for(int i=0; i<Nin; ++i)
+          Fout.data.set(Fout.format.index(i,bulk_t_[b]),Fin[bulk_b_[b]*Nin+i]);
+    }
+
+
+
     //for experimental use
     void operator()(GaugeField1D& Fout,const GaugeField1D& Fin,
 		    int mu,Forward)const{
@@ -111,6 +135,29 @@ namespace Mapping{
       
       Fout.data.set(Fin.get_sub(bdry_b_),recv_bdry);
       Fout.data.set(Fin.get_sub(bulk_b_),Fin.data[Fin.get_sub(bulk_t_,mu)]);
+    }
+
+    //////// for temporal use ///////
+    // assumes internal indexing for the Fields
+    void operator()(GaugeField1D& Fout,const double* Fin,Backward)const{
+      int Nin = Fout.Nin();
+      int bdsize = Nin*bdry_b_.size();
+      double send_bdry[bdsize],recv_bdry[bdsize];
+
+      for(int b=0; b<bdry_b_.size(); ++b)
+        for(int i=0; i<Nin; ++i)
+          send_bdry[b*Nin+i] = Fin[bdry_t_[b]*Nin+i];
+      
+      Communicator::instance()->transfer_bk(recv_bdry,send_bdry,bdsize,dir_);
+      Communicator::instance()->sync();
+
+      for(int b=0; b<bdry_b_.size(); ++b)      
+        for(int i=0; i<Nin; ++i)
+          Fout.data.set(Fout.format.index(i,bdry_b_[b]),recv_bdry[b*Nin+i]);
+      
+      for(int b=0; b<bulk_t_.size(); ++b)      
+        for(int i=0; i<Nin; ++i)
+          Fout.data.set(Fout.format.index(i,bulk_b_[b]),Fin[bulk_t_[b]*Nin+i]);
     }
   };
 

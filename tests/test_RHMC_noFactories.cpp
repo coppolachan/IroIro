@@ -74,7 +74,7 @@ int Test_HMC::run(){
 						     1e-20,
 						     1000);
   
-  RationalSolver* SolverRational = new RationalSolver(Solver);
+  RationalSolver_CG* SolverRational = new RationalSolver_CG(Solver);
   
   Action* NfAction = new Action_Nf(CommonField,
 				   Kernel,

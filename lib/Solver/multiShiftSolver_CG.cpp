@@ -8,6 +8,9 @@
 #include "Fields/field_expressions.hpp"
 #include "include/messages_macros.hpp"
 
+typedef struct FermionSpinor{
+  double _Complex v[12];
+}Spinor;
 
 using namespace std;
 
@@ -55,6 +58,7 @@ void MultiShiftSolver_CG::solve_step(vector<Field>& x,
   s = opr_->mult(p[0]);
   s += sigma[0]*p[0];
 
+
   double rrp = rr;
   double pap = s*p[0];
   double beta = -rrp/pap;
@@ -83,7 +87,7 @@ void MultiShiftSolver_CG::solve_step(vector<Field>& x,
 
     pp[ish] = p[ish] * p[ish];
     pp[ish] *= snorm;
-
+ 
     zeta2[ish] = zeta1[ish];
     zeta1[ish] = zeta;
   }
@@ -185,5 +189,5 @@ SolverOutput MultiShiftSolver_CG::solve(prop_t& xq,
   Out.diff = sqrt(diff);
   TIMING_END(Out.timing);
   
-  return Out;
+ return Out;
 }

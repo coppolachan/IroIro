@@ -376,7 +376,50 @@ private:
 			       smearing,SC);
   }
 };
+////////////////////////////////////////////////////
+#ifdef IBM_BGQ_WILSON
+class NfFlavorDomainWall5d_EO_BGQ_ActionFactory : public FermionActionFactory {
+  RaiiFactoryObj<DiracDWF5dEvenOddFactory> DiracObj;
+  RaiiFactoryObj<RationalSolverCGFactory_DWF_Optimized> SolverObj;
 
+  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_Kernel;
+  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_KernelPV;
+  RaiiFactoryObj<RationalSolver_DWF_Optimized> Solv;
+  RaiiFactoryObj<RationalSolver_DWF_Optimized> SolvPV;
+  
+  const XML::node Action_node;
+  bool smearing;
+public:
+  ~NfFlavorDomainWall5d_EO_BGQ_ActionFactory(){}
+
+  NfFlavorDomainWall5d_EO_BGQ_ActionFactory(XML::node node)
+    :Action_node(node),smearing(false){
+    XML::read(node,"smeared",smearing);
+
+    XML::descend(node,"Kernel5D",MANDATORY);
+    DiracObj.save(new DiracDWF5dEvenOddFactory(node));
+    XML::next_sibling(node,"RationalSolver",MANDATORY);
+    SolverObj.save(new RationalSolverCGFactory_DWF_Optimized(node));
+  }
+private:  
+  Action_Nf_ratio* getFermionAction(GaugeField* const F,SmartConf* const SC){
+    // select links according to smearing
+    GaugeField* Links = SC->select_conf(smearing);
+
+    DWF5d_Kernel.save(  DiracObj.get()->getDiracOperatorWL(&(Links->data)));
+    DWF5d_KernelPV.save(DiracObj.get()->getDiracOperatorPV(&(Links->data)));
+
+    Solv.save(  SolverObj.get()->getSolver(DWF5d_Kernel.get()));
+    SolvPV.save(SolverObj.get()->getSolver(DWF5d_KernelPV.get()));
+    return new Action_Nf_ratio(Links,
+			       DWF5d_Kernel.get(),DWF5d_KernelPV.get(),
+			       Solv.get(),SolvPV.get(),
+			       Action_Nf_ratio_params(Action_node),
+			       smearing,SC);
+  }
+};
+#endif
+////////////////////////////////////////////////////
 class FourFlavorStaggeredActionFactory :public FermionActionFactory{
   RaiiFactoryObj<DiracStaggeredEvenOddLikeOperatorFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverObj;
@@ -411,7 +454,7 @@ private:
     return new Action_staggered(Links,Kernel.get(),Solv.get(),smearing,SC);
   }
 };
-
+////////////////////////////////////////////////////
 class FourFlavorStaggeredRatioActionFactory :public FermionActionFactory{
   RaiiFactoryObj<DiracStaggeredEvenOddLikeOperatorFactory> DiracNumObj;
   RaiiFactoryObj<DiracStaggeredEvenOddLikeOperatorFactory> DiracDenomObj;

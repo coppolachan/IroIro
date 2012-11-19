@@ -136,7 +136,7 @@ int Test_RationalApprox::run(){
                             stop_cond,
                             Niter);
   
-  RationalSolver* RASolver = new RationalSolver(Solver, TestXMLApprox);
+  RationalSolver_CG* RASolver = new RationalSolver_CG(Solver, TestXMLApprox);
 
   XML::next_sibling(kernel_node,"Source");
   SourceFactory* SrcFactory 

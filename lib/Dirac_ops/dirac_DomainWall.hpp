@@ -20,6 +20,7 @@
 static double wilson_mult_timer;
 static double wilson_multdag_timer;
 
+
 #ifdef IBM_BGQ_WILSON
 struct SolverOutput;
 #endif
@@ -289,11 +290,25 @@ public:
 
   void update_internal_state(){}
 
-
   // BGQ optimizations
   #ifdef IBM_BGQ_WILSON
+  typedef std::vector<Field> prop_t;
   void solve_eo_5d(Field&, const Field&, SolverOutput&, int, double) const;
-  #endif
+  void Dirac_optimalDomainWall::solve_ms_init(std::vector<Field>&,
+					      std::vector<Field>&,
+					      Field&, Field&,
+					      double& rr,
+					      std::vector<double>&,
+					      std::vector<double>&,
+					      std::vector<double>&,
+					      double&,
+					      double&) const;
+  void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t&, 
+					       const Field&,
+					       SolverOutput&, 
+					       const std::vector<double>&, 
+					       int, double) const;
+#endif
 };
 
 

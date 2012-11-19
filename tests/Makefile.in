@@ -67,8 +67,9 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_PolyakovLoop$(EXEEXT) test_WilsonFlow$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_Clover$(EXEEXT) \
 	test_Wilson_EvenOdd$(EXEEXT) test_Wilson_Brillouin$(EXEEXT) \
-	test_DomainWall$(EXEEXT) test_QpropMom$(EXEEXT) \
-	test_ResMass$(EXEEXT) test_MesonSpectrum$(EXEEXT) \
+	test_Wilson_Brillouin_Imp$(EXEEXT) test_DomainWall$(EXEEXT) \
+	test_QpropMom$(EXEEXT) test_ResMass$(EXEEXT) \
+	test_MesonSpectrum$(EXEEXT) test_MesonSpectrum_SpMom$(EXEEXT) \
 	test_MesonSpectrum_Nf2p1$(EXEEXT) \
 	test_BaryonSpectrum_Nf2p1$(EXEEXT) \
 	test_HadronSpectrum_Nf2p1$(EXEEXT) \
@@ -165,6 +166,13 @@ test_MesonSpectrum_Nf2p1_OBJECTS =  \
 	$(am_test_MesonSpectrum_Nf2p1_OBJECTS)
 test_MesonSpectrum_Nf2p1_LDADD = $(LDADD)
 test_MesonSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am_test_MesonSpectrum_SpMom_OBJECTS =  \
+	test_MesonSpectrum_SpMom.$(OBJEXT) \
+	testerMesonSpectrumSpMom.$(OBJEXT)
+test_MesonSpectrum_SpMom_OBJECTS =  \
+	$(am_test_MesonSpectrum_SpMom_OBJECTS)
+test_MesonSpectrum_SpMom_LDADD = $(LDADD)
+test_MesonSpectrum_SpMom_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_MultiShiftSolver_OBJECTS = test_MultiShiftSolver.$(OBJEXT) \
 	testerMultiShiftSolver.$(OBJEXT)
 test_MultiShiftSolver_OBJECTS = $(am_test_MultiShiftSolver_OBJECTS)
@@ -227,6 +235,13 @@ am_test_Wilson_Brillouin_OBJECTS = test_wilson_Brillouin.$(OBJEXT) \
 test_Wilson_Brillouin_OBJECTS = $(am_test_Wilson_Brillouin_OBJECTS)
 test_Wilson_Brillouin_LDADD = $(LDADD)
 test_Wilson_Brillouin_DEPENDENCIES = $(am__DEPENDENCIES_2)
+am_test_Wilson_Brillouin_Imp_OBJECTS =  \
+	test_wilson_Brillouin_Imp.$(OBJEXT) \
+	testerWilsonBrillouin_Imp.$(OBJEXT)
+test_Wilson_Brillouin_Imp_OBJECTS =  \
+	$(am_test_Wilson_Brillouin_Imp_OBJECTS)
+test_Wilson_Brillouin_Imp_LDADD = $(LDADD)
+test_Wilson_Brillouin_Imp_DEPENDENCIES = $(am__DEPENDENCIES_2)
 am_test_Wilson_EvenOdd_OBJECTS = test_wilson_EvenOdd.$(OBJEXT) \
 	testerWilson_EvenOdd.$(OBJEXT)
 test_Wilson_EvenOdd_OBJECTS = $(am_test_Wilson_EvenOdd_OBJECTS)
@@ -261,6 +276,7 @@ SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
 	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_IO_SOURCES) \
 	$(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
+	$(test_MesonSpectrum_SpMom_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
 	$(test_PolyakovLoop_SOURCES) $(test_QpropMom_SOURCES) \
 	$(test_RHMC_noFactories_SOURCES) $(test_RNG_SOURCES) \
@@ -268,6 +284,7 @@ SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
 	$(test_Smearing_SOURCES) $(test_Solver_Perf_SOURCES) \
 	$(test_Wilson_SOURCES) $(test_WilsonFlow_SOURCES) \
 	$(test_Wilson_Brillouin_SOURCES) \
+	$(test_Wilson_Brillouin_Imp_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) \
 	$(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
@@ -278,6 +295,7 @@ DIST_SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) \
 	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_IO_SOURCES) \
 	$(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
+	$(test_MesonSpectrum_SpMom_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_Overlap_SOURCES) \
 	$(test_PolyakovLoop_SOURCES) $(test_QpropMom_SOURCES) \
 	$(test_RHMC_noFactories_SOURCES) $(test_RNG_SOURCES) \
@@ -285,6 +303,7 @@ DIST_SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) \
 	$(test_Smearing_SOURCES) $(test_Solver_Perf_SOURCES) \
 	$(test_Wilson_SOURCES) $(test_WilsonFlow_SOURCES) \
 	$(test_Wilson_Brillouin_SOURCES) \
+	$(test_Wilson_Brillouin_Imp_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
@@ -451,6 +470,7 @@ EXTRA_DIST = testResults.info	\
 		test_Wilson_Brillouin.xml	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
+		test_EigenModesSolver.xml\
 		test_GeneralMeas.xml 	\
 		test_PolyakovLoop.xml	\
 		test_WilsonFlow.xml	\
@@ -502,6 +522,9 @@ test_Wilson_EvenOdd_SOURCES = test_wilson_EvenOdd.cpp 	\
 test_Wilson_Brillouin_SOURCES = test_wilson_Brillouin.cpp 	\
 		        	testerWilsonBrillouin.cpp
 
+test_Wilson_Brillouin_Imp_SOURCES = test_wilson_Brillouin_Imp.cpp 	\
+		        	testerWilsonBrillouin_Imp.cpp
+
 test_DomainWall_SOURCES = test_DomainWall.cpp 		\
 				testerDWF.cpp
 
@@ -510,6 +533,9 @@ test_QpropMom_SOURCES = test_QpropMom.cpp 		\
 
 test_MesonSpectrum_SOURCES = test_MesonSpectrum.cpp 		\
 				testerMesonSpectrum.cpp
+
+test_MesonSpectrum_SpMom_SOURCES = test_MesonSpectrum_SpMom.cpp 	\
+				testerMesonSpectrumSpMom.cpp
 
 test_MesonSpectrum_Nf2p1_SOURCES = test_MesonSpectrum_Nf2p1.cpp 	\
 				testerMesonSpectrumNf2p1.cpp
@@ -694,6 +720,9 @@ test_MesonSpectrum$(EXEEXT): $(test_MesonSpectrum_OBJECTS) $(test_MesonSpectrum_
 test_MesonSpectrum_Nf2p1$(EXEEXT): $(test_MesonSpectrum_Nf2p1_OBJECTS) $(test_MesonSpectrum_Nf2p1_DEPENDENCIES) $(EXTRA_test_MesonSpectrum_Nf2p1_DEPENDENCIES) 
 	@rm -f test_MesonSpectrum_Nf2p1$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_MesonSpectrum_Nf2p1_OBJECTS) $(test_MesonSpectrum_Nf2p1_LDADD) $(LIBS)
+test_MesonSpectrum_SpMom$(EXEEXT): $(test_MesonSpectrum_SpMom_OBJECTS) $(test_MesonSpectrum_SpMom_DEPENDENCIES) $(EXTRA_test_MesonSpectrum_SpMom_DEPENDENCIES) 
+	@rm -f test_MesonSpectrum_SpMom$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_MesonSpectrum_SpMom_OBJECTS) $(test_MesonSpectrum_SpMom_LDADD) $(LIBS)
 test_MultiShiftSolver$(EXEEXT): $(test_MultiShiftSolver_OBJECTS) $(test_MultiShiftSolver_DEPENDENCIES) $(EXTRA_test_MultiShiftSolver_DEPENDENCIES) 
 	@rm -f test_MultiShiftSolver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_MultiShiftSolver_OBJECTS) $(test_MultiShiftSolver_LDADD) $(LIBS)
@@ -733,6 +762,9 @@ test_WilsonFlow$(EXEEXT): $(test_WilsonFlow_OBJECTS) $(test_WilsonFlow_DEPENDENC
 test_Wilson_Brillouin$(EXEEXT): $(test_Wilson_Brillouin_OBJECTS) $(test_Wilson_Brillouin_DEPENDENCIES) $(EXTRA_test_Wilson_Brillouin_DEPENDENCIES) 
 	@rm -f test_Wilson_Brillouin$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Wilson_Brillouin_OBJECTS) $(test_Wilson_Brillouin_LDADD) $(LIBS)
+test_Wilson_Brillouin_Imp$(EXEEXT): $(test_Wilson_Brillouin_Imp_OBJECTS) $(test_Wilson_Brillouin_Imp_DEPENDENCIES) $(EXTRA_test_Wilson_Brillouin_Imp_DEPENDENCIES) 
+	@rm -f test_Wilson_Brillouin_Imp$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Wilson_Brillouin_Imp_OBJECTS) $(test_Wilson_Brillouin_Imp_LDADD) $(LIBS)
 test_Wilson_EvenOdd$(EXEEXT): $(test_Wilson_EvenOdd_OBJECTS) $(test_Wilson_EvenOdd_DEPENDENCIES) $(EXTRA_test_Wilson_EvenOdd_DEPENDENCIES) 
 	@rm -f test_Wilson_EvenOdd$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Wilson_EvenOdd_OBJECTS) $(test_Wilson_EvenOdd_LDADD) $(LIBS)
@@ -756,6 +788,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum_Nf2p1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum_SpMom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Overlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_PolyakovLoop.Po@am__quote@
@@ -770,6 +803,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_Brillouin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_Brillouin_Imp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerBaryonSpectrumNf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerClover.Po@am__quote@
@@ -783,6 +817,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrumNf2p1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrumSpMom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMultiShiftSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerOverlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerPolyakovLoop.Po@am__quote@
@@ -793,6 +828,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSolver_Perf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilsonBrillouin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilsonBrillouin_Imp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilsonFlow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson_EvenOdd.Po@am__quote@
 

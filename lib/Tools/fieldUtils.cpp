@@ -5,6 +5,8 @@
 #include "fieldUtils.hpp"
 #include "sunMatUtils.hpp"
 
+#include <omp.h>
+
 class RandNum;
 
 namespace FieldUtils{
@@ -29,9 +31,30 @@ namespace FieldUtils{
   const GaugeField ReUnit(const GaugeField& U){
     using namespace SUNmatUtils;
     GaugeField Ur(U);
+#ifdef IBM_BGQ_WILSON
+   register int Nvol = CommonPrms::instance()->Nvol();
+#pragma omp parallel 
+  {
+    int tid, nid;
+    int ns,is;
+    
+    nid = omp_get_num_threads();
+    tid = omp_get_thread_num();
+    
+    is = tid*Nvol / nid;
+    ns = Nvol / nid;
+    
     for(int mu=0; mu<U.Nex(); ++mu)
+      for(int site=is; site<is+ns; ++site)
+	SetMat(Ur,reunit(mat(U,site,mu)),site,mu);
+    
+  }
+#else
+   for(int mu=0; mu<U.Nex(); ++mu)
       for(int site=0; site<U.Nvol(); ++site)
 	SetMat(Ur,reunit(mat(U,site,mu)),site,mu);
+#endif
+
     return Ur;
   }
 
@@ -66,12 +89,12 @@ namespace FieldUtils{
       temp = temp2;
      }
     temp = ReUnit(temp2);
+    
     ///////////////////////////////////////////   
 #else
     for(int mu=0; mu<G.Nex(); ++mu)
       for(int site=0; site<G.Nvol(); ++site)
 	SetMat(temp, exponential(mat(G,site,mu)*d,N), site, mu);
-	       
 #endif
 
     return temp;
@@ -97,9 +120,34 @@ namespace FieldUtils{
     return TAField;
   }
 
+
+
+#ifdef IBM_BGQ_WILSON
+  //assumes some ordering of the matrices
+  void DirSliceBGQ(GaugeField1D &G, const GaugeField& F, int dir){
+    register double _Complex* pV0;
+    register double _Complex* pW0;
+    register int Nvol = F.Nvol();
+    int i,j;
+   
+    pV0 = (double _Complex*)G.data.getaddr(0);
+    pW0 = (double _Complex*)const_cast<Field&>(F.data).getaddr(0)+ 9*Nvol*dir;
+    
+    for(i=0;i<Nvol;i++){
+      for(j=0;j<9;j++){
+	*(pV0 + j) = *(pW0 + j);
+      }
+      pV0 += 9;
+      pW0 += 9;
+    }
+    
+  }
+#endif
   GaugeField1D DirSlice(const GaugeField& F, int dir){
     return GaugeField1D(Field(F.data[F.format.ex_slice(dir)]));
   }
+
+
 
   void SetSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
     G.data.set(G.format.ex_slice(dir), Gslice.data.getva());

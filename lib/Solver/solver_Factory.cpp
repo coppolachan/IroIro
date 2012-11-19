@@ -35,7 +35,7 @@ namespace SolverOperators {
       
       if(!strcmp(Solver_name, "Rational_CG")) 
 	return new RationalSolverCGFactory(node);
-      
+
       std::cerr << "No Solver available with type ["
 		<< Solver_name << "]\n" 
 		<< "Request by " << node.parent().name() << std::endl;
