@@ -92,6 +92,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp	\
+		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_clover.cpp		\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
@@ -104,12 +105,11 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/eoUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/boundaryCond.cpp      	\
+		EigenModes/eigenCalcGeneral.cpp		\
 		EigenModes/eigenModesSolver_Factory.cpp	\
 		EigenModes/eigenModesSolver_IRL.cpp	\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/eigenSorter.cpp		\
-		EigenModes/fopr_chebyshev_DdagD.cpp	\
-		EigenModes/foprHermFactory.cpp   	\
 		EigenModes/findminmax.cpp		\
 		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
@@ -171,7 +171,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/geometry.hpp		\
 			$(top_srcdir)/include/field.h			\
 			$(top_srcdir)/include/factories.hpp		\
-			$(top_srcdir)/include/fopr_chebyshev_DdagD.h	\
+			$(top_srcdir)/include/fopr_Chebyshev.h	        \
+			$(top_srcdir)/include/fopr_DdagDLinear.h        \
 			$(top_srcdir)/include/fopr_Dhat.h		\
 			$(top_srcdir)/include/fopr_eo.h			\
 			$(top_srcdir)/include/fopr_eo_wilson.h		\
@@ -246,6 +247,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
+			Dirac_ops/dirac_wilson_Brillouin_Imp.hpp\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
@@ -255,10 +257,13 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/boundaryCond.hpp      	\
+                        EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\
 			EigenModes/eigenModesSolver_IRL.hpp	\
+			EigenModes/eigenSorter_Factory.hpp	\
 			EigenModes/eigenSorter.hpp		\
+			EigenModes/foprHermFactory_ChebyshevDdagDLin.hpp\
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/findminmax.hpp		\
 			Fields/field_expressions.hpp		\

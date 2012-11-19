@@ -12,35 +12,6 @@
 
 using namespace std;
 
-EigenModesSolver_IRL::
-EigenModesSolver_IRL(const Fopr_Herm* fopr,XML::node node)
- :opr_(fopr),esorter_(NULL){
-  CCIO::cerr<<"EigenModesSolver_IRL being constructed"<<endl;
-  int Np;
-  XML::read(node,"Nk",Nk_,MANDATORY);
-  XML::read(node,"Np",Np,MANDATORY);
-  Nm_= Nk_+Np;
-  
-  XML::read(node,"precision",prec_,MANDATORY);
-
-  double thrs;
-  XML::read(node,"threshold",thrs,MANDATORY);
-  thrs_= opr_->func(thrs);
-
-  XML::read(node,"max_iter",Niter_,MANDATORY);
-
-  std::string sort_type;
-  XML::read(node,"eig_sort",sort_type,MANDATORY);
-  if(sort_type =="LowestModes")  esorter_= new EigenSorter_low;
-  if(sort_type =="HighestModes") esorter_= new EigenSorter_high;
-  if(esorter_== NULL){
-    CCIO::cerr<<"No EigenSorter available with name["
-		<< sort_type << "]" << std::endl;
-    abort();
-  }
-  CCIO::cerr<<"EigenModesSolver_IRL constructed"<<endl;
-}
-
 void EigenModesSolver_IRL::
 calc(vector<double>& ta,vector<Field>& V,int& Nin)const{ 
 
@@ -51,7 +22,10 @@ calc(vector<double>& ta,vector<Field>& V,int& Nin)const{
 
   int Np = Nm_-Nk_;  
   assert(Np>0);
-  CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Np<<" Nm = "<<"threshold = "<<thrs_
+  double thrs = esorter_->thrs();
+
+  CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Np<<" Nm = "<<Nm_
+	     <<" threshold = "<< thrs
 	     << endl;
 
   ta.resize(Nm_);  V.resize(Nm_);
@@ -104,7 +78,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Nin)const{
     diagonalize(tta,ttb,Qt,Nk_); /*!< @brief Qt contains Nk_ eigenvectors */
 
     i_conv.clear();
-    int Nover = 0; /*!< @brief Num of converged eigenvalues beyond thrs_.*/
+    int Nover = 0; /*!< @brief Num of converged eigenvalues beyond thrs.*/
 
     CCIO::cout << setiosflags(ios_base::scientific);
 
@@ -132,7 +106,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Nin)const{
       
       if(res<prec_){  /*!<@brief counting converged eigenmodes */
         i_conv.push_back(i);
-        if(esorter_->beyond_thrs(tta[i],thrs_)) ++Nover; 
+        if(esorter_->beyond_thrs(tta[i])) ++Nover; 
       }
     }  
     CCIO::cout << resetiosflags(ios_base::scientific);

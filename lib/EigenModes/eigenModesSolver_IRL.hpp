@@ -12,11 +12,6 @@
 
 class EigenSorter;
 
-namespace EigenModes{
-  struct LowestModes{};
-  struct HighestModes{};
-}
-
 class EigenModesSolver_IRL :public EigenModesSolver{
 private:
   const Fopr_Herm* opr_;
@@ -24,7 +19,6 @@ private:
   int Nk_;
   int Nm_;
   double prec_;
-  double thrs_;
   int Niter_;
   
   void setUnit(std::vector<double>& Qt)const;
@@ -45,24 +39,23 @@ private:
   void orthogonalize(Field& w,const std::vector<Field>& evec,int k)const;
   
 public:
-  EigenModesSolver_IRL(const Fopr_Herm* fopr,XML::node node);
-
-  EigenModesSolver_IRL(const Fopr_Herm* fopr,
-		       int Nk,int Np,double prec,double thrs,int Niter,
-		       EigenModes::LowestModes)
-    :opr_(fopr),esorter_(new EigenSorter_low),
-     Nk_(Nk),Nm_(Nk+Np),prec_(prec),thrs_(opr_->func(thrs)),
-     Niter_(Niter){}
-
-  EigenModesSolver_IRL(const Fopr_Herm* fopr,
-		       int Nk,int Np,double prec,double thrs,int Niter,
-		       EigenModes::HighestModes)
-    :opr_(fopr),esorter_(new EigenSorter_high),
-     Nk_(Nk),Nm_(Nk+Np),prec_(prec),thrs_(opr_->func(thrs)),
-     Niter_(Niter){}
+  EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,XML::node node)
+    :opr_(fopr),esorter_(esorter){
+    CCIO::cerr<<"EigenModesSolver_IRL being constructed"<<std::endl;
+    int Np;
+    XML::read(node,"Nk",Nk_,MANDATORY);
+    XML::read(node,"Np",Np,MANDATORY);
+    Nm_= Nk_+Np;
+    
+    XML::read(node,"precision",prec_,MANDATORY);
+    XML::read(node,"max_iter",Niter_,MANDATORY);
+   
+    CCIO::cerr<<"EigenModesSolver_IRL constructed"<<std::endl;
+  }
+  EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
+		       int Nk,int Np,double prec,int Niter)
+    :opr_(fopr),esorter_(esorter),Nk_(Nk),Nm_(Nk+Np),prec_(prec),Niter_(Niter){}
   
-  ~EigenModesSolver_IRL(){delete esorter_;}
-
   void calc(std::vector<double>& lmd,std::vector<Field>& evec,int& Nsbt)const;
 };
 

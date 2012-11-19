@@ -71,7 +71,8 @@ int Test_ResMass::run() {
     CCIO::cout << "Calculating eigenvalues of H_W" << std::endl;
     CCIO::cout << " -- M0= " << mq << std::endl;
     CCIO::cout << " -- vthrs= " << vthrs << std::endl;
-    EigenModesSolver_IRL eigen(&Hw,Nk,Np,enorm,vthrs,Niter,EigenModes::LowestModes());
+    EigenSorter_low esort(vthrs);
+    EigenModesSolver_IRL eigen(&Hw,&esort,Nk,Np,enorm,Niter);
     
     int Nmm = 100;
     int Nsbt = -1;

@@ -37,24 +37,24 @@ public:
 					 Nvol_(CommonPrms::instance()->Nvol()){
     switch (Type) {
     case Pion:
-      G1_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Unit);
-      G2_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Unit);
+      G1_.reset(new GammaMatrices::Unit);
+      G2_.reset(new GammaMatrices::Unit);
       break;
     case Scalar:
-      G1_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma5);
-      G2_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma5);
+      G1_.reset(new GammaMatrices::Gamma5);
+      G2_.reset(new GammaMatrices::Gamma5);
       break;
     case Vector1:
-      G1_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma1_5);
-      G2_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma1_5);
+      G1_.reset(new GammaMatrices::Gamma1_5);
+      G2_.reset(new GammaMatrices::Gamma1_5);
       break;
     case Vector2:
-      G1_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma2_5);
-      G2_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma2_5);
+      G1_.reset(new GammaMatrices::Gamma2_5);
+      G2_.reset(new GammaMatrices::Gamma2_5);
       break;
     case Vector3:
-      G1_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma3_5);
-      G2_ = std::auto_ptr<GammaMatrices::Gamma>(new GammaMatrices::Gamma3_5);
+      G1_.reset(new GammaMatrices::Gamma3_5);
+      G2_.reset(new GammaMatrices::Gamma3_5);
       break;
     }
   }

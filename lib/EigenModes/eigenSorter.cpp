@@ -20,8 +20,8 @@ bool EigenSorter_high::greater_pair(pair<double,Field>& left,
 bool EigenSorter_high::greater_lmd(double left,double right){
   return fabs(left) > fabs(right);}  
 
-bool EigenSorter_high::beyond_thrs(double lmd,double thrs) const{
-  return fabs(lmd) < fabs(thrs);}
+bool EigenSorter_high::beyond_thrs(double lmd) const{
+  return fabs(lmd) < fabs(thrs_);}
 
 void EigenSorter_high::push(vector<double>& lmd,int N) const{
   std::partial_sort(lmd.begin(),lmd.begin()+N,lmd.end(),greater_lmd);}
@@ -50,8 +50,8 @@ bool EigenSorter_low::less_pair(pair<double,Field>& left,
 bool EigenSorter_low::less_lmd(double left,double right){
   return fabs(left) < fabs(right);}  
 
-bool EigenSorter_low::beyond_thrs(double lmd,double thrs) const{
-  return fabs(lmd) > fabs(thrs);}
+bool EigenSorter_low::beyond_thrs(double lmd) const{
+  return fabs(lmd) > fabs(thrs_);}
 
 void EigenSorter_low::push(vector<double>& lmd,int N) const{
   std::partial_sort(lmd.begin(),lmd.begin()+N,lmd.end(),less_lmd);}

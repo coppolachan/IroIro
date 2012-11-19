@@ -42,54 +42,55 @@ int Test_HadronSpectrum_Nf2p1::run(){
   
   ofstream writer(output_.c_str());
 
-  { ////////// Meson Correlation Functions ///////////
-    MesonCorrelator pp(Pion), v1v1(Vector1), v2v2(Vector2), v3v3(Vector3);
-    // S=0 correlators
-    CCIO::cout << " ---- Making meson correlators\n";
-    writer<<"=== meson correlators ===\n";
+  ////////// Meson Correlation Functions ///////////
+  MesonCorrelator pp(Pion), v1v1(Vector1), v2v2(Vector2), v3v3(Vector3);
 
-    output_meson(writer,  pp.calculate<Format::Format_F>(sq_ud,sq_ud),"---pion---");
-    output_meson(writer,  pp.calculate<Format::Format_F>(sq_s, sq_ud),"---kaon---");
-    output_meson(writer,  pp.calculate<Format::Format_F>(sq_s, sq_s), "---eta_s---");
+  CCIO::cout << " ---- Making meson correlators\n";
+  if(Communicator::instance()->primaryNode()) writer<<"=== meson correlators ===\n";
 
-    output_meson(writer,v1v1.calculate<Format::Format_F>(sq_ud,sq_ud),"---rho_X---");
-    output_meson(writer,v2v2.calculate<Format::Format_F>(sq_ud,sq_ud),"---rho_Y---");
-    output_meson(writer,v3v3.calculate<Format::Format_F>(sq_ud,sq_ud),"---rho_Z---");
+  output_meson(writer,  pp.calculate<Format::Format_F>(sq_ud,sq_ud),"---pion---");
+  output_meson(writer,  pp.calculate<Format::Format_F>(sq_s, sq_ud),"---kaon---");
+  output_meson(writer,  pp.calculate<Format::Format_F>(sq_s, sq_s), "---eta_s---");
+  
+  output_meson(writer,v1v1.calculate<Format::Format_F>(sq_ud,sq_ud),"---rho_X---");
+  output_meson(writer,v2v2.calculate<Format::Format_F>(sq_ud,sq_ud),"---rho_Y---");
+  output_meson(writer,v3v3.calculate<Format::Format_F>(sq_ud,sq_ud),"---rho_Z---");
 
-    output_meson(writer,v1v1.calculate<Format::Format_F>(sq_s,sq_ud),"---k_star_X---");
-    output_meson(writer,v2v2.calculate<Format::Format_F>(sq_s,sq_ud),"---k_star_Y---");
-    output_meson(writer,v3v3.calculate<Format::Format_F>(sq_s,sq_ud),"---k_star_Z---");
+  output_meson(writer,v1v1.calculate<Format::Format_F>(sq_s,sq_ud),"---k_star_X---");
+  output_meson(writer,v2v2.calculate<Format::Format_F>(sq_s,sq_ud),"---k_star_Y---");
+  output_meson(writer,v3v3.calculate<Format::Format_F>(sq_s,sq_ud),"---k_star_Z---");
 
-    output_meson(writer,v1v1.calculate<Format::Format_F>(sq_s,sq_s),"---phi_X---");
-    output_meson(writer,v2v2.calculate<Format::Format_F>(sq_s,sq_s),"---phi_Y---");
-    output_meson(writer,v3v3.calculate<Format::Format_F>(sq_s,sq_s),"---phi_Z---");
-  }
+  output_meson(writer,v1v1.calculate<Format::Format_F>(sq_s,sq_s),"---phi_X---");
+  output_meson(writer,v2v2.calculate<Format::Format_F>(sq_s,sq_s),"---phi_Y---");
+  output_meson(writer,v3v3.calculate<Format::Format_F>(sq_s,sq_s),"---phi_Z---");
 
-  { ////////// Baryon Correlation Functions ///////////
-    BaryonCorrelator baryons(sq_ud,sq_s);
-    CCIO::cout << " ---- Making baryon correlators\n";
-    writer<<"=== baryon correlators ===\n";
-    output_baryon(writer,baryons.nucleon(UP),     baryons.nucleon(DN),     "---nucleon---");
-    output_baryon(writer,baryons.sigma8(UP),      baryons.sigma8(DN),      "---sigma8---");
-    output_baryon(writer,baryons.xi8(UP),         baryons.xi8(DN),         "---xi8---");
-    output_baryon(writer,baryons.lambda(UP),      baryons.lambda(DN),      "---lambda---");
+  ////////// Baryon Correlation Functions ///////////
+  BaryonCorrelator baryons(sq_ud,sq_s);
 
-    output_baryon(writer,baryons.delta(XDIR,UP),  baryons.delta(XDIR,DN),  "---delta_X---");
-    output_baryon(writer,baryons.delta(YDIR,UP),  baryons.delta(YDIR,DN),  "---delta_Y---");
-    output_baryon(writer,baryons.delta(ZDIR,UP),  baryons.delta(ZDIR,DN),  "---delta_Z---");
+  CCIO::cout << " ---- Making baryon correlators\n";
+  if(Communicator::instance()->primaryNode()) writer<<"=== baryon correlators ===\n";
 
-    output_baryon(writer,baryons.omega(XDIR,UP),  baryons.omega(XDIR,DN),  "---omega_X---");
-    output_baryon(writer,baryons.omega(YDIR,UP),  baryons.omega(YDIR,DN),  "---omega_Y---");
-    output_baryon(writer,baryons.omega(ZDIR,UP),  baryons.omega(ZDIR,DN),  "---omega_Z---");
+  output_baryon(writer,baryons.nucleon(UP),     baryons.nucleon(DN),     "---nucleon---");
+  output_baryon(writer,baryons.sigma8(UP),      baryons.sigma8(DN),      "---sigma8---");
+  output_baryon(writer,baryons.xi8(UP),         baryons.xi8(DN),         "---xi8---");
+  output_baryon(writer,baryons.lambda(UP),      baryons.lambda(DN),      "---lambda---");
+  
+  output_baryon(writer,baryons.delta(XDIR,UP),  baryons.delta(XDIR,DN),  "---delta_X---");
+  output_baryon(writer,baryons.delta(YDIR,UP),  baryons.delta(YDIR,DN),  "---delta_Y---");
+  output_baryon(writer,baryons.delta(ZDIR,UP),  baryons.delta(ZDIR,DN),  "---delta_Z---");
+  
+  output_baryon(writer,baryons.omega(XDIR,UP),  baryons.omega(XDIR,DN),  "---omega_X---");
+  output_baryon(writer,baryons.omega(YDIR,UP),  baryons.omega(YDIR,DN),  "---omega_Y---");
+  output_baryon(writer,baryons.omega(ZDIR,UP),  baryons.omega(ZDIR,DN),  "---omega_Z---");
+  
+  output_baryon(writer,baryons.sigma10(XDIR,UP),baryons.sigma10(XDIR,DN),"---sigma10_X---");
+  output_baryon(writer,baryons.sigma10(YDIR,UP),baryons.sigma10(YDIR,DN),"---sigma10_Y---");
+  output_baryon(writer,baryons.sigma10(ZDIR,UP),baryons.sigma10(ZDIR,DN),"---sigma10_Z---");
+  
+  output_baryon(writer,baryons.xi10(XDIR,UP),   baryons.xi10(XDIR,DN),   "---xi10_X---");
+  output_baryon(writer,baryons.xi10(YDIR,UP),   baryons.xi10(YDIR,DN),   "---xi10_Y---");
+  output_baryon(writer,baryons.xi10(ZDIR,UP),   baryons.xi10(ZDIR,DN),   "---xi10_Z---");
 
-    output_baryon(writer,baryons.sigma10(XDIR,UP),baryons.sigma10(XDIR,DN),"---sigma10_X---");
-    output_baryon(writer,baryons.sigma10(YDIR,UP),baryons.sigma10(YDIR,DN),"---sigma10_Y---");
-    output_baryon(writer,baryons.sigma10(ZDIR,UP),baryons.sigma10(ZDIR,DN),"---sigma10_Z---");
-
-    output_baryon(writer,baryons.xi10(XDIR,UP),   baryons.xi10(XDIR,DN),   "---xi10_X---");
-    output_baryon(writer,baryons.xi10(YDIR,UP),   baryons.xi10(YDIR,DN),   "---xi10_Y---");
-    output_baryon(writer,baryons.xi10(ZDIR,UP),   baryons.xi10(ZDIR,DN),   "---xi10_Z---");
-  }
   return 0;
 }
 
