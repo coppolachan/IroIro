@@ -42,6 +42,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_Wilson_Brillouin.xml	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
+		test_EigenModesSolver.xml\
 		test_GeneralMeas.xml 	\
 		test_PolyakovLoop.xml	\
 		test_WilsonFlow.xml	\
@@ -72,10 +73,12 @@ test_PROGRAMS = test_HMC 		\
 		test_Clover 		\
 		test_Wilson_EvenOdd 	\
 		test_Wilson_Brillouin 	\
+		test_Wilson_Brillouin_Imp\
 		test_DomainWall		\
 		test_QpropMom		\
 		test_ResMass 		\
 		test_MesonSpectrum	\
+		test_MesonSpectrum_SpMom\
 		test_MesonSpectrum_Nf2p1\
 		test_BaryonSpectrum_Nf2p1\
 		test_HadronSpectrum_Nf2p1\
@@ -123,6 +126,9 @@ test_Wilson_EvenOdd_SOURCES =	test_wilson_EvenOdd.cpp 	\
 test_Wilson_Brillouin_SOURCES =	test_wilson_Brillouin.cpp 	\
 		        	testerWilsonBrillouin.cpp
 
+test_Wilson_Brillouin_Imp_SOURCES = test_wilson_Brillouin_Imp.cpp 	\
+		        	testerWilsonBrillouin_Imp.cpp
+
 test_DomainWall_SOURCES = 	test_DomainWall.cpp 		\
 				testerDWF.cpp
 
@@ -131,6 +137,9 @@ test_QpropMom_SOURCES 	= 	test_QpropMom.cpp 		\
 
 test_MesonSpectrum_SOURCES= 	test_MesonSpectrum.cpp 		\
 				testerMesonSpectrum.cpp
+
+test_MesonSpectrum_SpMom_SOURCES= test_MesonSpectrum_SpMom.cpp 	\
+				testerMesonSpectrumSpMom.cpp
 
 test_MesonSpectrum_Nf2p1_SOURCES= test_MesonSpectrum_Nf2p1.cpp 	\
 				testerMesonSpectrumNf2p1.cpp
@@ -181,6 +190,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_clover.hpp 		\
 				test_wilson_EvenOdd.hpp 	\
 				test_wilson_Brillouin.hpp 	\
+				test_wilson_Brillouin_Imp.hpp 	\
 				test_WilsonFlow.hpp     	\
 				test_PolyakovLoop.hpp     	\
 				test_DomainWall.hpp 		\
@@ -192,6 +202,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
 				test_MesonSpectrum_Nf2p1.hpp	\
+	                        test_MesonSpectrum_SpMom.hpp    \
 				test_BaryonSpectrum_Nf2p1.hpp	\
 				test_HadronSpectrum_Nf2p1.hpp	\
 				test_Overlap.hpp		\

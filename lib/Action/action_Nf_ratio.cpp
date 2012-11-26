@@ -33,8 +33,7 @@ void Action_Nf_ratio::attach_smearing(SmartConf* SmearObj) {
 void Action_Nf_ratio::init(const RandNum& rand){
   SolverOutput monitor;
   std::valarray<double> xi(fermion_size_);
-  Field temp;
-  temp.resize(fermion_size_);
+  Field temp(fermion_size_);
 
   slv1_->set_Approx(PseudoFermionsApprox_);
   slv2_->set_Approx(PseudoFermionsApprox_);
@@ -62,9 +61,7 @@ double Action_Nf_ratio::calc_H(){
   // Calculates action for the Metropolis step
   SolverOutput monitor;
   double H_nf2r = 0.0;
-  Field temp, zeta;
-  temp.resize(fermion_size_);
-  zeta.resize(fermion_size_);
+  Field temp(fermion_size_), zeta(fermion_size_);
 
   slv1_->set_Approx(MetropolisApprox_);
   slv2_->set_Approx(MetropolisApprox_Den_);
@@ -92,16 +89,12 @@ GaugeField Action_Nf_ratio::md_force(){
   using namespace FieldUtils;
   // Calculates the force
   GaugeField fce, gauge_temp;
-  Field zeta1, zeta3;
-  Field temp;
+  Field zeta1(fermion_size_), zeta3(fermion_size_);
+  Field temp(fermion_size_);
   std::vector<Field> eta1;
   std::vector<Field> eta2;
   GaugeField force;
   SolverOutput monitor;
-
-  zeta1.resize(fermion_size_);
-  zeta3.resize(fermion_size_);
-  temp.resize(fermion_size_);
 
   slv1_->set_Approx(MolecularDynApprox_);
   slv2_->set_Approx(MolecularDynApprox_Den_);

@@ -114,6 +114,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac.cpp Dirac_ops/dirac_wilson.cpp \
 	Dirac_ops/dirac_wilson_EvenOdd.cpp \
 	Dirac_ops/dirac_wilson_Brillouin.cpp \
+	Dirac_ops/dirac_wilson_Brillouin_Imp.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd.cpp \
 	Dirac_ops/dirac_clover.cpp Dirac_ops/fopr_signH_Zolotarev.cpp \
 	Dirac_ops/dirac_overlap_Zolotarev.cpp \
@@ -123,13 +124,12 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp Dirac_ops/eoUtils.cpp \
 	Dirac_ops/dirac_Operator_Factory.cpp \
-	Dirac_ops/boundaryCond.cpp \
+	Dirac_ops/boundaryCond.cpp EigenModes/eigenCalcGeneral.cpp \
 	EigenModes/eigenModesSolver_Factory.cpp \
 	EigenModes/eigenModesSolver_IRL.cpp \
 	EigenModes/eigenProc_Zolotarev.cpp EigenModes/eigenSorter.cpp \
-	EigenModes/fopr_chebyshev_DdagD.cpp \
-	EigenModes/foprHermFactory.cpp EigenModes/findminmax.cpp \
-	Measurements/measGeneral.cpp Measurements/GaugeM/staples.cpp \
+	EigenModes/findminmax.cpp Measurements/measGeneral.cpp \
+	Measurements/GaugeM/staples.cpp \
 	Measurements/GaugeM/wilsonFlow.cpp \
 	Measurements/GaugeM/polyakovLoop.cpp \
 	Measurements/GaugeM/gaugeFixingStep.cpp \
@@ -179,6 +179,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac.$(OBJEXT) dirac_wilson.$(OBJEXT) \
 	dirac_wilson_EvenOdd.$(OBJEXT) \
 	dirac_wilson_Brillouin.$(OBJEXT) \
+	dirac_wilson_Brillouin_Imp.$(OBJEXT) \
 	dirac_staggered_EvenOdd.$(OBJEXT) dirac_clover.$(OBJEXT) \
 	fopr_signH_Zolotarev.$(OBJEXT) \
 	dirac_overlap_Zolotarev.$(OBJEXT) dirac_DomainWall.$(OBJEXT) \
@@ -186,10 +187,9 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
 	dirac_DomainWall_4D_eoSolv.$(OBJEXT) eoUtils.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) boundaryCond.$(OBJEXT) \
-	eigenModesSolver_Factory.$(OBJEXT) \
+	eigenCalcGeneral.$(OBJEXT) eigenModesSolver_Factory.$(OBJEXT) \
 	eigenModesSolver_IRL.$(OBJEXT) eigenProc_Zolotarev.$(OBJEXT) \
-	eigenSorter.$(OBJEXT) fopr_chebyshev_DdagD.$(OBJEXT) \
-	foprHermFactory.$(OBJEXT) findminmax.$(OBJEXT) \
+	eigenSorter.$(OBJEXT) findminmax.$(OBJEXT) \
 	measGeneral.$(OBJEXT) staples.$(OBJEXT) wilsonFlow.$(OBJEXT) \
 	polyakovLoop.$(OBJEXT) gaugeFixingStep.$(OBJEXT) \
 	gaugeFixing_Coulomb.$(OBJEXT) gaugeFixing_Landau.$(OBJEXT) \
@@ -430,6 +430,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp	\
+		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_clover.cpp		\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
@@ -442,12 +443,11 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/eoUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/boundaryCond.cpp      	\
+		EigenModes/eigenCalcGeneral.cpp		\
 		EigenModes/eigenModesSolver_Factory.cpp	\
 		EigenModes/eigenModesSolver_IRL.cpp	\
 		EigenModes/eigenProc_Zolotarev.cpp	\
 		EigenModes/eigenSorter.cpp		\
-		EigenModes/fopr_chebyshev_DdagD.cpp	\
-		EigenModes/foprHermFactory.cpp   	\
 		EigenModes/findminmax.cpp		\
 		Measurements/measGeneral.cpp		\
 		Measurements/GaugeM/staples.cpp		\
@@ -509,7 +509,8 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/geometry.hpp		\
 			$(top_srcdir)/include/field.h			\
 			$(top_srcdir)/include/factories.hpp		\
-			$(top_srcdir)/include/fopr_chebyshev_DdagD.h	\
+			$(top_srcdir)/include/fopr_Chebyshev.h	        \
+			$(top_srcdir)/include/fopr_DdagDLinear.h        \
 			$(top_srcdir)/include/fopr_Dhat.h		\
 			$(top_srcdir)/include/fopr_eo.h			\
 			$(top_srcdir)/include/fopr_eo_wilson.h		\
@@ -584,6 +585,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
+			Dirac_ops/dirac_wilson_Brillouin_Imp.hpp\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
@@ -593,10 +595,13 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/boundaryCond.hpp      	\
+                        EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\
 			EigenModes/eigenModesSolver_IRL.hpp	\
+			EigenModes/eigenSorter_Factory.hpp	\
 			EigenModes/eigenSorter.hpp		\
+			EigenModes/foprHermFactory_ChebyshevDdagDLin.hpp\
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/findminmax.hpp		\
 			Fields/field_expressions.hpp		\
@@ -789,7 +794,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_staggered_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_Brillouin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_Brillouin_Imp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_EvenOdd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenCalcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenProc_Zolotarev.Po@am__quote@
@@ -797,8 +804,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eoUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fieldUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/findminmax.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/foprHermFactory.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fopr_chebyshev_DdagD.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fopr_signH_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gammaMatrices.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gaugeConf.Po@am__quote@
@@ -1216,6 +1221,22 @@ dirac_wilson_Brillouin.obj: Dirac_ops/dirac_wilson_Brillouin.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin.cpp'; fi`
 
+dirac_wilson_Brillouin_Imp.o: Dirac_ops/dirac_wilson_Brillouin_Imp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_Brillouin_Imp.o -MD -MP -MF $(DEPDIR)/dirac_wilson_Brillouin_Imp.Tpo -c -o dirac_wilson_Brillouin_Imp.o `test -f 'Dirac_ops/dirac_wilson_Brillouin_Imp.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_Brillouin_Imp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_Brillouin_Imp.Tpo $(DEPDIR)/dirac_wilson_Brillouin_Imp.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_wilson_Brillouin_Imp.cpp' object='dirac_wilson_Brillouin_Imp.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin_Imp.o `test -f 'Dirac_ops/dirac_wilson_Brillouin_Imp.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_Brillouin_Imp.cpp
+
+dirac_wilson_Brillouin_Imp.obj: Dirac_ops/dirac_wilson_Brillouin_Imp.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_Brillouin_Imp.obj -MD -MP -MF $(DEPDIR)/dirac_wilson_Brillouin_Imp.Tpo -c -o dirac_wilson_Brillouin_Imp.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin_Imp.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin_Imp.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin_Imp.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_Brillouin_Imp.Tpo $(DEPDIR)/dirac_wilson_Brillouin_Imp.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/dirac_wilson_Brillouin_Imp.cpp' object='dirac_wilson_Brillouin_Imp.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin_Imp.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin_Imp.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin_Imp.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin_Imp.cpp'; fi`
+
 dirac_staggered_EvenOdd.o: Dirac_ops/dirac_staggered_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_staggered_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_staggered_EvenOdd.Tpo -c -o dirac_staggered_EvenOdd.o `test -f 'Dirac_ops/dirac_staggered_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_staggered_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_staggered_EvenOdd.Tpo $(DEPDIR)/dirac_staggered_EvenOdd.Po
@@ -1408,6 +1429,22 @@ boundaryCond.obj: Dirac_ops/boundaryCond.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o boundaryCond.obj `if test -f 'Dirac_ops/boundaryCond.cpp'; then $(CYGPATH_W) 'Dirac_ops/boundaryCond.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/boundaryCond.cpp'; fi`
 
+eigenCalcGeneral.o: EigenModes/eigenCalcGeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenCalcGeneral.o -MD -MP -MF $(DEPDIR)/eigenCalcGeneral.Tpo -c -o eigenCalcGeneral.o `test -f 'EigenModes/eigenCalcGeneral.cpp' || echo '$(srcdir)/'`EigenModes/eigenCalcGeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenCalcGeneral.Tpo $(DEPDIR)/eigenCalcGeneral.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenCalcGeneral.cpp' object='eigenCalcGeneral.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenCalcGeneral.o `test -f 'EigenModes/eigenCalcGeneral.cpp' || echo '$(srcdir)/'`EigenModes/eigenCalcGeneral.cpp
+
+eigenCalcGeneral.obj: EigenModes/eigenCalcGeneral.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenCalcGeneral.obj -MD -MP -MF $(DEPDIR)/eigenCalcGeneral.Tpo -c -o eigenCalcGeneral.obj `if test -f 'EigenModes/eigenCalcGeneral.cpp'; then $(CYGPATH_W) 'EigenModes/eigenCalcGeneral.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenCalcGeneral.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenCalcGeneral.Tpo $(DEPDIR)/eigenCalcGeneral.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenCalcGeneral.cpp' object='eigenCalcGeneral.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenCalcGeneral.obj `if test -f 'EigenModes/eigenCalcGeneral.cpp'; then $(CYGPATH_W) 'EigenModes/eigenCalcGeneral.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenCalcGeneral.cpp'; fi`
+
 eigenModesSolver_Factory.o: EigenModes/eigenModesSolver_Factory.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenModesSolver_Factory.o -MD -MP -MF $(DEPDIR)/eigenModesSolver_Factory.Tpo -c -o eigenModesSolver_Factory.o `test -f 'EigenModes/eigenModesSolver_Factory.cpp' || echo '$(srcdir)/'`EigenModes/eigenModesSolver_Factory.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigenModesSolver_Factory.Tpo $(DEPDIR)/eigenModesSolver_Factory.Po
@@ -1471,38 +1508,6 @@ eigenSorter.obj: EigenModes/eigenSorter.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/eigenSorter.cpp' object='eigenSorter.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigenSorter.obj `if test -f 'EigenModes/eigenSorter.cpp'; then $(CYGPATH_W) 'EigenModes/eigenSorter.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigenSorter.cpp'; fi`
-
-fopr_chebyshev_DdagD.o: EigenModes/fopr_chebyshev_DdagD.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fopr_chebyshev_DdagD.o -MD -MP -MF $(DEPDIR)/fopr_chebyshev_DdagD.Tpo -c -o fopr_chebyshev_DdagD.o `test -f 'EigenModes/fopr_chebyshev_DdagD.cpp' || echo '$(srcdir)/'`EigenModes/fopr_chebyshev_DdagD.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fopr_chebyshev_DdagD.Tpo $(DEPDIR)/fopr_chebyshev_DdagD.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/fopr_chebyshev_DdagD.cpp' object='fopr_chebyshev_DdagD.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o fopr_chebyshev_DdagD.o `test -f 'EigenModes/fopr_chebyshev_DdagD.cpp' || echo '$(srcdir)/'`EigenModes/fopr_chebyshev_DdagD.cpp
-
-fopr_chebyshev_DdagD.obj: EigenModes/fopr_chebyshev_DdagD.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fopr_chebyshev_DdagD.obj -MD -MP -MF $(DEPDIR)/fopr_chebyshev_DdagD.Tpo -c -o fopr_chebyshev_DdagD.obj `if test -f 'EigenModes/fopr_chebyshev_DdagD.cpp'; then $(CYGPATH_W) 'EigenModes/fopr_chebyshev_DdagD.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/fopr_chebyshev_DdagD.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fopr_chebyshev_DdagD.Tpo $(DEPDIR)/fopr_chebyshev_DdagD.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/fopr_chebyshev_DdagD.cpp' object='fopr_chebyshev_DdagD.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o fopr_chebyshev_DdagD.obj `if test -f 'EigenModes/fopr_chebyshev_DdagD.cpp'; then $(CYGPATH_W) 'EigenModes/fopr_chebyshev_DdagD.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/fopr_chebyshev_DdagD.cpp'; fi`
-
-foprHermFactory.o: EigenModes/foprHermFactory.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT foprHermFactory.o -MD -MP -MF $(DEPDIR)/foprHermFactory.Tpo -c -o foprHermFactory.o `test -f 'EigenModes/foprHermFactory.cpp' || echo '$(srcdir)/'`EigenModes/foprHermFactory.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/foprHermFactory.Tpo $(DEPDIR)/foprHermFactory.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/foprHermFactory.cpp' object='foprHermFactory.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o foprHermFactory.o `test -f 'EigenModes/foprHermFactory.cpp' || echo '$(srcdir)/'`EigenModes/foprHermFactory.cpp
-
-foprHermFactory.obj: EigenModes/foprHermFactory.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT foprHermFactory.obj -MD -MP -MF $(DEPDIR)/foprHermFactory.Tpo -c -o foprHermFactory.obj `if test -f 'EigenModes/foprHermFactory.cpp'; then $(CYGPATH_W) 'EigenModes/foprHermFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/foprHermFactory.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/foprHermFactory.Tpo $(DEPDIR)/foprHermFactory.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='EigenModes/foprHermFactory.cpp' object='foprHermFactory.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o foprHermFactory.obj `if test -f 'EigenModes/foprHermFactory.cpp'; then $(CYGPATH_W) 'EigenModes/foprHermFactory.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/foprHermFactory.cpp'; fi`
 
 findminmax.o: EigenModes/findminmax.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT findminmax.o -MD -MP -MF $(DEPDIR)/findminmax.Tpo -c -o findminmax.o `test -f 'EigenModes/findminmax.cpp' || echo '$(srcdir)/'`EigenModes/findminmax.cpp

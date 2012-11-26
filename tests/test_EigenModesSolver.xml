@@ -38,45 +38,45 @@
   <Output>
     <starting_idx>0</starting_idx>
     <idx_increment>1</idx_increment>
-    <!--<output_prefix>Output/output_</output_prefix>-->
+    <output_prefix>Output/eigen_</output_prefix>
     <!--<gauge_prefix>Output/smr_gtr_</gauge_prefix>-->
     <!--<seed_prefix>Output/rng_seed_</seed_prefix>-->
   </Output>
   <Measurement>
-    <EigenModesSolver name="ImplicitRestartedLanczos">
-      <Nk>20</Nk>
-      <Np>50</Np>
-      <precision>1e-11</precision>
-      <threshold>0.15</threshold>
-      <max_iter>500</max_iter>	
-      <eig_sort>LowestModes</eig_sort>
-    </EigenModesSolver>
-    <HermiteOpr name="Hx"></HermiteOpr>
-   <!-- <AccelOpr name="Hx"></AccelOpr> -->
-    <AccelOpr name="Chebyshev_DdagD">
-      <Npoly>40</Npoly>
-      <vmin>0.16</vmin>
-      <vmax>2.50</vmax>
-    </AccelOpr>
-    <WilsonLikeDirac name="DiracWilson">
-      <mass>-1.6</mass>
-    </WilsonLikeDirac>
-    <!--
-    <WilsonLikeDirac name="DiracOptimalDomainWall4d">
-      <Kernel5d>
-	<Preconditioning>NoPreconditioner</Preconditioning>
-	<wilson_mass>-1.6</wilson_mass>
-	<N5d>8</N5d>
-	<b>1.0</b>
-	<c>1.0</c>
-	<mass>0.025</mass>
-	<approximation name="Zolotarev">
-	  <lambda_min>0.1</lambda_min>
-	  <lambda_max>1.5</lambda_max>
-	</approximation>
-      </Kernel5d>
-    </WilsonLikeDirac>
-    -->
+    <EigenModesCalc>
+      <WilsonLikeDirac name="DiracWilson">
+	<mass>-1.6</mass>
+      </WilsonLikeDirac>
+<!--  <WilsonLikeDirac name="DiracOptimalDomainWall4d">
+	<Kernel5d>
+	  <Preconditioning>NoPreconditioner</Preconditioning>
+	  <wilson_mass>-1.6</wilson_mass>
+	  <N5d>8</N5d>
+	  <b>1.0</b>
+	  <c>1.0</c>
+	  <mass>0.025</mass>
+	  <approximation name="Zolotarev">
+	    <lambda_min>0.1</lambda_min>
+	    <lambda_max>1.5</lambda_max>
+	  </approximation>
+	</Kernel5d>
+	</WilsonLikeDirac> -->
+      <Operator name="Hx" sorting="Lowest">      
+	<threshold>0.15</threshold>
+<!-- 	<Acceleration name="None">-->
+       <Acceleration name="Chebyshev" kernel_op="DdagDLinear">
+	  <ex_lower>0.16</ex_lower>
+	  <ex_upper>2.50</ex_upper>
+	  <Npoly>40</Npoly>
+	</Acceleration>
+      </Operator>
+      <EigenModesSolver name="ImplicitRestartedLanczos">
+	<Nk>20</Nk>
+	<Np>50</Np>
+	<precision>1e-11</precision>
+	<max_iter>500</max_iter>	
+      </EigenModesSolver>
+    </EigenModesCalc>
   </Measurement>
 </Parameters>
 

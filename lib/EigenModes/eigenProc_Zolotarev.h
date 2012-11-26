@@ -38,12 +38,11 @@ public:
   EigenProc_Zolotarev(const DiracWilsonLike* D,
 		      const EigenPrms& Eprms)
     :H_(new Fopr_H(D)),
+     sort_low_( new EigenSorter_low(Eprms.vthrs_l)),
+     sort_high_(new EigenSorter_high(Eprms.vthrs_h)),
+     eigen_low_( new EigenModesSolver_IRL(H_,sort_low_, Eprms.Nk_l,Eprms.Np_l,Eprms.enorm_l,Eprms.Niter_l)),
+     eigen_high_(new EigenModesSolver_IRL(H_,sort_high_,Eprms.Nk_h,Eprms.Np_h,Eprms.enorm_h,Eprms.Niter_h)),
      fsize_(H_->fsize()),
-     eigen_low_(new EigenModesSolver_IRL(H_,Eprms.Nk_l,Eprms.Np_l,Eprms.enorm_l,
-					 Eprms.vthrs_l,Eprms.Niter_l,EigenModes::LowestModes())),
-     sort_high_(new EigenSorter_high),
-     eigen_high_(new EigenModesSolver_IRL(H_,Eprms.Nk_h,Eprms.Np_h,Eprms.enorm_h,
-					  Eprms.vthrs_h,Eprms.Niter_h,EigenModes::HighestModes())),
      Nmm_(Eprms.Nmm),Np_(Eprms.Npoly){}
   
   ~EigenProc_Zolotarev(){
