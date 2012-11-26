@@ -1,5 +1,5 @@
 /*!
-  @file shiftField.cpp
+  @file mapping.cpp
   @brief Definition of ShiftField class
 */
 #include "shiftField.hpp"

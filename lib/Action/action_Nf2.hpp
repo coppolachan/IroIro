@@ -10,6 +10,8 @@
 #include "Solver/solver.hpp"
 #include "Smearing/smartConf.hpp"
 
+#include "Dirac_ops/boundaryCond.hpp"
+
 class Action_Nf2 :public Action{
 private:
   GaugeField* const u_;      /*!< The gauge field */
@@ -20,6 +22,8 @@ private:
   bool smeared_;
   SmartConf* smart_conf_;
   
+  BoundaryCond* BC;
+
   Field DdagD_inv(const Field& src);
   void attach_smearing(SmartConf*);
 public:
@@ -34,7 +38,8 @@ public:
      slv_(Solv),
      fsize_(D->fsize()),
      phi_(fsize_),
-     smeared_(smeared){
+     smeared_(smeared),
+     BC(new BoundaryCond_antiPeriodic(TDIR)){
      if (smeared_ && smart_conf !=NULL) attach_smearing(smart_conf);
   }
 

@@ -55,7 +55,7 @@ namespace MPrand{
     int Lvol = NP*Nvol;
 
     //CCIO::cout << "MP_GET_GAUSS valarray allocation\n";
-      /*
+    /*
     std::valarray<double> Rn(NP*rn.size());// too big.
     CCIO::cout << "MP_GET_GAUSS get_gauss\n";
     rand.get_gauss(Rn);	
@@ -63,9 +63,10 @@ namespace MPrand{
     FMT Fmt(Lvol,Nex);
     CCIO::cout << "MP_GET_GAUSS distribute\n";
     rn = Rn[Fmt.get_sub(gsite)];
-
-      */
+    */
+    
     //    FMT Fmt(Lvol,Nex);
+    
     std::valarray<double> Rn_source(rn.size());
     for (int node = 0; node < NP; ++node) {
       
