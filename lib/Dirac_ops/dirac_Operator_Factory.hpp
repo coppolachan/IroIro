@@ -49,10 +49,13 @@ public:
 };
 
 class DiracStaggeredEvenOddLikeOperatorFactory :public DiracOperatorFactory{
+  Dstagg::Dtype dt_;
 public:
-  virtual DiracStaggeredEvenOddLike* getDiracOperatorSTG(Field* const) = 0;
+  DiracStaggeredEvenOddLikeOperatorFactory(Dstagg::Dtype dt):dt_(dt){}
+  virtual DiracStaggeredEvenOddLike* 
+  getDiracOperatorSTG(Dstagg::Dtype,Field* const) = 0;
   Dirac* getDiracOperator(Field* const Gfield){
-    return getDiracOperatorSTG(Gfield);
+    return getDiracOperatorSTG(dt_,Gfield); // DdagDee is chosen as default
   }
   virtual ~DiracStaggeredEvenOddLikeOperatorFactory(){}
 };
@@ -248,12 +251,12 @@ public:
 /*! @brief Concrete class for creating Dirac_staggered_EvenOdd */
 class DiracStaggeredEvenOddFactory
   : public DiracStaggeredEvenOddLikeOperatorFactory{
-
-  const XML::node Dirac_node;
+  const XML::node Dirac_node;  
 public:
-  DiracStaggeredEvenOddFactory(const XML::node node):Dirac_node(node){}
-  Dirac_staggered_EvenOdd* getDiracOperatorSTG(Field* const Gfield){
-    return new Dirac_staggered_EvenOdd(Dirac_node,Gfield);
+  DiracStaggeredEvenOddFactory(const XML::node node,Dstagg::Dtype dt=Dstagg::DdagDee)
+    :Dirac_node(node),DiracStaggeredEvenOddLikeOperatorFactory(dt){}
+  Dirac_staggered_EvenOdd* getDiracOperatorSTG(Dstagg::Dtype dt,Field* const Gfield){
+    return new Dirac_staggered_EvenOdd(Dirac_node,dt,Gfield);
   }
 };
 

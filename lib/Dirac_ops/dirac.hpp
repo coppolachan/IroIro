@@ -13,6 +13,7 @@
 enum {Op, Dag};
 
 namespace Dop{
+  // for Wilson_EvenOdd
   struct EOtag{};    
   struct OEtag{};    
 
@@ -117,6 +118,7 @@ public:
   virtual const Field mult_oo(const Field&) const =0;
   virtual const Field mult_ee_inv(const Field&) const =0;
   virtual const Field mult_oo_inv(const Field&) const =0;
+  virtual double get_mq() const =0;
 };
 
 

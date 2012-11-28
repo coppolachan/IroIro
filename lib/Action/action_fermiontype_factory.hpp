@@ -447,7 +447,7 @@ private:
     // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
-    Kernel.save(DiracObj.get()->getDiracOperatorSTG(&(Links->data)));
+    Kernel.save(DiracObj.get()->getDiracOperatorSTG(Dstagg::DdagDee,&(Links->data)));
     HermitianOp.save(new Fopr_HD(Kernel.get()));
     Solv.save(SolverObj.get()->getSolver(HermitianOp.get()));
 
@@ -461,10 +461,12 @@ class FourFlavorStaggeredRatioActionFactory :public FermionActionFactory{
   RaiiFactoryObj<SolverOperatorFactory> SolverNumObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverDenomObj;
 
-  RaiiFactoryObj<DiracStaggeredEvenOddLike> DiracNumerator;
+  RaiiFactoryObj<DiracStaggeredEvenOddLike> DiracNumerator_ee;
+  RaiiFactoryObj<DiracStaggeredEvenOddLike> DiracNumerator_oo;
   RaiiFactoryObj<DiracStaggeredEvenOddLike> DiracDenominator;
-  RaiiFactoryObj<Solver> Solver1;
-  RaiiFactoryObj<Solver> Solver2;
+  RaiiFactoryObj<Solver> Solver1e;
+  RaiiFactoryObj<Solver> Solver1o;
+  RaiiFactoryObj<Solver> Solver2e;
 
   const XML::node Action_node;
   bool smearing;
@@ -489,16 +491,18 @@ private:
     // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
-    DiracNumerator.save(DiracNumObj.get()->getDiracOperatorSTG(&(Links->data)));
-    DiracDenominator.save(DiracDenomObj.get()->getDiracOperatorSTG(&(Links->data)));
+    DiracNumerator_ee.save(DiracNumObj.get()->getDiracOperatorSTG(Dstagg::DdagDee,&(Links->data)));
+    DiracNumerator_oo.save(DiracNumObj.get()->getDiracOperatorSTG(Dstagg::DdagDoo,&(Links->data)));
+    DiracDenominator.save(DiracDenomObj.get()->getDiracOperatorSTG(Dstagg::DdagDee,&(Links->data)));
     
-    Solver1.save(SolverNumObj.get()->getSolver(new Fopr_HD(DiracNumerator.get())));
-    Solver2.save(SolverDenomObj.get()->getSolver(new Fopr_HD(DiracDenominator.get())));
+    Solver1e.save(SolverNumObj.get()->getSolver(new Fopr_HD(DiracNumerator_ee.get())));
+    Solver1o.save(SolverNumObj.get()->getSolver(new Fopr_HD(DiracNumerator_oo.get())));
+    Solver2e.save(SolverDenomObj.get()->getSolver(new Fopr_HD(DiracDenominator.get())));
 
     return new Action_staggered_ratio(Links,
-				      DiracNumerator.get(),DiracDenominator.get(),
-				      Solver1.get(),Solver2.get(),
-				      smearing, SC); 
+				      DiracNumerator_ee.get(),DiracDenominator.get(),
+				      Solver1e.get(),Solver1o.get(),Solver2e.get(),
+				      smearing,SC); 
   }
 };
 

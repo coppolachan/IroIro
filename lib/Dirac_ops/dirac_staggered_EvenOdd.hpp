@@ -16,6 +16,10 @@
 typedef Format::Format_S sfmt_t;
 typedef Format::Format_G gfmt_t;
 
+namespace Dstagg{
+enum Dtype{DdagDee=0,DdagDoo=1,Dfull=2};
+}
+
 class Dirac_staggered_EvenOdd :public DiracStaggeredEvenOddLike{
 private:
   const Field* const u_;
@@ -24,7 +28,7 @@ private:
   GaugeField ue_,uo_;
 
   const sfmt_t ff_;  // for all pseudo-fermions 
-  const gfmt_t gf_;  // for ustg_
+  const gfmt_t gf_;  // for ue_ and uo_
   const gfmt_t gff_; // for u_ (always full site)
 
   const size_t fsize_;
@@ -45,15 +49,26 @@ private:
 
   void set_ksphase();
   void set_ustag();
-  
+
   void multPoe(Field&,const Field&,int)const;
   void multPeo(Field&,const Field&,int)const;
 
   int re(int c1,int c2)const{return 2*(NC_*c1+c2);}
   int im(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
+  
+  void mult_DdagDee(Field&,const Field&)const;
+  void mult_DdagDoo(Field&,const Field&)const;
+  void mult_Dfull(    Field&,const Field&)const;
+  void mult_Dfull_dag(Field&,const Field&)const;
+
+  static void (Dirac_staggered_EvenOdd::*mult_type[])(Field&,const Field&)const;
+  static void (Dirac_staggered_EvenOdd::*mult_dag_type[])(Field&,const Field&)const;
+  
+  void (Dirac_staggered_EvenOdd::*mult_core)(Field&,const Field&)const;
+  void (Dirac_staggered_EvenOdd::*mult_dag_core)(Field&,const Field&)const;
 
 public:
-  Dirac_staggered_EvenOdd(double mass,const Field* u,
+  Dirac_staggered_EvenOdd(double mass,Dstagg::Dtype D,const Field* u,
 			  const BoundaryCond* bdry = NULL)
     :mq_(mass),u_(u),
      Nvh_(CommonPrms::instance()->Nvol()/2),
@@ -64,26 +79,33 @@ public:
      fsize_(ff_.size()),gsize_(gff_.size()),
      kse_(1.0,Nvh_*Ndim_),kso_(1.0,Nvh_*Ndim_),
      sle_(ff_.get_sub(SiteIndex_EvenOdd::instance()->esec())),
-     slo_(ff_.get_sub(SiteIndex_EvenOdd::instance()->osec())){
+     slo_(ff_.get_sub(SiteIndex_EvenOdd::instance()->osec())),
+     mult_core(Dirac_staggered_EvenOdd::mult_type[D]),
+     mult_dag_core(Dirac_staggered_EvenOdd::mult_dag_type[D])
+  {
     Mapping::init_shiftField_EvenOdd();
     //
     if(bdry_== NULL) bdry_= new BoundaryCond_periodic;
     set_ksphase();
     set_ustag();
   }
-
-  Dirac_staggered_EvenOdd(const XML::node& stg_node,const Field* u)
-   :u_(u),
-    Nvh_(CommonPrms::instance()->Nvol()/2),
-    Ndim_(CommonPrms::instance()->Ndim()),
-    bdry_(NULL),
-    ff_(Nvh_),gf_(Nvh_),gff_(2*Nvh_),
-    ue_(Nvh_),uo_(Nvh_),
-    fsize_(ff_.size()),gsize_(gff_.size()),
-    kse_(1.0,Nvh_*Ndim_),kso_(1.0,Nvh_*Ndim_),
-    sle_(ff_.get_sub(SiteIndex_EvenOdd::instance()->esec())),
-    slo_(ff_.get_sub(SiteIndex_EvenOdd::instance()->osec())){
-    Mapping::init_shiftField_EvenOdd();
+  
+  Dirac_staggered_EvenOdd(const XML::node& stg_node,
+			  Dstagg::Dtype D,const Field* u)
+    :u_(u),
+     Nvh_(CommonPrms::instance()->Nvol()/2),
+     Ndim_(CommonPrms::instance()->Ndim()),
+     bdry_(NULL),
+     ff_(Nvh_),gf_(Nvh_),gff_(2*Nvh_),
+     ue_(Nvh_),uo_(Nvh_),
+     fsize_(ff_.size()),gsize_(gff_.size()),
+     kse_(1.0,Nvh_*Ndim_),kso_(1.0,Nvh_*Ndim_),
+     sle_(ff_.get_sub(SiteIndex_EvenOdd::instance()->esec())),
+     slo_(ff_.get_sub(SiteIndex_EvenOdd::instance()->osec())),
+     mult_core(Dirac_staggered_EvenOdd::mult_type[D]),
+     mult_dag_core(Dirac_staggered_EvenOdd::mult_dag_type[D])
+  {
+    Mapping::init_shiftField_EvenOdd();                                        
     //
     XML::read(stg_node,"mass",mq_);
     XML::node bdnode = stg_node;
