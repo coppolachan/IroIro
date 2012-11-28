@@ -127,6 +127,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
+		Main/Geometry/mapping.cpp		\
 		Main/Geometry/siteIndex_EvenOdd.cpp	\
 		Main/Geometry/siteMap.cpp		\
 		Main/Geometry/shiftField.cpp		\

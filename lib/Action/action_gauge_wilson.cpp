@@ -62,13 +62,17 @@ GaugeField ActionGaugeWilson::md_force(){
     BGWilsonSU3_MatMult_ND(c_ptr , u_->data.getaddr(0)+18*Nvol*m, tmp_ptr, Nvol);
     SetSlice(force, TracelessAntihermite(c), m);
 #else
-      tmp += stpl_.upper_lower(*u_,m,n);
+        tmp += stpl_.upper_lower(*u_,m,n);
       }
+      CCIO::cout << "Tmp norm: " << tmp.norm() << " mu: " << m <<"\n";
     }
-     for(int site=0; site < Nvol_; ++site){
+
+
+    for(int site=0; site < Nvol_; ++site){
        pl = mat(*u_,site,m)*mat_dag(tmp,site);
        SetMat(force, anti_hermite_traceless(pl), site, m);
     }
+    CCIO::cout << "Force norm: " << force.norm() << " mu: " << m <<"\n";
 #endif
   }
 

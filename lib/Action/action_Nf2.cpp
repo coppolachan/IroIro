@@ -7,6 +7,8 @@
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 
+
+
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2::observer_update() {
   D_->update_internal_state();  
@@ -36,20 +38,26 @@ Field Action_Nf2::DdagD_inv(const Field& src){
 
 void Action_Nf2::init(const RandNum& rand){
   std::valarray<double> ph(fsize_);
+  //BC->apply_bc(*u_);
   MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
   phi_= D_->mult_dag(Field(ph));
+  //BC->apply_bc(*u_);
 }
 
 double Action_Nf2::calc_H(){ 
+  // BC->apply_bc(*u_);
   double H_nf2 = phi_*DdagD_inv(phi_);
+  //BC->apply_bc(*u_);
   _Message(ACTION_VERB_LEVEL, "    [Action_Nf2] H = "<< H_nf2<<"\n");
   return H_nf2;
 }
 
 GaugeField Action_Nf2::md_force(){
+  //BC->apply_bc(*u_);
   Field eta = DdagD_inv(phi_);
   GaugeField fce(D_->md_force(eta,D_->mult(eta)));
-  
+  //BC->apply_bc(*u_);
+
   // [fce] is [U*SigmaTilde] in smearing language
   if(smeared_) smart_conf_->smeared_force(fce);
   GaugeField force = FieldUtils::TracelessAntihermite(fce);

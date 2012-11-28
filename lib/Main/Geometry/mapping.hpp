@@ -64,6 +64,7 @@ namespace Mapping{
       Communicator::instance()->transfer_bk(recv_bdry,
 					    Fin.data[Fin.get_sub(bdry_t_)],
 					    dir_);
+
       Fout.data.set(Fin.get_sub(bdry_b_),recv_bdry);
       Fout.data.set(Fin.get_sub(bulk_b_),Fin.data[Fin.get_sub(bulk_t_)]);
      
