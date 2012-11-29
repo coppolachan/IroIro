@@ -123,13 +123,11 @@ const Field Dirac_staggered_EvenOdd::mult_oe(const Field& fe)const{
 #endif //0
 
 const Field Dirac_staggered_EvenOdd::mult_eo_dag(const Field& fe) const{
-  Field wo = mult_oe(fe);
-  return -wo;
+  return -Field(mult_oe(fe));
 }
 
 const Field Dirac_staggered_EvenOdd::mult_oe_dag(const Field& fo) const{
-  Field we = mult_eo(fo);
-  return -we;
+  return -Field(mult_eo(fo));
 }
 
 const Field Dirac_staggered_EvenOdd::mult(const Field& f)const{
