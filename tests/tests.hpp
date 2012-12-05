@@ -22,6 +22,9 @@ namespace TestEnv{
   TestClass StartUp(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);
 
+    // Echo of input xml
+    JobUtils::echo_input(Options.filename);
+
     //Reading input file
     XML::node top_node = XML::getInputXML(Options.filename);  
 
@@ -33,22 +36,20 @@ namespace TestEnv{
     GaugeF.initialize(top_node);
     CCIO::cout<<"GaugeF initialized"<<std::endl;
 
-    // Echo of input xml
-    JobUtils::echo_input(Options.filename);
-    
     return TestClass(top_node, GaugeF);
   }
 
   template <class TestClass>
   int StartRun(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);
+
+    // Echo of input xml
+    JobUtils::echo_input(Options.filename);
+
     //Reading input file   
     XML::node top_node = XML::getInputXML(Options.filename);  
 
     MeasGeneral meas(top_node);
-
-    // Echo of input xml
-    JobUtils::echo_input(Options.filename);
 
     meas.do_meas<TestClass>();
     

@@ -109,14 +109,10 @@ public:
     //
     XML::read(stg_node,"mass",mq_);
     XML::node bdnode = stg_node;
-    XML::descend(bdnode,"boundary_condition",MANDATORY);
-    CCIO::cout<<"creating BC"<<std::endl;
+    XML::descend(bdnode,"BoundaryCondition",MANDATORY);
     bdry_= createBC(bdnode);
-    CCIO::cout<<"BC created"<<std::endl;
     set_ksphase();
-    CCIO::cout<<"ksphase created"<<std::endl;
     set_ustag();
-    CCIO::cout<<"ustag created"<<std::endl;
   }
 
   ~Dirac_staggered_EvenOdd(){ if(bdry_!= NULL) delete bdry_;}

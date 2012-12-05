@@ -5,21 +5,19 @@
 
 namespace RNG_Env {
   RandomNumberCreator* createRNGfactory(XML::node node){
-    XML::descend(node, "RandomNumberGen");
-
+    XML::descend(node,"RandomNumberGen");
     if(node !=NULL){
       const char* RNG_name = node.attribute("name").value();
     
-      if(!strcmp(RNG_name, "Mersenne Twister")){ 
-	return  new RandNum_MT19937_Creator(node);
-      }
-      CCIO::cerr << "No Random Number Generator available with name ["
-	      << RNG_name << "]" << std::endl;
+      if(!strcmp(RNG_name,"Mersenne Twister"))
+	return new RandNum_MT19937_Creator(node);
+
+      CCIO::cerr<< "No Random Number Generator available with name ["
+		<< RNG_name << "]" << std::endl;
       abort();
-    
     }else{
-      CCIO::cout << "Mandatory node <RandomNumberGen> is missing in input file"
-		 << std::endl;
+      CCIO::cout<< "Mandatory node <RandomNumberGen> is missing in input file"
+		<< std::endl;
       abort();
     }
   }

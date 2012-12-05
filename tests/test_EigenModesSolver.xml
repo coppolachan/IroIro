@@ -8,7 +8,7 @@
     <Boundary_cond>1 1 1 1</Boundary_cond>
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="TextFile">
+  <Configuration Type="TextFile" Input="FileList">
     <filename>conf_08080808.txt</filename>
   </Configuration> 
   <RandomNumberGen name="Mersenne Twister"> 

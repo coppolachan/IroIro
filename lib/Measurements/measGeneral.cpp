@@ -7,14 +7,8 @@
 #include "Smearing/smearingFactories.hpp"
 #include "Communicator/fields_io.hpp"
 #include <iostream>
+#include <string.h>
 using namespace std;
-
-void MeasGeneral::list_config(){
-  XML::node config_node= node_;
-  XML::descend(config_node,"Configuration");
-  for(XML::iterator it=config_node.begin(); it!=config_node.end();++it)
-    config_list_.push_back(it->child_value());
-}
 
 void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id){
 

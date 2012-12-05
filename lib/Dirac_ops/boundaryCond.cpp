@@ -92,24 +92,11 @@ BoundaryCond_U1phase::BoundaryCond_U1phase(const XML::node& bcnode)
     abort();
   }
 
-  double unit; 
-  XML::node phnode = bcnode;
-  XML::descend(phnode,"phase", MANDATORY);
-  const char* unit_name = phnode.attribute("unit").value();
+  double agl; /*! @brief phase angle (degree) */
+  XML::read(bcnode,"angle",agl,MANDATORY);
+  agl *= PI/180.0;
 
-  if(     !strcmp(unit_name,"unity")) unit = 1.0;
-  else if(!strcmp(unit_name,"PI"))    unit = PI;
-  else if(!strcmp(unit_name,"PIov2")) unit = PI*0.5;
-  else if(!strcmp(unit_name,"PIov3")) unit = PI/3.0;
-  else if(!strcmp(unit_name,"PIov4")) unit = PI*0.25;
-  else {
-    CCIO::cout<<"No valid unit available"<<endl;
-    abort();
-  }
-  double value; /*! @brief phase in unit of the specified value */
-  XML::read(phnode,"value",value,MANDATORY);
-  bc_= complex<double>(cos(value*unit),sin(value*unit));
-  CCIO::cout<<"bc_.real()="<<bc_.real()<<" bc_.imag()="<<bc_.imag()<<"\n";
+  bc_= complex<double>(cos(agl),sin(agl));
 }
 
 void BoundaryCond_U1phase::apply_bc(GaugeField& u)const{
