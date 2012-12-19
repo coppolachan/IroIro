@@ -45,7 +45,7 @@ void Action_Nf2::init(const RandNum& rand){
 }
 
 double Action_Nf2::calc_H(){ 
-  // BC->apply_bc(*u_);
+  //BC->apply_bc(*u_);
   double H_nf2 = phi_*DdagD_inv(phi_);
   //BC->apply_bc(*u_);
   _Message(ACTION_VERB_LEVEL, "    [Action_Nf2] H = "<< H_nf2<<"\n");

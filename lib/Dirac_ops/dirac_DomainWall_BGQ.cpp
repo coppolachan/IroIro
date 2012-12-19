@@ -1434,16 +1434,107 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
 
 
 
+//////////////////////////////////////////////////////////////////
+/*! @brief contribution to the MD-force from forward difference */
+void Dirac_optimalDomainWall::
+md_force_p_BGQ(Field& fce,const Field& phi,const Field& psi)const{
+  typedef struct FermionSpinor{
+    double _Complex v[12];
+  }Spinor;
+
+  using namespace FieldExpression;
+  register int Nvol = CommonPrms::instance()->Nvol()/2;
+
+  Field lpf(f4size_), lmf(f4size_);
+  Field w(fsize_);
+  Spinor* lpf_ptr = (Spinor*)lpf.getaddr(0);
+  Spinor* lmf_ptr = (Spinor*)lmf.getaddr(0);
+  Spinor* w_ptr = (Spinor*)w.getaddr(0);
+  Spinor* phi_ptr = (Spinor*)const_cast<Field&>(phi).getaddr(0);
 
 
+  
+  for(int s=0; s<N5_; ++s){
+#pragma omp parallel 
+    {
+      int tid, nid;
+      int is, ie, ns;
+      nid = omp_get_num_threads();
+      tid = omp_get_thread_num();
+      is = tid*Nvol / nid;
+      ie = (tid + 1)*Nvol / nid;
+      ns = ie - is;  
+      
+      BGWilsonLA_Proj_P(lpf_ptr+is,
+			phi_ptr+((s+N5_-1)%N5_)*Nvol+is,
+			ns); 
+      
+      //proj_p(lpf, phi,(s+N5_-1)%N5_);
+      if(s == 0)      BGWilsonLA_MultScalar(lpf_ptr+is, lpf_ptr+is,-mq_,ns);//  lpf *= -mq_;
+      BGWilsonLA_Proj_M(lmf_ptr+is,
+			phi_ptr +((s+1)%N5_)*Nvol+is,
+			ns); 
+      
+      //proj_m(lmf, phi,(s+1    )%N5_);
+      if(s == N5_-1)  BGWilsonLA_MultScalar(lmf_ptr+is, lmf_ptr+is,-mq_,ns);//lmf *= -mq_;
+      
+      BGWilsonLA_Add(lpf_ptr+is,lmf_ptr+is,ns);
+      BGWilsonLA_MultScalar(w_ptr+is, phi_ptr+s*Nvol+is, Params.bs_[s],ns);
+      BGWilsonLA_MultAddScalar(w_ptr+is, lpf_ptr+is, Params.cs_[s],ns);
+      
+    }
+    Dw_.md_force_p(fce,w,get4d(psi,s));
+  }
+} 
+/*! @brief contribution to the MD-force from backward difference */
+void Dirac_optimalDomainWall::
+md_force_m_BGQ(Field& fce,const Field& phi,const Field& psi)const{
+  typedef struct FermionSpinor{
+    double _Complex v[12];
+  }Spinor;
 
+  using namespace FieldExpression;
+  register int Nvol = CommonPrms::instance()->Nvol()/2;
 
+  Field lpf(f4size_), lmf(f4size_);
+  Field w(fsize_);
+  Spinor* lpf_ptr = (Spinor*)lpf.getaddr(0);
+  Spinor* lmf_ptr = (Spinor*)lmf.getaddr(0);
+  Spinor* w_ptr   = (Spinor*)w.getaddr(0);
+  Spinor* phi_ptr = (Spinor*)const_cast<Field&>(phi).getaddr(0);
 
+  
+  for(int s=0; s<N5_; ++s){
+#pragma omp parallel 
+    {
+      int tid, nid;
+      int is, ie, ns;
+      nid = omp_get_num_threads();
+      tid = omp_get_thread_num();
+      is = tid*Nvol / nid;
+      ie = (tid + 1)*Nvol / nid;
+      ns = ie - is;  
+      
+      BGWilsonLA_Proj_P(lpf_ptr+is,
+			phi_ptr+((s+N5_-1)%N5_)*Nvol+is,
+			ns); 
+      //proj_p(lpf, phi,(s+N5_-1)%N5_);
+      if(s == 0)     BGWilsonLA_MultScalar(lpf_ptr+is, lpf_ptr+is,-mq_,ns);// lpf *= -mq_;
+      BGWilsonLA_Proj_M(lmf_ptr+is,
+			phi_ptr +((s+1)%N5_)*Nvol+is,
+			ns); 
+      //proj_m(lmf, phi,(s+1    )%N5_);
+      if(s == N5_-1) BGWilsonLA_MultScalar(lmf_ptr+is, lmf_ptr+is,-mq_,ns);//lmf *= -mq_;
+      
+      BGWilsonLA_Add(lpf_ptr+is,lmf_ptr+is,ns);
+      BGWilsonLA_MultScalar(w_ptr+is, phi_ptr+s*Nvol+is, Params.bs_[s],ns);
+      BGWilsonLA_MultAddScalar(w_ptr+is, lpf_ptr+is, Params.cs_[s],ns);
 
-
-
-
-
+    }
+    Dw_.md_force_m(fce,w,get4d(psi,s));
+    
+  }
+}  
 
 
 

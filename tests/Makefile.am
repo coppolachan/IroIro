@@ -22,7 +22,7 @@ endif
 
 endif
 
-LDADD = -L../lib/ -lcommcode $(OPTLIB) -lrt
+LDADD = -L../lib/ -lcommcode $(OPTLIB)
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 

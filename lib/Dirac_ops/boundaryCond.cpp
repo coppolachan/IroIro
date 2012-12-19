@@ -88,7 +88,7 @@ BoundaryCond_U1phase::BoundaryCond_U1phase(const XML::node& bcnode)
   else if(!strcmp(dir_name,"Z")) dir_= ZDIR;
   else if(!strcmp(dir_name,"T")) dir_= TDIR;
   else {
-    CCIO::cout<<"No valid direction available"<<endl;
+    CCIO::cout<<"No valid direction specified"<<endl;
     abort();
   }
   int Nc = CommonPrms::instance()->Nc();
@@ -138,7 +138,7 @@ BoundaryCond_SUNmat::BoundaryCond_SUNmat(const XML::node& bcnode)
   else if(!strcmp(dir_name,"Z")) dir_= ZDIR;
   else if(!strcmp(dir_name,"T")) dir_= TDIR;
   else {
-    CCIO::cout<<"No valid direction available"<<endl;
+    CCIO::cout<<"No valid direction specified"<<endl;
     abort();
   }
   int Nc = CommonPrms::instance()->Nc();

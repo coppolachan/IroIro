@@ -71,7 +71,7 @@ namespace Mapping{
       return Fout;
     }
 
-    //////// for temporal use on BGQ ///////
+    //////// for BGQ ///////
     void operator()(GaugeField1D& Fout,const double* Fin,Forward)const{
       int Nin = Fout.Nin();
       int bdsize = Nin*bdry_t_.size();
