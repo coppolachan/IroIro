@@ -20,16 +20,17 @@ public:
     Mapping::init_shiftField();
   }
 
-
-  /////////////////////////////////////////////////
   double plaquette(const GaugeField&) const;
   double plaq_s   (const GaugeField&) const;
   double plaq_t   (const GaugeField&) const;
-  GaugeField1D lower(const GaugeField&, int, int) const;
-  GaugeField1D upper(const GaugeField&, int, int) const;
-  GaugeField1D upper_lower(const GaugeField&, int, int) const;
-  void staple(GaugeField1D&, const GaugeField&, int) const;
-  //////////////////////////////////////////////////
+  double plaq_min (const GaugeField&) const;
+
+  GaugeField1D lower(const GaugeField&,int,int) const;
+  GaugeField1D upper(const GaugeField&,int,int) const;
+  GaugeField1D upper_lower(const GaugeField&,int,int) const;
+  GaugeField1D fieldStrength(const GaugeField&,int,int)const;
+
+  void staple(GaugeField1D&, const GaugeField&,int) const;
 };
 
 #endif  

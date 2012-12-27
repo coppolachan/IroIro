@@ -18,21 +18,21 @@ namespace SUNmatUtils{
   SUNmat zero();
   double ReTr(const SUNmat&);  
   double ImTr(const SUNmat&);
-  const SUNmat dag(const SUNmat&);  
-  const SUNmat xI(const SUNmat&);  
-  const SUNmat operator+(const SUNmat&,const SUNmat&);
-  const SUNmat operator-(const SUNmat&,const SUNmat&);
-  const SUNmat operator*(const SUNmat&,const SUNmat&);
-  const SUNmat operator*(const SUNmat&,double);
-  const SUNmat operator*(const SUNmat&,const std::complex<double>&);
-  const SUNmat operator/(const SUNmat&,double);
-  const SUNmat reunit(const SUNmat&);
+  SUNmat dag(const SUNmat&);  
+  SUNmat xI(const SUNmat&);  
+  SUNmat operator+(const SUNmat&,const SUNmat&);
+  SUNmat operator-(const SUNmat&,const SUNmat&);
+  SUNmat operator*(const SUNmat&,const SUNmat&);
+  SUNmat operator*(const SUNmat&,double);
+  SUNmat operator*(const SUNmat&,const std::complex<double>&);
+  SUNmat operator/(const SUNmat&,double);
+  SUNmat reunit(const SUNmat&);
   //const std::valarray<double> trace_less(const SUNmat&);
-  const SUNmat anti_hermite_traceless(const SUNmat&);
-  const SUNmat anti_hermite(const SUNmat&);
-  const SUNmat outer_prod_t(const SUNvec& v,const SUNvec& w);
-  const SUNmat random_mat(const RandNum& rand);
-  const SUNmat exponential(const SUNmat& X,int N,int n=1);
+  SUNmat anti_hermite_traceless(const SUNmat&);
+  SUNmat anti_hermite(const SUNmat&);
+  SUNmat outer_prod_t(const SUNvec& v,const SUNvec& w);
+  SUNmat random_mat(const RandNum& rand);
+  SUNmat exponential(const SUNmat& X,int N,int n=1);
   /*  
   template<size_t COLORS>
   double ReTr(const SUNmatrix<COLORS>& m){
@@ -70,6 +70,8 @@ namespace SUNmatUtils{
 
   template<>
   const std::valarray<double> adjoint(const SUNmatrix<3>& u);
+
+  const SU3mat lmd_commutator(int a,int b);
 
   //BLAS style multiplications for optimization purposes
   // Matrix-matrix

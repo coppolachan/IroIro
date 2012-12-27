@@ -1,6 +1,5 @@
 /*!
  * @file dirac_DomainWall.hpp
- *
  * @brief Declaration of class Dirac_optimalDomainWall (5d operator)
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
@@ -19,7 +18,6 @@
 
 static double wilson_mult_timer;
 static double wilson_multdag_timer;
-
 
 #ifdef IBM_BGQ_WILSON
 struct SolverOutput;
@@ -82,7 +80,6 @@ private:
   double mq_;
   const Field* const u_;
   Dirac_Wilson Dw_; /*!< @brief Dirac Kernel - Wilson operator */ 
-
   size_t f4size_;
   size_t fsize_;
   size_t gsize_;
@@ -282,16 +279,19 @@ public:
   void md_force_p(Field&,const Field&,const Field&) const;
   void md_force_m(Field&,const Field&,const Field&) const;
   const Field md_force( const Field& eta,const Field& zeta) const;
-  
-  const ffmt_t get_fermionFormat() const{
-    return ffmt_t(Dw_.get_fermionFormat().Nvol(),N5_); }
 
-  const std::vector<int> get_gsite() const { return Dw_.get_gsite();}
+  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
+
+  ffmt_t getFermionFormat()const{
+    ffmt_t fmt = Dw_.getFermionFormat();
+    return ffmt_t(fmt.size()/ffmt_t::Nin(),N5_);
+  }
 
   void update_internal_state(){}
+  int Nvol()const{return Dw_.Nvol();}
 
   // BGQ optimizations
-  #ifdef IBM_BGQ_WILSON
+#ifdef IBM_BGQ_WILSON
   typedef std::vector<Field> prop_t;
   void solve_eo_5d(Field&, const Field&, SolverOutput&, int, double) const;
   void Dirac_optimalDomainWall::solve_ms_init(std::vector<Field>&,

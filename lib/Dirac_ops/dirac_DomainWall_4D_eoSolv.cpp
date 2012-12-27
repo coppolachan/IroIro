@@ -3,6 +3,15 @@
  */
 #include "dirac_DomainWall_4D_eoSolv.hpp"
 #include "Fields/field_expressions.hpp"
+#include "Tools/randNum_MP.h"
+
+using namespace std;
+
+void Dirac_optimalDomainWall_4D_eoSolv::
+get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
+  Format::Format_F ff(D_->Nvol());
+  MPrand::mp_get(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),ff);
+}
 
 const Field Dirac_optimalDomainWall_4D_eoSolv::
 mult(const Field& f)const{

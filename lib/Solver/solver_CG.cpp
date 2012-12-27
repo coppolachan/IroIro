@@ -1,13 +1,12 @@
 /*!
  * @file solver_CG.cpp
- *
  * @brief Definition of Solver_CG class member functions
- *
  */
 
 #include <iostream>
 #include <iomanip>
 #include "Communicator/communicator.h"
+#include "Communicator/comm_io.hpp"
 #include "Fields/field_expressions.hpp"
 #include "solver_CG.hpp"
 

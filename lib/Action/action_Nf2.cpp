@@ -7,8 +7,6 @@
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 
-
-
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2::observer_update() {
   D_->update_internal_state();  
@@ -39,7 +37,7 @@ Field Action_Nf2::DdagD_inv(const Field& src){
 void Action_Nf2::init(const RandNum& rand){
   std::valarray<double> ph(fsize_);
   //BC->apply_bc(*u_);
-  MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
+  D_->get_RandGauss(ph,rand);
   phi_= D_->mult_dag(Field(ph));
   //BC->apply_bc(*u_);
 }

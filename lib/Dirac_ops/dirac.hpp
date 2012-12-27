@@ -6,8 +6,6 @@
 #define DIRAC_H_
 
 #include "include/field.h"
-#include "include/format_F.h"
-#include "include/format_S.h"
 #include "include/pugi_interface.h"
 
 enum {Op, Dag};
@@ -19,6 +17,7 @@ namespace Dop{
 
   double read_mass(const XML::node& node);
 }
+class RandNum;
 
 /*
  *! @class Dirac
@@ -29,7 +28,7 @@ public:
   virtual ~Dirac(){}
   virtual size_t fsize() const = 0;
   virtual size_t gsize() const = 0;
-  virtual const std::vector<int> get_gsite() const = 0;
+  virtual int Nvol()const = 0;
 
   virtual const Field mult    (const Field&)const = 0;
   virtual const Field mult_dag(const Field&)const = 0;
@@ -46,6 +45,7 @@ public:
 
   virtual const Field md_force(const Field& eta,const Field& zeta)const = 0;
   virtual void update_internal_state() = 0;
+  virtual void get_RandGauss(std::valarray<double>&,const RandNum&)const =0;
 };
 
 /*!
@@ -56,7 +56,6 @@ class DiracWilsonLike : public Dirac {
 public:
   virtual ~DiracWilsonLike(){}
   virtual const Field gamma5(const Field&) const = 0;
-  virtual const Format::Format_F get_fermionFormat() const =0;
 };
 
 /*!
@@ -98,7 +97,6 @@ public:
 class DiracStaggeredLike : public Dirac {
  public:
   virtual ~DiracStaggeredLike(){}
-  virtual const Format::Format_S get_fermionFormat() const =0;
 };
 
 /*!
@@ -118,7 +116,7 @@ public:
   virtual const Field mult_oo(const Field&) const =0;
   virtual const Field mult_ee_inv(const Field&) const =0;
   virtual const Field mult_oo_inv(const Field&) const =0;
-  virtual double get_mq() const =0;
+  virtual double getMass() const =0;
 };
 
 

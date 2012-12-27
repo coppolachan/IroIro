@@ -19,7 +19,7 @@ class Dirac_Wilson_Brillouin_Imp: public DiracWilsonLike{
 private:
   const Field* const u_;
   double kimp_,mass_;
-  int Nx_,Ny_,Nz_,Nt_,Nvol_;
+  int Nx_,Ny_,Nz_,Nt_,Nvol_,Nin_;
 
   const ffmt_t ff_;
   const gfmt_t gf_;
@@ -73,7 +73,8 @@ public:
      Nvol_(CommonPrms::instance()->Nvol()),
      comm_(Communicator::instance()),
      ff_(Nvol_),fsize_(ff_.size()),
-     gf_(Nvol_),gsize_(gf_.size()){}
+     gf_(Nvol_),gsize_(gf_.size()),
+     Nin_(ff_.Nin()){}
 
   Dirac_Wilson_Brillouin_Imp(const XML::node& node,const Field* u)
     :u_(u),
@@ -84,7 +85,8 @@ public:
      Nvol_(CommonPrms::instance()->Nvol()),
      comm_(Communicator::instance()),
      ff_(Nvol_),fsize_(ff_.size()),
-     gf_(Nvol_),gsize_(gf_.size()){
+     gf_(Nvol_),gsize_(gf_.size()),
+     Nin_(ff_.Nin()){
     //
     double mass;
     XML::read(node, "mass", mass);
@@ -93,6 +95,7 @@ public:
   
   size_t fsize() const{return fsize_;}
   size_t gsize() const{return gsize_;}
+  int Nvol()const{return Nvol_;}
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
@@ -122,11 +125,10 @@ public:
   const Field md_force(const Field& , const Field&)const{}
   void md_force_p(Field&,const Field&,const Field&)const{}
   void md_force_m(Field&,const Field&,const Field&)const{}
-  
-  double getKappa() const {return 1.0/(2.0/kimp_-17.0/4.0);}  
-  const ffmt_t get_fermionFormat() const {return ff_;}
-  const std::vector<int> get_gsite() const;
 
+  void get_RandGauss(std::valarray<double>&,const RandNum&)const;
+
+  double getKappa() const {return 1.0/(2.0/kimp_-17.0/4.0);}  
   void update_internal_state(){}
 };
 

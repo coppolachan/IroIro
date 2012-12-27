@@ -39,6 +39,9 @@ public:
 
   void step_naive(GaugeField& Ue,GaugeField& Uo)const;
   void step_ovrlx(GaugeField& Ue,GaugeField& Uo)const;
+  void step_ovrlx(GaugeField1D& Gte,GaugeField1D& Gto,
+		  GaugeField& Ue,GaugeField& Uo)const;
+
   void step_sdm(  GaugeField& Ue,GaugeField& Uo)const;
 
   void gauge_tr(GaugeField& U,const GaugeField1D& G)const;

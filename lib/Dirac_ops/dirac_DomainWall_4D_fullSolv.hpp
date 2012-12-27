@@ -49,6 +49,7 @@ public:
   
   size_t fsize() const {return Dodw_->f4size();}
   size_t gsize() const {return Dodw_->gsize(); }
+  int Nvol()const{return Dodw_->Nvol();}
 
   const Field operator()(int, const Field&) const{}
 
@@ -70,12 +71,10 @@ public:
   //////////////////////////////////////////////////////////////
 
   const Field signKernel(const Field&)const;
-
-  const ffmt_t get_fermionFormat() const {
-    return ffmt_t(Dodw_->get_fermionFormat().Nvol());}
   double getMass() const {return Dodw_->getMass();}
-  const std::vector<int> get_gsite() const{ return Dodw_->get_gsite();}
+  
   const Field md_force(const Field& eta,const Field& zeta) const{}
+  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
   void update_internal_state(){}
 };
 

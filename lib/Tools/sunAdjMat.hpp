@@ -52,17 +52,17 @@ public:
 
   static int size(){return (COLORS*COLORS-1)*(COLORS*COLORS-1);}
   
-  double e(int a) const {return va_[a];}
-  double e(int a1,int a2) const {return e(Nadj_*a1+a2);}
+  double operator[](int a) const {return va_[a];}
+  double e(int a1,int a2) const {return va_[Nadj_*a1+a2];}
 
   void set(int a,double r){va_[a] = r;}
-  void set(int a1,int a2,double r){ set(Nadj_*a1+a2,r);}
+  void set(int a1,int a2,double r){ va_[Nadj_*a1+a2] = r;}
 
   void add(int a,double r){ va_[a] += r;}
-  void add(int a1,int a2,double r){ add(Nadj_*a1+a2,r);}
+  void add(int a1,int a2,double r){ va_[Nadj_*a1+a2] += r;}
  
   void mult(int a,double r){ va_[a] *= r;}
-  void mult(int a1,int a2,double r){ mult(Nadj_*a1+a2,r);}
+  void mult(int a1,int a2,double r){ va_[Nadj_*a1+a2] += r;}
 };
 
 typedef SUNadjMatrix<3> SU3adjMat;

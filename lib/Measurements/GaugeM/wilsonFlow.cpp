@@ -1,10 +1,12 @@
 /*!@file wilsonFlow.cpp
  * @brief implementation of the WilsonFlow class
  */
-
+#include "wilsonFlow.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
-#include "wilsonFlow.hpp"
+#include "Communicator/fields_io.hpp"
+
+using namespace std;
 
 void WilsonFlow::update_U(const GaugeField& Z)const{
   using namespace SUNmatUtils;
@@ -23,7 +25,7 @@ void WilsonFlow::update_U(const GaugeField& Z)const{
   }
 }
 
-void WilsonFlow::flow_step()const{
+void WilsonFlow::evolve_step()const{
                                    // W0 = U_
   GaugeField Z = Sg_->md_force();  // Z0
   Z *= 0.25;
@@ -41,7 +43,7 @@ void WilsonFlow::flow_step()const{
 }
 
 /*
-void WilsonFlow::flow_step()const{
+void WilsonFlow::evolve_step()const{
                                     // W0 = U_
   GaugeField Z0 = Sg_->md_force();  // Z0
   Z0 *= 0.5;
@@ -74,19 +76,40 @@ void WilsonFlow::flow_step()const{
 }
 */
 
-std::vector<double> WilsonFlow::get_t()const{
-  std::vector<double> tau;
-  for(int t=0; t<Nstep_; ++t) tau.push_back(estep_*(t+1.0));
-  return tau;
+double WilsonFlow::Edens_plaq(int t)const{
+  double td = tau(t);
+  return 2.0*td*td*Sg_->calc_H()/double(CommonPrms::instance()->Lvol());
 }
 
-std::vector<double> WilsonFlow::evolve()const{
-  std::vector<double> tau = get_t();
-  std::vector<double> ttE(Nstep_);
-  for(int t=0; t<Nstep_; ++t){
-    flow_step();
-    ttE[t] = 2.0*tau[t]*tau[t]*Sg_->calc_H()
-      /double(CommonPrms::instance()->Lvol());
+double WilsonFlow::Edens_clover(int t)const{
+
+  int Ndim = CommonPrms::instance()->Ndim();
+  int Nvol = CommonPrms::instance()->Nvol();
+
+  Staples stpl;
+  double Sg = 0.0;      
+  for(int mu=0; mu<Ndim; ++mu){
+    for(int nu=mu+1; nu<Ndim; ++nu){
+      GaugeField1D Fmn = stpl.fieldStrength(U_,mu,nu);
+      for(int site=0; site<Nvol; ++site){
+	/*
+	SUNmat u = mat(Fmn,site);
+	Sg -= ReTr(u*u);
+	*/
+	valarray<double> u = Fmn.data[Fmn.format.islice(site)];
+	Sg -= (u*u).sum();
+      }
+    }
   }
-  return ttE;
+  Sg = Communicator::instance()->reduce_sum(Sg);
+
+  double td = tau(t);
+  return 0.25*td*td*Sg/double(CommonPrms::instance()->Lvol());
+}
+
+void WilsonFlow::save_config(const std::string& fname)const{
+  if(saveConf_){
+    CCIO::cout << "Saving configuration on disk in binary format\n";
+    CCIO::SaveOnDisk<Format::Format_G>(U_.data,fname.c_str());
+  }
 }

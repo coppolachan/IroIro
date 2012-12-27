@@ -120,8 +120,6 @@ namespace FieldUtils{
     return TAField;
   }
 
-
-
 #ifdef IBM_BGQ_WILSON
   //assumes some ordering of the matrices
   void DirSliceBGQ(GaugeField1D &G, const GaugeField& F, int dir){

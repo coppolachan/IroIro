@@ -5,12 +5,18 @@
 #include "dirac_clover.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
+#include "Tools/randNum_MP.h"
 #include "Communicator/comm_io.hpp"
 #include "Main/Geometry/mapping.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 #include "include/messages_macros.hpp"
 
 using namespace std;
+
+void Dirac_Clover::get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
+  MPrand::mp_get(phi,rng,SiteIndex::instance()->get_gsite(),ff_);
+}
+
 
 void (Dirac_Clover::*Dirac_Clover::isigma[])(FermionField&,
 					     const FermionField&)const
@@ -449,8 +455,4 @@ const Field Dirac_Clover::md_force_block(const FermionField& eta,
     }
   }
   return force.data;
-}
-//====================================================================
-const vector<int> Dirac_Clover::get_gsite() const {
-  return SiteIndex::instance()->get_gsite();
 }

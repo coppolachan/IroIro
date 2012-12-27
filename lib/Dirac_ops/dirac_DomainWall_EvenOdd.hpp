@@ -1,6 +1,5 @@
 /*!
  * @file dirac_DomainWall_EvenOdd.hpp
- *
  * @brief Declaration of class Dirac_optimalDomainWall_EvenOdd (5d operator)
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
@@ -20,7 +19,6 @@ static  double multdag_timer;
 class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
   const Dirac_optimalDomainWall Deo_;
   const Dirac_optimalDomainWall Doe_;
-
 
   void md_force_eo(Field&,const Field&,const Field&)const;
   void md_force_oe(Field&,const Field&,const Field&)const;
@@ -50,12 +48,13 @@ public:
   ~Dirac_optimalDomainWall_EvenOdd(){
     CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";
     CCIO::cout << "DWF Timer multdag: "<< multdag_timer << "\n";
-}
+  }
   
   size_t f4size()const{ return Deo_.f4size();}
   size_t fsize() const{ return Deo_.fsize(); }
   size_t gsize() const{ return Deo_.gsize(); }
-  
+  int Nvol()const{return Deo_.Nvol();}
+
   const Field gamma5(const Field& f5) const{ return Deo_.gamma5(f5);}
   const Field gamma5_4d(const Field& f4) const{ return Deo_.gamma5_4d(f4);}
 
@@ -73,13 +72,10 @@ public:
   //////////////////////////////////////////////////////////////////////
 
   const Field md_force( const Field& eta,const Field& zeta) const;
-
-
   ////
   const Field mult_hop5_inv(const Field& f5) const;
 
   ////
-
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 
 
@@ -94,14 +90,10 @@ public:
   const Field mult_ee_inv(const Field& f)const;
   const Field mult_ee_dinv(const Field& f)const;
 
-  const ffmt_t get_fermionFormat() const{return  Deo_.get_fermionFormat();}
-  const std::vector<int> get_gsite() const { 
-    return SiteIndex_EvenOdd::instance()->get_gsite();}
-
   void update_internal_state(){} 
+  void get_RandGauss(std::valarray<double>&,const RandNum&)const;
 
   ////////////////////////////
-
 #ifdef IBM_BGQ_WILSON
 
  typedef std::vector<Field> prop_t;

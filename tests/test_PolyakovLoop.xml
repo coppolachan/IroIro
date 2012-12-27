@@ -17,10 +17,10 @@
 -->
   <!-- Input configuration -->
 <!--  <Configuration Type="TextFile" Input="RegularStep">
-    <basename>conf_</basename>
+    <input_prefix>conf_</input_prefix>
     <total_num>10</total_num>
     <starting_idx>0</starting_idx>
-    <step_size>1</step_size>
+    <idx_increment>1</idx_increment>
   </Configuration> -->
 
   <Configuration Type="TextFile" Input="FileList">

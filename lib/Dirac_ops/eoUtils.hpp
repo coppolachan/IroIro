@@ -24,7 +24,7 @@ namespace EvenOddUtils{
   public:
     Inverter_WilsonLike(const DiracWilsonLike_EvenOdd* D,const Solver* Solver)
       :D_(D),slv_(Solver),
-       fh_(D->get_fermionFormat()),
+       fh_(D->Nvol(),D->fsize()/D->Nvol()/Format::Format_F::Nin()),
        ff_(2*fh_.Nvol(),fh_.Nex()),
        idx_(SiteIndex_EvenOdd::instance()),
        esub_(ff_.get_sub(idx_->esec())),

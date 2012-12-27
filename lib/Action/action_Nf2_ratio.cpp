@@ -47,7 +47,7 @@ Field Action_Nf2_ratio::DdagD2_inv(const Field& src){
 
 void Action_Nf2_ratio::init(const RandNum& rand){
   std::valarray<double> ph(fsize_);
-  MPrand::mp_get_gauss(ph,rand,D1_->get_gsite(),D1_->get_fermionFormat());
+  D1_->get_RandGauss(ph,rand);
   //CCIO::cout << "ph norm "<< Field(ph).norm() <<"\n";
   phi_= D1_->mult_dag(Field(ph));
   //CCIO::cout << "phi norm (mult_dag) "<< phi_.norm() <<"\n";

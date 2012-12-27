@@ -69,6 +69,7 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		Main/documentation_pages.h	\
                 Dirac_ops/dirac_wilson_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
+                Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_standard.code    \
 		Fields/field.inl
 
@@ -93,7 +94,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp	\
 		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp\
+		Dirac_ops/staggered_Utils.cpp	        \
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
+		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp		\
 		Dirac_ops/fopr_signH_Zolotarev.cpp	\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
@@ -119,6 +122,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
 		Measurements/GaugeM/gaugeFixing_Landau.cpp		\
 		Measurements/GaugeM/gfixFactory.cpp			\
+		Measurements/GaugeM/topologyGeom.cpp			\
 		Measurements/FermionicM/qprop_MultiShift.cpp 		\
 		Measurements/FermionicM/qprop.cpp 			\
 		Measurements/FermionicM/qprop_mom.cpp 			\
@@ -183,6 +187,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/format_A.h		\
 			$(top_srcdir)/include/format_F.h		\
 			$(top_srcdir)/include/format_G.h		\
+			$(top_srcdir)/include/format_Ga.h		\
 			$(top_srcdir)/include/format_S.h		\
 			$(top_srcdir)/include/numerical_const.hpp	\
 			$(top_srcdir)/include/macros.hpp		\
@@ -218,6 +223,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Measurements/GaugeM/gfixFactory.hpp		\
 			Measurements/GaugeM/wilsonFlow.hpp		\
 			Measurements/GaugeM/polyakovLoop.hpp		\
+			Measurements/GaugeM/topologyGeom.hpp		\
 			Measurements/FermionicM/source.hpp		\
 			Measurements/FermionicM/source_types.hpp	\
 			Measurements/FermionicM/qprop_MultiShift.hpp 	\
@@ -249,7 +255,9 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin_Imp.hpp\
+			Dirac_ops/staggered_Utils.hpp	        \
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
+			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
@@ -258,6 +266,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Dirac_ops/dirac_Preconditioners.hpp	\
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/boundaryCond.hpp      	\
+			Dirac_ops/antiPeriodicBC.hpp      	\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\
@@ -291,6 +300,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp   		\
 			Tools/sunAdjMat.hpp			\
+			Tools/sunAdjVec.hpp			\
 			Tools/sunAdjMatUtils.hpp		\
 			Tools/sunVec.hpp			\
 			Tools/colorEpsilon.hpp	                \

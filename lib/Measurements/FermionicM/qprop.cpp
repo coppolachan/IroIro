@@ -3,6 +3,7 @@
  * @brief Definition of Qprop member functions
  */
 #include "qprop.hpp"
+#include "Communicator/comm_io.hpp"
 
 void Qprop::calc(prop_t& xq,Source& src) const{
 

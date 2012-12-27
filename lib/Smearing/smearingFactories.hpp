@@ -25,6 +25,7 @@ namespace SmearingOperators {
   SmearingOperatorFactory* createSmearingOperatorFactory(const XML::node);
 }
 
+ 
 /*! @brief Concrete class for creating APE smearing operators */
 class APESmearingFactory: public SmearingOperatorFactory {
   std::vector<double> rho;
@@ -36,7 +37,7 @@ public:
       double rho_val = rho[0];
       rho.resize(dims*dims);
       for(int i = 0; i < dims*dims; ++i) rho[i] = rho_val;
-      for(int mu = 0; mu < dims; ++mu) 	rho[mu + mu*dims] = 0.0;
+      for(int mu = 0; mu < dims; ++mu)  rho[mu + mu*dims] = 0.0;
     }
     if((rho.size() !=1) && (rho.size() != dims*dims)){
       CCIO::cout <<"[APESmearingFactory] Error in rho size\n";
@@ -52,7 +53,7 @@ class StoutSmearingFactory: public SmearingOperatorFactory {
   RaiiFactoryObj<SmearingOperatorFactory> BaseSmearingObj;
 
 public:
-  StoutSmearingFactory(){}; //empty for no smearing
+  //StoutSmearingFactory(){} //empty for no smearing
 
   StoutSmearingFactory(XML::node node){
     XML::descend(node, "Base", MANDATORY);
@@ -62,7 +63,6 @@ public:
   Smear_Stout* getSmearingOperator(){
     return new Smear_Stout(BaseSmearingObj.get()->getSmearingOperator()); }
 };
-
 
 /*! @brief Class for containing a Smart Conf operator instantiation */
 class SmartConfFactory {

@@ -42,7 +42,7 @@ private:
     :u_(GField),D_(D1),
      slv1e_(Solv1e),slv1o_(Solv1o),slv2e_(Solv2e),
      fsize_(D1->fsize()),
-     phi_(fsize_),mr_(D1->get_mq()/D2->get_mq()),
+     phi_(fsize_),mr_(D1->getMass()/D2->getMass()),
      smeared_(smeared){
     if(smeared_ && smart_conf !=NULL) attach_smearing(smart_conf);
   }

@@ -30,13 +30,12 @@ class GaugeFixing_Coulomb: public GaugeFixing{
   int    Nmeas_; // interval of measurements
   int    Nreset_;// Number of iteration to reset the config
   int    Nor_;   // Number of iteration to start overrelaxation
-  int    Nsdm_;  // Number of iteration to start steepest descent method
+  double esdm_;  // precision level to trigger the steepest descent method
   double prec_;  // convergence criterion
 
   int Nvh_;
 
   const GaugeFixingStep* gstep_;
-  //  std::auto_ptr<const RandNum> rng_;
   const RandNum& rng_;
 
   const std::vector<double> calc_F(const GaugeField& Ue,
@@ -44,9 +43,10 @@ class GaugeFixing_Coulomb: public GaugeFixing{
   const std::vector<double> gauge_cond(const GaugeField& Ue,
 				       const GaugeField& Uo)const;
   void random_gtr(GaugeField& Ue,GaugeField& Uo)const;
+  void re_overrelax(GaugeField& Ue,GaugeField& Uo)const;
 
  public:
-  GaugeFixing_Coulomb(const RandNum& rng, XML::node GFnode)
+  GaugeFixing_Coulomb(const RandNum& rng,XML::node GFnode)
     :rng_(rng),gstep_(NULL),Nvh_(CommonPrms::instance()->Nvol()/2){
     double orp,sdmp;
     //
@@ -55,7 +55,7 @@ class GaugeFixing_Coulomb: public GaugeFixing{
     XML::read(GFnode,"reset_step",  Nreset_,MANDATORY);
     XML::read(GFnode,"or_step",     Nor_,   MANDATORY);
     XML::read(GFnode,"or_prm",      orp,    MANDATORY);
-    XML::read(GFnode,"sdm_step",    Nsdm_,  MANDATORY);
+    XML::read(GFnode,"sdm_trigger", esdm_,  MANDATORY);
     XML::read(GFnode,"sdm_prm",     sdmp,   MANDATORY);
     XML::read(GFnode,"precision",   prec_,  MANDATORY);
     //
@@ -67,11 +67,11 @@ class GaugeFixing_Coulomb: public GaugeFixing{
 
   GaugeFixing_Coulomb(const RandNum& rng, 
 		      int Niter,int Nmeas,int Nreset,
-		      int Nor,double orp,int Nsdm,double sdmp,
+		      int Nor,double orp,double esdm,double sdmp,
 		      double prec)
     :rng_(rng),gstep_(new GaugeFixingStep(Coulomb,orp,sdmp)),
      Niter_(Niter),Nmeas_(Nmeas),Nreset_(Nreset),
-     Nor_(Nor),Nsdm_(Nsdm),
+     Nor_(Nor),esdm_(esdm),
      prec_(prec),Nvh_(CommonPrms::instance()->Nvol()/2){
     //
     Mapping::init_shiftField_EvenOdd();

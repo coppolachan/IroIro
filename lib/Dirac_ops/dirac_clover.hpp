@@ -1,6 +1,5 @@
 /*! 
   @file dirac_clover.hpp
-
   @brief Dirac clover operator class. Class declaration
 */
 
@@ -31,8 +30,6 @@ private:
 
   const size_t fsize_;
   const size_t gsize_;
-
-  int gsite(int site)const{return site;}
 
   static void (Dirac_Clover::*isigma[])(FermionField&,const FermionField&)const;
 
@@ -107,10 +104,8 @@ public:
 
   const Field gamma5(const Field&) const;
   const Field md_force(const Field& eta,const Field& zeta)const;
-
+  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
   void update_internal_state() {set_csw();}
-  
-  const std::vector<int> get_gsite() const;
-  const ffmt_t get_fermionFormat() const {return ff_;}
+  int Nvol()const{return Nvol_;}
 };
 #endif

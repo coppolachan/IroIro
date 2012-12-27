@@ -28,14 +28,14 @@ class GaugeFixing_Landau: public GaugeFixing{
   int    Niter_; // max iteration number   
   int    Nmeas_; // interval of measurements                         
   int    Nreset_;// Number of iteration to reset the config 
-  int    Nsdm_;  // Number of iteration to steepest descent method
   int    Nor_;   // Number of iteration to start overrelaxation
+  double esdm_;  // precision level to trigger the steepest descent method
   double prec_;  // convergence criterion  
 
   int Nvh_;
 
-  const RandNum& rng_;
   const GaugeFixingStep* gstep_;
+  const RandNum& rng_;
 
   double calc_F(const GaugeField& Ue,const GaugeField& Uo) const;
   double gauge_cond(const GaugeField& Ue,const GaugeField& Uo) const;
@@ -51,7 +51,7 @@ class GaugeFixing_Landau: public GaugeFixing{
     XML::read(GFnode,"reset_step",  Nreset_,MANDATORY);
     XML::read(GFnode,"or_step",     Nor_,   MANDATORY);
     XML::read(GFnode,"or_prm",      orp,    MANDATORY);
-    XML::read(GFnode,"sdm_step",    Nsdm_,  MANDATORY);
+    XML::read(GFnode,"sdm_trigger", esdm_,  MANDATORY);
     XML::read(GFnode,"sdm_prm",     sdmp,   MANDATORY);
     XML::read(GFnode,"precision",   prec_,  MANDATORY);
     //
@@ -64,11 +64,11 @@ class GaugeFixing_Landau: public GaugeFixing{
 
   GaugeFixing_Landau(const RandNum& rng,
 		     int Niter,int Nmeas,int Nreset,
-		     int Nor,double orp,int Nsdm,double sdmp,
+		     int Nor,double orp,double esdm,double sdmp,
 		     double prec)
     :rng_(rng),gstep_(new GaugeFixingStep(Landau,orp,sdmp)),
      Niter_(Niter),Nmeas_(Nmeas),Nreset_(Nreset),
-     Nor_(Nor),Nsdm_(Nsdm),
+     Nor_(Nor),esdm_(esdm),
      prec_(prec),Nvh_(CommonPrms::instance()->Nvol()/2){
     //
     Mapping::init_shiftField_EvenOdd();

@@ -2,6 +2,7 @@
   @brief implementation of QpropMom class */
 
 #include "Main/Geometry/siteIndex.hpp"
+#include "Communicator/comm_io.hpp"
 #include "include/numerical_const.hpp"
 #include "include/macros.hpp"
 #include "qprop_mom.hpp"

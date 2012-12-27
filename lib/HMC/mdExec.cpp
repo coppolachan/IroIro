@@ -24,8 +24,9 @@ namespace MDutils{
 
     static const double sq3i = 1.0/sqrt(3.0);
     int Nvol = CommonPrms::instance()->Nvol();
+    int Ndim = CommonPrms::instance()->Ndim();
 
-    Format::Format_A fmt(Nvol);
+    Format::Format_A fmt(Nvol,Ndim);
     valarray<double> pj(fmt.size());
 
     vector<int> gsite = SiteIndex::instance()->get_gsite();

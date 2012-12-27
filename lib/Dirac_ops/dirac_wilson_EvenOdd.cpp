@@ -4,7 +4,14 @@
 */
 //--------------------------------------------------------------
 #include "dirac_wilson_EvenOdd.hpp"
+#include "Tools/randNum_MP.h"
 using namespace std;
+
+void Dirac_Wilson_EvenOdd::get_RandGauss(valarray<double>& phi,
+					 const RandNum& rng)const{
+  MPrand::mp_get(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),
+		 Deo_.getFermionFormat());
+}
 
 const Field Dirac_Wilson_EvenOdd::mult_eo(const Field& f) const{ 
   return Deo_.mult(f);
@@ -33,10 +40,6 @@ const Field Dirac_Wilson_EvenOdd::mult_dag(const Field& f) const{
   Field w(f);
   w -= mult_oe_dag(mult_eo_dag(f));
   return w;
-}
-
-const vector<int> Dirac_Wilson_EvenOdd::get_gsite() const {
-  return SiteIndex_EvenOdd::instance()->get_gsite();
 }
 
 void Dirac_Wilson_EvenOdd::

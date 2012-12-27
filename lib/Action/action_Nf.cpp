@@ -39,7 +39,7 @@ void Action_Nf::init(const RandNum& rand){
   // Loop on pseudofermions
   for(int i=0; i<Params_.n_pseudof_; ++i){
     // Generates a gaussian distributed vector <xi>   
-    MPrand::mp_get_gauss(xi,rand,D_->get_gsite(),D_->get_fermionFormat());
+    D_->get_RandGauss(xi,rand);
     
     // Generates pseudofermions <phi_> = (M^dag M)^(Nf/4n) <xi> 
     // where n is the number of pseudofermion fields 

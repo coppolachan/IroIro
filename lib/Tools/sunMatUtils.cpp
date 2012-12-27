@@ -24,21 +24,12 @@ namespace SUNmatUtils{
     return tr;
   }
 
-  const SUNmat dag(const SUNmat& u){ return SUNmat(u).dag();}
-  
-  const SUNmat xI(const SUNmat& u){ return SUNmat(u).xI(); }
-  
-  const SUNmat operator+(const SUNmat& m1,const SUNmat& m2){
-    return SUNmat(m1)+= m2;  }
-
-  const SUNmat operator-(const SUNmat& m1,const SUNmat& m2){
-    return SUNmat(m1)-= m2;  }
-
-  const SUNmat operator*(const SUNmat& m1,const SUNmat& m2){
-    return SUNmat(m1)*= m2;  }
-
-  const SUNmat operator*(const SUNmat& m1,const complex<double>& cp){
-    
+  SUNmat dag(const SUNmat& u){ return SUNmat(u).dag();}
+  SUNmat xI(const SUNmat& u){ return SUNmat(u).xI(); }
+  SUNmat operator+(const SUNmat& m1,const SUNmat& m2){return SUNmat(m1)+= m2;}
+  SUNmat operator-(const SUNmat& m1,const SUNmat& m2){return SUNmat(m1)-= m2;}
+  SUNmat operator*(const SUNmat& m1,const SUNmat& m2){return SUNmat(m1)*= m2;}
+  SUNmat operator*(const SUNmat& m1,const complex<double>& cp){   
     SUNmat m;
     for(int c=0; c<NC_*NC_; ++c){
       m.setr(c,m1.r(c)*cp.real() -m1.i(c)*cp.imag());
@@ -47,68 +38,24 @@ namespace SUNmatUtils{
     return m;
   }
 
-  const SUNmat operator*(const SUNmat& m1,double x){
-    return SUNmat(m1)*= x;  }
+  SUNmat operator*(const SUNmat& m1,double x){ return SUNmat(m1)*= x;  }
+  SUNmat operator/(const SUNmat& m1,double x){ return SUNmat(m1)/= x;  }
+  SUNmat reunit(const SUNmat& m){ return SUNmat(m).reunit(); }
 
-  const SUNmat operator/(const SUNmat& m1,double x){
-    return SUNmat(m1)/= x;  }
-
-  const SUNmat reunit(const SUNmat& m){ return SUNmat(m).reunit(); }
-
-  /*
-  const valarray<double> trace_less(const SUNmat& m){
-    
-    double rtr = ReTr(m);
-    double itr = ImTr(m);
-    rtr /= NC_;
-    itr /= NC_;
-
-    valarray<double> va(m.getva());
-    for(int c=0; c<NC_; ++c){
-      va[2*(NC_*c+c)  ]-= rtr;
-      va[2*(NC_*c+c)+1]-= itr;
-    }
-    return va;
-  }
-  */
-
-  /*
-  const SUNmat exponential(const SUNmat& X,int N,int n){
-    //return N == n ? unity() : reunit(exponential(X,N,n+1)*X/n +unity());
-   
-    //faster
-    SUNmat un = unity();
-    SUNmat temp = un;
-    for (int i = N; i>=n;--i){
-      temp = un+temp*(X/i);
-      temp.reunit();
-    } 
-    return temp;
-    
-  }
-  */
-  const SUNmat exponential(const SUNmat& X,int N,int n){
+  SUNmat exponential(const SUNmat& X,int N,int n){
     return N == n ? unity() : exponential(X,N,n+1)*X/n +unity();
   }
 
-  const SUNmat anti_hermite_traceless(const SUNmat& m){
+  SUNmat anti_hermite_traceless(const SUNmat& m){
     SUNmat out = unity().xI();
     out *= -ImTr(m)/NC_;
     out += anti_hermite(m);
     return out;
   }
 
-  const SUNmat anti_hermite(const SUNmat& m){
-    SUNmat out;
-    for(int a=0; a<NC_; ++a){
-      for(int b=a; b<NC_; ++b){
-	double re = 0.5*(m.r(a,b) -m.r(b,a));
-	double im = 0.5*(m.i(a,b) +m.i(b,a));
-	out.set(a,b, re,im);
-	out.set(b,a,-re,im);
-      }
-    }
-    return out;
+  SUNmat anti_hermite(const SUNmat& m){
+    SUNmat out(m);
+    return out.anti_hermite();
   }
 
   void SUNprint(const SUNmat& mat) {
@@ -123,7 +70,7 @@ namespace SUNmatUtils{
   /*! @brief Transverse of the outer product of two vectors
     \f[(A^\dagger \circ B)_{ab}^T = A^*_b B_a \f]  
   */
-  const SUNmat outer_prod_t(const SUNvec& v,const SUNvec& w){
+  SUNmat outer_prod_t(const SUNvec& v,const SUNvec& w){
     SUNmat f;
     for(int a=0; a<NC_; ++a){
       for(int b=0; b<NC_; ++b){
@@ -258,6 +205,12 @@ namespace SUNmatUtils{
       }
     }
     return vt;
+  }
+
+  const SU3mat lmd_commutator(int a,int b){
+    SU3mat res = lambda[a](lambda[b](unity()));
+    res -= lambda[b](lambda[a](unity()));
+    return res;
   }
 
   // BLAS style optimization specific functions

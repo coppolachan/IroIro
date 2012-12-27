@@ -6,9 +6,10 @@
 #define EIGENMODESSOLVER_IRL_INCLUDED
 
 #include "include/fopr.h"
+#include "include/pugi_interface.h"
+#include "Communicator/comm_io.hpp"
 #include "eigenModesSolver.hpp"
 #include "eigenSorter.hpp"
-#include "include/pugi_interface.h"
 
 class EigenSorter;
 

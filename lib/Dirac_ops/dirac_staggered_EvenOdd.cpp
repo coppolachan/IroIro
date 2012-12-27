@@ -1,6 +1,6 @@
 //--------------------------------------------------------------
-/*!@file dirac_wilson_EvenOdd.cpp
-  @brief Definition of Even Odd wilson operator
+/*!@file dirac_wilson_EvenOdd_adjoint.cpp
+  @brief Definition of the Even Odd staggered operator
 */
 //-------------------------------------------------------------
 #include "dirac_staggered_EvenOdd.hpp"
@@ -8,7 +8,7 @@
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunVec.hpp"
-
+#include "Tools/randNum_MP.h"
 #include "Measurements/GaugeM/staples.hpp"
 #include <iostream>
 
@@ -18,6 +18,10 @@ using namespace SUNmatUtils;
 using namespace SUNvecUtils;
 using namespace Mapping;
 
+void Dirac_staggered_EvenOdd::
+get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const{
+  MPrand::mp_get(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),ff_);
+}
 
 void (Dirac_staggered_EvenOdd::*Dirac_staggered_EvenOdd::mult_type[])
 (Field&,const Field&) const = {&Dirac_staggered_EvenOdd::mult_DdagDee,
@@ -29,33 +33,6 @@ void (Dirac_staggered_EvenOdd::*Dirac_staggered_EvenOdd::mult_dag_type[])
 			       &Dirac_staggered_EvenOdd::mult_DdagDoo,
 			       &Dirac_staggered_EvenOdd::mult_Dfull_dag,};
 
-void Dirac_staggered_EvenOdd::set_ksphase(){
-  for(int hs=0; hs<Nvh_; ++hs){
-    // initialization for the even sector
-    {
-      int gs = SiteIndex::instance()->get_gsite(esec(hs)); 
-      int x = SiteIndex::instance()->g_x(gs);
-      int y = SiteIndex::instance()->g_y(gs);
-      int z = SiteIndex::instance()->g_z(gs);
-    
-      kse_[Nvh_*YDIR +hs] *= 1.0-2.0*(x%2);
-      kse_[Nvh_*ZDIR +hs] *= 1.0-2.0*((x+y)%2);
-      kse_[Nvh_*TDIR +hs] *= 1.0-2.0*((x+y+z)%2);
-    }
-    // initialization for the odd sector
-    {
-      int gs = SiteIndex::instance()->get_gsite(osec(hs)); 
-      int x = SiteIndex::instance()->g_x(gs);
-      int y = SiteIndex::instance()->g_y(gs);
-      int z = SiteIndex::instance()->g_z(gs);
-    
-      kso_[Nvh_*YDIR +hs] *= 1.0-2.0*(x%2);
-      kso_[Nvh_*ZDIR +hs] *= 1.0-2.0*((x+y)%2);
-      kso_[Nvh_*TDIR +hs] *= 1.0-2.0*((x+y+z)%2);
-    }
-  }
-}
-
 void Dirac_staggered_EvenOdd::set_ustag(){
   /*
   Staples stpl;
@@ -65,9 +42,13 @@ void Dirac_staggered_EvenOdd::set_ustag(){
   for(int mu=0; mu<Ndim_; ++mu){
     for(int hs=0; hs<Nvh_; ++hs){
       ue_.data.set(gf_.islice(hs,mu),
-		   kse_[Nvh_*mu+hs]*(*u_)[gff_.islice(esec(hs),mu)]); 
+		   kse_[Nvh_*mu+hs]
+		   *(*u_)[gff_.islice(SiteIndex_EvenOdd::instance()->esec(hs),
+				      mu)]); 
       uo_.data.set(gf_.islice(hs,mu),
-		   kso_[Nvh_*mu+hs]*(*u_)[gff_.islice(osec(hs),mu)]); 
+		   kso_[Nvh_*mu+hs]
+		   *(*u_)[gff_.islice(SiteIndex_EvenOdd::instance()->osec(hs),
+				      mu)]); 
     }
   }
   ue_*= 0.5/mq_;
@@ -179,9 +160,9 @@ md_force(const Field& eta,const Field& zeta) const{
 
     for(int hs=0; hs<Nvh_; ++hs){
       std::slice xsl = ff_.islice(hs);
-      fce.set(gff_.islice(esec(hs),mu),
+      fce.set(gff_.islice(SiteIndex_EvenOdd::instance()->esec(hs),mu),
 	      outer_prod_t(SUNvec(eta[xsl]),SUNvec(zetah[xsl])).getva());
-      fce.set(gff_.islice(osec(hs),mu),
+      fce.set(gff_.islice(SiteIndex_EvenOdd::instance()->osec(hs),mu),
 	      outer_prod_t(SUNvec(etah[xsl]),SUNvec(zeta[xsl])).getva());
     } 
   }

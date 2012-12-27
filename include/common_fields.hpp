@@ -10,6 +10,7 @@
 #include "include/field.h"
 #include "include/format_A.h"
 #include "include/format_G.h"
+#include "include/format_Ga.h"
 #include "include/format_F.h"
 #include "include/format_S.h"
 #include<cassert>
@@ -110,23 +111,23 @@ public:
 };
 
 //// list of typedefs ////
-typedef GeneralField<Field,Format::Format_A>              AdjGaugeField;
 typedef GeneralField<Field,Format::Format_G>              GaugeField;
+typedef GeneralField<Field,Format::Format_Ga>             AdjGaugeField;
 typedef GeneralField<Field,Format::Format_G,OneDimTag>    GaugeField1D;
 typedef GeneralField<Field,Format::Format_F,OneDimTag>    FermionField;
 typedef GeneralField<Field,Format::Format_S,OneDimTag>    FermionField1sp;
+typedef GeneralField<Field,Format::Format_A,OneDimTag>    AdjFermionField1sp;
 typedef GeneralField<std::vector<Field>,Format::Format_F> PropagatorField;
 
 template <> 
 inline GaugeField1D::GeneralField()
   :format(CommonPrms::instance()->Nvol(),1),data(format.size()){}
 template <> 
-inline FermionField1sp::GeneralField()
-  :format(CommonPrms::instance()->Nvol(),1),data(format.size()){}
-
-template <> 
 inline GaugeField1D::GeneralField(int LocalVol)
   :format(LocalVol,1),data(format.size()){}
+template <> 
+inline FermionField1sp::GeneralField()
+  :format(CommonPrms::instance()->Nvol(),1),data(format.size()){}
 template <> 
 inline FermionField1sp::GeneralField(int LocalVol)
   :format(LocalVol,1),data(format.size()){}
@@ -136,13 +137,14 @@ inline FermionField1sp::GeneralField(int LocalVol)
 template <> 
 inline GaugeField1D::GeneralField(const Field& Fin)
   :format(Fin.size()/Format::Format_G::Nin(),1),data(Fin){}
-
 template <> 
 inline FermionField::GeneralField(const Field& Fin)
   :format(Fin.size()/Format::Format_F::Nin(),1),data(Fin){}
-
 template <> 
 inline FermionField1sp::GeneralField(const Field& Fin)
   :format(Fin.size()/Format::Format_S::Nin(),1),data(Fin){}
+template <> 
+inline AdjFermionField1sp::GeneralField(const Field& Fin)
+  :format(Fin.size()/Format::Format_A::Nin(),1),data(Fin){}
 
 #endif //COMMON_FIELDS_H_

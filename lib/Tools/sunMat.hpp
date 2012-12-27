@@ -48,6 +48,7 @@ public:
   SUNmatrix& zero() { va_ = 0.0; }
   SUNmatrix& xI();
   SUNmatrix& reunit();
+  SUNmatrix& anti_hermite();
 
   static int size(){return 2*COLORS*COLORS;}
 
@@ -111,6 +112,27 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::dag(){
 
       va_[ba  ] = re;
       va_[ba+1] =-im;
+    }
+  }
+  return *this;
+}
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::anti_hermite(){
+  for(int a=0; a<NC_; ++a){
+    for(int b=a; b<NC_; ++b){
+
+      int ab = 2*(COLORS*a+b);
+      int ba = 2*(COLORS*b+a);
+
+      double re = 0.5*(va_[ab  ]-va_[ba  ]);
+      double im = 0.5*(va_[ab+1]+va_[ba+1]);
+
+      va_[ab  ] = re;
+      va_[ab+1] = im;
+
+      va_[ba  ] = -re;
+      va_[ba+1] = im;
     }
   }
   return *this;

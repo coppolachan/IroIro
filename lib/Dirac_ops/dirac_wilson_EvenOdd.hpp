@@ -58,9 +58,9 @@ public:
   const Field mult_oo_inv(const Field& f)const {return f;}
   const Field mult_ee_inv(const Field& f)const {return f;}
 
-  const ffmt_t get_fermionFormat() const{ return Deo_.get_fermionFormat();}
-  const std::vector<int> get_gsite() const;
+  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
   double getKappa()const { return Deo_.getKappa();}
+  int Nvol()const{ return Deo_.Nvol();}
 };
 
 #endif

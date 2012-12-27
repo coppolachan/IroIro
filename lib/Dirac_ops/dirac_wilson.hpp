@@ -94,7 +94,6 @@ private:
 
   int EO_BGWilson;
 
-
   Dirac_Wilson(const Dirac_Wilson&); /*!< @brief simple copy is prohibited.*/
 
 public:
@@ -176,10 +175,10 @@ public:
   const Field mult_dag(const Field&)const;
 
 #ifdef IBM_BGQ_WILSON
-  void mult_ptr(double* ,double* const )const;
-  void mult_dag_ptr(double* ,double* const )const;  
-  void mult_ptr_EO(double* ,double* const )const;
-  void mult_dag_ptr_EO(double* ,double* const )const;  
+  void mult_ptr(double*,double* const )const;
+  void mult_dag_ptr(double*,double* const )const;  
+  void mult_ptr_EO(double*,double* const )const;
+  void mult_dag_ptr_EO(double*,double* const )const;  
 #endif
 
   ////////////////////////////////////////Preconditioned versions
@@ -203,11 +202,11 @@ public:
   const Field md_force(const Field& , const Field&)const;
   void md_force_p(Field&,const Field&,const Field&)const;
   void md_force_m(Field&,const Field&,const Field&)const;
-  
-  double getKappa() const {return kpp_;}  
-  const ffmt_t get_fermionFormat() const {return ff_;}
-  const std::vector<int> get_gsite() const;
+  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
+  Format::Format_F getFermionFormat()const{return ff_;}
 
   void update_internal_state(){}
+  double getKappa() const {return kpp_;}  
+  int Nvol()const{return Nvol_;}
 };
 #endif

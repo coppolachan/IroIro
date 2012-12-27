@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------
-/*! @file sunVec.h
+/*! @file sunVec.hpp
   @brief \f$SU(N)\f$ vectors linear algebra
 
   Class declarations
@@ -9,7 +9,6 @@
 #define SUNVEC_INCLUDED
 
 #include "sunMat.hpp"
-
 #include <valarray>
 
 template <size_t COLORS>
@@ -36,12 +35,12 @@ public:
 
   SUNvector& operator-();
 
-  SUNvector& operator=(const double&);
+  SUNvector& operator=(double);
   SUNvector& operator=(const std::valarray<double>&);
   SUNvector& operator+=(const SUNvector&);
   SUNvector& operator-=(const SUNvector&);
-  SUNvector& operator*=(const double&);
-  SUNvector& operator/=(const double&);
+  SUNvector& operator*=(double);
+  SUNvector& operator/=(double);
 
 
 
@@ -50,9 +49,9 @@ public:
   double r(const int c) const {return va_[2*c  ];}
   double i(const int c) const {return va_[2*c+1];}
 
-  void setr(const int c, const double re){va_[2*c  ] = re;}
-  void seti(const int c, const double im){va_[2*c+1] = im;}
-  void set(const int c, const double re, const double im){
+  void setr(int c,double re){va_[2*c  ] = re;}
+  void seti(int c,double im){va_[2*c+1] = im;}
+  void set(int c,double re,double im){
     va_[2*c  ] = re;
     va_[2*c+1] = im;
   }
@@ -109,7 +108,7 @@ inline SUNvector<COLORS>& SUNvector<COLORS>::operator-(){
 }
 
 template <size_t COLORS> 
-inline SUNvector<COLORS>& SUNvector<COLORS>::operator=(const double& rhs){
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator=(double rhs){
   va_= rhs;
   return *this;
 }
@@ -134,13 +133,13 @@ inline SUNvector<COLORS>& SUNvector<COLORS>::operator-=(const SUNvector& rhs){
 }
 
 template <size_t COLORS> 
-inline SUNvector<COLORS>& SUNvector<COLORS>::operator*=(const double& rhs){
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator*=(double rhs){
   va_*= rhs;
   return *this;
 }
 
 template <size_t COLORS> 
-inline SUNvector<COLORS>& SUNvector<COLORS>::operator/=(const double& rhs){
+inline SUNvector<COLORS>& SUNvector<COLORS>::operator/=(double rhs){
   va_/= rhs;
   return *this;
 }
@@ -157,19 +156,19 @@ namespace SUNvecUtils{
     return tmp;
   }
 
-  inline const SUNvec operator+(const SUNvec& v1, const SUNvec& v2){
+  inline const SUNvec operator+(const SUNvec& v1,const SUNvec& v2){
     return SUNvec(v1)+= v2;
   }
-  inline const SUNvec operator-(const SUNvec& v1, const SUNvec& v2){
+  inline const SUNvec operator-(const SUNvec& v1,const SUNvec& v2){
     return SUNvec(v1)-= v2;
   }
-  inline const SUNvec operator*(const SUNvec& v, const double& r){
+  inline const SUNvec operator*(const SUNvec& v,double r){
     return SUNvec(v)*= r;
   }
-  inline const SUNvec operator*(const double& r, const SUNvec& v){
+  inline const SUNvec operator*(double r, const SUNvec& v){
     return SUNvec(v)*= r;
   }
-  inline const SUNvec operator/(const SUNvec& v, const double& r){
+  inline const SUNvec operator/(const SUNvec& v,double r){
     return SUNvec(v)/= r;
   }
 

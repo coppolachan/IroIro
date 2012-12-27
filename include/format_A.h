@@ -11,32 +11,26 @@ namespace Format{
 
   class Format_A{
   private:
-    int Nvol_;
-    int Nc_,Ndim_;
-    int Nin_,Nex_;
+    int Nin_,Nvol_,Nex_;
   public:
-    Format_A(int Nvol, int Nex=0):Nvol_(Nvol),
-				  Nc_(NC_),
-				  Ndim_(NDIM_),
-				  Nex_(Ndim_),
-				  Nin_(Nc_*Nc_-1){
-      if(Nex) Nex_= Nex;
-    }
+    Format_A(int Nvol,int Nex=1)
+      :Nvol_(Nvol),Nex_(Nex),Nin_(NC_*NC_-1){}
+
     static int Nin(){return NC_*NC_-1;}
     int Nvol() const {return Nvol_;}
     int Nex() const {return Nex_;}
     int size() const {return Nin_*Nvol_*Nex_;}
 
     // get indices 
-    int index(int a, int site, int dir=0) const {
-      return a +Nin_*(site +Nvol_*dir);
+    int index(int a, int site, int ex=0) const {
+      return a +Nin_*(site +Nvol_*ex);
     }
     // get slices 
-    std::slice islice(int site, int dir=0) const {
-      return std::slice(index(0,site,dir),Nin_,1);
+    std::slice islice(int site, int ex=0) const {
+      return std::slice(index(0,site,ex),Nin_,1);
     }
-    std::slice dir_slice(int dir) const {
-      return std::slice(index(0,0,dir),Nin_*Nvol_,1);
+    std::slice dir_slice(int ex) const {
+      return std::slice(index(0,0,ex),Nin_*Nvol_,1);
     }
 
     const std::valarray<size_t> get_sub(const std::vector<int>& sv,int e)const{

@@ -6,6 +6,7 @@
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
+#include <algorithm>
 
 using namespace FieldUtils;
 using namespace SUNmatUtils;
@@ -15,7 +16,7 @@ double Staples::plaquette(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaquette called\n");
   return (plaq_s(F) + plaq_t(F))*0.5;
 }
-//------------------------------------------------------------
+
 double Staples::plaq_s(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaq_s called\n");
   double plaq = 0.0;
@@ -30,19 +31,36 @@ double Staples::plaq_s(const GaugeField& F)const {
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*NC_*3.0);
 }
-//------------------------------------------------------------
+
 double Staples::plaq_t(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaq_t called\n");
   double plaq = 0.0;
   GaugeField1D stpl(Nvol_);
 
   for(int nu=0; nu < NDIM_-1; ++nu){
-    stpl = lower(F,3,nu);
+    stpl = lower(F,TDIR,nu);
     for(int site=0; site<Nvol_; ++site)
       plaq += ReTr(mat(F,site,TDIR)*mat_dag(stpl,site));  // P_zx
   }
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*NC_*3.0);
+}
+
+double Staples::plaq_min(const GaugeField& F)const {
+  GaugeField1D stpl(Nvol_);
+
+  double pmin(NC_);
+
+  for(int m=0;m<NDIM_;++m){
+    for(int n=m+1;n<NDIM_;++n){
+      stpl = lower(F,m,n);
+      for(int site=0; site<Nvol_; ++site)
+	double pmin = std::min(ReTr(mat(F,site,m)*mat_dag(stpl,site)),pmin); 
+    }
+  }
+  int dum;
+  int one = Communicator::instance()->reduce_min(pmin,dum,1);
+  return pmin/NC_;
 }
 //------------------------------------------------------------
 GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu) const{
@@ -159,5 +177,32 @@ void Staples::staple(GaugeField1D& W, const GaugeField& G, int mu) const{
     }
   }
 }
+//------------------------------------------------------------
+GaugeField1D 
+Staples::fieldStrength(const GaugeField& G,int mu,int nu) const{
+  using namespace Mapping;
 
+  GaugeField1D Vup = upper(G,mu,nu); // Upper staple V_+mu
+  GaugeField1D Vdn = lower(G,mu,nu); // Lower staple V_-mu
+
+  GaugeField1D Fmn(Nvol_);
+  GaugeField1D Ut(Nvol_);            // temporal objects
+
+  for(int site=0; site<Nvol_; ++site){
+    SUNmat u = mat(G,site,mu);    
+    SUNmat v = mat_dag(Vup,site); 
+    v -= mat_dag(Vdn,site);          // Vup_mu^dag -Vdn_mu^dag
+    SetMat(Fmn,(u*v).anti_hermite(),site);
+    SetMat(Ut, (v*u).anti_hermite(),site);
+  }
+  //Fmn +--<--+  Ut +--<--+ 
+  //    |     |     |     | 
+  // (x)+-->--+     +-->--+(x)
+  //    |     |     |     | 
+  //    +--<--+     +--<--+  
+
+  Fmn += shiftField(Ut,mu,Backward());
+  Fmn *= 0.25;
+  return Fmn;
+}
 

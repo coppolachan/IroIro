@@ -141,9 +141,7 @@ int Test_RationalApprox::run(){
   XML::next_sibling(kernel_node,"Source");
   SourceFactory* SrcFactory 
     = Sources::createSourceFactory<SiteIndex,Format::Format_F>(kernel_node);
-  Source* src = SrcFactory->getSource(Kernel->get_fermionFormat().Nvol()*
-				      Kernel->get_fermionFormat().Nex());
-
+  Source* src = SrcFactory->getSource(Kernel->fsize()/Format::Format_F::Nin());
   
   Field solution;
   Field solution2;

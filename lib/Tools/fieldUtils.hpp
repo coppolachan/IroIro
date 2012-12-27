@@ -5,6 +5,8 @@
 #define FIELDUTILS_INCLUDED
 
 #include "sunVec.hpp"
+#include "sunAdjMat.hpp"
+#include "sunAdjVec.hpp"
 #include "include/common_fields.hpp"
 #include "Main/Geometry/siteIndex_EvenOdd.hpp"
 
@@ -58,7 +60,16 @@ namespace FieldUtils{
 
   inline SUNvec vec(const FermionField1sp& F,int site){
     return SUNvec(F.data[F.format.islice(site)]);  }
+  //
+  inline SUNadjMat mat(const AdjGaugeField& F,int site,int dir){
+    return SUNadjMat(F.data[F.format.islice(site,dir)]);  }
 
+  inline SUNadjMat mat_dag(const AdjGaugeField& F,int site,int dir){
+    return SUNadjMat(F.data[F.format.islice(site,dir)]).dag();  }
+
+  inline SUNadjVec vec(const AdjFermionField1sp& F,int site){
+    return SUNadjVec(F.data[F.format.islice(site)]);  }
+  
   // function templates
   template<typename GF>
   GF get_even(const GF& Fin){

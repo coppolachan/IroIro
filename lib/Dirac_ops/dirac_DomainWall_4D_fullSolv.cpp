@@ -3,6 +3,15 @@
  * @brief Declaration of Dirac_optimalDomainWall_4D_fullSolv class 
  */
 #include "dirac_DomainWall_4D_fullSolv.hpp"
+#include "Tools/randNum_MP.h"
+
+using namespace std;
+
+void Dirac_optimalDomainWall_4D_fullSolv::
+get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
+  Format::Format_F ff(Dodw_->Nvol());
+  MPrand::mp_get(phi,rng,SiteIndex::instance()->get_gsite(),ff);
+}
 
 const Field Dirac_optimalDomainWall_4D_fullSolv::
 mult(const Field& f)const{

@@ -1,13 +1,10 @@
 /*!
  * @file rationalSolver_CG.cpp
- *
  * @brief Wrapper around MultiShiftSolver_CG class
- *
  * Calculates rational functions approximations
- *
  */
-
 #include "rationalSolver.hpp"
+#include "Communicator/comm_io.hpp"
 
 SolverOutput RationalSolver_CG::solve(Field& sol, const Field& source) const {
   if (Residuals.size() == 0)  {

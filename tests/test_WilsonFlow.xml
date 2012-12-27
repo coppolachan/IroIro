@@ -43,7 +43,7 @@
     <seed_prefix>Output/rng_seed_</seed_prefix>
   </Output>
   <Measurement>
-    <WilsonFlow>
+    <WilsonFlow SaveConf="False">
       <Nexp>8</Nexp>
       <Nstep>20</Nstep>
       <estep>0.05</estep>

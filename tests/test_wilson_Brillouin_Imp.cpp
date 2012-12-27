@@ -4,35 +4,23 @@
  */
 #include "test_wilson_Brillouin_Imp.hpp"
 #include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
-
 #include "Dirac_ops/dirac_wilson_Brillouin_Imp.hpp"
-//#include "Solver/solver_CG.hpp"
-//#include "Solver/solver_BiCGStab.hpp"
-//#include "Measurements/GaugeM/staples.hpp"
-//#include "Measurements/FermionicM/qprop.hpp"
-//#include "Measurements/FermionicM/source_types.hpp"
-//#include "Measurements/FermionicM/meson_correlator.hpp"
-//#include "Tools/randNum_MT19937.h"
+#include "include/numerical_const.hpp"
 #include <stdio.h>
 #include <time.h>
 #include <math.h>
 #include <fstream>
 #include <cstdio>
-//#include <complex>
 
 using namespace std;
 using namespace Format;
-
-#define numof(array)  (sizeof (array) / sizeof *(array))
-
 
 int Test_Wilson_Brillouin_Imp::run(){
 
   Dirac_Wilson_Brillouin_Imp D(0.0,&(conf_.data));
   Field f(D.fsize());
   fstream file; 
-  Format::Format_F ff = D.get_fermionFormat();
-  int Nvol = CommonPrms::instance()->Nvol();
+  Format::Format_F ff(D.Nvol());
   const int L = CommonPrms::instance()->Lx();
   double sum = 0.0;
   
@@ -44,7 +32,7 @@ int Test_Wilson_Brillouin_Imp::run(){
 
   //check
   file.open("coefficient.d",ios::out);
-  for(int site=0;site<Nvol;++site){
+  for(int site=0;site<D.Nvol();++site){
     int x  = SiteIndex::instance()->c_x(site);
     int y  = SiteIndex::instance()->c_y(site);
     int z  = SiteIndex::instance()->c_z(site);
@@ -66,17 +54,16 @@ int Test_Wilson_Brillouin_Imp::run(){
   const int P_Vol = 30;
   const double Stp = 0.1;
   const int V = P_Vol*P_Vol*P_Vol*P_Vol;
-  static const double PI = 6.0*asin(0.5);
   double px,py,pz,pt;
-  double *Fr,*Fi,*R;
-  Fr = new double[V];
-  Fi = new double[V];
-  R = new double[V];
+
+  double Fr[V];
+  double Fi[V];
+  double R[V];
 
   //write parameters
-  cout<<"Volume = "<<Nvol<<endl;
+  cout<<"Volume = "<<D.Nvol()<<endl;
   cout<<"P_Vol = "<<P_Vol<<endl;
-  cout<<"L =  "<<L<<endl;
+  cout<<"L = "<<L<<endl;
 
   // main part of DFT
   for(int it = 0; it<P_Vol; ++it){
@@ -91,7 +78,7 @@ int Test_Wilson_Brillouin_Imp::run(){
 	  //pt = it*Stp*2.0*
 	  pz = pt = 0.0;
 
-	  for(int site=0;site<Nvol;++site){
+	  for(int site=0;site<D.Nvol();++site){
 	    int x  = SiteIndex::instance()->c_x(site);
 	    int y  = SiteIndex::instance()->c_y(site);
 	    int z  = SiteIndex::instance()->c_z(site);
@@ -177,7 +164,4 @@ int Test_Wilson_Brillouin_Imp::run(){
     }
   }
   file.close();
-  delete[] Fr;
-  delete[] Fi;
-  delete[] R;
 }

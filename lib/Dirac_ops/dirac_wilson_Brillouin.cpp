@@ -4,14 +4,19 @@
 #include "dirac_wilson_Brillouin.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunVec.hpp"
+#include "Tools/randNum_MP.h"
 #include "Fields/field_expressions.hpp"
 
 using namespace SUNvecUtils;
 using namespace std;
 
 /////////////////////////////////////////////////////////////////////////
+void Dirac_Wilson_Brillouin::get_RandGauss(valarray<double>& phi,
+					   const RandNum& rng)const{
+  MPrand::mp_get(phi,rng,SiteIndex::instance()->get_gsite(),ff_);
+}
 
-int Dirac_Wilson_Brillouin::sgm(int mu,int nu, int rho)const{
+int Dirac_Wilson_Brillouin::sgm(int mu,int nu,int rho)const{
   for(int sigma=0; sigma<NDIM_; ++sigma){
     if(sigma !=mu && sigma !=nu && sigma !=rho) return sigma;
   }
@@ -26,22 +31,17 @@ const Field (Dirac_Wilson_Brillouin::*Dirac_Wilson_Brillouin::gm[])
 const Field Dirac_Wilson_Brillouin::mult_dag(const Field& f)const{ 
   return gamma5(mult(gamma5(f)));
 }
-const vector<int> Dirac_Wilson_Brillouin::get_gsite() const {
-  return SiteIndex::instance()->get_gsite();
-}
 
 /*!@brief U_{x,\mu}\psi_{x+\hat{\mu}} */
 
 const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
   Field fp(fsize_);
-  int Ni = 2*ND_*NC_; /*!< @brief num of elements of a spinor */
-  Format::Format_F ff = get_fermionFormat();
   
   /// boundary part ///
   int is = 0;
   int Xb = 0;
   int Nbdry = slsize(dir);
-  double vbd[Ni*Nbdry]; /*!< @brief data on the lower slice */   
+  double vbd[Nin_*Nbdry]; /*!< @brief data on the lower slice */   
   for(int k=0; k<Nbdry; ++k){
     const double* v = const_cast<Field&>(f).getaddr(ff_.index(0,xsl(Xb,k,dir)));
     for(int s=0; s<ND_; ++s){
@@ -50,10 +50,10 @@ const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
 	vbd[si(s,c)+is] = v[si(s,c)];
       }
     }
-    is += Ni;
+    is += Nin_;
   }
-  double vbc[Ni*Nbdry]; /*!< @brief data on the upper slice */   
-  comm_->transfer_fw(vbc,vbd,Ni*Nbdry,dir);
+  double vbc[Nin_*Nbdry]; /*!< @brief data on the upper slice */   
+  comm_->transfer_fw(vbc,vbd,Nin_*Nbdry,dir);
 
   is = 0;
   Xb = SiteIndex::instance()->Bdir(dir);
@@ -77,7 +77,7 @@ const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
 	res[si(s,c)] += vi;
       }
     }
-    is += Ni;
+    is += Nin_;
   }
   /// bulk part ///
   for(int x=0; x<Xb; ++x){
@@ -108,14 +108,12 @@ const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
 
 const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
   Field fm(fsize_);
-  int Ni = 2*ND_*NC_; /*!< @brief num ob elements of a spinor */
-  Format::Format_F ff = get_fermionFormat();
 
   /// boundary part ///
   int is = 0;
   int Xb = SiteIndex::instance()->Bdir(dir);
   int Nbdry = slsize(dir);
-  double vbd[Ni*Nbdry]; /*!< @brief data on the upper boundary */
+  double vbd[Nin_*Nbdry]; /*!< @brief data on the upper boundary */
   for(int k=0; k<Nbdry; ++k){
     int xc = xsl(Xb,k,dir);
     const double* v = const_cast<Field&>(f).getaddr(ff_.index(0,xc));
@@ -132,10 +130,10 @@ const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
 	}
       }
     }
-    is += Ni;
+    is += Nin_;
   }
-  double vbc[Ni*Nbdry];  //Copy vbd from backward processor
-  comm_->transfer_bk(vbc,vbd,Ni*Nbdry,dir);
+  double vbc[Nin_*Nbdry];  //Copy vbd from backward processor
+  comm_->transfer_bk(vbc,vbd,Nin_*Nbdry,dir);
   is = 0;
   Nbdry = slsize(dir);
   
@@ -148,7 +146,7 @@ const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
 	res[si(s,c)] += vbc[si(s,c)+is];
       }
     }
-    is += Ni;
+    is += Nin_;
   }
 
   /// bulk part ///
@@ -237,9 +235,8 @@ const Field Dirac_Wilson_Brillouin::mult(const Field& f)const{
 
 const Field Dirac_Wilson_Brillouin::gamma5(const Field& f) const{
   Field w(fsize_);
-  int Nin = ff_.Nin();
 
-  for(int site=0; site<Nvol_*Nin; site+=Nin){
+  for(int site=0; site<Nvol_*Nin_; site+=Nin_){
     const double* ft = const_cast<Field&>(f).getaddr(site);
     double* res = w.getaddr(site);    
 
@@ -258,9 +255,8 @@ const Field Dirac_Wilson_Brillouin::gamma5(const Field& f) const{
 
 const Field Dirac_Wilson_Brillouin::gamma_x(const Field& f) const{
   Field w(fsize_);
-  int Nin = ff_.Nin();
 
-  for(int site=0; site<Nvol_*Nin; site+=Nin){
+  for(int site=0; site<Nvol_*Nin_; site+=Nin_){
     const double* ft = const_cast<Field&>(f).getaddr(site);
     double* res = w.getaddr(site);    
 
@@ -279,9 +275,8 @@ const Field Dirac_Wilson_Brillouin::gamma_x(const Field& f) const{
 
 const Field Dirac_Wilson_Brillouin::gamma_y(const Field& f) const{
   Field w(fsize_);
-  int Nin = ff_.Nin();
   
-  for(int site=0; site<Nvol_*Nin; site+=Nin){
+  for(int site=0; site<Nvol_*Nin_; site+=Nin_){
     const double* ft = const_cast<Field&>(f).getaddr(site);
     double* res = w.getaddr(site);    
 
@@ -300,9 +295,8 @@ const Field Dirac_Wilson_Brillouin::gamma_y(const Field& f) const{
 
 const Field Dirac_Wilson_Brillouin::gamma_z(const Field& f) const{
   Field w(fsize_);
-  int Nin = ff_.Nin();
 
-  for(int site=0; site<Nvol_*Nin; site+=Nin){
+  for(int site=0; site<Nvol_*Nin_; site+=Nin_){
     const double* ft = const_cast<Field&>(f).getaddr(site);
     double* res = w.getaddr(site);    
 

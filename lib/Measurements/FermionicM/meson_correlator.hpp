@@ -59,11 +59,12 @@ public:
       break;
     }
   }
-  template <typename F> const std::vector<double> calculate(const prop_t&,const prop_t&);
+  template <typename F> 
+  const std::vector<double> calculate(const prop_t&,const prop_t&);
 
-  template <typename F> const std::vector<double> calculate_mom(const prop_t&,const prop_t&
-							    ,double a, double b, double c); 
-
+  template <typename F> 
+  const std::vector<double> calculate_mom(const prop_t&,const prop_t&,
+					  double a, double b, double c); 
 };
 
 /*!
@@ -77,13 +78,13 @@ public:
 template <typename F>
 const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
                                                      const prop_t& q2){
-  //CCIO::cout <<"Contraction to make up meson correlator\n";                                                     
+  //CCIO::cout <<"Contraction to make up meson correlator\n";          
 
   F fmt(CommonPrms::instance()->Nvol());
   int Nt = CommonPrms::instance()->Nt();
 
   std::vector<double> correl_local(Nt,0.0);
-  int s1, s2, s3, s4; //spinor indexes                                                                            
+  int s1, s2, s3, s4; //spinor indexes                                        
   double gamma_factor, temp_corr;
 
   for(int site=0; site<CommonPrms::instance()->Nvol(); ++site){
@@ -98,7 +99,8 @@ const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
         gamma_factor = (*G2_)(s4).facr*(*G1_)(s2).facr
 	  -(*G2_)(s4).faci*(*G1_)(s2).faci;
         //is always a real number
-	for(int c1=0; c1<Nc_; ++c1){//Contracts colors                                                            
+	for(int c1=0; c1<Nc_; ++c1){//Contracts colors                        
+                                    
 	  // following contraction is Re[q1*(q2~)]
 	  //  (imaginary part should be exactly zero)
           temp_corr = (q1[c1+Nc_*s1][fmt.cslice(s2,site)]
@@ -123,8 +125,9 @@ const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
 }
 
 template <typename F>
-const std::vector<double> MesonCorrelator::calculate_mom(const prop_t& q1,const prop_t& q2,
-							 double px,double py,double pz){
+const std::vector<double> 
+MesonCorrelator::calculate_mom(const prop_t& q1,const prop_t& q2,
+			       double px,double py,double pz){
 
   //CCIO::cout <<"Contraction to make up meson correlator\n";
 

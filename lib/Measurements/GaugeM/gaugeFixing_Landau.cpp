@@ -28,11 +28,12 @@ const GaugeField GaugeFixing_Landau::do_fix(const GaugeField& Uin)const{
 	    <<"     residual"<<"        F_value"<<endl;
 
   for(int it=0; it<Niter_; ++it){
+    double gc;
     if(it%Nmeas_==0){
       //double plaq = stpl.plaquette(combine_eo(Ue,Uo));
       //CCIO::cout<< "Plaquette = "<< plaq<<std::endl;
 
-      double gc = gauge_cond(Ue,Uo);
+      gc = gauge_cond(Ue,Uo);
       double Fval = calc_F(Ue,Uo);
 
       CCIO::cout<< setiosflags(ios_base::scientific);
@@ -48,20 +49,17 @@ const GaugeField GaugeFixing_Landau::do_fix(const GaugeField& Uin)const{
       }
     }
     // iteration step 
-    if(it%Nreset_== 0 && it>0){
+    int iter = it%Nreset_;
+    if(iter==0 && it>0){
       random_gtr(Ue,Uo);
     }else{
-      if(it%Nreset_>=Nsdm_){
+      if(gc < esdm_){
 	gstep_->step_sdm(  Ue,Uo);   
       }else{ 
-	if(it%Nreset_>=Nor_){  
-	  gstep_->step_ovrlx(Ue,Uo);
-	}else{
-	  gstep_->step_naive(Ue,Uo);
-	}
+	if(iter>=Nor_) gstep_->step_ovrlx(Ue,Uo);
+	else           gstep_->step_naive(Ue,Uo);
       }
     }
-    //
   }
   if(Nconv<0){
     CCIO::cout<<"did not converge."<<endl;

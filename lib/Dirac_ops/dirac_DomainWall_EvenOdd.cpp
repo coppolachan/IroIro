@@ -1,10 +1,11 @@
 /*!--------------------------------------------------------------------------
- * @file dirac_DomainWall_EvenOdd.cpp
+ *@file dirac_DomainWall_EvenOdd.cpp
  *
- * @brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op.)
+ *@brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op)
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"
+#include "Tools/randNum_MP.h"
 #include<stdlib.h>
 #include<stdio.h>
 #include<cassert>
@@ -12,7 +13,12 @@
 
 using namespace std;
 
-//-----------------------------------------------------------------------------
+void Dirac_optimalDomainWall_EvenOdd::get_RandGauss(valarray<double>& phi,
+					     const RandNum& rng)const{
+  MPrand::mp_get(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),
+		 Deo_.getFermionFormat());
+}
+
 const Field Dirac_optimalDomainWall_EvenOdd::mult_ee(const Field& f)const{
   return Deo_.mult_hop5(f);
 }

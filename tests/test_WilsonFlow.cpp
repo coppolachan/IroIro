@@ -3,30 +3,55 @@
 */
 #include "test_WilsonFlow.hpp"
 #include "Measurements/GaugeM/wilsonFlow.hpp"
+#include "Measurements/GaugeM/topologyGeom.hpp"
+#include <string>
 
 using namespace std;
 
 int Test_WilsonFlow::run(){
-  // object creation
-  XML::descend(node_,"WilsonFlow");
+  XML::descend(node_,"WilsonFlow");               // object creation
   WilsonFlow wflow(node_,conf_);
 
-  // wilson flow 
-  CCIO::cout<<" ---- Calculating Wilson flow\n";
-  vector<double> tau = wflow.get_t();
-  vector<double> ttE = wflow.evolve();
+  CCIO::cout<<" ---- Calculating Wilson flow\n"; 
+  vector<double> tau;
+  vector<double> ttEstd;
+  vector<double> ttEsym;
+  
+  for(int t=0; t<wflow.Nstep(); ++t){            // wilson flow 
+    wflow.evolve_step();
+    tau.push_back(wflow.tau(t));
+    ttEstd.push_back(wflow.Edens_plaq(t));
+    ttEsym.push_back(wflow.Edens_clover(t));
+  }
 
-  // output
-  CCIO::cout << " ---- Output in "<< output_.c_str()<<"\n";
+  TopologyGeom tg;                              // geometrical topology
+  double Qt = tg.getQ(wflow.getU());
+  CCIO::cout<<" GeometricalTopology = "<<Qt<<"\n";
+  
+  Staples stpl;                                 // check of the smoothness 
+  double sp_max = NC_*(1.0-stpl.plaq_min(wflow.getU()));
+  double sp_ave = NC_*(1.0-stpl.plaquette(wflow.getU()));
+  double sp_adm = 0.067;                        // admissible threshold
+
+  CCIO::cout<<" sp_max = "        << sp_max <<"\n";
+  CCIO::cout<<" sp_ave = "        << sp_ave <<"\n"; 
+  CCIO::cout<<" (sp_admissible = "<< sp_adm <<")\n"; 
+  CCIO::cout<<" sp_admissible - sp_max = "<<sp_adm-sp_max <<"\n";
+  CCIO::cout<<" sp_admissible - sp_ave = "<<sp_adm-sp_ave <<"\n";
+
+  ////// File Output //////
+  wflow.save_config(output_.c_str());           // saving evolved config (if required)
+  std::stringstream ofile;
+  ofile << output_.c_str() <<"_ttE";            // output of ttE
+
+  CCIO::cout << " ---- Output in "<< ofile.str()<<"\n";
   if(Communicator::instance()->primaryNode()){
-    ofstream writer(output_.c_str());
-
-    //writer<< setiosflags(  ios_base::scientific);
-    for(int t=0; t<ttE.size(); ++t)
+    ofstream writer(ofile.str().c_str());
+    for(int t=0; t<wflow.Nstep(); ++t)
       writer<<setw(10)<<fixed<<setprecision( 6)<<setiosflags(ios_base::left)<<tau[t]
-	    <<setw(20)<<fixed<<setprecision(16)<<setiosflags(ios_base::left)<<ttE[t]
+	    <<setw(20)<<fixed<<setprecision(16)<<setiosflags(ios_base::left)<<ttEstd[t]
+	    <<setw(20)<<fixed<<setprecision(16)<<setiosflags(ios_base::left)<<ttEsym[t]
 	    <<endl;
-    //writer<< resetiosflags(ios_base::scientific);
     writer.close();
   }
   Communicator::instance()->sync();

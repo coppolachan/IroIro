@@ -31,7 +31,7 @@
       <reset_step>10000</reset_step>
       <or_step>50</or_step>
       <or_prm>1.7</or_prm>
-      <sdm_step>4000</sdm_step>
+      <sdm_trigger>1.0e-12</sdm_trigger>
       <sdm_prm>1.6</sdm_prm>
       <precision>1e-20</precision>
   </GaugeFixing>

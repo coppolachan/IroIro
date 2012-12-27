@@ -17,23 +17,6 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id){
 
   GaugeField Ubuf = U;
 
-  //// smearing ////
-  XML::node smr_node = node_; 
-  XML::descend(smr_node,"Smearing"); 
-
-  int Nsmear;                                    
-  XML::read(smr_node,"Nsmear",Nsmear,MANDATORY);  
-
-  SmearingOperatorFactory* SmrFactory = 
-    SmearingOperators::createSmearingOperatorFactory(smr_node);
-  Smear* SmearingObj = SmrFactory->getSmearingOperator();
-
-  for(int i=0; i<Nsmear; ++i){ // Do the actual smearing 
-    GaugeField previous_u = Ubuf;
-    SmearingObj->smear(Ubuf,previous_u);
-  }
-  CCIO::cout<<"Plaquette (smeared): "<<Staple.plaquette(Ubuf)<<endl;
-  
   //// gauge fixing ////
   XML::node gfix_node = node_;
   XML::descend(gfix_node,"GaugeFixing");
@@ -49,6 +32,27 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id){
     gout << gauge_prefix_<< id;
     if(CCIO::SaveOnDisk<Format::Format_G> (U.data,gout.str().c_str()))
       CCIO::cout << "Some error occurred in saving file\n";
+  }
+
+  //// smearing ////
+  XML::node smr_node = node_; 
+  XML::descend(smr_node,"Smearing"); 
+  
+  if(!XML::attribute_compare(smr_node,"type","Off")){
+    return;
+  }else{
+    int Nsmear;                                    
+    XML::read(smr_node,"Nsmear",Nsmear,MANDATORY);  
+
+    SmearingOperatorFactory* SmrFactory = 
+      SmearingOperators::createSmearingOperatorFactory(smr_node);
+    Smear* SmearingObj = SmrFactory->getSmearingOperator();
+    
+    for(int i=0; i<Nsmear; ++i){ // Do the actual smearing 
+      Ubuf = U;
+      SmearingObj->smear(U,Ubuf);
+    }
+    CCIO::cout<<"Plaquette (smeared): "<<Staple.plaquette(U)<<endl;
   }
 }
 

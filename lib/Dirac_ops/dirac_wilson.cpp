@@ -4,6 +4,7 @@
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunVec.hpp"
+#include "Tools/randNum_MP.h"
 
 using namespace SUNvecUtils;
 using namespace std;
@@ -18,7 +19,9 @@ using namespace std;
 #include "bgqwilson.h"
 #endif
 
-/////////////////////////////////////////////////////////////////////////
+void Dirac_Wilson::get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
+  MPrand::mp_get(phi,rng,SiteIndex::instance()->get_gsite(),ff_);
+}
 
 void (Dirac_Wilson::*Dirac_Wilson::mult_p[])
 (Field&,const Field&) const = {&Dirac_Wilson::mult_xp,
@@ -176,6 +179,3 @@ const Field Dirac_Wilson::md_force(const Field& eta,const Field& zeta)const{
   return fp;
 }
 
-const vector<int> Dirac_Wilson::get_gsite() const {
-  return SiteIndex::instance()->get_gsite();
-}

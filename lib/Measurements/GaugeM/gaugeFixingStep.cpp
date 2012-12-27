@@ -30,6 +30,19 @@ void GaugeFixingStep::step_ovrlx(GaugeField& Ue,GaugeField& Uo)const{
   gauge_tr_odd(Ue,Uo,Gt);
 }
 
+void GaugeFixingStep::step_ovrlx(GaugeField1D& Gte,GaugeField1D& Gto,
+				 GaugeField& Ue,GaugeField& Uo)const{
+ // on the even sites      
+  Gte = max_trace(W_even(Ue,Uo));
+  for(int site=0; site<Gte.Nvol(); ++site)
+    SetMat(Gte,overrelax(mat(Gte,site)),site);
+
+  // on the odd sites      
+  Gto = max_trace(W_odd(Ue,Uo));
+  for(int site=0; site<Gto.Nvol(); ++site)
+    SetMat(Gto,overrelax(mat(Gto,site)),site);
+}
+
 const SUNmat GaugeFixingStep::overrelax(const SUNmat& g)const{
   SUNmat gt = unity()*(1.0-orp_);
   gt += g*orp_;

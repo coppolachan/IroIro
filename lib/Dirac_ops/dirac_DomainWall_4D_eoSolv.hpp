@@ -32,6 +32,7 @@ public:
   
   size_t fsize() const {return D_->f4size();}
   size_t gsize() const {return D_->gsize(); }
+  int Nvol()const {return D_->Nvol();}
 
   const Field operator()(int, const Field&) const{}
 
@@ -52,14 +53,10 @@ public:
   const Field right_dag_prec(const Field&f)const{return f;}
   //////////////////////////////////////////////////////////////
 
-  const ffmt_t get_fermionFormat() const {
-    return ffmt_t(D_->get_fermionFormat().Nvol()); }
   double getMass() const {return D_->getMass();}
-  const std::vector<int> get_gsite() const{ return D_->get_gsite();}
-
   const Field md_force(const Field& eta,const Field& zeta) const{}
   void update_internal_state(){}
-
+  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
   const Field signKernel(const Field&)const;
 };
 

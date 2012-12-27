@@ -18,11 +18,6 @@ BoundaryCond* createBC(const XML::node& node){
   if(node !=NULL){
     const char* bcname = node.attribute("name").value();
 
-    if (!strcmp(bcname,"")) {
-      std::cerr<< "No name provided for boundary condition. Request by <"
-	       << node.name() << ">\n";
-      abort();
-    }
     if(!strcmp(bcname,"periodic")) 
       return new BoundaryCond_periodic(node);
     if(!strcmp(bcname,"anti_periodic")) 
@@ -31,53 +26,17 @@ BoundaryCond* createBC(const XML::node& node){
       return new BoundaryCond_U1phase(node);
     if(!strcmp(bcname,"SUNdiag")) 
       return new BoundaryCond_SUNmat(node);
+
+    std::cerr<< "No valid name provided for boundary condition. Request by <"
+	     << node.name() << ">\n";
+    abort();
   }
+  std::cerr<< "No information provided for boundary condition. Request by <"
+	   << node.name() << ">\n";
+  abort();
 }
 
 ////////////////// member functions ///////////////////////
-////// anti-periodic BC //////
-BoundaryCond_antiPeriodic::BoundaryCond_antiPeriodic(const XML::node& bcnode){
-  const char* dir_name = bcnode.attribute("dir").value();
-  if(     !strcmp(dir_name,"X")) dir_= XDIR;
-  else if(!strcmp(dir_name,"Y")) dir_= YDIR;
-  else if(!strcmp(dir_name,"Z")) dir_= ZDIR;
-  else if(!strcmp(dir_name,"T")) dir_= TDIR;
-  else {
-    CCIO::cout<<"No valid direction available"<<endl;
-    abort();
-  }
-}
-
-void BoundaryCond_antiPeriodic::apply_bc(GaugeField& u)const{
-  if(Communicator::ipe(dir_)==CommonPrms::NPE(dir_)-1){
-
-    int Nbd = SiteIndex::instance()->Bdir(dir_);
-    int slsize = SiteIndex::instance()->slsize(Nbd,dir_);
-
-    for(int n=0; n<slsize; ++n){
-      int site = SiteMap::shiftSite.xslice(Nbd,n,dir_);
-      u.data.set(u.format.islice(site,dir_),-mat(u,site,dir_).getva());
-    }
-  }
-}
-
-void BoundaryCond_antiPeriodic::apply_bc(GaugeField& ue,GaugeField& uo)const{
-  if(Communicator::ipe(dir_)==CommonPrms::NPE(dir_)-1){
-
-    int Nbd = SiteIndex_EvenOdd::instance()->Bdir(dir_);
-
-    int slsize = SiteMap::shiftSite_eo.slice_size(Nbd,dir_);
-    for(int n=0; n<slsize; ++n){
-      int hs = SiteMap::shiftSite_eo.xslice(Nbd,n,dir_);
-      ue.data.set(ue.format.islice(hs,dir_),-mat(ue,hs,dir_).getva());
-    }
-    slsize = SiteMap::shiftSite_oe.slice_size(Nbd,dir_);
-    for(int n=0; n<slsize; ++n){
-      int hs = SiteMap::shiftSite_oe.xslice(Nbd,n,dir_);
-      uo.data.set(uo.format.islice(hs,dir_),-mat(uo,hs,dir_).getva());
-    }
-  }
-}
 
 /////// U(1) phase BC /////////
 BoundaryCond_U1phase::BoundaryCond_U1phase(const XML::node& bcnode)
