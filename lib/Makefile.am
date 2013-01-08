@@ -166,6 +166,7 @@ main_hmc_SOURCES = Main/main_hmc.cpp
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)
 
 include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
+			$(top_srcdir)/include/bgq_su3algebra.h		\
                         $(top_srcdir)/include/commandline.hpp           \
 			$(top_srcdir)/include/common_code.hpp		\
 			$(top_srcdir)/include/common_fields.hpp		\
