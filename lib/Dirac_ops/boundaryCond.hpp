@@ -64,6 +64,9 @@ public:
   void apply_bc(GaugeField& ue,GaugeField& uo)const;
 };
 
+
+
+
 ///////////////////////////////
 BoundaryCond* createBC(const XML::node&);
 

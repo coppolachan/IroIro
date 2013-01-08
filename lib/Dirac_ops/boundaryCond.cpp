@@ -91,10 +91,12 @@ BoundaryCond_U1phase::BoundaryCond_U1phase(const XML::node& bcnode)
     CCIO::cout<<"No valid direction specified"<<endl;
     abort();
   }
-  int Nc = CommonPrms::instance()->Nc();
-  double theta; /*! @brief phase */
-  XML::read(bcnode,"phase",theta,MANDATORY);
-  bc_= complex<double>(cos(theta),sin(theta));
+
+  double agl; /*! @brief phase angle (degree) */
+  XML::read(bcnode,"angle",agl,MANDATORY);
+  agl *= PI/180.0;
+
+  bc_= complex<double>(cos(agl),sin(agl));
 }
 
 void BoundaryCond_U1phase::apply_bc(GaugeField& u)const{

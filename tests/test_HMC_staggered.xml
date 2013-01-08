@@ -39,7 +39,10 @@
 	  <smeared>false</smeared>
 	  <Kernel name="DiracStaggeredEvenOdd">
 	    <mass>0.2</mass>
-	    <boundary_condition name="periodic" dir="T"></boundary_condition>
+	    <!--<BoundaryCondition name="periodic" dir="T"></BoundaryCondition>-->
+	    <BoundaryCondition name="U1phase" dir="T">
+	      <angle>120.0</angle>
+	    </BoundaryCondition>
 	  </Kernel>
 	  <Solver type="Solver_CG">
 	    <MaxIter>2000</MaxIter>

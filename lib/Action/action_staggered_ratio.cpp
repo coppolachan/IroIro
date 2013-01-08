@@ -6,11 +6,13 @@
 #include "Tools/randNum_MP.h"
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
+#include "Fields/field_expressions.hpp"
+
+using namespace FieldExpression;
 
 //::::::::::::::::::::::::::::::::Observer
 void Action_staggered_ratio::observer_update() {
-  D1_->update_internal_state();  
-  D2_->update_internal_state();  
+  D_->update_internal_state();  
 }
 
 void Action_staggered_ratio::attach_smearing(SmartConf* SmearObj) {
@@ -26,18 +28,27 @@ void Action_staggered_ratio::attach_smearing(SmartConf* SmearObj) {
   }
 }
 
-Field Action_staggered_ratio::DdagD1_inv(const Field& src){
+Field Action_staggered_ratio::DdagD1e_inv(const Field& src){
   Field sol(fsize_);
-  SolverOutput monitor = slv1_->solve(sol,src);
+  SolverOutput monitor = slv1e_->solve(sol,src);
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
   monitor.print();
 #endif
   return sol;
 }
 
-Field Action_staggered_ratio::DdagD2_inv(const Field& src){
+Field Action_staggered_ratio::DdagD1o_inv(const Field& src){
   Field sol(fsize_);
-  SolverOutput monitor = slv2_->solve(sol,src);
+  SolverOutput monitor = slv1o_->solve(sol,src);
+#if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
+  monitor.print();
+#endif
+  return sol;
+}
+
+Field Action_staggered_ratio::DdagD2e_inv(const Field& src){
+  Field sol(fsize_);
+  SolverOutput monitor = slv2e_->solve(sol,src);
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
   monitor.print();
 #endif
@@ -47,36 +58,43 @@ Field Action_staggered_ratio::DdagD2_inv(const Field& src){
 /*  following parts are not established */
 
 void Action_staggered_ratio::init(const RandNum& rand){
+
   std::valarray<double> ph(fsize_);
-  MPrand::mp_get_gauss(ph,rand,D1_->get_gsite(),D1_->get_fermionFormat());
+  MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
 
   Field xi(ph);
-  xi -= D2_->mult_eo(D1_->mult_oe(Field(ph)));
+  xi -= mr_*D_->mult_eo(D_->mult_oe(Field(ph)));
 
-  MPrand::mp_get_gauss(ph,rand,D1_->get_gsite(),D1_->get_fermionFormat());
-
-  xi += D2_->mult_eo(Field(ph));
-  xi -= D1_->mult_eo(Field(ph));
-
-  slv2_->solve(phi_,xi);
+  MPrand::mp_get_gauss(ph,rand,D_->get_gsite(),D_->get_fermionFormat());
+  
+  xi += (mr_-1.0)*D_->mult_eo(Field(ph));
+  slv2e_->solve(phi_,xi);
 }
 
 double Action_staggered_ratio::calc_H(){
-  Field zeta = D2_->mult_dag(phi_);//2 flavors
-  double H_nf2r = zeta*DdagD1_inv(zeta);
-  _Message(ACTION_VERB_LEVEL,"    [Action_Nf2_ratio] H = "<<H_nf2r<<"\n");
-  return H_nf2r;
+  Field zeta = D_->mult_oe(phi_);
+  double Hr = zeta*DdagD1o_inv(zeta);
+  Hr *= mr_*mr_;
+  Hr += phi_*DdagD1e_inv(phi_);
+
+  _Message(ACTION_VERB_LEVEL,"    [Action_staggered_ratio] H = "<<Hr<<"\n");
+  return Hr;
 }
 
 GaugeField Action_staggered_ratio::md_force(){
-  Field eta = DdagD1_inv(D2_->mult_dag(phi_));
-  GaugeField fce(D1_->md_force(eta,D1_->mult(eta)));
-  fce -= GaugeField(D2_->md_force(eta,phi_));
+
+  Field psi = DdagD1e_inv(phi_);
+  GaugeField fce(D_->md_force(psi,D_->mult_oe(psi)));
+
+  psi = mr_*mr_*DdagD1o_inv(D_->mult_oe(phi_));
+  fce -= D_->md_force(phi_,psi);
+  psi /= mr_;
+  fce -= D_->md_force(D_->mult_eo(psi),psi);
 
   if(smeared_) smart_conf_->smeared_force(fce);
   GaugeField force = FieldUtils::TracelessAntihermite(fce); 
 
-  _MonitorMsg(ACTION_VERB_LEVEL, Action,force,"Action_Nf2_ratio");
+  _MonitorMsg(ACTION_VERB_LEVEL, Action,force,"Action_staggered_ratio");
   return force;
 }
 

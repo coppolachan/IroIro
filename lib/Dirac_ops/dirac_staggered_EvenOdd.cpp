@@ -4,9 +4,12 @@
 */
 //-------------------------------------------------------------
 #include "dirac_staggered_EvenOdd.hpp"
+#include "Fields/field_expressions.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunVec.hpp"
+
+#include "Measurements/GaugeM/staples.hpp"
 #include <iostream>
 
 using namespace std;
@@ -14,6 +17,17 @@ using namespace FieldUtils;
 using namespace SUNmatUtils;
 using namespace SUNvecUtils;
 using namespace Mapping;
+
+
+void (Dirac_staggered_EvenOdd::*Dirac_staggered_EvenOdd::mult_type[])
+(Field&,const Field&) const = {&Dirac_staggered_EvenOdd::mult_DdagDee,
+			       &Dirac_staggered_EvenOdd::mult_DdagDoo,
+			       &Dirac_staggered_EvenOdd::mult_Dfull,};
+
+void (Dirac_staggered_EvenOdd::*Dirac_staggered_EvenOdd::mult_dag_type[])
+(Field&,const Field&) const = {&Dirac_staggered_EvenOdd::mult_DdagDee,
+			       &Dirac_staggered_EvenOdd::mult_DdagDoo,
+			       &Dirac_staggered_EvenOdd::mult_Dfull_dag,};
 
 void Dirac_staggered_EvenOdd::set_ksphase(){
   for(int hs=0; hs<Nvh_; ++hs){
@@ -24,9 +38,9 @@ void Dirac_staggered_EvenOdd::set_ksphase(){
       int y = SiteIndex::instance()->g_y(gs);
       int z = SiteIndex::instance()->g_z(gs);
     
-      kse_[Nvh_*YDIR +hs] *= double(1-2*(x%2));
-      kse_[Nvh_*ZDIR +hs] *= double(1-2*((x+y)%2));
-      kse_[Nvh_*TDIR +hs] *= double(1-2*((x+y+z)%2));
+      kse_[Nvh_*YDIR +hs] *= 1.0-2.0*(x%2);
+      kse_[Nvh_*ZDIR +hs] *= 1.0-2.0*((x+y)%2);
+      kse_[Nvh_*TDIR +hs] *= 1.0-2.0*((x+y+z)%2);
     }
     // initialization for the odd sector
     {
@@ -35,14 +49,19 @@ void Dirac_staggered_EvenOdd::set_ksphase(){
       int y = SiteIndex::instance()->g_y(gs);
       int z = SiteIndex::instance()->g_z(gs);
     
-      kso_[Nvh_*YDIR +hs] *= double(1-2*(x%2));
-      kso_[Nvh_*ZDIR +hs] *= double(1-2*((x+y)%2));
-      kso_[Nvh_*TDIR +hs] *= double(1-2*((x+y+z)%2));
+      kso_[Nvh_*YDIR +hs] *= 1.0-2.0*(x%2);
+      kso_[Nvh_*ZDIR +hs] *= 1.0-2.0*((x+y)%2);
+      kso_[Nvh_*TDIR +hs] *= 1.0-2.0*((x+y+z)%2);
     }
   }
 }
 
 void Dirac_staggered_EvenOdd::set_ustag(){
+  /*
+  Staples stpl;
+  double plaq = stpl.plaquette(GaugeField(*u_));
+  CCIO::cout<<"Dirac_staggered_EvenOdd::set_ustag   plaq="<<plaq<<"\n";
+  */
   for(int mu=0; mu<Ndim_; ++mu){
     for(int hs=0; hs<Nvh_; ++hs){
       ue_.data.set(gf_.islice(hs,mu),
@@ -51,6 +70,8 @@ void Dirac_staggered_EvenOdd::set_ustag(){
 		   kso_[Nvh_*mu+hs]*(*u_)[gff_.islice(osec(hs),mu)]); 
     }
   }
+  ue_*= 0.5/mq_;
+  uo_*= 0.5/mq_;
   bdry_->apply_bc(ue_,uo_);
 }
 
@@ -82,7 +103,6 @@ const Field Dirac_staggered_EvenOdd::mult_eo(const Field& fo)const{
 		  (mat_dag(uo_,hs,mu)*SUNvec(fo[ff_.islice(hs)])).getva());
     we -= shiftField_eo(ft,mu,Backward()).data;
   }
-  we *= 0.5/mq_;
   return we;
 }
 
@@ -98,47 +118,54 @@ const Field Dirac_staggered_EvenOdd::mult_oe(const Field& fe)const{
 
     wo -= shiftField_oe(ft,mu,Backward()).data;
   }
-  wo *= 0.5/mq_;
   return wo;
 }
 #endif //0
 
 const Field Dirac_staggered_EvenOdd::mult_eo_dag(const Field& fe) const{
-  Field wo = mult_oe(fe);
-  return -wo;
+  return -Field(mult_oe(fe));
 }
 
 const Field Dirac_staggered_EvenOdd::mult_oe_dag(const Field& fo) const{
-  Field we = mult_eo(fo);
-  return -we;
+  return -Field(mult_eo(fo));
 }
 
-const Field Dirac_staggered_EvenOdd::mult(const Field& fe) const{
-  Field we(fe);
-  we -= mult_eo(mult_oe(fe));
-  return we;
+const Field Dirac_staggered_EvenOdd::mult(const Field& f)const{
+  Field w(fsize_);
+  (this->*mult_core)(w,f);
+  return w;
 }
 
-const Field Dirac_staggered_EvenOdd::mult_dag(const Field& fe) const{
-  return mult(fe);
+const Field Dirac_staggered_EvenOdd::mult_dag(const Field& f)const{
+  Field w(fsize_);
+  (this->*mult_dag_core)(w,f);
+  return w;
 }
 
-const Field Dirac_staggered_EvenOdd::mult_full(const Field& f) const{
+void Dirac_staggered_EvenOdd::mult_DdagDee(Field& we,const Field& fe)const{
+  using namespace FieldExpression;
+  we = fe -mult_eo(mult_oe(fe));
+}
+
+void Dirac_staggered_EvenOdd::mult_DdagDoo(Field& wo,const Field& fo)const{
+  using namespace FieldExpression;
+  wo = fo -mult_oe(mult_eo(fo));
+}
+
+void Dirac_staggered_EvenOdd::mult_Dfull(Field& w,const Field& f)const{
   assert(f.size()==2*fsize_);
-
-  Field w(f);
+  assert(w.size()==2*fsize_);
+  w = f;
   w.add(sle_,mult_eo(Field(f[slo_])).getva());
   w.add(slo_,mult_oe(Field(f[sle_])).getva());
-  return w;
 }
 
-const Field Dirac_staggered_EvenOdd::mult_full_dag(const Field& f) const{
+void Dirac_staggered_EvenOdd::mult_Dfull_dag(Field& w,const Field& f) const{
   assert(f.size()==2*fsize_);
-  
-  Field w(f);
+  assert(w.size()==2*fsize_);
+  w = f;
   w.add(sle_,-(mult_eo(Field(f[slo_]))).getva());
   w.add(slo_,-(mult_oe(Field(f[sle_]))).getva());
-  return w;
 }
 
 const Field Dirac_staggered_EvenOdd::
@@ -158,6 +185,6 @@ md_force(const Field& eta,const Field& zeta) const{
 	      outer_prod_t(SUNvec(etah[xsl]),SUNvec(zeta[xsl])).getva());
     } 
   }
-  fce *= -0.5/mq_;
+  fce *= -1.0;
   return fce;
 }

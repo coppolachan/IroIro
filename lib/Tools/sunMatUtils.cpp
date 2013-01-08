@@ -38,8 +38,13 @@ namespace SUNmatUtils{
     return SUNmat(m1)*= m2;  }
 
   const SUNmat operator*(const SUNmat& m1,const complex<double>& cp){
-    SUNmat m = m1*cp.real();
-    return m.xI()*cp.imag();
+    
+    SUNmat m;
+    for(int c=0; c<NC_*NC_; ++c){
+      m.setr(c,m1.r(c)*cp.real() -m1.i(c)*cp.imag());
+      m.seti(c,m1.r(c)*cp.imag() +m1.i(c)*cp.real());
+    }
+    return m;
   }
 
   const SUNmat operator*(const SUNmat& m1,double x){
