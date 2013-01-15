@@ -8,6 +8,7 @@
 #include "mpi.h"
 #else
 #include "bgnet.h"
+#include <omp.h>
 #endif
 
 #include "comm_io.hpp"
@@ -336,11 +337,11 @@ void Communicator::
 transfer_fw(double *bin,double *data,int size,int dir) const{
   int p_send = nd_dn_[dir];
   int p_recv = nd_up_[dir];
-
-  int tag1 = dir*Nproc_+my_rank_;
-  int tag2 = dir*Nproc_+p_recv;
-
-  BGNET_Sendrecv(0,data,size*sizeof(double),p_send,bin,size*sizeof(double),p_recv);
+  
+  BGNET_Sendrecv(0,
+		 data, size*sizeof(double), p_send,
+		 bin, size*sizeof(double), p_recv);
+  
 }
 
 void Communicator::

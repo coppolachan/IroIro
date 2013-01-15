@@ -145,8 +145,10 @@ GaugeField ActionGaugeRect::md_force(){
   double* Cup1_ptr = Cup1.data.getaddr(0);
 #endif
 
+  BGQThread_Init();
+
 #ifdef IBM_BGQ_WILSON
-#pragma omp parallel
+#pragma omp parallel default (shared)
   {
     for(int mu=0; mu<NDIM_; ++mu){
       int tid, nid;
@@ -168,29 +170,27 @@ GaugeField ActionGaugeRect::md_force(){
       
       for(int nu=0; nu<NDIM_; ++nu){
 	if (nu == mu) continue;
-	
-#pragma omp single 
+
+#pragma omp single
 	{
-	  // lot of reorderings and name reuse have been made
-	  shiftField(UpNu,U_mu_ptr,nu,Forward());// U_mu(x+nu)
 	  DirSliceBGQ(U_nu,*u_,nu); //U_nu links    
-	  shiftField(UpMu,U_nu_ptr,mu,Forward());// U_nu(x+mu)
-	}	  
+	}
+
+	shiftField(UpNu,U_mu_ptr,nu,Forward());// U_mu(x+nu)
+	shiftField(UpMu,U_nu_ptr,mu,Forward());// U_nu(x+mu)
+	  
 	BGWilsonSU3_MatMult_NND(Cup1_ptr+jump, U_nu_ptr+jump, UpNu_ptr+jump, UpMu_ptr+jump, ns);
 	BGWilsonSU3_MatMult_NND(Cup2_ptr+jump, U_mu_ptr+jump, UpMu_ptr+jump, UpNu_ptr+jump, ns);
 
 	BGWilsonSU3_MatMult_DNN(res_ptr+jump, U_nu_ptr+jump, U_mu_ptr+jump, UpMu_ptr+jump, ns);
 	BGWilsonSU3_MatMult_DNN(UpMu_ptr+jump, U_mu_ptr+jump, U_nu_ptr+jump, UpNu_ptr+jump, ns);
-#pragma omp barrier
-#pragma omp single 
-	{
-	  shiftField(Cdn1,res_ptr,nu,Backward());
-	  shiftField(Cdn2,UpMu_ptr,mu,Backward());
-	  shiftField(UpMu, Cup2_ptr, mu, Forward()); // Cup2(x+mu)
-	}
 	
-	// plaquette term
-	//force_pl += Cup1;
+	shiftField(Cdn1,res_ptr,nu,Backward());
+	shiftField(Cdn2,UpMu_ptr,mu,Backward());
+	shiftField(UpMu, Cup2_ptr, mu, Forward()); // Cup2(x+mu)
+
+ 	// plaquette term
+	// force_pl += Cup1;
 	BGWilsonMatLA_Add((__complex__ double*)force_pl.data.getaddr(0)+is*9, 
 			  (__complex__ double*)Cup1_ptr+is*9, ns); 
 	//force_pl += Cdn1;
@@ -204,11 +204,9 @@ GaugeField ActionGaugeRect::md_force(){
 
 	BGWilsonSU3_MatMult_DNN(Cup2_ptr+jump, U_nu_ptr+jump, U_mu_ptr+jump, UpMu_ptr+jump, ns);   
 	
-	#pragma omp single 
-	{
-	  shiftField(UpMu, U_nu_ptr, mu, Forward());    // U_nu(x+mu)
-	  shiftField(UpNu, Cup1_ptr, nu, Forward());    // Cup1(x+nu)
-	}
+	shiftField(UpMu, U_nu_ptr, mu, Forward());    // U_nu(x+mu)
+	shiftField(UpNu, Cup1_ptr, nu, Forward());    // Cup1(x+nu)
+	
 
 	BGWilsonSU3_MatMult_NND(res_ptr+jump, U_nu_ptr+jump, UpNu_ptr+jump, UpMu_ptr+jump, ns);
 	//force_rect += res; 
@@ -226,18 +224,16 @@ GaugeField ActionGaugeRect::md_force(){
 	BGWilsonMatLA_Add((__complex__ double*)res_ptr+is*9, 
 			  (__complex__ double*)Cup2_ptr+is*9, ns); 
 
-	#pragma omp single 
+#pragma omp master
 	{
 	  force_rect += shiftField(res,nu,Backward());//+=res(x-nu)
-	  shiftField(UpNu, U_mu_ptr, nu, Forward()); // U_mu(x+nu)
 	}
+	shiftField(UpNu, U_mu_ptr, nu, Forward()); // U_mu(x+nu)
 
 	BGWilsonSU3_MatMult_NND(res_ptr+jump, Cdn2_ptr+jump, UpNu_ptr+jump, UpMu_ptr+jump, ns);
 	//force_rect += res;
 	BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+is*9, 
 			  (__complex__ double*)res_ptr+is*9, ns); 
-	
-	
       }
     
       //force_pl   *= Params.c_plaq;
@@ -248,7 +244,6 @@ GaugeField ActionGaugeRect::md_force(){
       //force_rect += force_pl; //force_rect = total force (staples term)
       BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+is*9, 
 			(__complex__ double*)force_pl.data.getaddr(0)+is*9, ns); 
-      
     
       BGWilsonSU3_MatMult_ND(Cdn1_ptr+jump , u_->data.getaddr(0)+18*Nvol_*mu+jump, 
 			     force_rect.data.getaddr(0)+jump, ns);
