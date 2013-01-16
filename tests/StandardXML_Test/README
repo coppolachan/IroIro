@@ -1,9 +1,22 @@
-=============================
-Standardized test collection
-=============================
+  ______          __                     _ __     
+ /_  __/__  _____/ /______   _______  __(_) /____ 
+  / / / _ \/ ___/ __/ ___/  / ___/ / / / / __/ _ \
+ / / /  __(__  ) /_(__  )  (__  ) /_/ / / /_/  __/
+/_/  \___/____/\__/____/  /____/\__,_/_/\__/\___/ 
 
-Here is a collection of standard tests with corresponding 
-reference output and necessary input files.
+|     .-.
+|    /   \         .-.
+|   /     \       /   \       .-.     .-.     _   _
++--/-------\-----/-----\-----/---\---/---\---/-\-/-\/\/--
+| /         \   /       \   /     '-'     '-'
+|/           '-'         '-'
+
+======================================================================
+                  Standardized test collection
+======================================================================
+
+Here is a collection of standard tests with the
+corresponding reference output and necessary input files.
 
 
 The format for the filenames are
@@ -18,13 +31,26 @@ REFERENCE FILES (mandatory)
 
 INPUT FILES (if necessary)
 --------------------------
+here any input file necessary for reproducing the Reference Files.
+Some examples are
+(executable).(short test name).conf
+(executable).(short test name).seed
 (executable).(short test name).input
 
+In general
+(executable).(short test name).(type of input)
 
 
+->->->->->->->->->
+     EXAMPLE
+->->->->->->->->->
 
-EXAMPLE
--------
-test_HMC.my_test.xml
-test_HMC.my_test.input
-test_HMC.my_test.reference.INTEL
+For a test named "my_test" using "test_exe" as executable and 
+tested on a INTEL machine, single core
+
+- test_exe.my_test.xml
+- test_exe.my_test.input
+- test_exe.my_test.reference.INTEL_1core
+
+
+nununununununununununununununununununununununununununununununnunununun
