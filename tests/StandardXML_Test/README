@@ -1,0 +1,30 @@
+=============================
+Standardized test collection
+=============================
+
+Here is a collection of standard tests with corresponding 
+reference output and necessary input files.
+
+
+The format for the filenames are
+
+XML FILES (mandatory)
+---------------------
+(executable).(short test name).xml
+
+REFERENCE FILES (mandatory)
+---------------------------
+(executable).(short test name).reference.(generating architecture)
+
+INPUT FILES (if necessary)
+--------------------------
+(executable).(short test name).input
+
+
+
+
+EXAMPLE
+-------
+test_HMC.my_test.xml
+test_HMC.my_test.input
+test_HMC.my_test.reference.INTEL

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>16 16 16 16</Lattice>
+    <Nodes>8 4 4 4</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+    <!-- other params here -->
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="Unit"></Configuration> 
+  <!-- definition of HMC trajectory -->
+  <HMC>
+    <Nsweeps>20</Nsweeps>
+    <Thermalization>20</Thermalization>
+    <StartingConfig>1</StartingConfig>
+    <SavePrefix>Conf_gauge_</SavePrefix> 
+    <SaveInterval>20</SaveInterval>
+    
+    <RandomNumberGen name="Mersenne Twister">
+      <!--   <seedFile>seed_file</seedFile>
+	   Using seedFile supersedes the <init> line 
+           that can be safely omitted
+           It is ignored by factory in this case -->
+      <init>0x123 0x234 0x345 0x456</init> 
+    </RandomNumberGen>
+    
+    <Integrator name="2MN_multistep">
+      <MDsteps>10</MDsteps>
+      <step_size>0.1</step_size>
+      <exp_approx>8</exp_approx>
+      <step>
+	<multiplier>1</multiplier>
+	<Action type="Gauge" name="Symanzik">
+	  <beta>4.5</beta>
+	</Action>
+      </step>
+      
+    </Integrator>
+  </HMC>
+  
+</Parameters>
+
