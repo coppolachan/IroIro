@@ -50,18 +50,24 @@ double Staples::plaq_min(const GaugeField& F)const {
   GaugeField1D stpl(Nvol_);
 
   double pmin(NC_);
+  //double pav =0.0;
 
   for(int m=0;m<NDIM_;++m){
     for(int n=m+1;n<NDIM_;++n){
       stpl = lower(F,m,n);
-      for(int site=0; site<Nvol_; ++site)
-	double pmin = std::min(ReTr(mat(F,site,m)*mat_dag(stpl,site)),pmin); 
+      for(int site=0; site<Nvol_; ++site){
+	double pl = ReTr(mat(F,site,m)*mat_dag(stpl,site));
+        pmin = std::min(pl,pmin); 
+	//pav += pl;
+      }
     }
   }
+  //CCIO::cout<<"averaged plaq= "<<pav/(Lvol_*NC_*6.0)<<"\n";
   int dum;
   int one = Communicator::instance()->reduce_min(pmin,dum,1);
   return pmin/NC_;
 }
+
 //------------------------------------------------------------
 GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu) const{
   _Message(DEBUG_VERB_LEVEL, "Staples::upper_lower called\n");
@@ -178,6 +184,7 @@ void Staples::staple(GaugeField1D& W, const GaugeField& G, int mu) const{
   }
 }
 //------------------------------------------------------------
+
 GaugeField1D 
 Staples::fieldStrength(const GaugeField& G,int mu,int nu) const{
   using namespace Mapping;
@@ -205,4 +212,3 @@ Staples::fieldStrength(const GaugeField& G,int mu,int nu) const{
   Fmn *= 0.25;
   return Fmn;
 }
-

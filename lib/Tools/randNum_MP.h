@@ -79,12 +79,10 @@ namespace MPrand{
       //rn = Rn_node[Fmt.get_sub(gsite)];
       
     }
-    
   }
 
   void mp_get(std::valarray<double>& rn,const RandNum& rand);
   void mp_get_gauss(std::valarray<double>& rn,const RandNum& rand);
-
 }
 
 #endif 

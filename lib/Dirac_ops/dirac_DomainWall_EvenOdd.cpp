@@ -15,8 +15,8 @@ using namespace std;
 
 void Dirac_optimalDomainWall_EvenOdd::get_RandGauss(valarray<double>& phi,
 					     const RandNum& rng)const{
-  MPrand::mp_get(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),
-		 Deo_.getFermionFormat());
+  MPrand::mp_get_gauss(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),
+		       Deo_.getFermionFormat());
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult_ee(const Field& f)const{

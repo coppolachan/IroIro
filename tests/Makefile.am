@@ -22,7 +22,7 @@ endif
 
 endif
 
-LDADD = -L../lib/ -lcommcode $(OPTLIB) -lrt
+LDADD = -L../lib/ -lcommcode $(OPTLIB)
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
@@ -53,6 +53,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
 		test_Gauge.xml		\
+		test_NoMeas.xml	        \
 		test_Overlap.xml	\
 		test_HMC_EvenOdd.xml	\
 		test_HMC_DWF.xml	\
@@ -67,6 +68,7 @@ test_PROGRAMS = test_HMC 		\
 		test_HMC_smear_noF	\
 		test_HMC_DWall_noF	\
 		test_Gauge		\
+		test_NoMeas		\
 		test_PolyakovLoop	\
 		test_WilsonFlow		\
 		test_Wilson 		\
@@ -110,6 +112,8 @@ test_HMC_EvenOdd_SOURCES  =	test_HMC_EvenOdd.cpp		\
 
 test_HMC_DWall_noF_SOURCES =	test_HMC_DWall_noFact.cpp	\
 				testerHMC_DWall_noFact.cpp
+
+test_NoMeas_SOURCES 	= 	testerNoMeas.cpp
 
 test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
 				testerGauge.cpp

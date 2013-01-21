@@ -20,7 +20,7 @@ using namespace std;
 #endif
 
 void Dirac_Wilson::get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
-  MPrand::mp_get(phi,rng,SiteIndex::instance()->get_gsite(),ff_);
+  MPrand::mp_get_gauss(phi,rng,SiteIndex::instance()->get_gsite(),ff_);
 }
 
 void (Dirac_Wilson::*Dirac_Wilson::mult_p[])

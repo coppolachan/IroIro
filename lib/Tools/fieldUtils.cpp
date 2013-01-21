@@ -103,7 +103,7 @@ namespace FieldUtils{
 
   const GaugeField TracelessAntihermite(const GaugeField& G){
     using namespace SUNmatUtils;
-    GaugeField TAField;
+    GaugeField TAField(G.Nvol());
     for(int mu=0; mu<G.Nex(); ++mu){
       for(int site=0; site<G.Nvol(); ++site){
 	SetMat(TAField,anti_hermite_traceless(mat(G,site,mu)),site,mu);
@@ -114,7 +114,7 @@ namespace FieldUtils{
 
   const GaugeField1D TracelessAntihermite(const GaugeField1D& G){
     using namespace SUNmatUtils;
-    GaugeField1D TAField;
+    GaugeField1D TAField(G.Nvol());
     for(int site=0; site<G.Nvol(); ++site)
       SetMat(TAField,anti_hermite_traceless(mat(G,site)),site);
     return TAField;

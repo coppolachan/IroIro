@@ -41,7 +41,6 @@ void WilsonFlow::evolve_step()const{
   Z *= 0.75;                       // 17/36*Z0 -8/9*Z1 +3/4*Z2       
   update_U(Z);              // V(t+e) = exp(ep*(17/36*Z0 -8/9*Z1 +3/4*Z2))*W2
 }
-
 /*
 void WilsonFlow::evolve_step()const{
                                     // W0 = U_
@@ -82,7 +81,8 @@ double WilsonFlow::Edens_plaq(int t)const{
 }
 
 double WilsonFlow::Edens_clover(int t)const{
-
+  using namespace SUNmatUtils;
+  using namespace FieldUtils;
   int Ndim = CommonPrms::instance()->Ndim();
   int Nvol = CommonPrms::instance()->Nvol();
 
@@ -92,19 +92,15 @@ double WilsonFlow::Edens_clover(int t)const{
     for(int nu=mu+1; nu<Ndim; ++nu){
       GaugeField1D Fmn = stpl.fieldStrength(U_,mu,nu);
       for(int site=0; site<Nvol; ++site){
-	/*
-	SUNmat u = mat(Fmn,site);
-	Sg -= ReTr(u*u);
-	*/
 	valarray<double> u = Fmn.data[Fmn.format.islice(site)];
-	Sg -= (u*u).sum();
+	Sg += (u*u).sum();   // this is equivarent to Sg += Tr(u*u);
       }
     }
   }
   Sg = Communicator::instance()->reduce_sum(Sg);
 
   double td = tau(t);
-  return 0.25*td*td*Sg/double(CommonPrms::instance()->Lvol());
+  return td*td*Sg/double(CommonPrms::instance()->Lvol());
 }
 
 void WilsonFlow::save_config(const std::string& fname)const{

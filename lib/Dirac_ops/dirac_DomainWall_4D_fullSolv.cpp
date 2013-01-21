@@ -10,7 +10,7 @@ using namespace std;
 void Dirac_optimalDomainWall_4D_fullSolv::
 get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
   Format::Format_F ff(Dodw_->Nvol());
-  MPrand::mp_get(phi,rng,SiteIndex::instance()->get_gsite(),ff);
+  MPrand::mp_get_gauss(phi,rng,SiteIndex::instance()->get_gsite(),ff);
 }
 
 const Field Dirac_optimalDomainWall_4D_fullSolv::

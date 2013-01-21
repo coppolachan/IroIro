@@ -76,5 +76,9 @@ double Communicator::reduce_sum(double a)const{ return a;}
 void Communicator::sync()const{}
 void Communicator::broadcast(int size, int &data, int sender)const{}
 void Communicator::broadcast(int size, double &data, int sender)const{}
+void Communicator::allgether(double *bin,double *data,int size)const{
+  bin = data;}
+void Communicator::allgether(valarray<double>& bin,
+			     const valarray<double>& data)const{ bin = data;}
 int Communicator::reduce_max(double& val,int& idx,int size)const{return 0;}
 int Communicator::reduce_min(double& val,int& idx,int size)const{return 0;}

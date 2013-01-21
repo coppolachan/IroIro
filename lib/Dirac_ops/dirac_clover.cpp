@@ -14,7 +14,7 @@
 using namespace std;
 
 void Dirac_Clover::get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
-  MPrand::mp_get(phi,rng,SiteIndex::instance()->get_gsite(),ff_);
+  MPrand::mp_get_gauss(phi,rng,SiteIndex::instance()->get_gsite(),ff_);
 }
 
 

@@ -20,7 +20,7 @@ using namespace Mapping;
 
 void Dirac_staggered_EvenOdd_Adjoint::
 get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
-  MPrand::mp_get(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),ff_);
+  MPrand::mp_get_gauss(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),ff_);
 }
 
 void (Dirac_staggered_EvenOdd_Adjoint::*Dirac_staggered_EvenOdd_Adjoint::

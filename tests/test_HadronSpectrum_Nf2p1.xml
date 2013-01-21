@@ -18,29 +18,29 @@
            It is ignored by factory in this case -->
     <init>0x123 0x234 0x345 0x456</init>
   </RandomNumberGen>
+<!--  <GaugeFixing name="NoFixing">-->
+   <GaugeFixing name="Coulomb">
+      <max_iter>5000</max_iter>
+      <monitor_step>10</monitor_step> 
+      <reset_step>3000</reset_step>
+      <or_step>50</or_step>
+      <or_prm>1.7</or_prm>
+      <sdm_trigger>1.0e-12</sdm_trigger>
+      <sdm_prm>1.6</sdm_prm>
+      <precision>1e-12</precision>
+  </GaugeFixing>
   <Smearing type="Stout">
     <Nsmear>0</Nsmear>
     <Base type="APE">
       <rho>0.1</rho>
     </Base>
   </Smearing>
-  <GaugeFixing name="NoFixing">
-<!--  <GaugeFixing name="Coulomb">-->
-      <max_iter>5000</max_iter>
-      <monitor_step>10</monitor_step> 
-      <reset_step>10000</reset_step>
-      <or_step>50</or_step>
-      <or_prm>1.7</or_prm>
-      <sdm_trigger>1.0-12</sdm_trigger>
-      <sdm_prm>1.7</sdm_prm>
-      <precision>1e-20</precision>
-  </GaugeFixing>
   <Output>
     <starting_idx>0</starting_idx>
     <idx_increment>1</idx_increment>
-    <output_prefix>Output/output_</output_prefix>
-    <gauge_prefix>Output/smr_gtr_</gauge_prefix>
-    <seed_prefix>Output/rng_seed_</seed_prefix>
+    <output_prefix>Output/hadron_</output_prefix>
+    <!--<gauge_prefix>Output/smr_gtr_</gauge_prefix>-->
+    <!--<seed_prefix>Output/rng_seed_</seed_prefix>-->
   </Output>
   <Measurement>
     <!-- ud-quark propagator -->
@@ -85,14 +85,16 @@
       </Kernel4d>
     </QuarkProp>  
 -->
+<!--
     <Source type="Local">
       <position>0 0 0 0</position>
     </Source>
-<!--
+-->
     <Source type="Exp">
-      <position>0 0 0 0</position>
+      <position>0 0 0 4</position>
       <alpha>0.4</alpha>
     </Source>
+<!--
     <Source type="Wall">
       <position>0</position>
     </Source>

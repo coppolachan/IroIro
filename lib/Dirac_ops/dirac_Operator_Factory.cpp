@@ -127,6 +127,9 @@ namespace DiracOperators {
       }
       if (!strcmp(Dirac_name, "DiracStaggeredEvenOdd"))  
 	return new DiracStaggeredEvenOddFactory(node);
+
+      if (!strcmp(Dirac_name, "DiracStaggeredEvenOddAdjoint"))  
+	return new DiracStaggeredEvenOddAdjointFactory(node);
       abort();
     }else{
       std::cout<<"Mandatory node is missing in input file (DiracStaggered Object)\n";

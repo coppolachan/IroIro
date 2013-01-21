@@ -17,6 +17,7 @@ private:
   mutable GaugeField U_; // internal buffer, initialized by input U
   int Nexp_;
   int Nstep_;
+  int Mstep_;
   double estep_;
   bool saveConf_;
 
@@ -32,11 +33,12 @@ public:
     XML::read(node,"Nexp", Nexp_, MANDATORY);
     XML::read(node,"Nstep",Nstep_,MANDATORY);
     XML::read(node,"estep",estep_,MANDATORY);
+    XML::read(node,"MonitorStep",Mstep_);
   }
 
   WilsonFlow(double beta,int Nexp,int Nstep,double estep,
-	     const GaugeField& U,bool saveConf=false)
-    :Nexp_(Nexp),Nstep_(Nstep),estep_(estep),U_(U),
+	     const GaugeField& U,int Mstep=1, bool saveConf=false)
+    :Nexp_(Nexp),Nstep_(Nstep),Mstep_(Mstep),estep_(estep),U_(U),
      Sg_(new ActionGaugeWilson(3.0,&U_)),saveConf_(saveConf){}
   
   ~WilsonFlow(){if(Sg_) delete Sg_;}
@@ -44,7 +46,8 @@ public:
   const GaugeField& getU()const{ return U_;}
   
   int Nstep(){return Nstep_;}
-  
+  int MonitorStep(){return Mstep_;}
+
   double tau(int t)const{  return estep_*(t+1.0);}
   double Edens_plaq(int t)const;
   double Edens_clover(int t)const;

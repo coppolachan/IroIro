@@ -29,6 +29,9 @@ const GaugeField GaugeFixing_Coulomb::do_fix(const GaugeField& Uin)const{
   CCIO::cout<<setw(8) <<" iter"<<setw(25)<<setiosflags(ios_base::left )
 	    <<"     residual"<<"        F_value"<<endl;
 
+  GaugeField1D Pe(Ue.Nvol()),Po(Uo.Nvol());
+  GaugeField1D De(Ue.Nvol()),Do(Uo.Nvol());
+
   for(int it=0; it<Niter_; ++it){
     double gc_sum;
     if(it%Nmeas_==0){
@@ -38,7 +41,7 @@ const GaugeField GaugeFixing_Coulomb::do_fix(const GaugeField& Uin)const{
       vector<double> gc = gauge_cond(Ue,Uo);
       gc_sum = accumulate(gc.begin(),gc.end(),0.0);
       vector<double> Fval = calc_F(Ue,Uo);
-
+      
       //for(int t=0;t<gc.size();++t)
       //CCIO::cout<<"gc["<<t<<"]="<<gc[t]<<" Fval["<<t<<"]="<<Fval[t]<<"\n";
 
@@ -63,7 +66,8 @@ const GaugeField GaugeFixing_Coulomb::do_fix(const GaugeField& Uin)const{
       //re_overrelax(Ue,Uo);
     }else{
       if(gc_sum < esdm_){
-	gstep_->step_sdm(Ue,Uo);   
+	gstep_->step_CG(Ue,Uo,De,Do,Pe,Po);   
+	//gstep_->step_sdm(Ue,Uo);
       }else{ 
 	if(iter>=Nor_) gstep_->step_ovrlx(Ue,Uo);
 	else           gstep_->step_naive(Ue,Uo);
@@ -113,19 +117,20 @@ GaugeFixing_Coulomb::gauge_cond(const GaugeField& Ue,
   GaugeField1D dlo = TracelessAntihermite(gstep_->umu_odd( Ue,Uo));
 
   vector<double> gc(CommonPrms::instance()->Lt(),0.0);
-  
+
+
   for(int t=0; t<CommonPrms::instance()->Nt(); ++t){
     int gt = SiteIndex::instance()->global_t(t);
-    
-    Field fe(dle.data[dle.get_sub(shiftSite_eo.xslice_map(t,TDIR))]);
-    gc[gt] = fe*fe;
-    Field fo(dlo.data[dlo.get_sub(shiftSite_oe.xslice_map(t,TDIR))]);
-    gc[gt] += fo*fo;
+    valarray<double> ve= dle.data[dle.get_sub(shiftSite_eo.xslice_map(t,TDIR))];
+    gc[gt] = (ve*ve).sum();
+    valarray<double> vo= dlo.data[dlo.get_sub(shiftSite_oe.xslice_map(t,TDIR))];
+    gc[gt] += (vo*vo).sum();
   }
   double nrm = 4.0/(NDIM_-1)/NC_/CommonPrms::instance()->Lvol();
   
   for(int gt=0; gt<gc.size(); ++gt){
     double gcval = Communicator::instance()->reduce_sum(gc[gt]);
+    //CCIO::cout<<"gcval["<<gt<<"]="<<gcval<<"\n";
     gc[gt] = gcval*nrm;
   }
   return gc;

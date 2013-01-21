@@ -10,7 +10,7 @@ using namespace std;
 void Dirac_overlap_Zolotarev::
 get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const{
   Format::Format_F ff(Fopr_signH->Nvol()); // temporal hack
-  MPrand::mp_get(phi,rng,SiteIndex::instance()->get_gsite(),ff);
+  MPrand::mp_get_gauss(phi,rng,SiteIndex::instance()->get_gsite(),ff);
 }
 
 const Field Dirac_overlap_Zolotarev::mult(const Field& f) const{

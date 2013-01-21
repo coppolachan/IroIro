@@ -16,6 +16,7 @@
 #include "dirac_DomainWall.hpp"
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "dirac_staggered_EvenOdd.hpp"
+#include "dirac_staggered_EvenOdd_Adjoint.hpp"
 #include "Solver/solver_Factory.hpp"
 #include "eoUtils.hpp"
 
@@ -257,6 +258,18 @@ public:
     :Dirac_node(node),DiracStaggeredEvenOddLikeOperatorFactory(dt){}
   Dirac_staggered_EvenOdd* getDiracOperatorSTG(Dstagg::Dtype dt,Field* const Gfield){
     return new Dirac_staggered_EvenOdd(Dirac_node,dt,Gfield);
+  }
+};
+
+/*! @brief Concrete class for creating Dirac_staggered_EvenOdd_Adjoint */
+class DiracStaggeredEvenOddAdjointFactory
+  : public DiracStaggeredEvenOddLikeOperatorFactory{
+  const XML::node Dirac_node;  
+public:
+  DiracStaggeredEvenOddAdjointFactory(const XML::node node,Dstagg::Dtype dt=Dstagg::DdagDee)
+    :Dirac_node(node),DiracStaggeredEvenOddLikeOperatorFactory(dt){}
+  Dirac_staggered_EvenOdd_Adjoint* getDiracOperatorSTG(Dstagg::Dtype dt,Field* const Gfield){
+    return new Dirac_staggered_EvenOdd_Adjoint(Dirac_node,dt,Gfield);
   }
 };
 

@@ -22,7 +22,9 @@ private:
 
   const GaugeField1D upu_even(const GaugeField& Ue,const GaugeField& Uo)const;
   const GaugeField1D upu_odd( const GaugeField& Ue,const GaugeField& Uo)const;
-  const GaugeField1D gtr_sdm(const GaugeField1D& upu,const GaugeField1D& umu)const;
+  const GaugeField1D gtr_sdm(const GaugeField1D& upu,const GaugeField1D& umu)const;  
+  const GaugeField1D gtr_CG(const GaugeField1D& upu,const GaugeField1D& umu,
+			    GaugeField1D& D,GaugeField1D& P)const;
   const SUNmat overrelax(const SUNmat&)const;
   int Ndim_;  
   double orp_,sdmp_;
@@ -43,6 +45,9 @@ public:
 		  GaugeField& Ue,GaugeField& Uo)const;
 
   void step_sdm(  GaugeField& Ue,GaugeField& Uo)const;
+  void step_CG(GaugeField& Ue,GaugeField& Uo,
+	       GaugeField1D& De,GaugeField1D& Do,
+	       GaugeField1D& Pe,GaugeField1D& Po)const;
 
   void gauge_tr(GaugeField& U,const GaugeField1D& G)const;
   void gauge_tr_even(GaugeField& Ue,GaugeField& Uo,

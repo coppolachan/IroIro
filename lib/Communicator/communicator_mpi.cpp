@@ -93,6 +93,16 @@ int Communicator::nodeid(int x, int y, int z, int t)const{
   return x +NPEx*(y +NPEy*(z +NPEz*t));
 }
 
+void Communicator::allgether(double *bin,double *data,int size)const{
+   MPI_Allgather(data,size,MPI_DOUBLE, 
+		 bin, size,MPI_DOUBLE,MPI_COMM_WORLD);
+}
+
+void Communicator::allgether(valarray<double>& bin, 
+			     const valarray<double>& data)const{
+  allgether((const_cast<valarray<double>& >(data))[0],&bin[0],bin.size());
+}
+
 void Communicator::
 transfer_fw(double *bin,double *data,int size,int dir)const{
   MPI_Status  status;

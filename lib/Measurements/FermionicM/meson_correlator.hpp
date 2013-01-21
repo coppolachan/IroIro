@@ -165,7 +165,7 @@ MesonCorrelator::calculate_mom(const prop_t& q1,const prop_t& q2,
 
 		//get real part
 		temp_corr_re = (q1[c1+Nc_*s1][fmt.cslice(s2,site)]
-			     *q2[c1+Nc_*s4][fmt.cslice(s3,site)]).sum();
+				*q2[c1+Nc_*s4][fmt.cslice(s3,site)]).sum();
 		//get imaginary part
 		temp_corr_im = SUNvec(q1[c1+Nc_*s1][fmt.cslice(s2,site)]).im_prod(SUNvec(q2[c1+Nc_*s4][fmt.cslice(s3,site)]));
 

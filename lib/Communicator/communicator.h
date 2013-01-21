@@ -47,6 +47,10 @@ public:
   void broadcast(int size, int &data, int sender)const;
   void broadcast(int size, double &data, int sender)const;
   
+  void allgether(double *bin,double *data,int size)const;
+  void allgether(std::valarray<double>& bin,
+		 const std::valarray<double>& data)const;
+
   void transfer_fw(double *bin,double *data,int size,int dir)const;
 
   void transfer_fw(std::valarray<double>& bin,

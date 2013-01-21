@@ -52,9 +52,15 @@ public:
       while FileList accommodate a list of files with any name.
     */
     if(!XML::attribute_compare(inode,"Input","RegularStep")){
+
       std::string input_prefix;
       XML::read(inode,"input_prefix",input_prefix,MANDATORY);
       config_list_.push_back(input_prefix);   
+
+      std::string input_postfix ="";
+      XML::read(inode,"input_postfix",input_postfix);
+      config_list_.push_back(input_postfix);   
+
       /*!< input_prefix is stored in the first element of config_list_*/
       
       if(XML::read(inode,"total_num",meas_num_))
@@ -126,7 +132,8 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     
     std::stringstream infile;
     if(file_list_) infile << config_list_[c];
-    else           infile << config_list_[0]<< id;
+    else           infile << config_list_[0]<< id
+			  << config_list_[1];
     
     Uin_.initialize(node_,infile.str());
     CCIO::cout<<"Uin_ initialized from "<<infile.str()<<std::endl;

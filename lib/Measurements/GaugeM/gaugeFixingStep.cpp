@@ -54,6 +54,46 @@ const SUNmat GaugeFixingStep::overrelax(const SUNmat& g)const{
   return gt.reunit();
 }
 
+void GaugeFixingStep::step_CG(GaugeField& Ue,GaugeField& Uo,
+			      GaugeField1D& De,GaugeField1D& Do,
+			      GaugeField1D& Pe,GaugeField1D& Po)const{
+
+  GaugeField1D Gtr = gtr_CG(upu_even(Ue,Uo),umu_even(Ue,Uo),De,Pe);
+  gauge_tr_even(Ue,Uo,Gtr);
+  Gtr =              gtr_CG(upu_odd( Ue,Uo),umu_odd( Ue,Uo),Do,Po);
+  gauge_tr_odd( Ue,Uo,Gtr);
+}
+
+const GaugeField1D GaugeFixingStep::gtr_CG(const GaugeField1D& upu,
+					   const GaugeField1D& umu,
+					   GaugeField1D& D,
+					   GaugeField1D& P)const{
+
+  GaugeField1D del = TracelessAntihermite(umu);
+  GaugeField1D Gtr(upu.Nvol());
+
+  double beta;
+  for(int site=0; site<upu.Nvol(); ++site){
+    SUNmat dx = mat(del,site);
+    beta = ReTr(dx*dx);
+    beta /= ReTr(mat(P,site)*mat(D,site).anti_hermite());
+
+    SUNmat px = mat(P,site);
+    px *= beta;
+    px += dx;
+    SetMat(P,px,site);
+
+    double alpha = ReTr(px*mat(umu,site));
+    alpha /= ReTr(px*px*mat(upu,site));
+
+    //px*= alpha*sdmp_;
+    px*= alpha;      
+    SetMat(Gtr,reunit(exponential(px,12)),site);
+  }
+  D = umu;
+  return Gtr;
+}
+
 void GaugeFixingStep::step_sdm(GaugeField& Ue,GaugeField& Uo)const{
   GaugeField1D Gtr = gtr_sdm(upu_even(Ue,Uo),umu_even(Ue,Uo));
   gauge_tr_even(Ue,Uo,Gtr);

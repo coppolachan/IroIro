@@ -93,8 +93,6 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr,
   opr_timing += (end.tv_sec - start.tv_sec)*1000.0;
   opr_timing += (end.tv_usec - start.tv_usec) / 1000.0;   // us to ms
 
-
-
   double* s_ptr = s.getaddr(0);
 #ifdef IBM_BGQ_WILSON
   ///////////////////////////////////////////////////
@@ -121,26 +119,19 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr,
   double pap = p*s;// (p,Ap)
   double rrp = rr;
   register double cr = rrp/pap;// (r,r)/(p,Ap)
-
-  // x = x + cr * p
-  // r_k = r_k - cr * Ap
-  // rr = (r_k,r_k)
   rr = 0.0;
 
   for (int i = 0; i < x.size(); ++i){
-    x_ptr[i] += cr * p_ptr[i];
-    r_ptr[i] -= cr * s_ptr[i];
-    rr += r_ptr[i]*r_ptr[i];
+    x_ptr[i] += cr * p_ptr[i];    // x = x + cr * p
+    r_ptr[i] -= cr * s_ptr[i];    // r_k = r_k - cr * Ap
+    rr += r_ptr[i]*r_ptr[i];      // rr = (r_k,r_k)
   }
-
-
   rr = Communicator::instance()->reduce_sum(rr);
   cr = rr/rrp;
-  for (int i = 0; i < p.size(); ++i){
+  for(int i=0; i<p.size(); ++i)
     p_ptr[i] = p_ptr[i]*cr+r_ptr[i];
-  }
   
-  //p *= rr/rrp; // p = p*(r_k,r_k)/(r,r)
+  //p *= rr/rrp; // p += p*(r_k,r_k)/(r,r)
   //p += r; // p = p + p*(r_k,r_k)/(r,r)
 #endif
 }

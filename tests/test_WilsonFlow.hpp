@@ -16,6 +16,7 @@ public:
   Test_WilsonFlow(XML::node node,const GaugeField& conf,
 		  const RandNum&,std::string file)
     :node_(node),conf_(conf),output_(file){}
+  void monitor(const GaugeField&) const;
   int run();
 };
 
