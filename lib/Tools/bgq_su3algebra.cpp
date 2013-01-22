@@ -6,6 +6,7 @@
         IBM Confidential
 ---------------------------------------------------------------------*/
 
+#ifdef IBM_BGQ_WILSON
 #include "bgq_su3algebra.h"
 
 void BGWilsonMatLA_Add(QCDComplex* pV,QCDComplex* pW,int ns)
@@ -59,6 +60,7 @@ void BGWilsonLA_MatEquate(QCDComplex* pV,QCDComplex* pW,int ns)
         }
 }
 
+
 void BGWilsonLA_MatZero(QCDComplex* pV,int ns)
 {
         register double _Complex* pV0;
@@ -88,3 +90,6 @@ void BGWilsonLA_MatUnity(QCDComplex* pV,int ns)
 	  pV0 += QCDLA_MAT;
         }
 }
+
+#endif
+

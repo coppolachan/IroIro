@@ -10,6 +10,7 @@
 #include "include/messages_macros.hpp"
 #ifdef IBM_BGQ_WILSON
 #include <omp.h>
+#include "bgqthread.h"
 #include "include/bgq_su3algebra.h"
 #endif
 
@@ -206,7 +207,11 @@ GaugeField ActionGaugeRect::md_force(){
   double* Cup2_ptr = Cup2.data.getaddr(0);
   double* Cup1_ptr = Cup1.data.getaddr(0);
 
+
   BGQThread_Init();
+
+
+
 #pragma omp parallel
   {
       int tid, nid;
