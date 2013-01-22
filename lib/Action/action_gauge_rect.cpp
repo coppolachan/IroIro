@@ -143,11 +143,11 @@ GaugeField ActionGaugeRect::md_force(){
   double* Cdn2_ptr = Cdn2.data.getaddr(0);
   double* Cup2_ptr = Cup2.data.getaddr(0);
   double* Cup1_ptr = Cup1.data.getaddr(0);
-#endif
+
 
   BGQThread_Init();
 
-#ifdef IBM_BGQ_WILSON
+
 #pragma omp parallel default (shared)
   {
     for(int mu=0; mu<NDIM_; ++mu){
