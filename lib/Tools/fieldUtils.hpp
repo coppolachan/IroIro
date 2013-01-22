@@ -28,6 +28,14 @@ namespace FieldUtils{
   GaugeField1D DirSlice(const GaugeField& F, int dir);
 #ifdef IBM_BGQ_WILSON
   void DirSliceBGQ(GaugeField1D &G, const GaugeField& F, int dir);
+
+  inline double ReTrBGQ(double &result, const double *F, int site, int dir, const int Nvol){
+    //assumes some indexing and SU(3) matrix
+    result += F[     18*(site+Nvol*dir)];
+    result += F[ 8 + 18*(site+Nvol*dir)];
+    result += F[16 + 18*(site+Nvol*dir)];
+  }
+
 #endif
 
   void SetSlice(GaugeField&, const GaugeField1D&, int dir);

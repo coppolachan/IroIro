@@ -38,8 +38,14 @@ void Action_staggered::init(const RandNum& rand){
   std::valarray<double> ph(fsize_);
   D_->get_RandGauss(ph,rand);
   phi_= ph;
+  double ph_norm = phi_.norm();
+  CCIO::cout<<"ph_norm="<<ph_norm<<"\n";
+
   D_->get_RandGauss(ph,rand);
   phi_-= D_->mult_eo(Field(ph));
+
+  ph_norm = phi_.norm();
+  CCIO::cout<<"ph_norm="<<ph_norm<<"\n";
 }
 
 double Action_staggered::calc_H(){ 

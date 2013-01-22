@@ -5,6 +5,8 @@ LDFLAGS +=
 OPTLIB =
 
 DWF_BGQ_SRC = 
+BGQ_SU3ALGEBLA_HDR =
+BGQ_SU3ALGEBLA_SRC =
 
 if USE_MPI
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
@@ -20,6 +22,9 @@ CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) \
 	-I$(DRIVER)/spi/include/kernel/cnk \
 	-I$(DRIVER)/spi/include/mu/default \
 	-I$(DRIVER)/comm/xl/include	
+
+BGQ_SU3ALGEBLA_HDR += include/bgq_su3algebra.h
+BGQ_SU3ALGEBLA_SRC += Tools/bgq_su3algebra.cpp
 
 if IBM_BGQWILSON_NOSMP  
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
@@ -162,7 +167,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
-		Tools/Remez/alg_remez.cpp		\
+		$(BGQ_SU3ALGEBRA_SRC)                   \
+                Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
@@ -196,6 +202,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/singleton.h		\
 			$(top_srcdir)/include/observer.hpp		\
 			$(top_srcdir)/include/messages_macros.hpp	\
+			$(top_srcdir)/$(BGQ_SU3ALGEBRA_HDR)		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\

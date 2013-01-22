@@ -101,14 +101,26 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
 
 void Dirac_optimalDomainWall_EvenOdd::
 md_force_eo(Field& fce, const Field& eta,const Field& zeta) const{
+#ifdef IBM_BGQ_WILSON  
+  Deo_.md_force_p_BGQ(fce,eta,mult_ee_dinv(zeta));
+  Doe_.md_force_m_BGQ(fce,eta,mult_ee_dinv(zeta));
+#else
   Deo_.md_force_p(fce,eta,mult_ee_dinv(zeta));
   Doe_.md_force_m(fce,eta,mult_ee_dinv(zeta));
+#endif
+
 }
 
 void Dirac_optimalDomainWall_EvenOdd::
 md_force_oe(Field& fce, const Field& eta,const Field& zeta) const{
+#ifdef IBM_BGQ_WILSON  
+  Doe_.md_force_p_BGQ(fce,eta,mult_oo_dinv(zeta));
+  Deo_.md_force_m_BGQ(fce,eta,mult_oo_dinv(zeta));
+#else
   Doe_.md_force_p(fce,eta,mult_oo_dinv(zeta));
   Deo_.md_force_m(fce,eta,mult_oo_dinv(zeta));
+#endif
+
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::

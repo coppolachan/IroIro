@@ -308,6 +308,8 @@ public:
 					       SolverOutput&, 
 					       const std::vector<double>&, 
 					       int, double) const;
+  void md_force_p_BGQ(Field&,const Field&,const Field&) const;
+  void md_force_m_BGQ(Field&,const Field&,const Field&) const;
 #endif
 };
 

@@ -77,12 +77,53 @@ const Field Dirac_staggered_EvenOdd::mult_eo(const Field& fo)const{
   Field we(fsize_);
   for(int mu=0; mu<Ndim_; ++mu){
     multPeo(we,fo,mu);           //forward differenciation
-    
+
     FermionField1sp ft(Nvh_);    
     for(int hs=0; hs<Nvh_; ++hs) //backward differenciation
       ft.data.set(ff_.islice(hs),
 		  (mat_dag(uo_,hs,mu)*SUNvec(fo[ff_.islice(hs)])).getva());
-    we -= shiftField_eo(ft,mu,Backward()).data;
+
+    double ft_norm = ft.data.norm();
+    Field sft = shiftField_eo(ft,mu,Backward()).data;
+
+    for(int os=0;os<Nvh_;++os){
+      int idx = ff_.index(0,os);
+      int site = SiteIndex::instance()->get_gsite(SiteIndex_EvenOdd::instance()->osec(os));
+      int ix_o = SiteIndex::instance()->g_x(site);
+      int iy_o = SiteIndex::instance()->g_y(site);
+      int iz_o = SiteIndex::instance()->g_z(site);
+      int it_o = SiteIndex::instance()->g_t(site);
+
+      
+      site = SiteIndex::instance()->get_gsite(SiteIndex_EvenOdd::instance()->esec(os));
+      int ix_e = SiteIndex::instance()->g_x(site);
+      int iy_e = SiteIndex::instance()->g_y(site);
+      int iz_e = SiteIndex::instance()->g_z(site);
+      int it_e = SiteIndex::instance()->g_t(site);
+      /*
+      CCIO::cout<<ix<<","<<iy<<","<<iz<<","<<it
+		<<" sft["<<idx<<"]="<<sft[idx]
+		<<" we["<<idx<<"]="<<we[idx]<<"\n";
+      */
+      CCIO::cout<<ix_o<<","<<iy_o<<","<<iz_o<<","<<it_o
+		<<" ft["<<idx<<"]="<<ft[idx]<<"  "
+		<<ix_e<<","<<iy_e<<","<<iz_e<<","<<it_e
+		<<" sft["<<idx<<"]="<<sft[idx]<<"\n";
+    }
+
+    double sft_norm = sft.norm();
+
+    double w_norm0 = we.norm();
+    we -= sft;
+
+    //we -= shiftField_eo(ft,mu,Backward()).data;
+
+    double w_norm = we.norm();
+
+    CCIO::cout<<" ft_norm=" <<ft_norm
+	      <<" sft_norm="<<sft_norm
+	      <<" w_norm0="<< w_norm0
+	      <<" w_norm="<< w_norm<<"\n";
   }
   return we;
 }

@@ -25,8 +25,6 @@ void Action_Nf2_ratio::attach_smearing(SmartConf* SmearObj) {
   }
 }
 
-
-
 Field Action_Nf2_ratio::DdagD1_inv(const Field& src){
   Field sol(fsize_);
   SolverOutput monitor = slv1_->solve(sol,src);
@@ -47,10 +45,10 @@ Field Action_Nf2_ratio::DdagD2_inv(const Field& src){
 
 void Action_Nf2_ratio::init(const RandNum& rand){
   std::valarray<double> ph(fsize_);
+
   D1_->get_RandGauss(ph,rand);
-  //CCIO::cout << "ph norm "<< Field(ph).norm() <<"\n";
+
   phi_= D1_->mult_dag(Field(ph));
-  //CCIO::cout << "phi norm (mult_dag) "<< phi_.norm() <<"\n";
   phi_= D2_->mult(DdagD2_inv(phi_));
 }
 

@@ -11,9 +11,9 @@
  *
  * Current implementation:
  * - Actions (Gauge: Wilson, Rectangle, Fermion: 2 flavors, 2 flavors Ratio, RHMC Nf flavors, RHMC Nf flavors ratio, Overlap)
- * - %Dirac operators (Wilson, Clover, Overlap, Even-odd preconditioned Wilson, Generalized Domain Wall (4d - 5d) )
+ * - %Dirac operators (Wilson, Clover, Staggered, Overlap, Even-odd preconditioned Wilson, Generalized Domain Wall (4d - 5d) )
  * - Linear Solvers (Conjugate Gradient Unpreconditioned, Conjugate Gradient Preconditioned, BiConjugate Gradient)
- * - Measurements (Quark Propagator [Wilson, Domain Wall], Gauge Quantities)
+ * - Measurements (Quark Propagator [Wilson, Domain Wall], Meson and Baryon correlators, Gauge Quantities)
  * - Smearing (APE, Stout analytic), HMC Smeared runs
  * - Random Number Generators (Mersenne Twister)
  * - %XML control of program behavior

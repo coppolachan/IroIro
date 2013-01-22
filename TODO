@@ -1,0 +1,31 @@
+ _____          _         _ _     _   
+/__   \___   __| | ___   | (_)___| |_ 
+  / /\/ _ \ / _` |/ _ \  | | / __| __|
+ / / | (_) | (_| | (_) | | | \__ \ |_ 
+ \/   \___/ \__,_|\___/  |_|_|___/\__|
+ 
+.-"-.     .-"-.     .-"-.     .-"-.     .
+     "-.-"     "-.-"     "-.-"     "-.-"  
+                        
+..:::: Primary tasks
+
+Add support for EigenModes monitoring during update
+
+..:::: Secondary
+
+Add support for twisted mass fermions
+Add support for more fermionic observables
+Add standardized test files
+
+..:::: Would-be features
+
+Add constructor to Solvers to accomodate for GeneralFields
+
+..:::: Optional features
+
+Add new Mersenne Twister (should be faster)
+Add new exponential calculation (exact)
+Create XML by using a web interface
+Use ggplot2 for automatic generation of graphs
+
+

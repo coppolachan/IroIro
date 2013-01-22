@@ -6,6 +6,9 @@
 #include "sunMatUtils.hpp"
 
 #include <omp.h>
+#ifdef IBM_BGQ_WILSON
+#include "bgq_su3algebra.h"
+#endif
 
 class RandNum;
 
@@ -32,32 +35,32 @@ namespace FieldUtils{
     using namespace SUNmatUtils;
     GaugeField Ur(U);
 #ifdef IBM_BGQ_WILSON
-   register int Nvol = CommonPrms::instance()->Nvol();
+    register int Nvol = CommonPrms::instance()->Nvol();
 #pragma omp parallel 
-  {
-    int tid, nid;
-    int ns,is;
-    
-    nid = omp_get_num_threads();
-    tid = omp_get_thread_num();
-    
-    is = tid*Nvol / nid;
-    ns = Nvol / nid;
-    
-    for(int mu=0; mu<U.Nex(); ++mu)
-      for(int site=is; site<is+ns; ++site)
-	SetMat(Ur,reunit(mat(U,site,mu)),site,mu);
-    
-  }
+    {
+      int tid, nid;
+      int ns,is;
+      
+      nid = omp_get_num_threads();
+      tid = omp_get_thread_num();
+      
+      is = tid*Nvol / nid;
+      ns = Nvol / nid;
+      
+      for(int mu=0; mu<U.Nex(); ++mu)
+	for(int site=is; site<is+ns; ++site)
+	  SetMat(Ur,reunit(mat(U,site,mu)),site,mu);
+      
+    }
 #else
-   for(int mu=0; mu<U.Nex(); ++mu)
+    for(int mu=0; mu<U.Nex(); ++mu)
       for(int site=0; site<U.Nvol(); ++site)
 	SetMat(Ur,reunit(mat(U,site,mu)),site,mu);
 #endif
-
+    
     return Ur;
   }
-
+  
   const GaugeField1D ReUnit(const GaugeField1D& G){
     using namespace SUNmatUtils;
     GaugeField1D Gr(G);
@@ -65,29 +68,35 @@ namespace FieldUtils{
       SetMat(Gr,reunit(mat(G,site)),site);
     return Gr;
   }
-
+  
   const GaugeField Exponentiate(const GaugeField& G, const double d, const int N) {
     using namespace SUNmatUtils;
     GaugeField temp;
-
+    register int Nvol = G.Nvol();
 #ifdef IBM_BGQ_WILSON
     ///////////////////////////////////////////
     GaugeField unit, temp2;
     for(int mu=0; mu<G.Nex(); ++mu)
-      for(int site=0; site<G.Nvol(); ++site)
+      for(int site=0; site<Nvol; ++site)
 	SetMat(unit, unity(),site,mu);
-
+    
     temp = unit;
     double* temp_ptr  = temp.data.getaddr(0);
     double* G_ptr  = const_cast<GaugeField&>(G).data.getaddr(0);
     double* temp2_ptr = temp2.data.getaddr(0);
     double* unit_ptr = unit.data.getaddr(0);
-
+    
+    int is = 0;
+    int ns = Nvol*G.Nex();
     for (int i = N; i>=1;--i){
-      temp *= d/i;
-      BGWilsonSU3_MatMultAdd_NN(temp2_ptr,unit_ptr, temp_ptr, G_ptr, G.Nvol()*G.Nex());
-      temp = temp2;
-     }
+      BGWilsonLA_MatMultScalar((__complex__ double*)temp_ptr+is*9, d/i, ns);
+      BGWilsonSU3_MatMultAdd_NN(temp2_ptr+is*9,unit_ptr+is*9, temp_ptr+is*9, G_ptr+is*9, ns);
+      BGWilsonLA_MatEquate((__complex__ double*)temp_ptr+is*9,
+			   (__complex__ double*)temp2_ptr+is*9, 
+			   ns);
+    }
+    
+    
     temp = ReUnit(temp2);
     
     ///////////////////////////////////////////   
