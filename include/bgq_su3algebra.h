@@ -9,7 +9,7 @@
 #ifndef BGQ_SU3ALGEBRA_H_
 #define BGQ_SU3ALGEBRA_H_
 
-#ifdef IBM_BGQ_WILSON
+
 #include "/bghome/scbadm/ibm-doi/lib/lib_wilson/qcd.h"
 
 #define QCD_COLOR          3
@@ -21,6 +21,6 @@ void BGWilsonLA_MatEquate(QCDComplex* pV,QCDComplex* pW,int ns);
 void BGWilsonLA_MatZero(QCDComplex* pV,int ns);
 void BGWilsonLA_MatUnity(QCDComplex* pV,int ns);
 
-#endif
+
 
 #endif

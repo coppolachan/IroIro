@@ -5,9 +5,9 @@
 
         IBM Confidential
 ---------------------------------------------------------------------*/
-
-#ifdef IBM_BGQ_WILSON
 #include "bgq_su3algebra.h"
+
+
 
 void BGWilsonMatLA_Add(QCDComplex* pV,QCDComplex* pW,int ns)
 {
@@ -91,5 +91,5 @@ void BGWilsonLA_MatUnity(QCDComplex* pV,int ns)
         }
 }
 
-#endif
+
 
