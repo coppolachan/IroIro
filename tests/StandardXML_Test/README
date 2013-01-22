@@ -54,3 +54,16 @@ tested on a INTEL machine, single core
 
 
 nununununununununununununununununununununununununununununununnunununun
+               Tests brief explanation
+nununununununununununununununununununununununununununununununnunununun
+
+-- gauge_std_test
+Simple Symanzik gauge action starting from Unit configuration
+Tests just the HMC and Gauge routines
+
+-- 2+1_rect_DWF_Hasenbusch
+2+1 flavors of Domain Wall fermions using Hasenbusch preconditioning
+Tests pretty much all RHMC relevant routines
+
+
+

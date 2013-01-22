@@ -108,7 +108,6 @@ namespace Mapping{
 	  int Nin = Fout.Nin();
 	  int block   = bdry_t_.size()/nID;
 	  int bulk_bl = bulk_b_.size()/nID;
-	  int bdsize = Nin*bdry_t_.size()/nID;
 	  double* class_send = (double*)BGQThread_Malloc(bdry_t_.size()*Nin*sizeof(double), nID);
 	  double* class_recv = (double*)BGQThread_Malloc(bdry_t_.size()*Nin*sizeof(double), nID);
 
@@ -210,13 +209,13 @@ namespace Mapping{
      }
      else 
        {
-	 //variables declared here are private by default
-	 int tID, nID;
-	 tID = omp_get_thread_num();
-	 nID = omp_get_num_threads();
+	 // variables declared here are private by default
+	 int tID = omp_get_thread_num();
+	 int nID = omp_get_num_threads();
 	 int Nin = Fout.Nin();
 	 int block   = bdry_b_.size()/nID;
 	 int bulk_bl = bulk_t_.size()/nID;
+	 // these will be shared
 	 double* class_send = (double*)BGQThread_Malloc(bdry_b_.size()*Nin*sizeof(double), nID);
 	 double* class_recv = (double*)BGQThread_Malloc(bdry_b_.size()*Nin*sizeof(double), nID);
 	 
@@ -227,6 +226,7 @@ namespace Mapping{
 	 
 	 BGQThread_Barrier(0, nID);
 	 
+	 // Transfer using the shared variables
 	 if(tID == 0)
 	   Communicator::instance()->transfer_bk(class_recv,class_send,bdry_b_.size()*Nin,dir_);
 	 
