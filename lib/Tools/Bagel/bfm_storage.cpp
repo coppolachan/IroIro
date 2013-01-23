@@ -18,6 +18,16 @@ BFM_Storage::BFM_Storage():Nx_(CommonPrms::instance()->Nx()),
 			   Nz_(CommonPrms::instance()->Nz()),
 			   Nt_(CommonPrms::instance()->Nt()){};
 
+
+void BFM_Storage::BasisConversion(FermionField& F, int ConvType){
+  for(int site = 0; site<F.format.Nvol(); ++site){
+    for(int col = 0; col<NC_; ++col){
+      //write explicitly 
+    }  
+  }
+
+}
+
 double* BFM_Storage::GaugeExport_to_BFM(GaugeField& U){
   // BFM storage pattern N.B. : EVEN-ODD
   // double gauge [x%2][t][z][y][x/2] [row][column][realimag]  
@@ -48,7 +58,10 @@ double* BFM_Storage::FermionExport_to_BFM(double* U){
   // double psi   [x%2][t][z][y][x/2] [spin][color][realimag]
   double* F_ptr;
 
+  //Convert Dirac basis: Dirac -> Chiral
   
+  // Export
+
 
 
 
