@@ -10,10 +10,15 @@
 
 #include "include/common_fields.hpp"
 
+#define DIRAC_TO_CHIRAL 0
+#define CHIRAL_TO_DIRAC 1
+
+
 class BFM_Storage {
   int Nx_, Ny_, Nz_, Nt_;
   GaugeField1D U_dag;
 
+  void BasisConversion(FermionField& F,int Conversion); 
 public:
   BFM_Storage(); //Constructor
   double* GaugeExport_to_BFM(GaugeField& U);
