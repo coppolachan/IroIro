@@ -68,17 +68,76 @@ namespace FieldUtils{
       SetMat(Gr,reunit(mat(G,site)),site);
     return Gr;
   }
-  
+
+#ifdef IBM_BGQ_WILSON  
+  void Exponentiate_BGQ(GaugeField& U, const GaugeField& G, const double d, const int N) {
+    using namespace SUNmatUtils;
+    GaugeField temp;
+    GaugeField unit, temp2;
+    register int Nvol = G.Nvol();
+
+    double* temp_ptr  = temp.data.getaddr(0);
+    double* G_ptr  = const_cast<GaugeField&>(G).data.getaddr(0);
+    double* U_ptr  = U.data.getaddr(0);
+    double* temp2_ptr = temp2.data.getaddr(0);
+    double* unit_ptr = unit.data.getaddr(0);
+    
+#pragma omp parallel
+    {
+      int tid, nid;
+      int is, ns, is2,ns2;
+      nid = omp_get_num_threads();
+      tid = omp_get_thread_num();
+ 
+      is = tid*Nvol / nid;
+      ns = Nvol / nid;
+      is2 = is*G.Nex();
+      ns2 = ns*G.Nex();
+      register int jump = is2*9;
+      register int jump2 = is2*18;
+
+      BGWilsonLA_MatUnity((__complex__ double*)unit_ptr+jump, ns2);
+      BGWilsonLA_MatUnity((__complex__ double*)temp_ptr+jump, ns2);
+
+#pragma omp barrier            
+      for (int i = N; i>=1;--i){
+	BGWilsonLA_MatMultScalar((__complex__ double*)temp_ptr+jump, d/i, ns2);
+	BGWilsonSU3_MatMultAdd_NN(temp2_ptr+jump2,unit_ptr+jump2, temp_ptr+jump2, G_ptr+jump2, ns2);
+	BGWilsonLA_MatEquate((__complex__ double*)temp_ptr+jump,
+			     (__complex__ double*)temp2_ptr+jump, 
+			     ns2);
+      }
+
+#pragma omp barrier      
+      for(int mu=0; mu<G.Nex(); ++mu)
+	for(int site=is; site<is+ns; ++site)
+	  SetMat(temp,reunit(mat(temp2,site,mu)),site,mu);
+
+    
+#pragma omp barrier          
+      BGWilsonSU3_MatMult_NN(temp2_ptr+jump2, temp_ptr+jump2, U_ptr+jump2, ns2);
+#pragma omp barrier          
+      
+    for(int mu=0; mu<G.Nex(); ++mu)
+      for(int site=is; site<is+ns; ++site)
+	SetMat(U,reunit(mat(temp2,site,mu)),site,mu);
+    }
+    //   U = ReUnit(temp2);
+    
+  } 
+#endif
+
   const GaugeField Exponentiate(const GaugeField& G, const double d, const int N) {
     using namespace SUNmatUtils;
     GaugeField temp;
-    register int Nvol = G.Nvol();
 #ifdef IBM_BGQ_WILSON
     ///////////////////////////////////////////
     GaugeField unit, temp2;
+    register int Nvol = G.Nvol();
+
     for(int mu=0; mu<G.Nex(); ++mu)
       for(int site=0; site<Nvol; ++site)
-	SetMat(unit, unity(),site,mu);
+        SetMat(unit, unity(),site,mu);
     
     temp = unit;
     double* temp_ptr  = temp.data.getaddr(0);
@@ -92,8 +151,8 @@ namespace FieldUtils{
       BGWilsonLA_MatMultScalar((__complex__ double*)temp_ptr+is*9, d/i, ns);
       BGWilsonSU3_MatMultAdd_NN(temp2_ptr+is*9,unit_ptr+is*9, temp_ptr+is*9, G_ptr+is*9, ns);
       BGWilsonLA_MatEquate((__complex__ double*)temp_ptr+is*9,
-			   (__complex__ double*)temp2_ptr+is*9, 
-			   ns);
+                           (__complex__ double*)temp2_ptr+is*9, 
+                           ns);
     }
     
     

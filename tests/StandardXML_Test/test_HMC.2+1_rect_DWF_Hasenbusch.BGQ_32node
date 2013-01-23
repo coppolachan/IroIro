@@ -1,0 +1,494 @@
+Communicator initialized using BGNET with 512 processes.
+Init from binary file
+Binary reading 75497472 bytes from start_conf.bin with offset 0... done
+GaugeF initialized
+==== [begin] Contents of the input file rhmc_takashi.32.xml====
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>16 16 16 32</Lattice>
+    <Nodes>4 4 4 8</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+    <!-- other params here -->
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="Binary">start_conf.bin</Configuration> 
+  <!-- definition of HMC trajectory -->
+  <HMC>
+    <Nsweeps>1</Nsweeps>
+    <Thermalization>0</Thermalization>
+    <StartingConfig>2002</StartingConfig>
+    <SavePrefix>Conf_</SavePrefix> 
+    <SaveInterval>100</SaveInterval>
+
+    <RandomNumberGen name="Mersenne Twister">
+      <seedFile>seed_file</seedFile>
+      <!-- <init>0x123 0x234 0x345 0x456</init> -->
+    </RandomNumberGen>
+
+    <Integrator name="leapfrog_multistep">
+      <MDsteps>1</MDsteps>
+        <step_size>0.125</step_size>
+        <exp_approx>8</exp_approx>
+
+      <Smearing>
+      	<levels>3</levels>
+      	<Base type="APE">
+      	  <rho>0.1</rho>
+       	</Base>
+      </Smearing>
+
+        <!-- PF1 step --> 
+        <step>
+          <multiplier>1</multiplier>
+
+	  <Action type="Fermion" name="TwoFlavorsRatio">
+	    <smeared>true</smeared>
+	    <Numerator name="DiracOptimalDomainWall5dEvenOdd">
+	      <Preconditioning>NoPreconditioner</Preconditioning>
+	      <wilson_mass>-1.0</wilson_mass>
+	      <N5d>12</N5d>
+	      <b>2.0</b>
+	      <c>1.0</c>
+	      <mass>0.012</mass>
+	      <approximation name="Tanh">
+                <lambda_min>0.20</lambda_min>
+                <lambda_max>7.00</lambda_max>
+	      </approximation>
+	    </Numerator>
+	    <Denominator name="DiracOptimalDomainWall5dEvenOdd">
+	      <Preconditioning>NoPreconditioner</Preconditioning>
+	      <wilson_mass>-1.0</wilson_mass>
+	      <N5d>12</N5d>
+	      <b>2.0</b>
+	      <c>1.0</c>
+	      <mass>0.150</mass>
+	      <approximation name="Tanh">
+                <lambda_min>0.20</lambda_min>
+                <lambda_max>7.00</lambda_max>
+	      </approximation>
+	    </Denominator>
+            <SolverNumerator type="Solver_CG">
+              <MaxIter>100000</MaxIter>
+              <Precision>10e-16</Precision>
+            </SolverNumerator>
+            <SolverDenominator type="Solver_CG">
+              <MaxIter>100000</MaxIter>
+              <Precision>10e-16</Precision>
+            </SolverDenominator>
+          </Action>
+	  
+	  <!-- three-flavor part -->
+	  <step>
+	    <multiplier>3</multiplier>
+            <Action type="Fermion" name="NfFlavorsDomainWall_5D">
+              <smeared>true</smeared>
+	      <Flavors>1</Flavors>
+              <Pseudofermions>1</Pseudofermions>
+              <ApproxDegree>10 10 10</ApproxDegree>
+              <Precision>50 50 50</Precision>
+              <BoundaryLow>0.002 0.002 0.002</BoundaryLow>
+              <BoundaryHigh>3.0 3.0 3.0</BoundaryHigh>
+
+              <Kernel5D name="DiracOptimalDomainWall5dEvenOdd">
+		<Preconditioning>NoPreconditioner</Preconditioning>
+		<wilson_mass>-1.0</wilson_mass>
+		<N5d>12</N5d>
+		<b>2.0</b>
+		<c>1.0</c>
+		<mass>0.039</mass>
+		<approximation name="Tanh">
+                  <lambda_min>0.20</lambda_min>
+                  <lambda_max>7.00</lambda_max>
+		</approximation>
+              </Kernel5D>
+
+              <RationalSolver type="Rational_CG">
+		<MaxIter>10000</MaxIter>
+		<Precision>1e-16</Precision>
+              </RationalSolver>
+	      
+            </Action>
+
+            <!-- Hasenbusch step -->
+            <step>
+              <multiplier>2</multiplier>
+              <Action type="Fermion" name="TwoFlavorsDomainWall_5D-EO_BGQ">
+		<smeared>true</smeared>
+		<Kernel5D name="DiracOptimalDomainWall5dEvenOdd">
+		  <Preconditioning>NoPreconditioner</Preconditioning>
+		  <wilson_mass>-1.0</wilson_mass>
+		  <N5d>12</N5d>
+		  <b>2.0</b>
+		  <c>1.0</c>
+		  <mass>0.150</mass>
+		  <approximation name="Tanh">
+                    <lambda_min>0.20</lambda_min>
+                    <lambda_max>7.00</lambda_max>
+		  </approximation>
+		</Kernel5D>
+		<Solver_DWF-EO_BGQ>
+		  <MaxIter>100000</MaxIter>
+		  <Precision>10e-18</Precision>
+		</Solver_DWF-EO_BGQ>
+              </Action>
+
+              <!-- gauge step --> 
+              <step>
+		<multiplier>2</multiplier>
+		<Action type="Gauge" name="Symanzik">
+		  <beta>4.26</beta>
+		</Action>
+              </step>
+
+	    </step>
+	  </step>
+        </step>
+    </Integrator>
+  </HMC>
+</Parameters>
+
+==== [end] Contents of the input file rhmc_takashi.32.xml====
+Starting HMCrun
+Level : 1 with multiplier 1
+Found Action  [TwoFlavorsRatio] of type [Fermion]
+Level : 2 with multiplier 3
+Found Action  [NfFlavorsDomainWall_5D] of type [Fermion]
+Level : 3 with multiplier 2
+Found Action  [TwoFlavorsDomainWall_5D-EO_BGQ] of type [Fermion]
+Level : 4 with multiplier 2
+Found Action  [Symanzik] of type [Gauge]
+Number of actions 4  divided in 4 nested levels 
+Choosing preconditioner type: NoPreconditioner Code: 0
+Choosing preconditioner type: NoPreconditioner Code: 0
+Choosing preconditioner type: NoPreconditioner Code: 0
+Choosing preconditioner type: NoPreconditioner Code: 0
+Succesfully attached smearing routines
+Choosing preconditioner type: NoPreconditioner Code: 0
+Choosing preconditioner type: NoPreconditioner Code: 0
+Choosing preconditioner type: NoPreconditioner Code: 0
+Choosing preconditioner type: NoPreconditioner Code: 0
+Calculating Rational Approximation of the function:
+f(x) = x^(1/2) in the interval [0.002;3]
+Approximation error: 4.75429238040785e-09
+Partial fraction expansion coefficients
+Res[0] =     -7.61326977127603e-06   Pole[0] =      0.000498083417097847
+Res[1] =     -5.10196741197002e-05   Pole[1] =       0.00248912684648825
+Res[2] =      -0.00024334588771214   Pole[2] =       0.00796230630052537
+Res[3] =      -0.00107485857965201   Pole[3] =        0.0224128188409092
+Res[4] =      -0.00467630084992471   Pole[4] =        0.0605412193706137
+Res[5] =       -0.0206894754942612   Pole[5] =         0.162482495689199
+Res[6] =       -0.0976099763117123   Pole[6] =         0.445339082213843
+Res[7] =         -0.55218198206682   Pole[7] =          1.31317558960702
+Res[8] =         -5.33183388572372   Pole[8] =           4.8739537315587
+Res[9] =          -472.89959603573   Pole[9] =          51.0202066067339
+Inverse Partial fraction expansion coefficients
+Res[0] =        0.0140721398430514   Pole[0] =      0.000117600464581578
+Res[1] =        0.0173855899137311   Pole[1] =       0.00123103343413996
+Res[2] =        0.0248034592353994   Pole[2] =       0.00456907670800945
+Res[3] =        0.0381231004176376   Pole[3] =        0.0134728799686144
+Res[4] =        0.0607032500564013   Pole[4] =        0.0369270546624109
+Res[5] =        0.0988270293612762   Pole[5] =        0.0991060315992307
+Res[6] =         0.165742540326183   Pole[6] =         0.267703944005849
+Res[7] =         0.297318460913174   Pole[7] =         0.753550513323521
+Res[8] =         0.637851010145849   Pole[8] =          2.41048382426353
+Res[9] =          2.37707387258538   Pole[9] =          12.0461749860291
+Calculating Rational Approximation of the function:
+f(x) = x^(1/2) in the interval [0.002;3]
+Approximation error: 4.75429238040785e-09
+Partial fraction expansion coefficients
+Res[0] =     -7.61326977127603e-06   Pole[0] =      0.000498083417097847
+Res[1] =     -5.10196741197002e-05   Pole[1] =       0.00248912684648825
+Res[2] =      -0.00024334588771214   Pole[2] =       0.00796230630052537
+Res[3] =      -0.00107485857965201   Pole[3] =        0.0224128188409092
+Res[4] =      -0.00467630084992471   Pole[4] =        0.0605412193706137
+Res[5] =       -0.0206894754942612   Pole[5] =         0.162482495689199
+Res[6] =       -0.0976099763117123   Pole[6] =         0.445339082213843
+Res[7] =         -0.55218198206682   Pole[7] =          1.31317558960702
+Res[8] =         -5.33183388572372   Pole[8] =           4.8739537315587
+Res[9] =          -472.89959603573   Pole[9] =          51.0202066067339
+Inverse Partial fraction expansion coefficients
+Res[0] =        0.0140721398430514   Pole[0] =      0.000117600464581578
+Res[1] =        0.0173855899137311   Pole[1] =       0.00123103343413996
+Res[2] =        0.0248034592353994   Pole[2] =       0.00456907670800945
+Res[3] =        0.0381231004176376   Pole[3] =        0.0134728799686144
+Res[4] =        0.0607032500564013   Pole[4] =        0.0369270546624109
+Res[5] =        0.0988270293612762   Pole[5] =        0.0991060315992307
+Res[6] =         0.165742540326183   Pole[6] =         0.267703944005849
+Res[7] =         0.297318460913174   Pole[7] =         0.753550513323521
+Res[8] =         0.637851010145849   Pole[8] =          2.41048382426353
+Res[9] =          2.37707387258538   Pole[9] =          12.0461749860291
+Calculating Rational Approximation of the function:
+f(x) = x^(1/4) in the interval [0.002;3]
+Approximation error: 3.30230119522452e-09
+Partial fraction expansion coefficients
+Res[0] =     -2.86441656144825e-05   Pole[0] =      0.000383792346736445
+Res[1] =     -0.000137111859914381   Pole[1] =       0.00212501027929809
+Res[2] =     -0.000494164639864122   Pole[2] =       0.00697388779291432
+Res[3] =      -0.00168734740668393   Pole[3] =        0.0197853440215938
+Res[4] =      -0.00571608975661583   Pole[4] =        0.0535360761300874
+Res[5] =       -0.0196580018640325   Pole[5] =         0.143459097782815
+Res[6] =       -0.0711707519937426   Pole[6] =         0.390970907334835
+Res[7] =        -0.297070731928439   Pole[7] =          1.13474978264314
+Res[8] =         -1.86363456242411   Pole[8] =          4.00204659366594
+Res[9] =         -52.0085869545993   Pole[9] =          30.9078057567812
+Inverse Partial fraction expansion coefficients
+Res[0] =       0.00117368659319793   Pole[0] =      0.000194125718506679
+Res[1] =       0.00250847578352921   Pole[1] =       0.00149923291985062
+Res[2] =       0.00497362557523343   Pole[2] =       0.00528750927453308
+Res[3] =        0.0100375127069348   Pole[3] =        0.0153464104040393
+Res[4] =        0.0205919094235495   Pole[4] =        0.0418237678385759
+Res[5] =         0.042995143592771   Pole[5] =         0.112073958977131
+Res[6] =        0.0929246072160252   Pole[6] =         0.303254772494811
+Res[7] =         0.219045932407796   Pole[7] =         0.860352242273841
+Res[8] =         0.654585512971313   Pole[8] =          2.82351575352466
+Res[9] =          4.19234479506503   Pole[9] =          15.6334540045434
+Calculating Rational Approximation of the function:
+f(x) = x^(1/4) in the interval [0.002;3]
+Approximation error: 3.30230119522452e-09
+Partial fraction expansion coefficients
+Res[0] =     -2.86441656144825e-05   Pole[0] =      0.000383792346736445
+Res[1] =     -0.000137111859914381   Pole[1] =       0.00212501027929809
+Res[2] =     -0.000494164639864122   Pole[2] =       0.00697388779291432
+Res[3] =      -0.00168734740668393   Pole[3] =        0.0197853440215938
+Res[4] =      -0.00571608975661583   Pole[4] =        0.0535360761300874
+Res[5] =       -0.0196580018640325   Pole[5] =         0.143459097782815
+Res[6] =       -0.0711707519937426   Pole[6] =         0.390970907334835
+Res[7] =        -0.297070731928439   Pole[7] =          1.13474978264314
+Res[8] =         -1.86363456242411   Pole[8] =          4.00204659366594
+Res[9] =         -52.0085869545993   Pole[9] =          30.9078057567812
+Inverse Partial fraction expansion coefficients
+Res[0] =       0.00117368659319793   Pole[0] =      0.000194125718506679
+Res[1] =       0.00250847578352921   Pole[1] =       0.00149923291985062
+Res[2] =       0.00497362557523343   Pole[2] =       0.00528750927453308
+Res[3] =        0.0100375127069348   Pole[3] =        0.0153464104040393
+Res[4] =        0.0205919094235495   Pole[4] =        0.0418237678385759
+Res[5] =         0.042995143592771   Pole[5] =         0.112073958977131
+Res[6] =        0.0929246072160252   Pole[6] =         0.303254772494811
+Res[7] =         0.219045932407796   Pole[7] =         0.860352242273841
+Res[8] =         0.654585512971313   Pole[8] =          2.82351575352466
+Res[9] =          4.19234479506503   Pole[9] =          15.6334540045434
+Calculating Rational Approximation of the function:
+f(x) = x^(1/4) in the interval [0.002;3]
+Approximation error: 3.30230119522452e-09
+Partial fraction expansion coefficients
+Res[0] =     -2.86441656144825e-05   Pole[0] =      0.000383792346736445
+Res[1] =     -0.000137111859914381   Pole[1] =       0.00212501027929809
+Res[2] =     -0.000494164639864122   Pole[2] =       0.00697388779291432
+Res[3] =      -0.00168734740668393   Pole[3] =        0.0197853440215938
+Res[4] =      -0.00571608975661583   Pole[4] =        0.0535360761300874
+Res[5] =       -0.0196580018640325   Pole[5] =         0.143459097782815
+Res[6] =       -0.0711707519937426   Pole[6] =         0.390970907334835
+Res[7] =        -0.297070731928439   Pole[7] =          1.13474978264314
+Res[8] =         -1.86363456242411   Pole[8] =          4.00204659366594
+Res[9] =         -52.0085869545993   Pole[9] =          30.9078057567812
+Inverse Partial fraction expansion coefficients
+Res[0] =       0.00117368659319793   Pole[0] =      0.000194125718506679
+Res[1] =       0.00250847578352921   Pole[1] =       0.00149923291985062
+Res[2] =       0.00497362557523343   Pole[2] =       0.00528750927453308
+Res[3] =        0.0100375127069348   Pole[3] =        0.0153464104040393
+Res[4] =        0.0205919094235495   Pole[4] =        0.0418237678385759
+Res[5] =         0.042995143592771   Pole[5] =         0.112073958977131
+Res[6] =        0.0929246072160252   Pole[6] =         0.303254772494811
+Res[7] =         0.219045932407796   Pole[7] =         0.860352242273841
+Res[8] =         0.654585512971313   Pole[8] =          2.82351575352466
+Res[9] =          4.19234479506503   Pole[9] =          15.6334540045434
+Succesfully attached smearing routines
+Choosing preconditioner type: NoPreconditioner Code: 0
+Choosing preconditioner type: NoPreconditioner Code: 0
+Choosing preconditioner type: NoPreconditioner Code: 0
+Choosing preconditioner type: NoPreconditioner Code: 0
+Succesfully attached smearing routines
+[MDexec_leapfrog] Registered 5 Gauge observers
+Loading Mersenne Twister seeds from file [seed_file]
+HMC starts
+-- # Sweep = 2002
+---------------------------
+Kernel section timing: 1219.661
+Solver [CG solver]: Iterations = 165 Residual = 1.68598420299645e-06 Timing(ms) = 1411.824
+Solver [Multishift CG solver]: Iterations = 411 Residual = 9.66381591701214e-09 Timing(ms) = 8423.036
+Solver [Multishift CG solver]: Iterations = 87 Residual = 8.50231690681689e-09 Timing(ms) = 2536.556
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 88 Residual = 1.59923432530428e-07 Timing(ms) = 964.84
+[Momenta] H_p = 2096682.40859568
+Kernel section timing: 4662.965
+Solver [CG solver]: Iterations = 584 Residual = 1.78678241660111e-06 Timing(ms) = 5138.706
+    [Action_Nf2_ratio] H = 9437606.01908956
+Solver [Multishift CG solver]: Iterations = 88 Residual = 9.11965113469746e-09 Timing(ms) = 2004.344
+Solver [Multishift CG solver]: Iterations = 446 Residual = 9.73220477205081e-09 Timing(ms) = 6970.5
+    [Action_Nf_ratio] H = 9432574.15540537
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 191 Residual = 1.79411329022613e-07 Timing(ms) = 1571.464
+    [Action_Nf2_ratio] H = 9433425.5807103
+    [ActionGaugeRect] H = 1843203.27429595
+    -- Plaquette = 0.60851295094529
+total H_before = 32243491.4380969
+Kernel section timing: 4456.432
+Solver [CG solver]: Iterations = 584 Residual = 1.78678241660111e-06 Timing(ms) = 4971.16
+    [Action_Nf2_ratio]
+ +------- average |MD-force| (iPdot) = 0.0049488605096652
+ +------- maximum  MD-force  (iPdot) = 0.120089662696632
+P 0.5
+Solver [Multishift CG solver]: Iterations = 88 Residual = 9.11965113469746e-09 Timing(ms) = 2193.823
+Solver [Multishift CG solver]: Iterations = 446 Residual = 9.73220477205081e-09 Timing(ms) = 8566.172
+Solver [Multishift CG solver]: Iterations = 90 Residual = 7.60572697066237e-09 Timing(ms) = 2766.494
+    [Action_Nf_ratio]
+ +------- average |MD-force| (iPdot) = 0.0160008536227974
+ +------- maximum  MD-force  (iPdot) = 0.141444412469454
+   P 0.5
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 191 Residual = 1.79411329022613e-07 Timing(ms) = 2407.016
+    [Action_Nf2_ratio]
+ +------- average |MD-force| (iPdot) = 0.03168003150264
+ +------- maximum  MD-force  (iPdot) = 0.279049744747504
+      P 0.5
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13717868428901
+ +------- maximum  MD-force  (iPdot) = 5.18574365697755
+         P 0.5
+         U 1
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13720511236661
+ +------- maximum  MD-force  (iPdot) = 5.22058824810841
+         P 1.5
+         U 2
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13723078651741
+ +------- maximum  MD-force  (iPdot) = 5.25273754484829
+         P 2.5
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 191 Residual = 1.73849636784618e-07 Timing(ms) = 2150.443
+    [Action_Nf2_ratio]
+ +------- average |MD-force| (iPdot) = 0.0316726000453472
+ +------- maximum  MD-force  (iPdot) = 0.272509800801388
+      P 1.5
+         U 3
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13725816633863
+ +------- maximum  MD-force  (iPdot) = 5.28225016208668
+         P 3.5
+         U 4
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13728450005995
+ +------- maximum  MD-force  (iPdot) = 5.3091899894189
+         P 4.5
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 190 Residual = 1.81937958318313e-07 Timing(ms) = 2140.912
+    [Action_Nf2_ratio]
+ +------- average |MD-force| (iPdot) = 0.0316680344825358
+ +------- maximum  MD-force  (iPdot) = 0.273301067775509
+      P 2.5
+Solver [Multishift CG solver]: Iterations = 88 Residual = 9.1737977347232e-09 Timing(ms) = 2320.316
+Solver [Multishift CG solver]: Iterations = 450 Residual = 9.90316132820702e-09 Timing(ms) = 7842.89
+Solver [Multishift CG solver]: Iterations = 89 Residual = 7.59487838180055e-09 Timing(ms) = 2301.089
+    [Action_Nf_ratio]
+ +------- average |MD-force| (iPdot) = 0.0160392790633912
+ +------- maximum  MD-force  (iPdot) = 0.141270542837031
+   P 1.5
+         U 5
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13731103781409
+ +------- maximum  MD-force  (iPdot) = 5.33361384168971
+         P 5.5
+         U 6
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13733458983251
+ +------- maximum  MD-force  (iPdot) = 5.35556602101478
+         P 6.5
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 190 Residual = 1.68244863073808e-07 Timing(ms) = 1735.912
+    [Action_Nf2_ratio]
+ +------- average |MD-force| (iPdot) = 0.0316665097156324
+ +------- maximum  MD-force  (iPdot) = 0.272744974738667
+      P 3.5
+         U 7
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13735611911974
+ +------- maximum  MD-force  (iPdot) = 5.37508733134749
+         P 7.5
+         U 8
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13737337205232
+ +------- maximum  MD-force  (iPdot) = 5.3922134870595
+         P 8.5
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 189 Residual = 1.68195730175641e-07 Timing(ms) = 1717.284
+    [Action_Nf2_ratio]
+ +------- average |MD-force| (iPdot) = 0.0316678829732116
+ +------- maximum  MD-force  (iPdot) = 0.270835928417236
+      P 4.5
+Solver [Multishift CG solver]: Iterations = 89 Residual = 9.21945607166394e-09 Timing(ms) = 2419.555
+Solver [Multishift CG solver]: Iterations = 444 Residual = 9.80313572507098e-09 Timing(ms) = 7824.027
+Solver [Multishift CG solver]: Iterations = 90 Residual = 7.49374859525392e-09 Timing(ms) = 2325.746
+    [Action_Nf_ratio]
+ +------- average |MD-force| (iPdot) = 0.016078816872405
+ +------- maximum  MD-force  (iPdot) = 0.139735150266646
+   P 2.5
+         U 9
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13738544706809
+ +------- maximum  MD-force  (iPdot) = 5.40697832251983
+         P 9.5
+         U 10
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13739490964548
+ +------- maximum  MD-force  (iPdot) = 5.41939517386928
+         P 10.5
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 188 Residual = 1.72246420098493e-07 Timing(ms) = 1789.128
+    [Action_Nf2_ratio]
+ +------- average |MD-force| (iPdot) = 0.0316719725309593
+ +------- maximum  MD-force  (iPdot) = 0.267290194094051
+      P 5.5
+         U 11
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13740344659329
+ +------- maximum  MD-force  (iPdot) = 5.42948012299961
+         P 11.5
+         U 12
+    [ActionGaugeRect]
+ +------- average |MD-force| (iPdot) = 1.13740950765304
+ +------- maximum  MD-force  (iPdot) = 5.43723353732038
+         P 12
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 188 Residual = 1.72947563814306e-07 Timing(ms) = 1700.761
+    [Action_Nf2_ratio]
+ +------- average |MD-force| (iPdot) = 0.0316786357968342
+ +------- maximum  MD-force  (iPdot) = 0.262195048841568
+      P 6
+Solver [Multishift CG solver]: Iterations = 89 Residual = 9.25714423749165e-09 Timing(ms) = 2507.898
+Solver [Multishift CG solver]: Iterations = 440 Residual = 9.76160010127603e-09 Timing(ms) = 7783.589
+Solver [Multishift CG solver]: Iterations = 90 Residual = 8.67314717515619e-09 Timing(ms) = 2331.152
+    [Action_Nf_ratio]
+ +------- average |MD-force| (iPdot) = 0.0161169891862796
+ +------- maximum  MD-force  (iPdot) = 0.144942319293468
+   P 3
+Kernel section timing: 4830.518
+Solver [CG solver]: Iterations = 560 Residual = 1.7671691177975e-06 Timing(ms) = 5584.551
+    [Action_Nf2_ratio]
+ +------- average |MD-force| (iPdot) = 0.00532744009390246
+ +------- maximum  MD-force  (iPdot) = 0.117640122156213
+P 1
+[Momenta] H_p = 2096624.10278202
+Kernel section timing: 4641.853
+Solver [CG solver]: Iterations = 560 Residual = 1.7671691177975e-06 Timing(ms) = 5342.244
+    [Action_Nf2_ratio] H = 9437607.04626925
+Solver [Multishift CG solver]: Iterations = 89 Residual = 9.25714423749165e-09 Timing(ms) = 2571.315
+Solver [Multishift CG solver]: Iterations = 440 Residual = 9.76160010127603e-09 Timing(ms) = 8145.208
+    [Action_Nf_ratio] H = 9432587.1650298
+Kernel section timing: 0
+Solver [CG solver]: Iterations = 188 Residual = 1.72947563814306e-07 Timing(ms) = 1766.642
+    [Action_Nf2_ratio] H = 9433417.99046
+    [ActionGaugeRect] H = 1843255.33018865
+    -- Plaquette = 0.608494316393323
+Total H_after = 32243491.6347297
+Time for trajectory (s) : 161.060907
+--------------------------------------------
+dH = 0.196632850915194  Random = 0.501121005981022
+Acc. Probability = 0.821492188056517   -- ACCEPTED
+Saving Mersenne Twister in file [seed_file_last]
+Total elapsed time (s): 161.460181
+Saving configuration on disk in binary format
+Binary writing 75497472 bytes on final_conf.bin... write completed succesfully

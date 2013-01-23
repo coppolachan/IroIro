@@ -86,6 +86,7 @@ const Field Dirac_staggered_EvenOdd::mult_eo(const Field& fo)const{
     double ft_norm = ft.data.norm();
     Field sft = shiftField_eo(ft,mu,Backward()).data;
 
+    std::cout.precision(16);
     for(int os=0;os<Nvh_;++os){
       int idx = ff_.index(0,os);
       int site = SiteIndex::instance()->get_gsite(SiteIndex_EvenOdd::instance()->osec(os));
@@ -93,7 +94,6 @@ const Field Dirac_staggered_EvenOdd::mult_eo(const Field& fo)const{
       int iy_o = SiteIndex::instance()->g_y(site);
       int iz_o = SiteIndex::instance()->g_z(site);
       int it_o = SiteIndex::instance()->g_t(site);
-
       
       site = SiteIndex::instance()->get_gsite(SiteIndex_EvenOdd::instance()->esec(os));
       int ix_e = SiteIndex::instance()->g_x(site);
@@ -101,14 +101,14 @@ const Field Dirac_staggered_EvenOdd::mult_eo(const Field& fo)const{
       int iz_e = SiteIndex::instance()->g_z(site);
       int it_e = SiteIndex::instance()->g_t(site);
       /*
-      CCIO::cout<<ix<<","<<iy<<","<<iz<<","<<it
-		<<" sft["<<idx<<"]="<<sft[idx]
-		<<" we["<<idx<<"]="<<we[idx]<<"\n";
+	std::cout<<ix<<","<<iy<<","<<iz<<","<<it
+	  	 <<" sft["<<idx<<"]="<<sft[idx]
+		 <<" we["<<idx<<"]="<<we[idx]<<"\n";
       */
-      CCIO::cout<<ix_o<<","<<iy_o<<","<<iz_o<<","<<it_o
-		<<" ft["<<idx<<"]="<<ft[idx]<<"  "
-		<<ix_e<<","<<iy_e<<","<<iz_e<<","<<it_e
-		<<" sft["<<idx<<"]="<<sft[idx]<<"\n";
+      std::cout<<ix_o<<","<<iy_o<<","<<iz_o<<","<<it_o
+	       <<" ft["<<idx<<"]="<<ft[idx]<<"  "
+	       <<ix_e<<","<<iy_e<<","<<iz_e<<","<<it_e
+	       <<" sft["<<idx<<"]="<<sft[idx]<<"\n";
     }
 
     double sft_norm = sft.norm();

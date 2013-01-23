@@ -61,18 +61,17 @@ target_triplet = @target@
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/spi/include/mu/default \
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@	-I$(DRIVER)/comm/xl/include	
 
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = include/bgq_su3algebra.h
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = Tools/bgq_su3algebra.cpp
-@IBM_BGQWILSON_NOSMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_6 = Dirac_ops/dirac_DomainWall_BGQ.cpp
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_7 = Dirac_ops/dirac_DomainWall_BGQ.cpp
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_8 = -qsmp=omp:auto
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_9 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib \
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = Tools/bgq_su3algebra.cpp
+@IBM_BGQWILSON_NOSMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = Dirac_ops/dirac_DomainWall_BGQ.cpp
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_6 = Dirac_ops/dirac_DomainWall_BGQ.cpp
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_7 = -qsmp=omp:auto
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_8 = -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib \
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@	 -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib \
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@	 -L/bghome/scbadm/ibm-doi/lib
 
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_10 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_11 = -lbgqwilson3x4smp -lbgqthread
-@IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_12 = -lbgqwilson3x4
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_9 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_10 = -lbgqwilson3x4smp -lbgqthread
+@IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_11 = -lbgqwilson3x4
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
@@ -186,8 +185,9 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/jobUtils.cpp Tools/sunMatUtils.cpp \
 	Tools/sunAdjMatUtils.cpp Tools/randNum_MT19937.cpp \
 	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp \
-	Tools/Remez/alg_remez.cpp \
-	Tools/RationalApprox/rationalapprox.cpp
+	Tools/bgq_su3algebra.cpp Tools/Remez/alg_remez.cpp \
+	Tools/RationalApprox/rationalapprox.cpp \
+	Tools/Bagel/bfm_storage.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 @USE_EVENODD_FALSE@am__objects_2 = siteIndex.$(OBJEXT)
@@ -195,6 +195,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @IBM_BGQWILSON_NOSMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__objects_3 = dirac_DomainWall_BGQ.$(OBJEXT)
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT)
 am__objects_5 = $(am__objects_3) $(am__objects_4)
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__objects_6 = bgq_su3algebra.$(OBJEXT)
+am__objects_7 = $(am__objects_6)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) action_gauge_rect.$(OBJEXT) \
@@ -240,7 +242,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	fieldUtils.$(OBJEXT) jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	sunAdjMatUtils.$(OBJEXT) randNum_MT19937.$(OBJEXT) \
 	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT) \
-	alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT)
+	$(am__objects_7) alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT) \
+	bfm_storage.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -331,7 +334,7 @@ CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@ $(am__append_1) $(am__append_3) $(am__append_8)
+CXXFLAGS = @CXXFLAGS@ $(am__append_1) $(am__append_3) $(am__append_7)
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -348,7 +351,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LDFLAGS = @LDFLAGS@ $(am__append_2) $(am__append_9)
+LDFLAGS = @LDFLAGS@ $(am__append_2) $(am__append_8)
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
@@ -427,10 +430,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . 
-OPTLIB = $(am__append_10) $(am__append_11) $(am__append_12)
-DWF_BGQ_SRC = $(am__append_6) $(am__append_7)
-BGQ_SU3ALGEBLA_HDR = $(am__append_4)
-BGQ_SU3ALGEBLA_SRC = $(am__append_5)
+OPTLIB = $(am__append_9) $(am__append_10) $(am__append_11)
+DWF_BGQ_SRC = $(am__append_5) $(am__append_6)
+BGQ_MAT_SRC = $(am__append_4)
 @USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 @USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@DRIVER = /bgsys/drivers/ppcfloor
@@ -537,9 +539,10 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
-		$(BGQ_SU3ALGEBRA_SRC)                   \
-                Tools/Remez/alg_remez.cpp		\
-		Tools/RationalApprox/rationalapprox.cpp	
+		$(BGQ_MAT_SRC)				\
+		Tools/Remez/alg_remez.cpp		\
+		Tools/RationalApprox/rationalapprox.cpp	\
+		Tools/Bagel/bfm_storage.cpp
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD = libcommcode.a $(OPTLIB)
@@ -571,7 +574,7 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			$(top_srcdir)/include/singleton.h		\
 			$(top_srcdir)/include/observer.hpp		\
 			$(top_srcdir)/include/messages_macros.hpp	\
-			$(top_srcdir)/$(BGQ_SU3ALGEBRA_HDR)		\
+			$(top_srcdir)/include/bgq_su3algebra.h		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
@@ -691,7 +694,8 @@ include_HEADERS = $(top_srcdir)/include/commonPrms.h		\
 			Tools/gammaMatrices.hpp			\
 			Tools/Remez/alg_remez.hpp		\
 			Tools/Remez/bigfloat.hpp		\
-			Tools/RationalApprox/rationalapprox.hpp	
+			Tools/RationalApprox/rationalapprox.hpp	\
+			Tools/Bagel/bfm_storage.hpp
 
 all: all-recursive
 
@@ -827,6 +831,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_staggered_ratio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alg_remez.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/baryonCorrelator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfm_storage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bgq_su3algebra.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/boundaryCond.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/comm_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commandline.Po@am__quote@
@@ -2195,6 +2201,20 @@ gammaMatrices.obj: Tools/gammaMatrices.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o gammaMatrices.obj `if test -f 'Tools/gammaMatrices.cpp'; then $(CYGPATH_W) 'Tools/gammaMatrices.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/gammaMatrices.cpp'; fi`
 
+bgq_su3algebra.o: Tools/bgq_su3algebra.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT bgq_su3algebra.o -MD -MP -MF $(DEPDIR)/bgq_su3algebra.Tpo -c -o bgq_su3algebra.o `test -f 'Tools/bgq_su3algebra.cpp' || echo '$(srcdir)/'`Tools/bgq_su3algebra.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bgq_su3algebra.Tpo $(DEPDIR)/bgq_su3algebra.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/bgq_su3algebra.cpp' object='bgq_su3algebra.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o bgq_su3algebra.o `test -f 'Tools/bgq_su3algebra.cpp' || echo '$(srcdir)/'`Tools/bgq_su3algebra.cpp
+
+bgq_su3algebra.obj: Tools/bgq_su3algebra.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT bgq_su3algebra.obj -MD -MP -MF $(DEPDIR)/bgq_su3algebra.Tpo -c -o bgq_su3algebra.obj `if test -f 'Tools/bgq_su3algebra.cpp'; then $(CYGPATH_W) 'Tools/bgq_su3algebra.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/bgq_su3algebra.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bgq_su3algebra.Tpo $(DEPDIR)/bgq_su3algebra.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/bgq_su3algebra.cpp' object='bgq_su3algebra.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o bgq_su3algebra.obj `if test -f 'Tools/bgq_su3algebra.cpp'; then $(CYGPATH_W) 'Tools/bgq_su3algebra.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/bgq_su3algebra.cpp'; fi`
+
 alg_remez.o: Tools/Remez/alg_remez.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT alg_remez.o -MD -MP -MF $(DEPDIR)/alg_remez.Tpo -c -o alg_remez.o `test -f 'Tools/Remez/alg_remez.cpp' || echo '$(srcdir)/'`Tools/Remez/alg_remez.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/alg_remez.Tpo $(DEPDIR)/alg_remez.Po
@@ -2222,6 +2242,20 @@ rationalapprox.obj: Tools/RationalApprox/rationalapprox.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/RationalApprox/rationalapprox.cpp' object='rationalapprox.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalapprox.obj `if test -f 'Tools/RationalApprox/rationalapprox.cpp'; then $(CYGPATH_W) 'Tools/RationalApprox/rationalapprox.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RationalApprox/rationalapprox.cpp'; fi`
+
+bfm_storage.o: Tools/Bagel/bfm_storage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT bfm_storage.o -MD -MP -MF $(DEPDIR)/bfm_storage.Tpo -c -o bfm_storage.o `test -f 'Tools/Bagel/bfm_storage.cpp' || echo '$(srcdir)/'`Tools/Bagel/bfm_storage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bfm_storage.Tpo $(DEPDIR)/bfm_storage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/Bagel/bfm_storage.cpp' object='bfm_storage.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o bfm_storage.o `test -f 'Tools/Bagel/bfm_storage.cpp' || echo '$(srcdir)/'`Tools/Bagel/bfm_storage.cpp
+
+bfm_storage.obj: Tools/Bagel/bfm_storage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT bfm_storage.obj -MD -MP -MF $(DEPDIR)/bfm_storage.Tpo -c -o bfm_storage.obj `if test -f 'Tools/Bagel/bfm_storage.cpp'; then $(CYGPATH_W) 'Tools/Bagel/bfm_storage.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Bagel/bfm_storage.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bfm_storage.Tpo $(DEPDIR)/bfm_storage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/Bagel/bfm_storage.cpp' object='bfm_storage.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o bfm_storage.obj `if test -f 'Tools/Bagel/bfm_storage.cpp'; then $(CYGPATH_W) 'Tools/Bagel/bfm_storage.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Bagel/bfm_storage.cpp'; fi`
 
 main_hmc.o: Main/main_hmc.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hmc.o -MD -MP -MF $(DEPDIR)/main_hmc.Tpo -c -o main_hmc.o `test -f 'Main/main_hmc.cpp' || echo '$(srcdir)/'`Main/main_hmc.cpp

@@ -28,6 +28,7 @@ namespace FieldUtils{
   GaugeField1D DirSlice(const GaugeField& F, int dir);
 #ifdef IBM_BGQ_WILSON
   void DirSliceBGQ(GaugeField1D &G, const GaugeField& F, int dir);
+  void Exponentiate_BGQ(GaugeField& F, const GaugeField&, const double, const int);
 
   inline double ReTrBGQ(double &result, const double *F, int site, int dir, const int Nvol){
     //assumes some indexing and SU(3) matrix
