@@ -101,7 +101,7 @@ void Communicator::allgether(double *bin,double *data,int size)const{
 
 void Communicator::allgether(valarray<double>& bin, 
 			     const valarray<double>& data)const{
-  allgether((const_cast<valarray<double>& >(data))[0],&bin[0],bin.size());
+  allgether(&bin[0],&(const_cast<valarray<double>& >(data))[0],bin.size());
 }
 
 void Communicator::

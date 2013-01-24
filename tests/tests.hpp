@@ -46,10 +46,7 @@ namespace TestEnv{
     //Reading input file   
     XML::node top_node = XML::getInputXML(Options.filename);  
 
-    // Echo of input xml
-    JobUtils::echo_input(Options.filename);
-
-    MeasGeneral meas(top_node);
+    MeasGeneral meas(top_node,Geometry(top_node));
 
     // Echo of input xml
     JobUtils::echo_input(Options.filename);

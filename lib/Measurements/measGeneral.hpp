@@ -36,8 +36,8 @@ private:
   void post_process(GaugeField&,const RandNum&,int);
 
 public:
-  MeasGeneral(XML::node node)
-    :node_(node),meas_node_(node),Uin_(Geometry(node)),
+  MeasGeneral(XML::node node,Geometry geom)
+    :node_(node),meas_node_(node),Uin_(geom),
      meas_num_(1),starting_id_(0),increment_(1),
      config_list_(0),
      output_prefix_("output_"),

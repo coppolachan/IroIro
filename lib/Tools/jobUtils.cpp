@@ -8,6 +8,8 @@
 namespace JobUtils{
   void echo_input(const char* file_name){
 
+    std::cout<<"echo_input called\n";
+
     std::ifstream input(file_name);
     std::string buf;
     CCIO::cout<<"==== [begin] Contents of the input file "

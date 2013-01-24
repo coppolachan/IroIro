@@ -197,6 +197,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_wilson_Brillouin_Imp.hpp 	\
 				test_WilsonFlow.hpp     	\
 				test_PolyakovLoop.hpp     	\
+				test_NoMeas.hpp     	        \
 				test_DomainWall.hpp 		\
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
