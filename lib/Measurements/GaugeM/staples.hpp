@@ -23,7 +23,7 @@ public:
   double plaquette(const GaugeField&) const;
   double plaq_s   (const GaugeField&) const;
   double plaq_t   (const GaugeField&) const;
-  double plaq_min (const GaugeField&) const;
+  double plaq_min (const GaugeField&,double threshold=1.0) const;
 
   GaugeField1D lower(const GaugeField&,int,int) const;
   GaugeField1D upper(const GaugeField&,int,int) const;

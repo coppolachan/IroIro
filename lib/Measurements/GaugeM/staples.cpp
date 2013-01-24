@@ -46,10 +46,12 @@ double Staples::plaq_t(const GaugeField& F)const {
   return plaq/(Lvol_*NC_*3.0);
 }
 
-double Staples::plaq_min(const GaugeField& F)const {
+double Staples::plaq_min(const GaugeField& F,double threshold)const {
   GaugeField1D stpl(Nvol_);
 
   double pmin(NC_);
+  double thldxNc = threshold*NC_;
+  int count = 0;
   //double pav =0.0;
 
   for(int m=0;m<NDIM_;++m){
@@ -57,7 +59,9 @@ double Staples::plaq_min(const GaugeField& F)const {
       stpl = lower(F,m,n);
       for(int site=0; site<Nvol_; ++site){
 	double pl = ReTr(mat(F,site,m)*mat_dag(stpl,site));
-        pmin = std::min(pl,pmin); 
+	if(pl < thldxNc) count++;
+
+        pmin = std::min(pl,pmin);
 	//pav += pl;
       }
     }
@@ -65,6 +69,12 @@ double Staples::plaq_min(const GaugeField& F)const {
   //CCIO::cout<<"averaged plaq= "<<pav/(Lvol_*NC_*6.0)<<"\n";
   int dum;
   int one = Communicator::instance()->reduce_min(pmin,dum,1);
+
+  if(threshold < 1.0){
+    double rate(count);
+    rate = Communicator::instance()->reduce_sum(rate)/(Lvol_*6.0);
+    CCIO::cout<<"   Rate(pl <"<< threshold<<")= "<< rate <<"\n";
+  }
   return pmin/NC_;
 }
 
