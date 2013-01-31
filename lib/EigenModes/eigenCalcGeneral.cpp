@@ -40,7 +40,7 @@ void EigenCalcGeneral::do_calc(Field* const conf){
   const auto_ptr<Fopr_Herm> ooprPtr(opOrigFptr_->getFoprHerm(diracPtr.get()));
 
   if(Neig_> 0){
-    CCIO::cout<<"Calcuration successfully finished. #eigenmodes+1 eigenvalues are:\n";
+    CCIO::cout<<"Calcuration successfully finished. Eigenvalues are:\n";
     get_eval(ooprPtr.get()); // eigenvalues of oopr 
     
   }else if(Neig_== 0){
@@ -48,8 +48,8 @@ void EigenCalcGeneral::do_calc(Field* const conf){
     throw "Calcuration did not successfully finished.";
 
   }else if(Neig_< 0){/*!<@brief it means emslvPtr->calc() ended abnormally. */
-    Neig_= -1*(Neig_+1);           
-    CCIO::cout<<Neig_+1<<" eigenvalues are obtained:\n";
+    Neig_*= -1;           
+    CCIO::cout<<Neig_<<" eigenvalues are obtained:\n";
 
     get_eval(ooprPtr.get()); // eigenvalues of oopr 
     throw "Calcuration abnormally finished.\n";
@@ -61,7 +61,7 @@ void EigenCalcGeneral::get_eval(const Fopr_Herm* opr){
   assert(Neig_>= 0);
 
   CCIO::cout<< setiosflags(ios_base::scientific);
-  for(int i=0; i<=Neig_; ++i){
+  for(int i=0; i<Neig_; ++i){
     Field Av = opr->mult(evecs_[i]);
     double vv = evecs_[i]*evecs_[i];
 

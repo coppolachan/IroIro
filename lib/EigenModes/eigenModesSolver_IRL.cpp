@@ -109,17 +109,18 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
       }
     }  
     CCIO::cout << resetiosflags(ios_base::scientific);
-
     CCIO::cout<<" #converged modes= "<<i_conv.size()<<endl;
      
     /*!@brief  condition of termination: the eigenvalue exceeds the threshold*/
     if(Nover > 0){         
+      CCIO::cout<<"All eigenmodes upper/under the threshold are obtained.\n";
       Nconv = iter; 
       Neigen = i_conv.size()-Nover; 
       break;
     }
     /*!@brief condition of termiation: #eigenmods exceeds the threshold number*/
     if(i_conv.size() >= Nthrs_){ 
+      CCIO::cout<<"Desired number of eigenmodes are obtained.\n";
       Nconv = iter;
       Neigen = Nthrs_; 
       break;
