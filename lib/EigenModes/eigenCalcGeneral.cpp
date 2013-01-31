@@ -5,6 +5,7 @@
 #include "foprHermFactory_ChebyshevDdagDLin.hpp"
 #include "eigenSorter_Factory.hpp"
 #include "include/field.h"
+#include "Communicator/fields_io.hpp"
 #include "Fields/field_expressions.hpp"
 #include <cassert>
 
@@ -14,73 +15,94 @@ EigenCalcGeneral::EigenCalcGeneral(const XML::node& node){
 
   XML::node diracNode = node;
   XML::descend(diracNode,"WilsonLikeDirac");
-  diracFact_.reset(DiracOperators::createDiracWilsonLikeOperatorFactory(diracNode));
+  diracFptr_.reset(DiracOperators::createDiracWilsonLikeOperatorFactory(diracNode));
 
   XML::node oprNode = node;
   XML::descend(oprNode,"Operator");
-  opOrigFact_.reset(createFoprHermFactory(oprNode));
-  opAccelFact_.reset(createAccelOpFactory(oprNode));
-  esortFact_.reset(createEigenSorterFactory(oprNode));
+  opOrigFptr_.reset(createFoprHermFactory(oprNode));
+  opAccelFptr_.reset(createAccelOpFactory(oprNode));
+  esortFptr_.reset(createEigenSorterFactory(oprNode));
   
   XML::node eslvNode = node;
   XML::descend(eslvNode,"EigenModesSolver");
-  eslvFact_.reset(EigenModes::createEigenSolverFactory(eslvNode));  
+  eslvFptr_.reset(EigenModes::createEigenSolverFactory(eslvNode));  
 }
 
 void EigenCalcGeneral::do_calc(Field* const conf){
-  
-  auto_ptr<DiracWilsonLike> dirac(diracFact_->getDiracOperatorWL(conf));
-  auto_ptr<Fopr_Herm>       aopr(opAccelFact_->getFoprHerm(dirac.get()));
-  auto_ptr<EigenSorter>     sorter(esortFact_->getEigenSorter(aopr.get()));
-  auto_ptr<EigenModesSolver> emslv(eslvFact_->getEigenSolver(aopr.get(),sorter.get()));
-  
-  emslv->calc(eval_,evec_,Neig_); /*!< @brief solving eigenproblem of aopr
-				    eval and evec are resized inside */
 
-  auto_ptr<Fopr_Herm> oopr(opOrigFact_->getFoprHerm(dirac.get()));
-  get_eval(oopr.get()); // eigenvalues of oopr 
+  const auto_ptr<DiracWilsonLike> diracPtr(diracFptr_->getDiracOperatorWL(conf));
+  const auto_ptr<Fopr_Herm>       aoprPtr(opAccelFptr_->getFoprHerm(diracPtr.get()));
+  const auto_ptr<EigenSorter>     sorterPtr(esortFptr_->getEigenSorter(aoprPtr.get()));
+  const auto_ptr<EigenModesSolver> emslvPtr(eslvFptr_->getEigenSolver(aoprPtr.get(),sorterPtr.get()));
+  emslvPtr->calc(evals_,evecs_,Neig_); /*!< @brief solving eigenproblem of aopr
+					 eval and evec are resized inside */
+
+  const auto_ptr<Fopr_Herm> ooprPtr(opOrigFptr_->getFoprHerm(diracPtr.get()));
+
+  if(Neig_> 0){
+    CCIO::cout<<"Calcuration successfully finished. #eigenmodes+1 eigenvalues are:\n";
+    get_eval(ooprPtr.get()); // eigenvalues of oopr 
+    
+  }else if(Neig_== 0){
+    CCIO::cout<<"NO converged eigenmode.\n";
+    throw "Calcuration did not successfully finished.";
+
+  }else if(Neig_< 0){/*!<@brief it means emslvPtr->calc() ended abnormally. */
+    Neig_= -1*(Neig_+1);           
+    CCIO::cout<<Neig_+1<<" eigenvalues are obtained:\n";
+
+    get_eval(ooprPtr.get()); // eigenvalues of oopr 
+    throw "Calcuration abnormally finished.\n";
+  }
 }
 
 void EigenCalcGeneral::get_eval(const Fopr_Herm* opr){
   using namespace FieldExpression;
-  assert(Neig_>0);
+  assert(Neig_>= 0);
 
   CCIO::cout<< setiosflags(ios_base::scientific);
   for(int i=0; i<=Neig_; ++i){
-    Field Av = opr->mult(evec_[i]);
-    double vv = evec_[i]*evec_[i];
-    eval_[i] = evec_[i]*Av;    
-    eval_[i] /= vv;    
-    Av -= eval_[i]*evec_[i]; 
+    Field Av = opr->mult(evecs_[i]);
+    double vv = evecs_[i]*evecs_[i];
+
+    evals_[i] = evecs_[i]*Av;    
+    evals_[i] /= vv;    
+    Av -= evals_[i]*evecs_[i]; 
     double res = Av*Av; // residual 
     
     CCIO::cout<<" ["<<setw( 3)<<setiosflags(ios_base::right)<< i<<"] ";
-    CCIO::cout<<      setw(25)<<setiosflags(ios_base::left )<< eval_[i];
+    CCIO::cout<<      setw(25)<<setiosflags(ios_base::left )<< evals_[i];
     CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<< res;
     CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<< vv-1.0 <<endl;
   }
+
   CCIO::cout<< resetiosflags(ios_base::scientific);
 }
 
-void EigenCalcGeneral::output(ofstream& writer){
-
+void EigenCalcGeneral::output_txt(const string& output)const{
   if(Communicator::instance()->primaryNode()){
+    ofstream writer(output.c_str()); 
     CCIO::cout<<"starting output\n";
     for(int i=0; i<Neig_; ++i){
       writer<< setw(2) <<setiosflags(ios_base::right)<< i;
       writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
-	    << eval_[i]<<endl;
+	    << evals_[i]<<endl;
 
-      for(int k=0; k<evec_[i].size()/2; ++k){
+      for(int k=0; k<evecs_[i].size()/2; ++k){
 	writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
-	      << evec_[i][2*k];
+	      << evecs_[i][2*k];
 	writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
-	      << evec_[i][2*k+1]
+	      << evecs_[i][2*k+1]
 	      << endl;
       }
     }
     CCIO::cout<<"output finished\n";
   }
+}
+
+void EigenCalcGeneral::output_bin(const string& output)const{
+  for(int i=0; i<Neig_; ++i)
+    CCIO::SaveOnDisk<Format::Format_F>(evecs_[i],output.c_str(),true);
 }
 
 FoprHermFactory* EigenCalcGeneral::createAccelOpFactory(const XML::node& node)const{

@@ -13,7 +13,7 @@
 using namespace std;
 
 void EigenModesSolver_IRL::
-calc(vector<double>& ta,vector<Field>& V,int& Nin)const{ 
+calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{ 
 
   using namespace FieldExpression;
   const size_t fsize = opr_->fsize();
@@ -22,11 +22,8 @@ calc(vector<double>& ta,vector<Field>& V,int& Nin)const{
 
   int Np = Nm_-Nk_;  
   assert(Np>0);
-  double thrs = esorter_->thrs();
 
-  CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Np<<" Nm = "<<Nm_
-	     <<" threshold = "<< thrs
-	     << endl;
+  CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Np<<" Nm = "<<Nm_<<"\n";
 
   ta.resize(Nm_);  V.resize(Nm_);
   for(int i=0; i<Nm_; ++i) V[i].resize(fsize,1.0);
@@ -47,6 +44,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Nin)const{
   int Nconv = -1;
 
   for(int iter=0; iter<Niter_; ++iter){
+
     CCIO::cout<<"\n iteration "<< iter << endl;
 
     /****** Restarting procedures ******/
@@ -83,12 +81,13 @@ calc(vector<double>& ta,vector<Field>& V,int& Nin)const{
     CCIO::cout << setiosflags(ios_base::scientific);
 
     for(int i=0; i<Nk_; ++i){
+
       Vp[i] = 0.0;                    /*!< @brief eigenvectors */
       for(int j=0; j<Nk_; ++j) Vp[i] += Qt[i*Nm_+j]*V[j];  
 
       //double res = fabs(Qt[i*Nm_+Nk_-1]*tb[Nk_-1]);
       /*!@brief instead of above Ritz estimates, direct residual values 
-        are used to avoid fake eigenvmodes. This should be unnecessary given 
+        are used to avoid fake eigenmodes. This should be unnecessary given 
 	the classical orthogonalization and the DGKS correction are used in 
 	the Lanczos factrization. However, we take a conservative way.*/
 
@@ -112,16 +111,26 @@ calc(vector<double>& ta,vector<Field>& V,int& Nin)const{
     CCIO::cout << resetiosflags(ios_base::scientific);
 
     CCIO::cout<<" #converged modes= "<<i_conv.size()<<endl;
-    if(Nover > 0){ 
-      Nin = i_conv.size()-Nover; 
+     
+    /*!@brief  condition of termination: the eigenvalue exceeds the threshold*/
+    if(Nover > 0){         
       Nconv = iter; 
+      Neigen = i_conv.size()-Nover; 
       break;
     }
-    if(iter==Niter_) {
-      CCIO::cout<<"\n NOT converged.\n";
-      abort();
+    /*!@brief condition of termiation: #eigenmods exceeds the threshold number*/
+    if(i_conv.size() >= Nthrs_){ 
+      Nconv = iter;
+      Neigen = Nthrs_; 
+      break;
     }
-  } // end of iter loop
+
+    if(iter==Niter_-1){
+      CCIO::cout<<"Reached to the max iteration count.\n";
+      Neigen = -i_conv.size();
+      break;
+    } 
+  }// end of iter loop
 
   /*** post process after the conversion ***/
   ta.clear(); V.clear();
@@ -130,26 +139,21 @@ calc(vector<double>& ta,vector<Field>& V,int& Nin)const{
     ta.push_back(tta[i_conv[i]]);
     V.push_back(Vp[i_conv[i]]);
   }
-
-  esorter_->push(ta,V,i_conv.size());
-  CCIO::cout << "\n Converged\n Summary :\n";
-  CCIO::cout << " -- Iterations  = "<< Nconv        <<"\n";
-  CCIO::cout << " -- beta+_k     = "<< tb[Nk_-1]    <<"\n";
-  CCIO::cout << " -- N_eigen     = "<< i_conv.size()<<"\n";
-  CCIO::cout << " -- N_inner     = "<< Nin          <<"\n";
+  if(Neigen > 0){
+    esorter_->push(ta,V,i_conv.size());
+    CCIO::cout << "\n Converged\n Summary :\n";
+    CCIO::cout << " -- Iterations  = "<< Nconv        <<"\n";
+    CCIO::cout << " -- beta+_k     = "<< tb[Nk_-1]    <<"\n";
+    CCIO::cout << " -- #converged  = "<< i_conv.size()<<"\n";
+    CCIO::cout << " -- #eigenmodes = "<< Neigen       <<"\n";
+  }
 }
 
 void EigenModesSolver_IRL::
 lanczos_init(vector<double>& ta,vector<double>& tb,vector<Field>& V)const{
   using namespace FieldExpression;
-  
-  double nv = V[0].norm();
-  CCIO::cout<<"nf="<<nv<<endl;
 
   Field f = opr_->mult(V[0]);
-  nv = f.norm();
-  CCIO::cout<<"nf="<<nv<<endl;
-  //for(int i=0; i<f.size();++i) CCIO::cout<<i<<" "<<f[i]<<endl;
   double ab = V[0]*f;
   f -= ab*V[0];
   ta[0] = ab;

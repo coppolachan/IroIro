@@ -17,6 +17,7 @@ class EigenModesSolver_IRL :public EigenModesSolver{
 private:
   const Fopr_Herm* opr_;
   const EigenSorter* esorter_;
+  int Nthrs_;
   int Nk_;
   int Nm_;
   double prec_;
@@ -42,20 +43,22 @@ private:
 public:
   EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,XML::node node)
     :opr_(fopr),esorter_(esorter){
-    CCIO::cerr<<"EigenModesSolver_IRL being constructed"<<std::endl;
-    int Np;
+    //CCIO::cout<<"EigenModesSolver_IRL being constructed"<<std::endl;
+
+    XML::read(node,"Nthreshold",Nthrs_,MANDATORY);
     XML::read(node,"Nk",Nk_,MANDATORY);
+    int Np;
     XML::read(node,"Np",Np,MANDATORY);
     Nm_= Nk_+Np;
     
     XML::read(node,"precision",prec_,MANDATORY);
     XML::read(node,"max_iter",Niter_,MANDATORY);
    
-    CCIO::cerr<<"EigenModesSolver_IRL constructed"<<std::endl;
+    CCIO::cout<<"EigenModesSolver_IRL constructed"<<std::endl;
   }
   EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
-		       int Nk,int Np,double prec,int Niter)
-    :opr_(fopr),esorter_(esorter),Nk_(Nk),Nm_(Nk+Np),prec_(prec),Niter_(Niter){}
+		       int Nk,int Np,double prec,int Niter,int Nthrs=10000)
+    :opr_(fopr),esorter_(esorter),Nthrs_(Nthrs),Nk_(Nk),Nm_(Nk+Np),prec_(prec),Niter_(Niter){}
   
   void calc(std::vector<double>& lmd,std::vector<Field>& evec,int& Nsbt)const;
 };

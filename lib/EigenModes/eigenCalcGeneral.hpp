@@ -13,14 +13,14 @@ class Field;
 class Fopr_Herm;
 
 class EigenCalcGeneral{
-  std::auto_ptr<DiracWilsonLikeOperatorFactory> diracFact_;
-  std::auto_ptr<FoprHermFactory> opOrigFact_; 
-  std::auto_ptr<FoprHermFactory> opAccelFact_; 
-  std::auto_ptr<EigenSorterFactory> esortFact_; 
-  std::auto_ptr<EigenSolverFactory> eslvFact_;
+  std::auto_ptr<DiracWilsonLikeOperatorFactory> diracFptr_;
+  std::auto_ptr<FoprHermFactory> opOrigFptr_; 
+  std::auto_ptr<FoprHermFactory> opAccelFptr_; 
+  std::auto_ptr<EigenSorterFactory> esortFptr_; 
+  std::auto_ptr<EigenSolverFactory> eslvFptr_;
     
-  std::vector<double> eval_;
-  std::vector<Field> evec_;
+  std::vector<double> evals_;
+  std::vector<Field> evecs_;
   int Neig_;
 
   FoprHermFactory* createAccelOpFactory(const XML::node&)const;
@@ -30,8 +30,10 @@ class EigenCalcGeneral{
 
 public:
   EigenCalcGeneral(const XML::node& node);
+  ~EigenCalcGeneral(){}
 
   void do_calc(Field* const conf);
-  void output(std::ofstream&);
+  void output_txt(const std::string&)const;
+  void output_bin(const std::string&)const;
 };
 

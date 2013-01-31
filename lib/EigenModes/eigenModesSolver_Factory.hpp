@@ -19,15 +19,11 @@ public:
 
 class EigenSolverFactory_IRL: public EigenSolverFactory{
   const XML::node eigslv_node_;
-  mutable std::auto_ptr<Fopr_Herm> opr_ptr_;
-  mutable std::auto_ptr<EigenSorter> str_ptr_;
 public:
   EigenSolverFactory_IRL(XML::node node):eigslv_node_(node){}
   
   EigenModesSolver* getEigenSolver(Fopr_Herm* opr,EigenSorter* str)const{
-    opr_ptr_.reset(opr);
-    str_ptr_.reset(str);
-    return new EigenModesSolver_IRL(opr_ptr_.get(),str_ptr_.get(),eigslv_node_);
+    return new EigenModesSolver_IRL(opr,str,eigslv_node_);
   }
 };
 

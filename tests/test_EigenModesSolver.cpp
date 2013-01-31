@@ -11,10 +11,11 @@ int Test_EigenModesSolver::run(){
   XML::descend(eig_node,"EigenModesCalc");
   EigenCalcGeneral eigen(eig_node);
   
-  eigen.do_calc(&(conf_.data));
-
-  ofstream writer(output_.c_str());
-  eigen.output(writer);
-    
+  try{
+    eigen.do_calc(&(conf_.data));
+    eigen.output_bin(output_);
+  }catch(const char* error){
+    CCIO::cout<<error<<"\n";
+  }
   return 0;
 }

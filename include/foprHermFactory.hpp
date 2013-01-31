@@ -44,16 +44,16 @@ public:
 };
 
 class FoprHermFactory_Chebyshev: public FoprHermFactory{
-  FoprHermFactory* kernel_fact_;
-  std::auto_ptr<Fopr_Herm> kernel_;
+  const Fopr_Herm* kernel_;
   int N_;
+  FoprHermFactory_Chebyshev(FoprHermFactory_Chebyshev&);
+  FoprHermFactory_Chebyshev& operator=(FoprHermFactory_Chebyshev&);
 public:
-  FoprHermFactory_Chebyshev(FoprHermFactory* knfact, int Npoly)
-    :kernel_fact_(knfact),kernel_(NULL),N_(Npoly){}
+  FoprHermFactory_Chebyshev(const Fopr_Herm* kernel,int Npoly)
+    :kernel_(kernel),N_(Npoly){}
   
   Fopr_Chebyshev* getFoprHerm(const DiracWilsonLike* D){ 
-    kernel_= std::auto_ptr<Fopr_Herm>(kernel_fact_->getFoprHerm(D));
-    return new Fopr_Chebyshev(kernel_.get(),N_);
+    return new Fopr_Chebyshev(kernel_,N_);
   }
 };
 

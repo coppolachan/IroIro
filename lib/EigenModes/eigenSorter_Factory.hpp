@@ -7,7 +7,6 @@
 #include "eigenSorter.hpp"
 #include "include/foprHermFactory.hpp"
 #include "include/pugi_interface.h"
-#include <memory>
 
 class EigenSorterFactory{
 public:

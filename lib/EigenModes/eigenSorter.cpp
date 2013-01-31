@@ -12,7 +12,7 @@
 
 using namespace std;
 
-//*** SortEighen_high ***
+//*** EigenSorter_high ***
 bool EigenSorter_high::greater_pair(pair<double,Field>& left,
 				  pair<double,Field>& right){
   return fabs(left.first) > fabs(right.first);}  
@@ -42,7 +42,7 @@ void EigenSorter_high::push(vector<double>& lmd,vector<Field>& evec,int N)const{
   }
 }
 
-//*** SortEighen_low ***
+//*** EigenSorter_low ***
 bool EigenSorter_low::less_pair(pair<double,Field>& left,
 			      pair<double,Field>& right){
   return fabs(left.first) < fabs(right.first);}  

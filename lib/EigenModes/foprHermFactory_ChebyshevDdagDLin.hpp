@@ -5,16 +5,17 @@
 #ifndef FOPRHERMFACTORY_CHEBYSHEVDDAGDLIN_INCLUDED
 #define FOPRHERMFACTORY_CHEBYSHEVDDAGDLIN_INCLUDED
 
-#include "include/foprHermFactory.hpp"
 #include "include/fopr_Chebyshev.h"
+#include <iostream>
 
 class FoprHermFactory_ChebyshevDdagDLin: public FoprHermFactory{
   int N_;
-  FoprHermFactory_DdagDLinear ddlinFact_;
-  std::auto_ptr<Fopr_Herm> kernel_;
-
+  double slope_;
+  double itcpt_;
+  std::auto_ptr<Fopr_Herm> ddlin_;  
+  /*!<@brief ddlin_ is created, used and destructed within this class.*/
 public:
-  FoprHermFactory_ChebyshevDdagDLin(const XML::node& node):kernel_(NULL){
+  FoprHermFactory_ChebyshevDdagDLin(const XML::node& node):ddlin_(NULL){
 
     double sgn = 1.0;
     const char* st_name = node.attribute("sorting").value();
@@ -44,22 +45,26 @@ public:
 	abort();
       }
 
-      double slope = sgn*2.0/(exu*exu-exl*exl);
-      double itcpt = -sgn*(exu*exu+exl*exl)/(exu*exu-exl*exl);
-    
-      ddlinFact_= FoprHermFactory_DdagDLinear(slope,itcpt);
-
+      slope_= sgn*2.0/(exu*exu-exl*exl);
+      itcpt_= -sgn*(exu*exu+exl*exl)/(exu*exu-exl*exl);
     }else{
       CCIO::cout<<kn_name<<" is not compatible with current implementation.\n";
       abort();
     }
   }
   
+  ~FoprHermFactory_ChebyshevDdagDLin(){}
+
   Fopr_Chebyshev* getFoprHerm(const DiracWilsonLike* D){
-    kernel_= std::auto_ptr<Fopr_Herm>(ddlinFact_.getFoprHerm(D));
-    return new Fopr_Chebyshev(kernel_.get(),N_);
+    ddlin_= std::auto_ptr<Fopr_Herm>(new Fopr_DdagDLinear(D,slope_,itcpt_)); 
+
+    CCIO::cout<<"Fopr_Chebyshev is going to be constructed\n";
+    std::cout.setf(std::ios::showpos);
+    CCIO::cout<<"kernel= " <<slope_<<"*DdagD "<<itcpt_<<"\n";
+    std::cout.unsetf(std::ios::showpos);
+
+    return new Fopr_Chebyshev(ddlin_.get(),N_);
   }
 };
-
 
 #endif
