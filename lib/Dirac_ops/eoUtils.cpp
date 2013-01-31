@@ -20,7 +20,6 @@ namespace EvenOddUtils{
 	out.set(ff_.islice(idx_->osec(hs),ex), bo[fh_.islice(hs,ex)]);
       }
     } 
-
     return out;
   }
 

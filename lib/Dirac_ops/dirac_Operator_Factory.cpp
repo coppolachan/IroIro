@@ -29,6 +29,10 @@ namespace DiracOperators {
 	return new DiracDWF5dFactory(node);
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
 	return new DiracDWF5dEvenOddFactory(node);
+      if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
+	return new DiracDWF4DfullFactory(node);
+      if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
+	return new DiracDWF4DeoFactory(node);
       std::cerr<<"No Dirac Operator available with name ["
 	       << Dirac_name << "]. Request by <" << node.name() << ">\n";
       abort();
