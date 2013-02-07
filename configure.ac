@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-07 12:10:34 cossu>
+# Time-stamp: <2013-02-07 12:14:53 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.1], [cossu@post.kek.jp])
@@ -237,7 +237,8 @@ AC_CHECK_LIB([bfm],[vmx_vaxpy],,
 	or switch off BFM support.)])
 echo enabled BFM support on BGQ...
 else
-echo WARN: BFM support enabled only on BGQ
+echo WARN: BFM support enabled only on BGQ, switching off...
+bfm_link=false
 fi
 fi
 
