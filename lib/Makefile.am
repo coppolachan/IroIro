@@ -1,5 +1,13 @@
-# Time-stamp: <2012-04-20 17:11:14 neo>
+#                         -*- Automake -*-
+# Process this file with automake to produce a makefile.
+#
+# Project IROIRO JLQCD package (KEK) 
+# Lattice QCD MonteCarlo simulations
+#
+# Time-stamp: <2013-02-07 15:23:11 cossu>
 
+###########################################
+# Initial definitions 
 SUBDIRS = . 
 
 CXXFLAGS +=
@@ -9,6 +17,8 @@ OPTLIB =
 DWF_BGQ_SRC = 
 BGQ_MAT_SRC =
 
+###########################################
+# Configure driven path selector
 if USE_MPI
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 
@@ -28,13 +38,7 @@ if IBM_BGQWILSON_SMP
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
 endif
 
-if IBM_BGQWILSON_SMP
-CXXFLAGS += -qsmp=omp:auto
-endif
-
-#LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib \
-#-L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib \
-#-L/bghome/scbadm/ibm-doi/lib
+# NB: Libraries ordering is essential
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 
 if IBM_BGQWILSON_SMP
@@ -49,7 +53,8 @@ else
 COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 endif
 
-
+###########################################
+# Site indexing (Lexicographic/Even-Odd)
 if USE_EVENODD
 SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
 else

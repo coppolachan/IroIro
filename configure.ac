@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-07 12:14:53 cossu>
+# Time-stamp: <2013-02-07 15:20:21 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.1], [cossu@post.kek.jp])
@@ -17,6 +17,7 @@ AC_PROG_RANLIB
 
 AC_MSG_NOTICE([
 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 Configuring $PACKAGE_STRING for $host
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ])
@@ -34,6 +35,8 @@ hitachi=false  # default value
 bluegeneq=false   # default value
 #####################################################################
 # identify architecture
+echo           Checking architecture
+echo :::::::::::::::::::::::::::::::::::::::::::
 if test "$arch" = ""
 then
         case $host in
@@ -52,7 +55,7 @@ then
 	;;
 esac
 fi
-echo checking architecture... $arch
+echo checking architecture result... $arch
 ###################################################################
 # MPI communicator flags
 AC_ARG_ENABLE(mpi,
@@ -104,9 +107,9 @@ AC_ARG_ENABLE(evenodd-idx,
    esac],[even_odd_idx=false])
 
 ###################################################################
-# Enabling Even Odd indexing 
+# Enabling BFM (P.Boyle) Bagel Fermion Matrix classes linking 
 AC_ARG_WITH(bfm,
-        AC_HELP_STRING([--with-bfm=BFM_BASEDIR], [Enable BFM libraries (P.Boyle) linkage.]),
+        AC_HELP_STRING([--with-bfm=BFM_BASEDIR], [Enable BFM Bagel Fermion Matrix libraries (P.Boyle) linkage.]),
         [ bfm_link=true
 	  bfm_dir=${with_bfm}
 	  bfm_include=${with_bfm}/include
@@ -122,6 +125,10 @@ AC_ARG_WITH(bfm,
 # !!! this relies on undocumented Autoconf behavior !!!
 #
 # default flags are also defined
+
+echo
+echo           Setting up flags
+echo :::::::::::::::::::::::::::::::::::::::::::
 
 case "$arch" in
 ia64 | amd64 | ia32 )
@@ -173,7 +180,7 @@ bgq )
      else
 	use_cpp="bgxlC";
      fi
-     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -I/bghome/scbadm/ibm-doi/lib -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
+     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -q64 -qarch=qp -qtune=qp -I/bghome/scbadm/ibm-doi/lib -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
      ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib"
      use_ar_flags="cru"
      AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
@@ -193,55 +200,41 @@ AM_CONDITIONAL([USE_BFM], [(test x$bfm_link = xtrue)&&(test x$bluegeneq = xtrue)
 
 ###################################################################
 # Checks for programs.
+echo
+echo        Checking compiler features
+echo :::::::::::::::::::::::::::::::::::::::::::
+
 if test "$cpp" = "" ; then cpp="$use_cpp" ; fi
 AC_PROG_CXX($cpp)
 cpp=$CXX
 
-# Setting up compiler and linker flags
+# Setting up global compiler and linker flags
 if test "$cpp_flags" = "" ; then cpp_flags="$use_cpp_flags" ; fi
 CXXFLAGS=$cpp_flags
+CPPFLAGS=$cpp_flags # preprocessof flags
 AM_COND_IF([USE_BFM], [CXXFLAGS+=" -I$bfm_include"],,)
+AM_COND_IF([IBM_BGQWILSON_SMP], [CXXFLAGS+=" -qsmp=omp:auto"])
 AM_COND_IF([IBM_BGQ], [DRIVER="/bgsys/drivers/ppcfloor"
-		      CXXFLAGS+=" -q64 -qarch=qp -qtune=qp -I$DRIVER -I$DRIVER/spi/include/kernel/cnk -I$DRIVER/spi/include/mu/default -I$DRIVER/comm/xl/include"],,)
-echo configure: setting c++ compiler flags... $CXXFLAGS
+		      CXXFLAGS+=" -I$DRIVER -I$DRIVER/spi/include/kernel/cnk -I$DRIVER/spi/include/mu/default -I$DRIVER/comm/xl/include"],,)
+echo configure: setting c++ compiler flags... done
 
 LDFLAGS=$ld_flags
 AM_COND_IF([USE_BFM], [LDFLAGS+=" -L$bfm_lib"],,)
 AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L/bghome/scbadm/ibm-doi/lib"],,)
-echo configure: setting library flags... $LDFLAGS
+echo configure: setting library flags... done
 
 if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
 ARFLAGS=$ar_flags
-echo configure: setting linker flags... $ARFLAGS
+echo configure: setting linker flags... done
 
 
 
 
 ###################################################################
 # Checks for libraries and headers
-if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
-then
-AC_CHECK_HEADERS([bgqwilson.h],,
-	[AC_MSG_ERROR(BGQ Wilson library not found in your system.
-	Please install or provide the correct path to your installation
-	or switch to non optimized libraries.)])
-fi
-
-if [ ($bfm_link) ]
-then
-if [ $bluegeneq ]
-then
-AC_CHECK_LIB([bfm],[vmx_vaxpy],,
-	[AC_MSG_ERROR(BFM library not found in your system.
-	Please install or provide the correct path to your installation
-	or switch off BFM support.)])
-echo enabled BFM support on BGQ...
-else
-echo WARN: BFM support enabled only on BGQ, switching off...
-bfm_link=false
-fi
-fi
-
+echo
+echo Checking libraries 
+echo :::::::::::::::::::::::::::::::::::::::::::
 
 AC_CHECK_LIB([m], [pow])
 AC_CHECK_LIB([gslcblas],
@@ -266,9 +259,62 @@ AC_CHECK_LIB([mpfr],[mpfr_init],,
 Please install or provide the correct path to your installation
 Info at: http://www.mpfr.org/)])
 
-	
+# BGQ specific stuff
+echo :::: BGQ related stuff
+if [ $bluegeneq ]
+then
+AC_CHECK_LIB([bgnet],[BGNET_Init],,
+	[AC_MSG_ERROR(BGNET library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support.)],[-lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
+echo enabled BGNET support on BGQ...
+
+
+if [ $bgq_kernels_smp ]
+then
+AC_CHECK_LIB([bgqwilsonsmp],[BGWilson_Init],,
+	[AC_MSG_ERROR(BGWilsonSMP library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
+AC_CHECK_LIB([bgqwilson3x4smp],[BGWilson_Init],,
+	[AC_MSG_ERROR(BGWilson3x4SMP library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
+echo enabled BGWilson Multiprocessor SMP version support on BGQ...
+else
+AC_CHECK_LIB([bgqwilson],[BGWilson_Init],,
+	[AC_MSG_ERROR(BGWilson library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
+AC_CHECK_LIB([bgqwilson3x4],[BGWilson_Init],,
+	[AC_MSG_ERROR(BGWilson3x4 library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
+echo enabled BGWilson single threaded version support on BGQ...
+fi
+fi
+
+# BFM Bagel Fermion Class Peter Boyle's library
+if [ ($bfm_link) ]
+then
+if [ $bluegeneq ]
+then
+AC_CHECK_LIB([bfm],[vmx_vaxpy],,
+	[AC_MSG_ERROR(BFM library not found in your system.
+	Please install or provide the correct path to your installation
+	or switch off BFM support.)])
+echo enabled BFM Bagel Fermion Matrix support on BGQ...
+else
+echo WARN: BFM support enabled only on BGQ, switching off...
+bfm_link=false
+fi
+fi	
 ###################################################################
 # Checks for header files.
+echo
+echo Checking headers 
+echo :::::::::::::::::::::::::::::::::::::::::::
+
 AC_CHECK_HEADERS([stdlib.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -279,6 +325,29 @@ AC_TYPE_SIZE_T
 # Checks for library functions.
 #AC_FUNC_MALLOC
 AC_CHECK_FUNCS([sqrt])
+
+# Checks for BGQ specific headers 
+if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
+then
+# BGQ IBM Wilson operator 
+AC_CHECK_HEADERS([bgqwilson.h],,
+	[AC_MSG_ERROR(BGQ Wilson header not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries.)])
+# BGQ IBM Communication library
+AC_CHECK_HEADERS([bgnet.h],,
+	[AC_MSG_ERROR(BGNet header not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries.)])
+fi
+
+if [ $bgq_kernels_smp ]
+then
+AC_CHECK_HEADERS([bgqthread.h],,
+	[AC_MSG_ERROR(BGQThread header not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries.)])
+fi
 
 ##################################################################
 # Define macros for compilation
@@ -311,6 +380,9 @@ fi
 ###################################################################
 # Checks for doxygen support
 # if present enables the "make doxyfile" command
+echo
+echo Checking doxygen support 
+echo :::::::::::::::::::::::::::::::::::::::::::
 AC_PROG_DOXYGEN
 
 if test -n "$DOXYGEN"
@@ -329,13 +401,16 @@ AC_CONFIG_FILES([Makefile
  		lib/Makefile
 		tests/Makefile
 		docs/Makefile])
-		 
+
+echo
+echo Creating makefiles
+echo :::::::::::::::::::::::::::::::::::::::::::		 
 AC_OUTPUT
 
 echo "
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Summary of configuration for $PACKAGE $VERSION
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following features are enabled:
 

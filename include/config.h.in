@@ -3,6 +3,12 @@
 /* Using Big Endian machine type */
 #undef BIG_ENDIAN_TYPE
 
+/* Define to 1 if you have the <bgnet.h> header file. */
+#undef HAVE_BGNET_H
+
+/* Define to 1 if you have the <bgqthread.h> header file. */
+#undef HAVE_BGQTHREAD_H
+
 /* Define to 1 if you have the <bgqwilson.h> header file. */
 #undef HAVE_BGQWILSON_H
 
@@ -11,6 +17,22 @@
 
 /* Define to 1 if you have the `bfm' library (-lbfm). */
 #undef HAVE_LIBBFM
+
+/* Define to 1 if you have the `bgnet' library (-lbgnet). */
+#undef HAVE_LIBBGNET
+
+/* Define to 1 if you have the `bgqwilson' library (-lbgqwilson). */
+#undef HAVE_LIBBGQWILSON
+
+/* Define to 1 if you have the `bgqwilson3x4' library (-lbgqwilson3x4). */
+#undef HAVE_LIBBGQWILSON3X4
+
+/* Define to 1 if you have the `bgqwilson3x4smp' library (-lbgqwilson3x4smp).
+   */
+#undef HAVE_LIBBGQWILSON3X4SMP
+
+/* Define to 1 if you have the `bgqwilsonsmp' library (-lbgqwilsonsmp). */
+#undef HAVE_LIBBGQWILSONSMP
 
 /* Define to 1 if you have the `gmp' library (-lgmp). */
 #undef HAVE_LIBGMP
