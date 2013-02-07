@@ -16,12 +16,6 @@ LDFLAGS += -q64
 endif
 
 if IBM_BGQ
-DRIVER=/bgsys/drivers/ppcfloor
-CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) \
-	-I$(DRIVER)/spi/include/kernel/cnk \
-	-I$(DRIVER)/spi/include/mu/default \
-	-I$(DRIVER)/comm/xl/include	
-
 BGQ_MAT_SRC += Tools/bgq_su3algebra.cpp
 
 if IBM_BGQWILSON_NOSMP  
@@ -36,9 +30,9 @@ if IBM_BGQWILSON_SMP
 CXXFLAGS += -qsmp=omp:auto
 endif
 
-LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib \
-	 -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib \
-	 -L/bghome/scbadm/ibm-doi/lib
+#LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib \
+#-L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib \
+#-L/bghome/scbadm/ibm-doi/lib
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 
 if IBM_BGQWILSON_SMP
@@ -167,8 +161,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/gammaMatrices.cpp			\
 		$(BGQ_MAT_SRC)				\
 		Tools/Remez/alg_remez.cpp		\
-		Tools/RationalApprox/rationalapprox.cpp	\
-		Tools/Bagel/bfm_storage.cpp
+		Tools/RationalApprox/rationalapprox.cpp	
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)
@@ -321,8 +314,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/gammaMatrices.hpp			\
 			Tools/Remez/alg_remez.hpp		\
 			Tools/Remez/bigfloat.hpp		\
-			Tools/RationalApprox/rationalapprox.hpp	\
-			Tools/Bagel/bfm_storage.hpp
+			Tools/RationalApprox/rationalapprox.hpp	
 
 
 

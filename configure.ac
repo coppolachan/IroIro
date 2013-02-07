@@ -88,7 +88,7 @@ AC_ARG_ENABLE(bgq-improved-smp,
      	*) AC_MSG_ERROR([bad value ${enableval} for --enable-bgq-improved-smp . Compiling with standard kernels.]) ;;
    esac],[bgq_kernels_smp=false])
 
-###################################################################                                                                                                                          
+###################################################################
 # Enabling Even Odd indexing 
 AC_ARG_ENABLE(evenodd-idx,
         AC_HELP_STRING([--enable-evenodd-idx], [Enable even odd checkerboard indexing for the gauge field.]),
@@ -97,6 +97,17 @@ AC_ARG_ENABLE(evenodd-idx,
         no)  even_odd_idx=false ;;
         *) AC_MSG_ERROR([bad value ${enableval} for --enable-evenodd-idx . Using lexicographic indexing.]) ;;
    esac],[even_odd_idx=false])
+
+###################################################################
+# Enabling Even Odd indexing 
+AC_ARG_WITH(bfm,
+        AC_HELP_STRING([--with-bfm=BFM_BASEDIR], [Enable BFM libraries (P.Boyle) linkage.]),
+        [ bfm_link=true
+	  bfm_dir=${with_bfm}
+	  bfm_include=${with_bfm}/include
+	  bfm_lib=${with_bfm}/lib	
+	],[bfm_link=false])
+
 
 ######################################################################
 # many HPC systems are configured so that running parallel programs
@@ -164,24 +175,6 @@ bgq )
      ;;
 
 esac
-###################################################################
-# Checks for programs.
-if test "$cpp" = "" ; then cpp="$use_cpp" ; fi
-AC_PROG_CXX($cpp)
-cpp=$CXX
-
-# Setting up compiler and linker flags
-if test "$cpp_flags" = "" ; then cpp_flags="$use_cpp_flags" ; fi
-CXXFLAGS=$cpp_flags
-echo configure: setting c++ compiler flags... $CXXFLAGS
-
-LDFLAGS=$ld_flags
-echo configure: setting library flags... $LDFLAGS
-
-if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
-ARFLAGS=$ar_flags
-echo configure: setting linker flags... $ARFLAGS
-
 
 ###################################################################
 # Automake flags
@@ -191,6 +184,33 @@ AM_CONDITIONAL([IBM_BGQ], [(test x$bluegeneq = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_NOSMP], [(test x$bgq_kernels_nosmp = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_SMP], [(test x$bgq_kernels_smp = xtrue)])
 AM_CONDITIONAL([USE_EVENODD], [(test x$even_odd_idx = xtrue)])	 
+AM_CONDITIONAL([USE_BFM], [(test x$bfm_link = xtrue)&&(test x$bluegeneq = xtrue)])	 
+
+###################################################################
+# Checks for programs.
+if test "$cpp" = "" ; then cpp="$use_cpp" ; fi
+AC_PROG_CXX($cpp)
+cpp=$CXX
+
+# Setting up compiler and linker flags
+if test "$cpp_flags" = "" ; then cpp_flags="$use_cpp_flags" ; fi
+CXXFLAGS=$cpp_flags
+AM_COND_IF([USE_BFM], [CXXFLAGS+=" -I$bfm_include"],,)
+AM_COND_IF([IBM_BGQ], [DRIVER="/bgsys/drivers/ppcfloor"
+		      CXXFLAGS+=" -q64 -qarch=qp -qtune=qp -I$DRIVER -I$DRIVER/spi/include/kernel/cnk -I$DRIVER/spi/include/mu/default -I$DRIVER/comm/xl/include"],,)
+echo configure: setting c++ compiler flags... $CXXFLAGS
+
+LDFLAGS=$ld_flags
+AM_COND_IF([USE_BFM], [LDFLAGS+=" -L$bfm_lib"],,)
+AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L/bghome/scbadm/ibm-doi/lib"],,)
+echo configure: setting library flags... $LDFLAGS
+
+if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
+ARFLAGS=$ar_flags
+echo configure: setting linker flags... $ARFLAGS
+
+
+
 
 ###################################################################
 # Checks for libraries and headers
@@ -201,6 +221,16 @@ AC_CHECK_HEADERS([bgqwilson.h],,
 	Please install or provide the correct path to your installation
 	or switch to non optimized libraries.)])
 fi
+
+if [ $bfm_link ]
+then
+AC_CHECK_LIB([bfm],[vmx_vaxpy],,
+	[AC_MSG_ERROR(BFM library not found in your system.
+	Please install or provide the correct path to your installation
+	or switch off BFM support.)])
+echo enabled BFM support on BGQ...
+fi
+
 
 AC_CHECK_LIB([m], [pow])
 AC_CHECK_LIB([gslcblas],
@@ -224,6 +254,7 @@ AC_CHECK_LIB([mpfr],[mpfr_init],,
 	[AC_MSG_ERROR(GNU Multiple Precision MPFR library was not found in your system.
 Please install or provide the correct path to your installation
 Info at: http://www.mpfr.org/)])
+
 	
 ###################################################################
 # Checks for header files.
@@ -281,6 +312,7 @@ AC_ARG_VAR(code_verbosity, Sets code verbosity level 0..5)
 AC_DEFINE_UNQUOTED([VERBOSITY],[${code_verbosity=1}],[Code Verbosity level])
 ###################################################################
 AC_SUBST(ARFLAGS)
+AC_SUBST(DRIVER)
 
 AC_CONFIG_FILES([Makefile
  		lib/Makefile
@@ -308,6 +340,7 @@ echo "- improved kernels compilation  : $improved_kernels"
 fi
 echo "- build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
 - graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
+- optional BFM library linking  : `if test "x$bfm_link" = xtrue; then echo yes; else echo no; fi`
 
 Directories:
 
