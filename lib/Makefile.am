@@ -1,3 +1,5 @@
+# Time-stamp: <2012-04-20 17:11:14 neo>
+
 SUBDIRS = . 
 
 CXXFLAGS +=

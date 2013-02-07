@@ -1,5 +1,10 @@
-#                                               -*- Autoconf -*-
+#                         -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
+#
+# Project IROIRO JLQCD package (KEK) 
+# Lattice QCD MonteCarlo simulations
+#
+# Time-stamp: <2013-02-07 12:10:34 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.1], [cossu@post.kek.jp])
@@ -13,7 +18,7 @@ AC_PROG_RANLIB
 AC_MSG_NOTICE([
 
 Configuring $PACKAGE_STRING for $host
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ])
 
 # Declares code language
@@ -222,13 +227,18 @@ AC_CHECK_HEADERS([bgqwilson.h],,
 	or switch to non optimized libraries.)])
 fi
 
-if [ $bfm_link ]
+if [ ($bfm_link) ]
+then
+if [ $bluegeneq ]
 then
 AC_CHECK_LIB([bfm],[vmx_vaxpy],,
 	[AC_MSG_ERROR(BFM library not found in your system.
 	Please install or provide the correct path to your installation
 	or switch off BFM support.)])
 echo enabled BFM support on BGQ...
+else
+echo WARN: BFM support enabled only on BGQ
+fi
 fi
 
 

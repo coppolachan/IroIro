@@ -2658,12 +2658,12 @@ fi
 { $as_echo "$as_me:$LINENO:
 
 Configuring $PACKAGE_STRING for $host
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 " >&5
 $as_echo "$as_me:
 
 Configuring $PACKAGE_STRING for $host
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 " >&6;}
 
 # Declares code language
@@ -4564,7 +4564,9 @@ done
 
 fi
 
-if  $bfm_link
+if  ($bfm_link)
+then
+if  $bluegeneq
 then
 
 { $as_echo "$as_me:$LINENO: checking for vmx_vaxpy in -lbfm" >&5
@@ -4650,6 +4652,9 @@ $as_echo "$as_me: error: BFM library not found in your system.
 fi
 
 echo enabled BFM support on BGQ...
+else
+echo WARN: BFM support enabled only on BGQ
+fi
 fi
 
 
