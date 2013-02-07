@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-07 15:20:21 cossu>
+# Time-stamp: <2013-02-07 15:40:29 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.1], [cossu@post.kek.jp])
@@ -109,7 +109,7 @@ AC_ARG_ENABLE(evenodd-idx,
 ###################################################################
 # Enabling BFM (P.Boyle) Bagel Fermion Matrix classes linking 
 AC_ARG_WITH(bfm,
-        AC_HELP_STRING([--with-bfm=BFM_BASEDIR], [Enable BFM Bagel Fermion Matrix libraries (P.Boyle) linkage.]),
+        AC_HELP_STRING([--with-bfm=BFM_BASEDIR], [Enable BFM Bagel Fermion Matrix libraries (P.Boyle) linkage (Only on BGQ). If BFM_BASEDIR is not specified it assumes that libraries and header are somewhere in the path]),
         [ bfm_link=true
 	  bfm_dir=${with_bfm}
 	  bfm_include=${with_bfm}/include
@@ -260,8 +260,8 @@ Please install or provide the correct path to your installation
 Info at: http://www.mpfr.org/)])
 
 # BGQ specific stuff
-echo :::: BGQ related stuff
 if [ $bluegeneq ]
+echo :::: BGQ related stuff
 then
 AC_CHECK_LIB([bgnet],[BGNET_Init],,
 	[AC_MSG_ERROR(BGNET library not found in your system or missing dependences.

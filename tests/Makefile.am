@@ -1,17 +1,19 @@
-# Time-stamp: <2012-04-20 17:11:14 neo>
+#                   -*- Automake -*-
+# Process this file with automake to produce a makefile.
+#
+# Project IROIRO JLQCD package (KEK) 
+# Lattice QCD MonteCarlo simulations Test files
+#
+# Time-stamp: <2013-02-07 15:35:46 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
 
 if IBM_BGQ
-
-if IBM_BGQWILSON_SMP
-CXXFLAGS += -qsmp
-endif
-
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 
 if IBM_BGQWILSON_SMP
+CXXFLAGS += -qsmp
 OPTLIB += -lbgqwilson3x4smp -lbgqthread
 else
 OPTLIB += -lbgqwilson3x4

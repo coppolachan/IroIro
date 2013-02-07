@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-07 15:23:11 cossu>
+# Time-stamp: <2013-02-07 15:37:01 cossu>
 
 ###########################################
 # Initial definitions 
@@ -29,15 +29,7 @@ endif
 
 if IBM_BGQ
 BGQ_MAT_SRC += Tools/bgq_su3algebra.cpp
-
-if IBM_BGQWILSON_NOSMP  
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
-endif
-
-if IBM_BGQWILSON_SMP
-DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
-endif
-
 # NB: Libraries ordering is essential
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 

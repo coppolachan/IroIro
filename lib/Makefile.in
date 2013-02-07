@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-07 15:23:11 cossu>
+# Time-stamp: <2013-02-07 15:37:01 cossu>
 
 
 
@@ -48,13 +48,11 @@ target_triplet = @target@
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_1 = -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_2 = -q64
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_3 = Tools/bgq_su3algebra.cpp
-@IBM_BGQWILSON_NOSMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = Dirac_ops/dirac_DomainWall_BGQ.cpp
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = Dirac_ops/dirac_DomainWall_BGQ.cpp
-
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = Dirac_ops/dirac_DomainWall_BGQ.cpp
 # NB: Libraries ordering is essential
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_6 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_7 = -lbgqwilson3x4smp -lbgqthread
-@IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_8 = -lbgqwilson3x4
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_6 = -lbgqwilson3x4smp -lbgqthread
+@IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_7 = -lbgqwilson3x4
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
@@ -168,11 +166,11 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 @USE_EVENODD_FALSE@am__objects_2 = siteIndex.$(OBJEXT)
 @USE_EVENODD_TRUE@am__objects_2 = siteIndexEO.$(OBJEXT)
-@IBM_BGQWILSON_NOSMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__objects_3 = dirac_DomainWall_BGQ.$(OBJEXT)
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT)
-am__objects_5 = $(am__objects_3) $(am__objects_4)
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__objects_6 = bgq_su3algebra.$(OBJEXT)
-am__objects_7 = $(am__objects_6)
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__objects_3 =  \
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@	dirac_DomainWall_BGQ.$(OBJEXT)
+am__objects_4 = $(am__objects_3)
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__objects_5 = bgq_su3algebra.$(OBJEXT)
+am__objects_6 = $(am__objects_5)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) action_gauge_rect.$(OBJEXT) \
@@ -190,7 +188,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_staggered_EvenOdd_Adjoint.$(OBJEXT) \
 	dirac_clover.$(OBJEXT) fopr_signH_Zolotarev.$(OBJEXT) \
 	dirac_overlap_Zolotarev.$(OBJEXT) dirac_DomainWall.$(OBJEXT) \
-	$(am__objects_5) dirac_DomainWall_EvenOdd.$(OBJEXT) \
+	$(am__objects_4) dirac_DomainWall_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
 	dirac_DomainWall_4D_eoSolv.$(OBJEXT) eoUtils.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) boundaryCond.$(OBJEXT) \
@@ -218,7 +216,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	fieldUtils.$(OBJEXT) jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	sunAdjMatUtils.$(OBJEXT) randNum_MT19937.$(OBJEXT) \
 	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT) \
-	$(am__objects_7) alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT)
+	$(am__objects_6) alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -403,8 +401,8 @@ top_srcdir = @top_srcdir@
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
-OPTLIB = $(am__append_6) $(am__append_7) $(am__append_8)
-DWF_BGQ_SRC = $(am__append_4) $(am__append_5)
+OPTLIB = $(am__append_5) $(am__append_6) $(am__append_7)
+DWF_BGQ_SRC = $(am__append_4)
 BGQ_MAT_SRC = $(am__append_3)
 @USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 

@@ -1439,7 +1439,9 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-bfm=BFM_BASEDIR  Enable BFM Bagel Fermion Matrix libraries (P.Boyle)
-                          linkage.
+                          linkage (Only on BGQ). If BFM_BASEDIR is not
+                          specified it assumes that libraries and header are
+                          somewhere in the path
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -4308,8 +4310,8 @@ fi
 
 
 # BGQ specific stuff
-echo :::: BGQ related stuff
 if  $bluegeneq
+echo :::: BGQ related stuff
 then
 
 { $as_echo "$as_me:$LINENO: checking for BGNET_Init in -lbgnet" >&5
