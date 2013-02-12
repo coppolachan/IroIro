@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-07 15:37:01 cossu>
+# Time-stamp: <2013-02-07 16:05:12 cossu>
 
 ###########################################
 # Initial definitions 
@@ -313,7 +313,8 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/gammaMatrices.hpp			\
 			Tools/Remez/alg_remez.hpp		\
 			Tools/Remez/bigfloat.hpp		\
-			Tools/RationalApprox/rationalapprox.hpp	
+			Tools/RationalApprox/rationalapprox.hpp	\
+			Tools/Bagel/bfm_storage.hpp
 
 
 

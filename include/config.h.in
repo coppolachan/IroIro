@@ -118,6 +118,9 @@
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Using even odd storage indexing for the Gauge field */
+#undef USING_EVENODD_IDX
+
 /* Code Verbosity level */
 #undef VERBOSITY
 

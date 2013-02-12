@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-07 15:40:29 cossu>
+# Time-stamp: <2013-02-12 11:12:12 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.1], [cossu@post.kek.jp])
@@ -364,6 +364,12 @@ fi
 if [ $bluegeneq ]
 then
 AC_DEFINE([IBM_BGQ],[],[Specific tweaks for IBM BG/Q])
+fi
+
+
+if [ $even_odd_idx ]
+then
+AC_DEFINE([USING_EVENODD_IDX],[],[Using even odd storage indexing for the Gauge field])
 fi
 
 # Turn on all improved kernels

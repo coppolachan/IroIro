@@ -6636,6 +6636,16 @@ _ACEOF
 
 fi
 
+
+if  $even_odd_idx
+then
+
+cat >>confdefs.h <<\_ACEOF
+#define USING_EVENODD_IDX /**/
+_ACEOF
+
+fi
+
 # Turn on all improved kernels
 if  $improved_kernels
 then
