@@ -13,7 +13,18 @@
 #define DIRAC_TO_CHIRAL 0
 #define CHIRAL_TO_DIRAC 1
 
+//workaround
+#undef PACKAGE
+#undef PACKAGE_BUGREPORT
+#undef PACKAGE_NAME
+#undef PACKAGE_STRING
+#undef PACKAGE_TARNAME
+#undef PACKAGE_VERSION
+#undef VERSION
 #include "bfm.h"
+
+//redefine some macros
+#include "iroiro_config.h"
 
 class BFM_Storage {
   int Nx_, Ny_, Nz_, Nt_;

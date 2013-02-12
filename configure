@@ -2565,6 +2565,7 @@ AM_BACKSLASH='\'
 
 ac_config_headers="$ac_config_headers include/config.h"
 
+AX_PREFIX_CONFIG_H
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
 set dummy ${ac_tool_prefix}ranlib; ac_word=$2
@@ -3795,7 +3796,6 @@ echo configure: setting library flags... done
 if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
 ARFLAGS=$ar_flags
 echo configure: setting linker flags... done
-
 
 
 

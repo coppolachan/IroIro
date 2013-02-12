@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-12 11:12:12 cossu>
+# Time-stamp: <2013-02-12 17:27:27 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.1], [cossu@post.kek.jp])
@@ -13,6 +13,7 @@ AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility
 
 AC_CONFIG_HEADERS([include/config.h])
+AX_PREFIX_CONFIG_H
 AC_PROG_RANLIB
 
 AC_MSG_NOTICE([
@@ -226,7 +227,6 @@ echo configure: setting library flags... done
 if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
 ARFLAGS=$ar_flags
 echo configure: setting linker flags... done
-
 
 
 

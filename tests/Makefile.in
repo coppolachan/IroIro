@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-02-08 11:08:46 cossu>
+# Time-stamp: <2013-02-12 17:04:43 cossu>
 
 
 VPATH = @srcdir@
@@ -92,164 +92,189 @@ test_BaryonSpectrum_Nf2p1_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-test_BaryonSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_BaryonSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_Clover_OBJECTS = test_clover.$(OBJEXT) testerClover.$(OBJEXT)
 test_Clover_OBJECTS = $(am_test_Clover_OBJECTS)
 test_Clover_LDADD = $(LDADD)
-test_Clover_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Clover_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_test_DomainWall_OBJECTS = test_DomainWall.$(OBJEXT) \
 	testerDWF.$(OBJEXT)
 test_DomainWall_OBJECTS = $(am_test_DomainWall_OBJECTS)
 test_DomainWall_LDADD = $(LDADD)
-test_DomainWall_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_DomainWall_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_EigenModesSolver_OBJECTS = test_EigenModesSolver.$(OBJEXT) \
 	testerEigenModesSolver.$(OBJEXT)
 test_EigenModesSolver_OBJECTS = $(am_test_EigenModesSolver_OBJECTS)
 test_EigenModesSolver_LDADD = $(LDADD)
-test_EigenModesSolver_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_EigenModesSolver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_Gauge_OBJECTS = test_Gauge.$(OBJEXT) testerGauge.$(OBJEXT)
 test_Gauge_OBJECTS = $(am_test_Gauge_OBJECTS)
 test_Gauge_LDADD = $(LDADD)
-test_Gauge_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Gauge_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
-test_HMC_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_HMC_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_test_HMC_DWall_noF_OBJECTS = test_HMC_DWall_noFact.$(OBJEXT) \
 	testerHMC_DWall_noFact.$(OBJEXT)
 test_HMC_DWall_noF_OBJECTS = $(am_test_HMC_DWall_noF_OBJECTS)
 test_HMC_DWall_noF_LDADD = $(LDADD)
-test_HMC_DWall_noF_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_HMC_DWall_noF_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_HMC_EvenOdd_OBJECTS = test_HMC_EvenOdd.$(OBJEXT) \
 	testerHMCeven-odd.$(OBJEXT)
 test_HMC_EvenOdd_OBJECTS = $(am_test_HMC_EvenOdd_OBJECTS)
 test_HMC_EvenOdd_LDADD = $(LDADD)
-test_HMC_EvenOdd_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_HMC_EvenOdd_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_HMC_noFactories_OBJECTS = test_HMC_noFactories.$(OBJEXT) \
 	testerHMC.$(OBJEXT)
 test_HMC_noFactories_OBJECTS = $(am_test_HMC_noFactories_OBJECTS)
 test_HMC_noFactories_LDADD = $(LDADD)
-test_HMC_noFactories_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_HMC_noFactories_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_HMC_smear_noF_OBJECTS = test_HMC_Smear_noFact.$(OBJEXT) \
 	testerHMC.$(OBJEXT)
 test_HMC_smear_noF_OBJECTS = $(am_test_HMC_smear_noF_OBJECTS)
 test_HMC_smear_noF_LDADD = $(LDADD)
-test_HMC_smear_noF_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_HMC_smear_noF_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_HadronSpectrum_Nf2p1_OBJECTS =  \
 	test_HadronSpectrum_Nf2p1.$(OBJEXT) \
 	testerHadronSpectrumNf2p1.$(OBJEXT)
 test_HadronSpectrum_Nf2p1_OBJECTS =  \
 	$(am_test_HadronSpectrum_Nf2p1_OBJECTS)
 test_HadronSpectrum_Nf2p1_LDADD = $(LDADD)
-test_HadronSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_HadronSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
 test_IO_LDADD = $(LDADD)
-test_IO_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_IO_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_test_MesonSpectrum_OBJECTS = test_MesonSpectrum.$(OBJEXT) \
 	testerMesonSpectrum.$(OBJEXT)
 test_MesonSpectrum_OBJECTS = $(am_test_MesonSpectrum_OBJECTS)
 test_MesonSpectrum_LDADD = $(LDADD)
-test_MesonSpectrum_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_MesonSpectrum_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_MesonSpectrum_Nf2p1_OBJECTS =  \
 	test_MesonSpectrum_Nf2p1.$(OBJEXT) \
 	testerMesonSpectrumNf2p1.$(OBJEXT)
 test_MesonSpectrum_Nf2p1_OBJECTS =  \
 	$(am_test_MesonSpectrum_Nf2p1_OBJECTS)
 test_MesonSpectrum_Nf2p1_LDADD = $(LDADD)
-test_MesonSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_MesonSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_MesonSpectrum_SpMom_OBJECTS =  \
 	test_MesonSpectrum_SpMom.$(OBJEXT) \
 	testerMesonSpectrumSpMom.$(OBJEXT)
 test_MesonSpectrum_SpMom_OBJECTS =  \
 	$(am_test_MesonSpectrum_SpMom_OBJECTS)
 test_MesonSpectrum_SpMom_LDADD = $(LDADD)
-test_MesonSpectrum_SpMom_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_MesonSpectrum_SpMom_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_MultiShiftSolver_OBJECTS = test_MultiShiftSolver.$(OBJEXT) \
 	testerMultiShiftSolver.$(OBJEXT)
 test_MultiShiftSolver_OBJECTS = $(am_test_MultiShiftSolver_OBJECTS)
 test_MultiShiftSolver_LDADD = $(LDADD)
-test_MultiShiftSolver_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_MultiShiftSolver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_NoMeas_OBJECTS = testerNoMeas.$(OBJEXT)
 test_NoMeas_OBJECTS = $(am_test_NoMeas_OBJECTS)
 test_NoMeas_LDADD = $(LDADD)
-test_NoMeas_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_NoMeas_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_test_Overlap_OBJECTS = test_Overlap.$(OBJEXT) \
 	testerOverlap.$(OBJEXT)
 test_Overlap_OBJECTS = $(am_test_Overlap_OBJECTS)
 test_Overlap_LDADD = $(LDADD)
-test_Overlap_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Overlap_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_PolyakovLoop_OBJECTS = test_PolyakovLoop.$(OBJEXT) \
 	testerPolyakovLoop.$(OBJEXT)
 test_PolyakovLoop_OBJECTS = $(am_test_PolyakovLoop_OBJECTS)
 test_PolyakovLoop_LDADD = $(LDADD)
-test_PolyakovLoop_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_PolyakovLoop_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_QpropMom_OBJECTS = test_QpropMom.$(OBJEXT) \
 	testerQpropMom.$(OBJEXT)
 test_QpropMom_OBJECTS = $(am_test_QpropMom_OBJECTS)
 test_QpropMom_LDADD = $(LDADD)
-test_QpropMom_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_QpropMom_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_RHMC_noFactories_OBJECTS = test_RHMC_noFactories.$(OBJEXT) \
 	testerHMC.$(OBJEXT)
 test_RHMC_noFactories_OBJECTS = $(am_test_RHMC_noFactories_OBJECTS)
 test_RHMC_noFactories_LDADD = $(LDADD)
-test_RHMC_noFactories_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_RHMC_noFactories_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_RNG_OBJECTS = test_RNG.$(OBJEXT)
 test_RNG_OBJECTS = $(am_test_RNG_OBJECTS)
 test_RNG_LDADD = $(LDADD)
-test_RNG_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_RNG_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_test_RationalApprox_OBJECTS = test_RationalApprox.$(OBJEXT) \
 	testerRationalApprox.$(OBJEXT)
 test_RationalApprox_OBJECTS = $(am_test_RationalApprox_OBJECTS)
 test_RationalApprox_LDADD = $(LDADD)
-test_RationalApprox_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_RationalApprox_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_ResMass_OBJECTS = test_ResidualMass.$(OBJEXT) \
 	testerResMass.$(OBJEXT)
 test_ResMass_OBJECTS = $(am_test_ResMass_OBJECTS)
 test_ResMass_LDADD = $(LDADD)
-test_ResMass_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_ResMass_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_Smearing_OBJECTS = test_smear.$(OBJEXT) testerSmear.$(OBJEXT)
 test_Smearing_OBJECTS = $(am_test_Smearing_OBJECTS)
 test_Smearing_LDADD = $(LDADD)
-test_Smearing_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Smearing_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am__test_Solver_BFM_SOURCES_DIST = test_Solver_BFM.cpp \
 	testerSolver_BFM.cpp ../lib/Tools/Bagel/bfm_storage.cpp
 @USE_BFM_TRUE@am_test_Solver_BFM_OBJECTS = test_Solver_BFM.$(OBJEXT) \
 @USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
 test_Solver_BFM_OBJECTS = $(am_test_Solver_BFM_OBJECTS)
 test_Solver_BFM_LDADD = $(LDADD)
-test_Solver_BFM_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Solver_BFM_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_Solver_Perf_OBJECTS = test_Solver_Perf.$(OBJEXT) \
 	testerSolver_Perf.$(OBJEXT)
 test_Solver_Perf_OBJECTS = $(am_test_Solver_Perf_OBJECTS)
 test_Solver_Perf_LDADD = $(LDADD)
-test_Solver_Perf_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Solver_Perf_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_Wilson_OBJECTS = test_wilson.$(OBJEXT) testerWilson.$(OBJEXT)
 test_Wilson_OBJECTS = $(am_test_Wilson_OBJECTS)
 test_Wilson_LDADD = $(LDADD)
-test_Wilson_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Wilson_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_test_WilsonFlow_OBJECTS = test_WilsonFlow.$(OBJEXT) \
 	testerWilsonFlow.$(OBJEXT)
 test_WilsonFlow_OBJECTS = $(am_test_WilsonFlow_OBJECTS)
 test_WilsonFlow_LDADD = $(LDADD)
-test_WilsonFlow_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_WilsonFlow_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_Wilson_Brillouin_OBJECTS = test_wilson_Brillouin.$(OBJEXT) \
 	testerWilsonBrillouin.$(OBJEXT)
 test_Wilson_Brillouin_OBJECTS = $(am_test_Wilson_Brillouin_OBJECTS)
 test_Wilson_Brillouin_LDADD = $(LDADD)
-test_Wilson_Brillouin_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Wilson_Brillouin_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_Wilson_Brillouin_Imp_OBJECTS =  \
 	test_wilson_Brillouin_Imp.$(OBJEXT) \
 	testerWilsonBrillouin_Imp.$(OBJEXT)
 test_Wilson_Brillouin_Imp_OBJECTS =  \
 	$(am_test_Wilson_Brillouin_Imp_OBJECTS)
 test_Wilson_Brillouin_Imp_LDADD = $(LDADD)
-test_Wilson_Brillouin_Imp_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Wilson_Brillouin_Imp_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_Wilson_EvenOdd_OBJECTS = test_wilson_EvenOdd.$(OBJEXT) \
 	testerWilson_EvenOdd.$(OBJEXT)
 test_Wilson_EvenOdd_OBJECTS = $(am_test_Wilson_EvenOdd_OBJECTS)
 test_Wilson_EvenOdd_LDADD = $(LDADD)
-test_Wilson_EvenOdd_DEPENDENCIES = $(am__DEPENDENCIES_2)
+test_Wilson_EvenOdd_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -452,7 +477,7 @@ BMF_TESTPROGS = $(am__append_1)
 @USE_BFM_TRUE@BFM_INCLUDE = -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
 @USE_BFM_TRUE@BFM_LIBS = -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
 @USE_BFM_TRUE@BFM_LINKAGE = -lbfm -lbagel
-LDADD = -L../lib/ -lcommcode $(OPTLIB)
+LDADD = -L../lib/ -lcommcode $(BFM_LINKAGE) $(OPTLIB)
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 EXTRA_DIST = testResults.info	\
