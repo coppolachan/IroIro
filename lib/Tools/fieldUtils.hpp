@@ -27,16 +27,15 @@ namespace FieldUtils{
   // Field type-type transformations
   GaugeField1D DirSlice(const GaugeField& F, int dir);
 #ifdef IBM_BGQ_WILSON
-  void DirSliceBGQ(GaugeField1D &G, const GaugeField& F, int dir);
-  void Exponentiate_BGQ(GaugeField& F, const GaugeField&, const double, const int);
+  void DirSliceBGQ(GaugeField1D &G,const GaugeField& F,int dir);
+  void Exponentiate_BGQ(GaugeField& F,const GaugeField&,double,int);
 
-  inline double ReTrBGQ(double &result, const double *F, int site, int dir, const int Nvol){
+  inline double ReTrBGQ(double& result,const double *F,int site,int dir,int Nvol){
     //assumes some indexing and SU(3) matrix
-    result += F[     18*(site+Nvol*dir)];
-    result += F[ 8 + 18*(site+Nvol*dir)];
-    result += F[16 + 18*(site+Nvol*dir)];
+    result += F[    18*(site+Nvol*dir)];
+    result += F[ 8 +18*(site+Nvol*dir)];
+    result += F[16 +18*(site+Nvol*dir)];
   }
-
 #endif
 
   void SetSlice(GaugeField&, const GaugeField1D&, int dir);

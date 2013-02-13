@@ -55,7 +55,7 @@ class GaugeFixing_Landau: public GaugeFixing{
     XML::read(GFnode,"sdm_prm",     sdmp,   MANDATORY);
     XML::read(GFnode,"precision",   prec_,  MANDATORY);
     //
-    gstep_= new GaugeFixingStep(Landau,orp,sdmp);
+    gstep_= new GaugeFixingStep(Landau,orp,sdmp,Nvh_);
     if(!gstep_) abort();
 
     Mapping::init_shiftField_EvenOdd();
@@ -66,10 +66,10 @@ class GaugeFixing_Landau: public GaugeFixing{
 		     int Niter,int Nmeas,int Nreset,
 		     int Nor,double orp,double esdm,double sdmp,
 		     double prec)
-    :rng_(rng),gstep_(new GaugeFixingStep(Landau,orp,sdmp)),
-     Niter_(Niter),Nmeas_(Nmeas),Nreset_(Nreset),
+    :rng_(rng),Niter_(Niter),Nmeas_(Nmeas),Nreset_(Nreset),
      Nor_(Nor),esdm_(esdm),
-     prec_(prec),Nvh_(CommonPrms::instance()->Nvol()/2){
+     prec_(prec),Nvh_(CommonPrms::instance()->Nvol()/2),
+     gstep_(new GaugeFixingStep(Landau,orp,sdmp,Nvh_)){
     //
     Mapping::init_shiftField_EvenOdd();
   }

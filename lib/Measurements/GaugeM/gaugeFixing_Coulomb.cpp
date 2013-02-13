@@ -66,11 +66,11 @@ const GaugeField GaugeFixing_Coulomb::do_fix(const GaugeField& Uin)const{
       //re_overrelax(Ue,Uo);
     }else{
       if(gc_sum < esdm_){
-	gstep_->step_CG(Ue,Uo,De,Do,Pe,Po);   
-	//gstep_->step_sdm(Ue,Uo);
+	//gstep_->step_CG(Ue,Uo,De,Do,Pe,Po);   
+	gstep_->step_sdm(Ue,Uo);
       }else{ 
-	if(iter>=Nor_) gstep_->step_ovrlx(Ue,Uo);
-	else           gstep_->step_naive(Ue,Uo);
+	if(iter>=Nor_) gstep_->step_SU2(Ue,Uo,ORon);
+	else           gstep_->step_SU2(Ue,Uo,ORoff);
       }
     }
   }
@@ -157,6 +157,7 @@ void GaugeFixing_Coulomb::random_gtr(GaugeField& Ue,GaugeField& Uo)const{
   gstep_->gauge_tr_odd( Ue,Uo,get_odd( Gtr));
 }
 
+/*
 void GaugeFixing_Coulomb::re_overrelax(GaugeField& Ue,GaugeField& Uo)const{
   CCIO::cout<<" overrelaxation on ill timeslices performed."<<std::endl;
 
@@ -178,4 +179,4 @@ void GaugeFixing_Coulomb::re_overrelax(GaugeField& Ue,GaugeField& Uo)const{
   gstep_->gauge_tr_even(Ue,Uo,Gte);
   gstep_->gauge_tr_odd( Ue,Uo,Gto);
 }
-
+*/

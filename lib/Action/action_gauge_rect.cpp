@@ -18,7 +18,7 @@ using namespace SUNmatUtils;
 using namespace FieldUtils;
 
 typedef struct GaugeConfigType{
-  __complex__ double v[9];
+  __complex__ double v[NC_*NC_];
 }GaugePtr;
 
 
@@ -49,67 +49,65 @@ double ActionGaugeRect::calc_H(){
   // From Matsufuru-san code
 #pragma omp parallel
   {
+    const int nid = omp_get_num_threads();
+    const int tid = omp_get_thread_num();
+    const int is = tid*Nvol_/nid;
+    const int ie = (tid + 1)*Nvol_/nid;
+    const int ns = ie - is;
+    const int CC = NC_*NC_;
+    const int str = is*CC;
+    const int CC2 = 2*NC_*NC_;
+    const int str2 = is*CC2;
     
-    int tid, nid;
-    int is, ie, ns;
-    nid = omp_get_num_threads();
-    tid = omp_get_thread_num();
-    is = tid*Nvol_ / nid;
-    ie = (tid + 1)*Nvol_ / nid;
-    ns = ie - is;
-    int jump2 = is*18;
-    int jump = is*9;
-    
-    for(int mu = 0; mu < NDIM_; ++mu){
-      BGWilsonLA_MatEquate((__complex__ double*)U_mu_ptr+jump,
-			   (__complex__ double*)U_ptr+mu*Nvol_*9+jump, ns); //U_mu links    
+    for(int mu=0; mu<NDIM_; ++mu){
+      BGWilsonLA_MatEquate((__complex__ double*)U_mu_ptr+str,
+			   (__complex__ double*)U_ptr+mu*Nvol_*CC+str,ns); //U_mu links    
       
       
-      for(int nu = mu+1; nu < NDIM_; ++nu){
-	
-	BGWilsonLA_MatEquate((__complex__ double*)U_nu_ptr+jump,
-			     (__complex__ double*)U_ptr+jump+nu*Nvol_*9, ns); //U_nu links    
-	
+      for(int nu = mu+1; nu<NDIM_; ++nu){
+	BGWilsonLA_MatEquate((__complex__ double*)U_nu_ptr+str,
+			     (__complex__ double*)U_ptr+str+nu*Nvol_*CC,ns); //U_nu links
 	
 	shiftField(UpNu,U_mu_ptr,nu,Forward());
 	shiftField(UpMu,U_nu_ptr,mu,Forward());
 	
-	BGWilsonSU3_MatMult_NND(Cup1_ptr+jump2, U_nu_ptr+jump2, UpNu_ptr+jump2, UpMu_ptr+jump2, ns);
-	BGWilsonSU3_MatMult_NND(Cup2_ptr+jump2, U_mu_ptr+jump2, UpMu_ptr+jump2, UpNu_ptr+jump2, ns);
-	
+	BGWilsonSU3_MatMult_NND(Cup1_ptr+str2,U_nu_ptr+str2,UpNu_ptr+str2,
+				UpMu_ptr+str2,ns);
+	BGWilsonSU3_MatMult_NND(Cup2_ptr+str2,U_mu_ptr+str2,UpMu_ptr+str2,
+				UpNu_ptr+str2,ns);
 	// plaquette term
-	BGWilsonSU3_MatMult_ND(res_ptr+jump2, U_ptr+mu*Nvol_*18+jump2, Cup1_ptr+jump2, ns);
-      
+	BGWilsonSU3_MatMult_ND(res_ptr+str2,U_ptr+mu*Nvol_*CC2+str2,Cup1_ptr+str2,ns);
 	
 #pragma omp for reduction(+:plaqF) //nb NOT "parallel for" just "for"
-	for(int s=0; s<Nvol_; s++)
-	    plaqF += res_ptr[18*s]+res_ptr[8+18*s]+res_ptr[16+18*s];
-
+	for(int site=0; site<Nvol_; ++site)
+	  plaqF += res_ptr[CC2*site]+res_ptr[8+CC2*site]+res_ptr[16+CC2*site]; ///ReTr
+	
 	shiftField(UpNu, U_mu_ptr,nu,Forward());      //U_mu(x+nu)
 	shiftField(UpMu, Cup2_ptr,mu,Forward());      //Cup2(x+mu) 
 	
-	BGWilsonSU3_MatMult_NND(res_ptr+jump2, U_nu_ptr+jump2, UpNu_ptr+jump2, UpMu_ptr+jump2, ns);
-	BGWilsonSU3_MatMult_ND(UpNu_ptr+jump2, U_ptr+mu*Nvol_*18+jump2, res_ptr+jump2, ns);
-	
+	BGWilsonSU3_MatMult_NND(res_ptr+str2,
+				U_nu_ptr+str2,UpNu_ptr+str2,UpMu_ptr+str2,ns);
+	BGWilsonSU3_MatMult_ND(UpNu_ptr+str2, 
+			       U_ptr+mu*Nvol_*CC2+str2,res_ptr+str2,ns);
 #pragma omp for reduction(+:rectF)
 	for(int site=0; site<Nvol_; ++site)
-	    rectF += UpNu_ptr[18*site]+ UpNu_ptr[8+18*site]+ UpNu_ptr[16+18*site];
+	  rectF += UpNu_ptr[CC2*site]+ UpNu_ptr[8+CC2*site]+ UpNu_ptr[16+CC2*site];///ReTr
 	
 	shiftField(UpNu,Cup1_ptr,nu,Forward());   //Cup1(x+nu)
 	shiftField(UpMu,U_nu_ptr,mu,Forward());   //U_nu(x+mu)
 	
-	BGWilsonSU3_MatMult_NND(res_ptr+jump2, U_nu_ptr+jump2, UpNu_ptr+jump2, UpMu_ptr+jump2, ns);
-	BGWilsonSU3_MatMult_ND(UpNu_ptr+jump2, U_ptr+mu*Nvol_*18+jump2, res_ptr+jump2, ns);
-	
+	BGWilsonSU3_MatMult_NND(res_ptr+str2, 
+				U_nu_ptr+str2,UpNu_ptr+str2,UpMu_ptr+str2,ns);
+	BGWilsonSU3_MatMult_ND(UpNu_ptr+str2, 
+			       U_ptr+mu*Nvol_*CC2+str2,res_ptr+str2,ns);
 #pragma omp for reduction(+:rectF)
-	  for(int site=0; site<Nvol_; ++site)
-	    rectF += UpNu_ptr[18*site]+ UpNu_ptr[8+18*site]+ UpNu_ptr[16+18*site];
-
+	for(int site=0; site<Nvol_; ++site)
+	  rectF += UpNu_ptr[CC2*site]+ UpNu_ptr[8+CC2*site]+ UpNu_ptr[16+CC2*site]; ///ReTr
       }
     }
   }
 #else 
-  for(int mu = 0; mu < NDIM_; ++mu){
+  for(int mu=0; mu<NDIM_; ++mu){
     U_mu = DirSlice(*u_,mu); 
     
     for(int nu = mu+1; nu < NDIM_; ++nu){
@@ -117,9 +115,8 @@ double ActionGaugeRect::calc_H(){
       Cup2 = stpl_.upper(*u_,nu,mu);
       
       // plaquette term
-      for(int site=0; site<Nvol_; ++site){
-	plaqF += ReTr(mat(*u_,site,mu)*mat_dag(Cup1,site) );
-      }
+      for(int site=0; site<Nvol_; ++site)
+	plaqF += ReTr(mat(*u_,site,mu)*mat_dag(Cup1,site));
       
       U_nu = DirSlice(*u_,nu);
       // rectangular terms
@@ -132,7 +129,6 @@ double ActionGaugeRect::calc_H(){
       UpMu = shiftField(Cup2,mu,Forward());      //Cup2(x+mu)     
       
       res = 0.0;
-      
       for(int site = 0; site<Nvol_; ++site){
 	res.data[res.format.cslice(0,site)] = 
 	  (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
@@ -148,7 +144,6 @@ double ActionGaugeRect::calc_H(){
       
       UpNu = shiftField(Cup1,nu,Forward());   //Cup1(x+nu)
       UpMu = shiftField(U_nu,mu,Forward());   //U_nu(x+mu)
-      
       
       res = 0.0;
       for(int site = 0; site<Nvol_; ++site){
@@ -167,7 +162,7 @@ double ActionGaugeRect::calc_H(){
   double plaq = plaqF/NC_;
   double rect = rectF/NC_;
   double Hgauge = Params.c_plaq*(Nvol_*NP*NDIM_*(NDIM_-1.0)/2.0 -plaq)
-    + Params.c_rect*(Nvol_*NP*NDIM_*(NDIM_-1.0)     -rect);
+    + Params.c_rect*(Nvol_*NP*NDIM_*(NDIM_-1.0) -rect);
   Hgauge *= Params.beta;
   
   _Message(ACTION_VERB_LEVEL, "    [ActionGaugeRect] H = "<<Hgauge<<"\n");
@@ -211,39 +206,37 @@ GaugeField ActionGaugeRect::md_force(){
 
 #pragma omp parallel 
   {
-      int tid, nid;
-      int is, ie, ns;
-      nid = omp_get_num_threads();
-      tid = omp_get_thread_num();
-      is = tid*Nvol_ / nid;
-      ie = (tid + 1)*Nvol_ / nid;
-      ns = ie - is;
-      int jump = is*18;
+    const int nid = omp_get_num_threads();
+    const int tid = omp_get_thread_num();
+    const int is = tid*Nvol_ / nid;
+    const int ie = (tid + 1)*Nvol_ / nid;
+    const int ns = ie - is;
+    const int CC = NC_*NC_;
+    const int str = is*CC;
+    const int CC2 = 2*NC_*NC_;
+    const int str2 = is*CC2;
+    
+    for(int mu=0; mu<NDIM_; ++mu){
+      BGWilsonLA_MatZero((__complex__ double*)force_pl.data.getaddr(0)+is*CC,ns);
+      BGWilsonLA_MatZero((__complex__ double*)force_rect_ptr+str,ns);
 
-      for(int mu=0; mu<NDIM_; ++mu){
-	BGWilsonLA_MatZero((__complex__ double*)force_pl.data.getaddr(0)+is*9, ns);
-	BGWilsonLA_MatZero((__complex__ double*)force_rect_ptr+is*9, ns);
-
-
-	BGWilsonLA_MatEquate((__complex__ double*)U_mu_ptr+is*9,
-			     (__complex__ double*)U_ptr+is*9+mu*Nvol_*9, ns); //U_mu links    
-	
-
+      BGWilsonLA_MatEquate((__complex__ double*)U_mu_ptr+str,
+			   (__complex__ double*)U_ptr+str+mu*Nvol_*CC,ns); //U_mu links    
+      
       for(int nu=0; nu<NDIM_; ++nu){
 	if (nu == mu) continue;
-
-	BGWilsonLA_MatEquate((__complex__ double*)U_nu_ptr+is*9,
-			     (__complex__ double*)U_ptr+is*9+nu*Nvol_*9, ns); //U_nu links    
-
+	
+	BGWilsonLA_MatEquate((__complex__ double*)U_nu_ptr+is*CC,
+			     (__complex__ double*)U_ptr+str+nu*Nvol_*CC,ns); //U_nu links 
 
 	shiftField(UpNu,U_mu_ptr,nu,Forward());// U_mu(x+nu)
 	shiftField(UpMu,U_nu_ptr,mu,Forward());// U_nu(x+mu)
 
-	BGWilsonSU3_MatMult_NND(Cup1_ptr+jump, U_nu_ptr+jump, UpNu_ptr+jump, UpMu_ptr+jump, ns);
-	BGWilsonSU3_MatMult_NND(Cup2_ptr+jump, U_mu_ptr+jump, UpMu_ptr+jump, UpNu_ptr+jump, ns);
+	BGWilsonSU3_MatMult_NND(Cup1_ptr+str2,U_nu_ptr+str2,UpNu_ptr+str2,UpMu_ptr+str2,ns);
+	BGWilsonSU3_MatMult_NND(Cup2_ptr+str2,U_mu_ptr+str2,UpMu_ptr+str2,UpNu_ptr+str2,ns);
 
-	BGWilsonSU3_MatMult_DNN(res_ptr+jump, U_nu_ptr+jump, U_mu_ptr+jump, UpMu_ptr+jump, ns);
-	BGWilsonSU3_MatMult_DNN(UpMu_ptr+jump, U_mu_ptr+jump, U_nu_ptr+jump, UpNu_ptr+jump, ns);
+	BGWilsonSU3_MatMult_DNN(res_ptr+str2, U_nu_ptr+str2,U_mu_ptr+str2,UpMu_ptr+str2,ns);
+	BGWilsonSU3_MatMult_DNN(UpMu_ptr+str2,U_mu_ptr+str2,U_nu_ptr+str2,UpNu_ptr+str2,ns);
 
 	shiftField(Cdn1,res_ptr,nu,Backward());
 	shiftField(Cdn2,UpMu_ptr,mu,Backward());
@@ -251,67 +244,67 @@ GaugeField ActionGaugeRect::md_force(){
 
  	// plaquette term
 	// force_pl += Cup1;
-	BGWilsonMatLA_Add((__complex__ double*)force_pl.data.getaddr(0)+is*9, 
-			  (__complex__ double*)Cup1_ptr+is*9, ns); 
+	BGWilsonMatLA_Add((__complex__ double*)force_pl.data.getaddr(0)+str, 
+			  (__complex__ double*)Cup1_ptr+str, ns); 
 	//force_pl += Cdn1;
-	BGWilsonMatLA_Add((__complex__ double*)force_pl.data.getaddr(0)+is*9, 
-			  (__complex__ double*)Cdn1_ptr+is*9, ns); 
-
-	BGWilsonSU3_MatMult_NND(res_ptr+jump, U_nu_ptr+jump, UpNu_ptr+jump, UpMu_ptr+jump, ns);
+	BGWilsonMatLA_Add((__complex__ double*)force_pl.data.getaddr(0)+str, 
+			  (__complex__ double*)Cdn1_ptr+str, ns); 
+	
+	BGWilsonSU3_MatMult_NND(res_ptr+str2,U_nu_ptr+str2,UpNu_ptr+str2,UpMu_ptr+str2,ns);
 
 	//force_rect += res; 
-	BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+is*9, 
-			  (__complex__ double*)res_ptr+is*9, ns); 
+	BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+str, 
+			  (__complex__ double*)res_ptr+str,ns); 
 
-	BGWilsonSU3_MatMult_DNN(Cup2_ptr+jump, U_nu_ptr+jump, U_mu_ptr+jump, UpMu_ptr+jump, ns);   
+	BGWilsonSU3_MatMult_DNN(Cup2_ptr+str2,U_nu_ptr+str2,U_mu_ptr+str2,UpMu_ptr+str2,ns);
 	
-	shiftField(UpMu, U_nu_ptr, mu, Forward());    // U_nu(x+mu)
-	shiftField(UpNu, Cup1_ptr, nu, Forward());    // Cup1(x+nu)
+	shiftField(UpMu,U_nu_ptr,mu,Forward());    // U_nu(x+mu)
+	shiftField(UpNu,Cup1_ptr,nu,Forward());    // Cup1(x+nu)
 	
-
-	BGWilsonSU3_MatMult_NND(res_ptr+jump, U_nu_ptr+jump, UpNu_ptr+jump, UpMu_ptr+jump, ns);
+	BGWilsonSU3_MatMult_NND(res_ptr+str2,U_nu_ptr+str2,UpNu_ptr+str2,UpMu_ptr+str2,ns);
 	//force_rect += res; 
-	BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+is*9, 
-			  (__complex__ double*)res_ptr+is*9, ns); 
+	BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+str, 
+			  (__complex__ double*)res_ptr+str,ns); 
 
-	BGWilsonSU3_MatMult_DNN(res_ptr+jump, U_nu_ptr+jump, Cdn1_ptr+jump, UpMu_ptr+jump, ns);
-	BGWilsonSU3_MatMult_DNN(UpNu_ptr+jump, Cdn2_ptr+jump, U_mu_ptr+jump, UpMu_ptr+jump, ns);
+	BGWilsonSU3_MatMult_DNN(res_ptr+str2,U_nu_ptr+str2,Cdn1_ptr+str2,UpMu_ptr+str2,ns);
+	BGWilsonSU3_MatMult_DNN(UpNu_ptr+str2,Cdn2_ptr+str2,U_mu_ptr+str2,UpMu_ptr+str2,ns);
 
 	//res += UpNu;
-	BGWilsonMatLA_Add((__complex__ double*)res_ptr+is*9, 
-			  (__complex__ double*)UpNu_ptr+is*9, ns); 
+	BGWilsonMatLA_Add((__complex__ double*)res_ptr+str, 
+			  (__complex__ double*)UpNu_ptr+str,ns); 
 	//res += Cup2;
-	BGWilsonMatLA_Add((__complex__ double*)res_ptr+is*9, 
-			  (__complex__ double*)Cup2_ptr+is*9, ns); 
+	BGWilsonMatLA_Add((__complex__ double*)res_ptr+str, 
+			  (__complex__ double*)Cup2_ptr+str,ns); 
 
-	shiftField(Cup1, res_ptr,nu,Backward());//+=res(x-nu)
+	shiftField(Cup1,res_ptr,nu,Backward());//+=res(x-nu)
 
 	//force_rect += Cup1_ptr; 
-	BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+is*9, 
-			  (__complex__ double*)Cup1_ptr+is*9, ns); 
+	BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+str, 
+			  (__complex__ double*)Cup1_ptr+str,ns); 
 
-	shiftField(UpNu, U_mu_ptr, nu, Forward()); // U_mu(x+nu)
+	shiftField(UpNu,U_mu_ptr,nu,Forward()); // U_mu(x+nu)
 
-	BGWilsonSU3_MatMult_NND(res_ptr+jump, Cdn2_ptr+jump, UpNu_ptr+jump, UpMu_ptr+jump, ns);
+	BGWilsonSU3_MatMult_NND(res_ptr+str2,Cdn2_ptr+str2,UpNu_ptr+str2,UpMu_ptr+str2,ns);
 	//force_rect += res;
-	BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+is*9, 
-			  (__complex__ double*)res_ptr+is*9, ns); 
+	BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+str, 
+			  (__complex__ double*)res_ptr+str,ns); 
       }
-    
+      
       //force_pl   *= Params.c_plaq;
-      BGWilsonLA_MatMultScalar((__complex__ double*)force_pl.data.getaddr(0)+is*9,Params.c_plaq, ns);
+      BGWilsonLA_MatMultScalar((__complex__ double*)force_pl.data.getaddr(0)+str,
+			       Params.c_plaq,ns);
       //force_rect *= Params.c_rect;
-      BGWilsonLA_MatMultScalar((__complex__ double*)force_rect_ptr+is*9,Params.c_rect, ns);
-
+      BGWilsonLA_MatMultScalar((__complex__ double*)force_rect_ptr+str,
+			       Params.c_rect,ns);
       //force_rect += force_pl; //force_rect = total force (staples term)
-      BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+is*9, 
-			(__complex__ double*)force_pl.data.getaddr(0)+is*9, ns); 
+      BGWilsonMatLA_Add((__complex__ double*)force_rect_ptr+str, 
+			(__complex__ double*)force_pl.data.getaddr(0)+str,ns); 
 
-      BGWilsonSU3_MatMult_ND(Cdn1_ptr+jump , u_->data.getaddr(0)+18*Nvol_*mu+jump, 
-			     force_rect.data.getaddr(0)+jump, ns);
+      BGWilsonSU3_MatMult_ND(Cdn1_ptr+str2,u_->data.getaddr(0)+CC2*Nvol_*mu+str2, 
+			     force_rect.data.getaddr(0)+str2,ns);
 #pragma omp single 
       {    
-	SetSlice(force, TracelessAntihermite(Cdn1), mu);
+	SetSlice(force, TracelessAntihermite(Cdn1),mu);
       }
     }
   }
@@ -320,7 +313,7 @@ GaugeField ActionGaugeRect::md_force(){
     force_pl   = 0.0;
     force_rect = 0.0;
 
-    U_mu = DirSlice(*u_, mu);   //U_mu links
+    U_mu = DirSlice(*u_,mu);   //U_mu links
 
     for(int nu=0; nu<NDIM_; ++nu){
       if (nu == mu) continue;
@@ -340,20 +333,19 @@ GaugeField ActionGaugeRect::md_force(){
       // +-->mu
       //
       // (x) is the site position
-      U_nu = DirSlice(*u_, nu);   //U_nu links    
+      U_nu = DirSlice(*u_,nu);   //U_nu links    
       //          U_mu
       //         +-->--+-->--+
       //   U_nu  |           |   term  (Cup2)
       //        (x)    +--<--+      
 
-      UpMu = shiftField(Cup2, mu, Forward()); // Cup2(x+mu)
-      UpNu = shiftField(U_mu, nu, Forward()); // U_mu(x+nu)
+      UpMu = shiftField(Cup2,mu,Forward()); // Cup2(x+mu)
+      UpNu = shiftField(U_mu,nu,Forward()); // U_mu(x+nu)
 
       res = 0.0;
-      for(int site=0; site<Nvol_; ++site){
+      for(int site=0; site<Nvol_; ++site)
         res.data[res.format.cslice(0,site)] = 
           (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-      }
 
       force_rect += res;  
   
@@ -366,34 +358,33 @@ GaugeField ActionGaugeRect::md_force(){
       UpNu = shiftField(Cup1, nu, Forward());    // Cup1(x+nu)
       res = 0.0;
 
-      for(int site=0; site<Nvol_; ++site){
+      for(int site=0; site<Nvol_; ++site)
 	res.data[res.format.cslice(0,site)] =
 	  (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-      }       
+      
      force_rect += res;     
       //           U_mu(x+nu)
       //      +-->--+-->--+
       //      |           |   term
       //      +--<-(x)    v
-      UpNu = shiftField(U_mu, nu, Forward()); // U_mu(x+nu)
-      res = 0.0; 
+      UpNu = shiftField(U_mu,nu,Forward()); // U_mu(x+nu)
 
-      for(int site=0; site<Nvol_; ++site){
+      res = 0.0; 
+      for(int site=0; site<Nvol_; ++site)
 	res.data[res.format.cslice(0,site)] = 
 	  (mat(Cdn2,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-      }       
+
       force_rect += res;
       //     (x)    +--<--+
       //      |           |   term
       //      +-->--+-->--+
-      UpMu = shiftField(Cup2, mu, Forward());
+      UpMu = shiftField(Cup2,mu,Forward());
 
       res = 0.0;
-
-      for(int site=0; site<Nvol_; ++site){
+      for(int site=0; site<Nvol_; ++site)
 	res.data[res.format.cslice(0,site)] = 
 	  (mat_dag(U_nu,site)*mat(U_mu,site)*mat(UpMu,site)).getva();
-      } 
+
       force_rect += shiftField(res,nu,Backward()); //+=res(x-nu)
       //     (x)    ^
       //      |     |
@@ -403,7 +394,6 @@ GaugeField ActionGaugeRect::md_force(){
       UpMu = shiftField(U_nu, mu, Forward()); //U_nu(x+mu)
 
       res = 0.0;
-
       for(int site=0; site<Nvol_; ++site){
 	res.data[res.format.cslice(0,site)] = 
 	  (mat_dag(U_nu,site)*mat(Cdn1,site)*mat(UpMu,site)).getva();
@@ -412,25 +402,24 @@ GaugeField ActionGaugeRect::md_force(){
       //      +--<-(x)    ^
       //      |           |   term
       //      +--<--+--<--+
-      res = 0.0;
 
-      for(int site = 0; site<Nvol_; ++site){
+      res = 0.0;
+      for(int site=0; site<Nvol_; ++site)
 	res.data[res.format.cslice(0,site)] = 
 	  (mat_dag(Cdn2,site)*mat(U_mu,site)*mat(UpMu,site)).getva();
-      }       
+
       force_rect += shiftField(res,nu,Backward());//+=res(x-nu)  
     }
     force_pl   *= Params.c_plaq;
     force_rect *= Params.c_rect;
     force_rect += force_pl; //force_rect = total force (staples term)
 
-    for(int site = 0; site<Nvol_; ++site){
+    for(int site=0; site<Nvol_; ++site){
       force_mat = (mat(*u_,site,mu)*mat_dag(force_rect,site));
       SetMat(force, anti_hermite_traceless(force_mat), site, mu);
     }
   } 
-#endif
-  
+#endif  
   force *= 0.5*Params.beta/NC_;
   _MonitorMsg(ACTION_VERB_LEVEL,Action,force,"ActionGaugeRect");
 

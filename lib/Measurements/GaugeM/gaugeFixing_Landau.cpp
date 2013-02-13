@@ -56,8 +56,8 @@ const GaugeField GaugeFixing_Landau::do_fix(const GaugeField& Uin)const{
       if(gc < esdm_){
 	gstep_->step_sdm(  Ue,Uo);   
       }else{ 
-	if(iter>=Nor_) gstep_->step_ovrlx(Ue,Uo);
-	else           gstep_->step_naive(Ue,Uo);
+	if(iter>=Nor_) gstep_->step_SU2(Ue,Uo,ORon);
+	else           gstep_->step_SU2(Ue,Uo,ORoff);
       }
     }
   }

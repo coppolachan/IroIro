@@ -135,6 +135,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
 		Main/Geometry/mapping.cpp		\
+		Main/Geometry/mapping_improved.cpp	\
 		Main/Geometry/siteIndex_EvenOdd.cpp	\
 		Main/Geometry/siteMap.cpp		\
 		Main/Geometry/shiftField.cpp		\
@@ -165,6 +166,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_MT19937.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
+		Tools/sunAlgUtils.cpp			\
 		$(BGQ_MAT_SRC)				\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
@@ -309,6 +311,7 @@ include_HEADERS = 	$(top_srcdir)/include/commonPrms.h		\
 			Tools/sunAdjVec.hpp			\
 			Tools/sunAdjMatUtils.hpp		\
 			Tools/sunVec.hpp			\
+			Tools/sunAlgUtils.hpp			\
 			Tools/colorEpsilon.hpp	                \
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
