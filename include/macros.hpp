@@ -11,7 +11,7 @@
 #include <sys/time.h>
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "iroiro_config.h"
 #endif
 
 #include <iostream>

@@ -14,8 +14,6 @@
 #ifndef COMMON_CODE_HPP_
 #define COMMON_CODE_HPP_
 
-#include "include/macros.hpp"
-
 //Fields and common parameters
 #include "include/common_fields.hpp"
 #include "include/commonPrms.h"

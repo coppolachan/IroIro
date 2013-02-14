@@ -625,6 +625,7 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+DRIVER
 ARFLAGS
 code_verbosity
 enable_latex_docs
@@ -637,18 +638,6 @@ DOXYGEN
 EGREP
 GREP
 CXXCPP
-USE_EVENODD_FALSE
-USE_EVENODD_TRUE
-IBM_BGQWILSON_SMP_FALSE
-IBM_BGQWILSON_SMP_TRUE
-IBM_BGQWILSON_NOSMP_FALSE
-IBM_BGQWILSON_NOSMP_TRUE
-IBM_BGQ_FALSE
-IBM_BGQ_TRUE
-HITACHI_FALSE
-HITACHI_TRUE
-USE_MPI_FALSE
-USE_MPI_TRUE
 am__fastdepCXX_FALSE
 am__fastdepCXX_TRUE
 CXXDEPMODE
@@ -666,6 +655,20 @@ CPPFLAGS
 LDFLAGS
 CXXFLAGS
 CXX
+USE_BFM_FALSE
+USE_BFM_TRUE
+USE_EVENODD_FALSE
+USE_EVENODD_TRUE
+IBM_BGQWILSON_SMP_FALSE
+IBM_BGQWILSON_SMP_TRUE
+IBM_BGQWILSON_NOSMP_FALSE
+IBM_BGQWILSON_NOSMP_TRUE
+IBM_BGQ_FALSE
+IBM_BGQ_TRUE
+HITACHI_FALSE
+HITACHI_TRUE
+USE_MPI_FALSE
+USE_MPI_TRUE
 RANLIB
 AM_BACKSLASH
 AM_DEFAULT_VERBOSITY
@@ -753,6 +756,7 @@ enable_improved
 enable_bgq_improved
 enable_bgq_improved_smp
 enable_evenodd_idx
+with_bfm
 enable_dependency_tracking
 enable_doxygen
 enable_dot
@@ -1408,6 +1412,14 @@ Optional Features:
   --enable-latex-docs     enable LaTeX documentation generation with doxygen
                           (no)
 
+Optional Packages:
+  --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+  --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-bfm=BFM_BASEDIR  Enable BFM Bagel Fermion Matrix libraries (P.Boyle)
+                          linkage (Only on BGQ). If BFM_BASEDIR is not
+                          specified it assumes that libraries and header are
+                          somewhere in the path
+
 Some influential environment variables:
   CXX         C++ compiler command
   CXXFLAGS    C++ compiler flags
@@ -1537,6 +1549,119 @@ fi
   as_fn_set_status $ac_retval
 
 } # ac_fn_cxx_try_compile
+
+# ac_fn_cxx_try_link LINENO
+# -------------------------
+# Try to link conftest.$ac_ext, and return whether this succeeded.
+ac_fn_cxx_try_link ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  rm -f conftest.$ac_objext conftest$ac_exeext
+  if { { ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+$as_echo "$ac_try_echo"; } >&5
+  (eval "$ac_link") 2>conftest.err
+  ac_status=$?
+  if test -s conftest.err; then
+    grep -v '^ *+' conftest.err >conftest.er1
+    cat conftest.er1 >&5
+    mv -f conftest.er1 conftest.err
+  fi
+  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 test -x conftest$ac_exeext
+       }; then :
+  ac_retval=0
+else
+  $as_echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ac_retval=1
+fi
+  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
+  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
+  # interfere with the next link command; also delete a directory that is
+  # left behind by Apple's compiler.  We do this before executing the actions.
+  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+  as_fn_set_status $ac_retval
+
+} # ac_fn_cxx_try_link
+
+# ac_fn_cxx_check_func LINENO FUNC VAR
+# ------------------------------------
+# Tests whether FUNC exists, setting the cache variable VAR accordingly
+ac_fn_cxx_check_func ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+$as_echo_n "checking for $2... " >&6; }
+if eval \${$3+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+/* Define $2 to an innocuous variant, in case <limits.h> declares $2.
+   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
+#define $2 innocuous_$2
+
+/* System header to define __stub macros and hopefully few prototypes,
+    which can conflict with char $2 (); below.
+    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
+    <limits.h> exists even on freestanding compilers.  */
+
+#ifdef __STDC__
+# include <limits.h>
+#else
+# include <assert.h>
+#endif
+
+#undef $2
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char $2 ();
+/* The GNU C library defines this for functions which it implements
+    to always fail with ENOSYS.  Some functions are actually named
+    something starting with __ and the normal name is an alias.  */
+#if defined __stub_$2 || defined __stub___$2
+choke me
+#endif
+
+int
+main ()
+{
+return $2 ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  eval "$3=yes"
+else
+  eval "$3=no"
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+fi
+eval ac_res=\$$3
+	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+$as_echo "$ac_res" >&6; }
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+
+} # ac_fn_cxx_check_func
 
 # ac_fn_cxx_try_cpp LINENO
 # ------------------------
@@ -1738,119 +1863,6 @@ $as_echo "$ac_res" >&6; }
   eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
 
 } # ac_fn_cxx_check_header_compile
-
-# ac_fn_cxx_try_link LINENO
-# -------------------------
-# Try to link conftest.$ac_ext, and return whether this succeeded.
-ac_fn_cxx_try_link ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  rm -f conftest.$ac_objext conftest$ac_exeext
-  if { { ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-$as_echo "$ac_try_echo"; } >&5
-  (eval "$ac_link") 2>conftest.err
-  ac_status=$?
-  if test -s conftest.err; then
-    grep -v '^ *+' conftest.err >conftest.er1
-    cat conftest.er1 >&5
-    mv -f conftest.er1 conftest.err
-  fi
-  $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } && {
-	 test -z "$ac_cxx_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 test -x conftest$ac_exeext
-       }; then :
-  ac_retval=0
-else
-  $as_echo "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_retval=1
-fi
-  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
-  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
-  # interfere with the next link command; also delete a directory that is
-  # left behind by Apple's compiler.  We do this before executing the actions.
-  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-  as_fn_set_status $ac_retval
-
-} # ac_fn_cxx_try_link
-
-# ac_fn_cxx_check_func LINENO FUNC VAR
-# ------------------------------------
-# Tests whether FUNC exists, setting the cache variable VAR accordingly
-ac_fn_cxx_check_func ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
-$as_echo_n "checking for $2... " >&6; }
-if eval \${$3+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-/* Define $2 to an innocuous variant, in case <limits.h> declares $2.
-   For example, HP-UX 11i <limits.h> declares gettimeofday.  */
-#define $2 innocuous_$2
-
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char $2 (); below.
-    Prefer <limits.h> to <assert.h> if __STDC__ is defined, since
-    <limits.h> exists even on freestanding compilers.  */
-
-#ifdef __STDC__
-# include <limits.h>
-#else
-# include <assert.h>
-#endif
-
-#undef $2
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char $2 ();
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined __stub_$2 || defined __stub___$2
-choke me
-#endif
-
-int
-main ()
-{
-return $2 ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  eval "$3=yes"
-else
-  eval "$3=no"
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_cxx_check_func
 
 # ac_fn_cxx_check_type LINENO TYPE VAR INCLUDES
 # ---------------------------------------------
@@ -2917,6 +2929,7 @@ AM_BACKSLASH='\'
 
 ac_config_headers="$ac_config_headers include/config.h"
 
+AX_PREFIX_CONFIG_H
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
 set dummy ${ac_tool_prefix}ranlib; ac_word=$2
@@ -3012,13 +3025,15 @@ fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}:
 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 Configuring $PACKAGE_STRING for $host
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 " >&5
 $as_echo "$as_me:
 
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 Configuring $PACKAGE_STRING for $host
-:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 " >&6;}
 
 # Declares code language
@@ -3039,6 +3054,8 @@ hitachi=false  # default value
 bluegeneq=false   # default value
 #####################################################################
 # identify architecture
+echo           Checking architecture
+echo :::::::::::::::::::::::::::::::::::::::::::
 if test "$arch" = ""
 then
         case $host in
@@ -3058,7 +3075,7 @@ $as_echo "$as_me: WARNING: unsupported architecture. Setting defaults..." >&2;}
 	;;
 esac
 fi
-echo checking architecture... $arch
+echo checking architecture result... $arch
 ###################################################################
 # MPI communicator flags
 # Check whether --enable-mpi was given.
@@ -3129,6 +3146,22 @@ else
 fi
 
 
+###################################################################
+# Enabling BFM (P.Boyle) Bagel Fermion Matrix classes linking
+
+# Check whether --with-bfm was given.
+if test "${with_bfm+set}" = set; then :
+  withval=$with_bfm;  bfm_link=true
+	  bfm_dir=${with_bfm}
+	  bfm_include=${with_bfm}/include
+	  bfm_lib=${with_bfm}/lib
+
+else
+  bfm_link=false
+fi
+
+
+
 ######################################################################
 # many HPC systems are configured so that running parallel programs
 # interactively is disabled: on those systems, AC_PROG_F77 and AC_PROG_CC
@@ -3137,6 +3170,10 @@ fi
 # !!! this relies on undocumented Autoconf behavior !!!
 #
 # default flags are also defined
+
+echo
+echo           Setting up flags
+echo :::::::::::::::::::::::::::::::::::::::::::
 
 case "$arch" in
 ia64 | amd64 | ia32 )
@@ -3192,7 +3229,7 @@ $as_echo "$as_me: forcing cross compilation on BG/Q" >&6;}
      else
 	use_cpp="bgxlC";
      fi
-     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -I/bghome/scbadm/ibm-doi/lib -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
+     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -q64 -qarch=qp -qtune=qp -I/bghome/scbadm/ibm-doi/lib -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
      ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib"
      use_ar_flags="cru"
 
@@ -3201,8 +3238,72 @@ $as_echo "#define BIG_ENDIAN_TYPE /**/" >>confdefs.h
      ;;
 
 esac
+
+###################################################################
+# Automake flags
+ if (test x$mpi = xtrue); then
+  USE_MPI_TRUE=
+  USE_MPI_FALSE='#'
+else
+  USE_MPI_TRUE='#'
+  USE_MPI_FALSE=
+fi
+
+ if (test x$hitachi = xtrue); then
+  HITACHI_TRUE=
+  HITACHI_FALSE='#'
+else
+  HITACHI_TRUE='#'
+  HITACHI_FALSE=
+fi
+
+ if (test x$bluegeneq = xtrue); then
+  IBM_BGQ_TRUE=
+  IBM_BGQ_FALSE='#'
+else
+  IBM_BGQ_TRUE='#'
+  IBM_BGQ_FALSE=
+fi
+
+ if (test x$bgq_kernels_nosmp = xtrue); then
+  IBM_BGQWILSON_NOSMP_TRUE=
+  IBM_BGQWILSON_NOSMP_FALSE='#'
+else
+  IBM_BGQWILSON_NOSMP_TRUE='#'
+  IBM_BGQWILSON_NOSMP_FALSE=
+fi
+
+ if (test x$bgq_kernels_smp = xtrue); then
+  IBM_BGQWILSON_SMP_TRUE=
+  IBM_BGQWILSON_SMP_FALSE='#'
+else
+  IBM_BGQWILSON_SMP_TRUE='#'
+  IBM_BGQWILSON_SMP_FALSE=
+fi
+
+ if (test x$even_odd_idx = xtrue); then
+  USE_EVENODD_TRUE=
+  USE_EVENODD_FALSE='#'
+else
+  USE_EVENODD_TRUE='#'
+  USE_EVENODD_FALSE=
+fi
+
+ if (test x$bfm_link = xtrue)&&(test x$bluegeneq = xtrue); then
+  USE_BFM_TRUE=
+  USE_BFM_FALSE='#'
+else
+  USE_BFM_TRUE='#'
+  USE_BFM_FALSE=
+fi
+
+
 ###################################################################
 # Checks for programs.
+echo
+echo        Checking compiler features
+echo :::::::::::::::::::::::::::::::::::::::::::
+
 if test "$cpp" = "" ; then cpp="$use_cpp" ; fi
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -3904,74 +4005,620 @@ fi
 
 cpp=$CXX
 
-# Setting up compiler and linker flags
+# Setting up global compiler and linker flags
 if test "$cpp_flags" = "" ; then cpp_flags="$use_cpp_flags" ; fi
 CXXFLAGS=$cpp_flags
-echo configure: setting c++ compiler flags... $CXXFLAGS
+CPPFLAGS=$cpp_flags # preprocessof flags
+if test -z "$USE_BFM_TRUE"; then :
+  CXXFLAGS+=" -I$bfm_include"
+fi
+if test -z "$IBM_BGQWILSON_SMP_TRUE"; then :
+  CXXFLAGS+=" -qsmp=omp:auto"
+fi
+if test -z "$IBM_BGQ_TRUE"; then :
+  DRIVER="/bgsys/drivers/ppcfloor"
+		      CXXFLAGS+=" -I$DRIVER -I$DRIVER/spi/include/kernel/cnk -I$DRIVER/spi/include/mu/default -I$DRIVER/comm/xl/include"
+fi
+echo configure: setting c++ compiler flags... done
 
 LDFLAGS=$ld_flags
-echo configure: setting library flags... $LDFLAGS
+if test -z "$USE_BFM_TRUE"; then :
+  LDFLAGS+=" -L$bfm_lib"
+fi
+if test -z "$IBM_BGQ_TRUE"; then :
+  LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L/bghome/scbadm/ibm-doi/lib"
+fi
+echo configure: setting library flags... done
 
 if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
 ARFLAGS=$ar_flags
-echo configure: setting linker flags... $ARFLAGS
+echo configure: setting linker flags... done
 
-
-###################################################################
-# Automake flags
- if (test x$mpi = xtrue); then
-  USE_MPI_TRUE=
-  USE_MPI_FALSE='#'
-else
-  USE_MPI_TRUE='#'
-  USE_MPI_FALSE=
-fi
-
- if (test x$hitachi = xtrue); then
-  HITACHI_TRUE=
-  HITACHI_FALSE='#'
-else
-  HITACHI_TRUE='#'
-  HITACHI_FALSE=
-fi
-
- if (test x$bluegeneq = xtrue); then
-  IBM_BGQ_TRUE=
-  IBM_BGQ_FALSE='#'
-else
-  IBM_BGQ_TRUE='#'
-  IBM_BGQ_FALSE=
-fi
-
- if (test x$bgq_kernels_nosmp = xtrue); then
-  IBM_BGQWILSON_NOSMP_TRUE=
-  IBM_BGQWILSON_NOSMP_FALSE='#'
-else
-  IBM_BGQWILSON_NOSMP_TRUE='#'
-  IBM_BGQWILSON_NOSMP_FALSE=
-fi
-
- if (test x$bgq_kernels_smp = xtrue); then
-  IBM_BGQWILSON_SMP_TRUE=
-  IBM_BGQWILSON_SMP_FALSE='#'
-else
-  IBM_BGQWILSON_SMP_TRUE='#'
-  IBM_BGQWILSON_SMP_FALSE=
-fi
-
- if (test x$even_odd_idx = xtrue); then
-  USE_EVENODD_TRUE=
-  USE_EVENODD_FALSE='#'
-else
-  USE_EVENODD_TRUE='#'
-  USE_EVENODD_FALSE=
-fi
 
 
 ###################################################################
 # Checks for libraries and headers
-if  $bgq_kernels_nosmp || $bgq_kernels_smp
+echo
+echo Checking libraries
+echo :::::::::::::::::::::::::::::::::::::::::::
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for pow in -lm" >&5
+$as_echo_n "checking for pow in -lm... " >&6; }
+if ${ac_cv_lib_m_pow+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lm  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pow ();
+int
+main ()
+{
+return pow ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_m_pow=yes
+else
+  ac_cv_lib_m_pow=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_m_pow" >&5
+$as_echo "$ac_cv_lib_m_pow" >&6; }
+if test "x$ac_cv_lib_m_pow" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBM 1
+_ACEOF
+
+  LIBS="-lm $LIBS"
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for cblas_dgemm in -lgslcblas" >&5
+$as_echo_n "checking for cblas_dgemm in -lgslcblas... " >&6; }
+if ${ac_cv_lib_gslcblas_cblas_dgemm+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgslcblas  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char cblas_dgemm ();
+int
+main ()
+{
+return cblas_dgemm ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_gslcblas_cblas_dgemm=yes
+else
+  ac_cv_lib_gslcblas_cblas_dgemm=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gslcblas_cblas_dgemm" >&5
+$as_echo "$ac_cv_lib_gslcblas_cblas_dgemm" >&6; }
+if test "x$ac_cv_lib_gslcblas_cblas_dgemm" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBGSLCBLAS 1
+_ACEOF
+
+  LIBS="-lgslcblas $LIBS"
+
+else
+  as_fn_error $? "GNU Scientific Library BLAS not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gnu.org/s/gsl/" "$LINENO" 5
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl_sf_elljac_e in -lgsl" >&5
+$as_echo_n "checking for gsl_sf_elljac_e in -lgsl... " >&6; }
+if ${ac_cv_lib_gsl_gsl_sf_elljac_e+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgsl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char gsl_sf_elljac_e ();
+int
+main ()
+{
+return gsl_sf_elljac_e ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_gsl_gsl_sf_elljac_e=yes
+else
+  ac_cv_lib_gsl_gsl_sf_elljac_e=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gsl_gsl_sf_elljac_e" >&5
+$as_echo "$ac_cv_lib_gsl_gsl_sf_elljac_e" >&6; }
+if test "x$ac_cv_lib_gsl_gsl_sf_elljac_e" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBGSL 1
+_ACEOF
+
+  LIBS="-lgsl $LIBS"
+
+else
+  as_fn_error $? "GNU Scientific Library not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gnu.org/s/gsl/" "$LINENO" 5
+fi
+
+ac_fn_cxx_check_func "$LINENO" "gsl_sf_ellint_Kcomp" "ac_cv_func_gsl_sf_ellint_Kcomp"
+if test "x$ac_cv_func_gsl_sf_ellint_Kcomp" = xyes; then :
+
+else
+  as_fn_error $? "Missing function in GNU Scientific Library" "$LINENO" 5
+fi
+
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for __gmpf_init in -lgmp" >&5
+$as_echo_n "checking for __gmpf_init in -lgmp... " >&6; }
+if ${ac_cv_lib_gmp___gmpf_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lgmp  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char __gmpf_init ();
+int
+main ()
+{
+return __gmpf_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_gmp___gmpf_init=yes
+else
+  ac_cv_lib_gmp___gmpf_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gmp___gmpf_init" >&5
+$as_echo "$ac_cv_lib_gmp___gmpf_init" >&6; }
+if test "x$ac_cv_lib_gmp___gmpf_init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBGMP 1
+_ACEOF
+
+  LIBS="-lgmp $LIBS"
+
+else
+  as_fn_error $? "GNU Multiple Precision GMP library was not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gmplib.org" "$LINENO" 5
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for mpfr_init in -lmpfr" >&5
+$as_echo_n "checking for mpfr_init in -lmpfr... " >&6; }
+if ${ac_cv_lib_mpfr_mpfr_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lmpfr  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char mpfr_init ();
+int
+main ()
+{
+return mpfr_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_mpfr_mpfr_init=yes
+else
+  ac_cv_lib_mpfr_mpfr_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_mpfr_mpfr_init" >&5
+$as_echo "$ac_cv_lib_mpfr_mpfr_init" >&6; }
+if test "x$ac_cv_lib_mpfr_mpfr_init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBMPFR 1
+_ACEOF
+
+  LIBS="-lmpfr $LIBS"
+
+else
+  as_fn_error $? "GNU Multiple Precision MPFR library was not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.mpfr.org/" "$LINENO" 5
+fi
+
+
+# BGQ specific stuff
+if  $bluegeneq
 then
+echo :::: BGQ related stuff
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BGNET_Init in -lbgnet" >&5
+$as_echo_n "checking for BGNET_Init in -lbgnet... " >&6; }
+if ${ac_cv_lib_bgnet_BGNET_Init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char BGNET_Init ();
+int
+main ()
+{
+return BGNET_Init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_bgnet_BGNET_Init=yes
+else
+  ac_cv_lib_bgnet_BGNET_Init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bgnet_BGNET_Init" >&5
+$as_echo "$ac_cv_lib_bgnet_BGNET_Init" >&6; }
+if test "x$ac_cv_lib_bgnet_BGNET_Init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBBGNET 1
+_ACEOF
+
+  LIBS="-lbgnet $LIBS"
+
+else
+  as_fn_error $? "BGNET library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support." "$LINENO" 5
+fi
+
+echo enabled BGNET support on BGQ...
+
+
+if  $bgq_kernels_smp
+then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BGWilson_Init in -lbgqwilsonsmp" >&5
+$as_echo_n "checking for BGWilson_Init in -lbgqwilsonsmp... " >&6; }
+if ${ac_cv_lib_bgqwilsonsmp_BGWilson_Init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lbgqwilsonsmp -lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char BGWilson_Init ();
+int
+main ()
+{
+return BGWilson_Init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_bgqwilsonsmp_BGWilson_Init=yes
+else
+  ac_cv_lib_bgqwilsonsmp_BGWilson_Init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bgqwilsonsmp_BGWilson_Init" >&5
+$as_echo "$ac_cv_lib_bgqwilsonsmp_BGWilson_Init" >&6; }
+if test "x$ac_cv_lib_bgqwilsonsmp_BGWilson_Init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBBGQWILSONSMP 1
+_ACEOF
+
+  LIBS="-lbgqwilsonsmp $LIBS"
+
+else
+  as_fn_error $? "BGWilsonSMP library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support." "$LINENO" 5
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BGWilson_Init in -lbgqwilson3x4smp" >&5
+$as_echo_n "checking for BGWilson_Init in -lbgqwilson3x4smp... " >&6; }
+if ${ac_cv_lib_bgqwilson3x4smp_BGWilson_Init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lbgqwilson3x4smp -lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char BGWilson_Init ();
+int
+main ()
+{
+return BGWilson_Init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_bgqwilson3x4smp_BGWilson_Init=yes
+else
+  ac_cv_lib_bgqwilson3x4smp_BGWilson_Init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bgqwilson3x4smp_BGWilson_Init" >&5
+$as_echo "$ac_cv_lib_bgqwilson3x4smp_BGWilson_Init" >&6; }
+if test "x$ac_cv_lib_bgqwilson3x4smp_BGWilson_Init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBBGQWILSON3X4SMP 1
+_ACEOF
+
+  LIBS="-lbgqwilson3x4smp $LIBS"
+
+else
+  as_fn_error $? "BGWilson3x4SMP library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support." "$LINENO" 5
+fi
+
+echo enabled BGWilson Multiprocessor SMP version support on BGQ...
+else
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BGWilson_Init in -lbgqwilson" >&5
+$as_echo_n "checking for BGWilson_Init in -lbgqwilson... " >&6; }
+if ${ac_cv_lib_bgqwilson_BGWilson_Init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lbgqwilson -lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char BGWilson_Init ();
+int
+main ()
+{
+return BGWilson_Init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_bgqwilson_BGWilson_Init=yes
+else
+  ac_cv_lib_bgqwilson_BGWilson_Init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bgqwilson_BGWilson_Init" >&5
+$as_echo "$ac_cv_lib_bgqwilson_BGWilson_Init" >&6; }
+if test "x$ac_cv_lib_bgqwilson_BGWilson_Init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBBGQWILSON 1
+_ACEOF
+
+  LIBS="-lbgqwilson $LIBS"
+
+else
+  as_fn_error $? "BGWilson library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support." "$LINENO" 5
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BGWilson_Init in -lbgqwilson3x4" >&5
+$as_echo_n "checking for BGWilson_Init in -lbgqwilson3x4... " >&6; }
+if ${ac_cv_lib_bgqwilson3x4_BGWilson_Init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lbgqwilson3x4 -lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char BGWilson_Init ();
+int
+main ()
+{
+return BGWilson_Init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_bgqwilson3x4_BGWilson_Init=yes
+else
+  ac_cv_lib_bgqwilson3x4_BGWilson_Init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bgqwilson3x4_BGWilson_Init" >&5
+$as_echo "$ac_cv_lib_bgqwilson3x4_BGWilson_Init" >&6; }
+if test "x$ac_cv_lib_bgqwilson3x4_BGWilson_Init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBBGQWILSON3X4 1
+_ACEOF
+
+  LIBS="-lbgqwilson3x4 $LIBS"
+
+else
+  as_fn_error $? "BGWilson3x4 library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off BGNET support." "$LINENO" 5
+fi
+
+echo enabled BGWilson single threaded version support on BGQ...
+fi
+fi
+
+# BFM Bagel Fermion Class Peter Boyle's library
+if  ($bfm_link)
+then
+if  $bluegeneq
+then
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for vmx_vaxpy in -lbfm" >&5
+$as_echo_n "checking for vmx_vaxpy in -lbfm... " >&6; }
+if ${ac_cv_lib_bfm_vmx_vaxpy+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lbfm  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char vmx_vaxpy ();
+int
+main ()
+{
+return vmx_vaxpy ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_bfm_vmx_vaxpy=yes
+else
+  ac_cv_lib_bfm_vmx_vaxpy=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bfm_vmx_vaxpy" >&5
+$as_echo "$ac_cv_lib_bfm_vmx_vaxpy" >&6; }
+if test "x$ac_cv_lib_bfm_vmx_vaxpy" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBBFM 1
+_ACEOF
+
+  LIBS="-lbfm $LIBS"
+
+else
+  as_fn_error $? "BFM library not found in your system.
+	Please install or provide the correct path to your installation
+	or switch off BFM support." "$LINENO" 5
+fi
+
+echo enabled BFM Bagel Fermion Matrix support on BGQ...
+else
+echo WARN: BFM support enabled only on BGQ, switching off...
+bfm_link=false
+fi
+fi
+###################################################################
+# Checks for header files.
+echo
+echo Checking headers
+echo :::::::::::::::::::::::::::::::::::::::::::
 
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -4366,277 +5013,6 @@ fi
 done
 
 
-for ac_header in bgqwilson.h
-do :
-  ac_fn_cxx_check_header_mongrel "$LINENO" "bgqwilson.h" "ac_cv_header_bgqwilson_h" "$ac_includes_default"
-if test "x$ac_cv_header_bgqwilson_h" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_BGQWILSON_H 1
-_ACEOF
-
-else
-  as_fn_error $? "BGQ Wilson library not found in your system.
-	Please install or provide the correct path to your installation
-	or switch to non optimized libraries." "$LINENO" 5
-fi
-
-done
-
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for pow in -lm" >&5
-$as_echo_n "checking for pow in -lm... " >&6; }
-if ${ac_cv_lib_m_pow+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lm  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char pow ();
-int
-main ()
-{
-return pow ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_m_pow=yes
-else
-  ac_cv_lib_m_pow=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_m_pow" >&5
-$as_echo "$ac_cv_lib_m_pow" >&6; }
-if test "x$ac_cv_lib_m_pow" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBM 1
-_ACEOF
-
-  LIBS="-lm $LIBS"
-
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for cblas_dgemm in -lgslcblas" >&5
-$as_echo_n "checking for cblas_dgemm in -lgslcblas... " >&6; }
-if ${ac_cv_lib_gslcblas_cblas_dgemm+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lgslcblas  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char cblas_dgemm ();
-int
-main ()
-{
-return cblas_dgemm ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_gslcblas_cblas_dgemm=yes
-else
-  ac_cv_lib_gslcblas_cblas_dgemm=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gslcblas_cblas_dgemm" >&5
-$as_echo "$ac_cv_lib_gslcblas_cblas_dgemm" >&6; }
-if test "x$ac_cv_lib_gslcblas_cblas_dgemm" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBGSLCBLAS 1
-_ACEOF
-
-  LIBS="-lgslcblas $LIBS"
-
-else
-  as_fn_error $? "GNU Scientific Library BLAS not found in your system.
-Please install or provide the correct path to your installation
-Info at: http://www.gnu.org/s/gsl/" "$LINENO" 5
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for gsl_sf_elljac_e in -lgsl" >&5
-$as_echo_n "checking for gsl_sf_elljac_e in -lgsl... " >&6; }
-if ${ac_cv_lib_gsl_gsl_sf_elljac_e+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lgsl  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char gsl_sf_elljac_e ();
-int
-main ()
-{
-return gsl_sf_elljac_e ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_gsl_gsl_sf_elljac_e=yes
-else
-  ac_cv_lib_gsl_gsl_sf_elljac_e=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gsl_gsl_sf_elljac_e" >&5
-$as_echo "$ac_cv_lib_gsl_gsl_sf_elljac_e" >&6; }
-if test "x$ac_cv_lib_gsl_gsl_sf_elljac_e" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBGSL 1
-_ACEOF
-
-  LIBS="-lgsl $LIBS"
-
-else
-  as_fn_error $? "GNU Scientific Library not found in your system.
-Please install or provide the correct path to your installation
-Info at: http://www.gnu.org/s/gsl/" "$LINENO" 5
-fi
-
-ac_fn_cxx_check_func "$LINENO" "gsl_sf_ellint_Kcomp" "ac_cv_func_gsl_sf_ellint_Kcomp"
-if test "x$ac_cv_func_gsl_sf_ellint_Kcomp" = xyes; then :
-
-else
-  as_fn_error $? "Missing function in GNU Scientific Library" "$LINENO" 5
-fi
-
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for __gmpf_init in -lgmp" >&5
-$as_echo_n "checking for __gmpf_init in -lgmp... " >&6; }
-if ${ac_cv_lib_gmp___gmpf_init+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lgmp  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char __gmpf_init ();
-int
-main ()
-{
-return __gmpf_init ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_gmp___gmpf_init=yes
-else
-  ac_cv_lib_gmp___gmpf_init=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_gmp___gmpf_init" >&5
-$as_echo "$ac_cv_lib_gmp___gmpf_init" >&6; }
-if test "x$ac_cv_lib_gmp___gmpf_init" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBGMP 1
-_ACEOF
-
-  LIBS="-lgmp $LIBS"
-
-else
-  as_fn_error $? "GNU Multiple Precision GMP library was not found in your system.
-Please install or provide the correct path to your installation
-Info at: http://www.gmplib.org" "$LINENO" 5
-fi
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for mpfr_init in -lmpfr" >&5
-$as_echo_n "checking for mpfr_init in -lmpfr... " >&6; }
-if ${ac_cv_lib_mpfr_mpfr_init+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lmpfr  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char mpfr_init ();
-int
-main ()
-{
-return mpfr_init ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_mpfr_mpfr_init=yes
-else
-  ac_cv_lib_mpfr_mpfr_init=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_mpfr_mpfr_init" >&5
-$as_echo "$ac_cv_lib_mpfr_mpfr_init" >&6; }
-if test "x$ac_cv_lib_mpfr_mpfr_init" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBMPFR 1
-_ACEOF
-
-  LIBS="-lmpfr $LIBS"
-
-else
-  as_fn_error $? "GNU Multiple Precision MPFR library was not found in your system.
-Please install or provide the correct path to your installation
-Info at: http://www.mpfr.org/" "$LINENO" 5
-fi
-
-
-###################################################################
-# Checks for header files.
 for ac_header in stdlib.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "stdlib.h" "ac_cv_header_stdlib_h" "$ac_includes_default"
@@ -4812,6 +5188,65 @@ fi
 done
 
 
+# Checks for BGQ specific headers
+if  $bgq_kernels_nosmp || $bgq_kernels_smp
+then
+# BGQ IBM Wilson operator
+for ac_header in bgqwilson.h
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "bgqwilson.h" "ac_cv_header_bgqwilson_h" "$ac_includes_default"
+if test "x$ac_cv_header_bgqwilson_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_BGQWILSON_H 1
+_ACEOF
+
+else
+  as_fn_error $? "BGQ Wilson header not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries." "$LINENO" 5
+fi
+
+done
+
+# BGQ IBM Communication library
+for ac_header in bgnet.h
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "bgnet.h" "ac_cv_header_bgnet_h" "$ac_includes_default"
+if test "x$ac_cv_header_bgnet_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_BGNET_H 1
+_ACEOF
+
+else
+  as_fn_error $? "BGNet header not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries." "$LINENO" 5
+fi
+
+done
+
+fi
+
+if  $bgq_kernels_smp
+then
+for ac_header in bgqthread.h
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "bgqthread.h" "ac_cv_header_bgqthread_h" "$ac_includes_default"
+if test "x$ac_cv_header_bgqthread_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_BGQTHREAD_H 1
+_ACEOF
+
+else
+  as_fn_error $? "BGQThread header not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries." "$LINENO" 5
+fi
+
+done
+
+fi
+
 ##################################################################
 # Define macros for compilation
 if  $mpi
@@ -4835,6 +5270,14 @@ $as_echo "#define IBM_BGQ /**/" >>confdefs.h
 
 fi
 
+
+if  $even_odd_idx
+then
+
+$as_echo "#define USING_EVENODD_IDX /**/" >>confdefs.h
+
+fi
+
 # Turn on all improved kernels
 if  $improved_kernels
 then
@@ -4853,6 +5296,9 @@ fi
 ###################################################################
 # Checks for doxygen support
 # if present enables the "make doxyfile" command
+echo
+echo Checking doxygen support
+echo :::::::::::::::::::::::::::::::::::::::::::
 
 # Check whether --enable-doxygen was given.
 if test "${enable_doxygen+set}" = set; then :
@@ -5015,9 +5461,13 @@ _ACEOF
 ###################################################################
 
 
+
 ac_config_files="$ac_config_files Makefile lib/Makefile tests/Makefile docs/Makefile"
 
 
+echo
+echo Creating makefiles
+echo :::::::::::::::::::::::::::::::::::::::::::
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -5135,14 +5585,6 @@ else
   am__EXEEXT_FALSE=
 fi
 
-if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
-  as_fn_error $? "conditional \"AMDEP\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
-  as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${USE_MPI_TRUE}" && test -z "${USE_MPI_FALSE}"; then
   as_fn_error $? "conditional \"USE_MPI\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -5165,6 +5607,18 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${USE_EVENODD_TRUE}" && test -z "${USE_EVENODD_FALSE}"; then
   as_fn_error $? "conditional \"USE_EVENODD\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${USE_BFM_TRUE}" && test -z "${USE_BFM_FALSE}"; then
+  as_fn_error $? "conditional \"USE_BFM\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
+  as_fn_error $? "conditional \"AMDEP\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${am__fastdepCXX_TRUE}" && test -z "${am__fastdepCXX_FALSE}"; then
+  as_fn_error $? "conditional \"am__fastdepCXX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${DOXYGEN_DOC_TRUE}" && test -z "${DOXYGEN_DOC_FALSE}"; then
@@ -6500,9 +6954,9 @@ fi
 
 
 echo "
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Summary of configuration for $PACKAGE $VERSION
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The following features are enabled:
 
@@ -6518,6 +6972,7 @@ echo "- improved kernels compilation  : $improved_kernels"
 fi
 echo "- build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
 - graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
+- optional BFM library linking  : `if test "x$bfm_link" = xtrue; then echo yes; else echo no; fi`
 
 Directories:
 

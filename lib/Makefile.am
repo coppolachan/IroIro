@@ -1,3 +1,13 @@
+#                         -*- Automake -*-
+# Process this file with automake to produce a makefile.
+#
+# Project IROIRO JLQCD package (KEK) 
+# Lattice QCD MonteCarlo simulations
+#
+# Time-stamp: <2013-02-07 16:05:12 cossu>
+
+###########################################
+# Initial definitions 
 SUBDIRS = . 
 
 CXXFLAGS +=
@@ -7,6 +17,8 @@ OPTLIB =
 DWF_BGQ_SRC = 
 BGQ_MAT_SRC =
 
+###########################################
+# Configure driven path selector
 if USE_MPI
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 
@@ -16,29 +28,9 @@ LDFLAGS += -q64
 endif
 
 if IBM_BGQ
-DRIVER=/bgsys/drivers/ppcfloor
-CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) \
-	-I$(DRIVER)/spi/include/kernel/cnk \
-	-I$(DRIVER)/spi/include/mu/default \
-	-I$(DRIVER)/comm/xl/include	
-
 BGQ_MAT_SRC += Tools/bgq_su3algebra.cpp
-
-if IBM_BGQWILSON_NOSMP  
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
-endif
-
-if IBM_BGQWILSON_SMP
-DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
-endif
-
-if IBM_BGQWILSON_SMP
-CXXFLAGS += -qsmp=omp:auto
-endif
-
-LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib \
-	 -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib \
-	 -L/bghome/scbadm/ibm-doi/lib
+# NB: Libraries ordering is essential
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 
 if IBM_BGQWILSON_SMP
@@ -53,7 +45,8 @@ else
 COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 endif
 
-
+###########################################
+# Site indexing (Lexicographic/Even-Odd)
 if USE_EVENODD
 SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
 else
@@ -169,8 +162,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunAlgUtils.cpp			\
 		$(BGQ_MAT_SRC)				\
 		Tools/Remez/alg_remez.cpp		\
-		Tools/RationalApprox/rationalapprox.cpp	\
-		Tools/Bagel/bfm_storage.cpp
+		Tools/RationalApprox/rationalapprox.cpp	
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)

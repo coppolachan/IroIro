@@ -42,7 +42,6 @@
 #include "include/commandline.hpp"
 #include "include/geometry.hpp"
 #include "Main/gaugeGlobal.hpp"
-//#include "HMC/hmcGeneral.hpp"
 
 using namespace XML;
 
@@ -52,7 +51,7 @@ int main(int argc, char* argv[]){
   int status;
   CommandOptions Options = ReadCmdLine(argc, argv);
  
-  CCIO::header(PACKAGE_STRING);
+  CCIO::header(IROIRO_PACKAGE_STRING);
  
   //Reading input file
   node top_node = getInputXML(Options.filename);  

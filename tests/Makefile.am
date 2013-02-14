@@ -1,20 +1,28 @@
-# Time-stamp: <2012-04-20 17:11:14 neo>
+#                   -*- Automake -*-
+# Process this file with automake to produce a makefile.
+#
+# Project IROIRO JLQCD package (KEK) 
+# Lattice QCD MonteCarlo simulations Test files
+#
+# Time-stamp: <2013-02-12 17:04:43 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
+BMF_TESTPROGS = 
 
-if IBM_BGQ
- DRIVER=/bgsys/drivers/ppcfloor
- CXXFLAGS += -q64 -qarch=qp -qtune=qp -I$(DRIVER) -I$(DRIVER)/spi/include/kernel/cnk -I$(DRIVER)/spi/include/mu/default -I$(DRIVER)/comm/xl/include 
-
-if IBM_BGQWILSON_SMP
-CXXFLAGS += -qsmp
+if USE_BFM
+BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
+BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
+BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
+BFM_LINKAGE= -lbfm -lbagel
+BMF_TESTPROGS += test_Solver_BFM
 endif
 
- LDFLAGS += -L$(DRIVER)/comm/xl/lib -L$(DRIVER)/comm/sys/lib -L$(DRIVER)/spi/lib -L$(DRIVER)/bgpm/lib -L/bghome/scbadm/ibm-doi/lib
- OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
+if IBM_BGQ
+OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 
 if IBM_BGQWILSON_SMP
+CXXFLAGS += -qsmp=omp:auto
 OPTLIB += -lbgqwilson3x4smp -lbgqthread
 else
 OPTLIB += -lbgqwilson3x4
@@ -22,7 +30,10 @@ endif
 
 endif
 
-LDADD = -L../lib/ -lcommcode $(OPTLIB)
+CXXFLAGS += $(BFM_INCLUDE) 
+LDFLAGS += $(BFM_LIBS)
+
+LDADD = -L../lib/ -lcommcode $(BFM_LINKAGE) $(OPTLIB)
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
@@ -89,6 +100,7 @@ test_PROGRAMS = test_HMC 		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
 		test_Solver_Perf	\
+		$(BMF_TESTPROGS)        \
 		test_RNG 		\
 		test_IO			\
 		test_RationalApprox	\
@@ -184,6 +196,14 @@ test_WilsonFlow_SOURCES 	= 	test_WilsonFlow.cpp	\
 					testerWilsonFlow.cpp
 test_PolyakovLoop_SOURCES 	= 	test_PolyakovLoop.cpp	\
 	 				testerPolyakovLoop.cpp
+
+## Put all BFM related tests here
+if USE_BFM
+test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
+                                testerSolver_BFM.cpp            \
+                                ../lib/Tools/Bagel/bfm_storage.cpp
+endif
+
 
 include_HEADERS 	=	tests.hpp			\
 				tests_all.hpp			\
