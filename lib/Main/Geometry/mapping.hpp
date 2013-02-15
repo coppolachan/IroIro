@@ -124,8 +124,9 @@ namespace Mapping{
     //////// for BGQ ///////                                                                  
 #ifdef IBM_BGQ_WILSON
     void operator()(GaugeField1D& Fout,const double* Fin,Forward)const{
+
       if(!omp_in_parallel()){
-	int Nin = Fout.Nin();
+      	int Nin = Fout.Nin();
 	int bdsize = Nin*bdry_t_.size();
 	double send_bdry[bdsize],recv_bdry[bdsize];
 
@@ -157,16 +158,17 @@ namespace Mapping{
 	  (double*)BGQThread_Malloc(bdry_t_.size()*Nin*sizeof(double), nID);
 	double* class_recv =
 	  (double*)BGQThread_Malloc(bdry_t_.size()*Nin*sizeof(double), nID);
-	
+
 	for(int b=0; b<block; ++b)
 	  for(int i=0; i<Nin; ++i)
 	    class_send[(b+tID*block)*Nin+i] = Fin[bdry_b_[b+tID*block]*Nin+i];
 
-	BGQThread_Barrier(0, nID);
-
-	if(tID == 0)
+	if(tID == 0){
 	  Communicator::instance()->transfer_fw(class_recv,class_send,
 						bdry_t_.size()*Nin,dir_);
+	  Communicator::instance()->sync();
+	}
+
 	BGQThread_Barrier(0, nID);
 
 	for(int b=0; b<block; ++b)
@@ -188,6 +190,7 @@ namespace Mapping{
     // assumes internal indexing for the Fields                                             
     void operator()(GaugeField1D& Fout,const double* Fin,Backward)const{
       if(!omp_in_parallel()){
+	
 	int Nin = Fout.Nin();
 	int bdsize = Nin*bdry_b_.size();
 	double send_bdry[bdsize],recv_bdry[bdsize];
@@ -219,16 +222,16 @@ namespace Mapping{
           (double*)BGQThread_Malloc(bdry_b_.size()*Nin*sizeof(double), nID);
         double* class_recv =
           (double*)BGQThread_Malloc(bdry_b_.size()*Nin*sizeof(double), nID);
-	
+
 	for(int b=0; b<block; ++b)
 	  for(int i=0; i<Nin; ++i)
 	    class_send[(b+tID*block)*Nin+i] = Fin[bdry_t_[b+tID*block]*Nin+i];
 
-	BGQThread_Barrier(0, nID);
-
-	if(tID == 0)
+	if(tID == 0){
 	  Communicator::instance()->transfer_bk(class_recv,class_send,
 						bdry_b_.size()*Nin,dir_);
+	  Communicator::instance()->sync();
+	}
 	BGQThread_Barrier(0, nID);
 	
 	for(int b=0; b<block; ++b)
