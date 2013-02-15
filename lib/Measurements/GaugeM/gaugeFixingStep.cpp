@@ -94,7 +94,7 @@ void GaugeFixingStep::gauge_tr_even(GaugeField& Ue,GaugeField& Uo,
     const int str = CC*ns*omp_get_thread_num();
     const int str2 = str*2;
 
-    for(int mu=0; mu<Ndim_; ++mu){
+    for(int mu=0; mu<NDIM_; ++mu){ /*!<gauge tr. is always done for NDIM-dims*/
       shiftField_oe(Gp,Ge_ptr,mu,Forward());
 
       BGWilsonSU3_MatMult_NN(U1d_ptr+str2,
@@ -109,7 +109,7 @@ void GaugeFixingStep::gauge_tr_even(GaugeField& Ue,GaugeField& Uo,
     }
   }
 #else
-  for(int mu=0; mu<Ndim_; ++mu){
+  for(int mu=0; mu<NDIM_; ++mu){ /*!<gauge tr. is always done for NDIM-dims*/
     Gp = shiftField_oe(Ge,mu,Forward());
     for(int site=0; site<Nvh_; ++site){
       SetMat(Ue,mat(Ge,site)*mat(Ue,site,mu),site,mu);
@@ -122,7 +122,7 @@ void GaugeFixingStep::gauge_tr_even(GaugeField& Ue,GaugeField& Uo,
 void GaugeFixingStep::gauge_tr_odd(GaugeField& Ue,GaugeField& Uo,
 				    const GaugeField1D& Go)const{
   GaugeField1D Gp(Nvh_);
-
+  
 #ifdef IBM_BGQ_WILSON
   double* Gp_ptr = Gp.data.getaddr(0);
   double* Go_ptr = const_cast<GaugeField1D&>(Go).data.getaddr(0);
@@ -141,7 +141,7 @@ void GaugeFixingStep::gauge_tr_odd(GaugeField& Ue,GaugeField& Uo,
     const int str = CC*ns*omp_get_thread_num();
     const int str2 = str*2;
 
-    for(int mu=0; mu<Ndim_; ++mu){
+    for(int mu=0; mu<NDIM_; ++mu){ /*!<gauge tr. is always done for NDIM-dims*/
       shiftField_eo(Gp,Go_ptr,mu,Forward());
 
       BGWilsonSU3_MatMult_ND(U1d_ptr+str2,
@@ -156,7 +156,7 @@ void GaugeFixingStep::gauge_tr_odd(GaugeField& Ue,GaugeField& Uo,
     }
   }
 #else
-  for(int mu=0; mu<Ndim_; ++mu){
+  for(int mu=0; mu<NDIM_; ++mu){ /*!<gauge tr. is always done for NDIM-dims*/
     Gp = shiftField_eo(Go,mu,Forward());
     for(int site=0; site<Nvh_; ++site){
       SetMat(Ue,mat(Ue,site,mu)*mat_dag(Gp,site),site,mu);
