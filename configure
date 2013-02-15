@@ -4311,8 +4311,8 @@ fi
 
 # BGQ specific stuff
 if  $bluegeneq
-echo :::: BGQ related stuff
 then
+echo :::: BGQ related stuff
 
 { $as_echo "$as_me:$LINENO: checking for BGNET_Init in -lbgnet" >&5
 $as_echo_n "checking for BGNET_Init in -lbgnet... " >&6; }

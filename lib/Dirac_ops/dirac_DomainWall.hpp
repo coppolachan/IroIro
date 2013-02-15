@@ -236,13 +236,6 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
-  void mult_hop(Field&, const Field&)const;
-  void mult_hop_omp(Field&, const void*)const;
-  void mult_hop_omp_allocated(Field&, const void*, void*, void*,  int, int)const;
-  void mult_hop_dag(Field&, const Field&)const;
-  void mult_hop_dag_omp(Field&, const void*)const;
-  void mult_hop_dag_omp_allocated(Field&, const void*, void*, void*, int, int)const;
-
   // mult in the heavy quark limit
   const Field mult_hop5(const Field& f5) const;    /*! @brief mult in the heavy M0 limit*/
   const Field mult_hop5_inv(const Field& f5) const;/*! @brief mult_inv in the heavy M0 limit*/
@@ -292,6 +285,13 @@ public:
 
   // BGQ optimizations
 #ifdef IBM_BGQ_WILSON
+  void mult_hop(Field&, const Field&)const;
+  void mult_hop_omp(Field&, const void*)const;
+  void mult_hop_omp_allocated(Field&, const void*, void*, void*,  int, int)const;
+  void mult_hop_dag(Field&, const Field&)const;
+  void mult_hop_dag_omp(Field&, const void*)const;
+  void mult_hop_dag_omp_allocated(Field&, const void*, void*, void*, int, int)const;
+
   typedef std::vector<Field> prop_t;
   void solve_eo_5d(Field&, const Field&, SolverOutput&, int, double) const;
   void Dirac_optimalDomainWall::solve_ms_init(std::vector<Field>&,

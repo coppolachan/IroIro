@@ -261,8 +261,8 @@ Info at: http://www.mpfr.org/)])
 
 # BGQ specific stuff
 if [ $bluegeneq ]
-echo :::: BGQ related stuff
 then
+echo :::: BGQ related stuff
 AC_CHECK_LIB([bgnet],[BGNET_Init],,
 	[AC_MSG_ERROR(BGNET library not found in your system or missing dependences.
 	Please install or provide the correct path to your installation

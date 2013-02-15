@@ -38,26 +38,20 @@ namespace FieldUtils{
     register int Nvol = CommonPrms::instance()->Nvol();
 #pragma omp parallel 
     {
-      int tid, nid;
-      int ns,is;
-      
-      nid = omp_get_num_threads();
-      tid = omp_get_thread_num();
-      
-      is = tid*Nvol / nid;
-      ns = Nvol / nid;
+      int nid = omp_get_num_threads();
+      int tid = omp_get_thread_num();
+      int is = tid*Nvol/nid;
+      int ns = Nvol/nid;
       
       for(int mu=0; mu<U.Nex(); ++mu)
 	for(int site=is; site<is+ns; ++site)
 	  SetMat(Ur,reunit(mat(U,site,mu)),site,mu);
-      
     }
 #else
     for(int mu=0; mu<U.Nex(); ++mu)
       for(int site=0; site<U.Nvol(); ++site)
 	SetMat(Ur,reunit(mat(U,site,mu)),site,mu);
 #endif
-    
     return Ur;
   }
   
@@ -70,7 +64,7 @@ namespace FieldUtils{
   }
 
 #ifdef IBM_BGQ_WILSON  
-  void Exponentiate_BGQ(GaugeField& U, const GaugeField& G, const double d, const int N) {
+  void Exponentiate_BGQ(GaugeField& U,const GaugeField& G,double d,int N){
     using namespace SUNmatUtils;
     GaugeField temp;
     GaugeField unit, temp2;
@@ -84,50 +78,45 @@ namespace FieldUtils{
     
 #pragma omp parallel
     {
-      int tid, nid;
-      int is, ns, is2,ns2;
-      nid = omp_get_num_threads();
-      tid = omp_get_thread_num();
+      int nid = omp_get_num_threads();
+      int tid = omp_get_thread_num();
  
-      is = tid*Nvol / nid;
-      ns = Nvol / nid;
-      is2 = is*G.Nex();
-      ns2 = ns*G.Nex();
+      int is = tid*Nvol / nid;
+      int ns = Nvol / nid;
+      int is2 = is*G.Nex();
+      int ns2 = ns*G.Nex();
       register int jump = is2*9;
       register int jump2 = is2*18;
 
-      BGWilsonLA_MatUnity((__complex__ double*)unit_ptr+jump, ns2);
-      BGWilsonLA_MatUnity((__complex__ double*)temp_ptr+jump, ns2);
+      BGWilsonLA_MatUnity((__complex__ double*)unit_ptr+jump,ns2);
+      BGWilsonLA_MatUnity((__complex__ double*)temp_ptr+jump,ns2);
 
 #pragma omp barrier            
       for (int i = N; i>=1;--i){
-	BGWilsonLA_MatMultScalar((__complex__ double*)temp_ptr+jump, d/i, ns2);
-	BGWilsonSU3_MatMultAdd_NN(temp2_ptr+jump2,unit_ptr+jump2, temp_ptr+jump2, G_ptr+jump2, ns2);
+	BGWilsonLA_MatMultScalar((__complex__ double*)temp_ptr+jump,d/i,ns2);
+	BGWilsonSU3_MatMultAdd_NN(temp2_ptr+jump2,unit_ptr+jump2, 
+				  temp_ptr+jump2,G_ptr+jump2,ns2);
 	BGWilsonLA_MatEquate((__complex__ double*)temp_ptr+jump,
-			     (__complex__ double*)temp2_ptr+jump, 
-			     ns2);
+			     (__complex__ double*)temp2_ptr+jump,ns2);
       }
-
 #pragma omp barrier      
       for(int mu=0; mu<G.Nex(); ++mu)
 	for(int site=is; site<is+ns; ++site)
 	  SetMat(temp,reunit(mat(temp2,site,mu)),site,mu);
-
     
 #pragma omp barrier          
-      BGWilsonSU3_MatMult_NN(temp2_ptr+jump2, temp_ptr+jump2, U_ptr+jump2, ns2);
+      BGWilsonSU3_MatMult_NN(temp2_ptr+jump2,temp_ptr+jump2,U_ptr+jump2,ns2);
 #pragma omp barrier          
       
-    for(int mu=0; mu<G.Nex(); ++mu)
-      for(int site=is; site<is+ns; ++site)
-	SetMat(U,reunit(mat(temp2,site,mu)),site,mu);
+      for(int mu=0; mu<G.Nex(); ++mu)
+	for(int site=is; site<is+ns; ++site)
+	  SetMat(U,reunit(mat(temp2,site,mu)),site,mu);
     }
     //   U = ReUnit(temp2);
-    
   } 
 #endif
 
-  const GaugeField Exponentiate(const GaugeField& G, const double d, const int N) {
+  const GaugeField Exponentiate(const GaugeField& G,double d,int N){
     using namespace SUNmatUtils;
     GaugeField temp;
 #ifdef IBM_BGQ_WILSON
@@ -148,26 +137,22 @@ namespace FieldUtils{
     int is = 0;
     int ns = Nvol*G.Nex();
     for (int i = N; i>=1;--i){
-      BGWilsonLA_MatMultScalar((__complex__ double*)temp_ptr+is*9, d/i, ns);
-      BGWilsonSU3_MatMultAdd_NN(temp2_ptr+is*9,unit_ptr+is*9, temp_ptr+is*9, G_ptr+is*9, ns);
+      BGWilsonLA_MatMultScalar((__complex__ double*)temp_ptr+is*9,d/i,ns);
+      BGWilsonSU3_MatMultAdd_NN(temp2_ptr+is*9,unit_ptr+is*9, 
+				temp_ptr+is*9,G_ptr+is*9,ns);
       BGWilsonLA_MatEquate((__complex__ double*)temp_ptr+is*9,
-                           (__complex__ double*)temp2_ptr+is*9, 
-                           ns);
+                           (__complex__ double*)temp2_ptr+is*9,ns);
     }
-    
-    
     temp = ReUnit(temp2);
     
     ///////////////////////////////////////////   
 #else
     for(int mu=0; mu<G.Nex(); ++mu)
       for(int site=0; site<G.Nvol(); ++site)
-	SetMat(temp, exponential(mat(G,site,mu)*d,N), site, mu);
+	SetMat(temp, exponential(mat(G,site,mu)*d,N),site,mu);
 #endif
-
     return temp;
   }
-
 
   const GaugeField TracelessAntihermite(const GaugeField& G){
     using namespace SUNmatUtils;
@@ -194,26 +179,21 @@ namespace FieldUtils{
     register double _Complex* pV0;
     register double _Complex* pW0;
     register int Nvol = F.Nvol();
-    int i,j;
    
     pV0 = (double _Complex*)G.data.getaddr(0);
     pW0 = (double _Complex*)const_cast<Field&>(F.data).getaddr(0)+ 9*Nvol*dir;
     
-    for(i=0;i<Nvol;i++){
-      for(j=0;j<9;j++){
-	*(pV0 + j) = *(pW0 + j);
-      }
+    for(int i=0;i<Nvol; ++i){
+      for(int j=0;j<9; ++j) *(pV0 + j) = *(pW0 + j);
+
       pV0 += 9;
       pW0 += 9;
     }
-    
   }
 #endif
   GaugeField1D DirSlice(const GaugeField& F, int dir){
     return GaugeField1D(Field(F.data[F.format.ex_slice(dir)]));
   }
-
-
 
   void SetSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
     G.data.set(G.format.ex_slice(dir), Gslice.data.getva());
