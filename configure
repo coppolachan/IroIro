@@ -767,6 +767,7 @@ enable_improved
 enable_bgq_improved
 enable_bgq_improved_smp
 enable_evenodd_idx
+enable_bgq_fast
 with_bfm
 enable_dependency_tracking
 enable_doxygen
@@ -1427,6 +1428,7 @@ Optional Features:
                           kernels. Multithreaded SMP version.
   --enable-evenodd-idx    Enable even odd checkerboard indexing for the gauge
                           field.
+  --enable-bgq-fast       Enable automatically all optimizations for BGQ.
   --disable-dependency-tracking  speeds up one-time build
   --enable-dependency-tracking   do not reject slow dependency extractors
   --enable-doxygen        enable documentation generation with doxygen (auto)
@@ -2565,7 +2567,6 @@ AM_BACKSLASH='\'
 
 ac_config_headers="$ac_config_headers include/config.h"
 
-AX_PREFIX_CONFIG_H
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}ranlib", so it can be a program name with args.
 set dummy ${ac_tool_prefix}ranlib; ac_word=$2
@@ -2789,6 +2790,30 @@ $as_echo "$as_me: error: bad value ${enableval} for --enable-evenodd-idx . Using
    esac
 else
   even_odd_idx=false
+fi
+
+
+###################################################################
+# Enabling Even Odd indexing BGQ fast optimizations
+# Check whether --enable-bgq-fast was given.
+if test "${enable_bgq_fast+set}" = set; then
+  enableval=$enable_bgq_fast; case "${enableval}" in
+        yes) even_odd_idx=true
+	     bgq_kernels_smp=true
+	     improved_kernels=true
+	;;
+        no)  even_odd_idx=false
+	     bgq_kernels_smp=false
+	     improved_kernels=false
+	;;
+        *) { { $as_echo "$as_me:$LINENO: error: bad value ${enableval} for --enable-bgq-fast. Using basic settings." >&5
+$as_echo "$as_me: error: bad value ${enableval} for --enable-bgq-fast. Using basic settings." >&2;}
+   { (exit 1); exit 1; }; } ;;
+   	esac
+else
+  even_odd_idx=false
+	       bgq_kernels_smp=false
+	       improved_kernels=false
 fi
 
 
