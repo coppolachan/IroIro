@@ -88,6 +88,7 @@ namespace Mapping{
 	for(int i=0; i<Nin; ++i)
 	  class_send[(b+tID*block)*Nin+i] = Fin[bdry_b_[b+tID*block]*Nin+i];
       
+      BGQThread_Barrier(0, nID);
       if(tID == 0) {
 	Communicator::instance()->transfer_fw(class_recv,class_send,
 							 bdry_t_.size()*Nin,dir_);
@@ -152,6 +153,7 @@ namespace Mapping{
 	for(int i=0; i<Nin; ++i)
 	  class_send[(b+tID*block)*Nin+i] = Fin[bdry_t_[b+tID*block]*Nin+i];
       
+      BGQThread_Barrier(0, nID);
       if(tID == 0) {
 	Communicator::instance()->transfer_bk(class_recv,class_send,
 					      bdry_b_.size()*Nin,dir_);
