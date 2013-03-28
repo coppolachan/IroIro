@@ -3,6 +3,7 @@
   @brief Definition of the Even Odd staggered operator
 */
 //-------------------------------------------------------------
+
 #include "dirac_staggered_EvenOdd.hpp"
 #include "Fields/field_expressions.hpp"
 #include "Tools/fieldUtils.hpp"
@@ -210,3 +211,5 @@ md_force(const Field& eta,const Field& zeta) const{
   fce *= -1.0;
   return fce;
 }
+
+

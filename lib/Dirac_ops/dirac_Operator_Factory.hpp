@@ -262,6 +262,8 @@ public:
 };
 
 /*! @brief Concrete class for creating Dirac_staggered_EvenOdd_Adjoint */
+//Valid only in the case of NC=3
+#if NC_==3
 class DiracStaggeredEvenOddAdjointFactory
   : public DiracStaggeredEvenOddLikeOperatorFactory{
   const XML::node Dirac_node;  
@@ -272,6 +274,7 @@ public:
     return new Dirac_staggered_EvenOdd_Adjoint(Dirac_node,dt,Gfield);
   }
 };
+#endif
 
 //Add new factories here
 //....

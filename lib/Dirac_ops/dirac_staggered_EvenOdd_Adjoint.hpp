@@ -3,6 +3,10 @@
  * @brief  Definition of the staggered operator in the adjoint rep.
  */
 //-------------------------------------------------------------
+
+//Compile only in the case NC=3
+#if NC_==3
+
 #ifndef DIRAC_STAGGERED_EVENODD_ADJOINT_INCLUDED
 #define DIRAC_STAGGERED_EVENODD_ADJOINT_INCLUDED
 
@@ -149,3 +153,5 @@ public:
 };
 
 #endif
+
+#endif//NC=3
