@@ -59,10 +59,10 @@ void SUNRep<COLORS>::GenerateRep() {
  _Message(DEBUG_VERB_LEVEL, "Wrote "<<a<<" off-diagonal generators\n");
 
   for (int j = 0; j < COLORS-1; j++) {
-    for (int i = 0; i < j; i++) {
+    for (int i = 0; i < j+1; i++) {
       FundamentalGen[a].set(i,i, 1.0/sqrt((double)((j+1)*(j+2))), 0.0);
     }
-    FundamentalGen[a].set(j+2,j+2, -double(j+1)/sqrt((double)((j+1)*(j+2))), 0.0);
+    FundamentalGen[a].set(j+1,j+1, -double(j+1)/sqrt((double)((j+1)*(j+2))), 0.0);
     a++;
   }
 

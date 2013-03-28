@@ -20,15 +20,17 @@ int Test_sunRep::run(){
   CCIO::cout << "Test sunRep Starts ------------------------\n";
   CCIO::cout << "Running on "<<Communicator::instance()->size() << " nodes\n";
 
-  CCIO::cout << "Group SU("<<NC_<<")\n"; 
+  CCIO::cout << ":::::: Group SU("<<NC_<<")\n"; 
  
   SUNRep<3> Representations;
 
   for (int a = 0; a < 8; a++)
     Representations.lambda_fund(a).print();
   
+  
   for (int a = 0; a < 8; a++)
     Representations.lambda_adj(a).print();
+  
 
   return 0;
 }
