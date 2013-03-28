@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-15 15:58:40 cossu>
+# Time-stamp: <2013-02-28 14:54:49 neo>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.1], [cossu@post.kek.jp])
@@ -115,14 +115,10 @@ AC_ARG_ENABLE(bgq-fast,
 	     bgq_kernels_smp=true
 	     improved_kernels=true
 	;;  
-        no)  even_odd_idx=false
-	     bgq_kernels_smp=false
-	     improved_kernels=false
+        no)  
 	;;   
         *) AC_MSG_ERROR([bad value ${enableval} for --enable-bgq-fast. Using basic settings.]) ;;
-   	esac],[even_odd_idx=false
-	       bgq_kernels_smp=false
-	       improved_kernels=false	])
+   	esac],[])
 
 ###################################################################
 # Enabling BFM (P.Boyle) Bagel Fermion Matrix classes linking 

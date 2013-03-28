@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-02-12 17:04:43 cossu>
+# Time-stamp: <2013-03-28 11:38:11 neo>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -71,6 +71,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_MultiShiftSolver.xml	\
 		test_RationalApprox.xml	\
 		test_Solver_Perf.xml	\
+		test_SunRep.xml
 		input.xml
 
 test_PROGRAMS = test_HMC 		\
@@ -104,7 +105,8 @@ test_PROGRAMS = test_HMC 		\
 		test_RNG 		\
 		test_IO			\
 		test_RationalApprox	\
-		test_RHMC_noFactories 	
+		test_RHMC_noFactories 	\
+		test_SUNRepresentation
 
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
@@ -197,6 +199,9 @@ test_WilsonFlow_SOURCES 	= 	test_WilsonFlow.cpp	\
 test_PolyakovLoop_SOURCES 	= 	test_PolyakovLoop.cpp	\
 	 				testerPolyakovLoop.cpp
 
+test_SUNRepresentation_SOURCES  =	test_sunRepres.cpp	\
+					testerSunRep.cpp	
+
 ## Put all BFM related tests here
 if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
@@ -233,4 +238,5 @@ include_HEADERS 	=	tests.hpp			\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\
-	                        test_Solver_Perf.hpp
+	                        test_Solver_Perf.hpp		\
+				test_sunRepres.hpp	

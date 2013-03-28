@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-07 16:05:12 cossu>
+# Time-stamp: <2013-03-28 11:37:30 neo>
 
 ###########################################
 # Initial definitions 
@@ -303,6 +303,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/sunAdjMat.hpp			\
 			Tools/sunAdjVec.hpp			\
 			Tools/sunAdjMatUtils.hpp		\
+			Tools/sunRepresentations.hpp		\
 			Tools/sunVec.hpp			\
 			Tools/sunAlgUtils.hpp			\
 			Tools/colorEpsilon.hpp	                \
