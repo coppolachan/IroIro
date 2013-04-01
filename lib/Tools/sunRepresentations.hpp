@@ -10,10 +10,11 @@
 
 #include <iostream>
 #include "include/macros.hpp"
+#include "include/messages_macros.hpp"
 #include "sunMat.hpp"
 
 
-#define ADJCOL COLORS*COLORS-1
+#define ADJCOL NC_*NC_-1
 
 template <size_t COLORS>
 class SUNRep {

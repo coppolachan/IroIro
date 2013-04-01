@@ -5,7 +5,7 @@
 //-------------------------------------------------------------
 
 //Compile only in the case NC=3
-#if NC_==3
+#if (NC_==3)
 
 #ifndef DIRAC_STAGGERED_EVENODD_ADJOINT_INCLUDED
 #define DIRAC_STAGGERED_EVENODD_ADJOINT_INCLUDED
@@ -152,6 +152,6 @@ public:
   int Nvol()const{return ff_.Nvol();}
 };
 
-#endif
-
 #endif//NC=3
+
+#endif

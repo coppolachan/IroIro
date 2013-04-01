@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-03-28 11:37:30 neo>
+# Time-stamp: <2013-03-28 15:46:42 neo>
 
 ###########################################
 # Initial definitions 
@@ -74,6 +74,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(SITE_INDEXING_SRCS)			\
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
+	 	Action/action_gauge_wilson_adjoint.cpp	\
 		Action/action_gauge_rect.cpp            \
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
@@ -200,6 +201,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
+	 		Action/action_gauge_wilson_adjoint.hpp		\
 			Action/action_gauge_rect.hpp                    \
 			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\

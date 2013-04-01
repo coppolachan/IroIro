@@ -76,7 +76,7 @@ init(vector<int>& clock,const GaugeField& U,const RandNum& rand){
 
   *U_= U;                       // initialize U_ (common to actions) to U
   notify_observers();
-  MDutils::md_mom(P_,rand); // initialize P_ 
+  md_mom(P_,rand); // initialize P_ 
 
   for(int lv=0; lv< as_.size(); ++lv){
     for(int id=0; id<as_.at(lv).size(); ++id){

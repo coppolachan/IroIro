@@ -29,7 +29,7 @@ double Staples::plaq_s(const GaugeField& F)const {
       plaq += ReTr(mat(F,site,i)*mat_dag(stpl,site));  // P_ij
   }
   plaq = com_->reduce_sum(plaq);
-  return plaq/(Lvol_*NC_*3.0);
+  return plaq/(Lvol_*NC_*(NDIM_-1));
 }
 
 double Staples::plaq_t(const GaugeField& F)const {
@@ -43,7 +43,47 @@ double Staples::plaq_t(const GaugeField& F)const {
       plaq += ReTr(mat(F,site,TDIR)*mat_dag(stpl,site));  // P_zx
   }
   plaq = com_->reduce_sum(plaq);
-  return plaq/(Lvol_*NC_*3.0);
+  return plaq/(Lvol_*NC_*(NDIM_-1));
+}
+
+double Staples::plaquette_adj(const GaugeField& F)const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaquette called\n");
+  return (plaq_s_adj(F) + plaq_t_adj(F))*0.5;
+}
+
+double Staples::plaq_s_adj(const GaugeField& F)const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaq_s called\n");
+  double plaq = 0.0;
+  GaugeField1D stpl(Nvol_);
+
+  for(int i=0;i<NDIM_-1;++i){
+    int j = (i+1)%(NDIM_-1);
+    stpl = lower(F,i,j);
+    for(int site=0; site<Nvol_; ++site){
+      double retrace = ReTr(mat(F,site,i)*mat_dag(stpl,site));  // P_ij
+      double imtrace = ImTr(mat(F,site,i)*mat_dag(stpl,site));  // P_ij
+      plaq += retrace*retrace + imtrace*imtrace - 1.0;
+    }
+  }
+  plaq = com_->reduce_sum(plaq);
+  return plaq/(Lvol_*(NC_*NC_-1.0)*(NDIM_-1));
+}
+
+double Staples::plaq_t_adj(const GaugeField& F)const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaq_t called\n");
+  double plaq = 0.0;
+  GaugeField1D stpl(Nvol_);
+
+  for(int nu=0; nu < NDIM_-1; ++nu){
+    stpl = lower(F,TDIR,nu);
+    for(int site=0; site<Nvol_; ++site){
+      double retrace = ReTr(mat(F,site,TDIR)*mat_dag(stpl,site));  // P_zx
+      double imtrace = ImTr(mat(F,site,TDIR)*mat_dag(stpl,site));  // P_zx
+      plaq += retrace*retrace + imtrace*imtrace - 1.0;
+    }
+  }
+  plaq = com_->reduce_sum(plaq);
+  return plaq/(Lvol_*(NC_*NC_-1.0)*(NDIM_-1));
 }
 
 double Staples::plaq_min(const GaugeField& F,double threshold)const {

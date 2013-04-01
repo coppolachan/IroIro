@@ -4,6 +4,7 @@
 #include "include/pugi_interface.h"
 #include "action_gaugetype_factory_abs.hpp"
 #include "Action/action_gauge_wilson.hpp"
+#include "Action/action_gauge_wilson_adjoint.hpp"
 #include "Action/action_gauge_rect.hpp"
 
 
@@ -18,6 +19,20 @@ public:
 private:  
   ActionGaugeWilson* getGaugeAction(GaugeField* const G, SmartConf* const SC){
     return new ActionGaugeWilson(Action_node,G); 
+  }
+};
+
+///////////////////////////////////////////////////////////////////////
+class WilsonGaugeAdjointActionFactory : public GaugeActionFactory {
+  const XML::node Action_node;
+  
+public:
+  WilsonGaugeAdjointActionFactory(const XML::node node):
+    Action_node(node){};
+  
+private:  
+  ActionGaugeWilsonAdjoint* getGaugeAction(GaugeField* const G, SmartConf* const SC){
+    return new ActionGaugeWilsonAdjoint(Action_node,G); 
   }
 };
 

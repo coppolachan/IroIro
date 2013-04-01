@@ -44,6 +44,7 @@ public:
   SUNmatrix& operator/=(const double);
 
   SUNmatrix& dag();
+  SUNmatrix& star();
   SUNmatrix& unity();
   SUNmatrix& zero() { va_ = 0.0; }
   SUNmatrix& xI();
@@ -117,6 +118,18 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::dag(){
   }
   return *this;
 }
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::star(){
+  for(int a=0; a<COLORS; ++a){
+    for(int b=0; b<COLORS; ++b){
+      int ab = 2*(COLORS*a+b);
+      va_[ab+1] *= -1;
+    }
+  }
+  return *this;
+}
+
 
 template <size_t COLORS>
 inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::anti_hermite(){
