@@ -55,13 +55,15 @@ double Staples::plaq_s_adj(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaq_s called\n");
   double plaq = 0.0;
   GaugeField1D stpl(Nvol_);
+  SUNmat pl;
 
   for(int i=0;i<NDIM_-1;++i){
     int j = (i+1)%(NDIM_-1);
     stpl = lower(F,i,j);
     for(int site=0; site<Nvol_; ++site){
-      double retrace = ReTr(mat(F,site,i)*mat_dag(stpl,site));  // P_ij
-      double imtrace = ImTr(mat(F,site,i)*mat_dag(stpl,site));  // P_ij
+      pl = mat(F,site,i)*mat_dag(stpl,site);// P_ij
+      double retrace = ReTr(pl);  
+      double imtrace = ImTr(pl);  
       plaq += retrace*retrace + imtrace*imtrace - 1.0;
     }
   }
@@ -73,12 +75,14 @@ double Staples::plaq_t_adj(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaq_t called\n");
   double plaq = 0.0;
   GaugeField1D stpl(Nvol_);
+  SUNmat pl;
 
   for(int nu=0; nu < NDIM_-1; ++nu){
     stpl = lower(F,TDIR,nu);
     for(int site=0; site<Nvol_; ++site){
-      double retrace = ReTr(mat(F,site,TDIR)*mat_dag(stpl,site));  // P_zx
-      double imtrace = ImTr(mat(F,site,TDIR)*mat_dag(stpl,site));  // P_zx
+      pl = mat(F,site,TDIR)*mat_dag(stpl,site);// P_zx
+      double retrace = ReTr(pl);  
+      double imtrace = ImTr(pl);  
       plaq += retrace*retrace + imtrace*imtrace - 1.0;
     }
   }

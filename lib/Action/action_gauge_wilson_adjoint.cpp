@@ -49,16 +49,12 @@ GaugeField ActionGaugeWilsonAdjoint::md_force(){
 	    pl = mat(*u_,site,m)*mat_dag(tmp_up,site);
 	    trace.real() = ReTr(pl);
 	    trace.imag() = -ImTr(pl);
-	    //std::cout << "Trace :" << trace << "\n";
 	    pl_sum += pl*trace;
-	    //pl_sum -= unitNc;
 	    pl = mat(*u_,site,m)*mat_dag(tmp_dn,site);
 	    trace.real() = ReTr(pl);
 	    trace.imag() = ImTr(pl);
 	    pl_sum += pl*trace;
-	    //pl_sum -= unitNc;
 
-	    //std::cout << "Trace :" << ReTr(pl_sum) << "\n";
 	    AddMat(force, anti_hermite_traceless(pl_sum), site, m);
 	  }	
 	}

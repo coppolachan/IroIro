@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-03-28 11:38:11 neo>
+# Time-stamp: <2013-04-02 15:07:17 neo>
 
 
 VPATH = @srcdir@
@@ -83,7 +83,8 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_Overlap$(EXEEXT) test_MultiShiftSolver$(EXEEXT) \
 	test_Solver_Perf$(EXEEXT) $(am__EXEEXT_2) test_RNG$(EXEEXT) \
 	test_IO$(EXEEXT) test_RationalApprox$(EXEEXT) \
-	test_RHMC_noFactories$(EXEEXT) test_SUNRepresentation$(EXEEXT)
+	test_RHMC_noFactories$(EXEEXT) test_SUNRepresentation$(EXEEXT) \
+	test_HeatBath$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -166,6 +167,12 @@ test_HadronSpectrum_Nf2p1_OBJECTS =  \
 	$(am_test_HadronSpectrum_Nf2p1_OBJECTS)
 test_HadronSpectrum_Nf2p1_LDADD = $(LDADD)
 test_HadronSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+am_test_HeatBath_OBJECTS = test_HeatBath.$(OBJEXT) \
+	testerHeatBath.$(OBJEXT)
+test_HeatBath_OBJECTS = $(am_test_HeatBath_OBJECTS)
+test_HeatBath_LDADD = $(LDADD)
+test_HeatBath_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
@@ -327,8 +334,8 @@ SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
 	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
 	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
-	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_IO_SOURCES) \
-	$(test_MesonSpectrum_SOURCES) \
+	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_HeatBath_SOURCES) \
+	$(test_IO_SOURCES) $(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MesonSpectrum_SpMom_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_NoMeas_SOURCES) \
@@ -347,8 +354,8 @@ DIST_SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
 	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) \
-	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_IO_SOURCES) \
-	$(test_MesonSpectrum_SOURCES) \
+	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_HeatBath_SOURCES) \
+	$(test_IO_SOURCES) $(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MesonSpectrum_SpMom_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_NoMeas_SOURCES) \
@@ -549,7 +556,8 @@ EXTRA_DIST = testResults.info	\
 		test_MultiShiftSolver.xml	\
 		test_RationalApprox.xml	\
 		test_Solver_Perf.xml	\
-		test_SunRep.xml
+		test_sunRep.xml		\
+		input.xml
 
 test_HMC_SOURCES = test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -643,6 +651,9 @@ test_PolyakovLoop_SOURCES = test_PolyakovLoop.cpp	\
 test_SUNRepresentation_SOURCES = test_sunRepres.cpp	\
 					testerSunRep.cpp	
 
+test_HeatBath_SOURCES = test_HeatBath.cpp	\
+					testerHeatBath.cpp
+
 @USE_BFM_TRUE@test_Solver_BFM_SOURCES = test_Solver_BFM.cpp             \
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
 @USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
@@ -676,7 +687,8 @@ include_HEADERS = tests.hpp			\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\
 	                        test_Solver_Perf.hpp		\
-				test_sunRepres.hpp	
+				test_sunRepres.hpp		\
+				test_HeatBath.hpp
 
 all: all-am
 
@@ -785,6 +797,9 @@ test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_
 test_HadronSpectrum_Nf2p1$(EXEEXT): $(test_HadronSpectrum_Nf2p1_OBJECTS) $(test_HadronSpectrum_Nf2p1_DEPENDENCIES) $(EXTRA_test_HadronSpectrum_Nf2p1_DEPENDENCIES) 
 	@rm -f test_HadronSpectrum_Nf2p1$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HadronSpectrum_Nf2p1_OBJECTS) $(test_HadronSpectrum_Nf2p1_LDADD) $(LIBS)
+test_HeatBath$(EXEEXT): $(test_HeatBath_OBJECTS) $(test_HeatBath_DEPENDENCIES) $(EXTRA_test_HeatBath_DEPENDENCIES) 
+	@rm -f test_HeatBath$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HeatBath_OBJECTS) $(test_HeatBath_LDADD) $(LIBS)
 test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES) $(EXTRA_test_IO_DEPENDENCIES) 
 	@rm -f test_IO$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_IO_OBJECTS) $(test_IO_LDADD) $(LIBS)
@@ -869,6 +884,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_Smear_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HadronSpectrum_Nf2p1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HeatBath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum_Nf2p1.Po@am__quote@
@@ -900,6 +916,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC_DWall_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMCeven-odd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHadronSpectrumNf2p1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHeatBath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrumNf2p1.Po@am__quote@
@@ -1174,7 +1191,6 @@ uninstall-am: uninstall-includeHEADERS uninstall-testPROGRAMS
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
 	uninstall-am uninstall-includeHEADERS uninstall-testPROGRAMS
 
-		input.xml
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
