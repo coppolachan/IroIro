@@ -1,6 +1,8 @@
 //--------------------------------------------------------------------
 /*! @file heatbath.hpp
  * @brief Declaration of classes for HeatBath update
+ *
+ * Time-stamp: <2013-04-02 15:45:40 neo>
  */
 //--------------------------------------------------------------------
 #ifndef HEATBATH_INCLUDED

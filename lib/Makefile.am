@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-02 14:39:00 neo>
+# Time-stamp: <2013-04-02 15:48:49 neo>
 
 ###########################################
 # Initial definitions 
@@ -164,7 +164,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(BGQ_MAT_SRC)				\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
-		UpdatingAlg/HeatBath/heatbath.cpp
+		UpdatingAlg/HeatBath/heatbath.cpp	\
+		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)
@@ -324,7 +325,8 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
-			UpdatingAlg/HeatBath/HBActions.hpp
+			UpdatingAlg/HeatBath/HBActions.hpp	\
+			UpdatingAlg/HeatBath/HBActions_SUN.hpp	
 
 
 

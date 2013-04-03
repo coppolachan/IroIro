@@ -3,6 +3,7 @@
  *
  * @brief Definitions of functions for HeatBath update
  *
+ * Time-stamp: <2013-04-02 17:43:07 neo>
  */
 //--------------------------------------------------------------------
 #include "heatbath.hpp"
@@ -22,14 +23,15 @@ void HeatBathGeneral::update(GaugeField& Uin)const{
   Action_->init(*rand_);
 
  // Thermalizations
+  Action_->calc_H();
   for(int iter=1; iter <= Params_.ThermalizationSteps; ++iter){
     CCIO::cout << "-- # Thermalization step = "<< iter <<  "\n";
 
     double timer;
     TIMING_START;
-    Action_->hb_update();
+    Action_->hb_update(*rand_);
     TIMING_END(timer);
-    
+    Action_->calc_H();
     CCIO::cout<< "Time for sweep (s) : "<< timer/1000.0 << "\n";
     //    Uin = md_->get_U();  //accept every time
   }
@@ -41,8 +43,9 @@ void HeatBathGeneral::update(GaugeField& Uin)const{
     CCIO::cout << "---------------------------\n";
     double timer;
     TIMING_START;
-    Action_->hb_update();
+    Action_->hb_update(*rand_);
     TIMING_END(timer);
+    Action_->calc_H();
     CCIO::cout<< "Time for sweep (s) : "<< timer/1000.0 << "\n";
 
     if (Params_.SaveInterval!=0 && iter%Params_.SaveInterval == 0) {
