@@ -28,7 +28,7 @@ int Test_HB::run(){
 
   //Initialization
   //HeatBathGeneral hb_general(HB_node);
-  HBAction_SUN SUNAction(2.3, &Gfield_);
+  HBAction_SUN SUNAction(1.5, 0.9, &Gfield_);
   HeatBathGeneral hb_general(HB_node, SUNAction,*(RNG_Env::RNG->getRandomNumGenerator()));
 
   ////////////// HMC calculation /////////////////
@@ -47,10 +47,10 @@ int Test_HB::run(){
 
   
   sleep(2);// Hack to avoid concurrency problems
-  /*
+  
   CCIO::cout << "Saving configuration on disk in binary format\n";
   CCIO::SaveOnDisk< Format::Format_G >(Gfield_.data, "final_conf.bin");
-  */
+  
 
   return 0;
 }

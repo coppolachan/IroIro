@@ -3,14 +3,14 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
+    <Lattice>4 4 4 4</Lattice>
     <Nodes>1 1 1 1</Nodes>
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="Unit">conf_04040408.txt</Configuration> 
 
   <HB>
-    <Nsweeps>200</Nsweeps>
+    <Nsweeps>400</Nsweeps>
     <Thermalization>20</Thermalization>
     <SaveInterval>0</SaveInterval>
     <SavePrefix>HB_</SavePrefix>

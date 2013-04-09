@@ -29,7 +29,7 @@ namespace CCIO {
 			     int tot_vol,int tot_in,int tot_ex){
     //Read just as it is
     //order is (in, ex, sites)  
-    fread(buffer,sizeof(double),block_size,inputFile);}
+    size_t res = fread(buffer,sizeof(double),block_size,inputFile);}
 
   inline void ReadJLQCDLegacyFormat(double* buffer,FILE *inputFile,int block_size,
 				    int tot_vol,int tot_in,int tot_ex){
@@ -40,7 +40,7 @@ namespace CCIO {
     fgetpos(inputFile, &pos);
     for(int ext=0; ext<tot_ex; ++ext){
       //reads the ex blocks
-      fread((buffer+ext*chunk), sizeof(double), chunk, inputFile);
+      size_t res = fread((buffer+ext*chunk), sizeof(double), chunk, inputFile);
       fseek(inputFile, sizeof(double)*tot_vol*tot_in , SEEK_CUR);
     }
     fsetpos(inputFile, &pos);

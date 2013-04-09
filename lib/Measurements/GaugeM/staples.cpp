@@ -157,6 +157,56 @@ GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu) const{
   return c;
 }
 
+GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu, const Field aux) const{
+  _Message(DEBUG_VERB_LEVEL, "Staples::upper_lower called\n");
+  using namespace Mapping;
+  //       mu,v                               
+  //      +-->--+                                                    
+  // nu,w |     |t_dag(site+mu,nu)
+  //  site+     +
+  GaugeField1D v = DirSlice(G,mu);
+  GaugeField1D w = DirSlice(G,nu);
+  GaugeField1D c(G.Nvol()); 
+  GaugeField1D WupMu = shiftField(w,mu,Forward());
+  GaugeField1D VupNu = shiftField(v,nu,Forward());
+  SUNmat temp;
+
+  int mu_aux = mu;
+  int nu_aux = nu;
+  int limit;
+  double sign = 1.0;
+  int sector = -1;
+  if (mu > nu) {
+    mu_aux = nu;
+    nu_aux = mu;
+    sign = -1.0;
+  }
+
+  for (int m = 0; m <= mu_aux; m++) {
+    if (m < mu_aux)
+      limit = NDIM_-1;
+    else
+      limit = nu_aux;
+    for (int n = m+1; n <= limit; n++) 
+      sector++;
+  }
+  //CCIO::cout << "mu, nu, sector "<< mu<< " "<< nu << "  "<< sector << "\n";
+
+  
+  for(int site=0; site<Nvol_; ++site){
+    std::slice isl = c.format.islice(site);
+    std::complex<double>     fact(aux[2*site+2*Nvol_*sector],  sign*aux[2*site+1+2*Nvol_*sector]);
+    std::complex<double> fact_dag(aux[2*site+2*Nvol_*sector], -sign*aux[2*site+1+2*Nvol_*sector]);
+    temp = mat(w,site)* fact_dag;
+    c.data[isl] = (temp*mat(VupNu,site)*mat_dag(WupMu,site)).getva();    
+    temp = mat_dag(w,site)* fact;
+    VupNu.data[isl] = (temp*mat(v,site)*mat(WupMu,site)).getva();
+  }
+  c += shiftField(VupNu,nu,Backward());
+
+  return c;
+}
+
 GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
   _Message(DEBUG_VERB_LEVEL, "Staples::lower called\n");
   using namespace Mapping;

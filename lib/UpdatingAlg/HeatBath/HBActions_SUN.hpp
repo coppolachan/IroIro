@@ -3,7 +3,7 @@
  *
  * @brief Definitions of actions for Heat Bath updates
  *
- * Time-stamp: <2013-04-02 17:13:09 neo>
+ * Time-stamp: <2013-04-03 14:33:30 neo>
  */
 //--------------------------------------------------------------------
 #ifndef HBACTION_SUN_INCLUDED
@@ -21,12 +21,16 @@
  */
 struct HBAction_SUNPrm {
   double beta;/*!< %Gauge coupling */
+  double beta_adj;/*!< %Gauge coupling */
+
 
   HBAction_SUNPrm(const XML::node node){
     XML::read(node, "beta", beta);
+    XML::read(node, "beta_adj", beta_adj);
   }
-  HBAction_SUNPrm(const double beta_)
-    :beta(beta_){}
+  HBAction_SUNPrm(const double beta_, const double beta_adj_)
+    :beta(beta_),
+     beta_adj(beta_adj_){}
 };
 
 
@@ -45,11 +49,11 @@ private:
 
 
 public:
-  HBAction_SUN(const double beta, 
+  HBAction_SUN(const double beta, const double beta_adj,
                     GaugeField* const GField)
     :u_(GField),
      stplfield_(),
-     Params_(HBAction_SUNPrm(beta)), 
+     Params_(HBAction_SUNPrm(beta, beta_adj)), 
      Nvol_(CommonPrms::instance()->Nvol()){}
   
   /*!

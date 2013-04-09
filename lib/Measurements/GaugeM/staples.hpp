@@ -32,6 +32,7 @@ public:
   GaugeField1D lower(const GaugeField&,int,int) const;
   GaugeField1D upper(const GaugeField&,int,int) const;
   GaugeField1D upper_lower(const GaugeField&,int,int) const;
+  GaugeField1D upper_lower(const GaugeField&,int,int, const Field) const;
   GaugeField1D fieldStrength(const GaugeField&,int,int)const;
 
   void staple(GaugeField1D&, const GaugeField&,int) const;
