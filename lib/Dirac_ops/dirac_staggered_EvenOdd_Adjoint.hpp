@@ -3,6 +3,10 @@
  * @brief  Definition of the staggered operator in the adjoint rep.
  */
 //-------------------------------------------------------------
+
+//Compile only in the case NC=3
+#if (NC_==3)
+
 #ifndef DIRAC_STAGGERED_EVENODD_ADJOINT_INCLUDED
 #define DIRAC_STAGGERED_EVENODD_ADJOINT_INCLUDED
 
@@ -147,5 +151,7 @@ public:
   double getMass()const{ return mq_;}
   int Nvol()const{return ff_.Nvol();}
 };
+
+#endif//NC=3
 
 #endif

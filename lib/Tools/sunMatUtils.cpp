@@ -191,6 +191,8 @@ namespace SUNmatUtils{
     return res;
   }
 
+  #if NC_==3
+  // specialization for NC_=3
   template<> 
   const valarray<double> adjoint(const SU3mat& u){
     int dim = 8;
@@ -214,8 +216,6 @@ namespace SUNmatUtils{
   // BLAS style optimization specific functions
   // not working, just containers now
 
-  #if NC_==3 
-  // specialization for NC_=3
   // Matrix-matrix
   const SUNmat gemm(const SUNmat&, const SUNmat&){}
   // Matrix-(matrix^dag)

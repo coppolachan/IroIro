@@ -44,13 +44,15 @@ public:
   SUNmatrix& operator/=(const double);
 
   SUNmatrix& dag();
+  SUNmatrix& star();
   SUNmatrix& unity();
   SUNmatrix& zero() { va_ = 0.0; }
   SUNmatrix& xI();
   SUNmatrix& reunit();
   SUNmatrix& anti_hermite();
-
+  
   static int size(){return 2*COLORS*COLORS;}
+  void print();
 
   double r(int c) const {return va_[2*c  ];}
   double i(int c) const {return va_[2*c+1];}
@@ -116,6 +118,18 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::dag(){
   }
   return *this;
 }
+
+template <size_t COLORS>
+inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::star(){
+  for(int a=0; a<COLORS; ++a){
+    for(int b=0; b<COLORS; ++b){
+      int ab = 2*(COLORS*a+b);
+      va_[ab+1] *= -1;
+    }
+  }
+  return *this;
+}
+
 
 template <size_t COLORS>
 inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::anti_hermite(){
@@ -353,4 +367,15 @@ SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
   return *this;
 }
 */
+
+template <size_t COLORS>
+void SUNmatrix<COLORS>::print(){
+  for(int a=0; a<COLORS; ++a){
+    for(int b=0; b<COLORS; ++b){ 
+      std::cout << "("<<this->r(a,b)<<","<<this->i(a,b)<<")   ";
+    }
+    std::cout << "\n";
+  }
+  std::cout << "\n"; 
+}
 #endif

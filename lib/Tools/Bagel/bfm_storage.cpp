@@ -122,7 +122,7 @@ void BFM_Storage::GaugeExport_to_BFM(GaugeField& U){
     CCIO::cout<<"BFM_Storage: Before getting the pointer\n";
     U_Ptr = U_dag.data.getaddr(0);
     CCIO::cout<<"BFM_Storage: Before importGauge call\n";
-    bfm_obj_.importGauge(U_Ptr, dir); //BFM functionM function
+    bfm_obj_.importGauge(U_Ptr, dir); //BFM function
   }
 };
 

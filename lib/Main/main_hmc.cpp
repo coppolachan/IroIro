@@ -45,7 +45,7 @@
 
 using namespace XML;
 
-int run(GaugeField, node);
+int run_hmc(GaugeField, node);
 
 int main(int argc, char* argv[]){
   int status;
@@ -66,27 +66,25 @@ int main(int argc, char* argv[]){
   node HMC_node = top_node;
   descend(HMC_node, "HMC");
   
-  status = run(GaugeF, HMC_node);
+  status = run_hmc(GaugeF, HMC_node);
 
   return status;
 }
 
 
-int run(GaugeField Gfield_, node HMC_node) {
+int run_hmc(GaugeField Gfield_, node HMC_node) {
   /*
-
-
-
   CCIO::header("Starting HMC updater");
 
   RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
+ 
   Integrators::Integr = 
     Integrators::createIntegratorFactory(HMC_node, Gfield_.Format);
 
-  //Initialization of class
+  //Initialization of HMC classes from XML file
   HMCgeneral hmc_general(HMC_node);
 
-  ////////////// HMC calculation /////////////////
+  ////////////// HMC calculation starts /////////////////
   double elapsed_time;
   TIMING_START;
   try{
@@ -96,21 +94,14 @@ int run(GaugeField Gfield_, node HMC_node) {
     CCIO::cerr << error << std::endl;
     return EXIT_FAILURE;
   }
-
   TIMING_END(elapsed_time);
-  ////////////// HMC calculation end /////////////////
+  ////////////// HMC calculation ends /////////////////
 
   CCIO::cout << "Total elapsed time (s): "<< elapsed_time/1000.0 << "\n";
 
   CCIO::cout << "Saving configuration on disk in binary format\n";
   CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "final_conf.bin");
-
-
   */
-
-
-
-
   return 0;
 }
 

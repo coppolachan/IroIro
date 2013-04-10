@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-12 17:27:27 cossu>
+# Time-stamp: <2013-02-28 14:54:49 neo>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.1], [cossu@post.kek.jp])
@@ -13,7 +13,6 @@ AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility
 
 AC_CONFIG_HEADERS([include/config.h])
-AX_PREFIX_CONFIG_H
 AC_PROG_RANLIB
 
 AC_MSG_NOTICE([
@@ -106,6 +105,20 @@ AC_ARG_ENABLE(evenodd-idx,
         no)  even_odd_idx=false ;;
         *) AC_MSG_ERROR([bad value ${enableval} for --enable-evenodd-idx . Using lexicographic indexing.]) ;;
    esac],[even_odd_idx=false])
+
+###################################################################
+# Enabling Even Odd indexing BGQ fast optimizations
+AC_ARG_ENABLE(bgq-fast,
+        AC_HELP_STRING([--enable-bgq-fast], [Enable automatically all optimizations for BGQ.]),
+        [case "${enableval}" in
+        yes) even_odd_idx=true
+	     bgq_kernels_smp=true
+	     improved_kernels=true
+	;;  
+        no)  
+	;;   
+        *) AC_MSG_ERROR([bad value ${enableval} for --enable-bgq-fast. Using basic settings.]) ;;
+   	esac],[])
 
 ###################################################################
 # Enabling BFM (P.Boyle) Bagel Fermion Matrix classes linking 

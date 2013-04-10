@@ -3,6 +3,7 @@
  * @brief  Definition of the staggered operator
  */
 //-------------------------------------------------------------
+
 #ifndef DIRAC_STAGGERED_EVENODD_INCLUDED
 #define DIRAC_STAGGERED_EVENODD_INCLUDED
 
@@ -143,3 +144,6 @@ public:
 };
 
 #endif
+
+
+

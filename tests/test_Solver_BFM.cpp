@@ -58,9 +58,11 @@ int Test_Solver_BFM::run(){
   dwfa.node_latt[1]  = CommonPrms::instance()->Ny();
   dwfa.node_latt[2]  = CommonPrms::instance()->Nz();
   dwfa.node_latt[3]  = CommonPrms::instance()->Nt();
+  dwfa.verbose = 1;
+
 
   for(int mu=0;mu<4;mu++){
-    if ( CommonPrms::instance()->NPE(mu)>1 ) {
+    if ( (CommonPrms::instance()->NPE(mu))>1 ) {
       dwfa.local_comm[mu] = 0;
     } else {
       dwfa.local_comm[mu] = 1;
@@ -83,20 +85,31 @@ int Test_Solver_BFM::run(){
   //launch the test
   FermionField source(src.mksrc(0,0));
 
-  Fermion_t Handle;
-  Handle = linop.allocFermion();
-  BFM_interface.FermionExport_to_BFM(source,Handle,0);
-
   // Tests the import/export routines
-  // Import back
+  ///////////////////////////////////////
+  Fermion_t psi_h;
+  Fermion_t chi_h;
+  psi_h = linop.allocFermion();
+  chi_h = linop.allocFermion();
+  // Export fermion field to BFM
+  BFM_interface.FermionExport_to_BFM(source,psi_h,0);
+ 
+  // Import back to IroIro
   FermionField Exported;
-  BFM_interface.FermionImport_from_BFM(Exported, Handle, 0);
+  BFM_interface.FermionImport_from_BFM(Exported, psi_h, 0);
 
-  // Check correctness of routines
+  // Check correctness of Import/Export routines
   FermionField Difference = source;
   Difference -= Exported;
 
   CCIO::cout << "Difference source-exported = "<< Difference.norm() << "\n";
+
+  // Running the dslash
+  for(int dag=0;dag<2;dag++){
+    linop.dslash(psi_h,
+		 chi_h,
+		 1, dag);
+  }
 
   return 0;
 }

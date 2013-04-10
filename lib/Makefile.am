@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-02-07 16:05:12 cossu>
+# Time-stamp: <2013-04-02 15:48:49 neo>
 
 ###########################################
 # Initial definitions 
@@ -74,6 +74,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(SITE_INDEXING_SRCS)			\
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
+	 	Action/action_gauge_wilson_adjoint.cpp	\
 		Action/action_gauge_rect.cpp            \
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
@@ -162,7 +163,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunAlgUtils.cpp			\
 		$(BGQ_MAT_SRC)				\
 		Tools/Remez/alg_remez.cpp		\
-		Tools/RationalApprox/rationalapprox.cpp	
+		Tools/RationalApprox/rationalapprox.cpp	\
+		UpdatingAlg/HeatBath/heatbath.cpp	\
+		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)
@@ -200,6 +203,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
+	 		Action/action_gauge_wilson_adjoint.hpp		\
 			Action/action_gauge_rect.hpp                    \
 			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\
@@ -303,6 +307,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/sunAdjMat.hpp			\
 			Tools/sunAdjVec.hpp			\
 			Tools/sunAdjMatUtils.hpp		\
+			Tools/sunRepresentations.hpp		\
 			Tools/sunVec.hpp			\
 			Tools/sunAlgUtils.hpp			\
 			Tools/colorEpsilon.hpp	                \
@@ -318,7 +323,10 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/Remez/alg_remez.hpp		\
 			Tools/Remez/bigfloat.hpp		\
 			Tools/RationalApprox/rationalapprox.hpp	\
-			Tools/Bagel/bfm_storage.hpp
+			Tools/Bagel/bfm_storage.hpp		\
+			UpdatingAlg/HeatBath/heatbath.hpp	\
+			UpdatingAlg/HeatBath/HBActions.hpp	\
+			UpdatingAlg/HeatBath/HBActions_SUN.hpp	
 
 
 

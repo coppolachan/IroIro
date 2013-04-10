@@ -29,7 +29,7 @@ double Staples::plaq_s(const GaugeField& F)const {
       plaq += ReTr(mat(F,site,i)*mat_dag(stpl,site));  // P_ij
   }
   plaq = com_->reduce_sum(plaq);
-  return plaq/(Lvol_*NC_*3.0);
+  return plaq/(Lvol_*NC_*(NDIM_-1));
 }
 
 double Staples::plaq_t(const GaugeField& F)const {
@@ -43,7 +43,51 @@ double Staples::plaq_t(const GaugeField& F)const {
       plaq += ReTr(mat(F,site,TDIR)*mat_dag(stpl,site));  // P_zx
   }
   plaq = com_->reduce_sum(plaq);
-  return plaq/(Lvol_*NC_*3.0);
+  return plaq/(Lvol_*NC_*(NDIM_-1));
+}
+
+double Staples::plaquette_adj(const GaugeField& F)const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaquette called\n");
+  return (plaq_s_adj(F) + plaq_t_adj(F))*0.5;
+}
+
+double Staples::plaq_s_adj(const GaugeField& F)const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaq_s called\n");
+  double plaq = 0.0;
+  GaugeField1D stpl(Nvol_);
+  SUNmat pl;
+
+  for(int i=0;i<NDIM_-1;++i){
+    int j = (i+1)%(NDIM_-1);
+    stpl = lower(F,i,j);
+    for(int site=0; site<Nvol_; ++site){
+      pl = mat(F,site,i)*mat_dag(stpl,site);// P_ij
+      double retrace = ReTr(pl);  
+      double imtrace = ImTr(pl);  
+      plaq += retrace*retrace + imtrace*imtrace - 1.0;
+    }
+  }
+  plaq = com_->reduce_sum(plaq);
+  return plaq/(Lvol_*(NC_*NC_-1.0)*(NDIM_-1));
+}
+
+double Staples::plaq_t_adj(const GaugeField& F)const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaq_t called\n");
+  double plaq = 0.0;
+  GaugeField1D stpl(Nvol_);
+  SUNmat pl;
+
+  for(int nu=0; nu < NDIM_-1; ++nu){
+    stpl = lower(F,TDIR,nu);
+    for(int site=0; site<Nvol_; ++site){
+      pl = mat(F,site,TDIR)*mat_dag(stpl,site);// P_zx
+      double retrace = ReTr(pl);  
+      double imtrace = ImTr(pl);  
+      plaq += retrace*retrace + imtrace*imtrace - 1.0;
+    }
+  }
+  plaq = com_->reduce_sum(plaq);
+  return plaq/(Lvol_*(NC_*NC_-1.0)*(NDIM_-1));
 }
 
 double Staples::plaq_min(const GaugeField& F,double threshold)const {
@@ -110,6 +154,56 @@ GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu) const{
   }
   c += shiftField(VupNu,nu,Backward());
 #endif
+  return c;
+}
+
+GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu, const Field aux) const{
+  _Message(DEBUG_VERB_LEVEL, "Staples::upper_lower called\n");
+  using namespace Mapping;
+  //       mu,v                               
+  //      +-->--+                                                    
+  // nu,w |     |t_dag(site+mu,nu)
+  //  site+     +
+  GaugeField1D v = DirSlice(G,mu);
+  GaugeField1D w = DirSlice(G,nu);
+  GaugeField1D c(G.Nvol()); 
+  GaugeField1D WupMu = shiftField(w,mu,Forward());
+  GaugeField1D VupNu = shiftField(v,nu,Forward());
+  SUNmat temp;
+
+  int mu_aux = mu;
+  int nu_aux = nu;
+  int limit;
+  double sign = 1.0;
+  int sector = -1;
+  if (mu > nu) {
+    mu_aux = nu;
+    nu_aux = mu;
+    sign = -1.0;
+  }
+
+  for (int m = 0; m <= mu_aux; m++) {
+    if (m < mu_aux)
+      limit = NDIM_-1;
+    else
+      limit = nu_aux;
+    for (int n = m+1; n <= limit; n++) 
+      sector++;
+  }
+  //CCIO::cout << "mu, nu, sector "<< mu<< " "<< nu << "  "<< sector << "\n";
+
+  
+  for(int site=0; site<Nvol_; ++site){
+    std::slice isl = c.format.islice(site);
+    std::complex<double>     fact(aux[2*site+2*Nvol_*sector],  sign*aux[2*site+1+2*Nvol_*sector]);
+    std::complex<double> fact_dag(aux[2*site+2*Nvol_*sector], -sign*aux[2*site+1+2*Nvol_*sector]);
+    temp = mat(w,site)* fact_dag;
+    c.data[isl] = (temp*mat(VupNu,site)*mat_dag(WupMu,site)).getva();    
+    temp = mat_dag(w,site)* fact;
+    VupNu.data[isl] = (temp*mat(v,site)*mat(WupMu,site)).getva();
+  }
+  c += shiftField(VupNu,nu,Backward());
+
   return c;
 }
 

@@ -82,7 +82,8 @@ namespace Mapping{
     void operator()(GaugeField1D& Fout,const GaugeField& Fin,
 		    int mu,Backward)const;
 
-    /// for improvements assuming the memory alinement
+    // for improvements assuming the memory alignment
+    // using OpenMP and BGQ threading
     void operator()(GaugeField1D& Fout,const double* Fin,Forward)const;
     void operator()(GaugeField1D& Fout,const double* Fin,Backward)const;
   };

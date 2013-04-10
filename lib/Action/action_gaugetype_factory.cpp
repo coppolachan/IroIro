@@ -16,6 +16,9 @@ namespace GaugeAction {
       if (!strcmp(Action_name, "Wilson")) { 
 	return new WilsonGaugeActionFactory(node);
       } 
+      if (!strcmp(Action_name, "WilsonAdjoint")) { 
+	return new WilsonGaugeAdjointActionFactory(node);
+      } 
       if (!strcmp(Action_name, "Rectangle")) { 
 	return new RectGaugeActionFactory(node);
       } 

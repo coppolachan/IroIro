@@ -3,6 +3,12 @@
   @brief Definition of the Even Odd staggered operator for adjoint rep.
 */
 //-------------------------------------------------------------
+
+//Compile only for NC=3
+#include "include/macros.hpp"
+#if (NC_==3)
+
+
 #include "dirac_staggered_EvenOdd_Adjoint.hpp"
 #include "Fields/field_expressions.hpp"
 #include "Tools/fieldUtils.hpp"
@@ -11,6 +17,8 @@
 #include "Tools/randNum_MP.h"
 #include "Measurements/GaugeM/staples.hpp"
 #include <iostream>
+
+
 
 using namespace std;
 using namespace FieldUtils;
@@ -179,3 +187,6 @@ md_force(const Field& eta,const Field& zeta) const{
   fce *= -0.5;
   return fce;
 }
+
+
+#endif //NC=3

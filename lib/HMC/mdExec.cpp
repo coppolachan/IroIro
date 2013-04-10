@@ -9,17 +9,19 @@
 #include "include/field.h"
 #include "Tools/randNum_MP.h"
 
+
 using namespace std;
 
-namespace MDutils{
-  void md_mom(GaugeField& P,const RandNum& rand){
-    if(CommonPrms::instance()->Nc() == 3){
-      md_mom_su3(P,rand);
-    }else{
-      throw "MD momentum P is not implemented for Nc_!=3.";
-    }
-  }
 
+void MDexec::md_mom(GaugeField& P,const RandNum& rand){
+  if(CommonPrms::instance()->Nc() == 3){
+    MDutils::md_mom_su3(P,rand);
+  }else{
+    MDutils::md_mom_suN(Representation, P,rand);
+  }
+}
+
+namespace MDutils{
   void md_mom_su3(GaugeField& P,const RandNum& rand){
 
     static const double sq3i = 1.0/sqrt(3.0);
@@ -62,4 +64,32 @@ namespace MDutils{
       }
     }
   }
+
+  void md_mom_suN(SUNRep<NC_>& Rep,GaugeField& P,const RandNum& rand){
+
+    int Nvol = CommonPrms::instance()->Nvol();
+    int Ndim = CommonPrms::instance()->Ndim();
+    vector<int> gsite = SiteIndex::instance()->get_gsite();
+
+    Format::Format_A fmt(Nvol,Ndim);
+    valarray<double> pj(fmt.size());
+
+    MPrand::mp_get_gauss(pj,rand,gsite,fmt);
+
+    SUNmatrix<NC_> p, temp;    
+    for(int d=0; d< Ndim; ++d){
+      for(int site=0; site<Nvol; ++site){
+
+	p.zero();
+	for (int a = 0; a < ADJCOL; a++){
+	  temp = Rep.lambda_fund(a).xI();
+	  temp *= pj[fmt.index(a,site,d)];
+	  p += temp;
+	}
+
+	P.data.set(P.format.cslice(0,site,d),p.getva());
+      }
+    }
+  }
+
 }
