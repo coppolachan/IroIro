@@ -61,6 +61,8 @@ void Dirac_staggered_EvenOdd_Adjoint::set_ustag(){
 #endif 
 
 #if 0
+using namespace SUNadjVecUtils;
+
 void Dirac_staggered_EvenOdd_Adjoint::
 multPeo(Field& we,const Field& fo,int mu)const{
   AdjFermionField1sp ft = shiftField_eo(AdjFermionField1sp(fo),mu,Forward());
@@ -84,6 +86,7 @@ const Field Dirac_staggered_EvenOdd_Adjoint::mult_eo(const Field& fo)const{
     for(int hs=0; hs<Nvh_; ++hs) //backward differenciation
       ft.data.set(ff_.islice(hs),
 		  (mat_dag(uo_,hs,mu)*SUNadjVec(fo[ff_.islice(hs)])).getva());
+
     we -= shiftField_eo(ft,mu,Backward()).data;
   }
   return we;
@@ -163,9 +166,8 @@ md_force(const Field& eta,const Field& zeta) const{
     for(int a=0;a<Nin_;++a){
       for(int b=0;b<Nin_;++b){
 	SUNmat Lmd_ab = lmd_commutator(a,b);
-	
-	for(int hs=0; hs<Nvh_; ++hs){
-	  std::slice xsl = ff_.islice(hs);
+
+	for(int hs=0; hs<Nvh_; ++hs){	
 	  fce.add(gff_.islice(idx_->esec(hs),mu),
 		  -(Lmd_ab*eta[ff_.index(a,hs)]*zetah[ff_.index(b,hs)]).getva());
 	  fce.add(gff_.islice(idx_->osec(hs),mu),
@@ -174,6 +176,6 @@ md_force(const Field& eta,const Field& zeta) const{
       }
     }
   }
-  fce *= 0.5;
+  fce *= -0.5;
   return fce;
 }

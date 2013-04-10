@@ -18,7 +18,7 @@ typedef Format::Format_G gfmt_t;
 class Dirac_Wilson_Brillouin: public DiracWilsonLike{
 private:
   const Field* const u_;
-  double kbr_;
+  double kbr_,m_;
   int Nx_,Ny_,Nz_,Nt_,Nvol_,Nin_;
 
   const ffmt_t ff_;
@@ -50,8 +50,8 @@ private:
 
   const Field sft_p(const Field& f,int dir)const;
   const Field sft_m(const Field& f,int dir)const;
-  const Field delg(const Field& f,int dir,double a,double b)const;
-  const Field lap(const Field& f,int dir,double a,double b)const;
+  const Field lap(const Field& f,int dir,double a)const;
+  const Field del(const Field& f,int dir,double a)const;
 
   const Field gamma_x(const Field&)const;
   const Field gamma_y(const Field&)const;
@@ -64,7 +64,7 @@ private:
 public:
  /*! @brief constructor to create instance with normal site indexing */
   Dirac_Wilson_Brillouin(double mass,const Field* u)
-    :kbr_(1.0/(15.0/8.0 +mass)),u_(u),
+    :kbr_(1.0/((15.0/8.0)+mass)),u_(u),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
      Nz_(CommonPrms::instance()->Nz()),
@@ -73,6 +73,7 @@ public:
      comm_(Communicator::instance()),
      ff_(Nvol_),fsize_(ff_.size()),
      gf_(Nvol_),gsize_(gf_.size()),
+     m_(mass),
      Nin_(ff_.Nin()){}
 
   Dirac_Wilson_Brillouin(const XML::node& node,const Field* u)
@@ -89,7 +90,8 @@ public:
     //
     double mass;
     XML::read(node,"mass",mass);
-    kbr_= 1.0/(15.0/8.0 +mass);
+    kbr_= 1.0/((15.0/8.0)+mass);
+    m_ = mass;
   }
   
   size_t fsize() const{return fsize_;}
@@ -98,6 +100,11 @@ public:
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
+  const Field mult_H(const Field&)const;
+  const Field mult_del(const Field&)const;
+  const Field mult_lap(const Field&)const;
+
+  
 
   ////////////////////////////////////////Preconditioned versions
   // Wilson operator has no defined preconditioner now 
@@ -124,7 +131,8 @@ public:
 
   void get_RandGauss(std::valarray<double>&,const RandNum&)const;
 
-  double getKappa() const {return 1.0/(2.0/kbr_-17.0/4.0);}  
+  double getKappa() const {return kbr_;} 
+  const ffmt_t getFermionFormat() const {return ff_;} 
   void update_internal_state(){}
 };
 
