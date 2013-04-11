@@ -93,11 +93,11 @@ namespace FieldUtils{
 
 #pragma omp barrier            
       for (int i = N; i>=1;--i){
-	BGWilsonLA_MatMultScalar((__complex__ double*)temp_ptr+jump,d/i,ns2);
+	BGWilsonSU3_MatMultScalar(temp_ptr+jump2,d/i,ns2);
 	BGWilsonSU3_MatMultAdd_NN(temp2_ptr+jump2,unit_ptr+jump2, 
 				  temp_ptr+jump2,G_ptr+jump2,ns2);
-	BGWilsonLA_MatEquate((__complex__ double*)temp_ptr+jump,
-			     (__complex__ double*)temp2_ptr+jump,ns2);
+	BGWilsonSU3_MatEquate(temp_ptr+jump2,
+			      temp2_ptr+jump2,ns2);
       }
 #pragma omp barrier      
       for(int mu=0; mu<G.Nex(); ++mu)
@@ -137,11 +137,11 @@ namespace FieldUtils{
     int is = 0;
     int ns = Nvol*G.Nex();
     for (int i = N; i>=1;--i){
-      BGWilsonLA_MatMultScalar((__complex__ double*)temp_ptr+is*9,d/i,ns);
+      BGWilsonSU3_MatMultScalar(temp_ptr+is*9,d/i,ns);
       BGWilsonSU3_MatMultAdd_NN(temp2_ptr+is*9,unit_ptr+is*9, 
 				temp_ptr+is*9,G_ptr+is*9,ns);
-      BGWilsonLA_MatEquate((__complex__ double*)temp_ptr+is*9,
-                           (__complex__ double*)temp2_ptr+is*9,ns);
+      BGWilsonSU3_MatEquate(temp_ptr+is*9,
+			    temp2_ptr+is*9,ns);
     }
     temp = ReUnit(temp2);
     

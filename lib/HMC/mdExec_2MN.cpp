@@ -61,12 +61,12 @@ void MDexec_2MN::update_P(int lv,double ep){
   for(int a=0; a<as_[lv].size(); ++a){
     GaugeField fce = as_[lv].at(a)->md_force();
 #ifdef IBM_BGQ_WILSON
-    BGWilsonLA_MatMultScalar((__complex__ double*)fce.data.getaddr(0),
+    BGWilsonSU3_MatMultScalar((double*)fce.data.getaddr(0),
 			     -ep,
 			     CommonPrms::instance()->Nvol()*CommonPrms::instance()->Ndim());
-    BGWilsonMatLA_Add((__complex__ double*)P_.data.getaddr(0), 
-		      (__complex__ double*)fce.data.getaddr(0),
-		      CommonPrms::instance()->Nvol()*CommonPrms::instance()->Ndim()); 
+    BGWilsonSU3_MatAdd((double*)P_.data.getaddr(0), 
+		       (double*)fce.data.getaddr(0),
+		       CommonPrms::instance()->Nvol()*CommonPrms::instance()->Ndim()); 
 #else
     fce *= ep;
     P_-= fce; 
