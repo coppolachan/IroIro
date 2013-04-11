@@ -176,11 +176,13 @@ GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu, const Fie
   int limit;
   double sign = 1.0;
   int sector = -1;
+  
   if (mu > nu) {
     mu_aux = nu;
     nu_aux = mu;
     sign = -1.0;
   }
+  
 
   for (int m = 0; m <= mu_aux; m++) {
     if (m < mu_aux)
@@ -195,11 +197,11 @@ GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu, const Fie
   
   for(int site=0; site<Nvol_; ++site){
     std::slice isl = c.format.islice(site);
-    std::complex<double>     fact(aux[2*site+2*Nvol_*sector],  sign*aux[2*site+1+2*Nvol_*sector]);
-    std::complex<double> fact_dag(aux[2*site+2*Nvol_*sector], -sign*aux[2*site+1+2*Nvol_*sector]);
-    temp = mat(w,site)* fact_dag;
+    //std::complex<double>     fact(aux[2*site+2*Nvol_*sector],  sign*aux[2*site+1+2*Nvol_*sector]);
+    //std::complex<double> fact_dag(aux[2*site+2*Nvol_*sector], -sign*aux[2*site+1+2*Nvol_*sector]);
+    temp = mat(w,site)* aux[2*site+2*Nvol_*sector];
     c.data[isl] = (temp*mat(VupNu,site)*mat_dag(WupMu,site)).getva();    
-    temp = mat_dag(w,site)* fact;
+    temp = mat_dag(w,site)*aux[2*site+2*Nvol_*sector];
     VupNu.data[isl] = (temp*mat(v,site)*mat(WupMu,site)).getva();
   }
   c += shiftField(VupNu,nu,Backward());

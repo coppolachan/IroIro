@@ -4,7 +4,7 @@
  * @brief Declarations of actions for Heat Bath updates
  *
  *
- *  Time-stamp: <2013-04-09 14:21:30 neo>
+ *  Time-stamp: <2013-04-10 16:21:33 neo>
  */
 //--------------------------------------------------------------------
 
@@ -91,7 +91,7 @@ void HBAction_SUN::hb_update(const RandNum& RNG) {
     abort();
   }
 
-  GaugeField1D tmp; 
+  GaugeField1D tmp, tmpup, tmpdn; 
   SUNmat staple, newlink;
   int sector = 0;
 
@@ -111,18 +111,18 @@ void HBAction_SUN::hb_update(const RandNum& RNG) {
   
   // Fill the field with complex numbers
   // distributed normally with variance = sigma
-  
+  /*
   for (int m = 0; m < NDIM_-1; m++) {
     for (int n = m+1; n < NDIM_; n++) {
       tmp = stplfield_.upper(*u_, m,n);
       for (int s = 0; s < Nvol_; s++) {
-	RNG.get_complex_gauss(&z_r, &z_i, 1.0);
+	RNG.get_complex_gauss(&z_r, &z_i, sigma);
 	double plaqr = ReTr(mat(*u_,s,m)*mat_dag(tmp,s));
 	//double plaqi = ImTr(mat(*u_,s,m)*mat_dag(tmp,s));
 	zp.set(2*s+  2*Nvol_*sector  , z_r);
 	zp.set(2*s+1+2*Nvol_*sector  , z_i);
 
-	fp.set(2*s+  2*Nvol_*sector  , Params_.beta/NC_+2.0*beta_adj_p/NC_*(z_r+ plaqr/(sigma*NC_)));
+	fp.set(2*s+  2*Nvol_*sector  , Params_.beta/NC_+2.0*beta_adj_p/NC_*(z_r+ plaqr/(NC_)));
 	//fp.set(2*s+1+2*Nvol_*sector  ,             +2.0*beta_adj_p*(z_i+plaqi/NC_));
 	fp.set(2*s+1+2*Nvol_*sector  ,             0.0);
 
@@ -133,7 +133,7 @@ void HBAction_SUN::hb_update(const RandNum& RNG) {
       sector++;
     }
   }
-  
+  */
 
   // SU(2) updating
  
@@ -162,17 +162,42 @@ void HBAction_SUN::hb_update(const RandNum& RNG) {
       Sites = SiteIndex_EvenOdd::instance()->osec();
     }
     for(int m = 0; m < NDIM_; ++m){
-       // Fill the staple field, tmp
+      
+      //Create Auxiliary field fp
+      sector = 0;
+      for (int mu = 0; mu < NDIM_-1; mu++) {
+	for (int n = mu+1; n < NDIM_; n++) {
+	  tmp = stplfield_.upper(*u_, mu,n);
+	  for (int s = 0; s < Nvol_; s++) {
+	    site = s;
+	    RNG.get_complex_gauss(&z_r, &z_i, sigma);
+	    double plaqr = ReTr(mat(*u_,site,mu)*mat_dag(tmp,site));
+	    
+	    fp.set(2*site+  2*Nvol_*sector  , Params_.beta/NC_+2.0*beta_adj_p/NC_*(z_r+plaqr/(NC_)));
+	  
+	    fp.set(2*site+1+2*Nvol_*sector  , 0.0);
+	  }
+	  sector++;
+	  
+	}
+      }
+      
       tmp = 0.0;
-      for(int n=0; n< NDIM_; ++n)
-	if(n != m) tmp += stplfield_.upper_lower(*u_,m,n, fp); 
+       // Fill the staple field, tmp
+      for(int n=0; n< NDIM_; ++n) {
+	if(n != m) 
+	  {
+	    tmp += stplfield_.upper_lower(*u_,m,n, fp);
+	  }
+      }
+	  
       
       // Sweep among links 
       // first even (eo=0), then odd (eo=1)
       for (int s = 0; s < Nvol_/2; s++) {
 	site = Sites[s];
 	staple = mat(tmp, site);
-	
+
 	// Calculate xi = det (staple)^(1/2)
 	double xi    = SU2_det_r(staple); // for SU(2) det is always real and >0
 	//double xi = projected_det(staple);// more general, little overhead
@@ -260,27 +285,7 @@ void HBAction_SUN::hb_update(const RandNum& RNG) {
 
 
       } // end loop on sites for updating U
-      
-      sector = 0;
-      for (int mu = 0; mu < NDIM_-1; mu++) {
-	for (int n = mu+1; n < NDIM_; n++) {
-	  tmp = stplfield_.upper(*u_, mu,n);
-	  for (int s = 0; s < Nvol_; s++) {
-	    site = s;
-	    RNG.get_complex_gauss(&z_r, &z_i, 1.0);
-	    double plaqr = ReTr(mat(*u_,site,mu)*mat_dag(tmp,site));
-	    //double plaqi = ImTr(mat(*u_,site,mu)*mat_dag(tmp,site));
-	    //z_r = zp[2*site+  2*Nvol_*sector];
-	    //z_i = zp[2*site+1+2*Nvol_*sector];
-	    
-	    fp.set(2*site+  2*Nvol_*sector  , Params_.beta/NC_+2.0*beta_adj_p/NC_*(z_r+plaqr/(sigma*NC_)));
-	    //fp.set(2*site+1+2*Nvol_*sector  ,             +2.0*beta_adj_p*(z_i+plaqi/NC_));
-	    fp.set(2*site+1+2*Nvol_*sector  ,             0.0);
-	  }
-	  sector++;
-	  
-	}
-      }
+
       
 
     } // end loop on mu

@@ -32,6 +32,7 @@ double ActionGaugeRect::calc_H(){
   GaugeField1D Cup1, Cup2;
   GaugeField1D res;
   GaugeField1D UpNu, UpMu;
+  GaugeField1D U_mu, U_nu;
 
   double plaqF = 0.0;
   double rectF = 0.0;
@@ -193,6 +194,7 @@ GaugeField ActionGaugeRect::md_force(){
   //check speed
   GaugeField1D res;
   GaugeField1D UpMu, UpNu;
+  GaugeField1D U_mu, U_nu;
 
 #ifdef IBM_BGQ_WILSON
   GaugePtr* force_rect_ptr = (GaugePtr*)force_rect.data.getaddr(0);

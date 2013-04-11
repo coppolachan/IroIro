@@ -28,7 +28,7 @@ int Test_HB::run(){
 
   //Initialization
   //HeatBathGeneral hb_general(HB_node);
-  HBAction_SUN SUNAction(1.5, 0.9, &Gfield_);
+  HBAction_SUN SUNAction(1.5, 1.0, &Gfield_);
   HeatBathGeneral hb_general(HB_node, SUNAction,*(RNG_Env::RNG->getRandomNumGenerator()));
 
   ////////////// HMC calculation /////////////////
