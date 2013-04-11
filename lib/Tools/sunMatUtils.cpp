@@ -197,14 +197,12 @@ namespace SUNmatUtils{
   const valarray<double> adjoint(const SU3mat& u){
     int dim = 8;
     valarray<double> vt(dim*dim);
-    
+
     for(int a=0; a<dim; ++a){
-      SU3mat ua = lambda[a](u);
-      for(int b=0; b<dim; ++b){
-	SU3mat ub_dag = lambda[b](dag(u));
-	ub_dag *= ua;
-	vt[dim*a+b] = ReTr(ub_dag)*0.5;
-      }
+      SU3mat lu = lambda[a](u);
+
+      for(int b=0; b<dim; ++b)
+	vt[dim*a+b] = ReTr(lu*lambda[b](dag(u)))*0.5;
     }
     return vt;
   }
