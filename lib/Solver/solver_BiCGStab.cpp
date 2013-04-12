@@ -4,9 +4,14 @@
  * @brief Definition of BiCGstab solver
  *
  */
+
+#include <iostream>
+#include <iomanip>
+
 #include "solver_BiCGStab.hpp"
 #include "Fields/field_expressions.hpp"
 #include "Communicator/communicator.h"
+#include "include/messages_macros.hpp"
 
 using namespace std;
 
@@ -14,7 +19,7 @@ SolverOutput Solver_BiCGStab::
 solve(Field& xq, const Field& b)const{ 
   using namespace FieldExpression;
 
-#if VERBOSITYY>=SOLV_ITER_VERB_LEVEL
+#if VERBOSITY>=SOLV_ITER_VERB_LEVEL
   CCIO::header("BiCGStab solver start");
 #endif
   SolverOutput Out;
@@ -26,9 +31,7 @@ solve(Field& xq, const Field& b)const{
   double bnorm = b.norm();
   double snorm = 1.0/bnorm;
 
-#if VERBOSITY > 1
-  CCIO::cout<<"b.norm()="<<bnorm<<std::endl;
-#endif
+  _Message(SOLV_ITER_VERB_LEVEL, "b.norm()="<<bnorm<<std::endl);
 
   Field x = b;
   Field p(b.size());
@@ -43,13 +46,11 @@ solve(Field& xq, const Field& b)const{
   double alp = 1.0;
   double omg = 1.0;
 
-#if VERBOSITY > 1
-  CCIO::cout << " Init: "<< rr*snorm << std::endl;
-#endif
+  _Message(SOLV_ITER_VERB_LEVEL," Init: "<< rr*snorm << std::endl);
   
   for(int it = 0; it < Params.MaxIter; it++){
     solve_step(r,p,x,v,rr,rho,alp,omg);
-#if VERBOSITY > 1
+#if VERBOSITY > SOLV_ITER_VERB_LEVEL
     CCIO::cout<< std::setw(5)<< "["<<it<<"] "
 	      << std::setw(20) << rr*snorm<< "\n";
 #endif

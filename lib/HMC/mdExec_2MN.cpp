@@ -10,9 +10,9 @@
 #include <iomanip>
 
 #ifdef IBM_BGQ_WILSON
+#include "timing_BGQ.hpp"
 //#include <omp.h>
 //#include "bgqthread.h"
-#include "include/bgq_su3algebra.h"
 #endif
 
 using namespace std;
@@ -58,8 +58,12 @@ void MDexec_2MN::update_U(double ep){
 }
 
 void MDexec_2MN::update_P(int lv,double ep){
+  long double timing;
   for(int a=0; a<as_[lv].size(); ++a){
+    FINE_TIMING_START;    
     GaugeField fce = as_[lv].at(a)->md_force();
+    FINE_TIMING_END(timing);
+    _Message(TIMING_VERB_LEVEL, "Action ["<<a<<"] timing = " << timing << std::endl);
 #ifdef IBM_BGQ_WILSON
     BGWilsonSU3_MatMultScalar((double*)fce.data.getaddr(0),
 			     -ep,

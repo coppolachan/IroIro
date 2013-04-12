@@ -6,9 +6,6 @@
 #include "sunMatUtils.hpp"
 
 #include <omp.h>
-#ifdef IBM_BGQ_WILSON
-#include "bgq_su3algebra.h"
-#endif
 
 class RandNum;
 

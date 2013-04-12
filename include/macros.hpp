@@ -20,7 +20,8 @@
 
 // Predefined verbosity levels
 #define ACTION_VERB_LEVEL 1
-#define SOLV_ITER_VERB_LEVEL 2
+#define TIMING_VERB_LEVEL 2
+#define SOLV_ITER_VERB_LEVEL 3
 #define SOLV_MONITOR_VERB_LEVEL 1
 #define DEBUG_VERB_LEVEL 5
 
@@ -38,5 +39,7 @@
   var = var + (end.tv_usec - start.tv_usec) / 1000.0   // us to ms
 
 class NullType{};
+
+
 
 #endif

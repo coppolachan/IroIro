@@ -12,7 +12,6 @@
 #ifdef IBM_BGQ_WILSON
 #include <omp.h>
 #include "bgqthread.h"
-#include "include/bgq_su3algebra.h"
 #endif
 
 using namespace SUNmatUtils;
