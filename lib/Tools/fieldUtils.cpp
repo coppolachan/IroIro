@@ -88,8 +88,8 @@ namespace FieldUtils{
       register int jump = is2*9;
       register int jump2 = is2*18;
 
-      BGWilsonLA_MatUnity((__complex__ double*)unit_ptr+jump,ns2);
-      BGWilsonLA_MatUnity((__complex__ double*)temp_ptr+jump,ns2);
+      BGWilsonSU3_MatUnity(unit_ptr+jump2,ns2);
+      BGWilsonSU3_MatUnity(temp_ptr+jump2,ns2);
 
 #pragma omp barrier            
       for (int i = N; i>=1;--i){

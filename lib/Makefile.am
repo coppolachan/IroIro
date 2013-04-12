@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-11 11:53:36 cossu>
+# Time-stamp: <2013-04-12 15:00:21 cossu>
 
 ###########################################
 # Initial definitions 
@@ -28,7 +28,6 @@ LDFLAGS += -q64
 endif
 
 if IBM_BGQ
-BGQ_MAT_SRC += Tools/bgq_su3algebra.cpp
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
 # NB: Libraries ordering is essential
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
@@ -161,7 +160,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
 		Tools/sunAlgUtils.cpp			\
-		$(BGQ_MAT_SRC)				\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
@@ -199,7 +197,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/singleton.h		\
 			$(top_srcdir)/include/observer.hpp		\
 			$(top_srcdir)/include/messages_macros.hpp	\
-			$(top_srcdir)/include/bgq_su3algebra.h		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
