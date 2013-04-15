@@ -58,12 +58,15 @@ void MDexec_2MN::update_U(double ep){
 }
 
 void MDexec_2MN::update_P(int lv,double ep){
-  long double timing;
+  long double timing, total_timing;
+  FINE_TIMING_START(total_timing);    
   for(int a=0; a<as_[lv].size(); ++a){
-    FINE_TIMING_START;    
+    FINE_TIMING_START(timing);    
     GaugeField fce = as_[lv].at(a)->md_force();
     FINE_TIMING_END(timing);
     _Message(TIMING_VERB_LEVEL, "Action ["<<a<<"] timing = " << timing << std::endl);
+
+
 #ifdef IBM_BGQ_WILSON
     BGWilsonSU3_MatMultScalar((double*)fce.data.getaddr(0),
 			     -ep,
@@ -76,6 +79,9 @@ void MDexec_2MN::update_P(int lv,double ep){
     P_-= fce; 
 #endif
   }
+   FINE_TIMING_END(total_timing);
+    _Message(TIMING_VERB_LEVEL, "Total timing = " << total_timing << std::endl);
+
 }
 
 void MDexec_2MN::

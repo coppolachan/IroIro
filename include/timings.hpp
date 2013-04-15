@@ -11,8 +11,8 @@
 #define TIMING_BGQ_HPP_
 
 //now empty
-#define FINE_TIMING_START
-#define FINE_TIMING_END(var)
+#define FINE_TIMING_START(t)
+#define FINE_TIMING_END(t)
 
 #ifdef IBM_BGQ_WILSON
 
@@ -23,31 +23,22 @@
 
 namespace timingBGQ {
 
-  // Returns the Time from the last call
-  long double GetTime() {
-    static long double old;
-    static bool have_time = false;
-    long double diff, newest;
-
-    if (have_time) {
-      newest = ((long double)GetTimeBase())/BGQ_HERTZ;
-      diff = newest -old ;
-      old = newest;
-      return diff;
-    } else {
-      old = ((long double)GetTimeBase())/BGQ_HERTZ;
-      have_time = true;
-      return old;
-    }
-
+  long double Timer(long double t = 0) {
+    long double new_t = ((long double)GetTimeBase())/BGQ_HERTZ; 
+    
+    if (t == 0)
+      return new_t;
+    else 
+      return new_t - t;
   }
 
   // Redefine the timing routines in case of BGQ 
 #undef FINE_TIMING_START
-#define FINE_TIMING_START timingBGQ::GetTime()
+#define FINE_TIMING_START(t) t = 0; \ 
+  t = timingBGQ::Timer()
 
-#undef FINE TIMING_END(var)
-#define FINE_TIMING_END(var) var = timingBGQ::GetTime()
+#undef  FINE_TIMING_END
+#define FINE_TIMING_END(t) t = timingBGQ::Timer(t)
 
 }
 
