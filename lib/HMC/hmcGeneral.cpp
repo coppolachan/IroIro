@@ -24,9 +24,9 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
     double timer;
     TIMING_START;
     Hdiff = evolve_step(Uin);
-    TIMING_END(timer);
+    TIMING_END(timer); // in milliseconds
     
-    CCIO::cout<< "Time for trajectory (s) : "<< timer/1000.0 << "\n";
+    CCIO::cout<< "[Timing] Trajectory time (s) : "<< timer/1000.0 << "\n";
     CCIO::cout<< "dH = "<< Hdiff << "\n";
     Uin = md_->get_U();  //accept every time
   }
@@ -40,7 +40,7 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
     TIMING_START;
     Hdiff = evolve_step(Uin);
     TIMING_END(timer);
-    CCIO::cout<< "Time for trajectory (s) : "<< timer/1000.0 << "\n";
+    CCIO::cout<< "[Timing] Trajectory time (s) : "<< timer/1000.0 << "\n";
 
     if(metropolis_test(Hdiff)) Uin = md_->get_U();
 
@@ -68,7 +68,7 @@ double HMCgeneral::evolve_step(GaugeField& Uin)const{
 
   int init_level = 0;
   double H0 = md_->calc_H();     // current state            
-  CCIO::cout<<"total H_before = "<< H0 << "\n";
+  CCIO::cout<<"Total H_before = "<< H0 << "\n";
   
   md_->integrator(init_level,clock);
   

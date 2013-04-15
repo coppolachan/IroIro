@@ -70,7 +70,7 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   xq = x;
 
   TIMING_END(Out.timing);
-  CCIO::cout << "Kernel section timing: "<< kernel_timing << "\n";
+  CCIO::cout << "[Timing] Solver_CG Kernel section : "<< kernel_timing << "\n";
 
   return Out;
 }
