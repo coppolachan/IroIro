@@ -5,12 +5,14 @@
 
 
  */
-//now empty
-#define FINE_TIMING_START
-#define FINE_TIMING_PRINT(var)
+
 
 #ifndef TIMING_BGQ_HPP_
 #define TIMING_BGQ_HPP_
+
+//now empty
+#define FINE_TIMING_START
+#define FINE_TIMING_END(var)
 
 #ifdef IBM_BGQ_WILSON
 

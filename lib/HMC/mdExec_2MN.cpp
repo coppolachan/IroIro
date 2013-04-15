@@ -8,9 +8,9 @@
 #include "include/messages_macros.hpp"
 
 #include <iomanip>
+#include "timings.hpp"
 
 #ifdef IBM_BGQ_WILSON
-#include "timing_BGQ.hpp"
 //#include <omp.h>
 //#include "bgqthread.h"
 #endif
