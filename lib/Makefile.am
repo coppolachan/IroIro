@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-16 15:43:11 neo>
+# Time-stamp: <2013-04-16 16:11:57 neo>
 
 ###########################################
 # Initial definitions 
@@ -48,8 +48,10 @@ endif
 if IBM_BGQ
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
+ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
 else
 ACTION_SRCS = Action/action_gauge_rect.cpp
+ACTION_SRCS += Action/action_gauge_wilson_force.cpp
 endif 
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
@@ -79,7 +81,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
 		$(SITE_INDEXING_SRCS)			\
 		Action/action.cpp			\
-	 	Action/action_gauge_wilson.cpp 		\
+		Action/action_gauge_wilson.cpp		\
 	 	Action/action_gauge_wilson_adjoint.cpp	\
 		$(ACTION_SRCS)				\
 		Action/action_gaugetype_factory.cpp     \
