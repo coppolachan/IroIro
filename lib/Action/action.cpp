@@ -3,6 +3,7 @@
   
   @brief Definition of non virtual functions in abstract Action class
 
+  Time-stamp: <2013-04-16 11:20:31 neo>
  */
 
 #include "action.hpp"
@@ -10,16 +11,18 @@
 
 
 void Action::monitor_force(GaugeField& force, std::string ActionName){
-  double f_abs = force.data.average_abs();
+  // calculates the average of the force field
+  double f_abs = force.data.average_abs(); 
+  // calculates the maximum of the force field
   double f_max = force.data.max_element();
 
+  // Print out the result 
   CCIO::cout<<"    ["<<ActionName<<"]\n";  
-  //we want to check the real part of iP only for debugging purposes
-  CCIO::cout<<" +------- average |MD-force| (iPdot) = "  
+  CCIO::cout<<"    :::::::::: Average |MD-force| = "  
 	    << f_abs
 	    << "\n";
   
-  CCIO::cout<<" +------- maximum  MD-force  (iPdot) = "
+  CCIO::cout<<"    :::::::::: Maximum  MD-force  = "
 	    << f_max
 	    << "\n";
 }

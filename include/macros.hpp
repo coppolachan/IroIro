@@ -16,7 +16,7 @@
 
 #include <iostream>
 #include <sstream>
-
+#include <vector>
 
 // Predefined verbosity levels
 #define ACTION_VERB_LEVEL 1
@@ -39,6 +39,10 @@
   var = var + (end.tv_usec - start.tv_usec) / 1000.0   // us to ms
 
 class NullType{};
+
+
+typedef std::vector<int> vector_int;
+typedef std::vector<double> vector_double;
 
 
 

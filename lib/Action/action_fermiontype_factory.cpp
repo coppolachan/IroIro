@@ -1,38 +1,54 @@
-#include "action_fermiontype_factory.hpp"
+/*!
+  @file action_fermiontype_factory.cpp
 
-#include <string.h>
+  @brief Definition of createFermionActionFactory function
+
+  Time-stamp: <2013-04-16 14:25:39 neo>
+*/
+
+#include "action_fermiontype_factory.hpp"
+#include "include/errors.hpp"
+
 
 namespace FermionAction {
   FermionActionFactory* createFermionActionFactory(XML::node node){
+    std::ostringstream NoActionErr;
     if (node !=NULL) {
       
       const char* Action_name = node.attribute("name").value();
-      
+	
       if (!strcmp(Action_name, "")) {
-	std::cerr << "No name provided for Action. Check your xml file\n";
-	abort();
+	NoActionErr << "No name provided for Action. Check your XML input file";
+	Errors::XMLerr(NoActionErr);
       }
+
+      //////////////////////////////////////////////////////////////////////
       if (!strcmp(Action_name, "TwoFlavors")) 
 	return new TwoFlavorActionFactory(node);
-
+	
+      // RHMC
       if (!strcmp(Action_name, "NfFlavors")) 
 	return new NfFlavorsActionFactory(node);
-
+	
       if (!strcmp(Action_name, "TwoFlavorsRatio")) 
 	return new TwoFlavorRatioActionFactory(node);
-
+	
+      // RHMC 
       if (!strcmp(Action_name, "NfFlavorsRatio")) 
 	return new NfFlavorRatioActionFactory(node);
+	
+      // Staggered actions
       if (!strcmp(Action_name, "FourFlavorStaggered")) 
 	return new FourFlavorStaggeredActionFactory(node);
       if (!strcmp(Action_name, "FourFlavorStaggeredRatio")) 
 	return new FourFlavorStaggeredRatioActionFactory(node);
+	
+      // DomainWall specific actions
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D")) 
 	return new TwoFlavorDomainWall5dActionFactory(node);
-
       if (!strcmp(Action_name, "NfFlavorsDomainWall_5D")) 
 	return new NfFlavorDomainWall5dActionFactory(node);
-
+	
       //BGQ specific improved routines
 #ifdef IBM_BGQ_WILSON
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D-EO_BGQ"))
@@ -42,15 +58,19 @@ namespace FermionAction {
       if (!strcmp(Action_name, "NfFlavorsDomainWall_5D-EO_BGQ")) 
 	return new NfFlavorDomainWall5d_EO_BGQ_ActionFactory(node);
 #endif
-
-      std::cerr << "No Fermionic Action available with name ["
-		<< Action_name << "]. Request by <" << node.name() << ">\n";
-      abort();
-      
+      //////////////////////////////////////////////////////////////////////
+	
+      // If no action is found with provided name 
+      // execution reaches this point
+      NoActionErr << "No Fermionic Action available with name ["
+		  << Action_name << "].\nRequest by <" << node.name() << "> node";
+      Errors::XMLerr(NoActionErr);
     } else {
-      std::cout << "Mandatory node is missing in input file (Action Object)\n";
-      abort();
-
+      std::ostringstream NodeErr;
+      NodeErr << "Mandatory node is missing in input file (Action Object)\n"
+	      << "Check correct spelling of Fermion Action name.\n"
+	      << "Refer to documentation for available names.";
+      Errors::XMLerr(NodeErr);
     }
   }
 }

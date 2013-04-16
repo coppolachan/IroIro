@@ -1,13 +1,19 @@
 /*!
  * @file action_fermiontype_factory.hpp 
- * @brief Declaration of FermionType action factories
+ *
+ * @brief Declaration of Fermion-type action factories
+ *
+ * Time-stamp: <2013-04-16 14:16:05 neo>
  */
+
 #ifndef ACTION_FERMION_FACT_
 #define ACTION_FERMION_FACT_
 
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
 
+// Include here the files containing 
+// the declarations of the actions
 #include "action_fermiontype_factory_abs.hpp"
 #include "Action/action_Nf2.hpp"
 #include "Action/action_Nf.hpp"
@@ -81,7 +87,7 @@ public:
   ~NfFlavorsActionFactory(){}
 private: 
   Action_Nf* getFermionAction(GaugeField* const F,SmartConf* const SC) {
-   // select links according to smearing
+    // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
     
     Kernel.save(DiracObj.get()->getDiracOperatorWL(&(Links->data)));
@@ -124,7 +130,7 @@ public:
   }
 private:  
   Action_Nf2_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
-   // select links according to smearing
+    // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
     DiracNumerator.save(DiracNumObj.get()->getDiracOperatorWL(&(Links->data)));
@@ -172,7 +178,7 @@ public:
   }
 private:  
   Action_Nf_ratio* getFermionAction(GaugeField* const F,SmartConf* const SC){
-   // select links according to smearing
+    // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
     DiracNumerator.save(DiracNumObj.get()->getDiracOperatorWL(&(Links->data)));
@@ -312,7 +318,7 @@ public:
   }
 private:  
   Action_Nf2_ratio* getFermionAction(GaugeField* const F, SmartConf* const SC){
-   // select links according to smearing
+    // select links according to smearing
     GaugeField* Links = SC->select_conf(smearing);
 
     DiracNumerator.save(DiracNumObj.get()->getDiracOperatorWL(&(Links->data)));
@@ -506,7 +512,7 @@ private:
   }
 };
 
-//Add new factories here
+//Add new factories here and in the .cpp file
 //....
 
 #endif

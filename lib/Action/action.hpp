@@ -1,7 +1,11 @@
 /*!
   @file action.hpp
-  @brief Declaration of abstract Action class
+
+  @brief Declaration of abstract Action class, top level
+
+  Time-stamp: <2013-04-16 11:23:55 neo>
  */
+
 #ifndef ACTION_INCLUDED
 #define ACTION_INCLUDED
 
@@ -10,7 +14,9 @@
 #include "include/observer.hpp"
 #include "include/common_fields.hpp"
 
-class RandNum;
+class RandNum; // forward declaration 
+
+
 /*!
  * @brief Definition of virtual Action class
  * Action class is defined 
@@ -26,6 +32,7 @@ public:
   /*! Calculates force contribution */
   virtual GaugeField md_force() = 0;
 
+  /*! Default destructor */
   virtual ~Action(){}
 
   /*! Monitor force contribution */

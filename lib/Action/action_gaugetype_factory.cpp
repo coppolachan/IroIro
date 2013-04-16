@@ -1,15 +1,25 @@
-#include "action_gaugetype_factory.hpp"
+/*!
+ * @file action_gaugetype_factory.cpp 
+ *
+ * @brief Definition of createGaugeActionFactory function
+ *
+ * Time-stamp: <2013-04-16 14:28:15 neo>
+ */
 
 #include <string.h>
+#include "action_gaugetype_factory.hpp"
+#include "include/errors.hpp"
 
 namespace GaugeAction {
-  GaugeActionFactory* createGaugeActionFactory(XML::node node)
-  {
+  GaugeActionFactory* createGaugeActionFactory(XML::node node){
+    std::ostringstream NoActionErr;
     if (node !=NULL) {
+
       const char* Action_name = node.attribute("name").value();
+
       if (!strcmp(Action_name, "")) {
-        std::cerr << "No name provided for Gauge Action. Check your xml file\n";
-        abort();
+        NoActionErr << "No name provided for Gauge Action. Check your XML input file\n";
+        Errors::XMLerr(NoActionErr);
       }
       
       /////////////////////////////////////////////////     
@@ -32,16 +42,18 @@ namespace GaugeAction {
 	return new DBW2GaugeActionFactory(node);
       } 
       /////////////////////////////////////////////////
-      std::cerr << "No Gauge Action available with name ["
-                << Action_name << "]. Request by <" << node.name() << ">\n";
-      abort();
-      
+
+      // If no action is found with provided name 
+      // execution reaches this point
+      NoActionErr << "No Gauge Action available with name ["
+		  << Action_name << "]. Request by <" << node.name() << "> node";
+      Errors::XMLerr(NoActionErr);
     } else {
-      std::cout << "Mandatory node is missing in input file (Action Object)\n";
-      abort();
+      std::ostringstream NodeErr;
+      NodeErr << "Mandatory node is missing in input file (Action Object)\n"
+	      << "Check correct spelling of Gauge Action name.\n"
+	      << "Refer to documentation for available names.";
+      Errors::XMLerr(NodeErr);
     } 
-
-
   }
-  
 }

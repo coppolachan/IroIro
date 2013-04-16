@@ -1,5 +1,14 @@
-#ifndef ACTION_FACT_
-#define ACTION_FACT_
+/*!
+  @file action_Factory.hpp
+
+  @brief Declaration of abstract ActionFactory class, top level
+
+  Time-stamp: <2013-04-16 11:22:24 neo>
+ */
+
+
+#ifndef ACTION_FACT_HPP_
+#define ACTION_FACT_HPP_
 
 #include "action.hpp"
 #include "Smearing/smearingFactories.hpp"

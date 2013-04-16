@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-16 10:51:46 neo>
+# Time-stamp: <2013-04-16 14:36:11 neo>
 
 ###########################################
 # Initial definitions 
@@ -162,6 +162,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/sunAlgUtils.cpp			\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
+		Tools/ErrorsHandling/xml_errors.cpp	\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
 
@@ -198,6 +199,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/observer.hpp		\
 			$(top_srcdir)/include/messages_macros.hpp	\
 			$(top_srcdir)/include/timings.hpp		\
+			$(top_srcdir)/include/errors.hpp		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\

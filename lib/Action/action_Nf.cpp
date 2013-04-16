@@ -1,10 +1,13 @@
 /*! 
- * @file action_Nf2.cpp
+ * @file action_Nf.cpp
  *
  * @brief Definition of methods of Action_Nf class
  *
- * Any number of flavours
+ * This class deals with any number of flavours 
+ * using rational approximation for the fractional
+ * power of the Dirac kernel.
  */
+
 #include "action_Nf.hpp"
 #include "Tools/randNum_MP.h"
 #include "Tools/fieldUtils.hpp"
@@ -29,7 +32,10 @@ void Action_Nf::attach_smearing(SmartConf* SmearObj) {
 }
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-
+/*! Generates the pseudofermions \f$\phi = (M^\dagger M)^{(N_f/4n)}\xi\f$ 
+ * where \f$n\f$ is the number of pseudofermion fields 
+ * and \f$N_f\f$ the number of flavors
+ */
 void Action_Nf::init(const RandNum& rand){
   SolverOutput monitor;
   std::valarray<double> xi(fermion_size_);
@@ -40,10 +46,7 @@ void Action_Nf::init(const RandNum& rand){
   for(int i=0; i<Params_.n_pseudof_; ++i){
     // Generates a gaussian distributed vector <xi>   
     D_->get_RandGauss(xi,rand);
-    
-    // Generates pseudofermions <phi_> = (M^dag M)^(Nf/4n) <xi> 
-    // where n is the number of pseudofermion fields 
-    // and Nf the number of flavors
+ 
     monitor =  slv_->solve(phi_[i], Field(xi));
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();

@@ -1,9 +1,10 @@
 /*!
  * @mainpage KEK code for %Lattice QCD simulations
  *
+ * \image html LogoIroIro170px.png 
  * \image html keklogo-c.jpg 
  * \image html JICFUSsymbolmark170px.png 
- * \image html LogoIroIro170px.png 
+ * 
  *
  * JLQCD branch of the code for lattice simulations of QCD  
  * 

@@ -1,7 +1,19 @@
+/*!
+ * @file action_gaugetype_factory.hpp 
+ *
+ * @brief Declaration of Gauge-type action factories
+ *
+ * Time-stamp: <2013-04-16 14:17:33 neo>
+ */
+
 #ifndef ACTION_GAUGE_FACT_
 #define ACTION_GAUGE_FACT_
 
+
 #include "include/pugi_interface.h"
+
+// Include here the files containing 
+// the declarations of the actions
 #include "action_gaugetype_factory_abs.hpp"
 #include "Action/action_gauge_wilson.hpp"
 #include "Action/action_gauge_wilson_adjoint.hpp"
