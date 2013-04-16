@@ -4,16 +4,16 @@
 
   This is the BGQ optimized version
 
-  Time-stamp: <2013-04-16 16:18:33 neo>
+  Time-stamp: <2013-04-16 16:14:48 cossu>
 */
-#include "action_gauge_wilson.hpp"
-#include "Tools/sunMatUtils.hpp"
+#include "Action/action_gauge_wilson.hpp"
+//#include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 
 GaugeField ActionGaugeWilson::md_force(){
   using namespace FieldUtils;
-  using namespace SUNmatUtils;
+  //using namespace SUNmatUtils;
   using namespace Mapping;
 
   SUNmat pl;
