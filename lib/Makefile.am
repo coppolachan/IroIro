@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-12 15:00:21 cossu>
+# Time-stamp: <2013-04-16 10:51:46 neo>
 
 ###########################################
 # Initial definitions 
@@ -197,6 +197,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/singleton.h		\
 			$(top_srcdir)/include/observer.hpp		\
 			$(top_srcdir)/include/messages_macros.hpp	\
+			$(top_srcdir)/include/timings.hpp		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
