@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-16 14:36:11 neo>
+# Time-stamp: <2013-04-16 15:43:11 neo>
 
 ###########################################
 # Initial definitions 
@@ -15,7 +15,6 @@ LDFLAGS +=
 OPTLIB =
 
 DWF_BGQ_SRC = 
-BGQ_MAT_SRC =
 
 ###########################################
 # Configure driven path selector
@@ -28,7 +27,7 @@ LDFLAGS += -q64
 endif
 
 if IBM_BGQ
-DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
+
 # NB: Libraries ordering is essential
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 
@@ -44,6 +43,14 @@ else
 COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 endif
 
+############################################
+# Sources by architecture
+if IBM_BGQ
+DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
+ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
+else
+ACTION_SRCS = Action/action_gauge_rect.cpp
+endif 
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
 if USE_EVENODD
@@ -74,7 +81,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
 	 	Action/action_gauge_wilson_adjoint.cpp	\
-		Action/action_gauge_rect.cpp            \
+		$(ACTION_SRCS)				\
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\

@@ -2,14 +2,16 @@
   @file action_gauge_rect.hpp
 
   @brief Declaration of the ActionGaugeRect class
+
+  Time-stamp: <2013-04-16 15:16:57 neo>
 */
+
 #ifndef ACTION_GAUGE_CLOVER_INCLUDED
 #define ACTION_GAUGE_CLOVER_INCLUDED
 
 #include "action.hpp"
 #include "include/common_fields.hpp"
 #include "include/pugi_interface.h"
-
 
 /*!
   @brief Parameters for the ActionGauge class
@@ -24,7 +26,6 @@ struct ActionGaugeRectPrm {
   double c_rect;/*!< Coefficient for the rectangular term */
 
   ActionGaugeRectPrm(const XML::node node){
-    //read parameters from XML tree
     XML::read(node, "beta", beta, MANDATORY);
     XML::read(node, "c_plaq", c_plaq, MANDATORY);
     XML::read(node, "c_rect", c_rect, MANDATORY);
@@ -33,7 +34,6 @@ struct ActionGaugeRectPrm {
   /*! 
    * @brief Constructor to accomodate the case 
    * of predefined coefficients in factories 
-   *
    */
   ActionGaugeRectPrm(const XML::node node,
 		     const double c_plaq_,
@@ -70,6 +70,10 @@ public:
   GaugeField  md_force();
   void observer_update(){};
   
+  /*!
+   * @brief Standard constructor for basic tests
+   *
+   */
   ActionGaugeRect(const double beta, 
 		  const double c_plaq_,
 		  const double c_rect_,  
@@ -90,7 +94,7 @@ public:
 
   /*!
    * @brief Specialized constructor for the case of
-   * prefedined coefficients c_plaq and c_rect
+   * predefined coefficients c_plaq and c_rect
    *
    * To be used in factories
    */

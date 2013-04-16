@@ -1,8 +1,10 @@
 /*!
-  @file action_gauge_rect.cpp
+  @file action_gauge_rect.bgq.cpp
   @brief Definition of the ActionGaugeRect class
 
-  Time-stamp: <2013-04-16 15:17:49 neo>
+  Optimized version for BlueGeneQ architecture
+
+  Time-stamp: <2013-04-16 15:23:20 neo>
 */
 
 #include "action_gauge_rect.hpp"
@@ -12,10 +14,8 @@
 #include "lib/Main/Geometry/mapping.hpp"
 #include "include/messages_macros.hpp"
 
-#ifdef IBM_BGQ_WILSON
 #include <omp.h>
 #include "bgqthread.h"
-#endif
 
 using namespace SUNmatUtils;
 using namespace FieldUtils;
@@ -32,7 +32,6 @@ double ActionGaugeRect::calc_H(){
   double plaqF = 0.0;
   double rectF = 0.0;
 
-#ifdef IBM_BGQ_WILSON
   //pointers
   double* UpMu_ptr = UpMu.data.getaddr(0);
   double* UpNu_ptr = UpNu.data.getaddr(0);
@@ -104,54 +103,7 @@ double ActionGaugeRect::calc_H(){
       }
     }
   }
-#else 
-  for(int mu=0; mu<NDIM_; ++mu){
-    U_mu = DirSlice(*u_,mu); 
-    
-    for(int nu = mu+1; nu < NDIM_; ++nu){
-      Cup1 = stpl_.upper(*u_,mu,nu);
-      Cup2 = stpl_.upper(*u_,nu,mu);
-      
-      // plaquette term
-      for(int site=0; site<Nvol_; ++site)
-	plaqF += ReTr(mat(*u_,site,mu)*mat_dag(Cup1,site));
-      
-      U_nu = DirSlice(*u_,nu);
-      // rectangular terms
-      //       mu,U_mu (UpNu) 
-      //         +-->--+-->--+
-      // nu,U_nu |           |Cup2_dag(site+mu) (UpMu)
-      //     site+     +--<--+                               
-      
-      UpNu = shiftField(U_mu,nu,Forward());      //U_mu(x+nu)
-      UpMu = shiftField(Cup2,mu,Forward());      //Cup2(x+mu)     
-      
-      res = 0.0;
-      for(int site = 0; site<Nvol_; ++site){
-	res.data[res.format.cslice(0,site)] = 
-	  (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-	rectF += ReTr(mat(*u_,site,mu)*mat_dag(res,site));
-      }
-      
-      //        Cup1(site+nu)
-      //          +-->--+
-      //          |     |
-      //          +     +
-      // nu,U_nu  |     | U_nu+mu (UpMu)
-      //    site  +     +
-      
-      UpNu = shiftField(Cup1,nu,Forward());   //Cup1(x+nu)
-      UpMu = shiftField(U_nu,mu,Forward());   //U_nu(x+mu)
-      
-      res = 0.0;
-      for(int site = 0; site<Nvol_; ++site){
-	res.data[res.format.cslice(0,site)] =
-	  (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-	rectF += ReTr(mat(*u_,site,mu)*mat_dag(res,site));
-      }
-    }
-  }
-#endif
+
   Communicator::instance()->sync();
   plaqF = Communicator::instance()->reduce_sum(plaqF);
   rectF = Communicator::instance()->reduce_sum(rectF);
@@ -191,7 +143,6 @@ GaugeField ActionGaugeRect::md_force(){
   GaugeField1D UpMu, UpNu;
   GaugeField1D U_mu, U_nu;
 
-#ifdef IBM_BGQ_WILSON
   GaugePtr* force_rect_ptr = (GaugePtr*)force_rect.data.getaddr(0);
   GaugePtr* force_pl_ptr = (GaugePtr*)force_pl.data.getaddr(0);
   double* UpMu_ptr = UpMu.data.getaddr(0);
@@ -313,118 +264,6 @@ GaugeField ActionGaugeRect::md_force(){
 
   }
 
-#else
-  for(int mu=0; mu<NDIM_; ++mu){
-    force_pl   = 0.0;
-    force_rect = 0.0;
-
-    U_mu = DirSlice(*u_,mu);   //U_mu links
-
-    for(int nu=0; nu<NDIM_; ++nu){
-      if (nu == mu) continue;
-      
-      Cup1 = stpl_.upper(*u_,mu,nu);
-      Cup2 = stpl_.upper(*u_,nu,mu);
-      Cdn1 = stpl_.lower(*u_,mu,nu);
-      Cdn2 = stpl_.lower(*u_,nu,mu);
-
-      // plaquette term
-      force_pl += Cup1;
-      force_pl += Cdn1;
-
-      // rectangular terms
-      // ^nu
-      // |  
-      // +-->mu
-      //
-      // (x) is the site position
-      U_nu = DirSlice(*u_,nu);   //U_nu links    
-      //          U_mu
-      //         +-->--+-->--+
-      //   U_nu  |           |   term  (Cup2)
-      //        (x)    +--<--+      
-
-      UpMu = shiftField(Cup2,mu,Forward()); // Cup2(x+mu)
-      UpNu = shiftField(U_mu,nu,Forward()); // U_mu(x+nu)
-
-      res = 0.0;
-      for(int site=0; site<Nvol_; ++site)
-        res.data[res.format.cslice(0,site)] = 
-          (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-
-      force_rect += res;  
-  
-      //         +-->--+
-      //         |     |
-      //         +     +   term
-      //   U_nu  |     |  U_nu(x+mu) (UpMu)
-      //        (x)    v
-      UpMu = shiftField(U_nu, mu, Forward());    // U_nu(x+mu)
-      UpNu = shiftField(Cup1, nu, Forward());    // Cup1(x+nu)
-      res = 0.0;
-
-      for(int site=0; site<Nvol_; ++site)
-	res.data[res.format.cslice(0,site)] =
-	  (mat(U_nu,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-      
-     force_rect += res;     
-      //           U_mu(x+nu)
-      //      +-->--+-->--+
-      //      |           |   term
-      //      +--<-(x)    v
-      UpNu = shiftField(U_mu,nu,Forward()); // U_mu(x+nu)
-
-      res = 0.0; 
-      for(int site=0; site<Nvol_; ++site)
-	res.data[res.format.cslice(0,site)] = 
-	  (mat(Cdn2,site)*mat(UpNu,site)*mat_dag(UpMu,site)).getva();
-
-      force_rect += res;
-      //     (x)    +--<--+
-      //      |           |   term
-      //      +-->--+-->--+
-      UpMu = shiftField(Cup2,mu,Forward());
-
-      res = 0.0;
-      for(int site=0; site<Nvol_; ++site)
-	res.data[res.format.cslice(0,site)] = 
-	  (mat_dag(U_nu,site)*mat(U_mu,site)*mat(UpMu,site)).getva();
-
-      force_rect += shiftField(res,nu,Backward()); //+=res(x-nu)
-      //     (x)    ^
-      //      |     |
-      //      +     +   term
-      //      |     |
-      //      +-->--+
-      UpMu = shiftField(U_nu, mu, Forward()); //U_nu(x+mu)
-
-      res = 0.0;
-      for(int site=0; site<Nvol_; ++site){
-	res.data[res.format.cslice(0,site)] = 
-	  (mat_dag(U_nu,site)*mat(Cdn1,site)*mat(UpMu,site)).getva();
-      } 
-      force_rect += shiftField(res,nu,Backward());//+=res(x-nu)    
-      //      +--<-(x)    ^
-      //      |           |   term
-      //      +--<--+--<--+
-
-      res = 0.0;
-      for(int site=0; site<Nvol_; ++site)
-	res.data[res.format.cslice(0,site)] = 
-	  (mat_dag(Cdn2,site)*mat(U_mu,site)*mat(UpMu,site)).getva();
-
-      force_rect += shiftField(res,nu,Backward());//+=res(x-nu)  
-    }
-    force_pl   *= Params.c_plaq;
-    force_rect *= Params.c_rect;
-    force_rect += force_pl; //force_rect = total force (staples term)
-
-    for(int site=0; site<Nvol_; ++site){
-      force_mat = (mat(*u_,site,mu)*mat_dag(force_rect,site));
-      SetMat(force, anti_hermite_traceless(force_mat), site, mu);
-    }
-  } 
-#endif  
   force *= 0.5*Params.beta/NC_;
   _MonitorMsg(ACTION_VERB_LEVEL,Action,force,"ActionGaugeRect");
 

@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-16 14:36:11 neo>
+# Time-stamp: <2013-04-16 15:43:11 neo>
 
 
 
@@ -64,11 +64,15 @@ host_triplet = @host@
 target_triplet = @target@
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_1 = -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 @HITACHI_TRUE@@USE_MPI_TRUE@am__append_2 = -q64
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_3 = Dirac_ops/dirac_DomainWall_BGQ.cpp
+
 # NB: Libraries ordering is essential
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = -lbgqwilson3x4smp -lbgqthread
-@IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_6 = -lbgqwilson3x4
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_3 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_4 = -lbgqwilson3x4smp -lbgqthread
+@IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_5 = -lbgqwilson3x4
+
+############################################
+# Sources by architecture
+@IBM_BGQ_TRUE@am__append_6 = Dirac_ops/dirac_DomainWall_BGQ.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
@@ -128,6 +132,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Action/action_gauge_wilson.cpp \
 	Action/action_gauge_wilson_adjoint.cpp \
 	Action/action_gauge_rect.cpp \
+	Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
 	Action/action_gaugetype_factory.cpp Action/action_Nf2.cpp \
 	Action/action_Nf2_ratio.cpp Action/action_Nf.cpp \
 	Action/action_Nf_ratio.cpp Action/action_staggered.cpp \
@@ -194,17 +199,18 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
 @USE_EVENODD_FALSE@am__objects_2 = siteIndex.$(OBJEXT)
 @USE_EVENODD_TRUE@am__objects_2 = siteIndexEO.$(OBJEXT)
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__objects_3 =  \
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@	dirac_DomainWall_BGQ.$(OBJEXT)
-am__objects_4 = $(am__objects_3)
+@IBM_BGQ_FALSE@am__objects_3 = action_gauge_rect.$(OBJEXT)
+@IBM_BGQ_TRUE@am__objects_3 = action_gauge_rect.bgq.$(OBJEXT)
+@IBM_BGQ_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT)
+am__objects_5 = $(am__objects_4)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) \
-	action_gauge_wilson_adjoint.$(OBJEXT) \
-	action_gauge_rect.$(OBJEXT) action_gaugetype_factory.$(OBJEXT) \
-	action_Nf2.$(OBJEXT) action_Nf2_ratio.$(OBJEXT) \
-	action_Nf.$(OBJEXT) action_Nf_ratio.$(OBJEXT) \
-	action_staggered.$(OBJEXT) action_staggered_ratio.$(OBJEXT) \
+	action_gauge_wilson_adjoint.$(OBJEXT) $(am__objects_3) \
+	action_gaugetype_factory.$(OBJEXT) action_Nf2.$(OBJEXT) \
+	action_Nf2_ratio.$(OBJEXT) action_Nf.$(OBJEXT) \
+	action_Nf_ratio.$(OBJEXT) action_staggered.$(OBJEXT) \
+	action_staggered_ratio.$(OBJEXT) \
 	action_Nf2_DomainWall.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	dirac.$(OBJEXT) dirac_wilson.$(OBJEXT) \
@@ -215,7 +221,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_staggered_EvenOdd_Adjoint.$(OBJEXT) \
 	dirac_clover.$(OBJEXT) fopr_signH_Zolotarev.$(OBJEXT) \
 	dirac_overlap_Zolotarev.$(OBJEXT) dirac_DomainWall.$(OBJEXT) \
-	$(am__objects_4) dirac_DomainWall_EvenOdd.$(OBJEXT) \
+	$(am__objects_5) dirac_DomainWall_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
 	dirac_DomainWall_4D_eoSolv.$(OBJEXT) eoUtils.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) boundaryCond.$(OBJEXT) \
@@ -437,16 +443,16 @@ top_srcdir = @top_srcdir@
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
-OPTLIB = $(am__append_4) $(am__append_5) $(am__append_6)
-DWF_BGQ_SRC = $(am__append_3)
-BGQ_MAT_SRC = 
+OPTLIB = $(am__append_3) $(am__append_4) $(am__append_5)
+DWF_BGQ_SRC = $(am__append_6)
 @USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
 
 ###########################################
 # Configure driven path selector
 @USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
+@IBM_BGQ_FALSE@ACTION_SRCS = Action/action_gauge_rect.cpp
+@IBM_BGQ_TRUE@ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 @USE_EVENODD_FALSE@SITE_INDEXING_SRCS = Main/Geometry/siteIndex.cpp
-
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
 @USE_EVENODD_TRUE@SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
@@ -468,7 +474,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action.cpp			\
 	 	Action/action_gauge_wilson.cpp 		\
 	 	Action/action_gauge_wilson_adjoint.cpp	\
-		Action/action_gauge_rect.cpp            \
+		$(ACTION_SRCS)				\
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\
@@ -850,6 +856,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf_ratio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_fermiontype_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_rect.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_rect.bgq.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson_adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gaugetype_factory.Po@am__quote@
@@ -1080,6 +1087,20 @@ action_gauge_rect.obj: Action/action_gauge_rect.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Action/action_gauge_rect.cpp' object='action_gauge_rect.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_rect.obj `if test -f 'Action/action_gauge_rect.cpp'; then $(CYGPATH_W) 'Action/action_gauge_rect.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_rect.cpp'; fi`
+
+action_gauge_rect.bgq.o: Action/Architecture_Optimized/action_gauge_rect.bgq.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_rect.bgq.o -MD -MP -MF $(DEPDIR)/action_gauge_rect.bgq.Tpo -c -o action_gauge_rect.bgq.o `test -f 'Action/Architecture_Optimized/action_gauge_rect.bgq.cpp' || echo '$(srcdir)/'`Action/Architecture_Optimized/action_gauge_rect.bgq.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gauge_rect.bgq.Tpo $(DEPDIR)/action_gauge_rect.bgq.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Action/Architecture_Optimized/action_gauge_rect.bgq.cpp' object='action_gauge_rect.bgq.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_rect.bgq.o `test -f 'Action/Architecture_Optimized/action_gauge_rect.bgq.cpp' || echo '$(srcdir)/'`Action/Architecture_Optimized/action_gauge_rect.bgq.cpp
+
+action_gauge_rect.bgq.obj: Action/Architecture_Optimized/action_gauge_rect.bgq.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_rect.bgq.obj -MD -MP -MF $(DEPDIR)/action_gauge_rect.bgq.Tpo -c -o action_gauge_rect.bgq.obj `if test -f 'Action/Architecture_Optimized/action_gauge_rect.bgq.cpp'; then $(CYGPATH_W) 'Action/Architecture_Optimized/action_gauge_rect.bgq.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/Architecture_Optimized/action_gauge_rect.bgq.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gauge_rect.bgq.Tpo $(DEPDIR)/action_gauge_rect.bgq.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Action/Architecture_Optimized/action_gauge_rect.bgq.cpp' object='action_gauge_rect.bgq.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_rect.bgq.obj `if test -f 'Action/Architecture_Optimized/action_gauge_rect.bgq.cpp'; then $(CYGPATH_W) 'Action/Architecture_Optimized/action_gauge_rect.bgq.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/Architecture_Optimized/action_gauge_rect.bgq.cpp'; fi`
 
 action_gaugetype_factory.o: Action/action_gaugetype_factory.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gaugetype_factory.o -MD -MP -MF $(DEPDIR)/action_gaugetype_factory.Tpo -c -o action_gaugetype_factory.o `test -f 'Action/action_gaugetype_factory.cpp' || echo '$(srcdir)/'`Action/action_gaugetype_factory.cpp
