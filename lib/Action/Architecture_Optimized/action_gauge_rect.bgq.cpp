@@ -4,10 +4,10 @@
 
   Optimized version for BlueGeneQ architecture
 
-  Time-stamp: <2013-04-16 15:23:20 neo>
+  Time-stamp: <2013-04-16 15:41:25 cossu>
 */
 
-#include "action_gauge_rect.hpp"
+#include "Action/action_gauge_rect.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Measurements/GaugeM/staples.hpp"
@@ -19,6 +19,10 @@
 
 using namespace SUNmatUtils;
 using namespace FieldUtils;
+
+typedef struct GaugeConfigType{
+  __complex__ double v[NC_*NC_];
+}GaugePtr;
 
 double ActionGaugeRect::calc_H(){
   using namespace Mapping;
