@@ -5,6 +5,7 @@
 #include "action_Nf2_ratio.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
+#include "include/timings.hpp"
 
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2_ratio::observer_update() {
@@ -44,12 +45,21 @@ Field Action_Nf2_ratio::DdagD2_inv(const Field& src){
 }
 
 void Action_Nf2_ratio::init(const RandNum& rand){
+  long double rnd_timing;
   std::valarray<double> ph(fsize_);
+
+  FINE_TIMING_START(rnd_timing); 
 
   D1_->get_RandGauss(ph,rand);
 
+  FINE_TIMING_END(rnd_timing);
+  _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::init"
+	   << " - Random numbers timing = "
+	   << rnd_timing << std::endl);     
+ 
   phi_= D1_->mult_dag(Field(ph));
   phi_= D2_->mult(DdagD2_inv(phi_));
+
 }
 
 double Action_Nf2_ratio::calc_H(){

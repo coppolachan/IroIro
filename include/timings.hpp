@@ -39,7 +39,7 @@ namespace timingBGQ {
 
 /////////////////////////////////////////////
 #undef FINE_TIMING_START
-#define FINE_TIMING_START(t) t = 0; \ 
+#define FINE_TIMING_START(t) t = 0; \
                              t = timingBGQ::Timer()
   
 #undef  FINE_TIMING_END
