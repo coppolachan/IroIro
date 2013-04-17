@@ -3,7 +3,7 @@
  *
  * @brief Definition of createGaugeActionFactory function
  *
- * Time-stamp: <2013-04-17 13:58:10 neo>
+ * Time-stamp: <2013-04-17 15:00:39 neo>
  */
 
 #include <string.h>

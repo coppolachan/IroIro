@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-17 14:40:17 neo>
+# Time-stamp: <2013-04-17 15:08:59 neo>
 
 ###########################################
 # Initial definitions 
@@ -85,6 +85,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 	 	Action/action_gauge_wilson_adjoint.testing.cpp	\
 		$(ACTION_SRCS)					\
 		Action/action_gaugetype_factory_creator.cpp     \
+		Action/action_gaugetype_factory.cpp     	\
 		Action/action_Nf2.cpp				\
 		Action/action_Nf2_ratio.cpp			\
 		Action/action_Nf.cpp				\
@@ -217,9 +218,11 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Action/action_gauge_rect.hpp                    \
 			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\
+			Action/action_gaugetype_factory_creator.hpp	\
 			Action/action_gaugetype_factory_abs.hpp		\
 			Action/action_fermiontype_factory_abs.hpp	\
 			Action/action_fermiontype_factory.hpp		\
+			Action/action_fermiontype_factory_creator.hpp	\
 			Action/action_Factory.hpp			\
 			Action/action_Nf2.hpp				\
 			Action/action_Nf2_ratio.hpp			\
