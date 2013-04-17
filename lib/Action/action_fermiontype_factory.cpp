@@ -3,7 +3,7 @@
  *
  * @brief Definition of methods for Fermion-type action factories
  *
- * Time-stamp: <2013-04-17 14:43:44 neo>
+ * Time-stamp: <2013-04-17 14:44:53 cossu>
  */
 
 #include "action_fermiontype_factory.hpp"
@@ -257,7 +257,7 @@ Action_Nf_ratio* NfFlavorDomainWall5d_EO_BGQ_ActionFactory::getFermionAction(Gau
 			     DWF5d_Kernel.get(),DWF5d_KernelPV.get(),
 			     Solv.get(),SolvPV.get(),
 			     Action_Nf_ratio_params(Action_node),
-			     "NfFlavorsDomainWall_5D-EO_BGQ"
+			     "NfFlavorsDomainWall_5D-EO_BGQ",
 			     smearing,SC);
 }
 #endif
