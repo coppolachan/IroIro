@@ -1,6 +1,6 @@
 /*!
-  @file action_gauge_wilson_adjoint.cpp
-  @brief Definition of the ActionGaugeWilsonAdjoint class
+  @file action_gauge_wilson_adjoint.testing.cpp
+  @brief Definition of the ActionGaugeWilsonAdjoint class (testing state)
 */
 #include "action_gauge_wilson_adjoint.hpp"
 #include "Tools/sunMatUtils.hpp"

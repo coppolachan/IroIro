@@ -1,5 +1,5 @@
 /*!
- * @file action_staggered_ratio.h
+ * @file action_staggered_ratio.hpp
  * @brief Declaration of Action_staggered_ratio class
  */
 #ifndef ACTION_STAGGERED_RATIO_INCLUDED

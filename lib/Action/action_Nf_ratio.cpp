@@ -60,7 +60,7 @@ void Action_Nf_ratio::init(const RandNum& rand){
 double Action_Nf_ratio::calc_H(){
   // Calculates action for the Metropolis step
   SolverOutput monitor;
-  double H_nf2r = 0.0;
+  double H = 0.0;
   Field temp(fermion_size_), zeta(fermion_size_);
 
   slv1_->set_Approx(MetropolisApprox_);
@@ -77,11 +77,11 @@ double Action_Nf_ratio::calc_H(){
     #endif     
     // temp = [ (M1^dag M1)^(-Nf/2n) ][ (M2^dag M2)^(Nf/4n) ]<phi_>
 
-    H_nf2r += zeta * temp;
+    H += zeta * temp;
   }
-  _Message(ACTION_VERB_LEVEL,"    [Action_Nf_ratio] H = "<< H_nf2r <<"\n");
+  _Message(ACTION_VERB_LEVEL,"    ["<<name_<<"] H = "<< H <<"\n");
   
-  return H_nf2r;
+  return H;
 }
 
 
@@ -154,7 +154,7 @@ GaugeField Action_Nf_ratio::md_force(){
   if(smeared_) smart_conf_->smeared_force(fce);
   force = FieldUtils::TracelessAntihermite(fce); 
   
-  _MonitorMsg(ACTION_VERB_LEVEL, Action,force,"Action_Nf_ratio");
+  _MonitorMsg(ACTION_VERB_LEVEL, Action,force, name_);
   return force;
 }
 

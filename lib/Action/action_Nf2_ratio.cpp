@@ -55,7 +55,7 @@ void Action_Nf2_ratio::init(const RandNum& rand){
 double Action_Nf2_ratio::calc_H(){
   Field zeta = D2_->mult_dag(phi_);//2 flavors
   double H_nf2r = zeta*DdagD1_inv(zeta);
-  _Message(ACTION_VERB_LEVEL,"    [Action_Nf2_ratio] H = "<<H_nf2r<<"\n");
+  _Message(ACTION_VERB_LEVEL,"    ["<<name_<<"] H = "<<H_nf2r<<"\n");
   return H_nf2r;
 }
 
@@ -67,8 +67,6 @@ GaugeField Action_Nf2_ratio::md_force(){
   if(smeared_) smart_conf_->smeared_force(fce);
   GaugeField force = FieldUtils::TracelessAntihermite(fce); 
 
-  _MonitorMsg(ACTION_VERB_LEVEL, Action,force,"Action_Nf2_ratio");
+  _MonitorMsg(ACTION_VERB_LEVEL, Action,force, name_);
   return force;
 }
-
-

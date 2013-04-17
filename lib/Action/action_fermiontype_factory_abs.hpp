@@ -3,13 +3,12 @@
  *
  * @brief Declaration of the abstract fermion action factory
  *
- * Time-stamp: <2013-04-16 14:39:36 neo>
+ * Time-stamp: <2013-04-17 14:34:40 neo>
  */
 
 #ifndef ACTION_FERMION_FACT_ABS_
 #define ACTION_FERMION_FACT_ABS_
 
-#include "include/pugi_interface.h"
 #include "action_Factory.hpp"
 
 /*
@@ -22,10 +21,5 @@ public:
     return getFermionAction(F, SC);
   }
 };
-
-/////////////////////////////////////////////////////////////
-namespace FermionAction {
-  FermionActionFactory* createFermionActionFactory(XML::node);
-}
 
 #endif

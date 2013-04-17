@@ -1,9 +1,9 @@
 /*!
- * @file action_gaugetype_factory.cpp 
+ * @file action_gaugetype_factory_creator.cpp 
  *
  * @brief Definition of createGaugeActionFactory function
  *
- * Time-stamp: <2013-04-16 14:28:15 neo>
+ * Time-stamp: <2013-04-17 13:58:10 neo>
  */
 
 #include <string.h>

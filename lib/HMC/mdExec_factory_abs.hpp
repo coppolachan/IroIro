@@ -14,7 +14,7 @@
 #include "include/pugi_interface.h"
 #include "Tools/RAIIFactory.hpp"
 #include "Action/action_gaugetype_factory_abs.hpp"
-#include "Action/action_fermiontype_factory_abs.hpp"
+#include "Action/action_fermiontype_factory_creator.hpp"
 #include "Communicator/comm_io.hpp"
 #include "HMC/mdExec.hpp"
 #include "Smearing/smearingFactories.hpp"

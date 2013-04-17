@@ -22,6 +22,7 @@ private:
   
   Field DdagD_inv(const Field& src);
   void attach_smearing(SmartConf*);
+ 
 public:
   /*! @brief Standard constructor */
   Action_staggered(GaugeField* const GField,

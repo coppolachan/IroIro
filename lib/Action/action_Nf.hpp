@@ -137,13 +137,12 @@ public:
   /*! @brief Initializes the pseudofermion fields */ 
   void init(const RandNum& rand);
 
-  void observer_update();
-
-  /*! @brief Calculates the action contribution to H */
+   /*! @brief Calculates the action contribution to H */
   double calc_H();
   
   /*! @brief Force term for the HMC update */
   GaugeField md_force();
 
+  void observer_update();
 };
 #endif

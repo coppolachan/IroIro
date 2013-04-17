@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-16 16:11:57 neo>
+# Time-stamp: <2013-04-17 14:40:17 neo>
 
 ###########################################
 # Initial definitions 
@@ -69,59 +69,60 @@ AM_LDFLAGS =
 bin_PROGRAMS = main_hmc
 lib_LIBRARIES = libcommcode.a
 
-EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
-		Main/documentation_pages.h	\
-                Dirac_ops/dirac_wilson_improved.code    \
-                Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
+EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp			\
+		Main/documentation_pages.h			\
+                Dirac_ops/dirac_wilson_improved.code    	\
+                Dirac_ops/dirac_staggered_EvenOdd_improved.code	\
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
-                Dirac_ops/dirac_wilson_standard.code    \
+                Dirac_ops/dirac_wilson_standard.code    	\
 		Fields/field.inl
 
-libcommcode_a_SOURCES = Main/commonPrms.cpp		\
-		$(COMMUNICATOR_SRCS)     	        \
-		$(SITE_INDEXING_SRCS)			\
-		Action/action.cpp			\
-		Action/action_gauge_wilson.cpp		\
-	 	Action/action_gauge_wilson_adjoint.cpp	\
-		$(ACTION_SRCS)				\
-		Action/action_gaugetype_factory.cpp     \
-		Action/action_Nf2.cpp			\
-		Action/action_Nf2_ratio.cpp		\
-		Action/action_Nf.cpp			\
-		Action/action_Nf_ratio.cpp		\
-		Action/action_staggered.cpp		\
-		Action/action_staggered_ratio.cpp	\
-		Action/action_Nf2_DomainWall.cpp	\
-		Action/action_fermiontype_factory.cpp	\
-		Communicator/comm_io.cpp		\
-		Dirac_ops/dirac.cpp     		\
-		Dirac_ops/dirac_wilson.cpp		\
-		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
-		Dirac_ops/dirac_wilson_Brillouin.cpp	\
-		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp\
-		Dirac_ops/staggered_Utils.cpp	        \
-		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
+libcommcode_a_SOURCES = Main/commonPrms.cpp			\
+		$(COMMUNICATOR_SRCS)     	        	\
+		$(SITE_INDEXING_SRCS)				\
+		Action/action.cpp				\
+		Action/action_gauge_wilson.cpp			\
+	 	Action/action_gauge_wilson_adjoint.testing.cpp	\
+		$(ACTION_SRCS)					\
+		Action/action_gaugetype_factory_creator.cpp     \
+		Action/action_Nf2.cpp				\
+		Action/action_Nf2_ratio.cpp			\
+		Action/action_Nf.cpp				\
+		Action/action_Nf_ratio.cpp			\
+		Action/action_staggered.cpp			\
+		Action/action_staggered_ratio.cpp		\
+		Action/action_Nf2_DomainWall.cpp		\
+		Action/action_fermiontype_factory_creator.cpp	\
+		Action/action_fermiontype_factory.cpp		\
+		Communicator/comm_io.cpp			\
+		Dirac_ops/dirac.cpp     			\
+		Dirac_ops/dirac_wilson.cpp			\
+		Dirac_ops/dirac_wilson_EvenOdd.cpp		\
+		Dirac_ops/dirac_wilson_Brillouin.cpp		\
+		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp	\
+		Dirac_ops/staggered_Utils.cpp	        	\
+		Dirac_ops/dirac_staggered_EvenOdd.cpp		\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
-		Dirac_ops/dirac_clover.cpp		\
-		Dirac_ops/fopr_signH_Zolotarev.cpp	\
-		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
-		Dirac_ops/dirac_DomainWall.cpp   	\
-		$(DWF_BGQ_SRC)				\
-		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  \
-		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
-		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
-		Dirac_ops/eoUtils.cpp           	\
-		Dirac_ops/dirac_Operator_Factory.cpp	\
-		Dirac_ops/boundaryCond.cpp      	\
-		EigenModes/eigenCalcGeneral.cpp		\
-		EigenModes/eigenModesSolver_Factory.cpp	\
-		EigenModes/eigenModesSolver_IRL.cpp	\
-		EigenModes/eigenProc_Zolotarev.cpp	\
-		EigenModes/eigenSorter.cpp		\
-		EigenModes/findminmax.cpp		\
-		Measurements/measGeneral.cpp		\
-		Measurements/GaugeM/staples.cpp		\
-		Measurements/GaugeM/wilsonFlow.cpp	\
+		Dirac_ops/dirac_clover.cpp			\
+		Dirac_ops/fopr_signH_Zolotarev.cpp		\
+		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
+		Dirac_ops/dirac_DomainWall.cpp   		\
+		$(DWF_BGQ_SRC)					\
+		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
+		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
+		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
+		Dirac_ops/eoUtils.cpp           		\
+		Dirac_ops/dirac_Operator_Factory.cpp		\
+		Dirac_ops/boundaryCond.cpp      		\
+		EigenModes/eigenCalcGeneral.cpp			\
+		EigenModes/eigenModesSolver_Factory.cpp		\
+		EigenModes/eigenModesSolver_IRL.cpp		\
+		EigenModes/eigenProc_Zolotarev.cpp		\
+		EigenModes/eigenSorter.cpp			\
+		EigenModes/findminmax.cpp			\
+		Measurements/measGeneral.cpp			\
+		Measurements/GaugeM/staples.cpp			\
+		Measurements/GaugeM/wilsonFlow.cpp		\
 		Measurements/GaugeM/polyakovLoop.cpp			\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
