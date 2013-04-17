@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-17 15:08:59 neo>
+# Time-stamp: <2013-04-17 17:36:06 cossu>
 
 ###########################################
 # Initial definitions 
@@ -174,6 +174,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
+		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
 

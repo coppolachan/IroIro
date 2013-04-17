@@ -21,20 +21,8 @@
 // and only if the fime timing has been enabled
 // VERBOSITY>=TIMING_VERB_LEVEL
 
-
-#define BGQ_HERTZ 1600000000.0
-#include <spi/include/kernel/process.h> //for GetTimeBase
-
 namespace timingBGQ {
-
-  long double Timer(long double t = 0) {
-    long double new_t = ((long double)GetTimeBase())/BGQ_HERTZ; 
-    
-    if (t == 0)
-      return new_t;
-    else 
-      return new_t - t;
-  }
+  long double Timer(long double t = 0);
 }
 
 /////////////////////////////////////////////
