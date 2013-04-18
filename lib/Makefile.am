@@ -4,14 +4,14 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-17 15:08:59 neo>
+# Time-stamp: <2013-04-18 15:31:12 neo>
 
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
 
-CXXFLAGS +=
-LDFLAGS +=
+CXXFLAGS += 
+LDFLAGS += 
 OPTLIB =
 
 DWF_BGQ_SRC = 
@@ -63,11 +63,11 @@ endif
 
 
 AM_CPPFLAGS=-I$(top_srcdir)
-AM_CFLAGS  =-I$(top_srcdir)
+AM_CFLAGS  =-I$(top_srcdir) 
 AM_LDFLAGS =
 
 bin_PROGRAMS = main_hmc
-lib_LIBRARIES = libcommcode.a
+lib_LIBRARIES = libcommcode.a 
 
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp			\
 		Main/documentation_pages.h			\
@@ -174,6 +174,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
+		Tools/RandomNumGen/dcmt_wrapper.cpp	\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
 
@@ -337,6 +338,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/Remez/bigfloat.hpp		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
+			Tools/RandomNumGen/dcmt_wrapper.hpp	\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-04-02 15:07:17 neo>
+# Time-stamp: <2013-04-18 15:37:15 neo>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -33,7 +33,7 @@ endif
 CXXFLAGS += $(BFM_INCLUDE) 
 LDFLAGS += $(BFM_LIBS)
 
-LDADD = -L../lib/ -lcommcode $(BFM_LINKAGE) $(OPTLIB)
+LDADD = -L../lib/ -L../lib/Tools/RandomNumGen/dcmt0.6.1/lib -lcommcode $(BFM_LINKAGE) $(OPTLIB) -ldcmt
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 

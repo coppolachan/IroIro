@@ -4,7 +4,7 @@
   <!-- Geometry parameters here -->
   <Geometry>
     <Lattice>8 8 8 8</Lattice>
-    <Nodes>2 2 1 1</Nodes>
+    <Nodes>1 1 1 1</Nodes>
 
   </Geometry>
   <!-- Input configuration -->

@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-04-02 15:07:17 neo>
+# Time-stamp: <2013-04-18 15:37:15 neo>
 
 
 VPATH = @srcdir@
@@ -519,7 +519,7 @@ BMF_TESTPROGS = $(am__append_1)
 @USE_BFM_TRUE@BFM_INCLUDE = -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
 @USE_BFM_TRUE@BFM_LIBS = -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
 @USE_BFM_TRUE@BFM_LINKAGE = -lbfm -lbagel
-LDADD = -L../lib/ -lcommcode $(BFM_LINKAGE) $(OPTLIB)
+LDADD = -L../lib/ -L../lib/Tools/RandomNumGen/dcmt0.6.1/lib -lcommcode $(BFM_LINKAGE) $(OPTLIB) -ldcmt
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 EXTRA_DIST = testResults.info	\

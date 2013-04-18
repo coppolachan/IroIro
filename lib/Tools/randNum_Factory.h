@@ -6,6 +6,7 @@
 
 #include "randNum.h"
 #include "randNum_MT19937.h"
+#include "RandomNumGen/dcmt_wrapper.hpp"
 #include "include/singleton.h"
 #include "include/pugi_interface.h"
 #include "Communicator/comm_io.hpp"
@@ -16,7 +17,7 @@
 class RandomNumberCreator {
 public:
   /*! Virtual function returning the Random Number Generator */
-  virtual RandNum* getRandomNumGenerator() = 0;
+  virtual RandNum* getRandomNumGenerator(int ID=0) = 0;
 };
 
 //Specific factories 
@@ -51,8 +52,35 @@ public:
       length_= inputs_.size();
     }
   }
-  RandNum* getRandomNumGenerator(){ return createRNG();}
+  RandNum* getRandomNumGenerator(int ID=0){ return createRNG();}
 };
+
+class RandNum_DCMT_Creator : public RandomNumberCreator{
+  unsigned long generatorSeed_;
+  unsigned long seed_;
+  std::string filename_;
+  bool fromfile_;
+
+  RandNum_DCMT* createRNG(int ID){
+    return new RandNum_DCMT(generatorSeed_,seed_, ID); 
+  }
+ public:
+  RandNum_DCMT_Creator(XML::node node){
+    if(node.child("seedFile")!= NULL){
+      fromfile_= true;
+      XML::read(node,"seedFile",filename_,MANDATORY); 
+    }else{
+      fromfile_= false;
+      XML::read(node,"genSeed",generatorSeed_,MANDATORY);
+      XML::read(node,"seed",seed_,MANDATORY);
+    }
+  }
+   RandNum_DCMT_Creator(unsigned long gS, int s)
+     :generatorSeed_(gS), seed_(s), fromfile_(false){}
+
+  RandNum* getRandomNumGenerator(int ID=0){ return createRNG(ID);}
+};
+
 
 //////////////////////////////////////////////////////////////
 namespace RNG_Env {

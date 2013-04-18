@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-17 15:08:59 neo>
+# Time-stamp: <2013-04-18 15:31:12 neo>
 
 
 
@@ -197,6 +197,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/sunAlgUtils.cpp Tools/Remez/alg_remez.cpp \
 	Tools/RationalApprox/rationalapprox.cpp \
 	Tools/ErrorsHandling/xml_errors.cpp \
+	Tools/RandomNumGen/dcmt_wrapper.cpp \
 	UpdatingAlg/HeatBath/heatbath.cpp \
 	UpdatingAlg/HeatBath/HBActions_SUN.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
@@ -260,7 +261,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT) \
 	sunAlgUtils.$(OBJEXT) alg_remez.$(OBJEXT) \
 	rationalapprox.$(OBJEXT) xml_errors.$(OBJEXT) \
-	heatbath.$(OBJEXT) HBActions_SUN.$(OBJEXT)
+	dcmt_wrapper.$(OBJEXT) heatbath.$(OBJEXT) \
+	HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -467,9 +469,9 @@ DWF_BGQ_SRC = $(am__append_6)
 # Site indexing (Lexicographic/Even-Odd)
 @USE_EVENODD_TRUE@SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
 AM_CPPFLAGS = -I$(top_srcdir)
-AM_CFLAGS = -I$(top_srcdir)
+AM_CFLAGS = -I$(top_srcdir) 
 AM_LDFLAGS = 
-lib_LIBRARIES = libcommcode.a
+lib_LIBRARIES = libcommcode.a 
 EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp			\
 		Main/documentation_pages.h			\
                 Dirac_ops/dirac_wilson_improved.code    	\
@@ -575,6 +577,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
+		Tools/RandomNumGen/dcmt_wrapper.cpp	\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
 
@@ -737,6 +740,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Tools/Remez/bigfloat.hpp		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
+			Tools/RandomNumGen/dcmt_wrapper.hpp	\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	
@@ -888,6 +892,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commonPrms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_mpi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dcmt_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po@am__quote@
@@ -2407,6 +2412,20 @@ xml_errors.obj: Tools/ErrorsHandling/xml_errors.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/xml_errors.cpp' object='xml_errors.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xml_errors.obj `if test -f 'Tools/ErrorsHandling/xml_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/xml_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/xml_errors.cpp'; fi`
+
+dcmt_wrapper.o: Tools/RandomNumGen/dcmt_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dcmt_wrapper.o -MD -MP -MF $(DEPDIR)/dcmt_wrapper.Tpo -c -o dcmt_wrapper.o `test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/dcmt_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dcmt_wrapper.Tpo $(DEPDIR)/dcmt_wrapper.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/RandomNumGen/dcmt_wrapper.cpp' object='dcmt_wrapper.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dcmt_wrapper.o `test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/dcmt_wrapper.cpp
+
+dcmt_wrapper.obj: Tools/RandomNumGen/dcmt_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dcmt_wrapper.obj -MD -MP -MF $(DEPDIR)/dcmt_wrapper.Tpo -c -o dcmt_wrapper.obj `if test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/dcmt_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/dcmt_wrapper.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dcmt_wrapper.Tpo $(DEPDIR)/dcmt_wrapper.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/RandomNumGen/dcmt_wrapper.cpp' object='dcmt_wrapper.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dcmt_wrapper.obj `if test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/dcmt_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/dcmt_wrapper.cpp'; fi`
 
 heatbath.o: UpdatingAlg/HeatBath/heatbath.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT heatbath.o -MD -MP -MF $(DEPDIR)/heatbath.Tpo -c -o heatbath.o `test -f 'UpdatingAlg/HeatBath/heatbath.cpp' || echo '$(srcdir)/'`UpdatingAlg/HeatBath/heatbath.cpp
