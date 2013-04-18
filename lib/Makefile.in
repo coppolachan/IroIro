@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-18 15:31:12 neo>
+# Time-stamp: <2013-04-18 16:37:00 neo>
 
 
 
@@ -197,7 +197,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/sunAlgUtils.cpp Tools/Remez/alg_remez.cpp \
 	Tools/RationalApprox/rationalapprox.cpp \
 	Tools/ErrorsHandling/xml_errors.cpp \
-	Tools/RandomNumGen/dcmt_wrapper.cpp \
+	Tools/RandomNumGen/dcmt_wrapper.cpp Tools/Timings/timings.cpp \
 	UpdatingAlg/HeatBath/heatbath.cpp \
 	UpdatingAlg/HeatBath/HBActions_SUN.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
@@ -261,7 +261,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT) \
 	sunAlgUtils.$(OBJEXT) alg_remez.$(OBJEXT) \
 	rationalapprox.$(OBJEXT) xml_errors.$(OBJEXT) \
-	dcmt_wrapper.$(OBJEXT) heatbath.$(OBJEXT) \
+	dcmt_wrapper.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
 	HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
@@ -578,6 +578,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
 		Tools/RandomNumGen/dcmt_wrapper.cpp	\
+		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
 
@@ -966,6 +967,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunAdjMatUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunAlgUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunMatUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/topologyGeom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wilsonFlow.Po@am__quote@
@@ -2426,6 +2428,20 @@ dcmt_wrapper.obj: Tools/RandomNumGen/dcmt_wrapper.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/RandomNumGen/dcmt_wrapper.cpp' object='dcmt_wrapper.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dcmt_wrapper.obj `if test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/dcmt_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/dcmt_wrapper.cpp'; fi`
+
+timings.o: Tools/Timings/timings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT timings.o -MD -MP -MF $(DEPDIR)/timings.Tpo -c -o timings.o `test -f 'Tools/Timings/timings.cpp' || echo '$(srcdir)/'`Tools/Timings/timings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/timings.Tpo $(DEPDIR)/timings.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/Timings/timings.cpp' object='timings.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o timings.o `test -f 'Tools/Timings/timings.cpp' || echo '$(srcdir)/'`Tools/Timings/timings.cpp
+
+timings.obj: Tools/Timings/timings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT timings.obj -MD -MP -MF $(DEPDIR)/timings.Tpo -c -o timings.obj `if test -f 'Tools/Timings/timings.cpp'; then $(CYGPATH_W) 'Tools/Timings/timings.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Timings/timings.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/timings.Tpo $(DEPDIR)/timings.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/Timings/timings.cpp' object='timings.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o timings.obj `if test -f 'Tools/Timings/timings.cpp'; then $(CYGPATH_W) 'Tools/Timings/timings.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Timings/timings.cpp'; fi`
 
 heatbath.o: UpdatingAlg/HeatBath/heatbath.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT heatbath.o -MD -MP -MF $(DEPDIR)/heatbath.Tpo -c -o heatbath.o `test -f 'UpdatingAlg/HeatBath/heatbath.cpp' || echo '$(srcdir)/'`UpdatingAlg/HeatBath/heatbath.cpp
