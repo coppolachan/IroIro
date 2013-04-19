@@ -13,13 +13,14 @@
 */
 
 #include "dcmt_wrapper.hpp"
+#include "include/messages_macros.hpp"
 #define BITS_FACTOR32 2.32830643708079737543e-10
 #define BITS_FACTOR64 1.11022302462515654042e-16
 
 int RandNum_DCMT::init(int ID, int genSeed, int seed){
   // genSeed 16 bit integer, seed 32 bit
   // Get the independent MT
-  std::cout << "Initialization of the DCMT\n";
+  _Message(DEBUG_VERB_LEVEL, "Initialization of DC Mersenne Twister\n");
   mts = get_mt_parameter_id_st(w, p, ID, genSeed);
   if (mts == NULL) {
     // print error

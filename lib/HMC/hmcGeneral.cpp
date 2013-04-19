@@ -42,7 +42,10 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
     TIMING_END(timer);
     CCIO::cout<< "[Timing] Trajectory time (s) : "<< timer/1000.0 << "\n";
 
-    if(metropolis_test(Hdiff)) Uin = md_->get_U();
+    if (Communicator::instance()->primaryNode()){
+      if(metropolis_test(Hdiff)) Uin = md_->get_U();
+    }
+    Communicator::instance()->sync();
 
     if (Params.SaveInterval!=0 && iter%Params.SaveInterval == 0) {
       std::stringstream file;
@@ -81,20 +84,22 @@ double HMCgeneral::evolve_step(GaugeField& Uin)const{
 
 bool HMCgeneral::metropolis_test(const double Hdiff)const{
 
-  double prob = exp(-Hdiff);
-  double rn = rand_->get();
-  CCIO::cout<< "--------------------------------------------\n";
-  CCIO::cout<< "dH = "<<Hdiff << "  Random = "<< rn 
-	    << "\nAcc. Probability = " << ((prob<1.0)? prob: 1.0)<< "   ";
-  if(prob >1.0){       // accepted
-    CCIO::cout<<"-- ACCEPTED\n";
-    return true;
-  }else if(rn <= prob){// accepted
-    CCIO::cout <<"-- ACCEPTED\n";
-    return true;
-  }else{               // rejected
-    CCIO::cout <<"-- REJECTED\n";
-    return false;
-  }
+    double prob = exp(-Hdiff);
+    double rn = rand_->get();
+    CCIO::cout<< "--------------------------------------------\n";
+    CCIO::cout<< "dH = "<<Hdiff << "  Random = "<< rn 
+	      << "\nAcc. Probability = " << ((prob<1.0)? prob: 1.0)<< "   ";
+    if(prob >1.0){       // accepted
+      CCIO::cout<<"-- ACCEPTED\n";
+      return true;
+    }else if(rn <= prob){// accepted
+      CCIO::cout <<"-- ACCEPTED\n";
+      return true;
+    }else{               // rejected
+      CCIO::cout <<"-- REJECTED\n";
+      return false;
+    }
+  
+ 
 }
 

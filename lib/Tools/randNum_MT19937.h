@@ -43,6 +43,8 @@ public:
     loadSeed(file);
   }
 
+  bool parallel_safe() const{return false;}
+
   ~RandNum_MT19937(){};
 
   void saveSeed(const std::string& file) const;

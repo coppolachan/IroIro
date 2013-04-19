@@ -10,6 +10,7 @@
 #include "include/singleton.h"
 #include "include/pugi_interface.h"
 #include "Communicator/comm_io.hpp"
+#include "Communicator/communicator.h"
 /*!
  *@class RandomNumberCreator
  *@brief Abstract Factory class for Random Number Generators
@@ -17,7 +18,7 @@
 class RandomNumberCreator {
 public:
   /*! Virtual function returning the Random Number Generator */
-  virtual RandNum* getRandomNumGenerator(int ID=0) = 0;
+  virtual RandNum* getRandomNumGenerator() = 0;
 };
 
 //Specific factories 
@@ -52,7 +53,7 @@ public:
       length_= inputs_.size();
     }
   }
-  RandNum* getRandomNumGenerator(int ID=0){ return createRNG();}
+  RandNum* getRandomNumGenerator(){ return createRNG();}
 };
 
 class RandNum_DCMT_Creator : public RandomNumberCreator{
@@ -61,8 +62,10 @@ class RandNum_DCMT_Creator : public RandomNumberCreator{
   std::string filename_;
   bool fromfile_;
 
-  RandNum_DCMT* createRNG(int ID){
-    return new RandNum_DCMT(generatorSeed_,seed_, ID); 
+  RandNum_DCMT* createRNG(){
+    return new RandNum_DCMT(generatorSeed_,
+			    seed_,
+			    Communicator::instance()->id()); 
   }
  public:
   RandNum_DCMT_Creator(XML::node node){
@@ -78,7 +81,7 @@ class RandNum_DCMT_Creator : public RandomNumberCreator{
    RandNum_DCMT_Creator(unsigned long gS, int s)
      :generatorSeed_(gS), seed_(s), fromfile_(false){}
 
-  RandNum* getRandomNumGenerator(int ID=0){ return createRNG(ID);}
+  RandNum* getRandomNumGenerator(){ return createRNG();}
 };
 
 

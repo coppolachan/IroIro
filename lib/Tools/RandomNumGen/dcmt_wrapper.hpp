@@ -56,6 +56,8 @@ public:
 
   ~RandNum_DCMT();
 
+  bool parallel_safe() const{return true;}
+
   void saveSeed(const std::string& file) const;
   void loadSeed(const std::string& file);
 

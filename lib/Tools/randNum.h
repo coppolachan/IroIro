@@ -18,9 +18,11 @@ private:
   virtual double do_rand() const{return 0;};
 public:
   RandNum(){ srand(static_cast<unsigned>(time(NULL)));}
+  virtual bool parallel_safe() const{return false;}
   virtual ~RandNum(){}
   
   double get()const{ return do_rand();}
+
 
   void get_complex_gauss(double *re, double *im, const double variance = 1.0)const{
     // get the gaussian random number with the variance 1/\sqrt(2)

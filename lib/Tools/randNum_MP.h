@@ -4,9 +4,7 @@
 #ifndef RANDNUM_MP_INCLUDED
 #define RANDNUM_MP_INCLUDED
 
-#ifndef RANDNUM_INCLUDED
 #include "randNum.h"
-#endif
 
 #include "include/commonPrms.h"
 #include "Communicator/communicator.h"
@@ -40,7 +38,6 @@ namespace MPrand{
     rn=0.0;
 
     assert(rn.size()==fmt.size());
-    int NP = CommonPrms::instance()->NP();
     /*
     std::valarray<double> Rn(NP*rn.size());// too big.
     CCIO::cout << "MP_GET_GAUSS get_gauss\n";
@@ -51,16 +48,24 @@ namespace MPrand{
     rn = Rn[Fmt.get_sub(gsite)];
     */
     
-    std::valarray<double> Rn_source(rn.size());
-    for(int node=0; node<NP; ++node) {
-      if(Communicator::instance()->primaryNode()) 
-	rand.get_gauss(Rn_source);	
-
-      Communicator::instance()->sync();
-      Communicator::instance()->send_1to1(rn,Rn_source,rn.size(),node,0,node);
+    if (rand.parallel_safe()){
+      rand.get_gauss(rn);
+      Communicator::instance()->sync();	
+    } else {
+      
+      int NP = CommonPrms::instance()->NP();
+      
+      std::valarray<double> Rn_source(rn.size());
+      for(int node=0; node<NP; ++node) {
+	if(Communicator::instance()->primaryNode()) 
+	  rand.get_gauss(Rn_source);	
+	
+	Communicator::instance()->sync();
+	Communicator::instance()->send_1to1(rn,Rn_source,rn.size(),node,0,node);
+      }
     }
   }
-
+  
   void mp_get(std::valarray<double>& rn,const RandNum& rand);
   void mp_get_gauss(std::valarray<double>& rn,const RandNum& rand);
 }
