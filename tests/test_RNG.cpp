@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------
 #include "include/common_code.hpp"
 #include "include/geometry.hpp"
-#include "Tools/randNum_MT19937.h"
+#include "Tools/RandomNumGen/randNum_MT19937.h"
 #include "Tools/RandomNumGen/dcmt_wrapper.hpp"
 #include "Communicator/comm_io.hpp"
 

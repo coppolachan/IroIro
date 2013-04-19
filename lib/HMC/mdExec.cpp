@@ -32,11 +32,9 @@ namespace MDutils{
     Format::Format_A fmt(Nvol,Ndim);
     valarray<double> pj(fmt.size());
 
-    vector<int> gsite = SiteIndex::instance()->get_gsite();
-
     FINE_TIMING_START(rand_timings);
 
-    MPrand::mp_get_gauss(pj,rand,gsite,fmt);
+    MPrand::mp_get_gauss(pj,rand);
 
     FINE_TIMING_END(rand_timings);
     _Message(TIMING_VERB_LEVEL, "[Timing] - MDutils::md_mom_su3 - RNG timing = "

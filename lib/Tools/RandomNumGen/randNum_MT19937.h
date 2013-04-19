@@ -4,13 +4,10 @@
 #ifndef RANDNUM_MT19937_INCLUDED
 #define RANDNUM_MT19937_INCLUDED
 
-#ifndef RANDNUM_INCLUDED
-#include "randNum.h"
-#endif
-
 #include<iostream>
-
 #include <string>
+
+#include "Tools/randNum.h"
 
 class RandNum_MT19937 :public RandNum {
 private:
@@ -34,7 +31,7 @@ private:
 
   double rand_res53()const;
   double do_rand()const{ return rand_res53();}
-
+  double do_rand_closed()const{ return rand_double1();}
 public:
   RandNum_MT19937(unsigned long s = 5489UL):left_(1){init(s);}
   RandNum_MT19937(unsigned long* key,int key_length)

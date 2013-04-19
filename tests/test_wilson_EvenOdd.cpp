@@ -14,7 +14,7 @@
 #include "Measurements/FermionicM/qprop.hpp"
 #include "Measurements/FermionicM/qprop_EvenOdd.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
-#include "Tools/randNum_MT19937.h"
+#include "Tools/RandomNumGen/randNum_MT19937.h"
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Main/Geometry/siteMap.hpp"
 

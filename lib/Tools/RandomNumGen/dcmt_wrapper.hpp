@@ -38,7 +38,9 @@ private:
 
   mt_struct *mts; /*!< Contains the mt parameters */
   int init(int, int, int);
+  mt_struct* alloc_mt_struct(int);
   double do_rand()const;
+  double do_rand_closed() const;
 
   long rand_int31()const;
   
@@ -47,11 +49,11 @@ private:
   double rand_double3()const;
   
   double rand_res53()const;
-
+  double rand_64bit()const;
 public:
-  // RandNum_DCMT(std::string& file){
-  //   loadSeed(file);
-  // }
+  RandNum_DCMT(std::string& file){
+    loadSeed(file);
+  }
   RandNum_DCMT(int genSeed, int seed, int ID = 0){ init(ID, genSeed, seed);}
 
   ~RandNum_DCMT();

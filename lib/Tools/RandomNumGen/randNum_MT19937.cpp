@@ -105,8 +105,8 @@ double RandNum_MT19937::rand_double3()const{
 
 // generates a random number on [0,1) with 53-bit resolution
 double RandNum_MT19937::rand_res53()const{
-  unsigned long a = rand_int32()>>5;
-  unsigned long b = rand_int32()>>6;
+  register unsigned long a = rand_int32()>>5;
+  register unsigned long b = rand_int32()>>6;
   static const double factor = 1.0/9007199254740992.0;
   //std::cout<<"randRes53()="<< (a*67108864.0+b)*factor<<std::endl;
   return (a*67108864.0+b)*factor;

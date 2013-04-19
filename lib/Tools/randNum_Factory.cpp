@@ -1,4 +1,6 @@
-/*!@file randNum_Factory.cpp */
+/*!
+  @file randNum_Factory.cpp 
+*/
 #include "randNum_Factory.h"
 #include "Communicator/comm_io.hpp"
 #include <string.h>

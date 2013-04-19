@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-18 16:37:00 neo>
+# Time-stamp: <2013-04-19 16:10:49 cossu>
 
 ###########################################
 # Initial definitions 
@@ -167,7 +167,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
 		Tools/sunAdjMatUtils.cpp		\
-		Tools/randNum_MT19937.cpp		\
+		Tools/randNum.cpp			\
+		Tools/randNum_MP.cpp			\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
 		Tools/sunAlgUtils.cpp			\
@@ -175,6 +176,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
 		Tools/RandomNumGen/dcmt_wrapper.cpp	\
+		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
@@ -328,7 +330,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/colorEpsilon.hpp	                \
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
-			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
 			Tools/fieldUtils.hpp			\
 			Tools/RAIIFactory.hpp			\
@@ -340,6 +341,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
 			Tools/RandomNumGen/dcmt_wrapper.hpp	\
+			Tools/RandomNumGen/randNum_MT19937.h	\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	

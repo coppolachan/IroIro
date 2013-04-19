@@ -5,7 +5,7 @@
  */
 #include "test_DomainWall.hpp"
 #include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
-#include "Tools/randNum_MT19937.h"
+#include "Tools/RandomNumGen/randNum_MT19937.h"
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Measurements/FermionicM/source_types.hpp"

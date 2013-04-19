@@ -4,13 +4,15 @@
 #ifndef RANDNUM_FACT_
 #define RANDNUM_FACT_
 
-#include "randNum.h"
-#include "randNum_MT19937.h"
-#include "RandomNumGen/dcmt_wrapper.hpp"
 #include "include/singleton.h"
 #include "include/pugi_interface.h"
-#include "Communicator/comm_io.hpp"
 #include "Communicator/communicator.h"
+
+#include "randNum.h"
+#include "RandomNumGen/randNum_MT19937.h"
+#include "RandomNumGen/dcmt_wrapper.hpp"
+
+
 /*!
  *@class RandomNumberCreator
  *@brief Abstract Factory class for Random Number Generators
