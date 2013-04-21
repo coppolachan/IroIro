@@ -73,13 +73,14 @@ void MDexec_2MN::update_P(int lv,double ep){
   FINE_TIMING_START(total_timing);  
 
   ////////////////////////////////// Core of calculations 
-  for(int a=0; a<as_[lv].size(); ++a){
+  for(int a = 0; a < as_[lv].size(); ++a){
     FINE_TIMING_START(timing);
     
     GaugeField fce = as_[lv].at(a)->md_force();
 
     FINE_TIMING_END(timing);
-    _Message(TIMING_VERB_LEVEL, "[Timing] - MDexec_2MN::Update_P - Action ["<<a<<"] timing = "
+    _Message(TIMING_VERB_LEVEL, "[Timing] - MDexec_2MN::Update_P - Level["
+	     << lv <<"] - Action ["<< a <<"] timing = "
 	     << timing << std::endl);
 
 #ifdef IBM_BGQ_WILSON

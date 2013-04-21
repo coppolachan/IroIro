@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-16 16:11:57 neo>
+# Time-stamp: <2013-04-19 16:10:49 cossu>
 
 
 
@@ -107,16 +107,18 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Communicator/communicator_mpi.cpp Main/Geometry/siteIndex.cpp \
 	Main/Geometry/siteIndexEO.cpp Action/action.cpp \
 	Action/action_gauge_wilson.cpp \
-	Action/action_gauge_wilson_adjoint.cpp \
+	Action/action_gauge_wilson_adjoint.testing.cpp \
 	Action/action_gauge_rect.cpp \
 	Action/action_gauge_wilson_force.cpp \
 	Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
 	Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp \
+	Action/action_gaugetype_factory_creator.cpp \
 	Action/action_gaugetype_factory.cpp Action/action_Nf2.cpp \
 	Action/action_Nf2_ratio.cpp Action/action_Nf.cpp \
 	Action/action_Nf_ratio.cpp Action/action_staggered.cpp \
 	Action/action_staggered_ratio.cpp \
 	Action/action_Nf2_DomainWall.cpp \
+	Action/action_fermiontype_factory_creator.cpp \
 	Action/action_fermiontype_factory.cpp Communicator/comm_io.cpp \
 	Dirac_ops/dirac.cpp Dirac_ops/dirac_wilson.cpp \
 	Dirac_ops/dirac_wilson_EvenOdd.cpp \
@@ -167,12 +169,15 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Smearing/stoutSmear.cpp Smearing/smartConf.cpp \
 	Smearing/smearingFactories.cpp Tools/fieldUtils.cpp \
 	Tools/jobUtils.cpp Tools/sunMatUtils.cpp \
-	Tools/sunAdjMatUtils.cpp Tools/randNum_MT19937.cpp \
-	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp \
-	Tools/sunAlgUtils.cpp Tools/Remez/alg_remez.cpp \
+	Tools/sunAdjMatUtils.cpp Tools/randNum.cpp \
+	Tools/randNum_MP.cpp Tools/randNum_Factory.cpp \
+	Tools/gammaMatrices.cpp Tools/sunAlgUtils.cpp \
+	Tools/Remez/alg_remez.cpp \
 	Tools/RationalApprox/rationalapprox.cpp \
 	Tools/ErrorsHandling/xml_errors.cpp \
-	UpdatingAlg/HeatBath/heatbath.cpp \
+	Tools/RandomNumGen/dcmt_wrapper.cpp \
+	Tools/RandomNumGen/randNum_MT19937.cpp \
+	Tools/Timings/timings.cpp UpdatingAlg/HeatBath/heatbath.cpp \
 	UpdatingAlg/HeatBath/HBActions_SUN.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
@@ -187,12 +192,14 @@ am__objects_5 = $(am__objects_4)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) \
-	action_gauge_wilson_adjoint.$(OBJEXT) $(am__objects_3) \
+	action_gauge_wilson_adjoint.testing.$(OBJEXT) $(am__objects_3) \
+	action_gaugetype_factory_creator.$(OBJEXT) \
 	action_gaugetype_factory.$(OBJEXT) action_Nf2.$(OBJEXT) \
 	action_Nf2_ratio.$(OBJEXT) action_Nf.$(OBJEXT) \
 	action_Nf_ratio.$(OBJEXT) action_staggered.$(OBJEXT) \
 	action_staggered_ratio.$(OBJEXT) \
 	action_Nf2_DomainWall.$(OBJEXT) \
+	action_fermiontype_factory_creator.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	dirac.$(OBJEXT) dirac_wilson.$(OBJEXT) \
 	dirac_wilson_EvenOdd.$(OBJEXT) \
@@ -229,11 +236,13 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	solver.$(OBJEXT) APEsmear.$(OBJEXT) stoutSmear.$(OBJEXT) \
 	smartConf.$(OBJEXT) smearingFactories.$(OBJEXT) \
 	fieldUtils.$(OBJEXT) jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
-	sunAdjMatUtils.$(OBJEXT) randNum_MT19937.$(OBJEXT) \
-	randNum_Factory.$(OBJEXT) gammaMatrices.$(OBJEXT) \
-	sunAlgUtils.$(OBJEXT) alg_remez.$(OBJEXT) \
-	rationalapprox.$(OBJEXT) xml_errors.$(OBJEXT) \
-	heatbath.$(OBJEXT) HBActions_SUN.$(OBJEXT)
+	sunAdjMatUtils.$(OBJEXT) randNum.$(OBJEXT) \
+	randNum_MP.$(OBJEXT) randNum_Factory.$(OBJEXT) \
+	gammaMatrices.$(OBJEXT) sunAlgUtils.$(OBJEXT) \
+	alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT) \
+	xml_errors.$(OBJEXT) dcmt_wrapper.$(OBJEXT) \
+	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
+	HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -434,62 +443,64 @@ DWF_BGQ_SRC = $(am__append_6)
 # Site indexing (Lexicographic/Even-Odd)
 @USE_EVENODD_TRUE@SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
 AM_CPPFLAGS = -I$(top_srcdir)
-AM_CFLAGS = -I$(top_srcdir)
+AM_CFLAGS = -I$(top_srcdir) 
 AM_LDFLAGS = 
-lib_LIBRARIES = libcommcode.a
-EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
-		Main/documentation_pages.h	\
-                Dirac_ops/dirac_wilson_improved.code    \
-                Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
+lib_LIBRARIES = libcommcode.a 
+EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp			\
+		Main/documentation_pages.h			\
+                Dirac_ops/dirac_wilson_improved.code    	\
+                Dirac_ops/dirac_staggered_EvenOdd_improved.code	\
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
-                Dirac_ops/dirac_wilson_standard.code    \
+                Dirac_ops/dirac_wilson_standard.code    	\
 		Fields/field.inl
 
-libcommcode_a_SOURCES = Main/commonPrms.cpp		\
-		$(COMMUNICATOR_SRCS)     	        \
-		$(SITE_INDEXING_SRCS)			\
-		Action/action.cpp			\
-		Action/action_gauge_wilson.cpp		\
-	 	Action/action_gauge_wilson_adjoint.cpp	\
-		$(ACTION_SRCS)				\
-		Action/action_gaugetype_factory.cpp     \
-		Action/action_Nf2.cpp			\
-		Action/action_Nf2_ratio.cpp		\
-		Action/action_Nf.cpp			\
-		Action/action_Nf_ratio.cpp		\
-		Action/action_staggered.cpp		\
-		Action/action_staggered_ratio.cpp	\
-		Action/action_Nf2_DomainWall.cpp	\
-		Action/action_fermiontype_factory.cpp	\
-		Communicator/comm_io.cpp		\
-		Dirac_ops/dirac.cpp     		\
-		Dirac_ops/dirac_wilson.cpp		\
-		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
-		Dirac_ops/dirac_wilson_Brillouin.cpp	\
-		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp\
-		Dirac_ops/staggered_Utils.cpp	        \
-		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
+libcommcode_a_SOURCES = Main/commonPrms.cpp			\
+		$(COMMUNICATOR_SRCS)     	        	\
+		$(SITE_INDEXING_SRCS)				\
+		Action/action.cpp				\
+		Action/action_gauge_wilson.cpp			\
+	 	Action/action_gauge_wilson_adjoint.testing.cpp	\
+		$(ACTION_SRCS)					\
+		Action/action_gaugetype_factory_creator.cpp     \
+		Action/action_gaugetype_factory.cpp     	\
+		Action/action_Nf2.cpp				\
+		Action/action_Nf2_ratio.cpp			\
+		Action/action_Nf.cpp				\
+		Action/action_Nf_ratio.cpp			\
+		Action/action_staggered.cpp			\
+		Action/action_staggered_ratio.cpp		\
+		Action/action_Nf2_DomainWall.cpp		\
+		Action/action_fermiontype_factory_creator.cpp	\
+		Action/action_fermiontype_factory.cpp		\
+		Communicator/comm_io.cpp			\
+		Dirac_ops/dirac.cpp     			\
+		Dirac_ops/dirac_wilson.cpp			\
+		Dirac_ops/dirac_wilson_EvenOdd.cpp		\
+		Dirac_ops/dirac_wilson_Brillouin.cpp		\
+		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp	\
+		Dirac_ops/staggered_Utils.cpp	        	\
+		Dirac_ops/dirac_staggered_EvenOdd.cpp		\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
-		Dirac_ops/dirac_clover.cpp		\
-		Dirac_ops/fopr_signH_Zolotarev.cpp	\
-		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
-		Dirac_ops/dirac_DomainWall.cpp   	\
-		$(DWF_BGQ_SRC)				\
-		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  \
-		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
-		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
-		Dirac_ops/eoUtils.cpp           	\
-		Dirac_ops/dirac_Operator_Factory.cpp	\
-		Dirac_ops/boundaryCond.cpp      	\
-		EigenModes/eigenCalcGeneral.cpp		\
-		EigenModes/eigenModesSolver_Factory.cpp	\
-		EigenModes/eigenModesSolver_IRL.cpp	\
-		EigenModes/eigenProc_Zolotarev.cpp	\
-		EigenModes/eigenSorter.cpp		\
-		EigenModes/findminmax.cpp		\
-		Measurements/measGeneral.cpp		\
-		Measurements/GaugeM/staples.cpp		\
-		Measurements/GaugeM/wilsonFlow.cpp	\
+		Dirac_ops/dirac_clover.cpp			\
+		Dirac_ops/fopr_signH_Zolotarev.cpp		\
+		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
+		Dirac_ops/dirac_DomainWall.cpp   		\
+		$(DWF_BGQ_SRC)					\
+		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
+		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
+		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
+		Dirac_ops/eoUtils.cpp           		\
+		Dirac_ops/dirac_Operator_Factory.cpp		\
+		Dirac_ops/boundaryCond.cpp      		\
+		EigenModes/eigenCalcGeneral.cpp			\
+		EigenModes/eigenModesSolver_Factory.cpp		\
+		EigenModes/eigenModesSolver_IRL.cpp		\
+		EigenModes/eigenProc_Zolotarev.cpp		\
+		EigenModes/eigenSorter.cpp			\
+		EigenModes/findminmax.cpp			\
+		Measurements/measGeneral.cpp			\
+		Measurements/GaugeM/staples.cpp			\
+		Measurements/GaugeM/wilsonFlow.cpp		\
 		Measurements/GaugeM/polyakovLoop.cpp			\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
@@ -533,13 +544,17 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
 		Tools/sunAdjMatUtils.cpp		\
-		Tools/randNum_MT19937.cpp		\
+		Tools/randNum.cpp			\
+		Tools/randNum_MP.cpp			\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
 		Tools/sunAlgUtils.cpp			\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
+		Tools/RandomNumGen/dcmt_wrapper.cpp	\
+		Tools/RandomNumGen/randNum_MT19937.cpp	\
+		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
 
@@ -583,9 +598,11 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Action/action_gauge_rect.hpp                    \
 			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\
+			Action/action_gaugetype_factory_creator.hpp	\
 			Action/action_gaugetype_factory_abs.hpp		\
 			Action/action_fermiontype_factory_abs.hpp	\
 			Action/action_fermiontype_factory.hpp		\
+			Action/action_fermiontype_factory_creator.hpp	\
 			Action/action_Factory.hpp			\
 			Action/action_Nf2.hpp				\
 			Action/action_Nf2_ratio.hpp			\
@@ -689,7 +706,6 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Tools/colorEpsilon.hpp	                \
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
-			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
 			Tools/fieldUtils.hpp			\
 			Tools/RAIIFactory.hpp			\
@@ -700,6 +716,8 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Tools/Remez/bigfloat.hpp		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
+			Tools/RandomNumGen/dcmt_wrapper.hpp	\
+			Tools/RandomNumGen/randNum_MT19937.h	\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	
@@ -830,13 +848,15 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2_ratio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf_ratio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_fermiontype_factory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_fermiontype_factory_creator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_rect.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_rect.bgq.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson_adjoint.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson_adjoint.testing.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson_force.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson_force.bgq.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gaugetype_factory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gaugetype_factory_creator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_staggered.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_staggered_ratio.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/alg_remez.Po@am__quote@
@@ -847,6 +867,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commonPrms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_mpi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dcmt_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po@am__quote@
@@ -899,7 +920,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_MultiShift.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qprop_mom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/quark_prop_meas_factory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_Factory.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_MP.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_MT19937.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalapprox.Po@am__quote@
@@ -920,6 +943,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunAdjMatUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunAlgUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunMatUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/topologyGeom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wilsonFlow.Po@am__quote@
@@ -1053,21 +1077,21 @@ action_gauge_wilson.obj: Action/action_gauge_wilson.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson.obj `if test -f 'Action/action_gauge_wilson.cpp'; then $(CYGPATH_W) 'Action/action_gauge_wilson.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_wilson.cpp'; fi`
 
-action_gauge_wilson_adjoint.o: Action/action_gauge_wilson_adjoint.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_wilson_adjoint.o -MD -MP -MF $(DEPDIR)/action_gauge_wilson_adjoint.Tpo -c -o action_gauge_wilson_adjoint.o `test -f 'Action/action_gauge_wilson_adjoint.cpp' || echo '$(srcdir)/'`Action/action_gauge_wilson_adjoint.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gauge_wilson_adjoint.Tpo $(DEPDIR)/action_gauge_wilson_adjoint.Po
+action_gauge_wilson_adjoint.testing.o: Action/action_gauge_wilson_adjoint.testing.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_wilson_adjoint.testing.o -MD -MP -MF $(DEPDIR)/action_gauge_wilson_adjoint.testing.Tpo -c -o action_gauge_wilson_adjoint.testing.o `test -f 'Action/action_gauge_wilson_adjoint.testing.cpp' || echo '$(srcdir)/'`Action/action_gauge_wilson_adjoint.testing.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gauge_wilson_adjoint.testing.Tpo $(DEPDIR)/action_gauge_wilson_adjoint.testing.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge_wilson_adjoint.cpp' object='action_gauge_wilson_adjoint.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge_wilson_adjoint.testing.cpp' object='action_gauge_wilson_adjoint.testing.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson_adjoint.o `test -f 'Action/action_gauge_wilson_adjoint.cpp' || echo '$(srcdir)/'`Action/action_gauge_wilson_adjoint.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson_adjoint.testing.o `test -f 'Action/action_gauge_wilson_adjoint.testing.cpp' || echo '$(srcdir)/'`Action/action_gauge_wilson_adjoint.testing.cpp
 
-action_gauge_wilson_adjoint.obj: Action/action_gauge_wilson_adjoint.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_wilson_adjoint.obj -MD -MP -MF $(DEPDIR)/action_gauge_wilson_adjoint.Tpo -c -o action_gauge_wilson_adjoint.obj `if test -f 'Action/action_gauge_wilson_adjoint.cpp'; then $(CYGPATH_W) 'Action/action_gauge_wilson_adjoint.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_wilson_adjoint.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gauge_wilson_adjoint.Tpo $(DEPDIR)/action_gauge_wilson_adjoint.Po
+action_gauge_wilson_adjoint.testing.obj: Action/action_gauge_wilson_adjoint.testing.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_wilson_adjoint.testing.obj -MD -MP -MF $(DEPDIR)/action_gauge_wilson_adjoint.testing.Tpo -c -o action_gauge_wilson_adjoint.testing.obj `if test -f 'Action/action_gauge_wilson_adjoint.testing.cpp'; then $(CYGPATH_W) 'Action/action_gauge_wilson_adjoint.testing.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_wilson_adjoint.testing.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gauge_wilson_adjoint.testing.Tpo $(DEPDIR)/action_gauge_wilson_adjoint.testing.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge_wilson_adjoint.cpp' object='action_gauge_wilson_adjoint.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gauge_wilson_adjoint.testing.cpp' object='action_gauge_wilson_adjoint.testing.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson_adjoint.obj `if test -f 'Action/action_gauge_wilson_adjoint.cpp'; then $(CYGPATH_W) 'Action/action_gauge_wilson_adjoint.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_wilson_adjoint.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson_adjoint.testing.obj `if test -f 'Action/action_gauge_wilson_adjoint.testing.cpp'; then $(CYGPATH_W) 'Action/action_gauge_wilson_adjoint.testing.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_wilson_adjoint.testing.cpp'; fi`
 
 action_gauge_rect.o: Action/action_gauge_rect.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_rect.o -MD -MP -MF $(DEPDIR)/action_gauge_rect.Tpo -c -o action_gauge_rect.o `test -f 'Action/action_gauge_rect.cpp' || echo '$(srcdir)/'`Action/action_gauge_rect.cpp
@@ -1132,6 +1156,22 @@ action_gauge_wilson_force.bgq.obj: Action/Architecture_Optimized/action_gauge_wi
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp' object='action_gauge_wilson_force.bgq.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson_force.bgq.obj `if test -f 'Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp'; then $(CYGPATH_W) 'Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp'; fi`
+
+action_gaugetype_factory_creator.o: Action/action_gaugetype_factory_creator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gaugetype_factory_creator.o -MD -MP -MF $(DEPDIR)/action_gaugetype_factory_creator.Tpo -c -o action_gaugetype_factory_creator.o `test -f 'Action/action_gaugetype_factory_creator.cpp' || echo '$(srcdir)/'`Action/action_gaugetype_factory_creator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gaugetype_factory_creator.Tpo $(DEPDIR)/action_gaugetype_factory_creator.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gaugetype_factory_creator.cpp' object='action_gaugetype_factory_creator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gaugetype_factory_creator.o `test -f 'Action/action_gaugetype_factory_creator.cpp' || echo '$(srcdir)/'`Action/action_gaugetype_factory_creator.cpp
+
+action_gaugetype_factory_creator.obj: Action/action_gaugetype_factory_creator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gaugetype_factory_creator.obj -MD -MP -MF $(DEPDIR)/action_gaugetype_factory_creator.Tpo -c -o action_gaugetype_factory_creator.obj `if test -f 'Action/action_gaugetype_factory_creator.cpp'; then $(CYGPATH_W) 'Action/action_gaugetype_factory_creator.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gaugetype_factory_creator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gaugetype_factory_creator.Tpo $(DEPDIR)/action_gaugetype_factory_creator.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_gaugetype_factory_creator.cpp' object='action_gaugetype_factory_creator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gaugetype_factory_creator.obj `if test -f 'Action/action_gaugetype_factory_creator.cpp'; then $(CYGPATH_W) 'Action/action_gaugetype_factory_creator.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gaugetype_factory_creator.cpp'; fi`
 
 action_gaugetype_factory.o: Action/action_gaugetype_factory.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gaugetype_factory.o -MD -MP -MF $(DEPDIR)/action_gaugetype_factory.Tpo -c -o action_gaugetype_factory.o `test -f 'Action/action_gaugetype_factory.cpp' || echo '$(srcdir)/'`Action/action_gaugetype_factory.cpp
@@ -1260,6 +1300,22 @@ action_Nf2_DomainWall.obj: Action/action_Nf2_DomainWall.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_Nf2_DomainWall.cpp' object='action_Nf2_DomainWall.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_Nf2_DomainWall.obj `if test -f 'Action/action_Nf2_DomainWall.cpp'; then $(CYGPATH_W) 'Action/action_Nf2_DomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_Nf2_DomainWall.cpp'; fi`
+
+action_fermiontype_factory_creator.o: Action/action_fermiontype_factory_creator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_fermiontype_factory_creator.o -MD -MP -MF $(DEPDIR)/action_fermiontype_factory_creator.Tpo -c -o action_fermiontype_factory_creator.o `test -f 'Action/action_fermiontype_factory_creator.cpp' || echo '$(srcdir)/'`Action/action_fermiontype_factory_creator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_fermiontype_factory_creator.Tpo $(DEPDIR)/action_fermiontype_factory_creator.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_fermiontype_factory_creator.cpp' object='action_fermiontype_factory_creator.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_fermiontype_factory_creator.o `test -f 'Action/action_fermiontype_factory_creator.cpp' || echo '$(srcdir)/'`Action/action_fermiontype_factory_creator.cpp
+
+action_fermiontype_factory_creator.obj: Action/action_fermiontype_factory_creator.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_fermiontype_factory_creator.obj -MD -MP -MF $(DEPDIR)/action_fermiontype_factory_creator.Tpo -c -o action_fermiontype_factory_creator.obj `if test -f 'Action/action_fermiontype_factory_creator.cpp'; then $(CYGPATH_W) 'Action/action_fermiontype_factory_creator.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_fermiontype_factory_creator.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_fermiontype_factory_creator.Tpo $(DEPDIR)/action_fermiontype_factory_creator.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Action/action_fermiontype_factory_creator.cpp' object='action_fermiontype_factory_creator.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_fermiontype_factory_creator.obj `if test -f 'Action/action_fermiontype_factory_creator.cpp'; then $(CYGPATH_W) 'Action/action_fermiontype_factory_creator.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_fermiontype_factory_creator.cpp'; fi`
 
 action_fermiontype_factory.o: Action/action_fermiontype_factory.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_fermiontype_factory.o -MD -MP -MF $(DEPDIR)/action_fermiontype_factory.Tpo -c -o action_fermiontype_factory.o `test -f 'Action/action_fermiontype_factory.cpp' || echo '$(srcdir)/'`Action/action_fermiontype_factory.cpp
@@ -2429,21 +2485,37 @@ sunAdjMatUtils.obj: Tools/sunAdjMatUtils.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sunAdjMatUtils.obj `if test -f 'Tools/sunAdjMatUtils.cpp'; then $(CYGPATH_W) 'Tools/sunAdjMatUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/sunAdjMatUtils.cpp'; fi`
 
-randNum_MT19937.o: Tools/randNum_MT19937.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_MT19937.o -MD -MP -MF $(DEPDIR)/randNum_MT19937.Tpo -c -o randNum_MT19937.o `test -f 'Tools/randNum_MT19937.cpp' || echo '$(srcdir)/'`Tools/randNum_MT19937.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum_MT19937.Tpo $(DEPDIR)/randNum_MT19937.Po
+randNum.o: Tools/randNum.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum.o -MD -MP -MF $(DEPDIR)/randNum.Tpo -c -o randNum.o `test -f 'Tools/randNum.cpp' || echo '$(srcdir)/'`Tools/randNum.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum.Tpo $(DEPDIR)/randNum.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/randNum_MT19937.cpp' object='randNum_MT19937.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/randNum.cpp' object='randNum.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum_MT19937.o `test -f 'Tools/randNum_MT19937.cpp' || echo '$(srcdir)/'`Tools/randNum_MT19937.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum.o `test -f 'Tools/randNum.cpp' || echo '$(srcdir)/'`Tools/randNum.cpp
 
-randNum_MT19937.obj: Tools/randNum_MT19937.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_MT19937.obj -MD -MP -MF $(DEPDIR)/randNum_MT19937.Tpo -c -o randNum_MT19937.obj `if test -f 'Tools/randNum_MT19937.cpp'; then $(CYGPATH_W) 'Tools/randNum_MT19937.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/randNum_MT19937.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum_MT19937.Tpo $(DEPDIR)/randNum_MT19937.Po
+randNum.obj: Tools/randNum.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum.obj -MD -MP -MF $(DEPDIR)/randNum.Tpo -c -o randNum.obj `if test -f 'Tools/randNum.cpp'; then $(CYGPATH_W) 'Tools/randNum.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/randNum.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum.Tpo $(DEPDIR)/randNum.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/randNum_MT19937.cpp' object='randNum_MT19937.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/randNum.cpp' object='randNum.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum_MT19937.obj `if test -f 'Tools/randNum_MT19937.cpp'; then $(CYGPATH_W) 'Tools/randNum_MT19937.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/randNum_MT19937.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum.obj `if test -f 'Tools/randNum.cpp'; then $(CYGPATH_W) 'Tools/randNum.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/randNum.cpp'; fi`
+
+randNum_MP.o: Tools/randNum_MP.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_MP.o -MD -MP -MF $(DEPDIR)/randNum_MP.Tpo -c -o randNum_MP.o `test -f 'Tools/randNum_MP.cpp' || echo '$(srcdir)/'`Tools/randNum_MP.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum_MP.Tpo $(DEPDIR)/randNum_MP.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/randNum_MP.cpp' object='randNum_MP.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum_MP.o `test -f 'Tools/randNum_MP.cpp' || echo '$(srcdir)/'`Tools/randNum_MP.cpp
+
+randNum_MP.obj: Tools/randNum_MP.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_MP.obj -MD -MP -MF $(DEPDIR)/randNum_MP.Tpo -c -o randNum_MP.obj `if test -f 'Tools/randNum_MP.cpp'; then $(CYGPATH_W) 'Tools/randNum_MP.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/randNum_MP.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum_MP.Tpo $(DEPDIR)/randNum_MP.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/randNum_MP.cpp' object='randNum_MP.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum_MP.obj `if test -f 'Tools/randNum_MP.cpp'; then $(CYGPATH_W) 'Tools/randNum_MP.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/randNum_MP.cpp'; fi`
 
 randNum_Factory.o: Tools/randNum_Factory.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_Factory.o -MD -MP -MF $(DEPDIR)/randNum_Factory.Tpo -c -o randNum_Factory.o `test -f 'Tools/randNum_Factory.cpp' || echo '$(srcdir)/'`Tools/randNum_Factory.cpp
@@ -2540,6 +2612,54 @@ xml_errors.obj: Tools/ErrorsHandling/xml_errors.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/ErrorsHandling/xml_errors.cpp' object='xml_errors.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xml_errors.obj `if test -f 'Tools/ErrorsHandling/xml_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/xml_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/xml_errors.cpp'; fi`
+
+dcmt_wrapper.o: Tools/RandomNumGen/dcmt_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dcmt_wrapper.o -MD -MP -MF $(DEPDIR)/dcmt_wrapper.Tpo -c -o dcmt_wrapper.o `test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/dcmt_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dcmt_wrapper.Tpo $(DEPDIR)/dcmt_wrapper.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/RandomNumGen/dcmt_wrapper.cpp' object='dcmt_wrapper.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dcmt_wrapper.o `test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/dcmt_wrapper.cpp
+
+dcmt_wrapper.obj: Tools/RandomNumGen/dcmt_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dcmt_wrapper.obj -MD -MP -MF $(DEPDIR)/dcmt_wrapper.Tpo -c -o dcmt_wrapper.obj `if test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/dcmt_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/dcmt_wrapper.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dcmt_wrapper.Tpo $(DEPDIR)/dcmt_wrapper.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/RandomNumGen/dcmt_wrapper.cpp' object='dcmt_wrapper.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dcmt_wrapper.obj `if test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/dcmt_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/dcmt_wrapper.cpp'; fi`
+
+randNum_MT19937.o: Tools/RandomNumGen/randNum_MT19937.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_MT19937.o -MD -MP -MF $(DEPDIR)/randNum_MT19937.Tpo -c -o randNum_MT19937.o `test -f 'Tools/RandomNumGen/randNum_MT19937.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/randNum_MT19937.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum_MT19937.Tpo $(DEPDIR)/randNum_MT19937.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/RandomNumGen/randNum_MT19937.cpp' object='randNum_MT19937.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum_MT19937.o `test -f 'Tools/RandomNumGen/randNum_MT19937.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/randNum_MT19937.cpp
+
+randNum_MT19937.obj: Tools/RandomNumGen/randNum_MT19937.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_MT19937.obj -MD -MP -MF $(DEPDIR)/randNum_MT19937.Tpo -c -o randNum_MT19937.obj `if test -f 'Tools/RandomNumGen/randNum_MT19937.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/randNum_MT19937.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/randNum_MT19937.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum_MT19937.Tpo $(DEPDIR)/randNum_MT19937.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/RandomNumGen/randNum_MT19937.cpp' object='randNum_MT19937.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum_MT19937.obj `if test -f 'Tools/RandomNumGen/randNum_MT19937.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/randNum_MT19937.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/randNum_MT19937.cpp'; fi`
+
+timings.o: Tools/Timings/timings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT timings.o -MD -MP -MF $(DEPDIR)/timings.Tpo -c -o timings.o `test -f 'Tools/Timings/timings.cpp' || echo '$(srcdir)/'`Tools/Timings/timings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/timings.Tpo $(DEPDIR)/timings.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/Timings/timings.cpp' object='timings.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o timings.o `test -f 'Tools/Timings/timings.cpp' || echo '$(srcdir)/'`Tools/Timings/timings.cpp
+
+timings.obj: Tools/Timings/timings.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT timings.obj -MD -MP -MF $(DEPDIR)/timings.Tpo -c -o timings.obj `if test -f 'Tools/Timings/timings.cpp'; then $(CYGPATH_W) 'Tools/Timings/timings.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Timings/timings.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/timings.Tpo $(DEPDIR)/timings.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/Timings/timings.cpp' object='timings.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o timings.obj `if test -f 'Tools/Timings/timings.cpp'; then $(CYGPATH_W) 'Tools/Timings/timings.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Timings/timings.cpp'; fi`
 
 heatbath.o: UpdatingAlg/HeatBath/heatbath.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT heatbath.o -MD -MP -MF $(DEPDIR)/heatbath.Tpo -c -o heatbath.o `test -f 'UpdatingAlg/HeatBath/heatbath.cpp' || echo '$(srcdir)/'`UpdatingAlg/HeatBath/heatbath.cpp

@@ -3,13 +3,12 @@
  *
  * @brief Declaration of the abstract gauge action factory
  *
- * Time-stamp: <2013-04-16 14:39:47 neo>
+ * Time-stamp: <2013-04-17 14:58:16 neo>
  */
 
 #ifndef ACTION_GAUGE_FACT_ABS_
 #define ACTION_GAUGE_FACT_ABS_
 
-#include "include/pugi_interface.h"
 #include "action_Factory.hpp"
 
 /*
@@ -22,9 +21,5 @@ public:
     return getGaugeAction(G, SC);
   }
 };
-////////////////////////////////////////////////
-namespace GaugeAction {
-  GaugeActionFactory* createGaugeActionFactory(XML::node);
-}
 
 #endif

@@ -8,7 +8,7 @@
 #include "include/format_G.h"
 #include "include/field.h"
 #include "Tools/randNum_MP.h"
-
+#include "include/timings.hpp"
 
 using namespace std;
 
@@ -27,13 +27,19 @@ namespace MDutils{
     static const double sq3i = 1.0/sqrt(3.0);
     int Nvol = CommonPrms::instance()->Nvol();
     int Ndim = CommonPrms::instance()->Ndim();
+    long double rand_timings;
 
     Format::Format_A fmt(Nvol,Ndim);
     valarray<double> pj(fmt.size());
 
-    vector<int> gsite = SiteIndex::instance()->get_gsite();
+    FINE_TIMING_START(rand_timings);
 
-    MPrand::mp_get_gauss(pj,rand,gsite,fmt);
+    MPrand::mp_get_gauss(pj,rand);
+
+    FINE_TIMING_END(rand_timings);
+    _Message(TIMING_VERB_LEVEL, "[Timing] - MDutils::md_mom_su3 - RNG timing = "
+	     << rand_timings << std::endl);
+
     pj *= sqrt(2.0); // to get Px,mu^a with the distribution exp(-1/2*P*P)
     pj /= 2.0;       // to get i*Px,mu =i*Px,mu^a*lambda^a/2 below
 

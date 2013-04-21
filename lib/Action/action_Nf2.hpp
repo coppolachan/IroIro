@@ -1,7 +1,14 @@
 /*! 
+<<<<<<< HEAD
  * @file action_Nf2.h
  * @brief Declaration of Action_Nf2 class
  *Time-stamp: <2013-04-20 07:10:04 noaki>
+=======
+ * @file action_Nf2.hpp
+ * @brief Declaration of the Action_Nf2 class
+ *
+ * Time-stamp: <2013-04-16 16:31:39 neo>
+>>>>>>> origin/master
  */
 #ifndef ACTION_NF2_INCLUDED
 #define ACTION_NF2_INCLUDED
@@ -13,6 +20,10 @@
 
 #include "Dirac_ops/boundaryCond.hpp"
 
+/*!
+ * @class Action_Nf
+ * @brief Class to calculate 2 Flavors of Dirac fermions
+ */
 class Action_Nf2 :public Action{
 private:
   GaugeField* const u_;      /*!< The gauge field */
@@ -46,10 +57,15 @@ public:
 
   ~Action_Nf2(){}
 
+ /*! @brief Initializes the pseudofermion fields */ 
   void init(const RandNum& rand);
-  double calc_H();
-  GaugeField md_force();
-  void observer_update();
 
+  /*! @brief Calculates the action contribution to H */
+  double calc_H();
+
+  /*! @brief Force term for the HMC update */
+  GaugeField md_force();
+
+  void observer_update();
 };
 #endif

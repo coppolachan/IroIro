@@ -1,59 +1,71 @@
 /*!
  * @file action_gaugetype_factory.cpp 
  *
- * @brief Definition of createGaugeActionFactory function
+ * @brief Definition of methods for Gauge-type action factories
  *
- * Time-stamp: <2013-04-16 14:28:15 neo>
+ * Time-stamp: <2013-04-17 15:15:43 neo>
  */
 
-#include <string.h>
 #include "action_gaugetype_factory.hpp"
-#include "include/errors.hpp"
 
-namespace GaugeAction {
-  GaugeActionFactory* createGaugeActionFactory(XML::node node){
-    std::ostringstream NoActionErr;
-    if (node !=NULL) {
+//////////////////////////////////////////////////////////////////////////////////
+WilsonGaugeActionFactory::WilsonGaugeActionFactory(const XML::node node):
+  Action_node(node){};
 
-      const char* Action_name = node.attribute("name").value();
-
-      if (!strcmp(Action_name, "")) {
-        NoActionErr << "No name provided for Gauge Action. Check your XML input file\n";
-        Errors::XMLerr(NoActionErr);
-      }
-      
-      /////////////////////////////////////////////////     
-      if (!strcmp(Action_name, "Wilson")) { 
-	return new WilsonGaugeActionFactory(node);
-      } 
-      if (!strcmp(Action_name, "WilsonAdjoint")) { 
-	return new WilsonGaugeAdjointActionFactory(node);
-      } 
-      if (!strcmp(Action_name, "Rectangle")) { 
-	return new RectGaugeActionFactory(node);
-      } 
-      if (!strcmp(Action_name, "Iwasaki")) { 
-	return new IwasakiGaugeActionFactory(node);
-      } 
-      if (!strcmp(Action_name, "Symanzik")) { 
-	return new SymanzikGaugeActionFactory(node);
-      } 
-      if (!strcmp(Action_name, "DBW2")) { 
-	return new DBW2GaugeActionFactory(node);
-      } 
-      /////////////////////////////////////////////////
-
-      // If no action is found with provided name 
-      // execution reaches this point
-      NoActionErr << "No Gauge Action available with name ["
-		  << Action_name << "]. Request by <" << node.name() << "> node";
-      Errors::XMLerr(NoActionErr);
-    } else {
-      std::ostringstream NodeErr;
-      NodeErr << "Mandatory node is missing in input file (Action Object)\n"
-	      << "Check correct spelling of Gauge Action name.\n"
-	      << "Refer to documentation for available names.";
-      Errors::XMLerr(NodeErr);
-    } 
-  }
+ActionGaugeWilson* WilsonGaugeActionFactory::getGaugeAction(GaugeField* const G,
+							    SmartConf* const SC)
+{
+  return new ActionGaugeWilson(Action_node,G); 
 }
+//////////////////////////////////////////////////////////////////////////////////
+WilsonGaugeAdjointActionFactory::WilsonGaugeAdjointActionFactory(const XML::node node):
+  Action_node(node){};
+
+ActionGaugeWilsonAdjoint* WilsonGaugeAdjointActionFactory::getGaugeAction(GaugeField* const G, 
+									  SmartConf* const SC)
+{
+  return new ActionGaugeWilsonAdjoint(Action_node,G); 
+}
+//////////////////////////////////////////////////////////////////////////////////
+RectGaugeActionFactory::RectGaugeActionFactory(const XML::node node):
+  Action_node(node){};
+
+ActionGaugeRect* RectGaugeActionFactory::getGaugeAction(GaugeField* const G, 
+							SmartConf* const SC)
+{
+  return new ActionGaugeRect(Action_node,G); 
+}
+//////////////////////////////////////////////////////////////////////////////////
+IwasakiGaugeActionFactory::IwasakiGaugeActionFactory(const XML::node node):
+  Action_node(node){};
+
+ActionGaugeRect* IwasakiGaugeActionFactory::getGaugeAction(GaugeField* const G,
+							   SmartConf* const SC){
+  return new ActionGaugeRect(Action_node,
+			     3.648,
+			     -0.331,
+			     G);
+}
+//////////////////////////////////////////////////////////////////////////////////
+SymanzikGaugeActionFactory::SymanzikGaugeActionFactory(const XML::node node):
+  Action_node(node){};
+
+ActionGaugeRect* SymanzikGaugeActionFactory::getGaugeAction(GaugeField* const G,
+							    SmartConf* const SC){
+  return new ActionGaugeRect(Action_node,
+			     5.0/3.0,
+			     -1.0/12.0,
+			     G); 
+}
+//////////////////////////////////////////////////////////////////////////////////
+DBW2GaugeActionFactory::DBW2GaugeActionFactory(const XML::node node):
+Action_node(node){};
+
+ActionGaugeRect* DBW2GaugeActionFactory::getGaugeAction(GaugeField* const G,
+							SmartConf* const SC){
+  return new ActionGaugeRect(Action_node,
+			     12.2704,
+			     -1.4088,
+			     G);
+}
+//////////////////////////////////////////////////////////////////////////////////

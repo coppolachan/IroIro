@@ -1,4 +1,6 @@
-/*!@file randNum_Factory.cpp */
+/*!
+  @file randNum_Factory.cpp 
+*/
 #include "randNum_Factory.h"
 #include "Communicator/comm_io.hpp"
 #include <string.h>
@@ -11,6 +13,9 @@ namespace RNG_Env {
     
       if(!strcmp(RNG_name,"Mersenne Twister"))
 	return new RandNum_MT19937_Creator(node);
+
+      if(!strcmp(RNG_name,"DC Mersenne Twister"))
+	return new RandNum_DCMT_Creator(node);
 
       CCIO::cerr<< "No Random Number Generator available with name ["
 		<< RNG_name << "]" << std::endl;

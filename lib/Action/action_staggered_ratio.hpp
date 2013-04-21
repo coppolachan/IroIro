@@ -1,5 +1,5 @@
 /*!
- * @file action_staggered_ratio.h
+ * @file action_staggered_ratio.hpp
  * @brief Declaration of Action_staggered_ratio class
  Time-stamp: <2013-04-20 07:23:49 noaki>
  */

@@ -5,6 +5,7 @@
 #include "action_Nf2_ratio.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
+#include "include/timings.hpp"
 
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2_ratio::observer_update() {
@@ -44,18 +45,27 @@ Field Action_Nf2_ratio::DdagD2_inv(const Field& src){
 }
 
 void Action_Nf2_ratio::init(const RandNum& rand){
+  long double rnd_timing;
   std::valarray<double> ph(fsize_);
+
+  FINE_TIMING_START(rnd_timing); 
 
   D1_->get_RandGauss(ph,rand);
 
+  FINE_TIMING_END(rnd_timing);
+  _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::init"
+	   << " - Random numbers timing = "
+	   << rnd_timing << std::endl);     
+ 
   phi_= D1_->mult_dag(Field(ph));
   phi_= D2_->mult(DdagD2_inv(phi_));
+
 }
 
 double Action_Nf2_ratio::calc_H(){
   Field zeta = D2_->mult_dag(phi_);//2 flavors
   double H_nf2r = zeta*DdagD1_inv(zeta);
-  _Message(ACTION_VERB_LEVEL,"    [Action_Nf2_ratio] H = "<<H_nf2r<<"\n");
+  _Message(ACTION_VERB_LEVEL,"    ["<<name_<<"] H = "<<H_nf2r<<"\n");
   return H_nf2r;
 }
 
@@ -67,8 +77,6 @@ GaugeField Action_Nf2_ratio::md_force(){
   if(smeared_) smart_conf_->smeared_force(fce);
   GaugeField force = FieldUtils::TracelessAntihermite(fce); 
 
-  _MonitorMsg(ACTION_VERB_LEVEL, Action,force,"Action_Nf2_ratio");
+  _MonitorMsg(ACTION_VERB_LEVEL, Action,force, name_);
   return force;
 }
-
-

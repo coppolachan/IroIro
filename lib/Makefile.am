@@ -4,14 +4,18 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
+<<<<<<< HEAD
 # Time-stamp: <2013-04-20 07:06:28 noaki>
+=======
+# Time-stamp: <2013-04-19 16:10:49 cossu>
+>>>>>>> origin/master
 
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
 
-CXXFLAGS +=
-LDFLAGS +=
+CXXFLAGS += 
+LDFLAGS += 
 OPTLIB =
 
 DWF_BGQ_SRC = 
@@ -63,21 +67,29 @@ endif
 
 
 AM_CPPFLAGS=-I$(top_srcdir)
-AM_CFLAGS  =-I$(top_srcdir)
+AM_CFLAGS  =-I$(top_srcdir) 
 AM_LDFLAGS =
 
 bin_PROGRAMS = main_hmc
-lib_LIBRARIES = libcommcode.a
+lib_LIBRARIES = libcommcode.a 
 
+<<<<<<< HEAD
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		Main/documentation_pages.h	\
                 Dirac_ops/dirac_wilson_improved.code    \
                 Dirac_ops/dirac_WilsonLike_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
+=======
+EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp			\
+		Main/documentation_pages.h			\
+                Dirac_ops/dirac_wilson_improved.code    	\
+                Dirac_ops/dirac_staggered_EvenOdd_improved.code	\
+>>>>>>> origin/master
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
-                Dirac_ops/dirac_wilson_standard.code    \
+                Dirac_ops/dirac_wilson_standard.code    	\
 		Fields/field.inl
 
+<<<<<<< HEAD
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(COMMUNICATOR_SRCS)     	        \
 		$(SITE_INDEXING_SRCS)			\
@@ -104,27 +116,55 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson_Brillouin.cpp	\
 		Dirac_ops/staggered_Utils.cpp	        \
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
+=======
+libcommcode_a_SOURCES = Main/commonPrms.cpp			\
+		$(COMMUNICATOR_SRCS)     	        	\
+		$(SITE_INDEXING_SRCS)				\
+		Action/action.cpp				\
+		Action/action_gauge_wilson.cpp			\
+	 	Action/action_gauge_wilson_adjoint.testing.cpp	\
+		$(ACTION_SRCS)					\
+		Action/action_gaugetype_factory_creator.cpp     \
+		Action/action_gaugetype_factory.cpp     	\
+		Action/action_Nf2.cpp				\
+		Action/action_Nf2_ratio.cpp			\
+		Action/action_Nf.cpp				\
+		Action/action_Nf_ratio.cpp			\
+		Action/action_staggered.cpp			\
+		Action/action_staggered_ratio.cpp		\
+		Action/action_Nf2_DomainWall.cpp		\
+		Action/action_fermiontype_factory_creator.cpp	\
+		Action/action_fermiontype_factory.cpp		\
+		Communicator/comm_io.cpp			\
+		Dirac_ops/dirac.cpp     			\
+		Dirac_ops/dirac_wilson.cpp			\
+		Dirac_ops/dirac_wilson_EvenOdd.cpp		\
+		Dirac_ops/dirac_wilson_Brillouin.cpp		\
+		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp	\
+		Dirac_ops/staggered_Utils.cpp	        	\
+		Dirac_ops/dirac_staggered_EvenOdd.cpp		\
+>>>>>>> origin/master
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
-		Dirac_ops/dirac_clover.cpp		\
-		Dirac_ops/fopr_signH_Zolotarev.cpp	\
-		Dirac_ops/dirac_overlap_Zolotarev.cpp	\
-		Dirac_ops/dirac_DomainWall.cpp   	\
-		$(DWF_BGQ_SRC)				\
-		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  \
-		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
-		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
-		Dirac_ops/eoUtils.cpp           	\
-		Dirac_ops/dirac_Operator_Factory.cpp	\
-		Dirac_ops/boundaryCond.cpp      	\
-		EigenModes/eigenCalcGeneral.cpp		\
-		EigenModes/eigenModesSolver_Factory.cpp	\
-		EigenModes/eigenModesSolver_IRL.cpp	\
-		EigenModes/eigenProc_Zolotarev.cpp	\
-		EigenModes/eigenSorter.cpp		\
-		EigenModes/findminmax.cpp		\
-		Measurements/measGeneral.cpp		\
-		Measurements/GaugeM/staples.cpp		\
-		Measurements/GaugeM/wilsonFlow.cpp	\
+		Dirac_ops/dirac_clover.cpp			\
+		Dirac_ops/fopr_signH_Zolotarev.cpp		\
+		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
+		Dirac_ops/dirac_DomainWall.cpp   		\
+		$(DWF_BGQ_SRC)					\
+		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
+		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
+		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
+		Dirac_ops/eoUtils.cpp           		\
+		Dirac_ops/dirac_Operator_Factory.cpp		\
+		Dirac_ops/boundaryCond.cpp      		\
+		EigenModes/eigenCalcGeneral.cpp			\
+		EigenModes/eigenModesSolver_Factory.cpp		\
+		EigenModes/eigenModesSolver_IRL.cpp		\
+		EigenModes/eigenProc_Zolotarev.cpp		\
+		EigenModes/eigenSorter.cpp			\
+		EigenModes/findminmax.cpp			\
+		Measurements/measGeneral.cpp			\
+		Measurements/GaugeM/staples.cpp			\
+		Measurements/GaugeM/wilsonFlow.cpp		\
 		Measurements/GaugeM/polyakovLoop.cpp			\
 		Measurements/GaugeM/gaugeFixingStep.cpp			\
 		Measurements/GaugeM/gaugeFixing_Coulomb.cpp		\
@@ -168,13 +208,17 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
 		Tools/sunAdjMatUtils.cpp		\
-		Tools/randNum_MT19937.cpp		\
+		Tools/randNum.cpp			\
+		Tools/randNum_MP.cpp			\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
 		Tools/sunAlgUtils.cpp			\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
+		Tools/RandomNumGen/dcmt_wrapper.cpp	\
+		Tools/RandomNumGen/randNum_MT19937.cpp	\
+		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
 
@@ -219,9 +263,11 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Action/action_gauge_rect.hpp                    \
 			Action/action.hpp				\
 			Action/action_gaugetype_factory.hpp		\
+			Action/action_gaugetype_factory_creator.hpp	\
 			Action/action_gaugetype_factory_abs.hpp		\
 			Action/action_fermiontype_factory_abs.hpp	\
 			Action/action_fermiontype_factory.hpp		\
+			Action/action_fermiontype_factory_creator.hpp	\
 			Action/action_Factory.hpp			\
 			Action/action_Nf2.hpp				\
 			Action/action_Nf2_ratio.hpp			\
@@ -326,7 +372,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/colorEpsilon.hpp	                \
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
-			Tools/randNum_MT19937.h			\
 			Tools/randNum_Factory.h			\
 			Tools/fieldUtils.hpp			\
 			Tools/RAIIFactory.hpp			\
@@ -337,6 +382,8 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/Remez/bigfloat.hpp		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
+			Tools/RandomNumGen/dcmt_wrapper.hpp	\
+			Tools/RandomNumGen/randNum_MT19937.h	\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	

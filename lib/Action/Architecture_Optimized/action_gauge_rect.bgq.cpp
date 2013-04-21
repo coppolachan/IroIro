@@ -1,10 +1,10 @@
 /*!
   @file action_gauge_rect.bgq.cpp
-  @brief Definition of the ActionGaugeRect class
+  @brief Specification of the ActionGaugeRect class for BGQ
 
   Optimized version for BlueGeneQ architecture
 
-  Time-stamp: <2013-04-16 15:41:25 cossu>
+  Time-stamp: <2013-04-16 17:35:07 neo>
 */
 
 #include "Action/action_gauge_rect.hpp"

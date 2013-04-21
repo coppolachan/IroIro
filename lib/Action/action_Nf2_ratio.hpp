@@ -1,5 +1,5 @@
 /*!
- * @file action_Nf2_ratio.h
+ * @file action_Nf2_ratio.hpp
  * @brief Declaration of Action_Nf2_ratio class
  Time-stamp: <2013-04-20 07:10:39 noaki>
  */
@@ -25,6 +25,7 @@ private:
   const size_t fsize_;
   Field phi_;
   bool smeared_;
+  const char* name_;
   SmartConf* smart_conf_;
 
   Field DdagD1_inv(const Field& src);
@@ -34,6 +35,7 @@ private:
   Action_Nf2_ratio(GaugeField* const GField, 
 		   DiracWilsonLike* const D1,DiracWilsonLike* const D2,
 		   const Solver* Solv1,const Solver* Solv2,
+		   const char* n = "Action_Nf2_ratio",
 		   bool smeared = false,
 		   SmartConf* smart_conf = NULL)
     :u_(GField),
@@ -41,6 +43,7 @@ private:
      slv1_(Solv1), slv2_(Solv2),
      fsize_(D1->fsize()),
      phi_(fsize_),
+     name_(n),
      smeared_(smeared){
     if (smeared_ && smart_conf !=NULL) attach_smearing(smart_conf);
   }
