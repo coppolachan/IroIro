@@ -26,10 +26,16 @@ class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
   Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd&);
   /*!< simple copy is prohibited */
 public:
-  Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,const Field* u,
+  Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,
+				  const DiracWilsonLike* Deo,
+				  const DiracWilsonLike* Doe,
+				  const Field* u,
 				  DWFType Type=Standard)
-    :Deo_(DWF_node,u,Dop::EOtag(),Type),
-     Doe_(DWF_node,u,Dop::OEtag(),Type){
+    :Deo_(DWF_node,Deo,u,DomainWallFermions::EvenOdd_tag(),Type),
+     Doe_(DWF_node,Doe,u,DomainWallFermions::EvenOdd_tag(),Type),
+     u_(u),
+     ff_(Deo_->getFermionFormat()),Nvol_(ff_.Nvol()),
+     fsize_(Deo_->fsize()),gsize_(Deo_->gsize()){
 #if VERBOSITY>4
     CCIO::cout<<"Dirac_optimalDomainWall_Evenodd created"<<std::endl;
 #endif
@@ -37,28 +43,29 @@ public:
   /*! @brief copy constractor to create Pauli-Villars operator */
   Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd& D, 
 				  DWFType Type=Standard)
-    :Deo_(D.Deo_,Type), Doe_(D.Doe_,Type){}
+    :Deo_(D.Deo_,Type),Doe_(D.Doe_,Type),u_(D.u_),
+     ff_(D_->getFermionFormat()),Nvol_(ff_.Nvol()),
+     fsize_(D_->fsize()),gsize_(D_->gsize()){}
   
   Dirac_optimalDomainWall_EvenOdd(double b,double c,double M0,double mq,
 				  const std::vector<double>& omega,
+				  const DiracWilsonLike* Deo,
+				  const DiracWilsonLike* Doe,
 				  const Field* u)
-    :Deo_(b,c,M0,mq,omega,u,Dop::EOtag()),
-     Doe_(b,c,M0,mq,omega,u,Dop::OEtag()){}
+    :Deo_(b,c,M0,mq,omega,Deo,u,DomainWallFermions::EvenOdd_tag()),
+     Doe_(b,c,M0,mq,omega,Doe,u,DomainWallFermions::EvenOdd_tag()){}
   
   ~Dirac_optimalDomainWall_EvenOdd(){
     CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";
     CCIO::cout << "DWF Timer multdag: "<< multdag_timer << "\n";
   }
   
-  size_t f4size()const{ return Deo_.f4size();}
-  size_t fsize() const{ return Deo_.fsize(); }
-  size_t gsize() const{ return Deo_.gsize(); }
-  int Nvol()const{return Deo_.Nvol();}
+  size_t f4size()const{ return Deo_->f4size();}
+  
+  const Field gamma5(const Field& f5) const{ return Deo_->gamma5(f5);}
+  const Field gamma5_4d(const Field& f4) const{ return Deo_->gamma5_4d(f4);}
 
-  const Field gamma5(const Field& f5) const{ return Deo_.gamma5(f5);}
-  const Field gamma5_4d(const Field& f4) const{ return Deo_.gamma5_4d(f4);}
-
-  double getMass() const{return Deo_.getMass();}
+  double getMass() const{return Deo_->getMass();}
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
@@ -91,7 +98,6 @@ public:
   const Field mult_ee_dinv(const Field& f)const;
 
   void update_internal_state(){} 
-  void get_RandGauss(std::valarray<double>&,const RandNum&)const;
 
   ////////////////////////////
 #ifdef IBM_BGQ_WILSON

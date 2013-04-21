@@ -10,8 +10,7 @@
 #ifndef DIRAC_STAGGERED_EVENODD_ADJOINT_INCLUDED
 #define DIRAC_STAGGERED_EVENODD_ADJOINT_INCLUDED
 
-#include "dirac.hpp"
-#include "staggered_Utils.hpp"
+#include "dirac_staggeredLike.hpp"
 #include "include/format_A.h"
 #include "include/format_Ga.h"
 #include "Main/Geometry/shiftField.hpp"
@@ -145,7 +144,6 @@ public:
   const Field mult_ee_inv(const Field& f)const {return f;}
 
   const Field md_force(const Field&,const Field&) const;
-  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
 
   void update_internal_state(){ set_ustag(); }
   double getMass()const{ return mq_;}

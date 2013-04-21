@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-16 16:11:57 neo>
+# Time-stamp: <2013-04-20 07:06:28 noaki>
 
 ###########################################
 # Initial definitions 
@@ -72,6 +72,7 @@ lib_LIBRARIES = libcommcode.a
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		Main/documentation_pages.h	\
                 Dirac_ops/dirac_wilson_improved.code    \
+                Dirac_ops/dirac_WilsonLike_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_standard.code    \
@@ -94,11 +95,13 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_Nf2_DomainWall.cpp	\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
+		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\
+		Dirac_ops/dirac_WilsonLike.cpp		\
+		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp	\
-		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp\
 		Dirac_ops/staggered_Utils.cpp	        \
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
@@ -265,10 +268,11 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac.hpp			\
+			Dirac_ops/dirac_WilsonLike.hpp		\
+			Dirac_ops/dirac_staggeredLike.hpp	\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
-			Dirac_ops/dirac_wilson_Brillouin_Imp.hpp\
 			Dirac_ops/staggered_Utils.hpp	        \
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\

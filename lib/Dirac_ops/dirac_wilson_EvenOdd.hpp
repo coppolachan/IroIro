@@ -1,7 +1,6 @@
-//---------------------------------------------------------
-/*
-  @file dirac_wilson_EvenOdd.hpp
+/*! @file dirac_wilson_EvenOdd.hpp
   @brief Definition of Even Odd wilson operator
+  Time-stamp: <2013-04-20 20:57:56 noaki>
 */
 //---------------------------------------------------------
 #ifndef DIRAC_WILSON_EVENODD_INCLUDED
@@ -58,7 +57,6 @@ public:
   const Field mult_oo_inv(const Field& f)const {return f;}
   const Field mult_ee_inv(const Field& f)const {return f;}
 
-  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
   double getKappa()const { return Deo_.getKappa();}
   int Nvol()const{ return Deo_.Nvol();}
 };

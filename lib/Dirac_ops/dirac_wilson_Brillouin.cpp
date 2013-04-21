@@ -1,21 +1,16 @@
-//----------------------------------------------------------------------
-// dirac_wilson_Brillouin.cpp
-//----------------------------------------------------------------------
+/* !@filename dirac_wilson_Brillouin.cpp
+ * @brief implementation of Dirac_Wilson_Brillouin class
+ *  Time-stamp: <2013-04-19 17:57:40 noaki>
+ */
+
 #include "dirac_wilson_Brillouin.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunVec.hpp"
-#include "Tools/randNum_MP.h"
 #include "Communicator/comm_io.hpp"
 #include "Fields/field_expressions.hpp"
 
 using namespace SUNvecUtils;
 using namespace std;
-
-/////////////////////////////////////////////////////////////////////////
-void Dirac_Wilson_Brillouin::get_RandGauss(valarray<double>& phi,
-					   const RandNum& rng)const{
-  MPrand::mp_get_gauss(phi,rng,SiteIndex::instance()->get_gsite(),ff_);
-}
 
 int Dirac_Wilson_Brillouin::sgm(int mu,int nu,int rho)const{
   for(int sigma=0; sigma<NDIM_; ++sigma){

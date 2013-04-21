@@ -104,7 +104,6 @@ public:
 
   const Field gamma5(const Field&) const;
   const Field md_force(const Field& eta,const Field& zeta)const;
-  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
   void update_internal_state() {set_csw();}
   int Nvol()const{return Nvol_;}
 };

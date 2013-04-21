@@ -1,12 +1,13 @@
 /*! 
  * @file action_staggered.hpp
  * @brief Declaration of Action_staggered class
+ Time-stamp: <2013-04-20 07:22:23 noaki>
  */
 #ifndef ACTION_STAGGERED_INCLUDED
 #define ACTION_STAGGERED_INCLUDED
 
 #include "Action/action.hpp"
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_staggeredLike.hpp"
 #include "Solver/solver.hpp"
 #include "Smearing/smartConf.hpp"
 

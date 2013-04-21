@@ -1,12 +1,13 @@
 /*! 
  * @file action_Nf2.h
  * @brief Declaration of Action_Nf2 class
+ *Time-stamp: <2013-04-20 07:10:04 noaki>
  */
 #ifndef ACTION_NF2_INCLUDED
 #define ACTION_NF2_INCLUDED
 
 #include "Action/action.hpp"
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "Solver/solver.hpp"
 #include "Smearing/smartConf.hpp"
 

@@ -1,6 +1,7 @@
-//----------------------------------------------------------------------
-// dirac_wilson_Brillouin.hpp
-//----------------------------------------------------------------------
+/*! @filename dirac_wilson_Brillouin.hpp
+ * @brief declaration of Dirac_Wilson_Brillouin class 
+ * Time-stamp: <2013-04-19 17:54:09 noaki>
+ ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
 
@@ -21,28 +22,10 @@ private:
   double kbr_,m_;
   int Nx_,Ny_,Nz_,Nt_,Nvol_,Nin_;
 
-  const ffmt_t ff_;
-  const gfmt_t gf_;
-
-  const size_t fsize_;
-  const size_t gsize_;
   const Communicator* comm_;
-
-  int r0(int c)const{return 2*c;}
-  int r1(int c)const{return 2*(NC_+c);}
-  int r2(int c)const{return 2*(2*NC_+c);}
-  int r3(int c)const{return 2*(3*NC_+c);} 
-
-  int i0(int c)const{return 2*c+1;}
-  int i1(int c)const{return 2*(NC_+c)+1;}
-  int i2(int c)const{return 2*(2*NC_+c)+1;}
-  int i3(int c)const{return 2*(3*NC_+c)+1;} 
 
   int sr(int s,int c)const{return 2*(s*NC_+c);}
   int si(int s,int c)const{return 2*(s*NC_+c)+1;}
-
-  int re(int c1,int c2)const{return 2*(NC_*c1+c2);}
-  int im(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
   
   // full site operation
   int xsl(int x,int n,int dir)const{return SiteMap::shiftSite.xslice(x,n,dir);}
@@ -93,18 +76,12 @@ public:
     kbr_= 1.0/((15.0/8.0)+mass);
     m_ = mass;
   }
-  
-  size_t fsize() const{return fsize_;}
-  size_t gsize() const{return gsize_;}
-  int Nvol() const{return Nvol_;}
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
   const Field mult_H(const Field&)const;
   const Field mult_del(const Field&)const;
   const Field mult_lap(const Field&)const;
-
-  
 
   ////////////////////////////////////////Preconditioned versions
   // Wilson operator has no defined preconditioner now 
@@ -117,23 +94,11 @@ public:
   //////////////////////////////////////////////////////////////
 
   const Field gamma5(const Field&) const;
-  /*
-  void gamma5_mult(Field&, const Field&) const;
-  void gamma5_ptr(double*, double* const) const;
-  const Field proj_p(const Field&) const;
-  const Field proj_m(const Field&) const;
-  void proj_p(Field&, const Field&, int) const;
-  void proj_m(Field&, const Field&, int) const;
-  */
   const Field md_force(const Field& , const Field&)const{}
   void md_force_p(Field&,const Field&,const Field&)const{}
   void md_force_m(Field&,const Field&,const Field&)const{}
 
-  void get_RandGauss(std::valarray<double>&,const RandNum&)const;
-
   double getKappa() const {return kbr_;} 
-  const ffmt_t getFermionFormat() const {return ff_;} 
-  void update_internal_state(){}
 };
 
 #endif
