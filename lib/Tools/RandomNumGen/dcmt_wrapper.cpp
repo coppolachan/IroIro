@@ -16,6 +16,7 @@
 
 #include "dcmt_wrapper.hpp"
 #include "include/messages_macros.hpp"
+#include "include/errors.hpp"
 #define BITS_FACTOR32   2.32830643708079737543e-10
 #define BITS_FACTOR32_1 2.3283064365386962890625e-10
 #define BITS_FACTOR53   1.11022302462515654042e-16
@@ -27,7 +28,7 @@ int RandNum_DCMT::init(int ID, int genSeed, int seed){
   _Message(DEBUG_VERB_LEVEL, "Initialization of DC Mersenne Twister\n");
   mts = get_mt_parameter_id_st(w, p, ID, genSeed);
   if (mts == NULL) {
-    // print error
+    Errors::AllocationErr("RandNum_DCMT::init - mts structure not allocated");
   }
   // Initialize RNG mts with 32-bit seed;
   sgenrand_mt(seed, mts);
@@ -171,24 +172,22 @@ void RandNum_DCMT::loadSeed(const std::string& file){
       reader >> temp_mt->state[i];
     }
     if (n == Communicator::instance()->id()){
-      //copy to the real mts structure
-      //*mts = *temp_mt;
-      // Deep copy
-      mts->aaa = temp_mt->aaa;
-      mts->mm = temp_mt->mm;
-      mts->nn = temp_mt->nn;
-      mts->rr = temp_mt->rr;
-      mts->ww = temp_mt->ww;
-      mts->wmask = temp_mt->wmask;
-      mts->umask = temp_mt->umask;
-      mts->lmask = temp_mt->lmask;
+      // deep copy to the real mts structure
+      mts->aaa    = temp_mt->aaa;
+      mts->mm     = temp_mt->mm;
+      mts->nn     = temp_mt->nn;
+      mts->rr     = temp_mt->rr;
+      mts->ww     = temp_mt->ww;
+      mts->wmask  = temp_mt->wmask;
+      mts->umask  = temp_mt->umask;
+      mts->lmask  = temp_mt->lmask;
       mts->shift0 = temp_mt->shift0;
       mts->shift1 = temp_mt->shift1;
       mts->shiftB = temp_mt->shiftB;
       mts->shiftC = temp_mt->shiftC;
-      mts->maskB = temp_mt->maskB;
-      mts->maskC = temp_mt->maskC;
-      mts->i = temp_mt->i;
+      mts->maskB  = temp_mt->maskB;
+      mts->maskC  = temp_mt->maskC;
+      mts->i      = temp_mt->i;
       for (int i = 0; i < state_size; i++) {
 	mts->state[i] = temp_mt->state[i];
       }
