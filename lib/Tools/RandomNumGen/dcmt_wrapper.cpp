@@ -90,7 +90,8 @@ double RandNum_DCMT::do_rand_closed()const {
 }
 
 RandNum_DCMT::~RandNum_DCMT(){
-  free_mt_struct(mts);
+  if (mts != NULL)
+    free_mt_struct(mts);
 }
 
 
@@ -98,16 +99,19 @@ void RandNum_DCMT::saveSeed(const std::string& file) const{
   CCIO::cout << "Saving DC Mersenne Twister in file ["
 	     << file << "]\n";
   int state_size = (p/w+1);
+  std::ofstream writer;
   for (int n = 0; n < Communicator::instance()->size(); n++) {
     if (n == Communicator::instance()->id()) {
-      std::ofstream writer(file.c_str(),std::ofstream::app);
-
       if (n == 0){
+	writer.open(file.c_str()); //open new file
 	//Write header with some useful info
-	writer << "# " << CommonPrms::instance()->node_num(0) << " "
+	writer << CommonPrms::instance()->node_num(0) << " "
 	       << CommonPrms::instance()->node_num(1) << " "
 	       << CommonPrms::instance()->node_num(2) << " "
 	       << CommonPrms::instance()->node_num(3) << std::endl;
+      } else {
+	//append data 
+	writer.open(file.c_str(),std::ofstream::app); 
       }
       
       writer << mts->aaa << std::endl;
@@ -128,24 +132,69 @@ void RandNum_DCMT::saveSeed(const std::string& file) const{
     Communicator::instance()->sync();
   }
 };
+
 void RandNum_DCMT::loadSeed(const std::string& file){
   CCIO::cout << "Loading DC Mersenne Twister structures from file ["
 	     << file << "]\n";
   int state_size = (p/w+1);
-
-  for (int n = 0; n < Communicator::instance()->size(); n++) {
-    if (n == Communicator::instance()->id()) {
-      std::ifstream reader(file.c_str());
-      //check that the processes match
-
-      //allocate space for the structure.
-      mts = alloc_mt_struct(state_size);
-      //load and store data
-
+  int np0, np1, np2, np3;
+  std::ifstream reader(file.c_str());
+  //check that the processes match
+  //Read header with some useful info
+  reader >> np0 >> np1 >> np2 >> np3;
+  if (Communicator::instance()->primaryNode()){
+    if ((np0 == CommonPrms::instance()->node_num(0)) &&
+	(np1 == CommonPrms::instance()->node_num(1)) &&
+	(np2 == CommonPrms::instance()->node_num(2)) &&
+	(np3 == CommonPrms::instance()->node_num(3))){
+      std::cout << "Number and distribution of nodes matches\n";
+    } else {
+      std::cout << "[Error] The Number and distribution of nodes does not match.";
+      exit(1);
     }
   }
-
-
-
-
+  Communicator::instance()->sync();
+  //allocate space for the structure.
+  mts = alloc_mt_struct(state_size);
+  // load and store data
+  // each process reads the same data but stores only the ones referring to its own process.
+  mt_struct *temp_mt;
+  temp_mt = alloc_mt_struct(state_size);
+  for (int n = 0; n < Communicator::instance()->size(); n++) {
+    reader >> temp_mt->aaa ;
+    reader >> temp_mt->mm >> temp_mt->nn >> temp_mt->rr >> temp_mt->ww;
+    reader >> temp_mt->wmask >> temp_mt->umask >> temp_mt->lmask;
+    reader >> temp_mt->shift0 >> temp_mt->shift1 >> temp_mt->shiftB >> temp_mt->shiftC;
+    reader >> temp_mt->maskB >> temp_mt->maskC;
+    reader >> temp_mt->i ;
+    for (int i = 0; i < state_size; i++) {
+      reader >> temp_mt->state[i];
+    }
+    if (n == Communicator::instance()->id()){
+      //copy to the real mts structure
+      //*mts = *temp_mt;
+      // Deep copy
+      mts->aaa = temp_mt->aaa;
+      mts->mm = temp_mt->mm;
+      mts->nn = temp_mt->nn;
+      mts->rr = temp_mt->rr;
+      mts->ww = temp_mt->ww;
+      mts->wmask = temp_mt->wmask;
+      mts->umask = temp_mt->umask;
+      mts->lmask = temp_mt->lmask;
+      mts->shift0 = temp_mt->shift0;
+      mts->shift1 = temp_mt->shift1;
+      mts->shiftB = temp_mt->shiftB;
+      mts->shiftC = temp_mt->shiftC;
+      mts->maskB = temp_mt->maskB;
+      mts->maskC = temp_mt->maskC;
+      mts->i = temp_mt->i;
+      for (int i = 0; i < state_size; i++) {
+	mts->state[i] = temp_mt->state[i];
+      }
+      break;
+    }
+  }
+  Communicator::instance()->sync();
+  free_mt_struct(temp_mt);
 };
