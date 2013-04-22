@@ -19,6 +19,7 @@
 #include <vector>
 
 // Predefined verbosity levels
+#define BASE_VERB_LEVEL 1
 #define ACTION_VERB_LEVEL 1
 #define TIMING_VERB_LEVEL 2
 #define SOLV_ITER_VERB_LEVEL 3

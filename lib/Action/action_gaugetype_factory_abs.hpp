@@ -3,13 +3,13 @@
  *
  * @brief Declaration of the abstract gauge action factory
  *
- * Time-stamp: <2013-04-17 14:58:16 neo>
+ * Time-stamp: <2013-04-22 16:38:28 neo>
  */
 
 #ifndef ACTION_GAUGE_FACT_ABS_
 #define ACTION_GAUGE_FACT_ABS_
 
-#include "action_Factory.hpp"
+#include "action_factory.hpp"
 
 /*
  * @brief Abstract class for gauge action creation

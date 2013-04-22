@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-22 13:03:41 cossu>
+# Time-stamp: <2013-04-22 16:37:18 neo>
 
 ###########################################
 # Initial definitions 
@@ -229,7 +229,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Action/action_fermiontype_factory_abs.hpp	\
 			Action/action_fermiontype_factory.hpp		\
 			Action/action_fermiontype_factory_creator.hpp	\
-			Action/action_Factory.hpp			\
+			Action/action_factory.hpp			\
 			Action/action_Nf2.hpp				\
 			Action/action_Nf2_ratio.hpp			\
 			Action/action_Nf.hpp				\

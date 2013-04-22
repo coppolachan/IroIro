@@ -37,7 +37,7 @@ Field Action_Nf2::DdagD_inv(const Field& src){
 void Action_Nf2::init(const RandNum& rand){
   std::valarray<double> ph(fsize_);
   //BC->apply_bc(*u_);
-  D_->get_RandGauss(ph,rand);
+  MPrand::mp_get_gauss(ph,rand);//D_->get_RandGauss(ph,rand);
   phi_= D_->mult_dag(Field(ph));
   //BC->apply_bc(*u_);
 }

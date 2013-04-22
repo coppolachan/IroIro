@@ -3,7 +3,7 @@
  *
  * @brief Definition of createGaugeActionFactory function
  *
- * Time-stamp: <2013-04-17 15:00:39 neo>
+ * Time-stamp: <2013-04-22 16:55:25 neo>
  */
 
 #include <string.h>
@@ -12,14 +12,12 @@
 
 namespace GaugeAction {
   GaugeActionFactory* createGaugeActionFactory(XML::node node){
-    std::ostringstream NoActionErr;
     if (node !=NULL) {
 
       const char* Action_name = node.attribute("name").value();
 
       if (!strcmp(Action_name, "")) {
-        NoActionErr << "No name provided for Gauge Action. Check your XML input file\n";
-        Errors::XMLerr(NoActionErr);
+	Errors::XMLerr("No name provided for Gauge Action. Check your XML input file\n");
       }
       
       /////////////////////////////////////////////////     
@@ -45,6 +43,7 @@ namespace GaugeAction {
 
       // If no action is found with provided name 
       // execution reaches this point
+      std::ostringstream NoActionErr;
       NoActionErr << "No Gauge Action available with name ["
 		  << Action_name << "]. Request by <" << node.name() << "> node";
       Errors::XMLerr(NoActionErr);

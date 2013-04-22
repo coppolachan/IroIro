@@ -3,7 +3,7 @@
  *
  * @brief Collection of simple allocation error handling functions
  *
- * Time-stamp: <2013-04-22 13:00:41 cossu>
+ * Time-stamp: <2013-04-22 16:48:43 neo>
  */
 
 #include <stdlib.h> // exit definition
@@ -17,6 +17,12 @@ namespace Errors{
     CCIO::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
     CCIO::cerr << "Exiting...\n";
     exit(EXIT_FAILURE);
+  }
+
+  void BaseWarning(const char* type, std::ostringstream& output) {
+    CCIO::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
+    CCIO::cerr << "["<<type<<" WARNING] Description:\n"<< output.str() << "\n";
+    CCIO::cerr << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n";
   }
 
 

@@ -45,7 +45,7 @@ void Action_Nf::init(const RandNum& rand){
   // Loop on pseudofermions
   for(int i=0; i<Params_.n_pseudof_; ++i){
     // Generates a gaussian distributed vector <xi>   
-    D_->get_RandGauss(xi,rand);
+    MPrand::mp_get_gauss(xi,rand);//D_->get_RandGauss(xi,rand);
  
     monitor =  slv_->solve(phi_[i], Field(xi));
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
