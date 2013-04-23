@@ -1,8 +1,7 @@
 /* !@filename dirac_wilson_Brillouin.cpp
  * @brief implementation of Dirac_Wilson_Brillouin class
- *  Time-stamp: <2013-04-19 17:57:40 noaki>
+ *  Time-stamp: <2013-04-23 11:54:33 noaki>
  */
-
 #include "dirac_wilson_Brillouin.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunVec.hpp"
@@ -11,6 +10,12 @@
 
 using namespace SUNvecUtils;
 using namespace std;
+
+const Field Dirac_Wilson_Brillouin::mult(const Field& f)const{
+  Field w(fsize_);
+  (this->*mult_core)(w,f);
+  return w;
+}
 
 int Dirac_Wilson_Brillouin::sgm(int mu,int nu,int rho)const{
   for(int sigma=0; sigma<NDIM_; ++sigma){
@@ -34,7 +39,7 @@ const Field Dirac_Wilson_Brillouin::mult_H(const Field& f)const{
 
 /*!@brief U_{x,\mu}\psi_{x+\hat{\mu}} */
 
-inline const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
+const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
   Field fp(fsize_);
   
   /// boundary part ///
@@ -107,7 +112,7 @@ inline const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
 
 /*! @brief  U_{x-\hat{\mu},\mu}^\dagger \psi_{x-\hat{\mu}} */
 
-inline const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
+const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
   Field fm(fsize_);
 
   /// boundary part ///
@@ -176,7 +181,7 @@ inline const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
   return fm;
 }
 
-inline const Field Dirac_Wilson_Brillouin::del(const Field& f,int dir,double a)const{
+const Field Dirac_Wilson_Brillouin::del(const Field& f,int dir,double a)const{
   using namespace FieldExpression;
   Field w = sft_p(f,dir);
   w -= sft_m(f,dir);
@@ -184,7 +189,7 @@ inline const Field Dirac_Wilson_Brillouin::del(const Field& f,int dir,double a)c
   return w;
 }
 
-inline const Field Dirac_Wilson_Brillouin::lap(const Field& f,int dir,double a)const{
+const Field Dirac_Wilson_Brillouin::lap(const Field& f,int dir,double a)const{
   using  namespace FieldExpression;
   Field w = sft_p(f,dir);
   w += sft_m(f,dir);
@@ -192,33 +197,103 @@ inline const Field Dirac_Wilson_Brillouin::lap(const Field& f,int dir,double a)c
   return w;
 }
 
-const Field Dirac_Wilson_Brillouin::mult(const Field& f)const{
+void Dirac_Wilson_Brillouin::mult_std(Field& w,const Field& f)const{
   using namespace FieldExpression;
-  Field w = mult_del(f);
+  w = mult_del(f);
   w -= 0.5*mult_lap(f);
   w *= kbr_;
   w += f;
+}
+
+void Dirac_Wilson_Brillouin::mult_imp(Field& w,const Field& f)const{
+  using namespace FieldExpression;
+
+  Field fn = mult_lap(f);
+
+  w = mult_lap(fn);
+  w -= 7.50*fn;
+  w *= 0.125;
+
+  fn -= 15.0/4.0*f; 
+  fn *= -1.0/12.0;
+  fn += f;
+
+  Field dr = mult_del(fn); 
+
+  fn = mult_lap(dr);
+  fn /= -12.0;
+  fn += (21.0/16.0)*dr;
+  
+  w += fn;
+  w *= kbr_;
+  w += f;
+}
+
+/* original version of _Imp::mult
+const Field Dirac_Wilson_Brillouin_Imp::mult(const Field& f)const{
+  using namespace FieldExpression;
+  CCIO::cout<<"improved Brillouin is called!"<<endl;
+  Field w(fsize_);
+
+  Field fn = mult_lap(f);
+  Field fr(fsize_);
+  fr = fn -15.0/4.0*f;  // total Brillouin laplacian
+
+  w = mult_lap(fn) -7.50*fn;
+  w *= 0.125;
+
+  Field dn(fsize_);
+  dn = f -(1.0/12.0)*fr;
+
+  Field dr = mult_del(dn); 
+
+  Field dl(fsize_);
+  dl = mult_lap(dr);
+  dl /= -12.0;
+  dl += (21.0/16.0)*dr;
+  
+  w += dl;
+  w *= kimp_;
+  w += f;
+
   return w;
 }
+*/
+
 
 const Field Dirac_Wilson_Brillouin::mult_del(const Field& f)const{
   using namespace FieldExpression;
   Field v(fsize_);
-  //===preconcitiong===================================
-  Field f0 = lap(f,0,0.25);  Field f1 = lap(f,1,0.25);
-  Field f2 = lap(f,2,0.25);  Field f3 = lap(f,3,0.25);
-  f0 += 4.0*f; f1 += 4.0*f;  f2 += 4.0*f; f3 += 4.0*f;
-  //===================================================
+  //===preconcitiong=================================
+  Field f0p = sft_p(f,0); Field f0m = sft_m(f,0); 
+  Field f0 = f0p; f0 += f0m; f0 *= 0.25; f0 += 4.0*f;
+  Field f1p = sft_p(f,1); Field f1m = sft_m(f,1);
+  Field f1 = f1p; f1 += f1m; f1 *= 0.25; f1 += 4.0*f;  
+  Field f2p = sft_p(f,2); Field f2m = sft_m(f,2); 
+  Field f2 = f2p; f2 += f2m; f2 *= 0.25; f2 += 4.0*f; 
+  Field f3p = sft_p(f,3); Field f3m = sft_m(f,3); 
+  Field f3 = f3p; f3 += f3m; f3 *= 0.25; f3 += 4.0*f;
+  //=================================================
   for(int mu = 0; mu<NDIM_; ++mu){
     Field w(fsize_);
     Field xi3(fsize_),eta1(fsize_);
-    //===preconcitiong==========================================
+    //===preconcitiong=====================================================
     Field f0d = del(f0,mu,1.0); Field f1d = del(f1,mu,1.0);
     Field f2d = del(f2,mu,1.0); Field f3d = del(f3,mu,1.0);
-    eta1 = del(f,mu,1.0);
-    Field f0l = lap(eta1,0,0.25); Field f1l = lap(eta1,1,0.25);
-    Field f2l = lap(eta1,2,0.25); Field f3l = lap(eta1,3,0.25);
-    //==========================================================
+    Field f0l(fsize_),f1l(fsize_),f2l(fsize_),f3l(fsize_);
+    if(mu==0){ eta1 = f0p -f0m;
+      f1l = lap(eta1,1,0.25);f2l = lap(eta1,2,0.25);f3l = lap(eta1,3,0.25);
+    }
+    else if(mu == 1){eta1 = f1p -f1m;
+      f0l = lap(eta1,0,0.25);f2l = lap(eta1,2,0.25);f3l = lap(eta1,3,0.25);
+    }
+    else if(mu == 2){eta1 = f2p -f2m;
+      f0l = lap(eta1,0,0.25);f1l = lap(eta1,1,0.25);f3l = lap(eta1,3,0.25);
+    }
+    else if(mu == 3){eta1 = f3p -f3m;
+      f0l = lap(eta1,0,0.25);f1l = lap(eta1,1,0.25);f2l = lap(eta1,2,0.25);
+    }
+    //====================================================================
     for(int nu=0; nu<NDIM_; ++nu){
       Field xi2(fsize_),eta3(fsize_);
       if(nu !=mu){
@@ -295,7 +370,6 @@ const Field Dirac_Wilson_Brillouin::mult_lap(const Field& f)const{
 	      else if(rho==2) fr += f32;
 	    }
 	    //===========================
-	    //fr += lap(ft,rho,1.0/3);
 	  }// rho if
 	}// rho looop
 	fr += 4.0*f;
@@ -309,91 +383,43 @@ const Field Dirac_Wilson_Brillouin::mult_lap(const Field& f)const{
 }
 
 // Dirac representation 
-const Field Dirac_Wilson_Brillouin::gamma5(const Field& f) const{
-  Field w(fsize_);
-
-  for(int site=0; site<Nvol_*Nin_; site+=Nin_){
-    const double* ft = const_cast<Field&>(f).getaddr(site);
-    double* res = w.getaddr(site);    
-
-    for(int c=0; c<NC_; ++c){
-      short int cc = 2*c;
-      short int cc1 = 2*c+1;
-
-      res[      cc] = ft[4*NC_+cc];  res[      cc1] = ft[4*NC_+cc1];
-      res[2*NC_+cc] = ft[6*NC_+cc];  res[2*NC_+cc1] = ft[6*NC_+cc1];
-      res[4*NC_+cc] = ft[      cc];  res[4*NC_+cc1] = ft[      cc1];
-      res[6*NC_+cc] = ft[2*NC_+cc];  res[6*NC_+cc1] = ft[2*NC_+cc1];
-    }
-  }
-  return w;
-}
-
 const Field Dirac_Wilson_Brillouin::gamma_x(const Field& f) const{
   Field w(fsize_);
-
-  for(int site=0; site<Nvol_*Nin_; site+=Nin_){
-    const double* ft = const_cast<Field&>(f).getaddr(site);
-    double* res = w.getaddr(site);    
-
-    for(int c=0; c<NC_; ++c){
-      short int cc = 2*c;
-      short int cc1 = 2*c+1;
-      
-      res[      cc] = ft[6*NC_+cc1];  res[      cc1] =-ft[6*NC_+cc];
-      res[2*NC_+cc] = ft[4*NC_+cc1];  res[2*NC_+cc1] =-ft[4*NC_+cc];
-      res[4*NC_+cc] =-ft[2*NC_+cc1];  res[4*NC_+cc1] = ft[2*NC_+cc];
-      res[6*NC_+cc] =-ft[      cc1];  res[6*NC_+cc1] = ft[      cc];
-    }
-  }
+  for(int site=0; site<Nvol_; ++site)
+    gammaXcore(w.getaddr(ff_.index(0,site)),
+	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
   return w;
 }
 
 const Field Dirac_Wilson_Brillouin::gamma_y(const Field& f) const{
   Field w(fsize_);
-  
-  for(int site=0; site<Nvol_*Nin_; site+=Nin_){
-    const double* ft = const_cast<Field&>(f).getaddr(site);
-    double* res = w.getaddr(site);    
-
-    for(int c=0; c<NC_; ++c){
-      short int cc = 2*c;
-      short int cc1 = 2*c+1;
-      
-      res[      cc] =-ft[6*NC_+cc];  res[      cc1] =-ft[6*NC_+cc1];
-      res[2*NC_+cc] = ft[4*NC_+cc];  res[2*NC_+cc1] = ft[4*NC_+cc1];
-      res[4*NC_+cc] = ft[2*NC_+cc];  res[4*NC_+cc1] = ft[2*NC_+cc1];
-      res[6*NC_+cc] =-ft[      cc];  res[6*NC_+cc1] =-ft[      cc1];
-    }
-  }
+  for(int site=0; site<Nvol_; ++site)
+    gammaYcore(w.getaddr(ff_.index(0,site)),
+	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
   return w;
-}
+}  
 
 const Field Dirac_Wilson_Brillouin::gamma_z(const Field& f) const{
   Field w(fsize_);
-
-  for(int site=0; site<Nvol_*Nin_; site+=Nin_){
-    const double* ft = const_cast<Field&>(f).getaddr(site);
-    double* res = w.getaddr(site);    
-
-    for(int c=0; c <NC_; ++c){
-      short int cc = 2*c;
-      short int cc1 = 2*c+1;
-      
-      res[      cc] = ft[4*NC_+cc1];  res[      cc1] =-ft[4*NC_+cc];
-      res[2*NC_+cc] =-ft[6*NC_+cc1];  res[2*NC_+cc1] = ft[6*NC_+cc];
-      res[4*NC_+cc] =-ft[      cc1];  res[4*NC_+cc1] = ft[      cc];
-      res[6*NC_+cc] = ft[2*NC_+cc1];  res[6*NC_+cc1] =-ft[2*NC_+cc];
-    }
-  }
+  for(int site=0; site<Nvol_; ++site)
+    gammaZcore(w.getaddr(ff_.index(0,site)),
+	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
   return w;
 }
 
 const Field Dirac_Wilson_Brillouin::gamma_t(const Field& f) const{
   Field w(f);
-  for(int site=0; site<Nvol_; ++site){
-    w.set(ff_.cslice(2,site), -f[ff_.cslice(2,site)]);
-    w.set(ff_.cslice(3,site), -f[ff_.cslice(3,site)]);
-  }
+  for(int site=0; site<Nvol_; ++site)
+    gammaTcore(w.getaddr(ff_.index(0,site)),
+	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
   return w;
 }
+
+const Field Dirac_Wilson_Brillouin::gamma5(const Field& f)const{ 
+  Field w(fsize_);
+  for(int site=0; site<Nvol_; ++site)
+    gamma5core(w.getaddr(ff_.index(0,site)),
+	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
+  return w;
+}
+

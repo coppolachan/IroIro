@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-04-20 20:56:05 noaki>
+ Time-stamp: <2013-04-23 10:56:15 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_INCLUDED
@@ -30,7 +30,7 @@ namespace DomainWallFermions {
   double read_wilson_mass(const XML::node& node);
 }
 
-enum DWFType {Standard, PauliVillars};
+enum DWFType {Regular, PauliVillars};
 enum Preconditioners {NoPreconditioner, LUPreconditioner};
 Begin_Enum_String( Preconditioners ) {
   Enum_String( NoPreconditioner );
@@ -77,7 +77,11 @@ private:
   size_t N5_;/*!< @brief Length of 5th dimension */
   double M0_;
   double mq_;
+
+  int Nvol_;
   size_t f4size_;
+  size_t f5size_;
+  ffmt_t ff_;  
 
   const Field* const u_;
   const DiracWilsonLike* Dw_; /*!< @brief Dirac Kernel - any WilsonLike op */ 
@@ -133,15 +137,21 @@ private:
   void(Dirac_optimalDomainWall::*mult_core)(Field&,const Field&)const;
   void(Dirac_optimalDomainWall::*mult_dag_core)(Field&,const Field&)const;
 
+  void proj_p(Field&,const Field&,int s);
+  void proj_m(Field&,const Field&,int s);
+
 public:
   /*! @brief constructors to create an instance with normal indexing */
   Dirac_optimalDomainWall(XML::node DWF_node,const DiracWilsonLike* Dw,
 			  const Field* u,
-			  DWFType Type= Standard)
+			  DWFType Type= Regular)
     :Params(DWF_node,Type),
-     DiracWilsonLike(Dw->getFermionFormat().Nvol(),Params.N5_),
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),
-     Dw_(Dw),u_(u),f4size_(Dw_->fsize()),
+     Dw_(Dw),u_(u),
+     Nvol_(CommonPrms::instance()->Nvol()),
+     ff_(Nvol_,N5_),
+     f5size_(ff_.size()),
+     f4size_(Dw->fsize()),
      mult_core(&Dirac_optimalDomainWall::mult_full),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_full),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){
@@ -155,20 +165,26 @@ public:
 			  const DiracWilsonLike* Dw,const Field* u,
 			  Preconditioners Precond = NoPreconditioner)
     :Params(b,c,M0,mq,omega,Precond),
-     DiracWilsonLike(Dw->getFermionFormat().Nvol(),Params.N5_),
      N5_(Params.N5_),M0_(M0),mq_(mq),
-     Dw_(Dw),u_(u),f4size_(Dw_->fsize()),
+     Dw_(Dw),u_(u),
+     Nvol_(CommonPrms::instance()->Nvol()),
+     ff_(Nvol_,N5_),
+     f5size_(ff_.size()),
+     f4size_(Dw->fsize()),
      mult_core(&Dirac_optimalDomainWall::mult_full),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_full),
      Precond_(choose_Preconditioner(Precond)){}
   
   /*! @brief copy constructor */
   Dirac_optimalDomainWall(const Dirac_optimalDomainWall& Dc, 
-			  DWFType Type=Standard)
+			  DWFType Type=Regular)
     :Params(Dc.Params),
-     DiracWilsonLike(Dc.Nvol_,Dc.N5_),
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),
-     Dw_(Dc.Dw_),u_(Dc.u_),f4size_(Dc.f4size_),
+     Dw_(Dc.Dw_),u_(Dc.u_),
+     Nvol_(Dc.Nvol_),
+     ff_(Dc.ff_),
+     f5size_(Dc.f5size_),
+     f4size_(Dc.f4size_),
      mult_core(&Dirac_optimalDomainWall::mult_full),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_full),
      Precond_(choose_Preconditioner(Params.Preconditioning_)){
@@ -179,12 +195,14 @@ public:
   }
 
   /*! @brief constructor for EvenOdd */
-  Dirac_optimalDomainWall(XML::node DWF_node,const DiracWilsonLike* Dw,const Field* u,
-			  DomainWallFermions::EvenOdd_tag,DWFType Type= Standard)
+  Dirac_optimalDomainWall(XML::node DWF_node,const DiracWilsonLike* Dw,
+			  const Field* u,DomainWallFermions::EvenOdd_tag,
+			  DWFType Type= Regular)
     :Params(DWF_node,Type),
-     DiracWilsonLike(Dw->getFermionFormat().Nvol(),Params.N5_),
      N5_(Params.N5_),M0_(Params.M0_),mq_(Params.mq_),
-     Dw_(Dw),u_(u),f4size_(Dw_->fsize()),
+     Dw_(Dw),u_(u),
+     Nvol_(CommonPrms::instance()->Nvol()/2),
+     ff_(Nvol_,Params.N5_),
      mult_core(&Dirac_optimalDomainWall::mult_offdiag),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag),
      Precond_(NULL){}
@@ -194,9 +212,10 @@ public:
 			  const DiracWilsonLike* Dw,const Field* u,
 			  DomainWallFermions::EvenOdd_tag)
     :Params(b,c,M0,mq,omega,NoPreconditioner),
-     DiracWilsonLike(Dw->getFermionFormat().Nvol(),Params.N5_),
      N5_(Params.N5_),M0_(M0),mq_(mq),
-     Dw_(Dw),u_(u),f4size_(Dw_->fsize()),
+     Dw_(Dw),u_(u),
+     Nvol_(CommonPrms::instance()->Nvol()/2),
+     ff_(Nvol_,Params.N5_),
      mult_core(&Dirac_optimalDomainWall::mult_offdiag),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag),
      Precond_(NULL){}
@@ -208,8 +227,9 @@ public:
     #endif
     delete Precond_; 
   }
-  
-  size_t f4size() const{ return f4size_;}
+
+  size_t f4size() const{ return Dw_->fsize();}
+  size_t fsize() const{ return ff_.size();}
   size_t gsize()const{return Dw_->gsize();}
   double getMass() const{return Params.mq_;}
 
@@ -241,6 +261,7 @@ public:
   void md_force_p(Field&,const Field&,const Field&)const;
   void md_force_m(Field&,const Field&,const Field&)const;
   const Field md_force(const Field& eta,const Field& zeta)const;
+  void update_internal_state(){}
   
   // BGQ optimizations
 #ifdef IBM_BGQ_WILSON

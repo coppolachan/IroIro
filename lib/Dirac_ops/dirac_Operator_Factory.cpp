@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-04-17 15:58:45 noaki>
+ * Time-stamp: <2013-04-23 11:50:47 noaki>
  */
 #include "dirac_Operator_Factory.hpp"
 #include "Communicator/comm_io.hpp"
@@ -19,12 +19,7 @@ getDiracOperatorWL(Field* const Gfield){
 /// Dirac_Wilson_Brillouin
 Dirac_Wilson_Brillouin* DiracWilsonBrillouinFactory::
 getDiracOperatorWL(Field* const Gfield){
-  return new Dirac_Wilson_Brillouin(Dirac_node_,Gfield);}
-
-/// Dirac_Wilson_Brillouin_Imp
-Dirac_Wilson_Brillouin_Imp*  DiracWilsonBrillouinImpFactory::
-getDiracOperatorWL(Field* const Gfield){
-  return new Dirac_Wilson_Brillouin_Imp(Dirac_node_,Gfield); }
+  return new Dirac_Wilson_Brillouin(Dirac_node_,Gfield,type_);}
 
 /// Dirac_Clover
 Dirac_Clover* DiracCloverFactory::
@@ -32,6 +27,11 @@ getDiracOperatorWL(Field* const Gfield){
   return new Dirac_Clover(Dirac_node_,Gfield); }
 
 /// Dirac_optimalDomainWall
+DiracDWF5dFactory::DiracDWF5dFactory(XML::node node):Dirac_node_(node){
+  XML::descend(node,"Kernel", MANDATORY);
+  KernelFactory_.save(DiracOperators::createDiracWilsonLikeOperatorFactory(node));
+}
+
 Dirac_optimalDomainWall* DiracDWF5dFactory::
 getDiracOperatorWL(Field* const Gfield){
   return new Dirac_optimalDomainWall(Dirac_node_,KernelFactory_.get()->getDiracOperatorWL(Gfield),Gfield); }
@@ -72,8 +72,16 @@ getDiracOperator4D(Field* const Gfield){
 }
 
 /// Dirac_DWF4DeoSolv
-DiracWilsonLike* DiracDWF4DeoFactory::
-getDiracOperatorWL(Field* const Gfield){
+DiracDWF4DeoFactory::DiracDWF4DeoFactory(XML::node node)
+:Dirac_node_(node){
+  XML::descend(node,"Kernel5d", MANDATORY);
+  DiracFactory_.save(new DiracDWF5dFactory(node));
+  DiracEOFactory_.save(new DiracDWF5dEvenOddFactory(node));
+  XML::next_sibling(node, "SolverDWF", MANDATORY);
+  SolverFactory_.save(SolverOperators::createSolverOperatorFactory(node));
+}
+
+DiracWilsonLike* DiracDWF4DeoFactory::getDiracOperatorWL(Field* const Gfield){
   return getDiracOperator4D(Gfield); }
 
 Dirac_optimalDomainWall_4D* DiracDWF4DeoFactory::

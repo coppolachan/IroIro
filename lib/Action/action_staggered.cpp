@@ -36,9 +36,10 @@ Field Action_staggered::DdagD_inv(const Field& src){
 
 void Action_staggered::init(const RandNum& rand){
   std::valarray<double> ph(fsize_);
-  D_->get_RandGauss(ph,rand);
+  MPrand::mp_get_gauss(ph,rand);
   phi_= ph;
-  D_->get_RandGauss(ph,rand);
+
+  MPrand::mp_get_gauss(ph,rand);
   phi_-= D_->mult_eo(Field(ph));
 }
 

@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.hpp
  * @brief Dirac_Wilson class 
- Time-stamp: <2013-04-20 19:58:04 noaki>
+ Time-stamp: <2013-04-22 12:04:17 noaki>
  */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
@@ -17,14 +17,15 @@
 class Dirac_Wilson: public DiracWilsonLike{
 
 private:
+  int Nvol_;
   int Nx_,Ny_,Nz_,Nt_;
   double kpp_;
 
   //int boundary[Ndim]; // this is temporary setting.
   const Communicator* comm_;
   const Field* const u_;
+  const ffmt_t ff_;
   const gfmt_t gf_;
-  size_t gsize_;
 
   void mult_xp(Field&,const Field&)const;
   void mult_yp(Field&,const Field&)const;
@@ -76,12 +77,12 @@ private:
 public:
   /*! @brief constructor to create instance with e/o site indexing */
   Dirac_Wilson(double mass,const Field* u,Dop::EOtag)
-    :DiracWilsonLike(CommonPrms::instance()->Nvol()/2),u_(u),
-     kpp_(0.5/(4.0+mass)),gf_(Nvol_*2),gsize_(gf_.size()),
+    :Nvol_(CommonPrms::instance()->Nvol()/2),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
      Nz_(CommonPrms::instance()->Nz()),
      Nt_(CommonPrms::instance()->Nt()),
+     kpp_(0.5/(4.0+mass)),ff_(Nvol_),gf_(Nvol_*2),u_(u),
      gp(&Dirac_Wilson::esec),gm(&Dirac_Wilson::osec),
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl_e),slice_osize(&Dirac_Wilson::slsize_e),
@@ -90,12 +91,12 @@ public:
      EO_BGWilson(1){}
 
   Dirac_Wilson(double mass,const Field* u,Dop::OEtag)
-    :DiracWilsonLike(CommonPrms::instance()->Nvol()/2),u_(u),
-     kpp_(0.5/(4.0+mass)),gf_(Nvol_*2),gsize_(gf_.size()),
+    :Nvol_(CommonPrms::instance()->Nvol()/2),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
      Nz_(CommonPrms::instance()->Nz()),
      Nt_(CommonPrms::instance()->Nt()),
+     kpp_(0.5/(4.0+mass)),ff_(Nvol_),gf_(Nvol_*2),u_(u),
      gp(&Dirac_Wilson::osec),gm(&Dirac_Wilson::esec),
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl_o),slice_osize(&Dirac_Wilson::slsize_o),
@@ -105,13 +106,12 @@ public:
 
   /*! @brief constructor to create instance with normal site indexing */
   Dirac_Wilson(double mass,const Field* u)
-    :DiracWilsonLike(CommonPrms::instance()->Nvol()),u_(u),
-     kpp_(0.5/(4.0+mass)),
-     gf_(Nvol_),gsize_(gf_.size()),
+    :Nvol_(CommonPrms::instance()->Nvol()),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
      Nz_(CommonPrms::instance()->Nz()),
      Nt_(CommonPrms::instance()->Nt()),
+     kpp_(0.5/(4.0+mass)),ff_(Nvol_),gf_(Nvol_),u_(u),
      gp(&Dirac_Wilson::gsite),gm(&Dirac_Wilson::gsite),
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl),slice_osize(&Dirac_Wilson::slsize),
@@ -119,12 +119,12 @@ public:
      mult_core(&Dirac_Wilson::mult_full){}
 
   Dirac_Wilson(const XML::node& node,const Field* u)
-    :DiracWilsonLike(CommonPrms::instance()->Nvol()),u_(u),
-     gf_(Nvol_),gsize_(gf_.size()),
+    :Nvol_(CommonPrms::instance()->Nvol()),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
      Nz_(CommonPrms::instance()->Nz()),
      Nt_(CommonPrms::instance()->Nt()),
+     ff_(Nvol_),gf_(Nvol_),u_(u),
      gp(&Dirac_Wilson::gsite),gm(&Dirac_Wilson::gsite),
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl),slice_osize(&Dirac_Wilson::slsize),
@@ -146,7 +146,6 @@ public:
   void mult_dag_ptr(double*,double* const )const;  
   void mult_ptr_EO(double*,double* const )const;
   void mult_dag_ptr_EO(double*,double* const )const;  
-  void gamma5_ptr(double*, double* const) const;
 #endif
 
   ////////////////////////////////////////Preconditioned versions
@@ -160,12 +159,14 @@ public:
   //////////////////////////////////////////////////////////////
   const Field gamma5(const Field&) const;
 
-  const Field md_force(const Field& , const Field&)const;
+  const Field md_force(const Field&,const Field&)const;
   void md_force_p(Field&,const Field&,const Field&)const;
   void md_force_m(Field&,const Field&,const Field&)const;
   double getKappa() const {return kpp_;}  
 
-  size_t gsize()const{return gsize_;}
+  size_t fsize()const{return ff_.size();}
+  size_t gsize()const{return gf_.size();}
+
   void update_internal_state(){}
 };
 #endif

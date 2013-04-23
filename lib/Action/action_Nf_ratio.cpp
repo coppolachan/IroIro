@@ -44,7 +44,8 @@ void Action_Nf_ratio::init(const RandNum& rand){
   for(int i=0; i<Params_.n_pseudof_; ++i){
     // Generates a gaussian distributed vector <xi>  
     FINE_TIMING_START(rnd_timing); 
-    D1_->get_RandGauss(xi,rand);
+    MPrand::mp_get_gauss(xi,rand);
+    
     FINE_TIMING_END(rnd_timing);
     _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf_ratio::init"
 	     << " - Random numbers PF#"<<i<<" timing = "

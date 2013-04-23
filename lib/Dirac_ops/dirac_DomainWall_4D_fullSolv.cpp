@@ -1,17 +1,12 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.cpp
  * @brief Declaration of Dirac_optimalDomainWall_4D_fullSolv class 
+ Time-stamp: <2013-04-23 10:59:31 noaki>
  */
 #include "dirac_DomainWall_4D_fullSolv.hpp"
 #include "Tools/randNum_MP.h"
 
 using namespace std;
-
-void Dirac_optimalDomainWall_4D_fullSolv::
-get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
-  Format::Format_F ff(Dodw_->Nvol());
-  MPrand::mp_get_gauss(phi,rng,SiteIndex::instance()->get_gsite(),ff);
-}
 
 const Field Dirac_optimalDomainWall_4D_fullSolv::
 mult(const Field& f)const{
@@ -70,3 +65,10 @@ mult_dag_inv(const Field& f)const{
   return Dodw_->Bproj(Dpv_->mult_dag(src));
 }
 
+const Field Dirac_optimalDomainWall_4D_fullSolv::gamma5(const Field& f)const{ 
+  Field w(ff_.size());
+  for(int site=0; site<Nvol_; ++site)
+    gamma5core(w.getaddr(ff_.index(0,site)),
+	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
+  return w;
+}

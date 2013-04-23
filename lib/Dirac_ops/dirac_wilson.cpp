@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2013-04-19 17:47:35 noaki>
+ * Time-stamp: <2013-04-22 12:05:18 noaki>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -59,14 +59,17 @@ void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
 }
 
 const Field Dirac_Wilson::mult(const Field& f) const{
-  Field w(fsize_);
+  Field w(ff_.size());
   (this->*mult_core)(w,f);
   return w;
 }
 
 const Field Dirac_Wilson::gamma5(const Field& f)const{ 
-  Field w(fsize_);
-  gamma5core(w,f);
+  Field w(ff_.size());
+  for(int site=0; site<Nvol_; ++site){
+    gamma5core(w.getaddr(ff_.index(0,site)),
+	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
+  }
   return w;
 }
 
@@ -82,10 +85,10 @@ void Dirac_Wilson::mult_ptr(double* w, double* const f) const{
 void Dirac_Wilson::mult_dag_ptr(double* w, double* const f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);
   
-  double* temp = (double*) malloc(fsize_*sizeof(double));
-  gamma5_ptr(w,f);
+  double* temp = (double*) malloc(ff_.size()*sizeof(double));
+  gamma5core(w,f);
   BGWilson_Mult(temp, pU,w,-kpp_,BGWILSON_DIRAC);
-  gamma5_ptr(w,temp);
+  gamma5core(w,temp);
   free(temp);
 }
 void Dirac_Wilson::mult_ptr_EO(double* w, double* const f) const{
@@ -95,25 +98,6 @@ void Dirac_Wilson::mult_ptr_EO(double* w, double* const f) const{
 void Dirac_Wilson::mult_dag_ptr_EO(double* w, double* const f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);
   BGWilson_MultEO_Dag(w,pU,f,-kpp_,EO_BGWilson,BGWILSON_DIRAC);
-}
-
-void Dirac_Wilson::gamma5_ptr(double* w,double* const f) const{
-  int Nin = ff_.Nin();
-  
-  for(int site=0; site<Nvol_*Nin; site+=Nin){
-    const double* ft = f+site;
-    double* res = w+site;    
-
-    for(int c=0; c <NC_; ++c){
-      short int cc = 2*c;
-      short int cc1 = 2*c+1;
-
-      res[      cc] = ft[4*NC_+cc];  res[      cc1] = ft[4*NC_+cc1];
-      res[2*NC_+cc] = ft[6*NC_+cc];  res[2*NC_+cc1] = ft[6*NC_+cc1];
-      res[4*NC_+cc] = ft[      cc];  res[4*NC_+cc1] = ft[      cc1];
-      res[6*NC_+cc] = ft[2*NC_+cc];  res[6*NC_+cc1] = ft[2*NC_+cc1];
-    }
-  }
 }
 
 #endif
@@ -126,7 +110,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
   using namespace SUNmatUtils;
 
   for(int mu=0; mu<NDIM_; ++mu){
-    Field xie(fsize_);
+    Field xie(ff_.size());
     (this->*mult_p[mu])(xie, eta);
        
 #pragma omp parallel 
@@ -175,7 +159,7 @@ void Dirac_Wilson::md_force_m(Field& fce,const Field& eta,const Field& zeta)cons
   Field zt5 = gamma5(zeta);
 
   for(int mu=0; mu<NDIM_; ++mu){
-    Field xz5(fsize_);
+    Field xz5(ff_.size());
     (this->*mult_p[mu])(xz5, zt5);
 
 #pragma omp parallel 

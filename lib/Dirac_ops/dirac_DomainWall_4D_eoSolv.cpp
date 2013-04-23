@@ -28,3 +28,11 @@ mult_inv(const Field& f)const{
 const Field Dirac_optimalDomainWall_4D_eoSolv::
 mult_dag_inv(const Field& f)const{ return gamma5(mult_inv(gamma5(f)));}
 
+const Field Dirac_optimalDomainWall_4D_eoSolv::gamma5(const Field& f)const{ 
+  Field w(fsize_);
+  for(int site=0; site<Nvol_; ++site)
+    gamma5core(w.getaddr(ff_.index(0,site)),
+	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
+  return w;
+}
+

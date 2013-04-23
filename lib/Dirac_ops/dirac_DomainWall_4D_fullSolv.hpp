@@ -1,6 +1,7 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.hpp
  * @brief Definition of Dirac_optimalDomainWall_4D class with full Solver
+ Time-stamp: <2013-04-23 10:58:06 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_4D_FULLSOLV_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_4D_FULLSOLV_INCLUDED
@@ -49,13 +50,10 @@ public:
   
   size_t fsize() const {return Dodw_->f4size();}
   size_t gsize() const {return Dodw_->gsize(); }
-  int Nvol()const{return Dodw_->Nvol();}
-
-  const Field operator()(int, const Field&) const{}
 
   const Field mult    (const Field&)const;
   const Field mult_dag(const Field&)const;
-  const Field gamma5  (const Field&f)const{return Dodw_->gamma5_4d(f);}
+  const Field gamma5  (const Field&)const;
 
   const Field mult_inv    (const Field&)const;
   const Field mult_dag_inv(const Field&)const;
@@ -70,11 +68,9 @@ public:
   const Field right_dag_prec(const Field&f)const{return f;}
   //////////////////////////////////////////////////////////////
 
+  const Field md_force(const Field& eta,const Field& zeta) const{}
   const Field signKernel(const Field&)const;
   double getMass() const {return Dodw_->getMass();}
-  
-  const Field md_force(const Field& eta,const Field& zeta) const{}
-  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
   void update_internal_state(){}
 };
 

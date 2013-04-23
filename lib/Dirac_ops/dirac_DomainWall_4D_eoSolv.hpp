@@ -2,6 +2,7 @@
  * @file dirac_DomainWall_4D_eoSolv.hpp
  * @brief Definition of Dirac_optimalDomainWall_4D_eoSolv class
  * which contains e/o-solver
+ Time-stamp: <2013-04-23 11:22:09 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_4D_EOSOLV_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_4D_EOSOLV_INCLUDED
@@ -32,7 +33,6 @@ public:
   
   size_t fsize() const {return D_->f4size();}
   size_t gsize() const {return D_->gsize(); }
-  int Nvol()const {return D_->Nvol();}
 
   const Field operator()(int, const Field&) const{}
 
@@ -41,8 +41,8 @@ public:
 
   const Field mult_inv    (const Field&)const;
   const Field mult_dag_inv(const Field&)const;
+  const Field gamma5  (const Field&f)const;
 
-  const Field gamma5  (const Field&f)const{return D_->gamma5_4d(f);}
   ////////////////////////////////////////Preconditioned versions
   // 4d operator has no preconditioner now 
   const Field mult_prec     (const Field&f)const{return f;}
@@ -55,9 +55,8 @@ public:
 
   double getMass() const {return D_->getMass();}
   const Field md_force(const Field& eta,const Field& zeta) const{}
-  void update_internal_state(){}
-  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
   const Field signKernel(const Field&)const;
+  void update_internal_state(){}
 };
 
 #endif

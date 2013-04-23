@@ -78,7 +78,7 @@ void Dirac_Clover::mult_sw(FermionField& v_out, const FermionField& w) const {
       AddVec(v_out,v1,s,site);
     }
   }
-  v_out *= Dw->getKappa() * csw_;
+  v_out *= Dw_->getKappa() * csw_;
 }
 
 //====================================================================
@@ -257,12 +257,12 @@ void Dirac_Clover::isigma_43(FermionField& w,const FermionField& v) const{
 }
 
 const Field Dirac_Clover::gamma5(const Field& f) const{
-  return Dw->gamma5(f);
+  return Dw_->gamma5(f);
 }
 const Field Dirac_Clover::mult(const Field& f) const{
   FermionField w, w2;
 
-  w.data  = Dw->mult(f);
+  w.data  = Dw_->mult(f);
   mult_sw(w2,FermionField(f));
   w -= w2;
   return w.data;
@@ -275,7 +275,7 @@ const Field Dirac_Clover::mult_dag(const Field& f)const{
 //====================================================================
 const Field Dirac_Clover::md_force(const Field& eta,const Field& zeta)const{
   //Wilson term
-  Field force = Dw->md_force(eta,zeta);
+  Field force = Dw_->md_force(eta,zeta);
 
  //just temporaries here (to be eliminated when all Field->FermionField)
   FermionField eta_F(eta), zeta_F(zeta);
@@ -442,7 +442,7 @@ const Field Dirac_Clover::md_force_block(const FermionField& eta,
       }       
       //shift = Udag_nu(x-nu)*U_mu(x-nu)*zeta(x+mu-nu)
       fce_tmp2 -= field_oprod(shiftField(vleft, nu, Backward()), vright);
-      fce_tmp2 *= -Dw->getKappa()*csw_/8.0; 
+      fce_tmp2 *= -Dw_->getKappa()*csw_/8.0; 
 
       for(int site=0; site<Nvol_; ++site)
 	AddMat(force,mat(fce_tmp2,site),site,mu); 

@@ -1,6 +1,7 @@
 /*! 
   @file dirac_clover.hpp
   @brief Dirac clover operator class. Class declaration
+  Time-stamp:<>
 */
 
 #ifndef DIRAC_CLOVER_INCLUDED
@@ -11,9 +12,6 @@
 #include "Dirac_ops/dirac_wilson.hpp"
 #include "include/common_fields.hpp"
 
-typedef Format::Format_F ffmt_t;
-typedef Format::Format_G gfmt_t;
-
 /*! 
   @ brief Class for the Clover %Dirac operator 
 */
@@ -21,15 +19,13 @@ class Dirac_Clover: public DiracWilsonLike{
  
 private:
   double csw_;
-  const int Nvol_;
+  int Nvol_;
 
   const Field* const u_;
-  const Dirac_Wilson* Dw;
-  mutable gfmt_t gf_;
-  mutable ffmt_t ff_;
+  const ffmt_t ff_;
+  const gfmt_t gf_;
 
-  const size_t fsize_;
-  const size_t gsize_;
+  const Dirac_Wilson* Dw_;
 
   static void (Dirac_Clover::*isigma[])(FermionField&,const FermionField&)const;
 
@@ -63,32 +59,21 @@ private:
 
 public:
   Dirac_Clover(double mass,double csw,const Field* u)
-    :csw_(csw),
-     Nvol_(CommonPrms::instance()->Nvol()),
-     u_(u),
-     Dw(new Dirac_Wilson(mass,u)),
-     ff_(Nvol_),fsize_(ff_.size()),
-     gf_(Nvol_),gsize_(gf_.size()){
-    set_csw();
-  }
+    :Nvol_(CommonPrms::instance()->Nvol()),u_(u),
+     Dw_(new Dirac_Wilson(mass,u)),
+     ff_(Nvol_),gf_(Nvol_),csw_(csw){ set_csw(); }
 
   Dirac_Clover(const XML::node& node,const Field* u)
-    :Nvol_(CommonPrms::instance()->Nvol()),
-     u_(u),
-     Dw(new Dirac_Wilson(node,u)),
-     ff_(Nvol_),fsize_(ff_.size()),
-     gf_(Nvol_),gsize_(gf_.size()){
+    :Nvol_(CommonPrms::instance()->Nvol()),u_(u),
+     Dw_(new Dirac_Wilson(node,u)),
+     ff_(Nvol_),gf_(Nvol_){
+    //
     XML::read(node, "Csw", csw_,MANDATORY);
     set_csw();
   }
   
-  virtual ~Dirac_Clover(){
-    delete Dw;
-  }
+  virtual ~Dirac_Clover(){ delete Dw_; }
   
-  size_t fsize() const{return fsize_;}
-  size_t gsize() const{return gsize_;}
-
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
@@ -102,9 +87,11 @@ public:
   const Field right_dag_prec(const Field&f)const{return f;}
   //////////////////////////////////////////////////////////////
 
+  size_t fsize() const{return ff_.size();}
+  size_t gsize() const{return gf_.size();}
+
   const Field gamma5(const Field&) const;
   const Field md_force(const Field& eta,const Field& zeta)const;
   void update_internal_state() {set_csw();}
-  int Nvol()const{return Nvol_;}
 };
 #endif

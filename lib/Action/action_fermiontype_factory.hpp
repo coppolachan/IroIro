@@ -3,7 +3,7 @@
  *
  * @brief Declaration of Fermion-type action factories
  *
- * Time-stamp: <2013-04-17 14:41:43 neo>
+ * Time-stamp: <2013-04-23 11:51:17 noaki>
  */
 
 #ifndef ACTION_FERMION_FACT_
@@ -21,7 +21,7 @@
 #include "Action/action_Nf_ratio.hpp"
 #include "Action/action_staggered.hpp"
 #include "Action/action_staggered_ratio.hpp"
-#include "Dirac_ops/dirac_Operator_Factory.hpp"
+#include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
 
 ///////////////////////////////////////////////////////////////////////

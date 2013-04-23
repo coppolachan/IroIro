@@ -1,14 +1,7 @@
 /*! 
-<<<<<<< HEAD
  * @file action_Nf2.h
- * @brief Declaration of Action_Nf2 class
- *Time-stamp: <2013-04-20 07:10:04 noaki>
-=======
- * @file action_Nf2.hpp
  * @brief Declaration of the Action_Nf2 class
- *
- * Time-stamp: <2013-04-16 16:31:39 neo>
->>>>>>> origin/master
+ *Time-stamp: <2013-04-22 08:25:01 noaki>
  */
 #ifndef ACTION_NF2_INCLUDED
 #define ACTION_NF2_INCLUDED
