@@ -7,6 +7,7 @@
 
 #include "include/field.h"
 #include "include/messages_macros.hpp"
+#include "include/errors.hpp"
 #include "Main/Geometry/siteIndex.hpp"
 #include "Tools/byteswap.hpp"
 #include <stdio.h>
@@ -163,6 +164,10 @@ namespace CCIO {
     FILE * inFile;
     if(comm->primaryNode()){
       inFile = fopen(filename,"r");
+      
+      if (inFile == NULL)
+	Errors::IOErr(Errors::FileNotFound, filename);
+
       std::cout << "Binary reading "<<f.size()*comm->size()*sizeof(double)
 		<<" bytes from "<< filename << " with offset "<< offset <<"... ";
       fseek(inFile, offset, SEEK_SET);

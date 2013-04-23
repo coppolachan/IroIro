@@ -1,5 +1,5 @@
 /*!
- * @file solver_BiCGStab.h
+ * @file solver_BiCGStab.hpp
  *
  * @brief Definition of BiCGstab solver
  *

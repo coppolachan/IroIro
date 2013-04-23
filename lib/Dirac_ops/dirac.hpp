@@ -1,6 +1,6 @@
 /*!
- * @file dirac.h
- * @brief Defines the abstract base classs for Dirac operators
+ * @file dirac.hpp
+ * @brief Defines the abstract base class for Dirac operators
  */
 #ifndef DIRAC_H_
 #define DIRAC_H_

@@ -1,12 +1,11 @@
 /*!
  * @file rationalSolver.hpp
  *
- * @brief Wrapper around MultiShiftSolver_CG class
+ * @brief Virtual class for rational solvers
  *
  * Calculates rational functions approximations
  *
  */
-
 #ifndef RATIONALSOLVER_INCLUDED
 #define RATIONALSOLVER_INCLUDED
 

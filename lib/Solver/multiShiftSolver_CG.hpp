@@ -3,7 +3,7 @@
  *
  * @brief Definition of the MultiShiftSolver_CG class
  *
- * Time-stamp: <2013-04-23 11:35:16 neo>
+ * Time-stamp: <2013-04-23 16:05:27 neo>
  */
 
 #ifndef MULTISHIFTSOLVER_CG_INCLUDED
@@ -12,6 +12,8 @@
 #include "include/pugi_interface.h"
 #include "include/fopr.h"
 #include "multiShiftSolver.hpp"
+
+
 
 struct MultiShiftSolver_CG_Params{
   double GoalPrecision;

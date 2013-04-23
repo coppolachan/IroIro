@@ -3,15 +3,14 @@
  *
  * @brief Definition of abstract MultiShiftSolver class
  *
- * Time-stamp: <2013-04-23 11:30:39 neo>
+ * Time-stamp: <2013-04-23 16:06:26 neo>
  */
 
 #ifndef MULTISOLVER_INCLUDED
 #define MULTISOLVER_INCLUDED
 
 #include "solver.hpp"
-
-class Field;
+#include "include/macros.hpp"
 
 class MultiShiftSolver{
 public:
