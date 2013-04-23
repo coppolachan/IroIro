@@ -2,7 +2,7 @@
  * @file solver_CG.cpp
  * @brief Definition of Solver_CG class member functions
  *
- * Time-stamp: <2013-04-23 13:17:36 neo>
+ * Time-stamp: <2013-04-23 13:29:19 neo>
  */
 
 #include <iostream>
@@ -42,7 +42,6 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   double rr = r*r;// (r,r)
   double snorm = b.norm();
   snorm = 1.0/snorm;
-
 
   _Message(SOLV_ITER_VERB_LEVEL, " Snorm = "<< snorm<<"\n" );
   _Message(SOLV_ITER_VERB_LEVEL, " Init  = "<< rr*snorm<<"\n" );

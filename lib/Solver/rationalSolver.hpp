@@ -11,8 +11,8 @@
 #define RATIONALSOLVER_INCLUDED
 
 #include "solver.hpp"
-#include "multiShiftSolver_CG.hpp"
 #include "Tools/RationalApprox/rationalapprox.hpp"
+
 
 class RationalSolver: public Solver {
 public:

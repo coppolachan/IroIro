@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-23 13:10:15 neo>
+# Time-stamp: <2013-04-23 13:32:52 neo>
 
 ###########################################
 # Initial definitions 
@@ -47,6 +47,7 @@ endif
 # Sources by architecture
 if IBM_BGQ
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
+DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
 else

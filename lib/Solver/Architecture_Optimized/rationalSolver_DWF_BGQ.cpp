@@ -1,15 +1,15 @@
 /*!
- * @file rationalSolver_CG.cpp
+ * @file rationalSolver_DWF_BGQ.hpp
+ *
  * @brief Wrapper around MultiShiftSolver_CG class
  *
  * Calculates rational functions approximations
  *
- * Time-stamp: <2013-04-23 13:35:57 neo>
  */
-#include "rationalSolver_CG.hpp"
-#include "Communicator/comm_io.hpp"
 
-SolverOutput RationalSolver_CG::solve(Field& sol, const Field& source) const {
+SolverOutput RationalSolver_DWF_Optimized::solve(Field& sol, 
+						 const Field& source) const {
+ SolverOutput out;
   if (Residuals.size() == 0)  {
     CCIO::cout << "[RationalSolver] Rational Approximation not initialized yet\n";
     abort();
@@ -24,7 +24,7 @@ SolverOutput RationalSolver_CG::solve(Field& sol, const Field& source) const {
   }
   temp.resize(source.size());
   
-  SolverOutput out = MS_Solver_->solve(shifted_sol, source, Poles, out.diff, out.Iterations);
+  opr_->solve_ms_eo(shifted_sol, source, out, Poles, Params.MaxIter, Params.GoalPrecision);
 
   // Reconstruct solution (M^dag M)^(a/b)
   sol = source;
@@ -38,7 +38,9 @@ SolverOutput RationalSolver_CG::solve(Field& sol, const Field& source) const {
   return out;
 }
 
-SolverOutput RationalSolver_CG::solve_inv(Field& sol, const Field& source) const {
+SolverOutput RationalSolver_DWF_Optimized::solve_inv(Field& sol, 
+						     const Field& source) const {
+  SolverOutput out;
   if (InvResiduals.size() == 0) {
     CCIO::cout << "[RationalSolver] Inverse Rational Approximation not initialized yet\n";
     abort();
@@ -53,8 +55,8 @@ SolverOutput RationalSolver_CG::solve_inv(Field& sol, const Field& source) const
   }
   temp.resize(source.size());
 
-
-  SolverOutput out = MS_Solver_->solve(shifted_sol, source, InvPoles, out.diff, out.Iterations);
+  opr_->solve_ms_eo(shifted_sol, source, out, InvPoles, Params.MaxIter, Params.GoalPrecision);
+ 
 
   // Reconstruct solution (M^dag M)^(-a/b)
   sol = source;
@@ -68,12 +70,13 @@ SolverOutput RationalSolver_CG::solve_inv(Field& sol, const Field& source) const
 
   return out;
 }
- 
+
 
 // Needed in force calculation
 // It solves the inverse equation
-SolverOutput RationalSolver_CG::solve_noReconstruct(std::vector<Field>& shifted_sol, 
+SolverOutput RationalSolver_DWF_Optimized::solve_noReconstruct(std::vector<Field>& shifted_sol, 
 						 const Field& source) const {
+  SolverOutput out;
   if (InvResiduals.size() == 0) {
     CCIO::cout << "[RationalSolver] Inverse Rational Approximation not initialized yet\n";
     abort();
@@ -83,8 +86,8 @@ SolverOutput RationalSolver_CG::solve_noReconstruct(std::vector<Field>& shifted_
   for (int i=0; i< shifted_sol.size(); ++i) {
     shifted_sol[i].resize(source.size());
   }
- 
-  SolverOutput out = MS_Solver_->solve(shifted_sol, source, InvPoles, out.diff, out.Iterations);
+
+  opr_->solve_ms_eo(shifted_sol, source, out, InvPoles, Params.MaxIter, Params.GoalPrecision);
 
   return out;
 }
@@ -93,8 +96,9 @@ SolverOutput RationalSolver_CG::solve_noReconstruct(std::vector<Field>& shifted_
 // Needed in force calculation
 // It solves the direct equation (nevertheless the name says "inv" because in the action 
 // such a term is associated to the inverse operator
-SolverOutput RationalSolver_CG::solve_noReconstruct_inv(std::vector<Field>& shifted_sol, 
+SolverOutput RationalSolver_DWF_Optimized::solve_noReconstruct_inv(std::vector<Field>& shifted_sol, 
 						 const Field& source) const {
+  SolverOutput out;
   if (Residuals.size() == 0) {
     CCIO::cout << "[RationalSolver] Rational Approximation not initialized yet\n";
     abort();
@@ -105,8 +109,8 @@ SolverOutput RationalSolver_CG::solve_noReconstruct_inv(std::vector<Field>& shif
     shifted_sol[i].resize(source.size());
   }
  
-  SolverOutput out = MS_Solver_->solve(shifted_sol, source, Poles, out.diff, out.Iterations);
+  opr_->solve_ms_eo(shifted_sol, source, out, Poles, Params.MaxIter, Params.GoalPrecision);
+
 
   return out;
 }
-
