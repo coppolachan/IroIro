@@ -1,15 +1,14 @@
-/* 
- * @file multiShiftSolver.h
+/*! 
+ * @file multiShiftSolver.hpp
  *
  * @brief Definition of abstract MultiShiftSolver class
+ *
+ * Time-stamp: <2013-04-23 11:30:39 neo>
  */
+
 #ifndef MULTISOLVER_INCLUDED
 #define MULTISOLVER_INCLUDED
 
-
-#include <vector>
-
-#include "Fields/field_expressions.hpp"
 #include "solver.hpp"
 
 class Field;
@@ -17,11 +16,10 @@ class Field;
 class MultiShiftSolver{
 public:
   virtual ~MultiShiftSolver(){}
-  //virtual void set_mq(double) const = 0;
-  //virtual void set_gconf(const Field&) const = 0;
-  virtual SolverOutput solve(std::vector<Field>& solution, 
+
+  virtual SolverOutput solve(vector_Field& solution, 
 			     const Field& source,
-			     const std::vector<double>& shifts,
+			     const vector_double& shifts,
 			     double& diff,
 			     int& Nconv) const = 0;
 };

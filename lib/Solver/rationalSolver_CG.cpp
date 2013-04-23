@@ -1,9 +1,12 @@
 /*!
- * @file rationalSolver_CG.cpp
+ * @file rationalSolver.cpp
  * @brief Wrapper around MultiShiftSolver_CG class
+ *
  * Calculates rational functions approximations
+ *
+ * Time-stamp: <2013-04-23 13:10:52 neo>
  */
-#include "rationalSolver.hpp"
+#include "rationalSolver_CG.hpp"
 #include "Communicator/comm_io.hpp"
 
 SolverOutput RationalSolver_CG::solve(Field& sol, const Field& source) const {
@@ -12,7 +15,7 @@ SolverOutput RationalSolver_CG::solve(Field& sol, const Field& source) const {
     abort();
   }
   Field temp;
-  prop_t shifted_sol;
+  vector_Field shifted_sol;
   shifted_sol.resize(Residuals.size());
   sol.resize(source.size());
   
@@ -41,7 +44,7 @@ SolverOutput RationalSolver_CG::solve_inv(Field& sol, const Field& source) const
     abort();
   }
   Field temp;
-  prop_t shifted_sol;
+  vector_Field shifted_sol;
   shifted_sol.resize(InvResiduals.size());
   sol.resize(source.size());
 
@@ -117,7 +120,7 @@ SolverOutput RationalSolver_DWF_Optimized::solve(Field& sol, const Field& source
     abort();
   }
   Field temp;
-  prop_t shifted_sol;
+  vector_Field shifted_sol;
   shifted_sol.resize(Residuals.size());
   sol.resize(source.size());
   
@@ -147,7 +150,7 @@ SolverOutput RationalSolver_DWF_Optimized::solve_inv(Field& sol, const Field& so
     abort();
   }
   Field temp;
-  prop_t shifted_sol;
+  vector_Field shifted_sol;
   shifted_sol.resize(InvResiduals.size());
   sol.resize(source.size());
 

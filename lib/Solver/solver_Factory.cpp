@@ -1,3 +1,10 @@
+/*!
+ * @file solver_Factory.cpp 
+ * @brief Definition of Solver operators factories
+ *
+ * Time-stamp: <2013-04-23 11:54:54 neo>
+ */
+
 #include "solver_Factory.hpp"
 #include <string.h>
 

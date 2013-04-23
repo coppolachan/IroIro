@@ -1,9 +1,9 @@
 /*!
-  @file action_Factory.hpp
+  @file action_factory.hpp
 
   @brief Declaration of abstract ActionFactory class, top level
 
-  Time-stamp: <2013-04-16 11:22:24 neo>
+  Time-stamp: <2013-04-23 11:20:44 neo>
  */
 
 

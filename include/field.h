@@ -1,6 +1,8 @@
 /*!
   @file field.h
   @brief Definition of a general class storing a field
+
+  Time-stamp: <2013-04-23 11:37:20 neo>
 */
 #ifndef FIELD_INCLUDED
 #define FIELD_INCLUDED
@@ -177,6 +179,8 @@ public:
   #endif
 
 };
+
+typedef std::vector<Field> vector_Field;
 
 #include "Fields/field.inl"  //definition of inlined functions
 #endif

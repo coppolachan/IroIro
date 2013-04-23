@@ -1,6 +1,8 @@
 /*!
  * @file solver_Factory.hpp 
  * @brief Declaration of Solver operators factories
+ *
+ * Time-stamp: <2013-04-23 13:13:14 neo>
  */
 
 #ifndef SOLVER_FACT_
@@ -13,6 +15,7 @@
 #include "Solver/solver_BiCGStab.hpp"
 #include "Solver/multiShiftSolver.hpp"
 #include "Solver/rationalSolver.hpp"
+#include "Solver/rationalSolver_CG.hpp"
 #include "Solver/multiShiftSolver_CG.hpp"
 
 /*!

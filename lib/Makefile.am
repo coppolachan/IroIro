@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-22 16:37:18 neo>
+# Time-stamp: <2013-04-23 13:10:15 neo>
 
 ###########################################
 # Initial definitions 
@@ -157,7 +157,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 		Solver/solver_CG.cpp			\
 		Solver/solver_Factory.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
-		Solver/rationalSolver.cpp		\
+		Solver/rationalSolver_CG.cpp		\
 		Solver/solver.cpp			\
 		Smearing/APEsmear.cpp			\
 		Smearing/stoutSmear.cpp			\
@@ -177,6 +177,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 		Tools/ErrorsHandling/xml_errors.cpp	\
 		Tools/ErrorsHandling/allocation_errors.cpp\
 		Tools/ErrorsHandling/base_errors.cpp	\
+		Tools/ErrorsHandling/convergence_errors.cpp\
 		Tools/RandomNumGen/dcmt_wrapper.cpp	\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
@@ -315,6 +316,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Solver/multiShiftSolver_CG.hpp		\
 			Solver/multiShiftSolver.hpp		\
 			Solver/rationalSolver.hpp		\
+			Solver/rationalSolver_CG.hpp		\
 			Smearing/APEsmear.hpp			\
 			Smearing/baseSmear.hpp			\
 			Smearing/stoutSmear.hpp			\

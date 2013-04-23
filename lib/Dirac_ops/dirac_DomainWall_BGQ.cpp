@@ -989,7 +989,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
     snorm = sqrt(snorm);
     snorm = 1.0/snorm;
 
-#if VERBOSITY>1
+#if VERBOSITY>=SOLV_ITER_VERB_LEVEL
 #pragma omp single
     {
       CCIO::cout<<" Snorm = "<< snorm << std::endl;
@@ -1040,7 +1040,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
       for(s5=0;s5<N5_;s5++)
 	BGWilsonLA_MultScalar_Add(p_ptr+s5*Nvol+is,r_ptr+s5*Nvol+is,rr/rrp,ns);
 
-#if VERBOSITY>1
+#if VERBOSITY>=SOLV_ITER_VERB_LEVEL
       if (tid==0) {
 	CCIO::cout<< std::setw(5)<< "["<<it<<"] "
 		  << std::setw(20) << rr*snorm<<"\n";

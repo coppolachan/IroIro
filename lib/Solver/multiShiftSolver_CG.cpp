@@ -3,25 +3,20 @@
  *
  * @brief Declaration of MultiShiftSolver_CG functions
  *
+ * Time-stamp: <2013-04-23 11:45:24 neo>
  */
 #include "multiShiftSolver_CG.hpp"
 #include "Fields/field_expressions.hpp"
 #include "include/messages_macros.hpp"
 
-typedef struct FermionSpinor{
-  double _Complex v[12];
-}Spinor;
-
-using namespace std;
-
-void MultiShiftSolver_CG::solve_init(vector<Field>& x,
-				     vector<Field>& p,
+void MultiShiftSolver_CG::solve_init(vector_Field& x,
+				     vector_Field& p,
 				     Field& r,
 				     Field& s,
 				     double& rr,
-				     vector<double>& zeta1,
-				     vector<double>& zeta2,
-				     vector<double>& csh2,
+				     vector_double& zeta1,
+				     vector_double& zeta2,
+				     vector_double& csh2,
 				     double& alphap,
 				     double& betap) const{
 
@@ -39,20 +34,20 @@ void MultiShiftSolver_CG::solve_init(vector<Field>& x,
   _Message(SOLV_ITER_VERB_LEVEL, "    | Initial residual |^2 = "<<rr<<"\n");
 }
 
-void MultiShiftSolver_CG::solve_step(vector<Field>& x,
-				     vector<Field>& p,
+void MultiShiftSolver_CG::solve_step(vector_Field& x,
+				     vector_Field& p,
 				     Field& r,
 				     Field& s,
 				     double& rr,
-				     vector<double>& zeta1,
-				     vector<double>& zeta2,
-				     const vector<double>& sigma,
-				     vector<double>& csh2,
+				     vector_double& zeta1,
+				     vector_double& zeta2,
+				     const vector_double& sigma,
+				     vector_double& csh2,
 				     double& alphap,
 				     double& betap,
 				     int& Nshift2, 
 				     double& snorm, 
-				     vector<double>& pp) const{
+				     vector_double& pp) const{
 
   using namespace FieldExpression;
   s = opr_->mult(p[0]);
@@ -102,9 +97,9 @@ void MultiShiftSolver_CG::solve_step(vector<Field>& x,
   betap  = beta;
 }
 
-SolverOutput MultiShiftSolver_CG::solve(prop_t& xq, 
+SolverOutput MultiShiftSolver_CG::solve(vector_Field& xq, 
 				const Field& b,
-				const vector<double>& sigma, 
+				const vector_double& sigma, 
 				double& diff,
 				int& Nconv)const
 { 
@@ -126,13 +121,13 @@ SolverOutput MultiShiftSolver_CG::solve(prop_t& xq,
   
   Field s = b;
   Field r = b;
-  vector<Field> p(Nshift);
-  vector<Field> x(Nshift);
+  vector_Field p(Nshift);
+  vector_Field x(Nshift);
 
-  vector<double> zeta1(Nshift,1.0);
-  vector<double> zeta2(Nshift,1.0);
-  vector<double> csh2(Nshift);
-  vector<double> pp(Nshift);
+  vector_double zeta1(Nshift,1.0);
+  vector_double zeta2(Nshift,1.0);
+  vector_double csh2(Nshift);
+  vector_double pp(Nshift);
 
   double rr;
   double alphap, betap, rrp;

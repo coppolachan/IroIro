@@ -3,7 +3,7 @@
  *
  * @brief Definition of SolverOutput structure
  *
- *
+ * Time-stamp: <2013-04-22 17:40:28 neo>
  */
 
 #include "solver.hpp"
