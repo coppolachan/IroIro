@@ -9,9 +9,11 @@
 #ifndef RATIONALSOLVER_DWF_BGQ_INCLUDED
 #define RATIONALSOLVER_DWF_BGQ_INCLUDED
 
-#ifdef IBM_BGQ_WILSON
-
+#include "Solver/rationalSolver.hpp"
+#include "Solver/multiShiftSolver_CG.hpp"
 #include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
+
+
 class RationalSolver_DWF_Optimized: public RationalSolver {
   const Dirac_optimalDomainWall_EvenOdd* opr_;
   const MultiShiftSolver_CG_Params Params;
@@ -74,7 +76,5 @@ public:
 
 
 };
-
-#endif
 
 #endif

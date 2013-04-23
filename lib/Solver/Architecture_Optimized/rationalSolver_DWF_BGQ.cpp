@@ -1,11 +1,13 @@
 /*!
- * @file rationalSolver_DWF_BGQ.hpp
+ * @file rationalSolver_DWF_BGQ.cpp
  *
  * @brief Wrapper around MultiShiftSolver_CG class
  *
  * Calculates rational functions approximations
  *
  */
+
+#include "Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp"
 
 SolverOutput RationalSolver_DWF_Optimized::solve(Field& sol, 
 						 const Field& source) const {
