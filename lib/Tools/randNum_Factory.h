@@ -6,7 +6,7 @@
 
 #include "include/singleton.h"
 #include "include/pugi_interface.h"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 
 #include "randNum.h"
 #include "RandomNumGen/randNum_MT19937.h"

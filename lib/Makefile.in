@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-23 17:12:18 neo>
+# Time-stamp: <2013-04-23 17:47:35 neo>
 
 
 
@@ -678,7 +678,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Measurements/FermionicM/fermion_meas_factory_abs.hpp \
 			Measurements/FermionicM/quark_prop_meas_factory.hpp \
                         Measurements/FermionicM/utils_DWF4d.hpp \
-			Communicator/communicator.h		\
+			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
 			Main/Geometry/siteIndex.hpp     	\

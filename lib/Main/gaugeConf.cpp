@@ -3,7 +3,7 @@
 //-------------------------------------------------------------------------
 #include "gaugeConf.hpp"
 #include "include/field.h"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 #include "Communicator/fields_io.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Tools/sunMat.hpp"

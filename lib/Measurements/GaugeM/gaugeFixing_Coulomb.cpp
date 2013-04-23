@@ -5,7 +5,7 @@
 #include "gaugeFixing_Coulomb.hpp"
 #include "Main/Geometry/mapping.hpp"
 #include "Main/gaugeConf.hpp"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 #include "include/macros.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"

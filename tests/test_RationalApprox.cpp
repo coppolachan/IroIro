@@ -25,9 +25,6 @@
 #include <assert.h>
 #include <vector>
 
-#include "Communicator/communicator.h"
-
-
 using namespace std;
 
 int Test_RationalApprox::run(){

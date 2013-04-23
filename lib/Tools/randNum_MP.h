@@ -7,7 +7,7 @@
 #include "randNum.h"
 
 #include "include/commonPrms.h"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 #include "Communicator/comm_io.hpp"
 #include <cassert>
 

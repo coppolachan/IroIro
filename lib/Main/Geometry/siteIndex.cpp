@@ -5,7 +5,7 @@
   LEXICOGRAPHIC
 */
 #include "siteIndex.hpp"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 
 SiteIndex::SiteIndex():Nx_(CommonPrms::instance()->Nx()),
 		       Ny_(CommonPrms::instance()->Ny()),

@@ -7,7 +7,7 @@
  */
 
 #include "comm_io.hpp"
-#include "communicator.h"
+#include "communicator.hpp"
 
 /*!
  *@brief CommonCode Input/Output overloaded functions

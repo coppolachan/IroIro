@@ -8,7 +8,7 @@
 #include <fstream>
 #include <cstdlib>
 #include "Communicator/comm_io.hpp"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 //-----------------------
 
 void RandNum_MT19937::init(unsigned long s){
