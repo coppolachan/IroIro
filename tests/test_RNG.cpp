@@ -8,9 +8,13 @@
 //------------------------------------------------------------------------
 #include "include/common_code.hpp"
 #include "include/geometry.hpp"
-#include "Tools/RandomNumGen/randNum_MT19937.h"
-#include "Tools/RandomNumGen/dcmt_wrapper.hpp"
 #include "Communicator/comm_io.hpp"
+#include "Tools/RandomNumGen/randNum_MT19937.h"
+
+#ifdef HAVE_LIBDCMT
+#include "Tools/RandomNumGen/dcmt_wrapper.hpp"
+#endif
+
 
 using namespace XML;
 
@@ -51,7 +55,7 @@ int main(){
   delete rand1;
   delete rand2;
 
-
+#ifdef HAVE_LIBDCMT
   CCIO::cout << "Testing Dynamic Creation of Mersenne Twister\n";
   CCIO::cout << "Creation of the MT object\n";
   
@@ -62,6 +66,6 @@ int main(){
     r1 = dcmt->get();
     CCIO::cout << r1 << std::endl;
   }
-  
+#endif
 
 }

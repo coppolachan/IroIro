@@ -15,7 +15,7 @@
 #define RANDNUM_DCMT_INCLUDED
 
 #include "Tools/randNum.h"
-#include "dcmt0.6.1/include/dc.h"
+#include "dc.h"
 
 #include<iostream>
 #include <string>
