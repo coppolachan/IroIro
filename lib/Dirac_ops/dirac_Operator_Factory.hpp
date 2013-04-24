@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-04-23 18:08:49 noaki>
+ Time-stamp: <2013-04-24 15:57:17 noaki>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -147,7 +147,6 @@ class DiracDWF4DfullFactory : public DiracDWF4dOperatorFactory{
 
 public:
   DiracDWF4DfullFactory(XML::node node);
-  DiracWilsonLike* getDiracOperatorWL(Field* const Gfield);
   Dirac_optimalDomainWall_4D* getDiracOperator4D(Field* const Gfield);
 };
 
@@ -173,7 +172,6 @@ class DiracDWF4DeoFactory : public DiracDWF4dOperatorFactory{
 
 public:
   DiracDWF4DeoFactory(XML::node node);
-  DiracWilsonLike* getDiracOperatorWL(Field* const Gfield);
   Dirac_optimalDomainWall_4D* getDiracOperator4D(Field* const Gfield);
 };
 

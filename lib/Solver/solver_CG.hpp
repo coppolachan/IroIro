@@ -3,12 +3,13 @@
  *
  * @brief Declaration of Solver_CG class
  *
- * Time-stamp: <2013-04-22 17:40:40 neo>
+ * Time-stamp: <2013-04-24 12:05:01 cossu>
  */
 #ifndef SOLVER_CG_INCLUDED
 #define SOLVER_CG_INCLUDED
 
 #include <typeinfo>
+
 #include "include/pugi_interface.h"
 #include "Dirac_ops/dirac_Preconditioners.hpp"
 #include "include/fopr.h"
@@ -209,6 +210,7 @@ public:
     return 1;
   }
 };
+
 #endif
 
 #endif    

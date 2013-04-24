@@ -9,14 +9,14 @@
     <!-- other params here -->
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Binary">therm_conf.bin</Configuration> 
+  <Configuration Type="Unit">therm_conf.bin</Configuration> 
   <!-- definition of HMC trajectory -->
   <HMC>
-    <Nsweeps>50</Nsweeps>
-    <Thermalization>0</Thermalization>
+    <Nsweeps>10</Nsweeps>
+    <Thermalization>20</Thermalization>
     <StartingConfig>0</StartingConfig>
     <SaveInterval>0</SaveInterval>
-    <SavePrefix>HMCrect_</SavePrefix>
+    <SavePrefix>HMCwilson_</SavePrefix>
     <RandomNumberGen name="Mersenne Twister">
       <!--   <seedFile>seed_file</seedFile>
 	   Using seedFile superseeds the <init> line 
@@ -25,9 +25,9 @@
       <init>0x123 0x234 0x345 0x456</init> 
     </RandomNumberGen>
     
-    <Integrator name="leapfrog_multistep">
-      <MDsteps>10</MDsteps>
-      <step_size>0.1</step_size>
+    <Integrator name="2MN_multistep">
+      <MDsteps>5</MDsteps>
+      <step_size>0.2</step_size>
       <exp_approx>8</exp_approx>
       <step>
 	<multiplier>1</multiplier>
@@ -41,7 +41,7 @@
 	  </Solver>
 	</Action>
 	<step>
-	  <multiplier>4</multiplier>
+	  <multiplier>2</multiplier>
 	  <Action type="Gauge" name="Wilson">
 	    <beta>5.0</beta>
 	  </Action>

@@ -1,18 +1,22 @@
-//-----------------------------------------------------------------------------
-// communicator.h
-//-----------------------------------------------------------------------------
+/*!
+ * @file communicator.hpp
+ *
+ * @brief Declares the Communicator class for multiprocessing
+ *
+ * Time-stamp: <2013-04-23 18:06:35 neo>
+ *
+ */
+
 #ifndef COMMUNICATOR_INCLUDED
 #define COMMUNICATOR_INCLUDED
 
 #include <vector>
 #include <valarray>
-#include <stdio.h>
-#include <cstdarg>
 
 class Communicator{
 private:
-  static int my_rank_;        // rank of current process
-  static int Nproc_;          // number of processes
+  static int my_rank_;  /*!< rank of current process */
+  static int Nproc_;    /*!< number of processes */
 
   enum{Ndim_max_ = 4}; // enum hack
 
@@ -35,20 +39,22 @@ public:
   ~Communicator();
   static Communicator* instance();
 
-  static int size(){return Nproc_;}
-  static int id(){return my_rank_;}
-  static int nodeid(){return my_rank_;}
-  static int ipe(int dir){ return ipe_[dir];}
+  static int size()      {return Nproc_;}
+  static int id()        {return my_rank_;}
+  static int nodeid()    {return my_rank_;}
+  static int ipe(int dir){return ipe_[dir];}
+  static bool primaryNode();
 
   int nodeid(int x,int y,int z,int t) const;
   
   double reduce_sum(double)const;
   void sync()const;
+
   void broadcast(int size, int &data, int sender)const;
   void broadcast(int size, double &data, int sender)const;
   
-  void allgether(double *bin,double *data,int size)const;
-  void allgether(std::valarray<double>& bin,
+  void allgather(double *bin,double *data,int size)const;
+  void allgather(std::valarray<double>& bin,
 		 const std::valarray<double>& data)const;
 
   void transfer_fw(double *bin,double *data,int size,int dir)const;
@@ -77,11 +83,7 @@ public:
   int reduce_max(double& val,int& idx,int size)const;
   int reduce_min(double& val,int& idx,int size)const;
 
-  double get_time()const{return 0.0;};
-
-  int pprintf(const char* ...)const;
-
-  static bool primaryNode();
+  //double get_time()const{return 0.0;};
 };
 
 

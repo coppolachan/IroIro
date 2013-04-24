@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-04-23 16:43:25 noaki>
+ * Time-stamp: <2013-04-24 15:57:22 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -70,6 +70,12 @@ getDiracOperatorWL(Field* const Gfield){
   return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get(),Gfield); 
 }
 
+Dirac_optimalDomainWall_EvenOdd* DiracDWF5dEvenOddFactory::
+getDiracOperatorPV(Field* const Gfield){
+  Kernel_.save(KernelFactory_.get()->getDiracOperatorEO(Gfield));
+  return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get(),Gfield,PauliVillars); 
+}
+
 /// Dirac_DWF4DfullSolv
 DiracDWF4DfullFactory::DiracDWF4DfullFactory(XML::node node)
 :Dirac_node_(node){
@@ -78,10 +84,6 @@ DiracDWF4DfullFactory::DiracDWF4DfullFactory(XML::node node)
   XML::next_sibling(node, "SolverDWF", MANDATORY);
   SolverFactory_.save(SolverOperators::createSolverOperatorFactory(node));
 }
-
-DiracWilsonLike* DiracDWF4DfullFactory::
-getDiracOperatorWL(Field* const Gfield){
-  return getDiracOperator4D(Gfield); }
 
 Dirac_optimalDomainWall_4D* DiracDWF4DfullFactory::
 getDiracOperator4D(Field* const Gfield){
@@ -106,7 +108,7 @@ DiracDWF4DeoFactory::DiracDWF4DeoFactory(XML::node node)
   XML::descend(node,"Kernel5d", MANDATORY);
   DiracFactory_.save(new DiracDWF5dFactory(node));
   DiracEOFactory_.save(new DiracDWF5dEvenOddFactory(node));
-  XML::next_sibling(node, "SolverDWF", MANDATORY);
+  XML::next_sibling(node,"SolverDWF", MANDATORY);
   SolverFactory_.save(SolverOperators::createSolverOperatorFactory(node));
 }
 

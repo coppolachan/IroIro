@@ -3,13 +3,15 @@
  *
  * @brief Definition of abstract Solver class and SolverOutput structure
  *
- * Time-stamp: <2013-04-23 16:24:28 neo>
+ * Time-stamp: <2013-04-24 12:05:22 cossu>
  */
 #ifndef SOLVER_INCLUDED
 #define SOLVER_INCLUDED
 
 #include <string>
+#include "include/macros.hpp"
 #include "include/field.h"
+
 
 struct SolverOutput{
   double diff;   /*!< Residual */

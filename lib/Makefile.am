@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-24 11:33:10 noaki>
+# Time-stamp: <2013-04-24 14:25:13 noaki>
 
 ###########################################
 # Initial definitions 
@@ -19,29 +19,32 @@ DWF_BGQ_SRC =
 ###########################################
 # Configure driven path selector
 if USE_MPI
-COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
+
+if IBM_BGQ
+# NB: Libraries ordering is essential
+OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+COMMUNICATOR_SRCS = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
+
+if IBM_BGQWILSON_SMP
+OPTLIB += -lbgqwilson3x4smp -lbgqthread
+else
+OPTLIB += -lbgqwilson3x4
+endif #IBM_BGQWILSON_SMP
+
+else #not using BGQ routines but MPI
 
 if HITACHI	
 CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 LDFLAGS += -q64
 endif
 
-if IBM_BGQ
-
-# NB: Libraries ordering is essential
-OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
-
-if IBM_BGQWILSON_SMP
-OPTLIB += -lbgqwilson3x4smp -lbgqthread
-else
-OPTLIB += -lbgqwilson3x4
-endif
-
-endif
+COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
+endif #IBM_BGQ
 
 else
-COMMUNICATOR_SRCS = Communicator/communicator_dummy.cpp	
-endif
+# Fall-back to the single core case
+COMMUNICATOR_SRCS = Communicator/communicator_single.cpp	
+endif #USE_MPI
 
 ############################################
 # Sources by architecture
@@ -86,6 +89,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_gauge_wilson.cpp		\
 	 	Action/action_gauge_wilson_adjoint.cpp	\
 		$(ACTION_SRCS)				\
+	 	Action/action_gaugetype_factory_creator.cpp\
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
 		Action/action_Nf2_ratio.cpp		\
@@ -94,6 +98,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_staggered.cpp		\
 		Action/action_staggered_ratio.cpp	\
 		Action/action_Nf2_DomainWall.cpp	\
+                Action/action_fermiontype_factory_creator.cpp\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
