@@ -3,20 +3,22 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-04-24 10:52:32 neo>
+ * Time-stamp: <2013-04-24 11:32:18 cossu>
  *
  */
 
-
-#include "communicator.hpp"
-#include "commonPrms.h"
-#include "bgnet.h"
-#include <omp.h>
-
-#include "comm_io.hpp"
 #include <stdio.h>
 #include <iostream>
 #include <cstdarg>
+
+#include "include/commonPrms.h"
+#include "Communicator/communicator.hpp"
+#include "Communicator/comm_io.hpp"
+
+#include "bgnet.h"
+#include <omp.h>
+
+
 
 using namespace std;
 
@@ -255,17 +257,5 @@ int Communicator::reduce_min(double& val,int& idx,int size) const{
 
   idx = idxOut%size;
   return idxOut/size;
-}
-
-int Communicator::pprintf(const char* format ...) const{
-  va_list ap;
-  int ret = 0;
-
-  va_start(ap,format);
-  if(my_rank_==0)
-    ret = vfprintf( stdout, format, ap );
-  va_end(ap);
-
-  return ret;
 }
 

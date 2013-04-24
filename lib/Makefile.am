@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-24 11:16:38 neo>
+# Time-stamp: <2013-04-24 11:30:00 cossu>
 
 ###########################################
 # Initial definitions 
@@ -20,15 +20,10 @@ DWF_BGQ_SRC =
 # Configure driven path selector
 if USE_MPI
 
-if HITACHI	
-CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
-LDFLAGS += -q64
-endif
-
 if IBM_BGQ
 # NB: Libraries ordering is essential
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
-COMMUNICATOR_SRCS = Communicator/communicator_mpi_bgq.cpp
+COMMUNICATOR_SRCS = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
 
 if IBM_BGQWILSON_SMP
 OPTLIB += -lbgqwilson3x4smp -lbgqthread
@@ -37,6 +32,12 @@ OPTLIB += -lbgqwilson3x4
 endif #IBM_BGQWILSON_SMP
 
 else #not using BGQ routines but MPI
+
+if HITACHI	
+CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
+LDFLAGS += -q64
+endif
+
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 endif #IBM_BGQ
 

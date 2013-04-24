@@ -6,7 +6,7 @@
   EVEN-ODD
 */
 #include "siteIndex.hpp"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 
 //std::vector<int> SiteIndex::global_site_;
 
