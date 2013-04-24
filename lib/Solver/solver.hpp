@@ -1,16 +1,15 @@
-/* 
- * @file solver.h
+/*! 
+ * @file solver.hpp
  *
  * @brief Definition of abstract Solver class and SolverOutput structure
+ *
+ * Time-stamp: <2013-04-23 16:24:28 neo>
  */
 #ifndef SOLVER_INCLUDED
 #define SOLVER_INCLUDED
 
 #include <string>
-#include "include/macros.hpp" 
-
-class Field;
-class Fopr;
+#include "include/field.h"
 
 struct SolverOutput{
   double diff;   /*!< Residual */

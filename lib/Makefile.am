@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-23 18:12:14 noaki>
+# Time-stamp: <2013-04-24 11:33:10 noaki>
 
 ###########################################
 # Initial definitions 
@@ -47,6 +47,7 @@ endif
 # Sources by architecture
 if IBM_BGQ
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
+DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
 else
@@ -158,7 +159,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/solver_CG.cpp			\
 		Solver/solver_Factory.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
-		Solver/rationalSolver.cpp		\
+		Solver/rationalSolver_CG.cpp		\
 		Solver/solver.cpp			\
 		Smearing/APEsmear.cpp			\
 		Smearing/stoutSmear.cpp			\
@@ -178,7 +179,10 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/xml_errors.cpp	\
 		Tools/ErrorsHandling/allocation_errors.cpp\
 		Tools/ErrorsHandling/base_errors.cpp	\
+		Tools/ErrorsHandling/io_errors.cpp	\
+		Tools/ErrorsHandling/convergence_errors.cpp\
 		Tools/RandomNumGen/dcmt_wrapper.cpp	\
+		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
@@ -262,7 +266,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Measurements/FermionicM/fermion_meas_factory_abs.hpp \
 			Measurements/FermionicM/quark_prop_meas_factory.hpp \
                         Measurements/FermionicM/utils_DWF4d.hpp \
-			Communicator/communicator.h		\
+			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
 			Main/Geometry/siteIndex.hpp     	\
@@ -316,6 +320,8 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Solver/multiShiftSolver_CG.hpp		\
 			Solver/multiShiftSolver.hpp		\
 			Solver/rationalSolver.hpp		\
+			Solver/rationalSolver_CG.hpp		\
+			Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp\
 			Smearing/APEsmear.hpp			\
 			Smearing/baseSmear.hpp			\
 			Smearing/stoutSmear.hpp			\
@@ -344,6 +350,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
 			Tools/RandomNumGen/dcmt_wrapper.hpp	\
+                        Tools/RandomNumGen/randNum_MT19937.h    \
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	

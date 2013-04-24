@@ -6,7 +6,7 @@
 #define ACTION_NF_RATIO_INCLUDED
 
 #include "Action/action.hpp"
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "Solver/rationalSolver.hpp"
 #include "Smearing/smartConf.hpp"
 #include "Tools/RationalApprox/rationalapprox.hpp"

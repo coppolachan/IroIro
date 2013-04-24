@@ -22,7 +22,7 @@
 #include "HMC/mdExec_leapfrog.hpp"
 #include "Dirac_ops/dirac_wilson.hpp"
 #include "Solver/solver_CG.hpp"
-#include "Solver/rationalSolver.hpp"
+#include "Solver/rationalSolver_CG.hpp"
 
 int Test_HMC::run(){
   CCIO::cout << "Starting HMCrun\n";

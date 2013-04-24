@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------
 // communicator_mpi.cpp
 //-----------------------------------------------------------------
-#include "communicator.h"
+#include "communicator.hpp"
 #include "commonPrms.h"
 
 #ifndef IBM_BGQ

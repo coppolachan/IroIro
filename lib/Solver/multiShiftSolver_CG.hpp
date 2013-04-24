@@ -3,6 +3,7 @@
  *
  * @brief Definition of the MultiShiftSolver_CG class
  *
+ * Time-stamp: <2013-04-23 16:05:27 neo>
  */
 
 #ifndef MULTISHIFTSOLVER_CG_INCLUDED
@@ -12,7 +13,7 @@
 #include "include/fopr.h"
 #include "multiShiftSolver.hpp"
 
-typedef std::vector<Field> prop_t;
+
 
 struct MultiShiftSolver_CG_Params{
   double GoalPrecision;
@@ -35,31 +36,31 @@ private:
   const Fopr* opr_;
   const MultiShiftSolver_CG_Params Params;
 
-  void solve_init(std::vector<Field>&,
-		  std::vector<Field>&,
+  void solve_init(vector_Field&,
+		  vector_Field&,
 		  Field&,
 		  Field&, 
 		  double&,
-		  std::vector<double>&, 
-		  std::vector<double>&,
-		  std::vector<double>&,
+		  vector_double&, 
+		  vector_double&,
+		  vector_double&,
 		  double&, 
 		  double&) const;
 
-  void solve_step(std::vector<Field>&, 
-		  std::vector<Field>&,
+  void solve_step(vector_Field&, 
+		  vector_Field&,
 		  Field&, 
 		  Field&, 
 		  double&,
-		  std::vector<double>&,
-		  std::vector<double>&,
-		  const std::vector<double>&,
-		  std::vector<double>&,
+		  vector_double&,
+		  vector_double&,
+		  const vector_double&,
+		  vector_double&,
 		  double&,
 		  double&, 
 		  int&, 
 		  double&, 
-		  std::vector<double>&) const;
+		  vector_double&) const;
 
 public:
   MultiShiftSolver_CG(const Fopr* fopr, 
@@ -75,9 +76,9 @@ public:
 
   ~MultiShiftSolver_CG(){}
   
-  SolverOutput solve(prop_t& solution, 
+  SolverOutput solve(vector_Field& solution, 
 		     const Field& source,
-		     const std::vector<double>& shifts,
+		     const vector_double& shifts,
 		     double& residual,
 		     int& Nconv) const;
 

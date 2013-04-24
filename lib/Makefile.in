@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-23 18:12:14 noaki>
+# Time-stamp: <2013-04-24 11:33:10 noaki>
 
 
 
@@ -72,7 +72,8 @@ target_triplet = @target@
 
 ############################################
 # Sources by architecture
-@IBM_BGQ_TRUE@am__append_6 = Dirac_ops/dirac_DomainWall_BGQ.cpp
+@IBM_BGQ_TRUE@am__append_6 = Dirac_ops/dirac_DomainWall_BGQ.cpp \
+@IBM_BGQ_TRUE@	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
@@ -153,6 +154,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_overlap_Zolotarev.cpp \
 	Dirac_ops/dirac_DomainWall.cpp \
 	Dirac_ops/dirac_DomainWall_BGQ.cpp \
+	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp \
 	Dirac_ops/dirac_DomainWall_EvenOdd.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp Dirac_ops/eoUtils.cpp \
@@ -185,7 +187,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	HMC/mdExec_factory.cpp PugiXML/pugixml.cpp \
 	PugiXML/pugi_interface.cpp Solver/solver_BiCGStab.cpp \
 	Solver/solver_CG.cpp Solver/solver_Factory.cpp \
-	Solver/multiShiftSolver_CG.cpp Solver/rationalSolver.cpp \
+	Solver/multiShiftSolver_CG.cpp Solver/rationalSolver_CG.cpp \
 	Solver/solver.cpp Smearing/APEsmear.cpp \
 	Smearing/stoutSmear.cpp Smearing/smartConf.cpp \
 	Smearing/smearingFactories.cpp Tools/fieldUtils.cpp \
@@ -198,8 +200,11 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/ErrorsHandling/xml_errors.cpp \
 	Tools/ErrorsHandling/allocation_errors.cpp \
 	Tools/ErrorsHandling/base_errors.cpp \
-	Tools/RandomNumGen/dcmt_wrapper.cpp Tools/Timings/timings.cpp \
-	UpdatingAlg/HeatBath/heatbath.cpp \
+	Tools/ErrorsHandling/io_errors.cpp \
+	Tools/ErrorsHandling/convergence_errors.cpp \
+	Tools/RandomNumGen/dcmt_wrapper.cpp \
+	Tools/RandomNumGen/randNum_MT19937.cpp \
+	Tools/Timings/timings.cpp UpdatingAlg/HeatBath/heatbath.cpp \
 	UpdatingAlg/HeatBath/HBActions_SUN.cpp
 @USE_MPI_FALSE@am__objects_1 = communicator_dummy.$(OBJEXT)
 @USE_MPI_TRUE@am__objects_1 = communicator_mpi.$(OBJEXT)
@@ -209,7 +214,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @IBM_BGQ_FALSE@	action_gauge_wilson_force.$(OBJEXT)
 @IBM_BGQ_TRUE@am__objects_3 = action_gauge_rect.bgq.$(OBJEXT) \
 @IBM_BGQ_TRUE@	action_gauge_wilson_force.bgq.$(OBJEXT)
-@IBM_BGQ_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT)
+@IBM_BGQ_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT) \
+@IBM_BGQ_TRUE@	rationalSolver_DWF_BGQ.$(OBJEXT)
 am__objects_5 = $(am__objects_4)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
@@ -253,7 +259,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	mdExec_factory.$(OBJEXT) pugixml.$(OBJEXT) \
 	pugi_interface.$(OBJEXT) solver_BiCGStab.$(OBJEXT) \
 	solver_CG.$(OBJEXT) solver_Factory.$(OBJEXT) \
-	multiShiftSolver_CG.$(OBJEXT) rationalSolver.$(OBJEXT) \
+	multiShiftSolver_CG.$(OBJEXT) rationalSolver_CG.$(OBJEXT) \
 	solver.$(OBJEXT) APEsmear.$(OBJEXT) stoutSmear.$(OBJEXT) \
 	smartConf.$(OBJEXT) smearingFactories.$(OBJEXT) \
 	fieldUtils.$(OBJEXT) jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
@@ -262,8 +268,10 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	gammaMatrices.$(OBJEXT) sunAlgUtils.$(OBJEXT) \
 	alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT) \
 	xml_errors.$(OBJEXT) allocation_errors.$(OBJEXT) \
-	base_errors.$(OBJEXT) dcmt_wrapper.$(OBJEXT) timings.$(OBJEXT) \
-	heatbath.$(OBJEXT) HBActions_SUN.$(OBJEXT)
+	base_errors.$(OBJEXT) io_errors.$(OBJEXT) \
+	convergence_errors.$(OBJEXT) dcmt_wrapper.$(OBJEXT) \
+	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
+	HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -561,7 +569,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/solver_CG.cpp			\
 		Solver/solver_Factory.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
-		Solver/rationalSolver.cpp		\
+		Solver/rationalSolver_CG.cpp		\
 		Solver/solver.cpp			\
 		Smearing/APEsmear.cpp			\
 		Smearing/stoutSmear.cpp			\
@@ -581,7 +589,10 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/xml_errors.cpp	\
 		Tools/ErrorsHandling/allocation_errors.cpp\
 		Tools/ErrorsHandling/base_errors.cpp	\
+		Tools/ErrorsHandling/io_errors.cpp	\
+		Tools/ErrorsHandling/convergence_errors.cpp\
 		Tools/RandomNumGen/dcmt_wrapper.cpp	\
+		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
@@ -664,7 +675,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Measurements/FermionicM/fermion_meas_factory_abs.hpp \
 			Measurements/FermionicM/quark_prop_meas_factory.hpp \
                         Measurements/FermionicM/utils_DWF4d.hpp \
-			Communicator/communicator.h		\
+			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
 			Main/Geometry/siteIndex.hpp     	\
@@ -718,6 +729,8 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Solver/multiShiftSolver_CG.hpp		\
 			Solver/multiShiftSolver.hpp		\
 			Solver/rationalSolver.hpp		\
+			Solver/rationalSolver_CG.hpp		\
+			Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp\
 			Smearing/APEsmear.hpp			\
 			Smearing/baseSmear.hpp			\
 			Smearing/stoutSmear.hpp			\
@@ -746,6 +759,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
 			Tools/RandomNumGen/dcmt_wrapper.hpp	\
+                        Tools/RandomNumGen/randNum_MT19937.h    \
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	
@@ -897,6 +911,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commonPrms.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_dummy.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/communicator_mpi.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/convergence_errors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dcmt_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall.Po@am__quote@
@@ -933,6 +948,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gfixFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/heatbath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcGeneral.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/io_errors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jobUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hmc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapping.Po@am__quote@
@@ -955,7 +971,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_MP.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalSolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/randNum_MT19937.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalSolver_CG.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalSolver_DWF_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalapprox.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shiftField.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex.Po@am__quote@
@@ -1510,6 +1528,20 @@ dirac_DomainWall_BGQ.obj: Dirac_ops/dirac_DomainWall_BGQ.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_DomainWall_BGQ.cpp' object='dirac_DomainWall_BGQ.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_BGQ.obj `if test -f 'Dirac_ops/dirac_DomainWall_BGQ.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_BGQ.cpp'; fi`
+
+rationalSolver_DWF_BGQ.o: Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalSolver_DWF_BGQ.o -MD -MP -MF $(DEPDIR)/rationalSolver_DWF_BGQ.Tpo -c -o rationalSolver_DWF_BGQ.o `test -f 'Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp' || echo '$(srcdir)/'`Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/rationalSolver_DWF_BGQ.Tpo $(DEPDIR)/rationalSolver_DWF_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp' object='rationalSolver_DWF_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalSolver_DWF_BGQ.o `test -f 'Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp' || echo '$(srcdir)/'`Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
+
+rationalSolver_DWF_BGQ.obj: Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalSolver_DWF_BGQ.obj -MD -MP -MF $(DEPDIR)/rationalSolver_DWF_BGQ.Tpo -c -o rationalSolver_DWF_BGQ.obj `if test -f 'Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp'; then $(CYGPATH_W) 'Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/rationalSolver_DWF_BGQ.Tpo $(DEPDIR)/rationalSolver_DWF_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp' object='rationalSolver_DWF_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalSolver_DWF_BGQ.obj `if test -f 'Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp'; then $(CYGPATH_W) 'Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp'; fi`
 
 dirac_DomainWall_EvenOdd.o: Dirac_ops/dirac_DomainWall_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_EvenOdd.Tpo -c -o dirac_DomainWall_EvenOdd.o `test -f 'Dirac_ops/dirac_DomainWall_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_EvenOdd.cpp
@@ -2169,19 +2201,19 @@ multiShiftSolver_CG.obj: Solver/multiShiftSolver_CG.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o multiShiftSolver_CG.obj `if test -f 'Solver/multiShiftSolver_CG.cpp'; then $(CYGPATH_W) 'Solver/multiShiftSolver_CG.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/multiShiftSolver_CG.cpp'; fi`
 
-rationalSolver.o: Solver/rationalSolver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalSolver.o -MD -MP -MF $(DEPDIR)/rationalSolver.Tpo -c -o rationalSolver.o `test -f 'Solver/rationalSolver.cpp' || echo '$(srcdir)/'`Solver/rationalSolver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/rationalSolver.Tpo $(DEPDIR)/rationalSolver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/rationalSolver.cpp' object='rationalSolver.o' libtool=no @AMDEPBACKSLASH@
+rationalSolver_CG.o: Solver/rationalSolver_CG.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalSolver_CG.o -MD -MP -MF $(DEPDIR)/rationalSolver_CG.Tpo -c -o rationalSolver_CG.o `test -f 'Solver/rationalSolver_CG.cpp' || echo '$(srcdir)/'`Solver/rationalSolver_CG.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/rationalSolver_CG.Tpo $(DEPDIR)/rationalSolver_CG.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/rationalSolver_CG.cpp' object='rationalSolver_CG.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalSolver.o `test -f 'Solver/rationalSolver.cpp' || echo '$(srcdir)/'`Solver/rationalSolver.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalSolver_CG.o `test -f 'Solver/rationalSolver_CG.cpp' || echo '$(srcdir)/'`Solver/rationalSolver_CG.cpp
 
-rationalSolver.obj: Solver/rationalSolver.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalSolver.obj -MD -MP -MF $(DEPDIR)/rationalSolver.Tpo -c -o rationalSolver.obj `if test -f 'Solver/rationalSolver.cpp'; then $(CYGPATH_W) 'Solver/rationalSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/rationalSolver.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/rationalSolver.Tpo $(DEPDIR)/rationalSolver.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/rationalSolver.cpp' object='rationalSolver.obj' libtool=no @AMDEPBACKSLASH@
+rationalSolver_CG.obj: Solver/rationalSolver_CG.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalSolver_CG.obj -MD -MP -MF $(DEPDIR)/rationalSolver_CG.Tpo -c -o rationalSolver_CG.obj `if test -f 'Solver/rationalSolver_CG.cpp'; then $(CYGPATH_W) 'Solver/rationalSolver_CG.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/rationalSolver_CG.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/rationalSolver_CG.Tpo $(DEPDIR)/rationalSolver_CG.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/rationalSolver_CG.cpp' object='rationalSolver_CG.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalSolver.obj `if test -f 'Solver/rationalSolver.cpp'; then $(CYGPATH_W) 'Solver/rationalSolver.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/rationalSolver.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o rationalSolver_CG.obj `if test -f 'Solver/rationalSolver_CG.cpp'; then $(CYGPATH_W) 'Solver/rationalSolver_CG.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/rationalSolver_CG.cpp'; fi`
 
 solver.o: Solver/solver.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT solver.o -MD -MP -MF $(DEPDIR)/solver.Tpo -c -o solver.o `test -f 'Solver/solver.cpp' || echo '$(srcdir)/'`Solver/solver.cpp
@@ -2449,6 +2481,34 @@ base_errors.obj: Tools/ErrorsHandling/base_errors.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o base_errors.obj `if test -f 'Tools/ErrorsHandling/base_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/base_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/base_errors.cpp'; fi`
 
+io_errors.o: Tools/ErrorsHandling/io_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT io_errors.o -MD -MP -MF $(DEPDIR)/io_errors.Tpo -c -o io_errors.o `test -f 'Tools/ErrorsHandling/io_errors.cpp' || echo '$(srcdir)/'`Tools/ErrorsHandling/io_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/io_errors.Tpo $(DEPDIR)/io_errors.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/io_errors.cpp' object='io_errors.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o io_errors.o `test -f 'Tools/ErrorsHandling/io_errors.cpp' || echo '$(srcdir)/'`Tools/ErrorsHandling/io_errors.cpp
+
+io_errors.obj: Tools/ErrorsHandling/io_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT io_errors.obj -MD -MP -MF $(DEPDIR)/io_errors.Tpo -c -o io_errors.obj `if test -f 'Tools/ErrorsHandling/io_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/io_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/io_errors.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/io_errors.Tpo $(DEPDIR)/io_errors.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/io_errors.cpp' object='io_errors.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o io_errors.obj `if test -f 'Tools/ErrorsHandling/io_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/io_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/io_errors.cpp'; fi`
+
+convergence_errors.o: Tools/ErrorsHandling/convergence_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT convergence_errors.o -MD -MP -MF $(DEPDIR)/convergence_errors.Tpo -c -o convergence_errors.o `test -f 'Tools/ErrorsHandling/convergence_errors.cpp' || echo '$(srcdir)/'`Tools/ErrorsHandling/convergence_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/convergence_errors.Tpo $(DEPDIR)/convergence_errors.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/convergence_errors.cpp' object='convergence_errors.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o convergence_errors.o `test -f 'Tools/ErrorsHandling/convergence_errors.cpp' || echo '$(srcdir)/'`Tools/ErrorsHandling/convergence_errors.cpp
+
+convergence_errors.obj: Tools/ErrorsHandling/convergence_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT convergence_errors.obj -MD -MP -MF $(DEPDIR)/convergence_errors.Tpo -c -o convergence_errors.obj `if test -f 'Tools/ErrorsHandling/convergence_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/convergence_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/convergence_errors.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/convergence_errors.Tpo $(DEPDIR)/convergence_errors.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/convergence_errors.cpp' object='convergence_errors.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o convergence_errors.obj `if test -f 'Tools/ErrorsHandling/convergence_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/convergence_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/convergence_errors.cpp'; fi`
+
 dcmt_wrapper.o: Tools/RandomNumGen/dcmt_wrapper.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dcmt_wrapper.o -MD -MP -MF $(DEPDIR)/dcmt_wrapper.Tpo -c -o dcmt_wrapper.o `test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/dcmt_wrapper.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dcmt_wrapper.Tpo $(DEPDIR)/dcmt_wrapper.Po
@@ -2462,6 +2522,20 @@ dcmt_wrapper.obj: Tools/RandomNumGen/dcmt_wrapper.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/RandomNumGen/dcmt_wrapper.cpp' object='dcmt_wrapper.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dcmt_wrapper.obj `if test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/dcmt_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/dcmt_wrapper.cpp'; fi`
+
+randNum_MT19937.o: Tools/RandomNumGen/randNum_MT19937.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_MT19937.o -MD -MP -MF $(DEPDIR)/randNum_MT19937.Tpo -c -o randNum_MT19937.o `test -f 'Tools/RandomNumGen/randNum_MT19937.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/randNum_MT19937.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum_MT19937.Tpo $(DEPDIR)/randNum_MT19937.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/RandomNumGen/randNum_MT19937.cpp' object='randNum_MT19937.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum_MT19937.o `test -f 'Tools/RandomNumGen/randNum_MT19937.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/randNum_MT19937.cpp
+
+randNum_MT19937.obj: Tools/RandomNumGen/randNum_MT19937.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT randNum_MT19937.obj -MD -MP -MF $(DEPDIR)/randNum_MT19937.Tpo -c -o randNum_MT19937.obj `if test -f 'Tools/RandomNumGen/randNum_MT19937.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/randNum_MT19937.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/randNum_MT19937.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/randNum_MT19937.Tpo $(DEPDIR)/randNum_MT19937.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/RandomNumGen/randNum_MT19937.cpp' object='randNum_MT19937.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o randNum_MT19937.obj `if test -f 'Tools/RandomNumGen/randNum_MT19937.cpp'; then $(CYGPATH_W) 'Tools/RandomNumGen/randNum_MT19937.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/RandomNumGen/randNum_MT19937.cpp'; fi`
 
 timings.o: Tools/Timings/timings.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT timings.o -MD -MP -MF $(DEPDIR)/timings.Tpo -c -o timings.o `test -f 'Tools/Timings/timings.cpp' || echo '$(srcdir)/'`Tools/Timings/timings.cpp

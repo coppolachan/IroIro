@@ -19,7 +19,7 @@
 #include "include/commonPrms.h"
 
 //Communicator headers
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Communicator/fields_io.hpp"
 

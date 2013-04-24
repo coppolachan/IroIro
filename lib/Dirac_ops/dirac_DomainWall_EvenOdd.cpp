@@ -2,7 +2,7 @@
  *@file dirac_DomainWall_EvenOdd.cpp
  *
  *@brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op)
- Time-stamp: <2013-04-23 17:41:39 noaki>
+ Time-stamp: <2013-04-24 11:21:24 noaki>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"
@@ -47,13 +47,13 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_oe_dag(const Field& f)const{
 const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{
 #ifdef  IBM_BGQ_WILSON
   // just slightly faster (but only BGQ)
-  Field res(fsize_);
+  Field res(Deo_.fsize());
   //Doe_->mult_hop(res,f);
   
   double* f_ptr = const_cast<Field&>(f).getaddr(0);
 #pragma omp parallel
   {
-    Deo_->mult_hop_omp(res, f_ptr);
+    Deo_.mult_hop_omp(res, f_ptr);
   }
   return res;
 #else
@@ -69,13 +69,13 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
   timeval start_, end_;
   gettimeofday(&start_,NULL);
 
-  Field res(fsize_);
-  //Deo_->mult_hop_dag(res,f);
+  Field res(Deo_.fsize());
+  //Deo_.mult_hop_dag(res,f);
   
   double* f_ptr = const_cast<Field&>(f).getaddr(0);
 #pragma omp parallel
   {
-    Deo_->mult_hop_dag_omp(res,f_ptr);
+    Deo_.mult_hop_dag_omp(res,f_ptr);
   }
   gettimeofday(&end_,NULL);
   multdag_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
@@ -131,7 +131,7 @@ void  Dirac_optimalDomainWall_EvenOdd::solve_eo(Field& out,
 						SolverOutput& SO, 
 						int Niter, 
 						double stop_cond) const{
-  Deo_->solve_eo_5d(out,in,SO,Niter,stop_cond);
+  Deo_.solve_eo_5d(out,in,SO,Niter,stop_cond);
 }
 void Dirac_optimalDomainWall_EvenOdd::solve_ms_eo(prop_t& xq,
 						  const Field& b,
@@ -139,7 +139,7 @@ void Dirac_optimalDomainWall_EvenOdd::solve_ms_eo(prop_t& xq,
 						  const vector<double>& sigma,
 						  int MaxIter, 
 						  double GoalPrecision) const{
-  Deo_->solve_ms_eo_5d(xq,b,SO,sigma,MaxIter,GoalPrecision);
+  Deo_.solve_ms_eo_5d(xq,b,SO,sigma,MaxIter,GoalPrecision);
 }
 
 #endif

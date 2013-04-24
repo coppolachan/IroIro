@@ -1,7 +1,7 @@
 /*!
- * @file dirac.h
+ * @file dirac.hpp
  * @brief Defines the abstract base classs for Dirac operators
- * Time-stamp: <2013-04-23 17:35:11 noaki>
+ * Time-stamp: <2013-04-24 09:54:26 noaki>
  */
 #ifndef DIRAC_H_
 #define DIRAC_H_
@@ -9,7 +9,6 @@
 #include "include/field.h"
 #include "include/pugi_interface.h"
 
-//enum {Op, Dag};
 /*
  *! @class Dirac
  * @brief Declaration of abstract base class for Dirac operators

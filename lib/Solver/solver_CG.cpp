@@ -1,20 +1,22 @@
 /*!
  * @file solver_CG.cpp
  * @brief Definition of Solver_CG class member functions
+ *
+ * Time-stamp: <2013-04-23 13:29:19 neo>
  */
 
 #include <iostream>
 #include <iomanip>
-#include "Communicator/communicator.h"
+#include <sstream>
 #include "Communicator/comm_io.hpp"
 #include "Fields/field_expressions.hpp"
+#include "include/messages_macros.hpp"
+#include "include/errors.hpp"
 #include "solver_CG.hpp"
 
 #ifdef IBM_BGQ_WILSON
 #include "bgqwilson.h"
 #endif
-
-using namespace std;
 
 /*!
  * @brief Solves the linear equation (no preconditioning)
@@ -24,9 +26,8 @@ using namespace std;
  */
 SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{ 
 
-#if VERBOSITY>=SOLV_ITER_VERB_LEVEL
-  CCIO::header("CG solver start");
-#endif
+  _Message(SOLV_ITER_VERB_LEVEL, "CG solver start");
+
   SolverOutput Out;
   Out.Msg = "CG solver";
   Out.Iterations = -1;
@@ -42,16 +43,13 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   double snorm = b.norm();
   snorm = 1.0/snorm;
 
-#if VERBOSITY>1
-  CCIO::cout<<" Snorm = "<< snorm << endl;
-  CCIO::cout<<" Init  = "<< rr*snorm<< endl;
-#endif
+  _Message(SOLV_ITER_VERB_LEVEL, " Snorm = "<< snorm<<"\n" );
+  _Message(SOLV_ITER_VERB_LEVEL, " Init  = "<< rr*snorm<<"\n" );
+
   for(int it = 0; it < Params.MaxIter; ++it){
     solve_step(r,p,x,rr, kernel_timing);
-#if VERBOSITY>1
-    CCIO::cout<< std::setw(5)<< "["<<it<<"] "
-	      << std::setw(20) << rr*snorm<< "\n";
-#endif    
+    _Message(SOLV_ITER_VERB_LEVEL, "   "<< std::setw(5)<< "["<<it<<"] "
+	     << std::setw(20) << rr*snorm<< "\n");
     if(rr*snorm < Params.GoalPrecision){
       Out.Iterations = it;
       break;
@@ -59,8 +57,9 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   }
 
   if(Out.Iterations == -1) {
-    CCIO::cout<<" Not converged. Current residual: "<< rr*snorm << endl;
-    abort();
+    std::ostringstream msg;
+    msg << "CG solver not converged. Current residual: "<< rr*snorm;
+    Errors::ConvergenceErr(msg);
   }
 
   p = opr_->mult(x);
@@ -70,7 +69,8 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   xq = x;
 
   TIMING_END(Out.timing);
-  CCIO::cout << "[Timing] Solver_CG Kernel section : "<< kernel_timing << "\n";
+  _Message(SOLV_ITER_VERB_LEVEL, 
+	   "[Timing] Solver_CG Kernel section : "<< kernel_timing << "\n");
 
   return Out;
 }

@@ -1,6 +1,8 @@
 /*!
  * @file solver_Factory.hpp 
  * @brief Declaration of Solver operators factories
+ *
+ * Time-stamp: <2013-04-23 13:36:36 cossu>
  */
 
 #ifndef SOLVER_FACT_
@@ -13,6 +15,7 @@
 #include "Solver/solver_BiCGStab.hpp"
 #include "Solver/multiShiftSolver.hpp"
 #include "Solver/rationalSolver.hpp"
+#include "Solver/rationalSolver_CG.hpp"
 #include "Solver/multiShiftSolver_CG.hpp"
 
 /*!
@@ -171,6 +174,8 @@ public:
  */
 #ifdef IBM_BGQ_WILSON
 #include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
+#include "Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp"
+
 class RationalSolverCGFactory_DWF_Optimized {
    const XML::node Solver_node;
 public:

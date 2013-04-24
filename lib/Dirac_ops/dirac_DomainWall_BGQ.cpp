@@ -2,7 +2,7 @@
  * @file dirac_DomainWall_BGQ.cpp
  *
  * @brief Definition of some BGQ optimized methods for Dirac_optimalDomainWall (5d operator)
- *Time-stamp: <2013-04-18 17:23:58 noaki>
+ *Time-stamp: <2013-04-24 10:44:30 noaki>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall.hpp"
 #include "Solver/solver.hpp"
@@ -50,7 +50,7 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
 
   Field lpf(f4size_);
   Field lmf(f4size_), ey(f4size_), fy(f4size_);
-  Field temp(fsize_);
+  Field temp(f5size_);
 
   Spinor* w_ptr    = (Spinor*)malloc(sizeof(double)*f4size_);
   Spinor* v_ptr    = (Spinor*)malloc(sizeof(double)*f4size_);
@@ -68,13 +68,13 @@ void Dirac_optimalDomainWall::mult_hop(Field& w5, const Field& f5) const{
 
   double mass_fact   = 4.0+M0_;
 
-  double minus_kappa = -Dw_.getKappa();
+  double minus_kappa = -Dw_->getKappa();
   double doe_factor = minus_kappa*mass_fact;
   double fact= 1.0/(Params.dp_[N5_-1] +mq_*Params.dm_[N5_-2]*Params.es_[N5_-2]);
 
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
-  Format::Format_F Fformat = Dw_.getFermionFormat();
+  Format::Format_F Fformat = Dw_->getFermionFormat();
 
   int tid, nid;
   int is, ns;
@@ -240,7 +240,7 @@ void Dirac_optimalDomainWall::mult_hop_omp(Field& w5, const void* f5) const
   BGQThread_Barrier(0, nid);
 
   BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-		       Dw_.getKappa(),BGWILSON_DIRAC);
+		       Dw_->getKappa(),BGWILSON_DIRAC);
 
 }
 
@@ -264,7 +264,7 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
   Spinor* lmf_ptr = (Spinor*)lmf_ptr_void;
 
   // 5d vectors
-  Spinor* temp_ptr_base = (Spinor*)BGQThread_Malloc(sizeof(double)*fsize_,nid);
+  Spinor* temp_ptr_base = (Spinor*)BGQThread_Malloc(sizeof(double)*f5size_,nid);
 
   BGQThread_Barrier(0,nid);
 
@@ -279,7 +279,7 @@ void Dirac_optimalDomainWall::mult_hop_omp_allocated(Field& w5,
 
   double mass_fact   = 4.0+M0_;
 
-  double minus_kappa = -Dw_.getKappa();
+  double minus_kappa = -Dw_->getKappa();
   double doe_factor = minus_kappa*mass_fact;
   double fact= 1.0/(Params.dp_[N5_-1] +mq_*Params.dm_[N5_-2]*Params.es_[N5_-2]);
 
@@ -445,7 +445,7 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
 
   register int Nvol = CommonPrms::instance()->Nvol()/2;
   Field lpf(f4size_), ey(f4size_), lmf(f4size_), v(f4size_), w(f4size_);
-  Field temp(f5),v5(fsize_);
+  Field temp(f5),v5(f5size_);
 
   Spinor* w5_ptr  = (Spinor*)w5.getaddr(0);
   Spinor* temp_ptr = (Spinor*)temp.getaddr(0);
@@ -457,7 +457,7 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
 
   int spin_idx;
   double cs, bs;
-  double minus_kappa = -Dw_.getKappa();
+  double minus_kappa = -Dw_->getKappa();
   double* pU       = const_cast<Field *>(u_)->getaddr(0);
 
 
@@ -479,7 +479,7 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
     for(int s=1; s<N5_-1; ++s){
       Spinor* temp_ptr   = (Spinor*)temp.getaddr(s*f4size_);
       BGWilsonLA_Proj_M(lmf_ptr+is,
-			(Spinor*)(const_cast<Field&>(temp).getaddr(Dw_.getFermionFormat().index(0,0,s-1)))+is,
+			(Spinor*)(const_cast<Field&>(temp).getaddr(Dw_->getFermionFormat().index(0,0,s-1)))+is,
 			ns);
       BGWilsonLA_MultAddScalar(temp_ptr+is,     lmf_ptr+is,Params.dm_[s-1],ns);
       BGWilsonLA_MultScalar(temp_ptr+is, temp_ptr+is, 1.0/ Params.dp_[s], ns);   
@@ -487,11 +487,11 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
     
     temp_ptr   += (N5_-1)*Nvol;
     BGWilsonLA_Proj_M(v_ptr+is,
-		      (Spinor*)(const_cast<Field&>(temp).getaddr(Dw_.getFermionFormat().index(0,0,N5_-2)))+is,ns);   
+		      (Spinor*)(const_cast<Field&>(temp).getaddr(Dw_->getFermionFormat().index(0,0,N5_-2)))+is,ns);   
     BGWilsonLA_MultAddScalar(temp_ptr+is, v_ptr+is,Params.dm_[N5_-2],ns);
     for(int s=0; s<N5_-1; ++s) {
       BGWilsonLA_Proj_P(ey_ptr+is,
-			(Spinor*)(const_cast<Field&>(temp).getaddr(Dw_.getFermionFormat().index(0,0,s)))+is,ns); 
+			(Spinor*)(const_cast<Field&>(temp).getaddr(Dw_->getFermionFormat().index(0,0,s)))+is,ns); 
       BGWilsonLA_MultAddScalar(temp_ptr+is, ey_ptr+is,-mq_*Params.fs_[s],ns);
     }
     BGWilsonLA_MultScalar(temp_ptr+is, temp_ptr+is,1.0/(Params.dp_[N5_-1] +mq_*Params.dm_[N5_-2]*Params.es_[N5_-2]),ns);
@@ -502,9 +502,9 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
       double fact_lpf = (Params.dm_[s+1]/Params.dp_[s]);
       
       BGWilsonLA_Proj_P(lpf_ptr+is,
-			(Spinor*)(const_cast<Field&>(temp).getaddr(Dw_.getFermionFormat().index(0,0,s+1)))+is,ns); 
+			(Spinor*)(const_cast<Field&>(temp).getaddr(Dw_->getFermionFormat().index(0,0,s+1)))+is,ns); 
       BGWilsonLA_Proj_M(ey_ptr+is,
-			(Spinor*)(const_cast<Field&>(temp).getaddr(Dw_.getFermionFormat().index(0,0,N5_-1)))+is,ns);
+			(Spinor*)(const_cast<Field&>(temp).getaddr(Dw_->getFermionFormat().index(0,0,N5_-1)))+is,ns);
       BGWilsonLA_AXPBYPZ(temp_ptr+is, lpf_ptr+is,ey_ptr+is, temp_ptr+is,
 			 fact_lpf, - mq_*Params.es_[s],ns);
     }
@@ -532,10 +532,10 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
       Spinor* v5_ptr = (Spinor*)v5.getaddr(spin_idx);
 
       BGWilsonLA_Proj_P(lpf_ptr+is,
-			(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_.getFermionFormat().index(0,0,(s+1)%N5_)))+is,
+			(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_->getFermionFormat().index(0,0,(s+1)%N5_)))+is,
 			ns);
       BGWilsonLA_Proj_M(lmf_ptr+is,
-			(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_.getFermionFormat().index(0,0,(s+N5_-1)%N5_)))+is,
+			(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_->getFermionFormat().index(0,0,(s+N5_-1)%N5_)))+is,
 			ns);
     
       if(s == N5_-1){
@@ -558,18 +558,18 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
     for(int s=1; s<N5_-1; ++s){
       w5_ptr   = (Spinor*)w5.getaddr(s*f4size_);
       BGWilsonLA_Proj_M(lmf_ptr+is,
-			(Spinor*)(const_cast<Field&>(w5).getaddr(Dw_.getFermionFormat().index(0,0,s-1)))+is,ns);
+			(Spinor*)(const_cast<Field&>(w5).getaddr(Dw_->getFermionFormat().index(0,0,s-1)))+is,ns);
       BGWilsonLA_MultAddScalar(w5_ptr+is,     lmf_ptr+is,Params.dm_[s-1],ns);
       BGWilsonLA_MultScalar(w5_ptr+is, w5_ptr+is, 1.0/ Params.dp_[s], ns);   
     } 
 
     w5_ptr   = (Spinor*)w5.getaddr((N5_-1)*f4size_); 
     BGWilsonLA_Proj_M(v_ptr+is,
-		      (Spinor*)(const_cast<Field&>(w5).getaddr(Dw_.getFermionFormat().index(0,0,N5_-2)))+is,ns);   
+		      (Spinor*)(const_cast<Field&>(w5).getaddr(Dw_->getFermionFormat().index(0,0,N5_-2)))+is,ns);   
     BGWilsonLA_MultAddScalar(w5_ptr+is, v_ptr+is,Params.dm_[N5_-2],ns);
     for(int s=0; s<N5_-1; ++s) {
       BGWilsonLA_Proj_P(ey_ptr+is,
-			(Spinor*)(const_cast<Field&>(w5).getaddr(Dw_.getFermionFormat().index(0,0,s)))+is,ns); 
+			(Spinor*)(const_cast<Field&>(w5).getaddr(Dw_->getFermionFormat().index(0,0,s)))+is,ns); 
       BGWilsonLA_MultAddScalar(w5_ptr+is, ey_ptr+is,-mq_*Params.fs_[s],ns);
     }
     BGWilsonLA_MultScalar(w5_ptr+is, w5_ptr+is,1.0/(Params.dp_[N5_-1] +mq_*Params.dm_[N5_-2]*Params.es_[N5_-2]),ns);
@@ -580,9 +580,9 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
       double fact_lpf = (Params.dm_[s+1]/Params.dp_[s]);
     
       BGWilsonLA_Proj_P(lpf_ptr+is,
-			(Spinor*)(const_cast<Field&>(w5).getaddr(Dw_.getFermionFormat().index(0,0,s+1)))+is,ns); 
+			(Spinor*)(const_cast<Field&>(w5).getaddr(Dw_->getFermionFormat().index(0,0,s+1)))+is,ns); 
       BGWilsonLA_Proj_M(ey_ptr+is,
-			(Spinor*)(const_cast<Field&>(w5).getaddr(Dw_.getFermionFormat().index(0,0,N5_-1)))+is,ns);
+			(Spinor*)(const_cast<Field&>(w5).getaddr(Dw_->getFermionFormat().index(0,0,N5_-1)))+is,ns);
       BGWilsonLA_AXPBYPZ(w5_ptr+is, lpf_ptr+is,ey_ptr+is, w5_ptr+is,
 			 fact_lpf, - mq_*Params.es_[s],ns);
     }
@@ -609,10 +609,10 @@ void Dirac_optimalDomainWall::mult_hop_dag(Field& w5, const Field& f5) const{
       Spinor* v5_ptr = (Spinor*)v5.getaddr(spin_idx);
 
       BGWilsonLA_Proj_P(lpf_ptr+is,
-			(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_.getFermionFormat().index(0,0,(s+1)%N5_)))+is,
+			(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_->getFermionFormat().index(0,0,(s+1)%N5_)))+is,
 			ns);
       BGWilsonLA_Proj_M(lmf_ptr+is,
-			(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_.getFermionFormat().index(0,0,(s+N5_-1)%N5_)))+is,
+			(Spinor*)(const_cast<Field&>(v5).getaddr(Dw_->getFermionFormat().index(0,0,(s+N5_-1)%N5_)))+is,
 			ns);
     
       if(s == N5_-1){
@@ -657,7 +657,7 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const void* f5) const
   BGQThread_Barrier(0, nid);
   
   BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)(const_cast<Field *>(u_)->getaddr(0)),(void*)f5,
-			   Dw_.getKappa(),BGWILSON_DIRAC);
+			   Dw_->getKappa(),BGWILSON_DIRAC);
 
 }
 
@@ -688,7 +688,7 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp_allocated(Field& w5,
   Spinor* lmf_ptr  = (Spinor*)lmf_ptr_void;
 
   // 5d vectors
-  Spinor* temp_ptr_base = (Spinor*)BGQThread_Malloc(sizeof(double)*fsize_, nid);
+  Spinor* temp_ptr_base = (Spinor*)BGQThread_Malloc(sizeof(double)*f5size_, nid);
 
   Spinor* f5_ptr        = (Spinor*)f5;
   Spinor* w5_ptr_base   = (Spinor*)w5.getaddr(0);
@@ -699,7 +699,7 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp_allocated(Field& w5,
 
   int spin_idx;
   double cs, bs;
-  double minus_kappa = -Dw_.getKappa();
+  double minus_kappa = -Dw_->getKappa();
   double* pU = const_cast<Field *>(u_)->getaddr(0);
 
   //////////////////////////////////// 5d hopping term
@@ -908,8 +908,8 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
   int is, ie, ns;
 
   register int Nvol = CommonPrms::instance()->Nvol()/2;
-  Field temp(fsize_), temp2(fsize_), s(fsize_); //eventually eliminated
-  Field p(fsize_);
+  Field temp(f5size_), temp2(f5size_), s(f5size_); //eventually eliminated
+  Field p(f5size_);
   int v_size = Nvol*N5_; // << assumes 24 elements
 
   double pap, rrp, cr, rr, snorm;
@@ -944,9 +944,9 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
     ns = ie - is;
 
     BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
-			 Dw_.getKappa(),BGWILSON_DIRAC);
+			 Dw_->getKappa(),BGWILSON_DIRAC);
     BGWilson_DW_Mult_hop_dag(temp2_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-			     Dw_.getKappa(),BGWILSON_DIRAC);
+			     Dw_->getKappa(),BGWILSON_DIRAC);
 
     for(s5=0;s5<N5_;s5++)
       BGWilsonLA_Sub(r_ptr+s5*Nvol+is, temp2_ptr+s5*Nvol+is, ns);
@@ -980,7 +980,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
     snorm = sqrt(snorm);
     snorm = 1.0/snorm;
 
-#if VERBOSITY>1
+#if VERBOSITY>=SOLV_ITER_VERB_LEVEL
 #pragma omp single
     {
       CCIO::cout<<" Snorm = "<< snorm << std::endl;
@@ -991,9 +991,9 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
     for(int it = 0; it < MaxIter; ++it){
       double tPAP;
       BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),p_ptr,
-			   Dw_.getKappa(),BGWILSON_DIRAC);
+			   Dw_->getKappa(),BGWILSON_DIRAC);
       BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-			       Dw_.getKappa(),BGWILSON_DIRAC);
+			       Dw_->getKappa(),BGWILSON_DIRAC);
 
       ///////////////////////////////////////////////////
       tSum = 0.0;
@@ -1031,7 +1031,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
       for(s5=0;s5<N5_;s5++)
 	BGWilsonLA_MultScalar_Add(p_ptr+s5*Nvol+is,r_ptr+s5*Nvol+is,rr/rrp,ns);
 
-#if VERBOSITY>1
+#if VERBOSITY>=SOLV_ITER_VERB_LEVEL
       if (tid==0) {
 	CCIO::cout<< std::setw(5)<< "["<<it<<"] "
 		  << std::setw(20) << rr*snorm<<"\n";
@@ -1054,9 +1054,9 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
     BGQThread_Barrier(0,nid);//after loop
 
     BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
-			 Dw_.getKappa(),BGWILSON_DIRAC);
+			 Dw_->getKappa(),BGWILSON_DIRAC);
     BGWilson_DW_Mult_hop_dag(p_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-			     Dw_.getKappa(),BGWILSON_DIRAC);
+			     Dw_->getKappa(),BGWILSON_DIRAC);
 
     //  p -= b;
     for(s5=0;s5<N5_;s5++)
@@ -1155,7 +1155,7 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
   double alphap, betap, rrp;
   int Nshift2 = Nshift;
 
-  Field temp(fsize_);
+  Field temp(f5size_);
 
   //////////////////
   BGQThread_Init(); //initializing BGQ fast threading routines
@@ -1216,9 +1216,9 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
       x_ptr = (Spinor*)(x[0].getaddr(0));
         
       BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),p_ptr,
-			   Dw_.getKappa(),BGWILSON_DIRAC);
+			   Dw_->getKappa(),BGWILSON_DIRAC);
       BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-			       Dw_.getKappa(),BGWILSON_DIRAC);
+			       Dw_->getKappa(),BGWILSON_DIRAC);
       
       //s = opr_->mult(p[0]);
       for(s5=0;s5<N5_;s5++)
@@ -1361,9 +1361,9 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
     for(int i=0; i<Nshift; ++i){
       x_ptr  = (Spinor*)x[i].getaddr(0);
       BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),x_ptr,
-			   Dw_.getKappa(),BGWILSON_DIRAC);
+			   Dw_->getKappa(),BGWILSON_DIRAC);
       BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
-			       Dw_.getKappa(),BGWILSON_DIRAC);
+			       Dw_->getKappa(),BGWILSON_DIRAC);
       //s = opr_->mult(x[i]);
       //s += sigma[i]*x[i];
       for(s5=0;s5<N5_;s5++)
@@ -1425,7 +1425,7 @@ md_force_p_BGQ(Field& fce,const Field& phi,const Field& psi)const{
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
   Field lpf(f4size_), lmf(f4size_);
-  Field w(fsize_);
+  Field w(f5size_);
   Spinor* lpf_ptr = (Spinor*)lpf.getaddr(0);
   Spinor* lmf_ptr = (Spinor*)lmf.getaddr(0);
   Spinor* w_ptr = (Spinor*)w.getaddr(0);
@@ -1451,7 +1451,7 @@ md_force_p_BGQ(Field& fce,const Field& phi,const Field& psi)const{
       BGWilsonLA_MultScalar(w_ptr+is, phi_ptr+s*Nvol+is, Params.bs_[s],ns);
       BGWilsonLA_MultAddScalar(w_ptr+is, lpf_ptr+is, Params.cs_[s],ns);
     }
-    Dw_.md_force_p(fce,w,get4d(psi,s));
+    Dw_->md_force_p(fce,w,get4d(psi,s));
   }
 } 
 /*! @brief contribution to the MD-force from backward difference */
@@ -1465,7 +1465,7 @@ md_force_m_BGQ(Field& fce,const Field& phi,const Field& psi)const{
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
   Field lpf(f4size_), lmf(f4size_);
-  Field w(fsize_);
+  Field w(f5size_);
   Spinor* lpf_ptr = (Spinor*)lpf.getaddr(0);
   Spinor* lmf_ptr = (Spinor*)lmf.getaddr(0);
   Spinor* w_ptr   = (Spinor*)w.getaddr(0);
@@ -1491,7 +1491,7 @@ md_force_m_BGQ(Field& fce,const Field& phi,const Field& psi)const{
       BGWilsonLA_MultScalar(w_ptr+is, phi_ptr+s*Nvol+is, Params.bs_[s],ns);
       BGWilsonLA_MultAddScalar(w_ptr+is, lpf_ptr+is, Params.cs_[s],ns);
     }
-    Dw_.md_force_m(fce,w,get4d(psi,s));
+    Dw_->md_force_m(fce,w,get4d(psi,s));
   }
 }  
 

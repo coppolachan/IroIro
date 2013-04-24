@@ -1,8 +1,9 @@
 /*!
- * @file solver_CG.h
+ * @file solver_CG.hpp
  *
  * @brief Declaration of Solver_CG class
  *
+ * Time-stamp: <2013-04-22 17:40:40 neo>
  */
 #ifndef SOLVER_CG_INCLUDED
 #define SOLVER_CG_INCLUDED

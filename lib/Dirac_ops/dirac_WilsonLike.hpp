@@ -1,6 +1,6 @@
 /*! @file dirac_WilsonLike.hpp
  *  @brief defines the abstract base classes for DiracWilsonLike 
- * Time-stamp: <2013-04-23 17:27:44 noaki>
+ * Time-stamp: <2013-04-24 10:36:07 noaki>
  */
 #ifndef DIRAC_WILSONLIKE_INCLUDED
 #define DIRAC_WILSONLIKE_INCLUDED
@@ -55,6 +55,14 @@ public:
   virtual const Field gamma5(const Field&) const = 0;
   virtual void md_force_p(Field&,const Field&,const Field&)const{}
   virtual void md_force_m(Field&,const Field&,const Field&)const{}
+
+#ifdef IBM_BGQ_WILSON
+  virtual void mult_ptr(double*,double* const)const{}
+  virtual void mult_dag_ptr(double*,double* const)const{}  
+  virtual void mult_ptr_EO(double*,double* const)const{}
+  virtual void mult_dag_ptr_EO(double*,double* const)const{}  
+#endif
+
 }; 
 
 /*!

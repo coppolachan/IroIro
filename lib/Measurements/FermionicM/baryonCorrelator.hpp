@@ -10,7 +10,7 @@
 #include "include/commonPrms.h"
 #include "Tools/colorEpsilon.hpp"
 #include "Tools/gammaMatrices.hpp"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 #include "Main/Geometry/siteIndex.hpp"
 #include <vector>
 #include <valarray>

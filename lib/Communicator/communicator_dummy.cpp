@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------
 // communicator_dummy.cpp
 //-----------------------------------------------------------------------
-#include "communicator.h"
+#include "communicator.hpp"
 #include "comm_io.hpp"
 #include <iostream>
 

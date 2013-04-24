@@ -1,10 +1,12 @@
 /*!
   @file field.h
   @brief Definition of a general class storing a field
+
+  Time-stamp: <2013-04-23 17:49:10 neo>
 */
 #ifndef FIELD_INCLUDED
 #define FIELD_INCLUDED
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 #include <valarray>
 #include <vector>
 #include <iostream>
@@ -177,6 +179,8 @@ public:
   #endif
 
 };
+
+typedef std::vector<Field> vector_Field;
 
 #include "Fields/field.inl"  //definition of inlined functions
 #endif

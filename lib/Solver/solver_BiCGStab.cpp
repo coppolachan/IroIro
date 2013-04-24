@@ -10,7 +10,7 @@
 
 #include "solver_BiCGStab.hpp"
 #include "Fields/field_expressions.hpp"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 #include "include/messages_macros.hpp"
 
 using namespace std;

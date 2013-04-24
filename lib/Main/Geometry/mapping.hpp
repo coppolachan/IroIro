@@ -6,7 +6,7 @@
 #define MAPPING_H_
 
 #include "include/common_fields.hpp"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 #include "siteMap.hpp"
 #include <vector>
 #include <valarray>

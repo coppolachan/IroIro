@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------
 #include "siteIndex.hpp"
 #include "siteIndex_EvenOdd.hpp"
-#include "Communicator/communicator.h"
+#include "Communicator/communicator.hpp"
 #include "Communicator/comm_io.hpp"
 
 using namespace std;
