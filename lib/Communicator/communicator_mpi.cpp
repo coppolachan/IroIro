@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes
  *
- * Time-stamp: <2013-04-24 10:51:19 neo>
+ * Time-stamp: <2013-04-24 11:33:04 neo>
  *
  */
 
@@ -106,7 +106,7 @@ void Communicator::allgather(double *bin,double *data,int size)const{
 
 void Communicator::allgather(valarray<double>& bin, 
 			     const valarray<double>& data)const{
-  allgether(&bin[0],&(const_cast<valarray<double>& >(data))[0],bin.size());
+  allgather(&bin[0],&(const_cast<valarray<double>& >(data))[0],bin.size());
 }
 
 void Communicator::
@@ -257,17 +257,6 @@ int Communicator::reduce_min(double& val,int& idx,int size)const{
   return vo.index/size;
 }
 
-int Communicator::pprintf(const char* format ...)const{
-  va_list ap;
-  int ret = 0;
-
-  va_start(ap,format);
-  if(my_rank_==0)
-    ret = vfprintf( stdout, format, ap );
-  va_end(ap);
-
-  return ret;
-}
 
 
 
