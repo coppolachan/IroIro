@@ -1,6 +1,6 @@
 /*! @file dirac_wilson_EvenOdd.hpp
   @brief Definition of Even Odd wilson operator
-  Time-stamp: <2013-04-22 16:58:49 noaki>
+  Time-stamp: <2013-04-23 15:06:19 noaki>
 */
 //---------------------------------------------------------
 #ifndef DIRAC_WILSON_EVENODD_INCLUDED
@@ -55,6 +55,9 @@ public:
   const Field mult_ee(const Field& f)const {return f;}
   const Field mult_oo_inv(const Field& f)const {return f;}
   const Field mult_ee_inv(const Field& f)const {return f;}
+
+  const DiracWilsonLike* getDeo()const{return &Deo_;}
+  const DiracWilsonLike* getDoe()const{return &Doe_;}
 
   double getKappa()const { return Deo_.getKappa();}
 };

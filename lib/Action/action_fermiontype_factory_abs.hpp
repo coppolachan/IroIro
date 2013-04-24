@@ -3,13 +3,13 @@
  *
  * @brief Declaration of the abstract fermion action factory
  *
- * Time-stamp: <2013-04-17 14:34:40 neo>
+ * Time-stamp: <2013-04-22 16:38:40 neo>
  */
 
 #ifndef ACTION_FERMION_FACT_ABS_
 #define ACTION_FERMION_FACT_ABS_
 
-#include "action_Factory.hpp"
+#include "action_factory.hpp"
 
 /*
  * @brief Abstract class for fermionic action creation

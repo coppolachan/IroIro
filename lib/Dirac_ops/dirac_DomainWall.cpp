@@ -1,7 +1,7 @@
 /*!--------------------------------------------------------------------------
  * @file dirac_DomainWall.cpp
  * @brief Definition of class methods for Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-04-22 16:44:14 noaki>
+ Time-stamp: <2013-04-23 17:55:57 noaki>
  *-------------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
@@ -93,7 +93,7 @@ void Dirac_optimalDomainWall_params::set_arrays(){
 const Field Dirac_optimalDomainWall::mult_hop5(const Field& f5) const{
   using namespace FieldExpression;
 
-  Field w5(fsize_), v(f4size_);
+  Field w5(f5size_), v(f4size_);
   double* v_ptr   = v.getaddr(0);
 
   for(int s=0; s<N5_; ++s) {
@@ -126,7 +126,7 @@ const Field Dirac_optimalDomainWall::mult_hop5(const Field& f5) const{
 const Field Dirac_optimalDomainWall::mult_hop5_dag(const Field& f5) const{
 #ifdef IBM_BGQ_WILSON
 
-  Field w5(fsize_), v(f4size_);
+  Field w5(f5size_), v(f4size_);
   double* v_ptr   = v.getaddr(0);
 
   for(int s=0; s<N5_; ++s){
@@ -153,8 +153,8 @@ const Field Dirac_optimalDomainWall::mult_hop5_dag(const Field& f5) const{
   BGWilsonLA_MultAddScalar(w5_ptr, v_ptr,mq_*Params.dm_[0],Nvol_);
 
 #else
-  assert(f5.size()==fsize_);
-  Field w5(fsize_), v(f4size_);
+  assert(f5.size()==f5size_);
+  Field w5(f5size_), v(f4size_);
 
   for(int s=0; s<N5_; ++s){
     v = get4d(f5,s);
@@ -412,7 +412,7 @@ void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
   
   
 #ifdef IBM_BGQ_WILSON
-  Field v5(fsize_);
+  Field v5(f5size_);
   Field f4(f4size_), w(f4size_);
   Field lpf(f4size_), lmf(f4size_);
   
@@ -443,7 +443,7 @@ void Dirac_optimalDomainWall::mult_dag_full(Field& w5,const Field& f5) const{
     else          BGWilsonLA_AXPBYPZ(w5_ptr, lpf.getaddr(0),lmf.getaddr(0),w5_ptr,1.0,1.0,Nvol_);
   }
 #else
-  Field v5(fsize_);
+  Field v5(f5size_);
   Field lpf(f4size_),lmf(f4size_),w(f4size_);
 
   int spin_idx;
@@ -540,7 +540,7 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5, const Field& f5) const{
 
 void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
 #ifdef IBM_BGQ_WILSON
-  Field v5(fsize_),lpf(f4size_), lmf(f4size_),w(f4size_);
+  Field v5(f5size_),lpf(f4size_), lmf(f4size_),w(f4size_);
   int spin_idx;
   double cs, bs;
   double* w_ptr = w.getaddr(0);
@@ -574,7 +574,7 @@ void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
   }
 #else
   assert(w5.size()==f5.size());
-  Field v5(fsize_),lpf(f4size_),lmf(f4size_);
+  Field v5(f5size_),lpf(f4size_),lmf(f4size_);
   int spin_idx;
   double cs, bs;
 
@@ -606,13 +606,13 @@ void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::mult(const Field& f5) const{
-  Field w5(fsize_);
+  Field w5(f5size_);
   (this->*mult_core)(w5,f5);
   return w5;
 }
 
 const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
-  Field w5(fsize_);
+  Field w5(f5size_);
   (this->*mult_dag_core)(w5,f5);
   return w5;
 }
@@ -620,7 +620,7 @@ const Field Dirac_optimalDomainWall::mult_dag(const Field& f5) const{
 /////// related useful functions  //////
 const Field Dirac_optimalDomainWall::Dminus(const Field& f5) const{
   //1-c_s * D_w(-M)
-  Field w5(fsize_);
+  Field w5(f5size_);
   w5 = f5;
   for(int s=0; s<N5_; ++s) {
     Field temp =  Dw_->mult(get4d(f5,s));
@@ -631,7 +631,7 @@ const Field Dirac_optimalDomainWall::Dminus(const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::gamma5(const Field& f5) const{
-  Field w5(fsize_); 
+  Field w5(f5size_); 
   
   for(int s=0; s<N5_; ++s){
     for(int site=0; site<Nvol_; ++site){
@@ -643,13 +643,13 @@ const Field Dirac_optimalDomainWall::gamma5(const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::R5(const Field& f5) const{
-  Field w5(fsize_); 
+  Field w5(f5size_); 
   for(int s=0; s<N5_; ++s) set5d(w5,get4d(f5,s),N5_-s-1);
   return w5; 
 }
 
 const Field Dirac_optimalDomainWall::R5g5(const Field& f5) const{
-  Field w5(fsize_);
+  Field w5(f5size_);
 
   for(int s=0; s<N5_; ++s){
     for(int site=0; site<Nvol_; ++site){
@@ -675,7 +675,7 @@ const Field Dirac_optimalDomainWall::Bproj(const Field& f5) const{
 }
 
 const Field Dirac_optimalDomainWall::Bproj_dag(const Field& f4) const{
-  Field f5(fsize_);
+  Field f5(f5size_);
   for(int site=0; site<Nvol_; ++site){
     projPcore(f5.getaddr(ff_.index(0,site,N5_-1)),
 	      const_cast<Field&>(f4).getaddr(ff_.index(0,site)));
@@ -685,18 +685,21 @@ const Field Dirac_optimalDomainWall::Bproj_dag(const Field& f4) const{
   return f5;
 }
 
-void Dirac_optimalDomainWall::proj_p(Field& w,const Field& f5,int s){
+void Dirac_optimalDomainWall::proj_p(Field& w,const Field& f5,int s)const{
   for(int site=0; site<Nvol_; ++site)
     projPcore(w.getaddr(ff_.index(0,site)),
 	      const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
 }
 
-void Dirac_optimalDomainWall::proj_m(Field& w,const Field& f5,int s){
+void Dirac_optimalDomainWall::proj_m(Field& w,const Field& f5,int s)const{
   for(int site=0; site<Nvol_; ++site)
     projMcore(w.getaddr(ff_.index(0,site)),
 	      const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
 }
 
+void Dirac_optimalDomainWall::gamma5_4d(Field& w,const Field& f)const{
+  w = Dw_->gamma5(f);
+}
 
 //////////////////////////////////////////////////////////////////
 /*! @brief contribution to the MD-force from forward difference */
@@ -746,7 +749,7 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
 const Field Dirac_optimalDomainWall::
 md_force(const Field& phi,const Field& psi) const{
 
-  Field fce(gsize_);
+  Field fce(Dw_->gsize());
   md_force_p(fce,phi,psi);
   md_force_m(fce,phi,psi);
   fce *= -0.5;

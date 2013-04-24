@@ -16,7 +16,7 @@ const Field Fopr_signH_Zolotarev::mult(const Field& f) const{
 
   //multi-shift solver
   std::vector<Field> xq(Np_);
-  for(int i=0; i<Np_; ++i) xq[i].resize(fsize_);
+  for(int i=0; i<Np_; ++i) xq[i].resize(D_->fsize());
 
   int Nconv;
   double diff;
@@ -25,7 +25,7 @@ const Field Fopr_signH_Zolotarev::mult(const Field& f) const{
 
   msslv_->solve(xq,f2,ed_->sigma,diff,Nconv);
   
-  Field v(fsize_);
+  Field v(D_->fsize());
   for(int i=0; i<Np_; ++i) v += ed_->bl[i]*xq[i];
 
   double lmd_min = ed_->lmd[0];
@@ -94,12 +94,12 @@ calc_force(Field& fce,const Field& eta,const Field& zeta) const{
   double lmd_min = ed_->lmd[0];
 
   std::vector<Field> etq(Np_);
-  for(int i=0; i<Np_; ++i) etq[i].resize(fsize_);
+  for(int i=0; i<Np_; ++i) etq[i].resize(D_->fsize());
   msslv_->solve(etq,eta,ed_->sigma,diff,Nconv);
   for(int i=0; i<Np_; ++i) etq[i]*= lmd_min*lmd_min;
 
   std::vector<Field> ztq(Np_);
-  for(int i=0; i<Np_; ++i) ztq[i].resize(fsize_);
+  for(int i=0; i<Np_; ++i) ztq[i].resize(D_->fsize());
   msslv_->solve(ztq,zeta,ed_->sigma,diff,Nconv);
   for(int i=0; i<Np_; ++i) ztq[i]*= lmd_min*lmd_min;
 

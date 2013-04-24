@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-04-23 11:58:29 noaki>
+ * Time-stamp: <2013-04-23 16:39:57 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 
@@ -34,6 +34,22 @@ namespace DiracOperators {
 	return new DiracDWF4DfullFactory(node);
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
 	return new DiracDWF4DeoFactory(node);
+      std::cerr<<"No Dirac Operator available with name ["
+	       << Dirac_name << "]. Request by <" << node.name() << ">\n";
+      abort();
+    }else{
+      std::cout<<"Mandatory node is missing in input file (Dirac Object)\n";
+      abort();
+    }
+  }
+
+  DiracWilsonLikeEvenOddOperatorFactory* 
+  createDiracWilsonLikeEvenOddOperatorFactory(const XML::node node){
+    if (node !=NULL) {
+      const char* Dirac_name = node.attribute("name").value();
+      if (!strcmp(Dirac_name, "DiracWilson")) 
+	return new DiracWilsonEvenOddFactory(node);
+      
       std::cerr<<"No Dirac Operator available with name ["
 	       << Dirac_name << "]. Request by <" << node.name() << ">\n";
       abort();

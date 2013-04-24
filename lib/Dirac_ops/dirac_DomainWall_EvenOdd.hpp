@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_EvenOdd.hpp
  * @brief Declaration of class Dirac_optimalDomainWall_EvenOdd (5d operator)
- Time-stamp: <2013-04-23 11:38:58 noaki>
+ Time-stamp: <2013-04-23 16:09:19 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
@@ -17,7 +17,9 @@ static  double multdag_timer;
 /*!
  * @brief Defines the 5d Domain Wall operator with even/odd site indexing
  */
+
 class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
+
   const Dirac_optimalDomainWall Deo_;
   const Dirac_optimalDomainWall Doe_;
 
@@ -26,14 +28,14 @@ class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
   
   Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd&);
   /*!< simple copy is prohibited */
+
 public:
   Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,
-				  const DiracWilsonLike* Deo,
-				  const DiracWilsonLike* Doe,
+				  DiracWilsonLike_EvenOdd* Kernel,
 				  const Field* u,
 				  DWFType Type=Regular)
-    :Deo_(DWF_node,Deo,u,DomainWallFermions::EvenOdd_tag(),Type),
-     Doe_(DWF_node,Doe,u,DomainWallFermions::EvenOdd_tag(),Type){
+    :Deo_(DWF_node,Kernel->getDeo(),u,DomainWallFermions::EvenOdd_tag(),Type),
+     Doe_(DWF_node,Kernel->getDoe(),u,DomainWallFermions::EvenOdd_tag(),Type){
     //
 #if VERBOSITY>4
     CCIO::cout<<"Dirac_optimalDomainWall_Evenodd created"<<std::endl;
@@ -47,11 +49,11 @@ public:
   
   Dirac_optimalDomainWall_EvenOdd(double b,double c,double M0,double mq,
 				  const std::vector<double>& omega,
-				  const DiracWilsonLike* Deo,
-				  const DiracWilsonLike* Doe,
+				  const DiracWilsonLike* Keo,
+				  const DiracWilsonLike* Koe,
 				  const Field* u)
-    :Deo_(b,c,M0,mq,omega,Deo,u,DomainWallFermions::EvenOdd_tag()),
-     Doe_(b,c,M0,mq,omega,Doe,u,DomainWallFermions::EvenOdd_tag()){}
+    :Deo_(b,c,M0,mq,omega,Keo,u,DomainWallFermions::EvenOdd_tag()),
+     Doe_(b,c,M0,mq,omega,Koe,u,DomainWallFermions::EvenOdd_tag()){}
   
   ~Dirac_optimalDomainWall_EvenOdd(){
     CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";
@@ -62,7 +64,9 @@ public:
   size_t fsize()const{ return Deo_.fsize();}
   size_t gsize()const{ return Deo_.gsize();}
 
-
+  const DiracWilsonLike* getDeo()const{ return &Deo_;}
+  const DiracWilsonLike* getDoe()const{ return &Doe_;}
+  
   double getMass() const{return Deo_.getMass();}
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;

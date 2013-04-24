@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-22 11:56:02 noaki>
+# Time-stamp: <2013-04-23 18:12:14 noaki>
 
 ###########################################
 # Initial definitions 
@@ -95,7 +95,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Action/action_Nf2_DomainWall.cpp	\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
-	        dirac_Operator_FactoryCreator.cpp       \
+		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\
 		Dirac_ops/dirac_WilsonLike.cpp		\
@@ -103,7 +103,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp	\
-		Dirac_ops/staggered_Utils.cpp	        \
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
@@ -177,8 +176,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
+		Tools/ErrorsHandling/allocation_errors.cpp\
+		Tools/ErrorsHandling/base_errors.cpp	\
 		Tools/RandomNumGen/dcmt_wrapper.cpp	\
-		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
@@ -229,7 +229,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Action/action_fermiontype_factory_abs.hpp	\
 			Action/action_fermiontype_factory.hpp		\
 			Action/action_fermiontype_factory_creator.hpp	\
-			Action/action_Factory.hpp			\
+			Action/action_factory.hpp			\
 			Action/action_Nf2.hpp				\
 			Action/action_Nf2_ratio.hpp			\
 			Action/action_Nf.hpp				\
@@ -272,7 +272,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Main/Geometry/shiftField.hpp		\
 			Main/gaugeConf.hpp			\
 			Main/gaugeGlobal.hpp			\
-		        dirac_Operator_FactoryCreator.cpp       \
+		        Dirac_ops/dirac_Operator_FactoryCreator.hpp  \
 			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac.hpp			\
@@ -281,7 +281,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
-			Dirac_ops/staggered_Utils.hpp	        \
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
@@ -345,7 +344,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
 			Tools/RandomNumGen/dcmt_wrapper.hpp	\
-			Tools/RandomNumGen/randNum_MT19937.h	\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	

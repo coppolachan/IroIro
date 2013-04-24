@@ -1,10 +1,11 @@
 /*! @file  eoUtils.hpp
  *  @brief utilities related to even/odd preconditioning
+ Time-stamp: <2013-04-23 15:08:23 noaki>
  */
 #ifndef EOUTILS_INCLUDED
 #define EOUTILS_INCLUDED
 
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "Solver/solver.hpp"
 #include "Main/Geometry/siteIndex_EvenOdd.hpp"
 #include "include/format_F.h"

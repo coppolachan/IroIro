@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.cpp
  * @brief Declaration of Dirac_optimalDomainWall_4D_fullSolv class 
- Time-stamp: <2013-04-23 10:59:31 noaki>
+ Time-stamp: <2013-04-23 17:54:12 noaki>
  */
 #include "dirac_DomainWall_4D_fullSolv.hpp"
 #include "Tools/randNum_MP.h"
@@ -66,9 +66,7 @@ mult_dag_inv(const Field& f)const{
 }
 
 const Field Dirac_optimalDomainWall_4D_fullSolv::gamma5(const Field& f)const{ 
-  Field w(ff_.size());
-  for(int site=0; site<Nvol_; ++site)
-    gamma5core(w.getaddr(ff_.index(0,site)),
-	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
+  Field w(Dodw_->f4size());
+  Dodw_->gamma5_4d(w,f);
   return w;
 }

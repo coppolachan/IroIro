@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-04-23 10:56:15 noaki>
+ Time-stamp: <2013-04-23 17:48:10 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_INCLUDED
@@ -137,8 +137,8 @@ private:
   void(Dirac_optimalDomainWall::*mult_core)(Field&,const Field&)const;
   void(Dirac_optimalDomainWall::*mult_dag_core)(Field&,const Field&)const;
 
-  void proj_p(Field&,const Field&,int s);
-  void proj_m(Field&,const Field&,int s);
+  void proj_p(Field&,const Field&,int s)const;
+  void proj_m(Field&,const Field&,int s)const;
 
 public:
   /*! @brief constructors to create an instance with normal indexing */
@@ -258,6 +258,7 @@ public:
   const Field R5(const Field&)const;
   const Field R5g5(const Field&)const;
 
+  void gamma5_4d(Field&,const Field&)const;
   void md_force_p(Field&,const Field&,const Field&)const;
   void md_force_m(Field&,const Field&,const Field&)const;
   const Field md_force(const Field& eta,const Field& zeta)const;

@@ -65,11 +65,15 @@ class RandNum_DCMT_Creator : public RandomNumberCreator{
   bool fromfile_;
 
   RandNum_DCMT* createRNG(){
-    return new RandNum_DCMT(generatorSeed_,
-			    seed_,
-			    Communicator::instance()->id()); 
+    if(fromfile_) return new RandNum_DCMT(filename_);
+    else          return new RandNum_DCMT(generatorSeed_,
+					  seed_,
+					  Communicator::instance()->id()); 
   }
  public:
+  explicit RandNum_DCMT_Creator(std::string filename)
+    :filename_(filename),fromfile_(true){}
+  
   RandNum_DCMT_Creator(XML::node node){
     if(node.child("seedFile")!= NULL){
       fromfile_= true;

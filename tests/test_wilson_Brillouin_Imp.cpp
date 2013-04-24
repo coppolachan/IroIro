@@ -1,10 +1,11 @@
 /*!
  * @file test_wilson_Brillouin.cpp
  * @brief Tests for the Dirac_Wilson_Brillouin class
+ Time-stamp: <2013-04-23 21:21:13 noaki>
  */
 #include "test_wilson_Brillouin_Imp.hpp"
 #include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
-#include "Dirac_ops/dirac_wilson_Brillouin_Imp.hpp"
+#include "Dirac_ops/dirac_wilson_Brillouin.hpp"
 #include "include/numerical_const.hpp"
 #include <stdio.h>
 #include <time.h>
@@ -16,11 +17,11 @@ using namespace std;
 using namespace Format;
 
 int Test_Wilson_Brillouin_Imp::run(){
-
-  Dirac_Wilson_Brillouin_Imp D(0.0,&(conf_.data));
+  int Nvol = CommonPrms::instance()->Nvol();
+  Dirac_Wilson_Brillouin D(0.0,&(conf_.data),Improved);
   Field f(D.fsize());
   fstream file; 
-  Format::Format_F ff(D.Nvol());
+  Format::Format_F ff(Nvol);
   const int L = CommonPrms::instance()->Lx();
   double sum = 0.0;
   
@@ -32,7 +33,7 @@ int Test_Wilson_Brillouin_Imp::run(){
 
   //check
   file.open("coefficient.d",ios::out);
-  for(int site=0;site<D.Nvol();++site){
+  for(int site=0;site<Nvol;++site){
     int x  = SiteIndex::instance()->c_x(site);
     int y  = SiteIndex::instance()->c_y(site);
     int z  = SiteIndex::instance()->c_z(site);
@@ -61,7 +62,7 @@ int Test_Wilson_Brillouin_Imp::run(){
   double R[V];
 
   //write parameters
-  cout<<"Volume = "<<D.Nvol()<<endl;
+  cout<<"Volume = "<<Nvol<<endl;
   cout<<"P_Vol = "<<P_Vol<<endl;
   cout<<"L = "<<L<<endl;
 
@@ -78,7 +79,7 @@ int Test_Wilson_Brillouin_Imp::run(){
 	  //pt = it*Stp*2.0*
 	  pz = pt = 0.0;
 
-	  for(int site=0;site<D.Nvol();++site){
+	  for(int site=0;site<Nvol;++site){
 	    int x  = SiteIndex::instance()->c_x(site);
 	    int y  = SiteIndex::instance()->c_y(site);
 	    int z  = SiteIndex::instance()->c_z(site);

@@ -2,7 +2,7 @@
   @file action_gauge_rect.cpp
   @brief Definition of the ActionGaugeRect class
 
-  Time-stamp: <2013-04-16 15:53:55 neo>
+  Time-stamp: <2013-04-22 16:53:36 neo>
 */
 
 #include "action_gauge_rect.hpp"
@@ -86,7 +86,7 @@ double ActionGaugeRect::calc_H(){
   Hgauge *= Params.beta;
   
   _Message(ACTION_VERB_LEVEL, "    [ActionGaugeRect] H = "<<Hgauge<<"\n");
-  _Message(1,"    -- Plaquette = "
+  _Message(BASE_VERB_LEVEL,   "    [ActionGaugeRect] Plaquette = "
 	   << plaq/(Nvol_*NP*NDIM_*(NDIM_-1.0)/2.0) << "\n");
   return Hgauge;
 }

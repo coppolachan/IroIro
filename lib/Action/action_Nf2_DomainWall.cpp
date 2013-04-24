@@ -1,9 +1,10 @@
 /*! 
- * @file action_Nf2_DomainWall.cpp
- * @brief Definition of Action_Nf2_DomainWall class
+  @file action_Nf2_DomainWall.cpp
+  @brief Definition of Action_Nf2_DomainWall class
+  
+  Time-stamp: <2013-04-22 16:59:42 neo>
  */
 #include "action_Nf2_DomainWall.hpp"
-#include "include/messages_macros.hpp"
 
 void Action_Nf2_DomainWall::init(const RandNum& rand){
   action_.init(rand);

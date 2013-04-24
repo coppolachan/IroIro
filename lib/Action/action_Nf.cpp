@@ -45,6 +45,7 @@ void Action_Nf::init(const RandNum& rand){
   // Loop on pseudofermions
   for(int i=0; i<Params_.n_pseudof_; ++i){
     // Generates a gaussian distributed vector <xi>   
+
     MPrand::mp_get_gauss(xi,rand);
  
     monitor =  slv_->solve(phi_[i], Field(xi));

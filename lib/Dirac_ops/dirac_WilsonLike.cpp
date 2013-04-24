@@ -1,6 +1,6 @@
 /*! @file dirac_WilsonLike.cpp
  *  @brief implementation of member functions of Dirac_WilsonLike
- Time-stamp: <2013-04-23 10:35:21 noaki>
+ Time-stamp: <2013-04-23 12:48:37 noaki>
  */
 
 #include "dirac_WilsonLike.hpp"
@@ -61,10 +61,10 @@ void DiracWilsonLike::projPcore(double* w,const double* f)const{
 
 void DiracWilsonLike::projMcore(double* w,const double* f)const{
   for(int c=0; c<NC_; ++c){
-    double fup_r = 0.5*(ft[r0(c)] -ft[r2(c)]);
-    double fup_i = 0.5*(ft[i0(c)] -ft[i2(c)]);
-    double fdn_r = 0.5*(ft[r1(c)] -ft[r3(c)]);
-    double fdn_i = 0.5*(ft[i1(c)] -ft[i3(c)]);
+    double fup_r = 0.5*(f[r0(c)] -f[r2(c)]);
+    double fup_i = 0.5*(f[i0(c)] -f[i2(c)]);
+    double fdn_r = 0.5*(f[r1(c)] -f[r3(c)]);
+    double fdn_i = 0.5*(f[i1(c)] -f[i3(c)]);
     w[r0(c)] = fup_r;   w[i0(c)] = fup_i;
     w[r1(c)] = fdn_r;   w[i1(c)] = fdn_i;
     w[r2(c)] =-fup_r;   w[i2(c)] =-fup_i;

@@ -1,7 +1,7 @@
 /*!
  * @file dirac.h
  * @brief Defines the abstract base classs for Dirac operators
- * Time-stamp: <2013-04-20 20:58:13 noaki>
+ * Time-stamp: <2013-04-23 17:35:11 noaki>
  */
 #ifndef DIRAC_H_
 #define DIRAC_H_
@@ -34,7 +34,7 @@ public:
   virtual const Field right_dag_prec(const Field&)const = 0;
   ////////////////////////////////////////////
 
-  virtual const Field md_force(const Field& eta,const Field& zeta)const = 0;
+  virtual const Field md_force(const Field& eta,const Field& zeta)const{}
   virtual void update_internal_state() = 0;
 };
 

@@ -3,10 +3,7 @@
 //--------------------------------------------------------------------
 #include "dirac_overlap_Zolotarev.hpp"
 #include "Fields/field_expressions.hpp"
-#include "Main/Geometry/siteIndex.hpp"
 using namespace std;
-
-void Dirac_overlap_Zolotarev::
 
 const Field Dirac_overlap_Zolotarev::mult(const Field& f) const{
   using namespace FieldExpression;
@@ -33,5 +30,3 @@ md_force(const Field& eta,const Field& zeta) const{
   Field fce(Fopr_signH->gsize());
   Fopr_signH->calc_force(fce,eta,zeta);
 }
-
-

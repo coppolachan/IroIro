@@ -3,7 +3,7 @@
 
   @brief Definition of createFermionActionFactory function
 
-  Time-stamp: <2013-04-17 13:57:58 neo>
+  Time-stamp: <2013-04-22 16:50:05 neo>
 */
 
 #include "action_fermiontype_factory.hpp"
@@ -18,8 +18,7 @@ namespace FermionAction {
       const char* Action_name = node.attribute("name").value();
 	
       if (!strcmp(Action_name, "")) {
-	NoActionErr << "No name provided for Action. Check your XML input file";
-	Errors::XMLerr(NoActionErr);
+	Errors::XMLerr("No name provided for Action. Check your XML input file");
       }
 
       //////////////////////////////////////////////////////////////////////

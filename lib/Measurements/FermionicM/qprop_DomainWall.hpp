@@ -6,7 +6,7 @@
 #define QPROP_OPTIMALDOMAINWALL_INCLUDED
 
 #include "quark_propagators.hpp"
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "include/commonPrms.h"
 #include "source.hpp"
 

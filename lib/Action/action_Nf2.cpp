@@ -1,7 +1,7 @@
 /*! 
  * @file action_Nf2.cpp
  * @brief Definition of methods of Action_Nf2 class
- Time-stamp: <2013-04-22 08:30:16 noaki>
+ Time-stamp: <2013-04-23 12:40:17 noaki>
  */
 #include "action_Nf2.hpp"
 #include "Tools/randNum_MP.h"
@@ -38,7 +38,9 @@ Field Action_Nf2::DdagD_inv(const Field& src){
 void Action_Nf2::init(const RandNum& rand){
   std::valarray<double> ph(fsize_);
   //BC->apply_bc(*u_);
+
   MPrand::mp_get_gauss(ph,rand);
+
   phi_= D_->mult_dag(Field(ph));
   //BC->apply_bc(*u_);
 }

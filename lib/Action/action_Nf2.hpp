@@ -1,7 +1,7 @@
 /*! 
  * @file action_Nf2.h
  * @brief Declaration of the Action_Nf2 class
- *Time-stamp: <2013-04-22 08:25:01 noaki>
+ *Time-stamp: <2013-04-23 12:41:11 noaki>
  */
 #ifndef ACTION_NF2_INCLUDED
 #define ACTION_NF2_INCLUDED
@@ -22,10 +22,10 @@ private:
   GaugeField* const u_;      /*!< The gauge field */
   DiracWilsonLike* const D_; /*!< Dirac Kernel operator */ 
   const Solver* slv_;        /*!< Linear solver operator */
-  const size_t fsize_;  
-  Field phi_;
-  bool smeared_;
-  SmartConf* smart_conf_;
+  const size_t fsize_;       /*!< Fermion field size */
+  Field phi_;                /*!< Pseudofermion field */
+  bool smeared_;             /*!< Asserts if the action is smeared */
+  SmartConf* smart_conf_;    /*!< Pointer to the Smart Configurations */
   
   BoundaryCond* BC;
 

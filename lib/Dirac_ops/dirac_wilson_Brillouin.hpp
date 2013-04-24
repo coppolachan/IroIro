@@ -1,13 +1,11 @@
 /*! @filename dirac_wilson_Brillouin.hpp
  * @brief declaration of Dirac_Wilson_Brillouin class 
- * Time-stamp: <2013-04-23 11:51:44 noaki>
+ * Time-stamp: <2013-04-23 17:35:48 noaki>
  ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
 
 #include "dirac_WilsonLike.hpp"
-#include "include/format_F.h"
-#include "include/format_G.h"
 #include "include/pugi_interface.h"
 
 #include "Main/Geometry/siteIndex.hpp"
@@ -109,10 +107,6 @@ public:
   //////////////////////////////////////////////////////////////
 
   const Field gamma5(const Field&) const;
-  const Field md_force(const Field& , const Field&)const{}
-  void md_force_p(Field&,const Field&,const Field&)const{}
-  void md_force_m(Field&,const Field&,const Field&)const{}
-
   double getKappa() const {return kbr_;} 
   void update_internal_state(){}
 };

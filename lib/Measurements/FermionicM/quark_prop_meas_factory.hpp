@@ -13,7 +13,7 @@
 #include "qprop.hpp"
 #include "qprop_EvenOdd.hpp"
 #include "qprop_DomainWall.hpp"
-#include "Dirac_ops/dirac_Operator_Factory.hpp"
+#include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
 
 /////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
  @brief Concrete class for creating Quark Propagator Qprop_EvenOdd operator
 */
 class QPropFactory_EvenOdd : public QuarkPropagatorFactory {
-  RaiiFactoryObj<DiracWilsonEvenOddFactory> DiracObj;
+  RaiiFactoryObj<DiracWilsonLikeEvenOddOperatorFactory> DiracObj;
   RaiiFactoryObj<SolverOperatorFactory> SolverObj;
 
   RaiiFactoryObj<DiracWilsonLike_EvenOdd> Kernel;
@@ -60,7 +60,7 @@ public:
   }
 
   QuarkPropagator* getQuarkProp(GaugeField& Field){
-    Kernel.save(DiracObj.get()->getDiracOperatorWL(&(Field.data)));
+    Kernel.save(DiracObj.get()->getDiracOperatorEO(&(Field.data)));
     Solv.save(SolverObj.get()->getSolver(new Fopr_DdagD(Kernel.get())));
     return new Qprop_EvenOdd(Kernel.get(), Solv.get());
   }

@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.hpp 
  *  @brief Declaration of the global functions to generate Dirac_op factories
- * Time-stamp: <2013-04-17 13:45:34 noaki>
+ * Time-stamp: <2013-04-23 16:35:44 noaki>
  */
 #ifndef DIRAC_OPERATOR_FACTORYCREATOR_INCLUDED
 #define DIRAC_OPERATOR_FACTORYCREATOR_INCLUDED
@@ -12,6 +12,9 @@ namespace DiracOperators {
 
   DiracWilsonLikeOperatorFactory* 
   createDiracWilsonLikeOperatorFactory(const XML::node);
+
+  DiracWilsonLikeEvenOddOperatorFactory* 
+  createDiracWilsonLikeEvenOddOperatorFactory(const XML::node);
 
   DiracDWF4dOperatorFactory* 
   createDiracDWF4dOperatorFactory(const XML::node);

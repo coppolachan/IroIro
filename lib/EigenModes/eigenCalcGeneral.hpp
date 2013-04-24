@@ -1,7 +1,7 @@
 /*!@file eigenCalcGeneral.hpp
  * @brief generalizes the eigenmodes calculation of fermion operators
  */
-#include "Dirac_ops/dirac_Operator_Factory.hpp"
+#include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "eigenModesSolver_Factory.hpp"
 #include "eigenSorter_Factory.hpp"
 #include "Communicator/comm_io.hpp"
