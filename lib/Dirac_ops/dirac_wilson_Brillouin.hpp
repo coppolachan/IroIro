@@ -1,6 +1,6 @@
 /*! @filename dirac_wilson_Brillouin.hpp
  * @brief declaration of Dirac_Wilson_Brillouin class 
- * Time-stamp: <2013-04-23 17:35:48 noaki>
+ * Time-stamp: <2013-04-24 16:37:46 noaki>
  ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
@@ -41,7 +41,7 @@ private:
   const Field gamma_z(const Field&)const;
   const Field gamma_t(const Field&)const;
 
-  static const Field (Dirac_Wilson_Brillouin::*gm[])(const Field&)const;
+  static void (Dirac_Wilson_Brillouin::*gm[])(double*, const double*)const;
 
   void(Dirac_Wilson_Brillouin::*mult_core)(Field&,const Field&)const;
   void mult_std(Field&,const Field&)const;
