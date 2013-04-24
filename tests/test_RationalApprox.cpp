@@ -10,9 +10,9 @@
 
 #include "Tools/RationalApprox/rationalapprox.hpp"
 #include "test_RationalApprox.hpp"
-
+#include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "Solver/multiShiftSolver_CG.hpp"
-#include "Solver/rationalSolver.hpp"
+#include "Solver/rationalSolver_CG.hpp"
 #include "include/format_F.h"
 #include "include/fopr.h"
 #include "include/factories.hpp"
