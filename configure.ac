@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-24 16:22:27 neo>
+# Time-stamp: <2013-04-25 11:04:51 neo>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.2], [cossu@post.kek.jp])
@@ -120,7 +120,7 @@ AC_ARG_WITH(dcmt,
 ###################################################################
 # Enabling Even Odd indexing BGQ fast optimizations
 AC_ARG_ENABLE(bgq-fast,
-        AC_HELP_STRING([--enable-bgq-fast], [Enable automatically all optimizations for BGQ. It is equivalent to switching on --enable-evenodd-idx --enable-bgq-improved-smp --enable-improved]),
+        AC_HELP_STRING([--enable-bgq-fast], [Enable automatically all optimizations for BGQ. It is equivalent to switching on --enable-evenodd-idx --enable-bgq-improved-smp --enable-improved -with-dcmt=<your home>/dcmt]),
         [case "${enableval}" in
         yes) even_odd_idx=true
 	     bgq_kernels_smp=true
@@ -171,7 +171,7 @@ ia64 | amd64 | ia32 )
      # list of tested compilers
       use_cpp="g++ icpc"; 
     fi
-    use_cpp_flags="-O3" 
+    use_cpp_flags="-O3 -fopenmp" 
     use_ar_flags="cru"
     ;;
 macppc | macx86 | mac86_64 )
@@ -283,6 +283,15 @@ Info at: http://www.gnu.org/s/gsl/)])
 AC_CHECK_FUNC([gsl_sf_ellint_Kcomp],,
 	[AC_MSG_ERROR(Missing function in GNU Scientific Library)])
 
+AC_CHECK_HEADER(gsl/gsl_sf_ellint.h,,
+	[AC_MSG_ERROR(GNU Scientific Library headers not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gnu.org/s/gsl/)])
+
+AC_CHECK_HEADER(gsl/gsl_sf_elljac.h,,
+	[AC_MSG_ERROR(GNU Scientific Library headers not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.gnu.org/s/gsl/)])
 
 AC_CHECK_LIB([gmp],[__gmpf_init],,
 	[AC_MSG_ERROR(GNU Multiple Precision GMP library was not found in your system.

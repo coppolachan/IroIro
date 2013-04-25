@@ -4,7 +4,7 @@
 #include "gaugeFixingStep.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
-#include "Tools/sunAlgUtils.hpp"
+//#include "Tools/sunAlgUtils.hpp"
 #include "include/macros.hpp"
 #include "lib/Main/Geometry/shiftField.hpp"
 #include "lib/Main/Geometry/mapping.hpp"
