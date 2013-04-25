@@ -1,6 +1,10 @@
-//-------------------------------------------------------------------------
-// gaugeConf.cpp
-//-------------------------------------------------------------------------
+/*!
+ * @file gaugeConf.cpp
+ *
+ * @brief Declares the initialization function for the GaugeConf
+ *
+ */
+
 #include "gaugeConf.hpp"
 #include "include/field.h"
 #include "Communicator/communicator.hpp"
@@ -53,6 +57,7 @@ void GaugeConf_csdt::init_conf(Field& u){
   int NP  = CommonPrms::instance()->NP();
 
   Communicator* comm = Communicator::instance();
+
   int nodeid = comm->nodeid();
   
   vector<valarray<double>* > u_all;
@@ -70,7 +75,7 @@ void GaugeConf_csdt::init_conf(Field& u){
     }
     catch ( char const* str) {
       cout << "GaugeConf_csdt Exception: " << str << endl;
-      abort();
+      exit(1);
     }
     
     CCIO::cout<< "Reading gauge configuration from " << file_.c_str() << endl;

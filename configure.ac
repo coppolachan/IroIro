@@ -4,10 +4,10 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-25 11:04:51 neo>
+# Time-stamp: <2013-04-25 12:01:10 neo>
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [1.0.2], [cossu@post.kek.jp])
+AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility

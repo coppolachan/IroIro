@@ -14,7 +14,6 @@
 #include <string>
 #include <vector>
 #include "include/macros.hpp"
-
 //------------------------------------------------------------------
 /*! @brief StandardInputStream class for parallel 
  * version of standard input
@@ -176,6 +175,8 @@ namespace CCIO{
   extern StandardOutputStream cout;
   extern StandardOutputStream cerr;
   void header(std::string name);
+
+  
 }
 
 #endif //COMM_IO_H_

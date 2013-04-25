@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-04-24 11:32:18 cossu>
+ * Time-stamp: <2013-04-25 14:49:16 neo>
  *
  */
 

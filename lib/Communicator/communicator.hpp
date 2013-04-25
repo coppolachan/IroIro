@@ -3,7 +3,7 @@
  *
  * @brief Declares the Communicator class for multiprocessing
  *
- * Time-stamp: <2013-04-23 18:06:35 neo>
+ * Time-stamp: <2013-04-25 14:39:25 neo>
  *
  */
 
@@ -83,7 +83,6 @@ public:
   int reduce_max(double& val,int& idx,int size)const;
   int reduce_min(double& val,int& idx,int size)const;
 
-  //double get_time()const{return 0.0;};
 };
 
 

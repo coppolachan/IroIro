@@ -17,6 +17,7 @@
 #include <iostream>
 #include <sstream>
 #include <vector>
+#include <valarray>
 
 // Predefined verbosity levels
 #define BASE_VERB_LEVEL 1
@@ -44,7 +45,7 @@ class NullType{};
 
 typedef std::vector<int> vector_int;
 typedef std::vector<double> vector_double;
-
+typedef std::valarray<double> varray_double;
 
 
 #endif

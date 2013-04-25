@@ -9,10 +9,14 @@
 #include "comm_io.hpp"
 #include "communicator.hpp"
 
+#ifdef HAVE_MPI
+#include "mpi.h"
+#endif
+
 /*!
- *@brief CommonCode Input/Output overloaded functions
+ * @brief CommonCode Input/Output overloaded functions
  *
- *Standard-IO-like input and output operations 
+ * Standard-IO-like input and output operations 
  * Credits to the Chroma team
  */
 namespace CCIO{
@@ -29,7 +33,6 @@ namespace CCIO{
 
 //-----------------------------------------
 //! stdin support
-
 StandardInputStream::StandardInputStream(){open=false; is=0;}
 
 StandardInputStream::~StandardInputStream(){}
