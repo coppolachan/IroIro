@@ -7,7 +7,7 @@
 #include "include/commonPrms.h"
 #include "include/common_fields.hpp"
 #include "Communicator/communicator.hpp"
-#include "lib/Main/Geometry/shiftField.hpp"
+#include "Geometry/shiftField.hpp"
 
 class Staples {
   int Nvol_, Lvol_;

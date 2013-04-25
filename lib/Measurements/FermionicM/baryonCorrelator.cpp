@@ -1,5 +1,5 @@
 #include "baryonCorrelator.hpp"
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 #include "Communicator/comm_io.hpp"
 #include "include/field.h"
 #include <complex>

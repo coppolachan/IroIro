@@ -3,7 +3,7 @@
  * @brief implementation of the BoundaryCond class
  *-------------------------------------------------------------------------*/
 #include "boundaryCond.hpp"
-#include "Main/Geometry/siteMap.hpp"
+#include "Geometry/siteMap.hpp"
 #include "include/numerical_const.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"

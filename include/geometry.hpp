@@ -7,7 +7,7 @@
 
 #include "include/commonPrms.h"
 #include "include/pugi_interface.h"
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 #include <iostream>
 #include <stdlib.h>
 #include <vector>

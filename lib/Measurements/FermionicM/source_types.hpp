@@ -7,7 +7,7 @@
 #define SOURCES_TYPES_H_
 
 #include "include/numerical_const.hpp"
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 #include "Tools/randNum.h"
 #include "Tools/randNum_MP.h"
 #include "source.hpp"

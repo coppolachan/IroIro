@@ -5,8 +5,8 @@
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "include/macros.hpp"
-#include "lib/Main/Geometry/shiftField.hpp"
-#include "lib/Main/Geometry/mapping.hpp"
+#include "Geometry/shiftField.hpp"
+#include "Geometry/mapping.hpp"
 #include  <complex.h>
 #ifdef IBM_BGQ_WILSON
 #include "Tools/sunAlgUtils.hpp" // this is not really a good option
@@ -636,7 +636,6 @@ void GaugeFixingStep::overrelax(double* w)const{
   for(int cc=0; cc<NC_*NC_; ++cc) *(pW+cc) *= orp_;
   for(int c=0; c<NC_; ++c) *(pW+c*(NC_+1)) += 1.0-orp_;
 
-  
   SUNmemAlign::reunit(w);
 }
 #endif

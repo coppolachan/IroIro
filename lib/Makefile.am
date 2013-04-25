@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-24 15:47:05 neo>
+# Time-stamp: <2013-04-25 16:17:26 neo>
 
 ###########################################
 # Initial definitions 
@@ -60,9 +60,9 @@ endif
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
 if USE_EVENODD
-SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
+SITE_INDEXING_SRCS = Geometry/siteIndexEO.cpp
 else
-SITE_INDEXING_SRCS = Main/Geometry/siteIndex.cpp
+SITE_INDEXING_SRCS = Geometry/siteIndex.cpp
 endif
 
 ###########################################
@@ -151,11 +151,11 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp			\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
-		Main/Geometry/mapping.cpp		\
-		Main/Geometry/mapping_improved.cpp	\
-		Main/Geometry/siteIndex_EvenOdd.cpp	\
-		Main/Geometry/siteMap.cpp		\
-		Main/Geometry/shiftField.cpp		\
+		Geometry/mapping.cpp			\
+		Geometry/mapping_improved.cpp		\
+		Geometry/siteIndex_EvenOdd.cpp		\
+		Geometry/siteMap.cpp			\
+		Geometry/shiftField.cpp			\
 		Main/gaugeConf.cpp			\
 		Main/gaugeGlobal.cpp			\
 		Main/commandline.cpp			\
@@ -280,11 +280,11 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
-			Main/Geometry/siteIndex.hpp     	\
-			Main/Geometry/siteIndex_EvenOdd.hpp	\
-			Main/Geometry/siteMap.hpp		\
-			Main/Geometry/mapping.hpp		\
-			Main/Geometry/shiftField.hpp		\
+			Geometry/siteIndex.hpp     		\
+			Geometry/siteIndex_EvenOdd.hpp		\
+			Geometry/siteMap.hpp			\
+			Geometry/mapping.hpp			\
+			Geometry/shiftField.hpp			\
 			Main/gaugeConf.hpp			\
 			Main/gaugeGlobal.hpp			\
 			Dirac_ops/dirac_Operator_Factory.hpp	\

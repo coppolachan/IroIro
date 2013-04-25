@@ -3,13 +3,9 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-04-25 14:49:16 neo>
+ * Time-stamp: <2013-04-25 15:11:23 cossu>
  *
  */
-
-#include <stdio.h>
-#include <iostream>
-#include <cstdarg>
 
 #include "include/commonPrms.h"
 #include "Communicator/communicator.hpp"
@@ -17,10 +13,6 @@
 
 #include "bgnet.h"
 #include <omp.h>
-
-
-
-using namespace std;
 
 int Communicator::my_rank_;
 int Communicator::Nproc_;
@@ -50,10 +42,11 @@ void Communicator::setup(){
 
   //Check number of nodes
   if (NPEx*NPEy*NPEz*NPEt != Nproc_) {
-    if(my_rank_==0) 
-      cerr << "Number of nodes provided is different from MPI environment ["
-	   << Nproc_<<"]\n"; 
-    abort();
+    if(my_rank_==0) {
+      std::cerr << "Total number of nodes provided in the input file is different from MPI environment ["
+		<< Nproc_<<"]\n";
+      exit(1);
+    }
   }
 
   int px =  nodeid %NPEx;
@@ -76,8 +69,13 @@ void Communicator::setup(){
   nd_dn_[2] = px +py*NPEx +((pz-1+NPEz)%NPEz)*NPEx*NPEy +pt*NPEx*NPEy*NPEz;
   nd_dn_[3] = px +py*NPEx +pz*NPEx*NPEy +((pt-1+NPEt)%NPEt)*NPEx*NPEy*NPEz;
 
-  if(my_rank_==0) cout << "Communicator initialized using BGNET with "
-		       << Nproc_ << " processes.\n";
+  if (my_rank_ == 0){
+    std::cout << "Communicator initialized using MPI with "<< Nproc_ ;
+    if (Nproc_==1) 
+      std::cout <<" process.\n";
+    else
+      std::cout <<" processes.\n";
+  }
 
   BGNET_GlobalBarrier();
   CCIO::cout.init(&std::cout);
@@ -94,11 +92,8 @@ bool Communicator::primaryNode(){
 //bool Communicator::primaryNode(){ return (my_rank_? true : false);}
 
 int Communicator::nodeid(int x, int y, int z, int t)const{
-  int NPEx = CommonPrms::instance()->NPEx();
-  int NPEy = CommonPrms::instance()->NPEy();
-  int NPEz = CommonPrms::instance()->NPEz();
-  int NPEt = CommonPrms::instance()->NPEt();
-  return x +NPEx*(y +NPEy*(z +NPEz*t));
+  CommonPrms* cPar = CommonPrms::instance();
+  return x +(cPar->NPEx())*(y +(cPar->NPEy())*(z +(cPar->NPEz())*t));
 }
 
 void Communicator::
@@ -113,14 +108,14 @@ transfer_fw(double *bin,double *data,int size,int dir) const{
 }
 
 void Communicator::
-transfer_fw(valarray<double>& bin,const valarray<double>& data,int dir) const{
-  transfer_fw(&bin[0],&(const_cast<valarray<double>& >(data))[0],
+transfer_fw(varray_double& bin,const varray_double& data,int dir) const{
+  transfer_fw(&bin[0],&(const_cast<varray_double& >(data))[0],
 	      bin.size(),dir);
 }
 
 void Communicator::
-transfer_fw(valarray<double>& bin,const valarray<double>& data,
-	    const vector<int>& index, int dir) const
+transfer_fw(varray_double& bin,const varray_double& data,
+	    const vector_int& index, int dir) const
 {
   double* pTmp;
   double* pIn;
@@ -140,13 +135,15 @@ transfer_fw(valarray<double>& bin,const valarray<double>& data,
     TmpBufferSize = size;
   }
 
-  pIn = &(const_cast<valarray<double>& >(data))[0];
+  pIn = &(const_cast<varray_double& >(data))[0];
   pTmp = pTmpBuffer;
   for(i=0;i<size;i++){
     pTmp[i] = pIn[index[i]];
   }
 
-  BGNET_Sendrecv(0,pTmp,size*sizeof(double),p_send,&(const_cast<valarray<double>& >(bin))[0],size*sizeof(double),p_recv);
+  BGNET_Sendrecv(0,pTmp,size*sizeof(double),
+		 p_send,&(const_cast<varray_double& >(bin))[0],
+		 size*sizeof(double),p_recv);
 }
 
 void Communicator::
@@ -161,14 +158,14 @@ transfer_bk(double *bin,double *data,int size,int dir) const{
 }
 
 void Communicator::
-transfer_bk(valarray<double>& bin,const valarray<double>& data,int dir) const{
-  transfer_bk(&(bin[0]),&(const_cast<valarray<double>& >(data))[0],
+transfer_bk(varray_double& bin,const varray_double& data,int dir) const{
+  transfer_bk(&(bin[0]),&(const_cast<varray_double& >(data))[0],
 	      bin.size(),dir);
 }
 
 void Communicator::
-transfer_bk(valarray<double>& bin,const valarray<double>& data,
-	    const vector<int>& index, int dir) const
+transfer_bk(varray_double& bin,const varray_double& data,
+	    const vector_int& index, int dir) const
 {
   double* pTmp;
   double* pIn;
@@ -186,13 +183,15 @@ transfer_bk(valarray<double>& bin,const valarray<double>& data,
     TmpBufferSize = size;
   }
 
-  pIn = &(const_cast<valarray<double>& >(data))[0];
+  pIn = &(const_cast<varray_double& >(data))[0];
   pTmp = pTmpBuffer;
   for(i=0;i<size;i++){
     pTmp[i] = pIn[index[i]];
   }
 
-  BGNET_Sendrecv(0,pTmp,size*sizeof(double),p_send,&(const_cast<valarray<double>& >(bin))[0],size*sizeof(double),p_recv);
+  BGNET_Sendrecv(0,pTmp,size*sizeof(double),
+		 p_send,&(const_cast<varray_double& >(bin))[0],
+		 size*sizeof(double),p_recv);
 }
 
 void Communicator::send_1to1(double *bin,double *data,int size,
@@ -208,11 +207,11 @@ void Communicator::send_1to1(double *bin,double *data,int size,
   BGNET_GlobalBarrier();
 }
 
-void Communicator::send_1to1(valarray<double>& bin,
-			     const valarray<double>& data, 
+void Communicator::send_1to1(varray_double& bin,
+			     const varray_double& data, 
 			     int size,int p_to,int p_from,int tag) const{
   if(p_to == p_from)    bin = data;
-  else send_1to1(&(bin[0]),&(const_cast<valarray<double>& >(data))[0],
+  else send_1to1(&(bin[0]),&(const_cast<varray_double& >(data))[0],
 		 size,p_to,p_from,tag);
   BGNET_GlobalBarrier();
 }
@@ -240,7 +239,9 @@ int Communicator::reduce_max(double& val,int& idx,int size) const{
   double vIn = val;
   int idxIn = my_rank_*size +idx;
   int idxOut;
-  BGNET_AllReduceLoc(&vIn,&idxIn,&val,&idxOut,1,BGNET_COLLECTIVE_DOUBLE,BGNET_COLLECTIVE_MAX,BGNET_COMM_WORLD);
+  BGNET_AllReduceLoc(&vIn,&idxIn,&val,&idxOut,1,
+		     BGNET_COLLECTIVE_DOUBLE,BGNET_COLLECTIVE_MAX,
+		     BGNET_COMM_WORLD);
 
   idx = idxOut%size;
   return idxOut/size;
@@ -253,7 +254,9 @@ int Communicator::reduce_min(double& val,int& idx,int size) const{
   double vIn = val;
   int idxIn = my_rank_*size +idx;
   int idxOut;
-  BGNET_AllReduceLoc(&vIn,&idxIn,&val,&idxOut,1,BGNET_COLLECTIVE_DOUBLE,BGNET_COLLECTIVE_MIN,BGNET_COMM_WORLD);
+  BGNET_AllReduceLoc(&vIn,&idxIn,&val,&idxOut,1,
+		     BGNET_COLLECTIVE_DOUBLE,BGNET_COLLECTIVE_MIN,
+		     BGNET_COMM_WORLD);
 
   idx = idxOut%size;
   return idxOut/size;

@@ -9,8 +9,8 @@
 #include "include/format_G.h"
 #include "include/pugi_interface.h"
 
-#include "Main/Geometry/siteIndex.hpp"
-#include "Main/Geometry/siteMap.hpp"
+#include "Geometry/siteIndex.hpp"
+#include "Geometry/siteMap.hpp"
 
 typedef Format::Format_F ffmt_t;
 typedef Format::Format_G gfmt_t;

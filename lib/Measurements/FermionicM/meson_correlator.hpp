@@ -12,7 +12,7 @@
 
 #include "include/field.h"
 #include "Communicator/comm_io.hpp"
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 #include "Tools/gammaMatrices.hpp"
 #include "Tools/sunVec.hpp"
 

@@ -6,7 +6,7 @@
 
 #include "Dirac_ops/dirac.hpp"
 #include "Solver/solver.hpp"
-#include "Main/Geometry/siteIndex_EvenOdd.hpp"
+#include "Geometry/siteIndex_EvenOdd.hpp"
 #include "include/format_F.h"
 #include <valarray>
 

@@ -4,7 +4,7 @@
 #include "dirac_overlap_Zolotarev.hpp"
 #include "Fields/field_expressions.hpp"
 #include "Tools/randNum_MP.h"
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 using namespace std;
 
 void Dirac_overlap_Zolotarev::

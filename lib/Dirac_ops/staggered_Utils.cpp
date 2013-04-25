@@ -4,8 +4,8 @@
 */
 //-------------------------------------------------------------
 #include "staggered_Utils.hpp"
-#include "Main/Geometry/siteIndex.hpp"
-#include "Main/Geometry/siteIndex_EvenOdd.hpp"
+#include "Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex_EvenOdd.hpp"
 using namespace std;
 
 namespace Dstagg{

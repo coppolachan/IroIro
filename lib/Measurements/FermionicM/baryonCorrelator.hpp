@@ -11,7 +11,7 @@
 #include "Tools/colorEpsilon.hpp"
 #include "Tools/gammaMatrices.hpp"
 #include "Communicator/communicator.hpp"
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 #include <vector>
 #include <valarray>
 #include <complex>

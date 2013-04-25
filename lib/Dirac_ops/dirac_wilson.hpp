@@ -9,9 +9,9 @@
 #include "include/format_G.h"
 #include "include/pugi_interface.h"
 
-#include "Main/Geometry/siteIndex_EvenOdd.hpp"
-#include "Main/Geometry/siteIndex.hpp"
-#include "Main/Geometry/siteMap.hpp"
+#include "Geometry/siteIndex_EvenOdd.hpp"
+#include "Geometry/siteIndex.hpp"
+#include "Geometry/siteMap.hpp"
 
 #ifdef IBM_BGQ_WILSON
 #include "bgqwilson.h"

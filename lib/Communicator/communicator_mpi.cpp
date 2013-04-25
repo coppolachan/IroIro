@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes
  *
- * Time-stamp: <2013-04-25 14:54:42 neo>
+ * Time-stamp: <2013-04-25 15:09:54 cossu>
  *
  */
 
@@ -35,9 +35,6 @@ void Communicator::setup(){
   int NPEy = CommonPrms::instance()->NPEy();
   int NPEz = CommonPrms::instance()->NPEz();
   int NPEt = CommonPrms::instance()->NPEt();
-
-  CCIO::cout.init(&std::cout);
-  CCIO::cerr.init(&std::cerr);
 
   //Check number of nodes
   if (NPEx*NPEy*NPEz*NPEt != Nproc_) {
@@ -75,6 +72,10 @@ void Communicator::setup(){
     else
       std::cout <<" processes.\n";
   }
+
+  MPI_Barrier(MPI_COMM_WORLD);
+  CCIO::cout.init(&std::cout);
+  CCIO::cerr.init(&std::cerr);
 }
 
 Communicator::~Communicator(){  MPI_Finalize();}
