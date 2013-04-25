@@ -4,7 +4,7 @@
 #ifndef TEST_EIGENMODESSOLVER_INCLUDED
 #define TEST_EIGENMODESSOLVER_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "Communicator/comm_io.hpp"
 class RandNum;
 

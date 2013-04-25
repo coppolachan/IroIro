@@ -10,7 +10,7 @@
 #ifndef TEST_HB_H_
 #define TEST_HB_H_
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 
 class Test_HB{
 private:

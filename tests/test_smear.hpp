@@ -7,7 +7,7 @@
 #ifndef TEST_SMEAR_H_
 #define TEST_SMEAR_H_
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests.hpp"
 
 class Test_Smear : public TestGeneral{

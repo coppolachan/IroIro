@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-25 16:17:26 neo>
+# Time-stamp: <2013-04-25 17:24:47 neo>
 
 ###########################################
 # Initial definitions 
@@ -202,9 +202,9 @@ main_hmc_SOURCES = Main/main_hmc.cpp
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)
 
 include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
-			$(top_srcdir)/include/commonPrms.h		\
+			$(top_srcdir)/include/commonPrms.hpp		\
                         $(top_srcdir)/include/commandline.hpp           \
-			$(top_srcdir)/include/common_code.hpp		\
+			$(top_srcdir)/include/iroiro_code.hpp		\
 			$(top_srcdir)/include/common_fields.hpp		\
 			$(top_srcdir)/include/config.h			\
 			$(top_srcdir)/include/geometry.hpp		\

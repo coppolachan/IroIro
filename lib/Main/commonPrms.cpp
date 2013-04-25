@@ -3,7 +3,7 @@
   @brief Defines CommonPrms class
 */
 
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "include/messages_macros.hpp"
 #include<iostream>
 #include<cstdlib>

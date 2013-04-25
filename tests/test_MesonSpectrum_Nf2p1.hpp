@@ -4,7 +4,7 @@
 #ifndef TEST_MESONSPECTRUM_NF2P1_INCLUDED
 #define TEST_MESONSPECTRUM_NF2P1_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
 class Test_MesonSpectrum_Nf2p1: public TestGeneral{

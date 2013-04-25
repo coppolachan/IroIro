@@ -8,7 +8,7 @@
 #ifndef QPROP_MULTISHIFT_INCLUDED
 #define QPROP_MULTISHIFT_INCLUDED
 
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "include/pugi_interface.h"
 #include "Measurements/FermionicM/source.hpp"
 #include "Solver/multiShiftSolver.hpp"

@@ -8,7 +8,7 @@
 #include "gaugeFixing.hpp"
 #include "gaugeFixingStep.hpp"
 #include "include/pugi_interface.h"
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "Geometry/shiftField.hpp"
 #include <memory>
 /*

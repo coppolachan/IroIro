@@ -4,7 +4,7 @@
 #ifndef STAPLES_INCLUDED
 #define STAPLES_INCLUDED
 
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "include/common_fields.hpp"
 #include "Communicator/communicator.hpp"
 #include "Geometry/shiftField.hpp"

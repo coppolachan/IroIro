@@ -4,7 +4,7 @@
 #ifndef TEST_MESONSPECTRUM_SPMOM_INCLUDED
 #define TEST_MESONSPECTRUM_SPMOM_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 class RandNum;
 
 class Test_MesonSpectrum_SpMom {

@@ -4,7 +4,7 @@
 #ifndef SITEINDEX_EVENODD_INCLUDED
 #define SITEINDEX_EVENODD_INCLUDED
 
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include <cassert>
 #include <vector>
 

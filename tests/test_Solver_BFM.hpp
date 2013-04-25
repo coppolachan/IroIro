@@ -7,7 +7,7 @@
 #ifndef TEST_SOLVER_BFM_INCLUDED
 #define TEST_SOLVER_BFM_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
 class Test_Solver_BFM: public TestGeneral{

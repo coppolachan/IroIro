@@ -1,7 +1,7 @@
 /*!
  * @file common_code.hpp
  *
- * @brief Common code general include file
+ * @brief IroIro code general include file
  *
  * Include this file into your main code.
  *
@@ -16,7 +16,7 @@
 
 //Fields and common parameters
 #include "include/common_fields.hpp"
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 
 //Communicator headers
 #include "Communicator/communicator.hpp"

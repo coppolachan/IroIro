@@ -10,7 +10,7 @@
 #ifndef TEST_RATIONALAPPROX_HPP_
 #define TEST_RATIONALAPPROX_HPP_
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
 class Test_RationalApprox: TestGeneral{

@@ -7,7 +7,7 @@
 #ifndef TEST_SOLVER_PERF_INCLUDED
 #define TEST_SOLVER_PERF_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
 class Test_Solver_Performance: public TestGeneral{

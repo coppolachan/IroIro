@@ -8,7 +8,7 @@
 
 #include <valarray>
 #include "baseSmear.hpp"
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 
 /*!  @brief APE type smearing of link variables. */
 class Smear_APE: public Smear{

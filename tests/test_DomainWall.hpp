@@ -7,7 +7,7 @@
 #ifndef TEST_OPTIMALDOMAINWALL_INCLUDED
 #define TEST_OPTIMALDOMAINWALL_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 #include "Dirac_ops/dirac_DomainWall.hpp"
 
