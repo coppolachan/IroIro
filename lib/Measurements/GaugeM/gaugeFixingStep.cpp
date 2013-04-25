@@ -4,7 +4,7 @@
 #include "gaugeFixingStep.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
-//#include "Tools/sunAlgUtils.hpp"
+#include "Tools/sunAlgUtils.hpp"
 #include "include/macros.hpp"
 #include "lib/Main/Geometry/shiftField.hpp"
 #include "lib/Main/Geometry/mapping.hpp"
@@ -635,6 +635,6 @@ void GaugeFixingStep::overrelax(double* w)const{
   for(int cc=0; cc<NC_*NC_; ++cc) *(pW+cc) *= orp_;
   for(int c=0; c<NC_; ++c) *(pW+c*(NC_+1)) += 1.0-orp_;
 
-  SUNmemAline::reunit(w);
+  SUNmemAling::reunit(w);
 }
 #endif
