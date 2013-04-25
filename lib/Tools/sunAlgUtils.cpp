@@ -4,7 +4,7 @@
   @brief Definitions of utility functions which assume the memory alignment
   of the color dof.
 
-  Time-stamp: <2013-04-25 11:48:09 neo>
+  Time-stamp: <2013-04-25 15:07:32 neo>
  */
 #include "include/macros.hpp"
 #include "sunAlgUtils.hpp"
@@ -13,7 +13,7 @@
 
 using namespace std;
 
-namespace SUNmemAling{
+namespace SUNmemAlign{
 
   void reunit(double* w){
     complex<double>* pv = (complex<double>*)w;
