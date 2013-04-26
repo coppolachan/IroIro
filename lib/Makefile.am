@@ -4,14 +4,14 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-25 17:24:47 neo>
+# Time-stamp: <2013-04-26 15:33:44 neo>
 
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
 
-CXXFLAGS += 
-LDFLAGS += 
+AM_CXXFLAGS = 
+AM_LDFLAGS = 
 OPTLIB =
 
 DWF_BGQ_SRC = 
@@ -34,8 +34,8 @@ endif #IBM_BGQWILSON_SMP
 else #not using BGQ routines but MPI
 
 if HITACHI	
-CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
-LDFLAGS += -q64
+AM_CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
+AM_LDFLAGS += -q64
 endif
 
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
@@ -77,7 +77,7 @@ endif
 
 AM_CPPFLAGS=-I$(top_srcdir)
 AM_CFLAGS  =-I$(top_srcdir) 
-AM_LDFLAGS =
+AM_LDFLAGS +=
 
 bin_PROGRAMS = main_hmc
 lib_LIBRARIES = libcommcode.a 

@@ -4,11 +4,13 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-04-24 15:43:07 neo>
+# Time-stamp: <2013-04-26 15:39:05 neo>
 
 testdir = $(bindir)/Test
 OPTLIB =
 BMF_TESTPROGS = 
+AM_CXXFLAGS =
+AM_LDFLAGS = 
 
 if USE_BFM
 BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
@@ -22,7 +24,7 @@ if IBM_BGQ
 OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 
 if IBM_BGQWILSON_SMP
-CXXFLAGS += -qsmp=omp:auto
+AM_CXXFLAGS += -qsmp=omp:auto
 OPTLIB += -lbgqwilson3x4smp -lbgqthread
 else
 OPTLIB += -lbgqwilson3x4
@@ -30,8 +32,8 @@ endif
 
 endif
 
-CXXFLAGS += $(BFM_INCLUDE) 
-LDFLAGS += $(BFM_LIBS)
+AM_CXXFLAGS += $(BFM_INCLUDE) 
+AM_LDFLAGS += $(BFM_LIBS)
 
 LDADD = -L../lib/ -lcommcode  $(BFM_LINKAGE) $(OPTLIB)
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/

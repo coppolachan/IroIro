@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-25 17:24:47 neo>
+# Time-stamp: <2013-04-26 15:33:44 neo>
 
 
 
@@ -373,7 +373,7 @@ CPPFLAGS = @CPPFLAGS@
 CXX = @CXX@
 CXXCPP = @CXXCPP@
 CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@ $(am__append_4)
+CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -391,7 +391,7 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LDFLAGS = @LDFLAGS@ $(am__append_5)
+LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
@@ -473,6 +473,8 @@ top_srcdir = @top_srcdir@
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
+AM_CXXFLAGS = $(am__append_4)
+AM_LDFLAGS = $(am__append_5)
 OPTLIB = $(am__append_1) $(am__append_2) $(am__append_3)
 DWF_BGQ_SRC = $(am__append_6)
 @IBM_BGQ_FALSE@@USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
@@ -495,7 +497,6 @@ DWF_BGQ_SRC = $(am__append_6)
 @USE_DCMT_TRUE@DCMT_SRCS = Tools/RandomNumGen/dcmt_wrapper.cpp
 AM_CPPFLAGS = -I$(top_srcdir)
 AM_CFLAGS = -I$(top_srcdir) 
-AM_LDFLAGS = 
 lib_LIBRARIES = libcommcode.a 
 EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp			\
 		Main/documentation_pages.h			\
