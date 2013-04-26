@@ -8,6 +8,8 @@
 #include "randNum.h"
 #include "include/numerical_const.hpp"
 
+#include <iostream>
+
 void RandNum::get_complex_gauss(double *re, double *im, const double variance)const{
   // get the gaussian random number with the variance 1/\sqrt(2)
   // Using the Box-Muller transform
@@ -23,9 +25,10 @@ void RandNum::get_complex_gauss(double *re, double *im, const double variance)co
     gauss_rand_im = sin(angle)*factor*variance;
     *re = gauss_rand_re;
     *im = gauss_rand_im;
-    */
+    */        
   
   // Polar form
+  
   double x1, x2, w;
   do {
     x1 = 2.0 * do_rand_closed()- 1.0;
@@ -33,9 +36,10 @@ void RandNum::get_complex_gauss(double *re, double *im, const double variance)co
       w = x1 * x1 + x2 * x2;
   }while ( w >= 1.0 );
   
-  w = sqrt( (-2.0 * log( w ) ) / w );
+  w = sqrt( (-1.0 * log( w ) ) / w );
   *re = x1 * w * variance;
   *im = x2 * w * variance;
+  
 }
 
 double RandNum::get_gauss(const double variance)const{
@@ -58,12 +62,7 @@ void RandNum::get(std::valarray<double>& rn) const  {
   for(int n=0; n<rn.size(); ++n) rn[n] = do_rand();
 }
 void RandNum::get_gauss(std::valarray<double>& rn) const{
-  if (rn.size() & 1)
     for(int n = 0; n < rn.size(); ++n)  rn[n] = get_gauss();
-  else
-    for(int n = 0; n < rn.size(); n+=2){
-      get_complex_gauss(&rn[n], &rn[n+1]);
-    }
 }
 
 
