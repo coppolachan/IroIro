@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-24 14:25:13 noaki>
+# Time-stamp: <2013-04-24 16:48:28 noaki>
 
 ###########################################
 # Initial definitions 
@@ -64,6 +64,15 @@ SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
 else
 SITE_INDEXING_SRCS = Main/Geometry/siteIndex.cpp
 endif
+
+###########################################
+# Optional DCMT Random number generators
+if USE_DCMT
+DCMT_SRCS = Tools/RandomNumGen/dcmt_wrapper.cpp
+else
+DCMT_SRCS = 
+endif
+
 
 
 AM_CPPFLAGS=-I$(top_srcdir)
@@ -186,7 +195,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/base_errors.cpp	\
 		Tools/ErrorsHandling/io_errors.cpp	\
 		Tools/ErrorsHandling/convergence_errors.cpp\
-		Tools/RandomNumGen/dcmt_wrapper.cpp	\
+		$(DCMT_SRCS)				\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\

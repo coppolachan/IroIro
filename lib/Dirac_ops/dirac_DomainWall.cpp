@@ -1,7 +1,7 @@
 /*!--------------------------------------------------------------------------
  * @file dirac_DomainWall.cpp
  * @brief Definition of class methods for Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-04-23 17:55:57 noaki>
+ Time-stamp: <2013-04-26 08:33:54 noaki>
  *-------------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,10 +26,14 @@ using namespace std;
 //======================================================================
 Dirac_optimalDomainWall_params::
 Dirac_optimalDomainWall_params(XML::node DWF_node,DWFType Type){
+  /* temporal hack*/
+  XML::node mynode = DWF_node;
+  XML::descend(mynode,"Kernel", MANDATORY);
+  XML::read(mynode, "mass", M0_, MANDATORY);
+
   std::string Precond_string;
   XML::read(DWF_node, "Preconditioning", Precond_string, MANDATORY);
   XML::read(DWF_node, "N5d", N5_, MANDATORY);
-  XML::read(DWF_node, "wilson_mass", M0_, MANDATORY);
   XML::read(DWF_node, "b", b_, MANDATORY);
   XML::read(DWF_node, "c", c_, MANDATORY);
   XML::read(DWF_node, "mass", mq_, MANDATORY);

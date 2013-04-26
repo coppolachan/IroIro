@@ -18,7 +18,7 @@
            It is ignored by factory in this case -->
     <init>0x123 0x234 0x345 0x456</init>
   </RandomNumberGen>
-<!--  <GaugeFixing name="NoFixing">-->
+  <!--  <GaugeFixing name="NoFixing">-->
    <GaugeFixing name="Coulomb">
       <max_iter>5000</max_iter>
       <monitor_step>10</monitor_step> 
@@ -68,7 +68,9 @@
       <Kernel4d name="DiracOptimalDomainWall4d_eo">
 	<Kernel5d>
 	  <Preconditioning>NoPreconditioner</Preconditioning>
-	  <wilson_mass>-1.6</wilson_mass>
+	  <Kernel name="DiracWilson">
+     	    <mass>-1.6</mass>
+          </Kernel>
 	  <N5d>8</N5d>
 	  <b>1.0</b>
 	  <c>1.0</c>

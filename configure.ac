@@ -4,10 +4,10 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-10 18:19:45 neo>
+# Time-stamp: <2013-04-24 16:55:37 noaki>
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [1.0.2], [cossu@post.kek.jp])
+AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.8 -Wall -Werror foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility
@@ -106,14 +106,29 @@ AC_ARG_ENABLE(evenodd-idx,
         *) AC_MSG_ERROR([bad value ${enableval} for --enable-evenodd-idx . Using lexicographic indexing.]) ;;
    esac],[even_odd_idx=false])
 
+
+###################################################################
+# Enabling DCMT random number generator linking 
+AC_ARG_WITH(dcmt,
+        AC_HELP_STRING([--with-dcmt=DCMT_BASEDIR], [Enable Dynamic Creation Mersenne Twister RNG linkage. If DCMT_BASEDIR is not specified it assumes that libraries and header are somewhere in the path]),
+        [ dcmt_link=true
+	  dcmt_dir=${with_dcmt}
+	  dcmt_include=${with_dcmt}/include
+	  dcmt_lib=${with_dcmt}/lib	
+	],[dcmt_link=false])
+
 ###################################################################
 # Enabling Even Odd indexing BGQ fast optimizations
 AC_ARG_ENABLE(bgq-fast,
-        AC_HELP_STRING([--enable-bgq-fast], [Enable automatically all optimizations for BGQ.]),
+        AC_HELP_STRING([--enable-bgq-fast], [Enable automatically all optimizations for BGQ. It is equivalent to switching on --enable-evenodd-idx --enable-bgq-improved-smp --enable-improved]),
         [case "${enableval}" in
         yes) even_odd_idx=true
 	     bgq_kernels_smp=true
-	     improved_kernels=true
+	     improved_kernels=true	
+	     dcmt_link=true
+	     dcmt_dir=${HOME}/dcmt
+	     dcmt_include=${dcmt_dir}/include
+	     dcmt_lib=${dcmt_dir}/lib
 	;;  
         no)  
 	;;   
@@ -129,6 +144,8 @@ AC_ARG_WITH(bfm,
 	  bfm_include=${with_bfm}/include
 	  bfm_lib=${with_bfm}/lib	
 	],[bfm_link=false])
+
+
 
 
 ######################################################################
@@ -211,6 +228,7 @@ AM_CONDITIONAL([IBM_BGQWILSON_NOSMP], [(test x$bgq_kernels_nosmp = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_SMP], [(test x$bgq_kernels_smp = xtrue)])
 AM_CONDITIONAL([USE_EVENODD], [(test x$even_odd_idx = xtrue)])	 
 AM_CONDITIONAL([USE_BFM], [(test x$bfm_link = xtrue)&&(test x$bluegeneq = xtrue)])	 
+AM_CONDITIONAL([USE_DCMT], [(test x$dcmt_link = xtrue)])	 
 
 ###################################################################
 # Checks for programs.
@@ -227,6 +245,7 @@ if test "$cpp_flags" = "" ; then cpp_flags="$use_cpp_flags" ; fi
 CXXFLAGS=$cpp_flags
 CPPFLAGS=$cpp_flags # preprocessof flags
 AM_COND_IF([USE_BFM], [CXXFLAGS+=" -I$bfm_include"],,)
+AM_COND_IF([USE_DCMT], [CXXFLAGS+=" -I$dcmt_include"],,)
 AM_COND_IF([IBM_BGQWILSON_SMP], [CXXFLAGS+=" -qsmp=omp:auto"])
 AM_COND_IF([IBM_BGQ], [DRIVER="/bgsys/drivers/ppcfloor"
 		      CXXFLAGS+=" -I$DRIVER -I$DRIVER/spi/include/kernel/cnk -I$DRIVER/spi/include/mu/default -I$DRIVER/comm/xl/include"],,)
@@ -234,6 +253,7 @@ echo configure: setting c++ compiler flags... done
 
 LDFLAGS=$ld_flags
 AM_COND_IF([USE_BFM], [LDFLAGS+=" -L$bfm_lib"],,)
+AM_COND_IF([USE_DCMT], [LDFLAGS+=" -L$dcmt_lib"],,)
 AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L/bghome/scbadm/ibm-doi/lib"],,)
 echo configure: setting library flags... done
 
@@ -255,6 +275,7 @@ AC_CHECK_LIB([gslcblas],
 	[AC_MSG_ERROR(GNU Scientific Library BLAS not found in your system.
 Please install or provide the correct path to your installation
 Info at: http://www.gnu.org/s/gsl/)])
+
 AC_CHECK_LIB([gsl],[gsl_sf_elljac_e],,
 	[AC_MSG_ERROR(GNU Scientific Library not found in your system.
 Please install or provide the correct path to your installation
@@ -271,6 +292,14 @@ AC_CHECK_LIB([mpfr],[mpfr_init],,
 	[AC_MSG_ERROR(GNU Multiple Precision MPFR library was not found in your system.
 Please install or provide the correct path to your installation
 Info at: http://www.mpfr.org/)])
+
+if [ ($dcmt_link) ]
+then
+AC_CHECK_LIB([dcmt], [global_mt19937],,  
+	[AC_MSG_ERROR(Dynamic Creation Mersenne Twister library was not found in your system.
+Please install or provide the correct path to your installation
+Info at: http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/DC/dc.html)]) 
+fi
 
 # BGQ specific stuff
 if [ $bluegeneq ]
@@ -446,6 +475,7 @@ fi
 echo "- build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
 - graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
 - optional BFM library linking  : `if test "x$bfm_link" = xtrue; then echo yes; else echo no; fi`
+- optional DCMT Random numbers  : `if test "x$dcmt_link" = xtrue; then echo yes; else echo no; fi`
 
 Directories:
 

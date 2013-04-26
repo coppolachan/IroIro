@@ -14,8 +14,10 @@ namespace RNG_Env {
       if(!strcmp(RNG_name,"Mersenne Twister"))
 	return new RandNum_MT19937_Creator(node);
 
+      #ifdef HAVE_LIBDCMT
       if(!strcmp(RNG_name,"DC Mersenne Twister"))
 	return new RandNum_DCMT_Creator(node);
+      #endif
 
       CCIO::cerr<< "No Random Number Generator available with name ["
 		<< RNG_name << "]" << std::endl;

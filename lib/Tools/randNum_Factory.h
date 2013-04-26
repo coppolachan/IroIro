@@ -4,14 +4,14 @@
 #ifndef RANDNUM_FACT_
 #define RANDNUM_FACT_
 
+#include "config.h"
+
 #include "include/singleton.h"
 #include "include/pugi_interface.h"
 #include "Communicator/communicator.hpp"
 
 #include "randNum.h"
 #include "RandomNumGen/randNum_MT19937.h"
-#include "RandomNumGen/dcmt_wrapper.hpp"
-
 
 /*!
  *@class RandomNumberCreator
@@ -58,6 +58,10 @@ public:
   RandNum* getRandomNumGenerator(){ return createRNG();}
 };
 
+
+#ifdef HAVE_LIBDCMT 
+#include "RandomNumGen/dcmt_wrapper.hpp"
+
 class RandNum_DCMT_Creator : public RandomNumberCreator{
   unsigned long generatorSeed_;
   unsigned long seed_;
@@ -90,7 +94,7 @@ class RandNum_DCMT_Creator : public RandomNumberCreator{
   RandNum* getRandomNumGenerator(){ return createRNG();}
 };
 
-
+#endif
 //////////////////////////////////////////////////////////////
 namespace RNG_Env {
   static RandomNumberCreator* RNG;

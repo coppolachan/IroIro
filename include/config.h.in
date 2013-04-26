@@ -34,6 +34,9 @@
 /* Define to 1 if you have the `bgqwilsonsmp' library (-lbgqwilsonsmp). */
 #undef HAVE_LIBBGQWILSONSMP
 
+/* Define to 1 if you have the `dcmt' library (-ldcmt). */
+#undef HAVE_LIBDCMT
+
 /* Define to 1 if you have the `gmp' library (-lgmp). */
 #undef HAVE_LIBGMP
 

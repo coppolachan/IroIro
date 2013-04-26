@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-24 14:25:13 noaki>
+# Time-stamp: <2013-04-24 16:48:28 noaki>
 
 
 
@@ -226,6 +226,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @IBM_BGQ_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT) \
 @IBM_BGQ_TRUE@	rationalSolver_DWF_BGQ.$(OBJEXT)
 am__objects_5 = $(am__objects_4)
+@USE_DCMT_TRUE@am__objects_6 = dcmt_wrapper.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) \
@@ -280,7 +281,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT) \
 	xml_errors.$(OBJEXT) allocation_errors.$(OBJEXT) \
 	base_errors.$(OBJEXT) io_errors.$(OBJEXT) \
-	convergence_errors.$(OBJEXT) dcmt_wrapper.$(OBJEXT) \
+	convergence_errors.$(OBJEXT) $(am__objects_6) \
 	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
 	HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
@@ -488,6 +489,11 @@ DWF_BGQ_SRC = $(am__append_6)
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
 @USE_EVENODD_TRUE@SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
+@USE_DCMT_FALSE@DCMT_SRCS = 
+
+###########################################
+# Optional DCMT Random number generators
+@USE_DCMT_TRUE@DCMT_SRCS = Tools/RandomNumGen/dcmt_wrapper.cpp
 AM_CPPFLAGS = -I$(top_srcdir)
 AM_CFLAGS = -I$(top_srcdir) 
 AM_LDFLAGS = 
@@ -604,7 +610,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/base_errors.cpp	\
 		Tools/ErrorsHandling/io_errors.cpp	\
 		Tools/ErrorsHandling/convergence_errors.cpp\
-		Tools/RandomNumGen/dcmt_wrapper.cpp	\
+		$(DCMT_SRCS)				\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
