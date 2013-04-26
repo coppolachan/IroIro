@@ -2,14 +2,14 @@
   @file action_gauge_rect.cpp
   @brief Definition of the ActionGaugeRect class
 
-  Time-stamp: <2013-04-22 16:53:36 neo>
+  Time-stamp: <2013-04-25 16:18:27 neo>
 */
 
 #include "action_gauge_rect.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Measurements/GaugeM/staples.hpp"
-#include "lib/Main/Geometry/mapping.hpp"
+#include "Geometry/mapping.hpp"
 #include "include/messages_macros.hpp"
 
 using namespace SUNmatUtils;

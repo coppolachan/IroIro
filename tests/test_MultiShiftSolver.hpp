@@ -7,7 +7,7 @@
 #ifndef TEST_SHIFTSOLVER_INCLUDED
 #define TEST_SHIFTSOLVER_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
 class Test_MultiShiftSolver : public TestGeneral{

@@ -4,14 +4,14 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-24 16:48:28 noaki>
+# Time-stamp: <2013-04-26 19:26:02 noaki>
 
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
 
-CXXFLAGS += 
-LDFLAGS += 
+AM_CXXFLAGS = 
+AM_LDFLAGS = 
 OPTLIB =
 
 DWF_BGQ_SRC = 
@@ -34,8 +34,8 @@ endif #IBM_BGQWILSON_SMP
 else #not using BGQ routines but MPI
 
 if HITACHI	
-CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
-LDFLAGS += -q64
+AM_CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
+AM_LDFLAGS += -q64
 endif
 
 COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
@@ -60,9 +60,9 @@ endif
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
 if USE_EVENODD
-SITE_INDEXING_SRCS = Main/Geometry/siteIndexEO.cpp
+SITE_INDEXING_SRCS = Geometry/siteIndexEO.cpp
 else
-SITE_INDEXING_SRCS = Main/Geometry/siteIndex.cpp
+SITE_INDEXING_SRCS = Geometry/siteIndex.cpp
 endif
 
 ###########################################
@@ -77,7 +77,7 @@ endif
 
 AM_CPPFLAGS=-I$(top_srcdir)
 AM_CFLAGS  =-I$(top_srcdir) 
-AM_LDFLAGS =
+AM_LDFLAGS +=
 
 bin_PROGRAMS = main_hmc
 lib_LIBRARIES = libcommcode.a 
@@ -154,11 +154,11 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
-		Main/Geometry/mapping.cpp		\
-		Main/Geometry/mapping_improved.cpp	\
-		Main/Geometry/siteIndex_EvenOdd.cpp	\
-		Main/Geometry/siteMap.cpp		\
-		Main/Geometry/shiftField.cpp		\
+		Geometry/mapping.cpp			\
+		Geometry/mapping_improved.cpp		\
+		Geometry/siteIndex_EvenOdd.cpp		\
+		Geometry/siteMap.cpp			\
+		Geometry/shiftField.cpp			\
 		Main/gaugeConf.cpp			\
 		Main/gaugeGlobal.cpp			\
 		Main/commandline.cpp			\
@@ -205,9 +205,9 @@ main_hmc_SOURCES = Main/main_hmc.cpp
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)
 
 include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
-			$(top_srcdir)/include/commonPrms.h		\
+			$(top_srcdir)/include/commonPrms.hpp		\
                         $(top_srcdir)/include/commandline.hpp           \
-			$(top_srcdir)/include/common_code.hpp		\
+			$(top_srcdir)/include/iroiro_code.hpp		\
 			$(top_srcdir)/include/common_fields.hpp		\
 			$(top_srcdir)/include/config.h			\
 			$(top_srcdir)/include/geometry.hpp		\
@@ -283,11 +283,11 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			Communicator/fields_io.hpp		\
-			Main/Geometry/siteIndex.hpp     	\
-			Main/Geometry/siteIndex_EvenOdd.hpp	\
-			Main/Geometry/siteMap.hpp		\
-			Main/Geometry/mapping.hpp		\
-			Main/Geometry/shiftField.hpp		\
+			Geometry/siteIndex.hpp     		\
+			Geometry/siteIndex_EvenOdd.hpp		\
+			Geometry/siteMap.hpp			\
+			Geometry/mapping.hpp			\
+			Geometry/shiftField.hpp			\
 			Main/gaugeConf.hpp			\
 			Main/gaugeGlobal.hpp			\
 		        Dirac_ops/dirac_Operator_FactoryCreator.hpp  \

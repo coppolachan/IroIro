@@ -1,6 +1,9 @@
 /*!
  * @file common_fields.hpp
+ *
  * @brief Code for general fields initializations
+ *
+ * Time-stamp: <2013-04-25 17:20:07 neo>
  */
 #ifndef COMMON_FIELDS_H_
 #define COMMON_FIELDS_H_
@@ -13,7 +16,7 @@
 #include "include/format_Ga.h"
 #include "include/format_F.h"
 #include "include/format_S.h"
-#include<cassert>
+#include <cassert>
 
 struct OneDimTag {};
 struct FiveDim{
@@ -21,11 +24,14 @@ struct FiveDim{
   int LocalVol;
 };
 
-/*!@brief A Class to handle gauge fields
+/*!
+ * @brief A Class to handle gauge fields
+ *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a> 
  * 
  * This class handles the Format and Field class in order to bind them 
  * into a single self contained object that knows the details of storage
+ *
  */
 template <typename DATA,typename FORMAT,typename TAG = NullType> 
 class GeneralField {

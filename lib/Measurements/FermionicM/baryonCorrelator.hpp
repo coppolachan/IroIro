@@ -7,11 +7,11 @@
 #define BARYON_CORRELATOR_HPP_
 
 #include "include/format_F.h"
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "Tools/colorEpsilon.hpp"
 #include "Tools/gammaMatrices.hpp"
 #include "Communicator/communicator.hpp"
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 #include <vector>
 #include <valarray>
 #include <complex>

@@ -8,8 +8,8 @@
 #include "dirac_WilsonLike.hpp"
 #include "include/pugi_interface.h"
 
-#include "Main/Geometry/siteIndex.hpp"
-#include "Main/Geometry/siteMap.hpp"
+#include "Geometry/siteIndex.hpp"
+#include "Geometry/siteMap.hpp"
 
 enum ImpType{Standard,Improved};
 

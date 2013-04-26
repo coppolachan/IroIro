@@ -4,7 +4,7 @@
  * @brief Declarations of actions for Heat Bath updates
  *
  *
- *  Time-stamp: <2013-04-10 16:21:33 neo>
+ *  Time-stamp: <2013-04-25 16:28:47 neo>
  */
 //--------------------------------------------------------------------
 
@@ -14,7 +14,7 @@
 #include "include/messages_macros.hpp"
 #include "Tools/randNum.h"
 #include "include/numerical_const.hpp"
-#include "Main/Geometry/siteIndex_EvenOdd.hpp"
+#include "Geometry/siteIndex_EvenOdd.hpp"
 
 #include <valarray>
 #include <complex>

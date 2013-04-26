@@ -16,7 +16,7 @@
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Tools/RandomNumGen/randNum_MT19937.h"
 #include "Measurements/FermionicM/source_types.hpp"
-#include "Main/Geometry/siteMap.hpp"
+#include "Geometry/siteMap.hpp"
 
 using namespace std;
 using namespace Format;

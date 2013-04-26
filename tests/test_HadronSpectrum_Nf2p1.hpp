@@ -4,7 +4,7 @@
 #ifndef TEST_HADRONSPECTRUM_NF2P1_INCLUDED
 #define TEST_HADRONSPECTRUM_NF2P1_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 #include "Measurements/FermionicM/baryonCorrelator.hpp"
 

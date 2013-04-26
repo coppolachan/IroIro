@@ -5,7 +5,7 @@
 #define WILSONFLOW_INCLUDED
 
 #include "include/messages_macros.hpp"
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "include/common_fields.hpp"
 #include "include/pugi_interface.h"
 #include "include/macros.hpp"

@@ -5,7 +5,7 @@
 #ifndef TEST_DWF_EVENODD_INCLUDED
 #define TEST_DWF_EVENODD_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests.hpp"
 
 class Test_DWF_EvenOdd : public TestGeneral{

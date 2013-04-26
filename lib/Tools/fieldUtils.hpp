@@ -8,7 +8,7 @@
 #include "sunAdjMat.hpp"
 #include "sunAdjVec.hpp"
 #include "include/common_fields.hpp"
-#include "Main/Geometry/siteIndex_EvenOdd.hpp"
+#include "Geometry/siteIndex_EvenOdd.hpp"
 
 class RandNum;
 

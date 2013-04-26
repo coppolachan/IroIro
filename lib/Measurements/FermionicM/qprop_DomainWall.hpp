@@ -7,7 +7,7 @@
 
 #include "quark_propagators.hpp"
 #include "Dirac_ops/dirac_WilsonLike.hpp"
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "source.hpp"
 
 typedef std::vector<Field> prop_t;

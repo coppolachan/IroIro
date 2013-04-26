@@ -13,7 +13,7 @@
 #include "dirac_staggeredLike.hpp"
 #include "include/format_A.h"
 #include "include/format_Ga.h"
-#include "Main/Geometry/shiftField.hpp"
+#include "Geometry/shiftField.hpp"
 #include "antiPeriodicBC.hpp"
 #include <memory>
 

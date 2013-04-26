@@ -2,7 +2,7 @@
   @file mdExec.cpp
   @brief utilities for MD including funcs to generate initial HMC momentum
  */
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 #include "mdExec.hpp"
 #include "include/format_A.h"
 #include "include/format_G.h"

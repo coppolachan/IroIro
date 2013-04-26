@@ -5,7 +5,7 @@
 #ifndef GAUGECONF_INCLUDED
 #define GAUGECONF_INCLUDED
 
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 #include "include/format_G.h"
 #include "Tools/randNum_MP.h"
 

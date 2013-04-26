@@ -6,7 +6,7 @@
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Communicator/comm_io.hpp"
-#include "Main/Geometry/mapping.hpp"
+#include "Geometry/mapping.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 #include "include/messages_macros.hpp"
 

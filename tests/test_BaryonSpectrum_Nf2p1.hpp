@@ -5,7 +5,7 @@
 #define TEST_BARYONSPECTRUM_NF2P1_INCLUDED
 
 #include "Measurements/FermionicM/baryonCorrelator.hpp"
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
 class Test_BaryonSpectrum_Nf2p1: public TestGeneral{

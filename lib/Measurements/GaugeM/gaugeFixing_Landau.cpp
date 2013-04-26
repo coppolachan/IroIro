@@ -3,13 +3,12 @@
    Original varaion is written by H. Matsufuru
 */
 #include "gaugeFixing_Landau.hpp"
-#include "Main/Geometry/mapping.hpp"
+#include "Geometry/mapping.hpp"
 #include "Main/gaugeConf.hpp"
 #include "Communicator/communicator.hpp"
 #include "include/macros.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
-//#include "staples.hpp"
 
 using namespace std;
 using namespace FieldUtils;

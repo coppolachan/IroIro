@@ -6,7 +6,7 @@
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "include/geometry.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Tools/RandomNumGen/randNum_MT19937.h"

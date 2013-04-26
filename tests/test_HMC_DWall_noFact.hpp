@@ -11,7 +11,7 @@
 #ifndef TEST_HMC_DOMAINWALL
 #define TEST_HMC_DOMAINWALL
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
 class Test_HMC_DomainWall: TestGeneral{

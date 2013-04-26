@@ -8,7 +8,7 @@
 #ifndef TEST_GAUGE_INCLUDED
 #define TEST_GAUGE_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests.hpp"
 
 /*!

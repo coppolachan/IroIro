@@ -11,7 +11,7 @@
 #ifndef TEST_HMC_H_
 #define TEST_HMC_H_
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 
 class Test_HMC{
 private:

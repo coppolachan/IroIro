@@ -8,9 +8,8 @@
 #include "gaugeFixing.hpp"
 #include "gaugeFixingStep.hpp"
 #include "include/pugi_interface.h"
-#include "include/commonPrms.h"
-#include "Main/Geometry/shiftField.hpp"
-//#include "Main/Geometry/mapping.hpp"
+#include "include/commonPrms.hpp"
+#include "Geometry/shiftField.hpp"
 #include <memory>
 /*
   This class fix the gauge of configuration to the Landau gauge.

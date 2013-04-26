@@ -4,7 +4,7 @@
 #ifndef TEST_WILSONFLOW_INCLUDED
 #define TEST_WILSONFLOW_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests.hpp"
 
 class Test_WilsonFlow: public TestGeneral{

@@ -5,7 +5,7 @@
 #ifndef STOUT_SMEAR_H_
 #define STOUT_SMEAR_H_
 
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "include/common_fields.hpp"
 #include "APEsmear.hpp"
 #include <valarray>

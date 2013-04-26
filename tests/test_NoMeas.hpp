@@ -4,7 +4,7 @@
 #ifndef TEST_NOMEAS_INCLUDED
 #define TEST_NOMEAS_INCLUDED
 
-#include "include/common_code.hpp"
+#include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
 class Test_NoMeas: public TestGeneral{

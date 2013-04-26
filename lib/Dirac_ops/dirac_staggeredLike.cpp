@@ -1,12 +1,12 @@
 //--------------------------------------------------------------
 /*!@file dirac_staggeredLike.cpp
   @brief implementation of the utility functions for staggered fermions.
-  Time-stamp: <2013-04-16 17:11:16 noaki>
+  Time-stamp: <2013-04-26 19:47:23 noaki>
 */
 //-------------------------------------------------------------
 #include "dirac_staggeredLike.hpp"
-#include "Main/Geometry/siteIndex.hpp"
-#include "Main/Geometry/siteIndex_EvenOdd.hpp"
+#include "Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex_EvenOdd.hpp"
 using namespace std;
 
 namespace Dstagg{

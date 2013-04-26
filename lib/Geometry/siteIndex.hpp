@@ -6,7 +6,7 @@
 #ifndef SITEINDEX_INCLUDED
 #define SITEINDEX_INCLUDED
 
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include<vector>
 
 enum site_dir{XDIR,YDIR,ZDIR,TDIR};

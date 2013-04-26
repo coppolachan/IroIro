@@ -4,7 +4,7 @@
 #ifndef POLYAKOVLOOP_INCLUDED
 #define POLYAKOVLOOP_INCLUDED
 
-#include "Main/Geometry/mapping.hpp"
+#include "Geometry/mapping.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include <complex>

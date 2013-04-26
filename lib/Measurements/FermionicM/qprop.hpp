@@ -4,7 +4,7 @@
 #ifndef QPROP_INCLUDED
 #define QPROP_INCLUDED
 
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "quark_propagators.hpp"
 #include "Dirac_ops/dirac.hpp"
 #include "Solver/solver.hpp"

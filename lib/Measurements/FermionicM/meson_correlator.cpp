@@ -1,7 +1,7 @@
 #include "meson_correlator.hpp"
 #include "include/field.h"
 #include "Communicator/comm_io.hpp"
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 const std::vector<double> 
 MesonCorrelator::calculate(const prop_t& q1,const prop_t& q2){
 

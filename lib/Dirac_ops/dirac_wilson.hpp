@@ -1,14 +1,14 @@
 /*! @file dirac_wilson.hpp
  * @brief Dirac_Wilson class 
- Time-stamp: <2013-04-22 12:04:17 noaki>
+ Time-stamp: <2013-04-26 19:47:03 noaki>
  */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
 
 #include "dirac_WilsonLike.hpp"
-#include "Main/Geometry/siteIndex_EvenOdd.hpp"
-#include "Main/Geometry/siteIndex.hpp"
-#include "Main/Geometry/siteMap.hpp"
+#include "Geometry/siteIndex_EvenOdd.hpp"
+#include "Geometry/siteIndex.hpp"
+#include "Geometry/siteMap.hpp"
 
 #ifdef IBM_BGQ_WILSON
 #include "bgqwilson.h"

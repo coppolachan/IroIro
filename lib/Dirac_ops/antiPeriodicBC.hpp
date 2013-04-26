@@ -9,7 +9,7 @@
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunAdjMatUtils.hpp"
-#include "Main/Geometry/siteMap.hpp"
+#include "Geometry/siteMap.hpp"
 #include <string.h>
 
 template <typename F>

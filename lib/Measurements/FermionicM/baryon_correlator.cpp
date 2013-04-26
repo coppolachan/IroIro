@@ -1,5 +1,5 @@
 #include "baryonCorrelator.hpp"
-#include "Main/Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex.hpp"
 #include "Tools/gammaMatrices.hpp"
 #include "Tools/colorEpsilon.hpp"
 #include "Communicator/comm_io.hpp"
