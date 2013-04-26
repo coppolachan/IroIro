@@ -3,11 +3,11 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-04-25 15:11:23 cossu>
+ * Time-stamp: <2013-04-26 16:09:08 cossu>
  *
  */
 
-#include "include/commonPrms.h"
+#include "include/commonPrms.hpp"
 #include "Communicator/communicator.hpp"
 #include "Communicator/comm_io.hpp"
 
