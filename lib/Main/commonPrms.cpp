@@ -1,22 +1,20 @@
 /*! 
   @file commonPrms.cpp  
   @brief Defines CommonPrms class
+
+  Time-stamp: <2013-04-26 16:57:34 neo>
 */
 
 #include "include/commonPrms.hpp"
-#include "include/messages_macros.hpp"
 #include<iostream>
-#include<cstdlib>
-
-using namespace std;
 
 int CommonPrms::Lvol_;
 int CommonPrms::Nvol_;
 int CommonPrms::NP_;
 
-vector<int> CommonPrms::Lsize_(NDIM_);
-vector<int> CommonPrms::Nsize_(NDIM_); 
-vector<int> CommonPrms::Nnodes_(NDIM_); 
+vector_int CommonPrms::Lsize_(NDIM_);
+vector_int CommonPrms::Nsize_(NDIM_); 
+vector_int CommonPrms::Nnodes_(NDIM_); 
 
 CommonPrms* CommonPrms::instance_= NULL;
 
@@ -35,14 +33,13 @@ CommonPrms* CommonPrms::instance(){
 CommonPrms::CommonPrms(const Lattice& latt){
 
   if(latt.stdinput){
-    cin >> Lsize_[0]>> Lsize_[1]>> Lsize_[2]>> Lsize_[3];
+    std::cin >> Lsize_[0]>> Lsize_[1]>> Lsize_[2]>> Lsize_[3];
 
     Nnodes_[0] = 1;
     Nnodes_[1] = 1;
     Nnodes_[2] = 1;
     Nnodes_[3] = 1;
-  }else{
-
+  } else  {
     Lsize_[0] = latt.Lx;
     Lsize_[1] = latt.Ly;
     Lsize_[2] = latt.Lz;
@@ -53,6 +50,7 @@ CommonPrms::CommonPrms(const Lattice& latt){
     Nnodes_[2] = latt.NPEz;
     Nnodes_[3] = latt.NPEt;
   }
+  
   Lvol_= Lsize_[0]*Lsize_[1]*Lsize_[2]*Lsize_[3];
   NP_= Nnodes_[0]*Nnodes_[1]*Nnodes_[2]*Nnodes_[3];
 

@@ -1,6 +1,13 @@
+/*!
+ * @file gaugeGlobal.cpp
+ * @brief Declaration of the GaugeGlobal class
+ *
+ * Time-stamp: <2013-04-26 17:06:11 neo>
+ */
+
 #include "gaugeGlobal.hpp"
 #include "gaugeConf.hpp" 
-#include "include/geometry.hpp"
+#include "include/errors.hpp"
 
 void GaugeGlobal::initializeUnit(){
   GaugeConf_unit gconf(format);
@@ -59,11 +66,9 @@ int GaugeGlobal::initialize(XML::node node){
       initializeJLQCDlegacy(filename);
       return 0;
     }
-    std::cout << "Configuration type unknown\n";
-    exit(1);
+    Errors::XMLerr("Configuration type unknown");
   }catch(...) {
-    std::cout << "Error in initialization of gauge field "<< std::endl;
-    abort();
+    Errors::XMLerr("Error in initialization of gauge field ");
   }
   return 0;
 }

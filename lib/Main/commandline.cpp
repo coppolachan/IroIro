@@ -1,6 +1,9 @@
 /*! 
  * @file commandline.cpp
+ *
  * @brief Command line parser
+ *
+ * Time-stamp: <2013-04-26 16:54:05 neo>
  */
 #include "include/commandline.hpp"
 #include <string>
