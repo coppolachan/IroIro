@@ -124,16 +124,6 @@ public:
   const Field mult_full(const Field&)const;
   const Field mult_full_dag(const Field&)const;
 
-  ////////////////////////////////////////Preconditioned versions
-  // EvenOdd operator has no preconditioner now 
-  const Field mult_prec     (const Field&f)const{return f;}
-  const Field mult_dag_prec (const Field&f)const{return f;}
-  const Field left_prec     (const Field&f)const{return f;}
-  const Field right_prec    (const Field&f)const{return f;}
-  const Field left_dag_prec (const Field&f)const{return f;}
-  const Field right_dag_prec(const Field&f)const{return f;}
-  //////////////////////////////////////////////////////////////
-  
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 
   const Field mult_eo_dag(const Field& f) const;

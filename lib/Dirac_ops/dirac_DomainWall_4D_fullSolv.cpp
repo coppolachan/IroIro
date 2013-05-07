@@ -1,15 +1,14 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.cpp
  * @brief Declaration of Dirac_optimalDomainWall_4D_fullSolv class 
- Time-stamp: <2013-04-23 17:54:12 noaki>
+ Time-stamp: <2013-05-06 14:31:49 noaki>
  */
 #include "dirac_DomainWall_4D_fullSolv.hpp"
 #include "Tools/randNum_MP.h"
 
 using namespace std;
 
-const Field Dirac_optimalDomainWall_4D_fullSolv::
-mult(const Field& f)const{
+const Field Dirac_optimalDomainWall_4D_fullSolv::mult(const Field& f)const{
   // D_dw(m)
   Field t5 = Dodw_->mult(Dodw_->Bproj_dag(f));
   // Dpv_^-1
@@ -22,8 +21,7 @@ mult(const Field& f)const{
   return Dodw_->Bproj(Dpv_->right_prec(sol5));
 }
 
-const Field Dirac_optimalDomainWall_4D_fullSolv::
-mult_dag(const Field& f)const{
+const Field Dirac_optimalDomainWall_4D_fullSolv::mult_dag(const Field& f)const{
   // Dpv_^dag^-1
   Field src = Dpv_->right_dag_prec(Dodw_->Bproj_dag(f));
   Field sol5(Dodw_->fsize());
@@ -36,8 +34,7 @@ mult_dag(const Field& f)const{
   return Dodw_->Bproj(Dodw_->mult_dag(src));
 }
 
-const Field Dirac_optimalDomainWall_4D_fullSolv::
-mult_inv(const Field& f)const{
+const Field Dirac_optimalDomainWall_4D_fullSolv::mult_inv(const Field& f)const{
   // D_pv
   Field t5 = Dpv_->mult(Dodw_->Bproj_dag(f));
   // D_dw^-1
@@ -47,7 +44,6 @@ mult_inv(const Field& f)const{
 #if VERBOSITY > 0
   monitor.print();
 #endif
-  CCIO::cout<<"sol5.norm()="<<(Dodw_->right_prec(sol5)).norm()<<std::endl;
   return Dodw_->Bproj(Dodw_->right_prec(sol5));
 }
 

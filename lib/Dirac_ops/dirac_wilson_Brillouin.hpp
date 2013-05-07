@@ -1,6 +1,6 @@
 /*! @filename dirac_wilson_Brillouin.hpp
  * @brief declaration of Dirac_Wilson_Brillouin class 
- * Time-stamp: <2013-04-24 16:37:46 noaki>
+ * Time-stamp: <2013-05-02 09:51:52 noaki>
  ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
@@ -95,16 +95,6 @@ public:
   const Field mult_H(const Field&)const;
   const Field mult_del(const Field&)const;
   const Field mult_lap(const Field&)const;
-
-  ////////////////////////////////////////Preconditioned versions
-  // Wilson operator has no defined preconditioner now 
-  const Field mult_prec     (const Field& f)const{return f;}
-  const Field mult_dag_prec (const Field& f)const{return f;}
-  const Field left_prec     (const Field& f)const{return f;}
-  const Field right_prec    (const Field& f)const{return f;}
-  const Field left_dag_prec (const Field& f)const{return f;}
-  const Field right_dag_prec(const Field& f)const{return f;}
-  //////////////////////////////////////////////////////////////
 
   const Field gamma5(const Field&) const;
   double getKappa() const {return kbr_;} 

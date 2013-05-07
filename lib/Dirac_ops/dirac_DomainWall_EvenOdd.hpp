@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_EvenOdd.hpp
  * @brief Declaration of class Dirac_optimalDomainWall_EvenOdd (5d operator)
- Time-stamp: <2013-04-23 16:09:19 noaki>
+ Time-stamp: <2013-05-02 09:45:39 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
@@ -70,15 +70,6 @@ public:
   double getMass() const{return Deo_.getMass();}
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
-
-  //Preconditioning methods
-  const Field mult_prec    (const Field& f)const{return f;}//empty now
-  const Field mult_dag_prec(const Field& f)const{return f;}//empty now
-  const Field left_prec     (const Field& f)const{return f;}//empty now
-  const Field left_dag_prec (const Field& f)const{return f;}//empty now
-  const Field right_prec    (const Field& f)const{return f;}//empty now
-  const Field right_dag_prec(const Field& f)const{return f;}//empty now
-  //////////////////////////////////////////////////////////////////////
 
   const Field md_force( const Field& eta,const Field& zeta) const;
   ////

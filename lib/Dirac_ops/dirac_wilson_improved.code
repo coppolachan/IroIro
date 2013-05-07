@@ -1,10 +1,10 @@
 /* Improved version of Dirac Kernel 
-   Time-stamp: <2013-04-17 09:11:03 noaki>
+   Time-stamp: <2013-05-03 09:19:16 noaki>
 */
 
 void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   int Nih = ND_*NC_; /*!< @brief num of elements of a half spinor */
-  
+
   /// boundary part ///
   int is = 0;
   int Xb = 0;
@@ -19,6 +19,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
     }
     is += Nih;
   }
+
   double vbc[Nih*Nbdry]; /*!< @brief data on the upper slice */   
   comm_->transfer_fw(vbc,vbd,Nih*Nbdry,XDIR);
 
@@ -28,12 +29,11 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   Nbdry = (this->*slice_osize)(Xb,XDIR);
 
   for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
-
     int xc = (this->*slice_out)(Xb,k,XDIR);
     const double* U 
       = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(xc),XDIR));
     double* res = fp.getaddr(ff_.index(0,xc));    
-    
+
     for(int c=0; c<NC_; ++c){
       v1r[c] = 0.0; v1i[c] = 0.0;
       v2r[c] = 0.0; v2i[c] = 0.0;
@@ -89,7 +89,6 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 
 void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
   int Nih = ND_*NC_; /*!< @brief num ob elements of a half spinor */
-
   /// boundary part ///
   int is = 0;
   int Yb = 0;

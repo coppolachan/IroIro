@@ -1,6 +1,6 @@
 /*! @file  eoUtils.hpp
  *  @brief utilities related to even/odd preconditioning
- Time-stamp: <2013-04-23 15:08:23 noaki>
+ Time-stamp: <2013-05-04 06:30:05 noaki>
  */
 #ifndef EOUTILS_INCLUDED
 #define EOUTILS_INCLUDED
@@ -18,12 +18,12 @@ namespace EvenOddUtils{
 
   class Inverter_WilsonLike{
   private:
-    int Nvol_,Nvh_,Nex_;
     const DiracWilsonLike_EvenOdd* D_;
     const Solver* slv_;
-    const SiteIndex_EvenOdd* idx_;
+    int Nvol_,Nvh_,Nex_;
     const ffmt_t ff_;  /*!< @brief full-size format */
     const ffmt_t fh_;  /*!< @brief half-size format */
+    const SiteIndex_EvenOdd* idx_;
     const std::valarray<size_t> esub_;/*!< @brief generalized slice for even sites*/
     const std::valarray<size_t> osub_;/*!< @brief generalized slice for odd sites*/
   public:
@@ -31,11 +31,11 @@ namespace EvenOddUtils{
       :D_(D),slv_(Solver),
        Nvol_(CommonPrms::instance()->Nvol()),Nvh_(Nvol_/2),
        Nex_(D->fsize()/Nvh_/ffmt_t::Nin()),
-       fh_(Nvh_,Nex_),
        ff_(Nvol_,Nex_),
+       fh_(Nvh_,Nex_),
        idx_(SiteIndex_EvenOdd::instance()),
        esub_(ff_.get_sub(idx_->esec())),
-       osub_(ff_.get_sub(idx_->osec())){}
+       osub_(ff_.get_sub(idx_->osec())){ assert(D_);}
 
     void invert(Field& sol,const Field& src) const;
     Field mult(const Field& in) const;

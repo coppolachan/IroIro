@@ -15,12 +15,11 @@
 
 #include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"
-
 #include "Smearing/smearingFactories.hpp"
 
 int Test_HMC::run(){
   CCIO::cout << "Starting HMCrun" << std::endl;
-  
+
   RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
 
   Integrators::Integr = Integrators::createIntegratorFactory(HMC_node);

@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.hpp
  * @brief Dirac_Wilson class 
- Time-stamp: <2013-04-26 19:47:03 noaki>
+ Time-stamp: <2013-05-03 09:21:26 noaki>
  */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
@@ -135,8 +135,6 @@ public:
     XML::read(node, "mass", mass);
     kpp_= 0.5/(4.0+mass);
   }
-
-  virtual ~Dirac_Wilson(){}
   
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
@@ -148,17 +146,7 @@ public:
   void mult_dag_ptr_EO(double*,double* const )const;  
 #endif
 
-  ////////////////////////////////////////Preconditioned versions
-  // Wilson operator has no defined preconditioner now 
-  const Field mult_prec     (const Field& f)const{return f;}
-  const Field mult_dag_prec (const Field& f)const{return f;}
-  const Field left_prec     (const Field& f)const{return f;}
-  const Field right_prec    (const Field& f)const{return f;}
-  const Field left_dag_prec (const Field& f)const{return f;}
-  const Field right_dag_prec(const Field& f)const{return f;}
-  //////////////////////////////////////////////////////////////
   const Field gamma5(const Field&) const;
-
   const Field md_force(const Field&,const Field&)const;
   void md_force_p(Field&,const Field&,const Field&)const;
   void md_force_m(Field&,const Field&,const Field&)const;

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-04-26 15:39:05 neo>
+# Time-stamp: <2013-05-07 11:55:03 noaki>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -74,7 +74,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_RationalApprox.xml	\
 		test_Solver_Perf.xml	\
 		test_sunRep.xml		\
-		input.xml
+		test_noFact.xml
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
@@ -90,7 +90,6 @@ test_PROGRAMS = test_HMC 		\
 		test_Wilson_EvenOdd 	\
 		test_Wilson_Brillouin 	\
 		test_Wilson_Brillouin_Imp\
-		test_DomainWall		\
 		test_QpropMom		\
 		test_ResMass 		\
 		test_MesonSpectrum	\
@@ -109,8 +108,8 @@ test_PROGRAMS = test_HMC 		\
 		test_RationalApprox	\
 		test_RHMC_noFactories 	\
 		test_SUNRepresentation	\
-		test_HeatBath
-
+		test_HeatBath           \
+                test_DWF              	
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -149,9 +148,6 @@ test_Wilson_Brillouin_SOURCES =	test_wilson_Brillouin.cpp 	\
 
 test_Wilson_Brillouin_Imp_SOURCES = test_wilson_Brillouin_Imp.cpp 	\
 		        	testerWilsonBrillouin_Imp.cpp
-
-test_DomainWall_SOURCES = 	test_DomainWall.cpp 		\
-				testerDWF.cpp
 
 test_QpropMom_SOURCES 	= 	test_QpropMom.cpp 		\
 				testerQpropMom.cpp
@@ -208,6 +204,9 @@ test_SUNRepresentation_SOURCES  =	test_sunRepres.cpp	\
 test_HeatBath_SOURCES 		=	test_HeatBath.cpp	\
 					testerHeatBath.cpp
 
+test_DWF_SOURCES 		=	test_DWF.cpp	\
+					testerDWF.cpp
+
 ## Put all BFM related tests here
 if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
@@ -229,7 +228,6 @@ include_HEADERS 	=	tests.hpp			\
 				test_WilsonFlow.hpp     	\
 				test_PolyakovLoop.hpp     	\
 				test_NoMeas.hpp     	        \
-				test_DomainWall.hpp 		\
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
 				test_IO.hpp			\
@@ -246,4 +244,5 @@ include_HEADERS 	=	tests.hpp			\
 				test_RationalApprox.hpp		\
 	                        test_Solver_Perf.hpp		\
 				test_sunRepres.hpp		\
-				test_HeatBath.hpp
+				test_HeatBath.hpp               \
+                                test_DWF.hpp

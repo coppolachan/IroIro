@@ -7,13 +7,14 @@ namespace EvenOddUtils{
 
   //Returns the multiplication of D*(full vector) in 5d
   Field Inverter_WilsonLike::mult(const Field& f) const{
-    Field out(ff_.size());
+
     Field be = D_->mult_ee(Field(f[esub_]));
     be += D_->mult_ee(D_->mult_eo(Field(f[osub_])));//see def of mult_eo
- 
-    Field bo = D_->mult_oo(Field(f[osub_]));
-    bo += D_->mult_oo(D_->mult_oe(Field(f[esub_])));
 
+    Field bo = D_->mult_oo(Field(f[osub_]));
+    bo += D_->mult_oo(D_->mult_oe(Field(f[esub_]))); 
+
+    Field out(ff_.size());
     for(int ex=0; ex<Nex_; ++ex){
       for(int hs=0; hs<Nvh_; ++hs){
 	out.set(ff_.islice(idx_->esec(hs),ex), be[fh_.islice(hs,ex)]);
@@ -37,7 +38,6 @@ namespace EvenOddUtils{
     monitor.print();
 #endif
     bo -= D_->mult_oe(ye);
-
     for(int ex=0; ex<Nex_; ++ex){
       for(int hs=0; hs<Nvh_; ++hs){
 	sol.set(ff_.islice(idx_->esec(hs),ex), ye[fh_.islice(hs,ex)]);
