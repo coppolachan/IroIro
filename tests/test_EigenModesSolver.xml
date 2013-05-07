@@ -23,8 +23,31 @@
   </Output>
   <Measurement>
     <EigenModesCalc>
+<!--
       <WilsonLikeDirac name="DiracWilson">
 	<mass>-1.0</mass>
+      </WilsonLikeDirac>
+-->
+      <WilsonLikeDirac name="DiracOptimalDomainWall4d_eo">
+	<mass>-1.0</mass>
+	<Kernel5d>
+	  <Preconditioning>NoPreconditioner</Preconditioning>
+	  <N5d>4</N5d>
+	  <b>1.0</b>
+	  <c>1.0</c>
+	  <mass>0.10</mass>
+	  <BaseKernel name="DiracWilson">
+	    <mass>-1.6</mass>
+	  </BaseKernel>
+	  <approximation name="Zolotarev">
+	    <lambda_min>0.1</lambda_min>
+	    <lambda_max>1.5</lambda_max>
+	  </approximation>
+	</Kernel5d>
+	<SolverDWF type="Solver_CG">
+	  <MaxIter>10000</MaxIter>
+	  <Precision>1e-4</Precision>
+	</SolverDWF>
       </WilsonLikeDirac>
       <Operator name="Hx" sorting="Lowest">      
 	<threshold>0.075</threshold>

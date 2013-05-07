@@ -32,11 +32,13 @@
           <Action type="Fermion" name="TwoFlavorsDomainWall_5D">
             <Kernel5D name="DiracOptimalDomainWall5dEvenOdd">
               <Preconditioning>NoPreconditioner</Preconditioning>
-              <wilson_mass>-1.8</wilson_mass>
               <N5d>8</N5d>
               <b>1.0</b>
               <c>1.0</c>
               <mass>0.2</mass>
+	      <BaseKernel name="DiracWilson">
+		<mass>-1.8</mass>
+	      </BaseKernel>
               <approximation name="Tanh" />
             </Kernel5D>
             <Solver type="Solver_CG">

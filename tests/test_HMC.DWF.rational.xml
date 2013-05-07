@@ -40,11 +40,13 @@
 	  <BoundaryHigh>18.0 18.0 18.0</BoundaryHigh>
 	  <Kernel5D name="DiracOptimalDomainWall5d">
             <Preconditioning>NoPreconditioner</Preconditioning>
-            <wilson_mass>-1.8</wilson_mass>
             <N5d>8</N5d>
             <b>1.0</b>
             <c>1.0</c>
             <mass>0.2</mass>
+	    <BaseKernel name="DiracWilson">
+	      <mass>-1.8</mass>
+	    </BaseKernel>
             <approximation name="Tanh" />
 	  </Kernel5D>
 	  <RationalSolver type="Rational_CG">
