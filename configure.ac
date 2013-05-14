@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-26 16:06:05 neo>
+# Time-stamp: <2013-05-14 10:14:14 neo>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
@@ -227,6 +227,7 @@ AM_CONDITIONAL([HITACHI], [(test x$hitachi = xtrue)])
 AM_CONDITIONAL([IBM_BGQ], [(test x$bluegeneq = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_NOSMP], [(test x$bgq_kernels_nosmp = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_SMP], [(test x$bgq_kernels_smp = xtrue)])
+AM_CONDITIONAL([IBM_BGQKERNELS], [[ ($bgq_kernels_nosmp == true) || ($bgq_kernels_smp == true)]])
 AM_CONDITIONAL([USE_EVENODD], [(test x$even_odd_idx = xtrue)])	 
 AM_CONDITIONAL([USE_BFM], [(test x$bfm_link = xtrue)&&(test x$bluegeneq = xtrue)])	 
 AM_CONDITIONAL([USE_DCMT], [(test x$dcmt_link = xtrue)])	 

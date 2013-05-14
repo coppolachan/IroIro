@@ -661,6 +661,8 @@ USE_BFM_FALSE
 USE_BFM_TRUE
 USE_EVENODD_FALSE
 USE_EVENODD_TRUE
+IBM_BGQKERNELS_FALSE
+IBM_BGQKERNELS_TRUE
 IBM_BGQWILSON_SMP_FALSE
 IBM_BGQWILSON_SMP_TRUE
 IBM_BGQWILSON_NOSMP_FALSE
@@ -3331,6 +3333,14 @@ else
   IBM_BGQWILSON_SMP_FALSE=
 fi
 
+ if  ($bgq_kernels_nosmp == true) || ($bgq_kernels_smp == true); then
+  IBM_BGQKERNELS_TRUE=
+  IBM_BGQKERNELS_FALSE='#'
+else
+  IBM_BGQKERNELS_TRUE='#'
+  IBM_BGQKERNELS_FALSE=
+fi
+
  if (test x$even_odd_idx = xtrue); then
   USE_EVENODD_TRUE=
   USE_EVENODD_FALSE='#'
@@ -5742,6 +5752,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${IBM_BGQWILSON_SMP_TRUE}" && test -z "${IBM_BGQWILSON_SMP_FALSE}"; then
   as_fn_error $? "conditional \"IBM_BGQWILSON_SMP\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${IBM_BGQKERNELS_TRUE}" && test -z "${IBM_BGQKERNELS_FALSE}"; then
+  as_fn_error $? "conditional \"IBM_BGQKERNELS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${USE_EVENODD_TRUE}" && test -z "${USE_EVENODD_FALSE}"; then

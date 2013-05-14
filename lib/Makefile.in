@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-26 15:33:44 neo>
+# Time-stamp: <2013-05-14 10:09:51 neo>
 
 
 
@@ -75,8 +75,9 @@ target_triplet = @target@
 
 ############################################
 # Sources by architecture
-@IBM_BGQ_TRUE@am__append_6 = Dirac_ops/dirac_DomainWall_BGQ.cpp \
-@IBM_BGQ_TRUE@	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
+@IBM_BGQKERNELS_TRUE@am__append_6 =  \
+@IBM_BGQKERNELS_TRUE@	Dirac_ops/dirac_DomainWall_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
@@ -219,12 +220,12 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @USE_MPI_FALSE@am__objects_1 = communicator_single.$(OBJEXT)
 @USE_EVENODD_FALSE@am__objects_2 = siteIndex.$(OBJEXT)
 @USE_EVENODD_TRUE@am__objects_2 = siteIndexEO.$(OBJEXT)
-@IBM_BGQ_FALSE@am__objects_3 = action_gauge_rect.$(OBJEXT) \
-@IBM_BGQ_FALSE@	action_gauge_wilson_force.$(OBJEXT)
-@IBM_BGQ_TRUE@am__objects_3 = action_gauge_rect.bgq.$(OBJEXT) \
-@IBM_BGQ_TRUE@	action_gauge_wilson_force.bgq.$(OBJEXT)
-@IBM_BGQ_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT) \
-@IBM_BGQ_TRUE@	rationalSolver_DWF_BGQ.$(OBJEXT)
+@IBM_BGQKERNELS_FALSE@am__objects_3 = action_gauge_rect.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@	action_gauge_wilson_force.$(OBJEXT)
+@IBM_BGQKERNELS_TRUE@am__objects_3 = action_gauge_rect.bgq.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@	action_gauge_wilson_force.bgq.$(OBJEXT)
+@IBM_BGQKERNELS_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@	rationalSolver_DWF_BGQ.$(OBJEXT)
 am__objects_5 = $(am__objects_4)
 @USE_DCMT_TRUE@am__objects_6 = dcmt_wrapper.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
@@ -482,10 +483,10 @@ DWF_BGQ_SRC = $(am__append_6)
 
 # Fall-back to the single core case
 @USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_single.cpp	
-@IBM_BGQ_FALSE@ACTION_SRCS = Action/action_gauge_rect.cpp \
-@IBM_BGQ_FALSE@	Action/action_gauge_wilson_force.cpp
-@IBM_BGQ_TRUE@ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
-@IBM_BGQ_TRUE@	Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp
+@IBM_BGQKERNELS_FALSE@ACTION_SRCS = Action/action_gauge_rect.cpp \
+@IBM_BGQKERNELS_FALSE@	Action/action_gauge_wilson_force.cpp
+@IBM_BGQKERNELS_TRUE@ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
+@IBM_BGQKERNELS_TRUE@	Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp
 @USE_EVENODD_FALSE@SITE_INDEXING_SRCS = Geometry/siteIndex.cpp
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
