@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-05-14 10:14:14 neo>
+# Time-stamp: <2013-05-14 10:31:55 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
@@ -334,7 +334,9 @@ AC_CHECK_LIB([bgqwilson3x4smp],[BGWilson_Init],,
 	Please install or provide the correct path to your installation
 	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
 echo enabled BGWilson Multiprocessor SMP version support on BGQ...
-else
+fi
+if [ $bgq_kernels_nosmp ]
+then
 AC_CHECK_LIB([bgqwilson],[BGWilson_Init],,
 	[AC_MSG_ERROR(BGWilson library not found in your system or missing dependences.
 	Please install or provide the correct path to your installation
@@ -345,7 +347,8 @@ AC_CHECK_LIB([bgqwilson3x4],[BGWilson_Init],,
 	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
 echo enabled BGWilson single threaded version support on BGQ...
 fi
-fi
+
+fi #bluegeneq
 
 # BFM Bagel Fermion Class Peter Boyle's library
 if [ ($bfm_link) ]
