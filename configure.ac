@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-05-14 10:31:55 cossu>
+# Time-stamp: <2013-05-17 18:06:34 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
@@ -34,6 +34,7 @@ ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value 
 bluegeneq=false   # default value
+BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib/
 #####################################################################
 # identify architecture
 echo           Checking architecture
@@ -256,7 +257,7 @@ echo configure: setting c++ compiler flags... done
 LDFLAGS=$ld_flags
 AM_COND_IF([USE_BFM], [LDFLAGS+=" -L$bfm_lib"],,)
 AM_COND_IF([USE_DCMT], [LDFLAGS+=" -L$dcmt_lib"],,)
-AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L/bghome/scbadm/ibm-doi/lib"],,)
+AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"],,)
 echo configure: setting library flags... done
 
 if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
@@ -325,10 +326,10 @@ echo enabled BGNET support on BGQ...
 
 if [ $bgq_kernels_smp ]
 then
-AC_CHECK_LIB([bgqwilsonsmp],[BGWilson_Init],,
-	[AC_MSG_ERROR(BGWilsonSMP library not found in your system or missing dependences.
-	Please install or provide the correct path to your installation
-	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
+#AC_CHECK_LIB([bgqwilsonsmp],[BGWilson_Init],,
+#	[AC_MSG_ERROR(BGWilsonSMP library not found in your system or missing dependences.
+#	Please install or provide the correct path to your installation
+#	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
 AC_CHECK_LIB([bgqwilson3x4smp],[BGWilson_Init],,
 	[AC_MSG_ERROR(BGWilson3x4SMP library not found in your system or missing dependences.
 	Please install or provide the correct path to your installation
@@ -337,10 +338,10 @@ echo enabled BGWilson Multiprocessor SMP version support on BGQ...
 fi
 if [ $bgq_kernels_nosmp ]
 then
-AC_CHECK_LIB([bgqwilson],[BGWilson_Init],,
-	[AC_MSG_ERROR(BGWilson library not found in your system or missing dependences.
-	Please install or provide the correct path to your installation
-	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
+#AC_CHECK_LIB([bgqwilson],[BGWilson_Init],,
+#	[AC_MSG_ERROR(BGWilson library not found in your system or missing dependences.
+#	Please install or provide the correct path to your installation
+#	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
 AC_CHECK_LIB([bgqwilson3x4],[BGWilson_Init],,
 	[AC_MSG_ERROR(BGWilson3x4 library not found in your system or missing dependences.
 	Please install or provide the correct path to your installation
