@@ -39,7 +39,7 @@
 	      <BaseKernel name="DiracWilson">
 		<mass>-1.8</mass>
 	      </BaseKernel>
-              <approximation name="Tanh" />
+              <approximation name="Tanh"></approximation>
             </Kernel5D>
             <Solver type="Solver_CG">
               <MaxIter>1000</MaxIter>
