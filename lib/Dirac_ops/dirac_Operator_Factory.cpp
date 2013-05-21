@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-05-02 06:03:43 noaki>
+ * Time-stamp: <2013-05-21 11:36:58 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -38,6 +38,24 @@ getDiracOperatorWL(Field* const Gfield){
 /// Dirac_Clover
 Dirac_Clover* DiracCloverFactory::getDiracOperatorWL(Field* const Gfield){
   return new Dirac_Clover(Dirac_node_,Gfield); }
+
+/// Dirac_Mobius
+DiracMobiusFactory::DiracMobiusFactory(XML::node node)
+  :Dirac_node_(node){
+  XML::node dnode = node;
+  XML::descend(dnode,"Dirac_denominator",MANDATORY);
+  XML::descend(node,"Solver",MANDATORY);
+
+  DiracFactory_.save(DiracOperators::createDiracWilsonLikeOperatorFactory(dnode));
+  SolverFactory_.save(SolverOperators::createSolverOperatorFactory(node));
+}
+
+Dirac_Mobius* DiracMobiusFactory::getDiracOperatorWL(Field* const Gfield){
+  D_.save(DiracFactory_.get()->getDiracOperatorWL(Gfield));
+  Fopr_.save(new Fopr_DdagD_Precondition(D_.get()));
+  Solver_.save(SolverFactory_.get()->getSolver(Fopr_.get()));
+  return new Dirac_Mobius(Dirac_node_,D_.get(),Solver_.get());
+}
 
 /// Dirac_optimalDomainWall
 DiracDWF5dFactory::DiracDWF5dFactory(XML::node node):Dirac_node_(node){
@@ -96,10 +114,8 @@ getDiracOperator4D(Field* const Gfield){
   Fopr_PV_.save(new Fopr_DdagD_Precondition(DW5D_PV_.get()));
   Solver_PV_.save(SolverFactory_.get()->getSolver(Fopr_PV_.get()));
 
-  return new Dirac_optimalDomainWall_4D_fullSolv(DW5D_.get(),
-						 DW5D_PV_.get(),
-						 Solver_.get(),
-						 Solver_PV_.get());
+  return new Dirac_optimalDomainWall_4D_fullSolv(DW5D_.get(),DW5D_PV_.get(),
+						 Solver_.get(),Solver_PV_.get());
 }
 
 /// Dirac_DWF4DeoSolv

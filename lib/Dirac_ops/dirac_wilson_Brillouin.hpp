@@ -1,6 +1,6 @@
 /*! @filename dirac_wilson_Brillouin.hpp
  * @brief declaration of Dirac_Wilson_Brillouin class 
- * Time-stamp: <2013-05-02 09:51:52 noaki>
+ * Time-stamp: <2013-05-21 10:39:57 noaki>
  ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
@@ -92,13 +92,11 @@ public:
 
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
-  const Field mult_H(const Field&)const;
   const Field mult_del(const Field&)const;
   const Field mult_lap(const Field&)const;
 
   const Field gamma5(const Field&) const;
   double getKappa() const {return kbr_;} 
-  void update_internal_state(){}
 };
 
 #endif

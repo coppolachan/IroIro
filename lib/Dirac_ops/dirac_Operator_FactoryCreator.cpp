@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-04-23 16:39:57 noaki>
+ * Time-stamp: <2013-05-21 13:09:30 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 
@@ -26,6 +26,8 @@ namespace DiracOperators {
 	return new DiracWilsonBrillouinFactory(node,Improved);
       if (!strcmp(Dirac_name, "DiracClover"))  
 	return new DiracCloverFactory(node);
+      if (!strcmp(Dirac_name, "DiracMobius"))  
+	return new DiracMobiusFactory(node);
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
 	return new DiracDWF5dFactory(node);
       if (!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
@@ -102,8 +104,7 @@ namespace DiracOperators {
     }
   }
   
-  // another clasification of the operator where inversion is not considered
-  // like in the case of eigenmode calculation.
+  // This is for the Dirac operator creation beyond the framework of WilsonLike
   DiracOperatorFactory* createGeneralDiracOperatorFactory(const XML::node node){
     // temporal hack
     return createGeneralDiracWilsonLikeOperatorFactory(node);
@@ -123,6 +124,8 @@ namespace DiracOperators {
 	return new DiracWilsonFactory(node);
       if (!strcmp(DWL_name, "DiracClover"))  
 	return new DiracCloverFactory(node);
+      if (!strcmp(DWL_name, "DiracMobius"))  
+	return new DiracMobiusFactory(node);
       if (!strcmp(DWL_name, "DiracOptimalDomainWall5d"))  
 	return new DiracDWF5dFactory(node);
       if (!strcmp(DWL_name, "DiracOptimalDomainWall4d"))  

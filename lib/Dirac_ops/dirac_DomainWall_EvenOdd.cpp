@@ -2,7 +2,7 @@
  *@file dirac_DomainWall_EvenOdd.cpp
  *
  *@brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op)
- Time-stamp: <2013-05-06 00:55:28 noaki>
+ Time-stamp: <2013-05-21 09:34:21 noaki>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"
@@ -46,10 +46,9 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_oe_dag(const Field& f)const{
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{
 #ifdef  IBM_BGQ_WILSON
-  Field w(Deo_.fsize()); // just slightly faster (but only BGQ)
-  //Doe_->mult_hop(w,f);
-  
   double* f_ptr = const_cast<Field&>(f).getaddr(0);
+  Field w(Deo_.fsize()); // just slightly faster (but only BGQ)
+
 #pragma omp parallel
   {
     Deo_.mult_hop_omp(w,f_ptr);
@@ -62,22 +61,14 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
-  
 #ifdef IBM_BGQ_WILSON  
-  timeval start_, end_;
-  gettimeofday(&start_,NULL);
-
-  Field w(Deo_.fsize());
-  //Deo_.mult_hop_dag(w,f);
-  
   double* f_ptr = const_cast<Field&>(f).getaddr(0);
+  Field w(Deo_.fsize());
+
 #pragma omp parallel
   {
     Deo_.mult_hop_dag_omp(w,f_ptr);
   }
-  gettimeofday(&end_,NULL);
-  multdag_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
-  multdag_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
 #else
   Field w(f);
   w -= mult_oe_dag(mult_eo_dag(f));

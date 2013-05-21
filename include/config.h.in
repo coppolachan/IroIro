@@ -21,18 +21,12 @@
 /* Define to 1 if you have the `bgnet' library (-lbgnet). */
 #undef HAVE_LIBBGNET
 
-/* Define to 1 if you have the `bgqwilson' library (-lbgqwilson). */
-#undef HAVE_LIBBGQWILSON
-
 /* Define to 1 if you have the `bgqwilson3x4' library (-lbgqwilson3x4). */
 #undef HAVE_LIBBGQWILSON3X4
 
 /* Define to 1 if you have the `bgqwilson3x4smp' library (-lbgqwilson3x4smp).
    */
 #undef HAVE_LIBBGQWILSON3X4SMP
-
-/* Define to 1 if you have the `bgqwilsonsmp' library (-lbgqwilsonsmp). */
-#undef HAVE_LIBBGQWILSONSMP
 
 /* Define to 1 if you have the `dcmt' library (-ldcmt). */
 #undef HAVE_LIBDCMT

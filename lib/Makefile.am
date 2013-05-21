@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-26 19:26:02 noaki>
+# Time-stamp: <2013-05-21 11:55:47 noaki>
 
 ###########################################
 # Initial definitions 
@@ -48,7 +48,7 @@ endif #USE_MPI
 
 ############################################
 # Sources by architecture
-if IBM_BGQ
+if IBM_BGQKERNELS
 DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
 DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
@@ -121,6 +121,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
+		Dirac_ops/dirac_Mobius.cpp			\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
 		Dirac_ops/dirac_DomainWall.cpp   		\
@@ -302,6 +303,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
+			Dirac_ops/dirac_Mobius.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \

@@ -86,19 +86,17 @@ bool HMCgeneral::metropolis_test(const double Hdiff)const{
   if (Communicator::instance()->primaryNode()){
     rn = rand_->get();
   }
+  Communicator::instance()->sync();
   Communicator::instance()->broadcast(sizeof(double), rn, 0);
   
   CCIO::cout<< "--------------------------------------------\n";
   CCIO::cout<< "dH = "<<Hdiff << "  Random = "<< rn 
 	    << "\nAcc. Probability = " << ((prob<1.0)? prob: 1.0)<< "   ";
   
-  if(prob >1.0){       // accepted
-    CCIO::cout<<"-- ACCEPTED\n";
-    return true;
-  }else if(rn <= prob){// accepted
+  if((prob >1.0) || (rn <= prob)){       // accepted
     CCIO::cout <<"-- ACCEPTED\n";
     return true;
-  }else{               // rejected
+  } else {                               // rejected
     CCIO::cout <<"-- REJECTED\n";
     return false;
   }

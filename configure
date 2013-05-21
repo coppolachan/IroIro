@@ -661,6 +661,8 @@ USE_BFM_FALSE
 USE_BFM_TRUE
 USE_EVENODD_FALSE
 USE_EVENODD_TRUE
+IBM_BGQKERNELS_FALSE
+IBM_BGQKERNELS_TRUE
 IBM_BGQWILSON_SMP_FALSE
 IBM_BGQWILSON_SMP_TRUE
 IBM_BGQWILSON_NOSMP_FALSE
@@ -3064,6 +3066,7 @@ ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value
 bluegeneq=false   # default value
+BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib/
 #####################################################################
 # identify architecture
 echo           Checking architecture
@@ -3329,6 +3332,14 @@ fi
 else
   IBM_BGQWILSON_SMP_TRUE='#'
   IBM_BGQWILSON_SMP_FALSE=
+fi
+
+ if  ($bgq_kernels_nosmp == true) || ($bgq_kernels_smp == true); then
+  IBM_BGQKERNELS_TRUE=
+  IBM_BGQKERNELS_FALSE='#'
+else
+  IBM_BGQKERNELS_TRUE='#'
+  IBM_BGQKERNELS_FALSE=
 fi
 
  if (test x$even_odd_idx = xtrue); then
@@ -4090,7 +4101,7 @@ if test -z "$USE_DCMT_TRUE"; then :
   LDFLAGS+=" -L$dcmt_lib"
 fi
 if test -z "$IBM_BGQ_TRUE"; then :
-  LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L/bghome/scbadm/ibm-doi/lib"
+  LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"
 fi
 echo configure: setting library flags... done
 
@@ -4884,55 +4895,10 @@ echo enabled BGNET support on BGQ...
 
 if  $bgq_kernels_smp
 then
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BGWilson_Init in -lbgqwilsonsmp" >&5
-$as_echo_n "checking for BGWilson_Init in -lbgqwilsonsmp... " >&6; }
-if ${ac_cv_lib_bgqwilsonsmp_BGWilson_Init+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lbgqwilsonsmp -lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char BGWilson_Init ();
-int
-main ()
-{
-return BGWilson_Init ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_bgqwilsonsmp_BGWilson_Init=yes
-else
-  ac_cv_lib_bgqwilsonsmp_BGWilson_Init=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bgqwilsonsmp_BGWilson_Init" >&5
-$as_echo "$ac_cv_lib_bgqwilsonsmp_BGWilson_Init" >&6; }
-if test "x$ac_cv_lib_bgqwilsonsmp_BGWilson_Init" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBBGQWILSONSMP 1
-_ACEOF
-
-  LIBS="-lbgqwilsonsmp $LIBS"
-
-else
-  as_fn_error $? "BGWilsonSMP library not found in your system or missing dependences.
-	Please install or provide the correct path to your installation
-	or switch off BGNET support." "$LINENO" 5
-fi
-
+#AC_CHECK_LIB([bgqwilsonsmp],[BGWilson_Init],,
+#	[AC_MSG_ERROR(BGWilsonSMP library not found in your system or missing dependences.
+#	Please install or provide the correct path to your installation
+#	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for BGWilson_Init in -lbgqwilson3x4smp" >&5
 $as_echo_n "checking for BGWilson_Init in -lbgqwilson3x4smp... " >&6; }
 if ${ac_cv_lib_bgqwilson3x4smp_BGWilson_Init+:} false; then :
@@ -4983,56 +4949,13 @@ else
 fi
 
 echo enabled BGWilson Multiprocessor SMP version support on BGQ...
-else
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for BGWilson_Init in -lbgqwilson" >&5
-$as_echo_n "checking for BGWilson_Init in -lbgqwilson... " >&6; }
-if ${ac_cv_lib_bgqwilson_BGWilson_Init+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lbgqwilson -lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char BGWilson_Init ();
-int
-main ()
-{
-return BGWilson_Init ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"; then :
-  ac_cv_lib_bgqwilson_BGWilson_Init=yes
-else
-  ac_cv_lib_bgqwilson_BGWilson_Init=no
 fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_bgqwilson_BGWilson_Init" >&5
-$as_echo "$ac_cv_lib_bgqwilson_BGWilson_Init" >&6; }
-if test "x$ac_cv_lib_bgqwilson_BGWilson_Init" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBBGQWILSON 1
-_ACEOF
-
-  LIBS="-lbgqwilson $LIBS"
-
-else
-  as_fn_error $? "BGWilson library not found in your system or missing dependences.
-	Please install or provide the correct path to your installation
-	or switch off BGNET support." "$LINENO" 5
-fi
-
+if  $bgq_kernels_nosmp
+then
+#AC_CHECK_LIB([bgqwilson],[BGWilson_Init],,
+#	[AC_MSG_ERROR(BGWilson library not found in your system or missing dependences.
+#	Please install or provide the correct path to your installation
+#	or switch off BGNET support.)],[-lbgnet -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++])
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for BGWilson_Init in -lbgqwilson3x4" >&5
 $as_echo_n "checking for BGWilson_Init in -lbgqwilson3x4... " >&6; }
 if ${ac_cv_lib_bgqwilson3x4_BGWilson_Init+:} false; then :
@@ -5084,7 +5007,8 @@ fi
 
 echo enabled BGWilson single threaded version support on BGQ...
 fi
-fi
+
+fi #bluegeneq
 
 # BFM Bagel Fermion Class Peter Boyle's library
 if  ($bfm_link)
@@ -5742,6 +5666,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${IBM_BGQWILSON_SMP_TRUE}" && test -z "${IBM_BGQWILSON_SMP_FALSE}"; then
   as_fn_error $? "conditional \"IBM_BGQWILSON_SMP\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${IBM_BGQKERNELS_TRUE}" && test -z "${IBM_BGQKERNELS_FALSE}"; then
+  as_fn_error $? "conditional \"IBM_BGQKERNELS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${USE_EVENODD_TRUE}" && test -z "${USE_EVENODD_FALSE}"; then

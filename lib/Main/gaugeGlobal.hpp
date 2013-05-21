@@ -1,6 +1,8 @@
 /*!
  * @file gaugeGlobal.hpp
  * @brief definition of the GaugeGlobal class
+ *
+ * Time-stamp: <2013-04-26 17:02:23 neo>
  */
 #ifndef GAUGEGLOBAL_INCLUDED
 #define GAUGEGLOBAL_INCLUDED

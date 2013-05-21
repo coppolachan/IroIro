@@ -7,10 +7,10 @@
 //---------------------------------------------------------------------
 
 #include "macros.hpp" //defines Color, Spin, Dimension constants
-#include "commonPrms.h"
+#include "commonPrms.hpp"
 
 #include "bfm_storage.hpp"
-#include "lib/Main/Geometry/shiftField.hpp"
+#include "lib/Geometry/shiftField.hpp"
 #include "Tools/fieldUtils.hpp"
 
 
@@ -103,8 +103,10 @@ void BFM_Storage::GaugeExport_to_BFM(GaugeField& U){
   for (int mu = 0; mu < NDIM_; mu++) {
 
     Umu = DirSlice(U, mu);
+    CCIO::cout << "Umu norm: "<< Umu.data.norm() << "\n";
     CCIO::cout<<"BFM_Storage: Before shiftfield call\n";
     U_dag = shiftField(Umu, mu, Backward()); // U(x-mu)
+    CCIO::cout << "Udag norm: "<< U_dag.data.norm() << "\n";
 
     int dir = 2*mu+1;
     CCIO::cout << "Direction : "<<dir<<"\n";
@@ -118,7 +120,8 @@ void BFM_Storage::GaugeExport_to_BFM(GaugeField& U){
     for(int site = 0; site<U.format.Nvol(); ++site)
       U_dag.data[U_dag.format.cslice(0,site)] =
 	mat_dag(U_dag,site).getva();
-    
+
+    CCIO::cout << "Udag norm after: "<< U_dag.data.norm() << "\n";
     CCIO::cout<<"BFM_Storage: Before getting the pointer\n";
     U_Ptr = U_dag.data.getaddr(0);
     CCIO::cout<<"BFM_Storage: Before importGauge call\n";

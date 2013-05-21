@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-04-26 19:26:02 noaki>
+# Time-stamp: <2013-05-21 11:55:47 noaki>
 
 
 
@@ -75,8 +75,9 @@ target_triplet = @target@
 
 ############################################
 # Sources by architecture
-@IBM_BGQ_TRUE@am__append_6 = Dirac_ops/dirac_DomainWall_BGQ.cpp \
-@IBM_BGQ_TRUE@	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
+@IBM_BGQKERNELS_TRUE@am__append_6 =  \
+@IBM_BGQKERNELS_TRUE@	Dirac_ops/dirac_DomainWall_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
@@ -156,7 +157,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_wilson_Brillouin.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp \
-	Dirac_ops/dirac_clover.cpp Dirac_ops/fopr_signH_Zolotarev.cpp \
+	Dirac_ops/dirac_clover.cpp Dirac_ops/dirac_Mobius.cpp \
+	Dirac_ops/fopr_signH_Zolotarev.cpp \
 	Dirac_ops/dirac_overlap_Zolotarev.cpp \
 	Dirac_ops/dirac_DomainWall.cpp \
 	Dirac_ops/dirac_DomainWall_BGQ.cpp \
@@ -219,12 +221,12 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @USE_MPI_FALSE@am__objects_1 = communicator_single.$(OBJEXT)
 @USE_EVENODD_FALSE@am__objects_2 = siteIndex.$(OBJEXT)
 @USE_EVENODD_TRUE@am__objects_2 = siteIndexEO.$(OBJEXT)
-@IBM_BGQ_FALSE@am__objects_3 = action_gauge_rect.$(OBJEXT) \
-@IBM_BGQ_FALSE@	action_gauge_wilson_force.$(OBJEXT)
-@IBM_BGQ_TRUE@am__objects_3 = action_gauge_rect.bgq.$(OBJEXT) \
-@IBM_BGQ_TRUE@	action_gauge_wilson_force.bgq.$(OBJEXT)
-@IBM_BGQ_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT) \
-@IBM_BGQ_TRUE@	rationalSolver_DWF_BGQ.$(OBJEXT)
+@IBM_BGQKERNELS_FALSE@am__objects_3 = action_gauge_rect.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@	action_gauge_wilson_force.$(OBJEXT)
+@IBM_BGQKERNELS_TRUE@am__objects_3 = action_gauge_rect.bgq.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@	action_gauge_wilson_force.bgq.$(OBJEXT)
+@IBM_BGQKERNELS_TRUE@am__objects_4 = dirac_DomainWall_BGQ.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@	rationalSolver_DWF_BGQ.$(OBJEXT)
 am__objects_5 = $(am__objects_4)
 @USE_DCMT_TRUE@am__objects_6 = dcmt_wrapper.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
@@ -246,7 +248,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_wilson_Brillouin.$(OBJEXT) \
 	dirac_staggered_EvenOdd.$(OBJEXT) \
 	dirac_staggered_EvenOdd_Adjoint.$(OBJEXT) \
-	dirac_clover.$(OBJEXT) fopr_signH_Zolotarev.$(OBJEXT) \
+	dirac_clover.$(OBJEXT) dirac_Mobius.$(OBJEXT) \
+	fopr_signH_Zolotarev.$(OBJEXT) \
 	dirac_overlap_Zolotarev.$(OBJEXT) dirac_DomainWall.$(OBJEXT) \
 	$(am__objects_5) dirac_DomainWall_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
@@ -483,10 +486,10 @@ DWF_BGQ_SRC = $(am__append_6)
 
 # Fall-back to the single core case
 @USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_single.cpp	
-@IBM_BGQ_FALSE@ACTION_SRCS = Action/action_gauge_rect.cpp \
-@IBM_BGQ_FALSE@	Action/action_gauge_wilson_force.cpp
-@IBM_BGQ_TRUE@ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
-@IBM_BGQ_TRUE@	Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp
+@IBM_BGQKERNELS_FALSE@ACTION_SRCS = Action/action_gauge_rect.cpp \
+@IBM_BGQKERNELS_FALSE@	Action/action_gauge_wilson_force.cpp
+@IBM_BGQKERNELS_TRUE@ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
+@IBM_BGQKERNELS_TRUE@	Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp
 @USE_EVENODD_FALSE@SITE_INDEXING_SRCS = Geometry/siteIndex.cpp
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
@@ -537,6 +540,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
+		Dirac_ops/dirac_Mobius.cpp			\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
 		Dirac_ops/dirac_DomainWall.cpp   		\
@@ -717,6 +721,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
+			Dirac_ops/dirac_Mobius.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
@@ -942,6 +947,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_4D_fullSolv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_EvenOdd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Mobius.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Operator_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Operator_FactoryCreator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_WilsonLike.Po@am__quote@
@@ -1537,6 +1543,20 @@ dirac_clover.obj: Dirac_ops/dirac_clover.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_clover.cpp' object='dirac_clover.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_clover.obj `if test -f 'Dirac_ops/dirac_clover.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_clover.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_clover.cpp'; fi`
+
+dirac_Mobius.o: Dirac_ops/dirac_Mobius.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_Mobius.o -MD -MP -MF $(DEPDIR)/dirac_Mobius.Tpo -c -o dirac_Mobius.o `test -f 'Dirac_ops/dirac_Mobius.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_Mobius.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_Mobius.Tpo $(DEPDIR)/dirac_Mobius.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_Mobius.cpp' object='dirac_Mobius.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_Mobius.o `test -f 'Dirac_ops/dirac_Mobius.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_Mobius.cpp
+
+dirac_Mobius.obj: Dirac_ops/dirac_Mobius.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_Mobius.obj -MD -MP -MF $(DEPDIR)/dirac_Mobius.Tpo -c -o dirac_Mobius.obj `if test -f 'Dirac_ops/dirac_Mobius.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_Mobius.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_Mobius.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_Mobius.Tpo $(DEPDIR)/dirac_Mobius.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_Mobius.cpp' object='dirac_Mobius.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_Mobius.obj `if test -f 'Dirac_ops/dirac_Mobius.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_Mobius.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_Mobius.cpp'; fi`
 
 fopr_signH_Zolotarev.o: Dirac_ops/fopr_signH_Zolotarev.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fopr_signH_Zolotarev.o -MD -MP -MF $(DEPDIR)/fopr_signH_Zolotarev.Tpo -c -o fopr_signH_Zolotarev.o `test -f 'Dirac_ops/fopr_signH_Zolotarev.cpp' || echo '$(srcdir)/'`Dirac_ops/fopr_signH_Zolotarev.cpp

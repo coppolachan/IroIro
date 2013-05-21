@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-04-24 15:57:17 noaki>
+ Time-stamp: <2013-05-21 11:57:11 noaki>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -11,6 +11,7 @@
 #include "dirac_wilson_EvenOdd.hpp"
 #include "dirac_wilson_Brillouin.hpp"
 #include "dirac_clover.hpp"
+#include "dirac_Mobius.hpp"
 #include "dirac_DomainWall_4D_fullSolv.hpp"
 #include "dirac_DomainWall_4D_eoSolv.hpp"
 #include "dirac_DomainWall.hpp"
@@ -106,6 +107,22 @@ class DiracCloverFactory : public DiracWilsonLikeOperatorFactory {
 public:
   DiracCloverFactory(const XML::node node):Dirac_node_(node){}
   Dirac_Clover* getDiracOperatorWL(Field* const Gfield);
+};
+
+/*! @brief Concrete class for creating Dirac Mobius operators */
+class DiracMobiusFactory : public DiracWilsonLikeOperatorFactory{
+  // Factories
+  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracFactory_;
+  RaiiFactoryObj<SolverOperatorFactory> SolverFactory_;
+  // Objects (Dodwf)
+  RaiiFactoryObj<DiracWilsonLike> D_;
+  RaiiFactoryObj<Fopr_DdagD_Precondition> Fopr_;
+  RaiiFactoryObj<Solver> Solver_;
+
+  const XML::node Dirac_node_;
+public:
+  DiracMobiusFactory(XML::node node);
+  Dirac_Mobius* getDiracOperatorWL(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac Optimal DWF-5d operators */

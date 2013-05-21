@@ -97,15 +97,11 @@ void GaugeFixingStep::gauge_tr_even(GaugeField& Ue,GaugeField& Uo,
     for(int mu=0; mu<NDIM_; ++mu){ /*!<gauge tr. is always done for NDIM-dims*/
       shiftField_oe(Gp,Ge_ptr,mu,Forward());
 
-      BGWilsonSU3_MatMult_NN(U1d_ptr+str2,
-			     Ge_ptr+str2,Ue_ptr+mu*Nvh_*CC*2+str2,ns);
-      BGWilsonSU3_MatEquate(Ue_ptr+mu*Nvh_*CC*2+str2,
-			    U1d_ptr+str2,ns);
+      BGWilsonSU3_MatMult_NN(U1d_ptr+str2,Ge_ptr+str2,Ue_ptr+mu*Nvh_*CC*2+str2,ns);
+      BGWilsonSU3_MatEquate(Ue_ptr+mu*Nvh_*CC*2+str2,U1d_ptr+str2,ns);
 
-      BGWilsonSU3_MatMult_ND(U1d_ptr+str2,
-			     Uo_ptr+mu*Nvh_*CC*2+str2,Gp_ptr+str2,ns);
-      BGWilsonSU3_MatEquate(Uo_ptr+mu*Nvh_*CC*2+str2,
-			    U1d_ptr+str2,ns);
+      BGWilsonSU3_MatMult_ND(U1d_ptr+str2,Uo_ptr+mu*Nvh_*CC*2+str2,Gp_ptr+str2,ns);
+      BGWilsonSU3_MatEquate(Uo_ptr+mu*Nvh_*CC*2+str2,U1d_ptr+str2,ns);
     }
   }
 #else
@@ -144,15 +140,11 @@ void GaugeFixingStep::gauge_tr_odd(GaugeField& Ue,GaugeField& Uo,
     for(int mu=0; mu<NDIM_; ++mu){ /*!<gauge tr. is always done for NDIM-dims*/
       shiftField_eo(Gp,Go_ptr,mu,Forward());
 
-      BGWilsonSU3_MatMult_ND(U1d_ptr+str2,
-			     Ue_ptr+mu*Nvh_*CC*2+str2,Gp_ptr+str2,ns);
-      BGWilsonSU3_MatEquate(Ue_ptr+mu*Nvh_*CC*2+str2,
-			    U1d_ptr+str2,ns);
+      BGWilsonSU3_MatMult_ND(U1d_ptr+str2,Ue_ptr+mu*Nvh_*CC*2+str2,Gp_ptr+str2,ns);
+      BGWilsonSU3_MatEquate(Ue_ptr+mu*Nvh_*CC*2+str2,U1d_ptr+str2,ns);
 
-      BGWilsonSU3_MatMult_NN(U1d_ptr+str2,
-			     Go_ptr+str2,Uo_ptr+mu*Nvh_*CC*2+str2,ns);
-      BGWilsonSU3_MatEquate(Uo_ptr+mu*Nvh_*CC*2+str2,
-			    U1d_ptr+str2,ns);
+      BGWilsonSU3_MatMult_NN(U1d_ptr+str2,Go_ptr+str2,Uo_ptr+mu*Nvh_*CC*2+str2,ns);
+      BGWilsonSU3_MatEquate(Uo_ptr+mu*Nvh_*CC*2+str2,U1d_ptr+str2,ns);
     }
   }
 #else
@@ -220,13 +212,9 @@ const GaugeField1D GaugeFixingStep::upu_even(const GaugeField& Ue,
     const int str2 = 2*CC*ns*omp_get_thread_num();
 
     for(int mu=0; mu<Ndim_; ++mu){
-      BGWilsonSU3_MatAdd(UpU_ptr+str2,
-			 Ue_ptr+mu*Nvh_*CC*2+str2,ns);
-
+      BGWilsonSU3_MatAdd(UpU_ptr+str2,Ue_ptr+mu*Nvh_*CC*2+str2,ns);
       shiftField_eo(Ute,Uo_ptr+mu*Nvh_*CC*2,mu,Backward());
-
-      BGWilsonSU3_MatAdd(UpU_ptr+str2,
-			 Ute_ptr+str2,ns);
+      BGWilsonSU3_MatAdd(UpU_ptr+str2,Ute_ptr+str2,ns);
     }      
   }
 #else
@@ -259,13 +247,9 @@ const GaugeField1D GaugeFixingStep::umu_even(const GaugeField& Ue,
     const int str2 = 2*CC*ns*omp_get_thread_num();
 
     for(int mu=0; mu<Ndim_; ++mu){
-      BGWilsonSU3_MatSub(UmU_ptr+str2,
-			 Ue_ptr+mu*Nvh_*CC*2+str2,ns);
-
+      BGWilsonSU3_MatSub(UmU_ptr+str2,Ue_ptr+mu*Nvh_*CC*2+str2,ns);
       shiftField_eo(Ute,Uo_ptr+mu*Nvh_*CC*2,mu,Backward());
-
-      BGWilsonSU3_MatAdd(UmU_ptr+str2,
-			 Ute_ptr+str2,ns);
+      BGWilsonSU3_MatAdd(UmU_ptr+str2,Ute_ptr+str2,ns);
     }      
   }
 #else
@@ -298,13 +282,9 @@ const GaugeField1D GaugeFixingStep::upu_odd(const GaugeField& Ue,
     const int str2 = 2*CC*ns*omp_get_thread_num();
 
     for(int mu=0; mu<Ndim_; ++mu){
-      BGWilsonSU3_MatAdd(UpU_ptr+str2,
-			 Uo_ptr+mu*Nvh_*CC*2+str2,ns);
-
+      BGWilsonSU3_MatAdd(UpU_ptr+str2,Uo_ptr+mu*Nvh_*CC*2+str2,ns);
       shiftField_oe(Uto,Ue_ptr+mu*Nvh_*CC*2,mu,Backward());
-
-      BGWilsonSU3_MatAdd(UpU_ptr+str2,
-			 Uto_ptr+str2,ns);
+      BGWilsonSU3_MatAdd(UpU_ptr+str2,Uto_ptr+str2,ns);
     }      
   }
 #else
@@ -337,13 +317,9 @@ const GaugeField1D GaugeFixingStep::umu_odd(const GaugeField& Ue,
     const int str2 = 2*CC*ns*omp_get_thread_num();
 
     for(int mu=0; mu<Ndim_; ++mu){
-      BGWilsonSU3_MatSub(UmU_ptr+str2,
-			 Uo_ptr+mu*Nvh_*CC*2+str2,ns);
-
+      BGWilsonSU3_MatSub(UmU_ptr+str2,Uo_ptr+mu*Nvh_*CC*2+str2,ns);
       shiftField_oe(Uto,Ue_ptr+mu*Nvh_*CC*2,mu,Backward());
-
-      BGWilsonSU3_MatAdd(UmU_ptr+str2,
-			 Uto_ptr+str2,ns);
+      BGWilsonSU3_MatAdd(UmU_ptr+str2,Uto_ptr+str2,ns);
     }      
   }
 #else
@@ -376,13 +352,9 @@ void GaugeFixingStep::W_even(GaugeField1D& W,
     BGWilsonSU3_MatZero(W_ptr+str2,ns);
 
     for(int mu=0; mu<Ndim_; ++mu){
-      BGWilsonSU3_MatAdd(W_ptr+str2,
-			 Ue_ptr+mu*Nvh_*CC*2+str2,ns);
-
+      BGWilsonSU3_MatAdd(W_ptr+str2,Ue_ptr+mu*Nvh_*CC*2+str2,ns);
       shiftField_eo(Wt,Uo_ptr+mu*Nvh_*CC*2,mu,Backward());
-
-      BGWilsonSU3_MatAdd_ND(W_ptr+str2,
-			    Wt_ptr+str2,ns);
+      BGWilsonSU3_MatAdd_ND(W_ptr+str2,Wt_ptr+str2,ns);
     }      
   }
 #else
@@ -416,13 +388,9 @@ void GaugeFixingStep::W_odd(GaugeField1D& W,
     BGWilsonSU3_MatZero(W_ptr+str2,ns);
 
     for(int mu=0; mu<Ndim_; ++mu){
-      BGWilsonSU3_MatAdd(W_ptr+str2,
-			 Uo_ptr+mu*Nvh_*CC*2+str2,ns);
-
+      BGWilsonSU3_MatAdd(W_ptr+str2,Uo_ptr+mu*Nvh_*CC*2+str2,ns);
       shiftField_oe(Wt,Ue_ptr+mu*Nvh_*CC*2,mu,Backward());
-
-      BGWilsonSU3_MatAdd_ND(W_ptr+str2,
-			    Wt_ptr+str2,ns);
+      BGWilsonSU3_MatAdd_ND(W_ptr+str2,Wt_ptr+str2,ns);
     }      
   }
 #else

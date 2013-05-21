@@ -5,7 +5,10 @@
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Communicator/fields_io.hpp"
-
+#ifdef IBM_BGQ_WILSON
+#include <omp.h>
+#include "bgqthread.h"
+#endif
 using namespace std;
 
 void WilsonFlow::update_U(const GaugeField& Z)const{
@@ -81,13 +84,35 @@ double WilsonFlow::Edens_plaq(int t)const{
 }
 
 double WilsonFlow::Edens_clover(int t)const{
-  using namespace SUNmatUtils;
-  using namespace FieldUtils;
   int Ndim = CommonPrms::instance()->Ndim();
   int Nvol = CommonPrms::instance()->Nvol();
 
   Staples stpl;
   double Sg = 0.0;      
+
+#ifdef IBM_BGQ_WILSON
+  GaugeField1D Fmn;
+  double* Fmn_ptr = Fmn.data.getaddr(0);
+
+  BGQThread_Init();
+
+  const int CC2 = 2*NC_*NC_;
+  for(int mu=0; mu<Ndim; ++mu){
+    for(int nu=mu+1; nu<Ndim; ++nu){
+      Fmn = stpl.fieldStrength(U_,mu,nu);
+
+#pragma omp for reduction(+:Sg)	
+      for(int site=0; site<Nvol; ++site){
+	for (int icc2=0; icc2< CC2; ++icc2){
+	  Sg += Fmn_ptr[icc2+CC2*site]*Fmn_ptr[icc2+CC2*site];
+	}
+      }
+    }
+  }
+#else
+  using namespace SUNmatUtils;
+  using namespace FieldUtils;
+
   for(int mu=0; mu<Ndim; ++mu){
     for(int nu=mu+1; nu<Ndim; ++nu){
       GaugeField1D Fmn = stpl.fieldStrength(U_,mu,nu);
@@ -97,6 +122,7 @@ double WilsonFlow::Edens_clover(int t)const{
       }
     }
   }
+#endif
   Sg = Communicator::instance()->reduce_sum(Sg);
 
   double td = tau(t);

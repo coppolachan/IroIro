@@ -1,6 +1,6 @@
 /* !@filename dirac_wilson_Brillouin.cpp
  * @brief implementation of Dirac_Wilson_Brillouin class
- *  Time-stamp: <2013-04-24 16:36:17 noaki>
+ *  Time-stamp: <2013-05-21 11:59:11 noaki>
  */
 #include "dirac_wilson_Brillouin.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -31,10 +31,6 @@ void (Dirac_Wilson_Brillouin::*Dirac_Wilson_Brillouin::gm[])
 
 const Field Dirac_Wilson_Brillouin::mult_dag(const Field& f)const{ 
   return gamma5(mult(gamma5(f)));
-}
-
-const Field Dirac_Wilson_Brillouin::mult_H(const Field& f)const{ 
-  return gamma5(mult(f));
 }
 
 /*!@brief U_{x,\mu}\psi_{x+\hat{\mu}} */
