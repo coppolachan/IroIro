@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.cpp
  * @brief Declaration of Dirac_optimalDomainWall_4D_fullSolv class 
- Time-stamp: <2013-05-06 14:31:49 noaki>
+ Time-stamp: <2013-05-21 09:08:57 noaki>
  */
 #include "dirac_DomainWall_4D_fullSolv.hpp"
 #include "Tools/randNum_MP.h"

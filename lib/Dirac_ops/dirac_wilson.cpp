@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2013-05-03 08:40:58 noaki>
+ * Time-stamp: <2013-05-17 17:09:27 noaki>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -48,9 +48,7 @@ void Dirac_Wilson::mult_offdiag(Field& w, const Field& f) const{
 }
 void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
 #ifndef IBM_BGQ_WILSON
-
   mult_offdiag(w,f);
-
   w += f; 
 #else  
   double* pF = const_cast<Field&>(f).getaddr(0);
