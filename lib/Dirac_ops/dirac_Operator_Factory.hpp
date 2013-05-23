@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-05-21 11:57:11 noaki>
+ Time-stamp: <2013-05-23 10:28:58 noaki>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -18,102 +18,102 @@
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "dirac_staggered_EvenOdd.hpp"
 #include "dirac_staggered_EvenOdd_Adjoint.hpp"
-class SolverOperatorFactory;
+class SolverFactory;
 
 /*! @brief Abstract base class for creating Dirac operators */
 
-class DiracOperatorFactory {
+class DiracFactory {
 public:
-  virtual Dirac* getDiracOperator(Field* const) = 0;
-  virtual ~DiracOperatorFactory(){}
+  virtual Dirac* getDirac(Field* const) = 0;
+  virtual ~DiracFactory(){}
 };
 
-class DiracWilsonLikeOperatorFactory :public DiracOperatorFactory{
+class DiracWilsonLikeFactory :public DiracFactory{
 public:
-  virtual DiracWilsonLike* getDiracOperatorWL(Field* const) = 0;
-  Dirac* getDiracOperator(Field* const Gfield){
-    return getDiracOperatorWL(Gfield);}
-  virtual ~DiracWilsonLikeOperatorFactory(){}
+  virtual DiracWilsonLike* getDiracWL(Field* const) = 0;
+  Dirac* getDirac(Field* const Gfield){
+    return getDiracWL(Gfield);}
+  virtual ~DiracWilsonLikeFactory(){}
 };
 
-class DiracWilsonLikeEvenOddOperatorFactory
-  : public DiracWilsonLikeOperatorFactory{
+class DiracWilsonLikeEvenOddFactory
+  : public DiracWilsonLikeFactory{
 public:
   /*!@brief this virtual function is to be wrapped and to give eo-/oe- operators to the higher level operator */
-  virtual DiracWilsonLike_EvenOdd* getDiracOperatorEO(Field* const) = 0;
+  virtual DiracWilsonLike_EvenOdd* getDiracEO(Field* const) = 0;
 
-  DiracWilsonLike* getDiracOperatorWL(Field* const Gfield){
-    return getDiracOperatorEO(Gfield);}
-  virtual ~DiracWilsonLikeEvenOddOperatorFactory(){}
+  DiracWilsonLike* getDiracWL(Field* const Gfield){
+    return getDiracEO(Gfield);}
+  virtual ~DiracWilsonLikeEvenOddFactory(){}
 };
 
-class DiracDWF5dOperatorFactory :public DiracWilsonLikeOperatorFactory{
+class DiracDWF5dFactory :public DiracWilsonLikeFactory{
 public:
-  virtual DiracWilsonLike* getDiracOperatorPV(Field* const) = 0;
-  virtual ~DiracDWF5dOperatorFactory(){}
+  virtual DiracWilsonLike* getDiracPV(Field* const) = 0;
+  virtual ~DiracDWF5dFactory(){}
 };
 
-class DiracDWF4dOperatorFactory :public DiracWilsonLikeOperatorFactory{
+class DiracDWF4dFactory :public DiracWilsonLikeFactory{
 public:
-  virtual Dirac_optimalDomainWall_4D* getDiracOperator4D(Field* const) = 0;
-  DiracWilsonLike* getDiracOperatorWL(Field* const Gfield){
-    return getDiracOperator4D(Gfield);}
+  virtual Dirac_optimalDomainWall_4D* getDirac4D(Field* const) = 0;
+  DiracWilsonLike* getDiracWL(Field* const Gfield){
+    return getDirac4D(Gfield);}
 
-  virtual ~DiracDWF4dOperatorFactory(){}
+  virtual ~DiracDWF4dFactory(){}
 };
 
-class DiracStaggeredEvenOddLikeOperatorFactory :public DiracOperatorFactory{
+class DiracStaggeredEvenOddLikeFactory :public DiracFactory{
   Dstagg::Dtype dt_;
 public:
-  DiracStaggeredEvenOddLikeOperatorFactory(Dstagg::Dtype dt):dt_(dt){}
+  DiracStaggeredEvenOddLikeFactory(Dstagg::Dtype dt):dt_(dt){}
   virtual DiracStaggeredEvenOddLike* 
-  getDiracOperatorSTG(Dstagg::Dtype,Field* const) = 0;
-  Dirac* getDiracOperator(Field* const Gfield){
-    return getDiracOperatorSTG(dt_,Gfield);} // DdagDee is chosen as default
-  virtual ~DiracStaggeredEvenOddLikeOperatorFactory(){}
+  getDiracSTG(Dstagg::Dtype,Field* const) = 0;
+  Dirac* getDirac(Field* const Gfield){
+    return getDiracSTG(dt_,Gfield);} // DdagDee is chosen as default
+  virtual ~DiracStaggeredEvenOddLikeFactory(){}
 };
 
 /////////////////////// conclete classes ///////////////////////////
 
 /*! @brief Concrete class for creating Dirac Wilson operators */
-class DiracWilsonFactory : public DiracWilsonLikeOperatorFactory {
+class DiracWilsonFactory : public DiracWilsonLikeFactory {
   const XML::node Dirac_node_;
 public:
   DiracWilsonFactory(const XML::node node):Dirac_node_(node){}
-  Dirac_Wilson* getDiracOperatorWL(Field* const Gfield);
+  Dirac_Wilson* getDiracWL(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac Wilson EvenOdd operators */
-class DiracWilsonEvenOddFactory : public DiracWilsonLikeEvenOddOperatorFactory {
+class DiracWilsonEvenOddFactory : public DiracWilsonLikeEvenOddFactory {
   const XML::node Dirac_node_;
 public:
   DiracWilsonEvenOddFactory(const XML::node node):Dirac_node_(node){}
-  Dirac_Wilson_EvenOdd* getDiracOperatorEO(Field* const Gfield);
+  Dirac_Wilson_EvenOdd* getDiracEO(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac Wilson Brillouin operators */
-class DiracWilsonBrillouinFactory : public DiracWilsonLikeOperatorFactory {
+class DiracWilsonBrillouinFactory : public DiracWilsonLikeFactory {
   const XML::node Dirac_node_;
   ImpType type_;
 public:
   DiracWilsonBrillouinFactory(const XML::node node,ImpType type=Standard)
     :Dirac_node_(node),type_(type){}
-  Dirac_Wilson_Brillouin* getDiracOperatorWL(Field* const Gfield);
+  Dirac_Wilson_Brillouin* getDiracWL(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac Clover operators */
-class DiracCloverFactory : public DiracWilsonLikeOperatorFactory {
+class DiracCloverFactory : public DiracWilsonLikeFactory {
   const XML::node Dirac_node_;
 public:
   DiracCloverFactory(const XML::node node):Dirac_node_(node){}
-  Dirac_Clover* getDiracOperatorWL(Field* const Gfield);
+  Dirac_Clover* getDiracWL(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac Mobius operators */
-class DiracMobiusFactory : public DiracWilsonLikeOperatorFactory{
+class DiracMobiusFactory : public DiracWilsonLikeFactory{
   // Factories
-  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> DiracFactory_;
-  RaiiFactoryObj<SolverOperatorFactory> SolverFactory_;
+  RaiiFactoryObj<DiracWilsonLikeFactory> DiracFactory_;
+  RaiiFactoryObj<SolverFactory> SolverFactory_;
   // Objects (Dodwf)
   RaiiFactoryObj<DiracWilsonLike> D_;
   RaiiFactoryObj<Fopr_DdagD_Precondition> Fopr_;
@@ -122,37 +122,37 @@ class DiracMobiusFactory : public DiracWilsonLikeOperatorFactory{
   const XML::node Dirac_node_;
 public:
   DiracMobiusFactory(XML::node node);
-  Dirac_Mobius* getDiracOperatorWL(Field* const Gfield);
+  Dirac_Mobius* getDiracWL(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac Optimal DWF-5d operators */
-class DiracDWF5dFactory : public DiracDWF5dOperatorFactory {
+class DiracDomainWall5dFactory : public DiracDWF5dFactory {
   const XML::node Dirac_node_;
-  RaiiFactoryObj<DiracWilsonLikeOperatorFactory> KernelFactory_;
+  RaiiFactoryObj<DiracWilsonLikeFactory> KernelFactory_;
 public:
-  DiracDWF5dFactory(XML::node node);
+  DiracDomainWall5dFactory(XML::node node);
 
-  Dirac_optimalDomainWall* getDiracOperatorWL(Field* const Gfield);
-  Dirac_optimalDomainWall* getDiracOperatorPV(Field* const Gfield);
+  Dirac_optimalDomainWall* getDiracWL(Field* const Gfield);
+  Dirac_optimalDomainWall* getDiracPV(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac Optimal DWF-5d e/o operators */
-class DiracDWF5dEvenOddFactory : public DiracDWF5dOperatorFactory {
+class DiracDomainWall5dEvenOddFactory : public DiracDWF5dFactory {
   const XML::node Dirac_node_;
-  RaiiFactoryObj<DiracWilsonLikeEvenOddOperatorFactory> KernelFactory_;
+  RaiiFactoryObj<DiracWilsonLikeEvenOddFactory> KernelFactory_;
   RaiiFactoryObj<DiracWilsonLike_EvenOdd> Kernel_;
 public:
-  DiracDWF5dEvenOddFactory(XML::node node);
-  Dirac_optimalDomainWall_EvenOdd* getDiracOperatorWL(Field* const Gfield);
-  Dirac_optimalDomainWall_EvenOdd* getDiracOperatorPV(Field* const Gfield);
+  DiracDomainWall5dEvenOddFactory(XML::node node);
+  Dirac_optimalDomainWall_EvenOdd* getDiracWL(Field* const Gfield);
+  Dirac_optimalDomainWall_EvenOdd* getDiracPV(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac_optimalDomainWall_4D_fullSolv */
-class DiracDWF4DfullFactory : public DiracDWF4dOperatorFactory{
+class DiracDWF4DfullFactory : public DiracDWF4dFactory{
   const XML::node Dirac_node_;
   // Factories
-  RaiiFactoryObj<DiracDWF5dFactory> DiracFactory_;
-  RaiiFactoryObj<SolverOperatorFactory> SolverFactory_;
+  RaiiFactoryObj<DiracDomainWall5dFactory> DiracFactory_;
+  RaiiFactoryObj<SolverFactory> SolverFactory_;
   // Objects (Dodwf)
   RaiiFactoryObj<Dirac_optimalDomainWall> DW5D_;
   RaiiFactoryObj<Fopr_DdagD_Precondition> Fopr_;
@@ -164,24 +164,21 @@ class DiracDWF4DfullFactory : public DiracDWF4dOperatorFactory{
 
 public:
   DiracDWF4DfullFactory(XML::node node);
-  Dirac_optimalDomainWall_4D* getDiracOperator4D(Field* const Gfield);
+  Dirac_optimalDomainWall_4D* getDirac4D(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac_optimalDomainWall_4D_eoSolv*/
-class DiracDWF4DeoFactory : public DiracDWF4dOperatorFactory{
+class DiracDWF4DeoFactory : public DiracDWF4dFactory{
   const XML::node Dirac_node_;
   // Factories
-  RaiiFactoryObj<DiracDWF5dFactory> DiracFactory_;
-  RaiiFactoryObj<DiracDWF5dEvenOddFactory> DiracEOFactory_;
-  RaiiFactoryObj<SolverOperatorFactory> SolverFactory_;
+  RaiiFactoryObj<DiracDomainWall5dEvenOddFactory> DiracEOFactory_;
+  RaiiFactoryObj<SolverFactory> SolverFactory_;
   // Objects (Dodwf)
-  RaiiFactoryObj<Dirac_optimalDomainWall> DW5D_;
   RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DW5D_EO_;
   RaiiFactoryObj<Fopr_DdagD> FoprEO_;
   RaiiFactoryObj<Solver> SolverEO_;
   RaiiFactoryObj<EvenOddUtils::Inverter_WilsonLike> Inv_;
   // Objects (PauliVillars)
-  RaiiFactoryObj<Dirac_optimalDomainWall> DW5DPV_;
   RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DW5D_EO_PV_;
   RaiiFactoryObj<Fopr_DdagD> FoprEO_PV_;
   RaiiFactoryObj<Solver> SolverEO_PV_;
@@ -189,18 +186,18 @@ class DiracDWF4DeoFactory : public DiracDWF4dOperatorFactory{
 
 public:
   DiracDWF4DeoFactory(XML::node node);
-  Dirac_optimalDomainWall_4D* getDiracOperator4D(Field* const Gfield);
+  Dirac_optimalDomainWall_4D* getDirac4D(Field* const Gfield);
 };
 
 /*! @brief Concrete class for creating Dirac_staggered_EvenOdd */
 class DiracStaggeredEvenOddFactory
-  : public DiracStaggeredEvenOddLikeOperatorFactory{
+  : public DiracStaggeredEvenOddLikeFactory{
   const XML::node Dirac_node_;  
 public:
   DiracStaggeredEvenOddFactory(const XML::node node,
 			       Dstagg::Dtype dt=Dstagg::DdagDee)
-    :Dirac_node_(node),DiracStaggeredEvenOddLikeOperatorFactory(dt){}
-  Dirac_staggered_EvenOdd* getDiracOperatorSTG(Dstagg::Dtype dt,
+    :Dirac_node_(node),DiracStaggeredEvenOddLikeFactory(dt){}
+  Dirac_staggered_EvenOdd* getDiracSTG(Dstagg::Dtype dt,
 					       Field* const Gfield);
 };
 
@@ -208,13 +205,13 @@ public:
 //Valid only in the case of NC=3
 #if NC_==3
 class DiracStaggeredEvenOddAdjointFactory
-  : public DiracStaggeredEvenOddLikeOperatorFactory{
+  : public DiracStaggeredEvenOddLikeFactory{
   const XML::node Dirac_node_;  
 public:
   DiracStaggeredEvenOddAdjointFactory(const XML::node node,
 				      Dstagg::Dtype dt=Dstagg::DdagDee)
-    :Dirac_node_(node),DiracStaggeredEvenOddLikeOperatorFactory(dt){}
-  Dirac_staggered_EvenOdd_Adjoint* getDiracOperatorSTG(Dstagg::Dtype dt,
+    :Dirac_node_(node),DiracStaggeredEvenOddLikeFactory(dt){}
+  Dirac_staggered_EvenOdd_Adjoint* getDiracSTG(Dstagg::Dtype dt,
 						       Field* const Gfield);
 };
 #endif

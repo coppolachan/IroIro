@@ -13,7 +13,7 @@ class Field;
 class Fopr_Herm;
 
 class EigenCalcGeneral{
-  std::auto_ptr<DiracWilsonLikeOperatorFactory> diracFptr_;
+  std::auto_ptr<DiracWilsonLikeFactory> diracFptr_;
   std::auto_ptr<FoprHermFactory> opOrigFptr_; 
   std::auto_ptr<FoprHermFactory> opAccelFptr_; 
   std::auto_ptr<EigenSorterFactory> esortFptr_; 

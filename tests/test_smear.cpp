@@ -29,10 +29,10 @@ int Test_Smear::run(){
      So we just copy Smear_node_ into a new object */
 
   XML::descend(SmearObjNode, "Smearing");
-  SmearingOperatorFactory* Sm_Factory = 
-    SmearingOperators::createSmearingOperatorFactory(SmearObjNode);
+  SmearingFactory* Sm_Factory = 
+    Smearings::createSmearingFactory(SmearObjNode);
   // Create smearing objects
-  SmearingObj = Sm_Factory->getSmearingOperator();
+  SmearingObj = Sm_Factory->getSmearing();
   
   XML::descend(Smear_node_, "QuarkPropagator");
   QuarkPropagatorFactory* QP_Factory = 

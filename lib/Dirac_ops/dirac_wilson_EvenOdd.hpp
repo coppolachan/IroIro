@@ -1,6 +1,6 @@
 /*! @file dirac_wilson_EvenOdd.hpp
   @brief Definition of Even Odd wilson operator
-  Time-stamp: <2013-04-23 15:06:19 noaki>
+  Time-stamp: <2013-05-23 10:07:36 noaki>
 */
 //---------------------------------------------------------
 #ifndef DIRAC_WILSON_EVENODD_INCLUDED
@@ -34,18 +34,7 @@ public:
   const Field mult(const Field&) const;
   const Field mult_dag(const Field&) const;
 
-  ////////////////////////////////////////Preconditioned versions
-  // EvenOdd operator has no preconditioner now 
-  const Field mult_prec     (const Field&f)const{return f;}
-  const Field mult_dag_prec (const Field&f)const{return f;}
-  const Field left_prec     (const Field&f)const{return f;}
-  const Field right_prec    (const Field&f)const{return f;}
-  const Field left_dag_prec (const Field&f)const{return f;}
-  const Field right_dag_prec(const Field&f)const{return f;}
-  //////////////////////////////////////////////////////////////
-  
   const Field md_force(const Field&,const Field&) const;
-  void update_internal_state(){}
 
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 

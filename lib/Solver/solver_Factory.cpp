@@ -1,15 +1,13 @@
 /*!
  * @file solver_Factory.cpp 
  * @brief Definition of Solver operators factories
- *
- * Time-stamp: <2013-04-23 11:54:54 neo>
+ * Time-stamp: <2013-05-23 11:20:32 noaki>
  */
-
 #include "solver_Factory.hpp"
 #include <string.h>
 
-namespace SolverOperators {
-  SolverOperatorFactory* createSolverOperatorFactory(const XML::node node){
+namespace Solvers {
+  SolverFactory* createSolverFactory(const XML::node node){
     if(node !=NULL) {
       
       const char* Solver_name = node.attribute("type").value();
@@ -27,7 +25,6 @@ namespace SolverOperators {
 		<< Solver_name << "]\n" 
 		<< "Request by " << node.parent().name() << std::endl;
       abort();
-      
     }else {
       std::cout << "Requested node is missing in input file (Solver Object)\n"
 		<< "Request by " << node.parent().name() << std::endl;
@@ -35,7 +32,7 @@ namespace SolverOperators {
     }
   }
 
-  RationalSolverOperatorFactory* createRationalSolverOperatorFactory(const XML::node node){  
+  RationalSolverFactory* createRationalSolverFactory(const XML::node node){  
     if(node !=NULL) {
       
       const char* Solver_name = node.attribute("type").value();

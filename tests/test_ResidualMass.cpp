@@ -33,10 +33,10 @@ int Test_ResMass::run() {
   XML::read(SmearObjNode, "Nsmear", Nsmear, MANDATORY);  // Reads in <Nsmear>
 
   // Create smearing factory from node information
-  SmearingOperatorFactory* Sm_Factory = 
-    SmearingOperators::createSmearingOperatorFactory(SmearObjNode);
+  SmearingFactory* Sm_Factory = 
+    Smearings::createSmearingFactory(SmearObjNode);
   // Create smearing objects from the factory
-  SmearingObj = Sm_Factory->getSmearingOperator();
+  SmearingObj = Sm_Factory->getSmearing();
 
   // Copy original configuration to smeared_u_ 
   // smeared_u_ will be passed to the operators
