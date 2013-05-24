@@ -1,12 +1,16 @@
 /* !@filename dirac_wilson_Brillouin.cpp
  * @brief implementation of Dirac_Wilson_Brillouin class
- *  Time-stamp: <2013-05-21 11:59:11 noaki>
+ *  Time-stamp: <2013-05-24 15:19:03 noaki>
  */
 #include "dirac_wilson_Brillouin.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunVec.hpp"
 #include "Communicator/comm_io.hpp"
 #include "Fields/field_expressions.hpp"
+
+#ifdef IBM_BGQ_WILSON
+#include "bgqwilson.h"
+#endif
 
 using namespace SUNvecUtils;
 using namespace std;
@@ -37,11 +41,16 @@ const Field Dirac_Wilson_Brillouin::mult_dag(const Field& f)const{
 
 const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
   Field fp(fsize_);
-  
+#ifdef IBM_BGQ_WILSON
+  BGWilson_Mult_Shift_Dir(fp.getaddr(0),
+			  const_cast<Field *>(u_)->getaddr(0),
+			  const_cast<Field&>(f).getaddr(0),
+			  dir,BGWILSON_FORWARD);
+#else
   /// boundary part ///
   int is = 0;
   int Xb = 0;
-  int Nbdry = slsize(dir); // ?
+  int Nbdry = slsize(dir); // 
   double vbd[Nin_*Nbdry]; /*!< @brief data on the lower slice */   
   for(int k=0; k<Nbdry; ++k){
     const double* v = const_cast<Field&>(f).getaddr(ff_.index(0,xsl(Xb,k,dir)));
@@ -103,6 +112,7 @@ const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
       }
     }
   }
+#endif
   return fp;
 }
 
@@ -110,7 +120,12 @@ const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
 
 const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
   Field fm(fsize_);
-
+#ifdef IBM_BGQ_WILSON
+  BGWilson_Mult_Shift_Dir(fm.getaddr(0),
+			  const_cast<Field *>(u_)->getaddr(0),
+			  const_cast<Field&>(f).getaddr(0),
+			  dir,BGWILSON_BACKWARD);
+#else
   /// boundary part ///
   int is = 0;
   int Xb = SiteIndex::instance()->Bdir(dir);
@@ -174,6 +189,7 @@ const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
       }
     }
   }
+#endif
   return fm;
 }
 
@@ -224,38 +240,6 @@ void Dirac_Wilson_Brillouin::mult_imp(Field& w,const Field& f)const{
   w *= kbr_;
   w += f;
 }
-
-/* original version of _Imp::mult
-const Field Dirac_Wilson_Brillouin_Imp::mult(const Field& f)const{
-  using namespace FieldExpression;
-  CCIO::cout<<"improved Brillouin is called!"<<endl;
-  Field w(fsize_);
-
-  Field fn = mult_lap(f);
-  Field fr(fsize_);
-  fr = fn -15.0/4.0*f;  // total Brillouin laplacian
-
-  w = mult_lap(fn) -7.50*fn;
-  w *= 0.125;
-
-  Field dn(fsize_);
-  dn = f -(1.0/12.0)*fr;
-
-  Field dr = mult_del(dn); 
-
-  Field dl(fsize_);
-  dl = mult_lap(dr);
-  dl /= -12.0;
-  dl += (21.0/16.0)*dr;
-  
-  w += dl;
-  w *= kimp_;
-  w += f;
-
-  return w;
-}
-*/
-
 
 const Field Dirac_Wilson_Brillouin::mult_del(const Field& f)const{
   using namespace FieldExpression;

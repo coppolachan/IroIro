@@ -1,6 +1,6 @@
 /*! @filename dirac_wilson_Brillouin.hpp
  * @brief declaration of Dirac_Wilson_Brillouin class 
- * Time-stamp: <2013-05-21 10:39:57 noaki>
+ * Time-stamp: <2013-05-24 15:08:19 noaki>
  ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
@@ -16,7 +16,7 @@ enum ImpType{Standard,Improved};
 class Dirac_Wilson_Brillouin: public DiracWilsonLike{
 private:
   int Nvol_,Nin_;
-  double kbr_,m_;
+  double kbr_;
   const Communicator* comm_;
 
   const Field* const u_;
