@@ -126,7 +126,7 @@ public:
 #ifdef IBM_BGQ_WILSON
 class TwoFlavorDomainWall5dEO_BGQ_ActionFactory : public FermionActionFactory {
 
-  RaiiFactoryObj<DiracDWF5dEvenOddFactory> DiracObj;
+  RaiiFactoryObj<DiracDomainWall5dEvenOddFactory> DiracObj;
   RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverObj;
 
   RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_Kernel;
@@ -147,8 +147,8 @@ public:
 ////////////////////////////////////////////////////
 class TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory: public FermionActionFactory {
 
-  RaiiFactoryObj<DiracDWF5dEvenOddFactory> DiracNumObj;
-  RaiiFactoryObj<DiracDWF5dEvenOddFactory> DiracDenomObj;
+  RaiiFactoryObj<DiracDomainWall5dEvenOddFactory> DiracNumObj;
+  RaiiFactoryObj<DiracDomainWall5dEvenOddFactory> DiracDenomObj;
   RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverNumObj;
   RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverDenomObj;
 
@@ -194,7 +194,7 @@ private:
 ////////////////////////////////////////////////////
 #ifdef IBM_BGQ_WILSON
 class NfFlavorDomainWall5d_EO_BGQ_ActionFactory : public FermionActionFactory {
-  RaiiFactoryObj<DiracDWF5dEvenOddFactory> DiracObj;
+  RaiiFactoryObj<DiracDomainWall5dEvenOddFactory> DiracObj;
   RaiiFactoryObj<RationalSolverCGFactory_DWF_Optimized> SolverObj;
 
   RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_Kernel;

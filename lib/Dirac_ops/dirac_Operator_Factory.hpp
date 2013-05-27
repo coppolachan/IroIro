@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-05-23 10:28:58 noaki>
+ Time-stamp: <2013-05-27 17:46:59 noaki>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -36,8 +36,7 @@ public:
   virtual ~DiracWilsonLikeFactory(){}
 };
 
-class DiracWilsonLikeEvenOddFactory
-  : public DiracWilsonLikeFactory{
+class DiracWilsonLikeEvenOddFactory: public DiracWilsonLikeFactory{
 public:
   /*!@brief this virtual function is to be wrapped and to give eo-/oe- operators to the higher level operator */
   virtual DiracWilsonLike_EvenOdd* getDiracEO(Field* const) = 0;

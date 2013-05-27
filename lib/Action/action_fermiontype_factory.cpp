@@ -149,7 +149,7 @@ TwoFlavorDomainWall5dEO_BGQ_ActionFactory(XML::node node)
   XML::read(node, "smeared", smearing);
   
   XML::descend(node,"Kernel5D", MANDATORY);
-  DiracObj.save(new DiracDWF5dEvenOddFactory(node));
+  DiracObj.save(new DiracDomainWall5dEvenOddFactory(node));
   XML::next_sibling(node,"Solver_DWF-EO_BGQ", MANDATORY);
   SolverObj.save(new SolverCG_DWF_opt_Factory(node));
 }
@@ -178,9 +178,9 @@ TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory(XML::node node)
   XML::read(node,"smeared",smearing);
 
   XML::descend(node,"Numerator", MANDATORY);
-  DiracNumObj.save(new DiracDWF5dEvenOddFactory(node)); 
+  DiracNumObj.save(new DiracDomainWall5dEvenOddFactory(node)); 
   XML::next_sibling(node,"Denominator", MANDATORY);
-  DiracDenomObj.save(new DiracDWF5dEvenOddFactory(node));
+  DiracDenomObj.save(new DiracDomainWall5dEvenOddFactory(node));
   XML::next_sibling(node,"SolverNumerator", MANDATORY);
   SolverNumObj.save(new SolverCG_DWF_opt_Factory(node));
   XML::next_sibling(node,"SolverDenominator", MANDATORY);
@@ -242,7 +242,7 @@ NfFlavorDomainWall5d_EO_BGQ_ActionFactory(XML::node node)
   XML::read(node,"smeared",smearing);
   
   XML::descend(node,"Kernel5D",MANDATORY);
-  DiracObj.save(new DiracDWF5dEvenOddFactory(node));
+  DiracObj.save(new DiracDomainWall5dEvenOddFactory(node));
   XML::next_sibling(node,"RationalSolver",MANDATORY);
   SolverObj.save(new RationalSolverCGFactory_DWF_Optimized(node));
 }

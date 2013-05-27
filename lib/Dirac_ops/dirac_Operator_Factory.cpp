@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-05-23 11:24:35 noaki>
+ * Time-stamp: <2013-05-27 17:05:39 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -82,16 +82,17 @@ DiracDomainWall5dEvenOddFactory::DiracDomainWall5dEvenOddFactory(XML::node node)
   KernelFactory_.save(Diracs::createDiracWilsonLikeEvenOddFactory(node));
 }
 
-Dirac_optimalDomainWall_EvenOdd* DiracDomainWall5dEvenOddFactory::
-getDiracWL(Field* const Gfield){
+Dirac_optimalDomainWall_EvenOdd* 
+DiracDomainWall5dEvenOddFactory::getDiracWL(Field* const Gfield){
   Kernel_.save(KernelFactory_.get()->getDiracEO(Gfield));
   return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get(),Gfield); 
 }
 
-Dirac_optimalDomainWall_EvenOdd* DiracDomainWall5dEvenOddFactory::
-getDiracPV(Field* const Gfield){
+Dirac_optimalDomainWall_EvenOdd* 
+DiracDomainWall5dEvenOddFactory::getDiracPV(Field* const Gfield){
   Kernel_.save(KernelFactory_.get()->getDiracEO(Gfield));
-  return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get(),Gfield,PauliVillars); 
+  return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get(),
+					     Gfield,PauliVillars); 
 }
 
 /// Dirac_DWF4DfullSolv
