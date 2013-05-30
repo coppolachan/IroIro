@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-05-05 10:30:02 noaki>
+ Time-stamp: <2013-05-30 13:28:24 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_INCLUDED
@@ -118,18 +118,20 @@ private:
   };
 
   Preconditioner* choose_Preconditioner(int PrecondID);
-
+  
   const Field get4d(const Field& f5,int s) const;
   void get4d(Field&, const Field& ,int ) const;
-  void get4d_c(Field&, const Field& ,const double&, int ) const;
   void set5d(Field& f5,const Field& f4,int s) const;
-  void set5d_c(Field& f5,const Field& f4,const double c,int s) const;  
-  void mul5d(Field& f5,double fac,int s) const;
   void add5d(Field& f5,const Field& f4,int s) const;
   void add5d(Field& f5,const Field& f4_1, const Field& f4_2,int s) const;
+
+#ifndef IBM_BGQ_WILSON
+  void get4d_c(Field&, const Field& ,const double&, int ) const;
+  void set5d_c(Field& f5,const Field& f4,const double c,int s) const;  
+  void mul5d(Field& f5,double fac,int s) const;
   void add5d_c(Field& f5,const Field& f4, double c,int s) const;
   void add5d_from5d(Field& f5,const Field& f,int s) const;
-
+#endif
   void mult_offdiag(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
   void mult_full(Field&,const Field&)const;/*! @brief it returns (1-kpp*D)*f */
 
@@ -139,8 +141,8 @@ private:
   void(Dirac_optimalDomainWall::*mult_core)(Field&,const Field&)const;
   void(Dirac_optimalDomainWall::*mult_dag_core)(Field&,const Field&)const;
 
-  void proj_p(Field&,const Field&,int s)const;
-  void proj_m(Field&,const Field&,int s)const;
+  void proj_p(Field&,const Field&,int s=0)const;
+  void proj_m(Field&,const Field&,int s=0)const;
 
 public:
   /*! @brief constructors to create an instance with normal indexing */
@@ -298,8 +300,6 @@ public:
 					       SolverOutput&, 
 					       const std::vector<double>&, 
 					       int, double) const;
-  void md_force_p_BGQ(Field&,const Field&,const Field&) const;
-  void md_force_m_BGQ(Field&,const Field&,const Field&) const;
 #endif
 };
 

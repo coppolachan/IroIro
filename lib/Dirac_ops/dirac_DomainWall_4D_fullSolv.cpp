@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.cpp
  * @brief Declaration of Dirac_optimalDomainWall_4D_fullSolv class 
- Time-stamp: <2013-05-21 09:08:57 noaki>
+ Time-stamp: <2013-05-28 16:41:07 noaki>
  */
 #include "dirac_DomainWall_4D_fullSolv.hpp"
 #include "Tools/randNum_MP.h"
@@ -22,16 +22,7 @@ const Field Dirac_optimalDomainWall_4D_fullSolv::mult(const Field& f)const{
 }
 
 const Field Dirac_optimalDomainWall_4D_fullSolv::mult_dag(const Field& f)const{
-  // Dpv_^dag^-1
-  Field src = Dpv_->right_dag_prec(Dodw_->Bproj_dag(f));
-  Field sol5(Dodw_->fsize());
-  SolverOutput monitor = slv_pv_->solve(sol5,src);
-#if VERBOSITY > 0
-  monitor.print();
-#endif
-  src = Dpv_->left_dag_prec(Dpv_->mult_prec(sol5));
-  // D_dw^dag(m)
-  return Dodw_->Bproj(Dodw_->mult_dag(src));
+  return gamma5(mult(gamma5(f)));
 }
 
 const Field Dirac_optimalDomainWall_4D_fullSolv::mult_inv(const Field& f)const{

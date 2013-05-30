@@ -3,12 +3,12 @@
  *
  * @brief Definition of parallel environment Communicator classes
  *
- * Time-stamp: <2013-04-25 15:09:54 cossu>
+ * Time-stamp: <2013-05-30 13:00:42 noaki>
  *
  */
 
 #include "communicator.hpp"
-#include "commonPrms.h"
+#include "commonPrms.hpp"
 
 #include "mpi.h"
 #include "comm_io.hpp"

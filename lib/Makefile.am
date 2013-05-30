@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-05-21 11:55:47 noaki>
+# Time-stamp: <2013-05-30 14:06:52 noaki>
 
 ###########################################
 # Initial definitions 
@@ -49,7 +49,6 @@ endif #USE_MPI
 ############################################
 # Sources by architecture
 if IBM_BGQKERNELS
-DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
 DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
@@ -89,6 +88,7 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_standard.code    	\
+                Dirac_ops/dirac_DomainWall_BGQ.code \
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
