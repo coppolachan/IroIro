@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-05-30 14:06:52 noaki>
+# Time-stamp: <2013-05-31 14:44:28 neo>
 
 ###########################################
 # Initial definitions 
@@ -110,6 +110,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
                 Action/action_fermiontype_factory_creator.cpp\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
+		Communicator/fields_io.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\

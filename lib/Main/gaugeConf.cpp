@@ -21,15 +21,36 @@ int GaugeConf::getid(int x,int y,int z,int t){
 }
 
 void GaugeConf_bin::init_conf(Field& u){
-  CCIO::cout << "Init from binary file\n";
+  CCIO::cout << "Init from binary file (ILDG format - default)\n";
   CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str());
 }
 
 void GaugeConf_JLQCDLegacy::init_conf(Field& u){
-  CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str(),
-					 FORTRAN_CONTROL_WORDS, 
-					 CCIO::JLQCDLegacyFormat);
+  using namespace CCIO;
+  CCIO::cout << "Init from binary file (JLQCD Legacy format)\n";
+  ReaderFormat JLQCDLegacyStorage = {JLQCDLegacyFormat,
+				     ReadJLQCDLegacyFormat, 
+				     NOheader,
+				     false};
+  ReadFromDisk< Format::Format_G >(u,file_.c_str(),
+				   FORTRAN_CONTROL_WORDS, 
+				   JLQCDLegacyStorage);
 }
+
+void GaugeConf_NERSC::init_conf(Field& u){
+  using namespace CCIO;
+  CCIO::cout << "Init from binary file (NERSC format)\n";
+  ReaderFormat NERSC = {ILDGBinFormat,//3x3 format
+			ReadNERSCFormat, 
+			ReadNERSCheader,
+			true};
+  ReadFromDisk< Format::Format_G >(u,file_.c_str(),
+				   0, 
+				   NERSC);
+}
+
+
+
 
 double GaugeConf_csdt::conv_endian(double vald){
   unsigned char val[8];

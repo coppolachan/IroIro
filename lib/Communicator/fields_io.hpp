@@ -1,9 +1,9 @@
 /*! 
  * @file fields_io.hpp 
  *
- * @brief Definition of MPI safe read/write routines for fields
+ * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-04-25 16:22:23 neo>
+ * Time-stamp: <2013-05-31 17:51:34 neo>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -24,23 +24,82 @@ namespace CCIO {
   typedef int (*StorageFormat)(int, int, int, 
 			       int, int, int);
   
+  typedef void (*GenericReader)(double*,FILE *,int,
+				int ,int ,int);
+
+  struct QCDheader {  /* Structure to hold ASCII header tokens */
+    int ntoken;
+    char **token;
+    char **value;
+  };
+  
+  typedef QCDheader * (*GenericHeader)(FILE*, fpos_t *);
+
+  typedef struct  {
+    StorageFormat format;
+    GenericReader reader;
+    GenericHeader header;
+    bool has_header;
+  } ReaderFormat;
+  
+
+
+  //////////////////////////////////////////////////
+  // ILDG binary storage format
+  // same as NERSC (that eventually need reconstruction of third row)
+  // same as MILC
   inline int ILDGBinFormat(int gsite,int in,int ex,
 			   int tot_vol,int tot_in,int tot_ex){
     return in +tot_in*(ex+ tot_ex*gsite);
   }
-  
+  /////////////////////////////////////////////////
   inline int JLQCDLegacyFormat(int gsite,int in,int ex,
 			       int tot_vol,int tot_in,int tot_ex){
     return in +tot_in*(gsite+ tot_vol*ex);
   }
-  
+  /////////////////////////////////////////////////  
   // reading function for corresponding format
+  inline size_t ReadStdBinary(double* buffer,FILE *inputFile,
+			      int block_size){
+    //Read just as it is
+    //order is (in, ex, sites)  
+    size_t res = fread(buffer,sizeof(double),block_size,inputFile);
+    return res;}
+ 
+  inline size_t ReadStdBinary_Float(float* buffer,FILE *inputFile,
+				    int block_size){
+    //Read just as it is
+    //order is (in, ex, sites)  
+    size_t res = fread(buffer,sizeof(float)*block_size,1, inputFile);
+    return res;} 
+  
   inline void ReadILDGBFormat(double* buffer,FILE *inputFile,
 			      int block_size,
 			      int tot_vol,int tot_in,int tot_ex){
-    //Read just as it is
-    //order is (in, ex, sites)  
-    size_t res = fread(buffer,sizeof(double),block_size,inputFile);}
+    size_t res = ReadStdBinary(buffer, inputFile, block_size);
+  }
+  
+  void reconstruct3x3(double* out, float* in, int block_size);
+
+  inline void ReadNERSCFormat(double* buffer,FILE *inputFile,
+		       int block_size,
+		       int tot_vol,int tot_in,int tot_ex){
+    int bl = block_size/3*2;
+    std::cout << "bl :" << bl << "\n";
+    float* uin = (float *) malloc(bl*sizeof(float));
+    size_t res = ReadStdBinary_Float(uin, inputFile, bl);//now assuming 3x2 format
+    //byte_swap_double(uin, sizeof(uin)/sizeof(float));
+    byte_swap_float(uin, bl);
+    std::cout << "Reconstructing\n";
+    reconstruct3x3(buffer, uin, bl);
+    // eventually reconstruct
+    // perform checks against header information
+    free(uin);
+  }
+
+  struct QCDheader* NOheader(FILE *inputFile, fpos_t *pos);
+
+  struct QCDheader* ReadNERSCheader(FILE *inputFile, fpos_t *pos);
 
   inline void ReadJLQCDLegacyFormat(double* buffer,FILE *inputFile,
 				    int block_size,
@@ -58,6 +117,8 @@ namespace CCIO {
     fsetpos(inputFile, &pos);
     fseek(inputFile, sizeof(double)*chunk, SEEK_CUR);
   }
+
+
   ////////////////////////////////////////////////////////////////////
 
   /*!
@@ -119,7 +180,7 @@ namespace CCIO {
 			for (int in =0; in < fmt.Nin(); ++in) {
 			  //Breaks universality
 			  local_idx = in +fmt.Nin()*(x_idx + block_x.size()*ex);
-			  global_idx = in +fmt.Nin()*(ex+ fmt.Nex()*x_idx);//ILDG
+			  global_idx = in +fmt.Nin()*(ex+ fmt.Nex()*x_idx);//ILDG default
 			  copy[global_idx] = local[local_idx];
 			}
 		      }
@@ -160,8 +221,7 @@ namespace CCIO {
    * @param offset Starting point in file reading (byte offset)
    */
   template <typename T>
-  int ReadFromDisk(Field& f,const char* filename,int offset = 0, 
-		   StorageFormat storeFormat = ILDGBinFormat){
+  int ReadFromDisk(Field& f,const char* filename,int offset, ReaderFormat readFormat){
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");
@@ -191,6 +251,12 @@ namespace CCIO {
       fseek(inFile, offset, SEEK_SET);
     }
     
+    if (readFormat.has_header){
+      fpos_t pos;
+      readFormat.header(inFile, &pos);
+      //fsetpos(inFile, &pos);
+    }
+
     //Loop among nodes (master node)   
     for(int node_t = 0; node_t < cmprms->NPEt(); ++node_t){
       for(int t_slice = 0; t_slice < cmprms->Nt(); ++t_slice){
@@ -208,6 +274,10 @@ namespace CCIO {
 		  //Read from file sequentially
 		  if(comm->primaryNode()){
 		    if(inFile!=NULL){
+		      readFormat.reader((double*)&copy[0],inFile,
+					copy.size(),total_vol,
+					fmt.Nin(),fmt.Nex());
+		      /*
 		      if(storeFormat == ILDGBinFormat) 
 			ReadILDGBFormat((double*)&copy[0],inFile,
 					copy.size(),total_vol,
@@ -216,13 +286,18 @@ namespace CCIO {
 			ReadJLQCDLegacyFormat((double*)&copy[0],inFile,
 					      copy.size(),total_vol,
 					      fmt.Nin(),fmt.Nex());
+		      */
 		    }
 		    for(int x_idx = 0; x_idx < block_x.size(); ++x_idx){
 		      for(int ex =0; ex < fmt.Nex(); ++ex){	      
 			for(int in =0; in < fmt.Nin(); ++in){
 			  //Breaks universality
 			  local_idx = in +fmt.Nin()*(x_idx +block_x.size()*ex);
+			  /*
 			  global_idx = storeFormat(x_idx,in,ex,block_x.size(),
+						   fmt.Nin(),fmt.Nex());
+			  */
+			  global_idx = readFormat.format(x_idx,in,ex,block_x.size(),
 						   fmt.Nin(),fmt.Nex());
 			  local[local_idx] = copy[global_idx];
 			}
@@ -253,6 +328,13 @@ namespace CCIO {
       std::cout << "done\n";
     }
     return 0;
+  }
+
+  // With default reader
+  template <typename T>
+  int ReadFromDisk(Field& f,const char* filename, int offset = 0){
+    ReaderFormat  DefaultStorage = {ILDGBinFormat,ReadILDGBFormat, NOheader, false};
+    ReadFromDisk<T>(f, filename, offset, DefaultStorage);
   }
   
   template <typename T>
