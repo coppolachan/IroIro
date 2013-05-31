@@ -58,11 +58,11 @@ int Test_Solver_BFM::run(){
 
   //Testing the correctness of the operator
   // creation of Dirac_Wilson kernel operators 
-  Dirac_Wilson Dw_eo(M5,&(conf_.data),Dop::EOtag());
-  Dirac_Wilson Dw_oe(M5,&(conf_.data),Dop::OEtag());
+  Dirac_Wilson Dw_eo(-M5,&(conf_.data),Dop::EOtag());
+  Dirac_Wilson Dw_oe(-M5,&(conf_.data),Dop::OEtag());
 
 
-  Dirac_optimalDomainWall_EvenOdd DWF_EO(b,c, M5, mq, omega, &Dw_eo, &Dw_oe, &(conf_.data));
+  Dirac_optimalDomainWall_EvenOdd DWF_EO(b,c, -M5, mq, omega, &Dw_eo, &Dw_oe, &(conf_.data));
   
   /********************************************************
 
