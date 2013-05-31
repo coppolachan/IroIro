@@ -5,20 +5,54 @@
 #include "Fields/field_expressions.hpp"
 
 using namespace std;
+using namespace FieldExpression;
 
-const Field Dirac_optimalDomainWall_4D_eoSolv::mult(const Field& f)const{
+void Dirac_optimalDomainWall_4D_eoSolv::mult_normal(Field& w,const Field& f)const{
   Field sol5(fsize_*N5_);
   invDpv_->invert(sol5,invD_->mult(Bproj_dag(f)));// Dpv_^-1 
-  return Bproj(sol5);
+  w = Bproj(sol5);
+}
+
+// mult with Exact low-modes
+void Dirac_optimalDomainWall_4D_eoSolv::mult_lmp(Field& w,const Field& f)const{
+  Field f_h = lmh_->proj_high(f);
+  w = (0.5*(1.0+mq_))*(f-f_h);
+  w += (0.5*(1.0-mq_))*gamma5(lmh_->proj_appliedLow(f));
+  Field v(fsize_);  
+  mult_normal(v,f_h); 
+  w += v;
+}
+
+void Dirac_optimalDomainWall_4D_eoSolv::mult_inv_normal(Field& w,const Field& f)const{
+  Field sol5(fsize_*N5_);
+  invD_->invert(sol5,invDpv_->mult(Bproj_dag(f)));// Dodw_^-1
+  w = Bproj(sol5);
+}
+
+// mult_inv with Exact low-modes
+void Dirac_optimalDomainWall_4D_eoSolv::mult_inv_lmp(Field& w, const Field& f)const{ 
+// This function is not tested, yet.
+  Field f_h = lmh_->proj_high(f);  
+  w = (0.5*(1.0+mq_)/mq_)*(f-f_h); 
+  w += (0.5*(mq_-1.0)/mq_)*gamma5(lmh_->proj_appliedLow(f));
+  Field v(fsize_);  
+  mult_inv_normal(v,f_h); 
+  w += v;
+}
+
+const Field Dirac_optimalDomainWall_4D_eoSolv::mult(const Field& f)const{
+  Field w(fsize_);
+  (this->*mult_core)(w,f);
+  return w;
 }
 
 const Field Dirac_optimalDomainWall_4D_eoSolv::mult_dag(const Field& f)const{ 
   return gamma5(mult(gamma5(f)));}
 
 const Field Dirac_optimalDomainWall_4D_eoSolv::mult_inv(const Field& f)const{
-  Field sol5(fsize_*N5_);
-  invD_->invert(sol5,invDpv_->mult(Bproj_dag(f)));// Dodw_^-1
-  return Bproj(sol5);
+  Field w(fsize_);
+  (this->*mult_inv_core)(w,f);
+  return w;
 }
 
 const Field Dirac_optimalDomainWall_4D_eoSolv::mult_dag_inv(const Field& f)const{ 

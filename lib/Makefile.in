@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-05-30 14:06:52 noaki>
+# Time-stamp: <2013-05-30 21:03:33 noaki>
 
 
 
@@ -167,8 +167,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	EigenModes/eigenModesSolver_Factory.cpp \
 	EigenModes/eigenModesSolver_IRL.cpp \
 	EigenModes/eigenProc_Zolotarev.cpp EigenModes/eigenSorter.cpp \
-	EigenModes/findminmax.cpp Measurements/measGeneral.cpp \
-	Measurements/GaugeM/staples.cpp \
+	EigenModes/findminmax.cpp EigenModes/lowModesHandler.cpp \
+	Measurements/measGeneral.cpp Measurements/GaugeM/staples.cpp \
 	Measurements/GaugeM/wilsonFlow.cpp \
 	Measurements/GaugeM/polyakovLoop.cpp \
 	Measurements/GaugeM/gaugeFixingStep.cpp \
@@ -254,18 +254,18 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	eigenCalcGeneral.$(OBJEXT) eigenModesSolver_Factory.$(OBJEXT) \
 	eigenModesSolver_IRL.$(OBJEXT) eigenProc_Zolotarev.$(OBJEXT) \
 	eigenSorter.$(OBJEXT) findminmax.$(OBJEXT) \
-	measGeneral.$(OBJEXT) staples.$(OBJEXT) wilsonFlow.$(OBJEXT) \
-	polyakovLoop.$(OBJEXT) gaugeFixingStep.$(OBJEXT) \
-	gaugeFixing_Coulomb.$(OBJEXT) gaugeFixing_Landau.$(OBJEXT) \
-	gfixFactory.$(OBJEXT) topologyGeom.$(OBJEXT) \
-	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) qprop_mom.$(OBJEXT) \
-	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
-	utils_DWF4d.$(OBJEXT) quark_prop_meas_factory.$(OBJEXT) \
-	baryonCorrelator.$(OBJEXT) mapping.$(OBJEXT) \
-	mapping_improved.$(OBJEXT) siteIndex_EvenOdd.$(OBJEXT) \
-	siteMap.$(OBJEXT) shiftField.$(OBJEXT) gaugeConf.$(OBJEXT) \
-	gaugeGlobal.$(OBJEXT) commandline.$(OBJEXT) \
-	hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
+	lowModesHandler.$(OBJEXT) measGeneral.$(OBJEXT) \
+	staples.$(OBJEXT) wilsonFlow.$(OBJEXT) polyakovLoop.$(OBJEXT) \
+	gaugeFixingStep.$(OBJEXT) gaugeFixing_Coulomb.$(OBJEXT) \
+	gaugeFixing_Landau.$(OBJEXT) gfixFactory.$(OBJEXT) \
+	topologyGeom.$(OBJEXT) qprop_MultiShift.$(OBJEXT) \
+	qprop.$(OBJEXT) qprop_mom.$(OBJEXT) qprop_EvenOdd.$(OBJEXT) \
+	qprop_DomainWall.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
+	quark_prop_meas_factory.$(OBJEXT) baryonCorrelator.$(OBJEXT) \
+	mapping.$(OBJEXT) mapping_improved.$(OBJEXT) \
+	siteIndex_EvenOdd.$(OBJEXT) siteMap.$(OBJEXT) \
+	shiftField.$(OBJEXT) gaugeConf.$(OBJEXT) gaugeGlobal.$(OBJEXT) \
+	commandline.$(OBJEXT) hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
 	mdExec_leapfrog.$(OBJEXT) mdExec_2MN.$(OBJEXT) \
 	mdExec_factory.$(OBJEXT) pugixml.$(OBJEXT) \
 	pugi_interface.$(OBJEXT) solver_BiCGStab.$(OBJEXT) \
@@ -554,6 +554,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp		\
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
+		EigenModes/lowModesHandler.cpp			\
 		Measurements/measGeneral.cpp			\
 		Measurements/GaugeM/staples.cpp			\
 		Measurements/GaugeM/wilsonFlow.cpp		\
@@ -723,7 +724,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
 			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
-			Dirac_ops/dirac_Preconditioners.hpp	\
+			Dirac_ops/preconditioner.hpp	        \
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/boundaryCond.hpp      	\
 			Dirac_ops/antiPeriodicBC.hpp      	\
@@ -736,6 +737,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/foprHermFactory_ChebyshevDdagDLin.hpp\
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/findminmax.hpp		\
+			EigenModes/lowModesHandler.hpp		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/mdExec.hpp		                \
@@ -975,6 +977,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hmcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/io_errors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jobUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lowModesHandler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hmc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapping.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mapping_improved.Po@am__quote@
@@ -1763,6 +1766,20 @@ findminmax.obj: EigenModes/findminmax.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='EigenModes/findminmax.cpp' object='findminmax.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o findminmax.obj `if test -f 'EigenModes/findminmax.cpp'; then $(CYGPATH_W) 'EigenModes/findminmax.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/findminmax.cpp'; fi`
+
+lowModesHandler.o: EigenModes/lowModesHandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT lowModesHandler.o -MD -MP -MF $(DEPDIR)/lowModesHandler.Tpo -c -o lowModesHandler.o `test -f 'EigenModes/lowModesHandler.cpp' || echo '$(srcdir)/'`EigenModes/lowModesHandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lowModesHandler.Tpo $(DEPDIR)/lowModesHandler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='EigenModes/lowModesHandler.cpp' object='lowModesHandler.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o lowModesHandler.o `test -f 'EigenModes/lowModesHandler.cpp' || echo '$(srcdir)/'`EigenModes/lowModesHandler.cpp
+
+lowModesHandler.obj: EigenModes/lowModesHandler.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT lowModesHandler.obj -MD -MP -MF $(DEPDIR)/lowModesHandler.Tpo -c -o lowModesHandler.obj `if test -f 'EigenModes/lowModesHandler.cpp'; then $(CYGPATH_W) 'EigenModes/lowModesHandler.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/lowModesHandler.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/lowModesHandler.Tpo $(DEPDIR)/lowModesHandler.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='EigenModes/lowModesHandler.cpp' object='lowModesHandler.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o lowModesHandler.obj `if test -f 'EigenModes/lowModesHandler.cpp'; then $(CYGPATH_W) 'EigenModes/lowModesHandler.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/lowModesHandler.cpp'; fi`
 
 measGeneral.o: Measurements/measGeneral.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT measGeneral.o -MD -MP -MF $(DEPDIR)/measGeneral.Tpo -c -o measGeneral.o `test -f 'Measurements/measGeneral.cpp' || echo '$(srcdir)/'`Measurements/measGeneral.cpp

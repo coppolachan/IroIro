@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-05-27 17:05:39 noaki>
+ * Time-stamp: <2013-05-30 23:14:17 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -115,8 +115,10 @@ getDirac4D(Field* const Gfield){
   Fopr_PV_.save(new Fopr_DdagD_Precondition(DW5D_PV_.get()));
   Solver_PV_.save(SolverFactory_.get()->getSolver(Fopr_PV_.get()));
 
-  return new Dirac_optimalDomainWall_4D_fullSolv(DW5D_.get(),DW5D_PV_.get(),
-						 Solver_.get(),Solver_PV_.get());
+  return new Dirac_optimalDomainWall_4D_fullSolv(Dirac_node_,DW5D_.get(),
+						 DW5D_PV_.get(),
+						 Solver_.get(),
+						 Solver_PV_.get());
 }
 
 /// Dirac_DWF4DeoSolv

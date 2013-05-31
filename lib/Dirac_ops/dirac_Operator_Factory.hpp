@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-05-27 17:46:59 noaki>
+ Time-stamp: <2013-05-30 20:32:18 noaki>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -18,6 +18,7 @@
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "dirac_staggered_EvenOdd.hpp"
 #include "dirac_staggered_EvenOdd_Adjoint.hpp"
+#include "EigenModes/lowModesHandler.hpp"
 class SolverFactory;
 
 /*! @brief Abstract base class for creating Dirac operators */
@@ -182,7 +183,6 @@ class DiracDWF4DeoFactory : public DiracDWF4dFactory{
   RaiiFactoryObj<Fopr_DdagD> FoprEO_PV_;
   RaiiFactoryObj<Solver> SolverEO_PV_;
   RaiiFactoryObj<EvenOddUtils::Inverter_WilsonLike> Inv_PV_;
-
 public:
   DiracDWF4DeoFactory(XML::node node);
   Dirac_optimalDomainWall_4D* getDirac4D(Field* const Gfield);

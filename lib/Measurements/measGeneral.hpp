@@ -102,10 +102,10 @@ public:
 
     /*! @brief In this case, the number_list_ is only used for output.*/
     int starting=0;
-    if(XML::read(inode,"starting_idx",starting))
+    if(XML::read(onode,"starting_idx",starting))
       CCIO::cout<<"[default] output: starting_num = "<<starting<<"\n";
     int increment=1;
-    if(XML::read(inode,"idx_increment",increment))
+    if(XML::read(onode,"idx_increment",increment))
       CCIO::cout<<"[default] output: inclement_num= "<<increment<<"\n";
 
     for(int c=0; c<meas_num_; ++c) 

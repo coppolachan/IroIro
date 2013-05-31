@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-05-30 13:28:24 noaki>
+ Time-stamp: <2013-05-30 16:37:05 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_INCLUDED
@@ -15,7 +15,7 @@
 #include "Tools/EnumToString.hpp"
 
 #include "dirac_wilson.hpp"
-#include "dirac_Preconditioners.hpp"
+#include "preconditioner.hpp"
 
 static double wilson_mult_timer;
 static double wilson_multdag_timer;

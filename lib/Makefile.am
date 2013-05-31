@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-05-30 14:06:52 noaki>
+# Time-stamp: <2013-05-30 21:03:33 noaki>
 
 ###########################################
 # Initial definitions 
@@ -138,6 +138,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp		\
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
+		EigenModes/lowModesHandler.cpp			\
 		Measurements/measGeneral.cpp			\
 		Measurements/GaugeM/staples.cpp			\
 		Measurements/GaugeM/wilsonFlow.cpp		\
@@ -308,7 +309,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
 			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
-			Dirac_ops/dirac_Preconditioners.hpp	\
+			Dirac_ops/preconditioner.hpp	        \
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/boundaryCond.hpp      	\
 			Dirac_ops/antiPeriodicBC.hpp      	\
@@ -321,6 +322,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/foprHermFactory_ChebyshevDdagDLin.hpp\
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/findminmax.hpp		\
+			EigenModes/lowModesHandler.hpp		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/mdExec.hpp		                \
