@@ -1,7 +1,6 @@
-//---------------------------------------------------------
-/*
-  @file dirac_wilson_EvenOdd.hpp
+/*! @file dirac_wilson_EvenOdd.hpp
   @brief Definition of Even Odd wilson operator
+  Time-stamp: <2013-05-23 10:07:36 noaki>
 */
 //---------------------------------------------------------
 #ifndef DIRAC_WILSON_EVENODD_INCLUDED
@@ -13,7 +12,6 @@ class Dirac_Wilson_EvenOdd:public DiracWilsonLike_EvenOdd {
 private:
   const Dirac_Wilson Deo_;
   const Dirac_Wilson Doe_;
-  //const Dirac_Wilson Dw_;
 
   void md_force_eo(Field&,const Field&,const Field&)const;
   void md_force_oe(Field&,const Field&,const Field&)const;
@@ -36,18 +34,7 @@ public:
   const Field mult(const Field&) const;
   const Field mult_dag(const Field&) const;
 
-  ////////////////////////////////////////Preconditioned versions
-  // EvenOdd operator has no preconditioner now 
-  const Field mult_prec     (const Field&f)const{return f;}
-  const Field mult_dag_prec (const Field&f)const{return f;}
-  const Field left_prec     (const Field&f)const{return f;}
-  const Field right_prec    (const Field&f)const{return f;}
-  const Field left_dag_prec (const Field&f)const{return f;}
-  const Field right_dag_prec(const Field&f)const{return f;}
-  //////////////////////////////////////////////////////////////
-  
   const Field md_force(const Field&,const Field&) const;
-  void update_internal_state(){}
 
   const Field mult_eo(const Field& f) const; 
   const Field mult_oe(const Field& f) const; 
@@ -58,9 +45,10 @@ public:
   const Field mult_oo_inv(const Field& f)const {return f;}
   const Field mult_ee_inv(const Field& f)const {return f;}
 
-  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
+  const DiracWilsonLike* getDeo()const{return &Deo_;}
+  const DiracWilsonLike* getDoe()const{return &Doe_;}
+
   double getKappa()const { return Deo_.getKappa();}
-  int Nvol()const{ return Deo_.Nvol();}
 };
 
 #endif

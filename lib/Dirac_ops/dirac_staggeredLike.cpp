@@ -1,9 +1,10 @@
 //--------------------------------------------------------------
-/*!@file staggered_Utils.cpp
+/*!@file dirac_staggeredLike.cpp
   @brief implementation of the utility functions for staggered fermions.
+  Time-stamp: <2013-04-26 19:47:23 noaki>
 */
 //-------------------------------------------------------------
-#include "staggered_Utils.hpp"
+#include "dirac_staggeredLike.hpp"
 #include "Geometry/siteIndex.hpp"
 #include "Geometry/siteIndex_EvenOdd.hpp"
 using namespace std;

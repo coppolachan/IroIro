@@ -17,13 +17,12 @@ int Test_Wilson_Brillouin::run(){
   Dirac_Wilson_Brillouin D(0.0,&(conf_.data));
   
   Field f(D.fsize());
-  Format::Format_F ff(D.Nvol());
+  int Nvol = CommonPrms::instance()->Nvol();
+  ffmt_t ff(Nvol);
   
   f.set(0,1.0);
   
   Field w = D.mult(f);
-  
-  int Nvol = CommonPrms::instance()->Nvol();
   
   for(int site=0;site<Nvol;++site){
     int x  = SiteIndex::instance()->c_x(site);

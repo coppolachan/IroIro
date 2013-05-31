@@ -9,7 +9,6 @@
 #include <vector>
 #include <memory>
 
-
 #include "include/field.h"
 #include "Communicator/comm_io.hpp"
 #include "Geometry/siteIndex.hpp"

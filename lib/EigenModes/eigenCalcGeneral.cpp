@@ -15,7 +15,7 @@ EigenCalcGeneral::EigenCalcGeneral(const XML::node& node){
 
   XML::node diracNode = node;
   XML::descend(diracNode,"WilsonLikeDirac");
-  diracFptr_.reset(DiracOperators::createDiracWilsonLikeOperatorFactory(diracNode));
+  diracFptr_.reset(Diracs::createDiracWilsonLikeFactory(diracNode));
 
   XML::node oprNode = node;
   XML::descend(oprNode,"Operator");
@@ -30,10 +30,11 @@ EigenCalcGeneral::EigenCalcGeneral(const XML::node& node){
 
 void EigenCalcGeneral::do_calc(Field* const conf){
 
-  const auto_ptr<DiracWilsonLike> diracPtr(diracFptr_->getDiracOperatorWL(conf));
+  const auto_ptr<DiracWilsonLike> diracPtr(diracFptr_->getDiracWL(conf));
   const auto_ptr<Fopr_Herm>       aoprPtr(opAccelFptr_->getFoprHerm(diracPtr.get()));
   const auto_ptr<EigenSorter>     sorterPtr(esortFptr_->getEigenSorter(aoprPtr.get()));
-  const auto_ptr<EigenModesSolver> emslvPtr(eslvFptr_->getEigenSolver(aoprPtr.get(),sorterPtr.get()));
+  const auto_ptr<EigenModesSolver> 
+    emslvPtr(eslvFptr_->getEigenSolver(aoprPtr.get(),sorterPtr.get()));
   emslvPtr->calc(evals_,evecs_,Neig_); /*!< @brief solving eigenproblem of aopr
 					 eval and evec are resized inside */
 

@@ -8,28 +8,19 @@
 #include "include/macros.hpp"
 #if (NC_==3)
 
-
 #include "dirac_staggered_EvenOdd_Adjoint.hpp"
 #include "Fields/field_expressions.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunAdjVec.hpp"
-#include "Tools/randNum_MP.h"
 #include "Measurements/GaugeM/staples.hpp"
 #include <iostream>
-
-
 
 using namespace std;
 using namespace FieldUtils;
 using namespace SUNmatUtils;
 using namespace SUNvecUtils;
 using namespace Mapping;
-
-void Dirac_staggered_EvenOdd_Adjoint::
-get_RandGauss(valarray<double>& phi,const RandNum& rng)const{
-  MPrand::mp_get_gauss(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),ff_);
-}
 
 void (Dirac_staggered_EvenOdd_Adjoint::*Dirac_staggered_EvenOdd_Adjoint::
       mult_type[])(Field&,const Field&) const 

@@ -44,9 +44,6 @@ int Test_MultiShiftSolver::test1(){
   double mq = 0.01;
   vector<double> omega(N5d,1.0);
 
-  
-
-
   // Definition of source 
   vector<int> spos(4,0);
   Source_local<Format::Format_F> Source(spos,
@@ -59,7 +56,11 @@ int Test_MultiShiftSolver::test1(){
   // Definition of Dirac Kernel
   //Dirac* Kernel = new Dirac_Wilson(wilson_kernel_mass, &(Gauge.data));
   //Dirac* Kernel = new Dirac_Clover(0.01, 1.0, &(Gauge.data));
-  Dirac_optimalDomainWall* Kernel = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&(Gauge.data));
+
+  const Field* u= &(Gauge.data);
+  Dirac_Wilson Dw(M0,u);
+  Dirac_optimalDomainWall* Kernel 
+    = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&Dw,u);
 
   // Definition of the Solver
   int    Niter= 1000;
@@ -68,7 +69,6 @@ int Test_MultiShiftSolver::test1(){
     new MultiShiftSolver_CG(new Fopr_DdagD(Kernel),
 			    stop_cond,
 			    Niter);
-  
 
   // Solver test
   xqs.resize(mass_shifts.size());

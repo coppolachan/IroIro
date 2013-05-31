@@ -7,9 +7,9 @@
 
 #include <string.h>
 
-namespace SmearingOperators {
-  SmearingOperatorFactory* 
-  createSmearingOperatorFactory(const XML::node node){
+namespace Smearings {
+  SmearingFactory* 
+  createSmearingFactory(const XML::node node){
     if (node !=NULL) {
       const char* Smear_name = node.attribute("type").value();
 

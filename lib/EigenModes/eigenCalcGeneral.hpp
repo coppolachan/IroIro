@@ -1,7 +1,7 @@
 /*!@file eigenCalcGeneral.hpp
  * @brief generalizes the eigenmodes calculation of fermion operators
  */
-#include "Dirac_ops/dirac_Operator_Factory.hpp"
+#include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "eigenModesSolver_Factory.hpp"
 #include "eigenSorter_Factory.hpp"
 #include "Communicator/comm_io.hpp"
@@ -13,7 +13,7 @@ class Field;
 class Fopr_Herm;
 
 class EigenCalcGeneral{
-  std::auto_ptr<DiracWilsonLikeOperatorFactory> diracFptr_;
+  std::auto_ptr<DiracWilsonLikeFactory> diracFptr_;
   std::auto_ptr<FoprHermFactory> opOrigFptr_; 
   std::auto_ptr<FoprHermFactory> opAccelFptr_; 
   std::auto_ptr<EigenSorterFactory> esortFptr_; 

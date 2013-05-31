@@ -50,7 +50,7 @@ void Action_Nf2_ratio::init(const RandNum& rand){
 
   FINE_TIMING_START(rnd_timing); 
 
-  MPrand::mp_get_gauss(ph, rand);//D1_->get_RandGauss(ph,rand);
+  MPrand::mp_get_gauss(ph,rand);
 
   FINE_TIMING_END(rnd_timing);
   _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::init"

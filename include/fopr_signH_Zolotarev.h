@@ -1,6 +1,8 @@
-//----------------------------------------------------------------------
-// fopr_signH_Zolotarev.h
-//----------------------------------------------------------------------
+/*----------------------------------------------------------------------
+!@filename fopr_signH_Zolotarev.h
+Time-stamp: <2013-04-23 16:52:21 noaki>
+------------------------------------------------------------------------*/
+
 #ifndef FOPR_SIGN_ZOLOTAREV_INCLUDED
 #define FOPR_SIGN_ZOLOTAREV_INCLUDED
 
@@ -12,7 +14,6 @@
 #include "EigenModes/eigenModesSolver.hpp"
 #include "EigenModes/eigenSorter.hpp"
 #include "include/format_F.h"
-
 
 struct EigenData{
   
@@ -26,7 +27,6 @@ struct EigenData{
   std::vector<double> bl;
   std::vector<double> cl;
   std::vector<double> sigma;
-
 };
 
 struct EigenPrms{
@@ -74,22 +74,15 @@ class Fopr_signH_Zolotarev: public Fopr {
   void subtract_lowmodes(Field&) const;
 
   const Field multDdagD(const Field& f) const{return D_->mult_dag(D_->mult(f));}
-
-  const size_t fsize_;  
-  const size_t gsize_;  
   const int Np_;
 
 public:
   Fopr_signH_Zolotarev(const DiracWilsonLike* D,
 		       const EigenPrms& Eprms, 
 		       EigenData* const ed)
-    :ed_(ed),
-     D_(D),
+    :ed_(ed),D_(D),Np_(Eprms.Npoly),
      msslv_(new MultiShiftSolver_CG(new Fopr_DdagD(D_),
-				    Eprms.stp_cnd,Eprms.Niter)),
-     fsize_(D_->fsize()),
-     gsize_(D_->gsize()),
-     Np_(Eprms.Npoly){}
+				    Eprms.stp_cnd,Eprms.Niter)){}
   
   ~Fopr_signH_Zolotarev(){ delete msslv_;}
   const Field mult(const Field& f) const;
@@ -98,9 +91,8 @@ public:
 
   void calc_force(Field& force,const Field& eta,const Field& zeta) const; 
 
-  size_t fsize() const{return fsize_;}
-  size_t gsize() const{return gsize_;}
-  int Nvol()const{return D_->Nvol();}
+  size_t fsize() const{return D_->fsize();}
+  size_t gsize() const{return D_->gsize();}
 };
 
 #endif

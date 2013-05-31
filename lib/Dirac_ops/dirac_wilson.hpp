@@ -1,14 +1,11 @@
-//----------------------------------------------------------------------
-// dirac_wilson.hpp
-//----------------------------------------------------------------------
+/*! @file dirac_wilson.hpp
+ * @brief Dirac_Wilson class 
+ Time-stamp: <2013-05-03 09:21:26 noaki>
+ */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
 
-#include "dirac.hpp"
-#include "include/format_F.h"
-#include "include/format_G.h"
-#include "include/pugi_interface.h"
-
+#include "dirac_WilsonLike.hpp"
 #include "Geometry/siteIndex_EvenOdd.hpp"
 #include "Geometry/siteIndex.hpp"
 #include "Geometry/siteMap.hpp"
@@ -17,24 +14,18 @@
 #include "bgqwilson.h"
 #endif
 
-typedef Format::Format_F ffmt_t;
-typedef Format::Format_G gfmt_t;
-
 class Dirac_Wilson: public DiracWilsonLike{
 
 private:
-  const Field* const u_;
+  int Nvol_;
+  int Nx_,Ny_,Nz_,Nt_;
   double kpp_;
-  int Nx_,Ny_,Nz_,Nt_,Nvol_;
 
   //int boundary[Ndim]; // this is temporary setting.
-
+  const Communicator* comm_;
+  const Field* const u_;
   const ffmt_t ff_;
   const gfmt_t gf_;
-
-  const size_t fsize_;
-  const size_t gsize_;
-  const Communicator* comm_;
 
   void mult_xp(Field&,const Field&)const;
   void mult_yp(Field&,const Field&)const;
@@ -48,19 +39,6 @@ private:
 
   static void(Dirac_Wilson::*mult_p[])(Field&,const Field&)const;
   static void(Dirac_Wilson::*mult_m[])(Field&,const Field&)const;
-
-  int r0(int c)const{return 2*c;}
-  int r1(int c)const{return 2*(NC_+c);}
-  int r2(int c)const{return 2*(2*NC_+c);}
-  int r3(int c)const{return 2*(3*NC_+c);} 
-
-  int i0(int c)const{return 2*c+1;}
-  int i1(int c)const{return 2*(NC_+c)+1;}
-  int i2(int c)const{return 2*(2*NC_+c)+1;}
-  int i3(int c)const{return 2*(3*NC_+c)+1;} 
-
-  int re(int c1,int c2)const{return 2*(NC_*c1+c2);}
-  int im(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
 
   void mult_full(Field&,const Field&)const;   /*! @brief  (1-kpp*D)*f */
   void mult_offdiag(Field&,const Field&)const;/*! @brief  -kpp*D*f */
@@ -99,78 +77,65 @@ private:
 public:
   /*! @brief constructor to create instance with e/o site indexing */
   Dirac_Wilson(double mass,const Field* u,Dop::EOtag)
-    :kpp_(0.5/(4.0+mass)),u_(u),
+    :Nvol_(CommonPrms::instance()->Nvol()/2),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
      Nz_(CommonPrms::instance()->Nz()),
      Nt_(CommonPrms::instance()->Nt()),
-     Nvol_(CommonPrms::instance()->Nvol()/2),
+     kpp_(0.5/(4.0+mass)),ff_(Nvol_),gf_(Nvol_*2),u_(u),
      gp(&Dirac_Wilson::esec),gm(&Dirac_Wilson::osec),
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl_e),slice_osize(&Dirac_Wilson::slsize_e),
      slice_in(&Dirac_Wilson::xsl_o),slice_isize(&Dirac_Wilson::slsize_o),
      mult_core(&Dirac_Wilson::mult_offdiag),
-     ff_(Nvol_),  fsize_(ff_.size()),
-     gf_(2*Nvol_),gsize_(gf_.size()),
      EO_BGWilson(1){}
 
   Dirac_Wilson(double mass,const Field* u,Dop::OEtag)
-    :kpp_(0.5/(4.0+mass)),u_(u),
+    :Nvol_(CommonPrms::instance()->Nvol()/2),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
      Nz_(CommonPrms::instance()->Nz()),
      Nt_(CommonPrms::instance()->Nt()),
-     Nvol_(CommonPrms::instance()->Nvol()/2),
+     kpp_(0.5/(4.0+mass)),ff_(Nvol_),gf_(Nvol_*2),u_(u),
      gp(&Dirac_Wilson::osec),gm(&Dirac_Wilson::esec),
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl_o),slice_osize(&Dirac_Wilson::slsize_o),
      slice_in(&Dirac_Wilson::xsl_e),slice_isize(&Dirac_Wilson::slsize_e),
      mult_core(&Dirac_Wilson::mult_offdiag),
-     ff_(Nvol_),  fsize_(ff_.size()),
-     gf_(2*Nvol_),gsize_(gf_.size()),
      EO_BGWilson(2){}
 
   /*! @brief constructor to create instance with normal site indexing */
   Dirac_Wilson(double mass,const Field* u)
-    :kpp_(0.5/(4.0+mass)),u_(u),
+    :Nvol_(CommonPrms::instance()->Nvol()),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
      Nz_(CommonPrms::instance()->Nz()),
      Nt_(CommonPrms::instance()->Nt()),
-     Nvol_(CommonPrms::instance()->Nvol()),
+     kpp_(0.5/(4.0+mass)),ff_(Nvol_),gf_(Nvol_),u_(u),
      gp(&Dirac_Wilson::gsite),gm(&Dirac_Wilson::gsite),
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl),slice_osize(&Dirac_Wilson::slsize),
      slice_in(&Dirac_Wilson::xsl),slice_isize(&Dirac_Wilson::slsize),
-     mult_core(&Dirac_Wilson::mult_full),
-     ff_(Nvol_),fsize_(ff_.size()),
-     gf_(Nvol_),gsize_(gf_.size()){}
+     mult_core(&Dirac_Wilson::mult_full){}
 
   Dirac_Wilson(const XML::node& node,const Field* u)
-    :u_(u),
+    :Nvol_(CommonPrms::instance()->Nvol()),
      Nx_(CommonPrms::instance()->Nx()),
      Ny_(CommonPrms::instance()->Ny()),
      Nz_(CommonPrms::instance()->Nz()),
      Nt_(CommonPrms::instance()->Nt()),
-     Nvol_(CommonPrms::instance()->Nvol()),
+     ff_(Nvol_),gf_(Nvol_),u_(u),
      gp(&Dirac_Wilson::gsite),gm(&Dirac_Wilson::gsite),
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl),slice_osize(&Dirac_Wilson::slsize),
      slice_in(&Dirac_Wilson::xsl),slice_isize(&Dirac_Wilson::slsize),
-     mult_core(&Dirac_Wilson::mult_full),
-     ff_(Nvol_),fsize_(ff_.size()),
-     gf_(Nvol_),gsize_(gf_.size()){
+     mult_core(&Dirac_Wilson::mult_full){
     //
     double mass;
     XML::read(node, "mass", mass);
     kpp_= 0.5/(4.0+mass);
   }
-
-  virtual ~Dirac_Wilson(){  }
   
-  size_t fsize() const{return fsize_;}
-  size_t gsize() const{return gsize_;}
-
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
@@ -181,32 +146,15 @@ public:
   void mult_dag_ptr_EO(double*,double* const )const;  
 #endif
 
-  ////////////////////////////////////////Preconditioned versions
-  // Wilson operator has no defined preconditioner now 
-  const Field mult_prec     (const Field& f)const{return f;}
-  const Field mult_dag_prec (const Field& f)const{return f;}
-  const Field left_prec     (const Field& f)const{return f;}
-  const Field right_prec    (const Field& f)const{return f;}
-  const Field left_dag_prec (const Field& f)const{return f;}
-  const Field right_dag_prec(const Field& f)const{return f;}
-  //////////////////////////////////////////////////////////////
-
   const Field gamma5(const Field&) const;
-  void gamma5_mult(Field&, const Field&) const;
-  void gamma5_ptr(double*, double* const) const;
-  const Field proj_p(const Field&) const;
-  const Field proj_m(const Field&) const;
-  void proj_p(Field&, const Field&, int) const;
-  void proj_m(Field&, const Field&, int) const;
-
-  const Field md_force(const Field& , const Field&)const;
+  const Field md_force(const Field&,const Field&)const;
   void md_force_p(Field&,const Field&,const Field&)const;
   void md_force_m(Field&,const Field&,const Field&)const;
-  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
-  Format::Format_F getFermionFormat()const{return ff_;}
+  double getKappa() const {return kpp_;}  
+
+  size_t fsize()const{return ff_.size();}
+  size_t gsize()const{return gf_.size();}
 
   void update_internal_state(){}
-  double getKappa() const {return kpp_;}  
-  int Nvol()const{return Nvol_;}
 };
 #endif

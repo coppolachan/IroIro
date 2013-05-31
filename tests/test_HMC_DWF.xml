@@ -30,32 +30,30 @@
      <MDsteps>1</MDsteps>
       <step_size>0.01</step_size>
       <exp_approx>8</exp_approx>
-
       <Smearing>
 	<levels>2</levels>
 	<Base type="APE">
 	  <rho>0.1</rho>
 	</Base>
       </Smearing>
-
-
       <step>
         <multiplier>1</multiplier>
           <Action type="Fermion" name="TwoFlavorsDomainWall_5D">
 	    <smeared>true</smeared>
             <Kernel5D name="DiracOptimalDomainWall5d">
               <Preconditioning>NoPreconditioner</Preconditioning>
-              <wilson_mass>-1.6</wilson_mass>
               <N5d>8</N5d>
               <b>2.0</b>
               <c>0.0</c>
-              <mass>0.07</mass>
+              <mass>0.1</mass>
+	      <BaseKernel name="DiracWilson">
+		<mass>-1.8</mass>
+	      </BaseKernel>
               <approximation name="Zolotarev">
 		<lambda_min>0.20</lambda_min>
 		<lambda_max>6.4</lambda_max>
 	      </approximation>
             </Kernel5D>
-
             <Solver type="Solver_CG">
               <MaxIter>10000</MaxIter>
               <Precision>10e-15</Precision>

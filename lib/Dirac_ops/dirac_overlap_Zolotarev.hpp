@@ -40,7 +40,6 @@ public:
   
   size_t fsize()const {return Fopr_signH->fsize();}
   size_t gsize()const {return Fopr_signH->gsize();}
-  int Nvol()const {return Fopr_signH->Nvol();}
 
   const Field mult    (const Field& f) const;
   const Field mult_dag(const Field& f) const;
@@ -57,7 +56,6 @@ public:
   //////////////////////////////////////////////////////////////
 
   const Field md_force(const Field& eta,const Field& zeta) const;
-  void get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const;
   void update_internal_state(){}
 };
 

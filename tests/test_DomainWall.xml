@@ -12,26 +12,29 @@
   <TestOptimalDomainWall>
     <DomainWall name="DiracOptimalDomainWall5d">
       <Preconditioning>NoPreconditioner</Preconditioning>
-      <wilson_mass>-1.6</wilson_mass>
       <N5d>6</N5d>
       <b>1.0</b>
       <c>1.0</c>
       <mass>0.02</mass>
+      <BaseKernel name="DiracWilson">
+	<mass>-1.6</mass>
+      </BaseKernel>
       <approximation name="Tanh">
 	<lambda_min>0.1</lambda_min>
 	<lambda_max>1.5</lambda_max>
       </approximation>
     </DomainWall> 
-
     <QuarkPropagator>
       <Kernel4d name="DiracOptimalDomainWall4d">
 	<Kernel5d >
 	  <Preconditioning>NoPreconditioner</Preconditioning>
-	  <wilson_mass>-1.6</wilson_mass>
 	  <N5d>6</N5d>
 	  <b>1.0</b>
 	  <c>1.0</c>
 	  <mass>0.02</mass>
+	  <BaseKernel name="DiracWilson">
+	    <mass>-1.6</mass>
+	  </BaseKernel>
 	  <approximation name="Zolotarev">
 	    <lambda_min>0.1</lambda_min>
 	    <lambda_max>1.5</lambda_max>

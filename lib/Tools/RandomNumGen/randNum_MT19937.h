@@ -8,7 +8,7 @@
 #include <string>
 
 #include "Tools/randNum.h"
-
+#include "Communicator/comm_io.hpp"
 class RandNum_MT19937 :public RandNum {
 private:
   enum{N=624, M=397};
@@ -35,10 +35,8 @@ private:
 public:
   RandNum_MT19937(unsigned long s = 5489UL):left_(1){init(s);}
   RandNum_MT19937(unsigned long* key,int key_length)
-    :left_(1){init(19650218UL,key,key_length);}
-  RandNum_MT19937(std::string& file){
-    loadSeed(file);
-  }
+    :left_(1){init(19650218UL,key,key_length); }
+  RandNum_MT19937(std::string& file){loadSeed(file);}
 
   bool parallel_safe() const{return false;}
 

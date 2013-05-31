@@ -15,9 +15,9 @@ void RandNum::get_complex_gauss(double *re, double *im, const double variance)co
   // Using the Box-Muller transform
   static double gauss_rand_re = 0;
   static double gauss_rand_im = 0;
-  
-  //redefine without trigonometric functions...
+
   /*
+  //redefine without trigonometric functions...
     double angle = 2*PI*do_rand();
     double rand = 1 -do_rand();
     double factor = sqrt(-log(rand));
@@ -25,10 +25,8 @@ void RandNum::get_complex_gauss(double *re, double *im, const double variance)co
     gauss_rand_im = sin(angle)*factor*variance;
     *re = gauss_rand_re;
     *im = gauss_rand_im;
-    */        
-  
+  */
   // Polar form
-  
   double x1, x2, w;
   do {
     x1 = 2.0 * do_rand_closed()- 1.0;
@@ -39,7 +37,6 @@ void RandNum::get_complex_gauss(double *re, double *im, const double variance)co
   w = sqrt( (-1.0 * log( w ) ) / w );
   *re = x1 * w * variance;
   *im = x2 * w * variance;
-  
 }
 
 double RandNum::get_gauss(const double variance)const{

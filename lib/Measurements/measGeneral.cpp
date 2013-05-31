@@ -44,9 +44,9 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id){
     int Nsmear;                                    
     XML::read(smr_node,"Nsmear",Nsmear,MANDATORY);  
 
-    SmearingOperatorFactory* SmrFactory = 
-      SmearingOperators::createSmearingOperatorFactory(smr_node);
-    Smear* SmearingObj = SmrFactory->getSmearingOperator();
+    SmearingFactory* SmrFactory = 
+      Smearings::createSmearingFactory(smr_node);
+    Smear* SmearingObj = SmrFactory->getSmearing();
     
     for(int i=0; i<Nsmear; ++i){ // Do the actual smearing 
       Ubuf = U;

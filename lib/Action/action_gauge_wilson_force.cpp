@@ -3,8 +3,7 @@
   @brief Definition of the md_force method for the ActionGaugeWilson class
 
   This is the standard, plain c++ version
-
-  Time-stamp: <2013-04-16 16:17:02 neo>
+  Time-stamp: <2013-05-21 15:16:39 noaki>
 */
 #include "action_gauge_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -18,18 +17,17 @@ GaugeField ActionGaugeWilson::md_force(){
   SUNmat pl;
   GaugeField force;
   GaugeField1D tmp; 
- 
-  for(int m = 0; m < NDIM_; ++m){
+
+  for(int m=0; m<NDIM_; ++m){
     tmp = 0.0;
-    for(int n=0; n< NDIM_; ++n)
+    for(int n=0; n<NDIM_; ++n)
       if(n != m) tmp += stpl_.upper_lower(*u_,m,n);
 
-    for(int site=0; site < Nvol_; ++site){
+    for(int site=0; site<Nvol_; ++site){
       pl = mat(*u_,site,m)*mat_dag(tmp,site);
-      SetMat(force, anti_hermite_traceless(pl), site, m);
+      SetMat(force,anti_hermite_traceless(pl),site,m);
     }
   }
-
   force *= 0.5*Params.beta/NC_;
 
   _MonitorMsg(ACTION_VERB_LEVEL, Action, force, "ActionGaugeWilson");

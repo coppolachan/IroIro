@@ -16,18 +16,18 @@
 /*!
  * @brief Abstract base class for creating smearing operators
  */
-class SmearingOperatorFactory {
+class SmearingFactory {
 public:
-  virtual Smear* getSmearingOperator() = 0;
+  virtual Smear* getSmearing() = 0;
 };
 
-namespace SmearingOperators {
-  SmearingOperatorFactory* createSmearingOperatorFactory(const XML::node);
+namespace Smearings {
+  SmearingFactory* createSmearingFactory(const XML::node);
 }
 
  
 /*! @brief Concrete class for creating APE smearing operators */
-class APESmearingFactory: public SmearingOperatorFactory {
+class APESmearingFactory: public SmearingFactory {
   std::vector<double> rho;
 public:
   APESmearingFactory(const XML::node node){
@@ -45,23 +45,23 @@ public:
     }
   }
   
-  Smear_APE* getSmearingOperator(){ return new Smear_APE(rho);}
+  Smear_APE* getSmearing(){ return new Smear_APE(rho);}
 };
 
 /*! @brief Concrete class for creating Stout smearing operators */
-class StoutSmearingFactory: public SmearingOperatorFactory {
-  RaiiFactoryObj<SmearingOperatorFactory> BaseSmearingObj;
+class StoutSmearingFactory: public SmearingFactory {
+  RaiiFactoryObj<SmearingFactory> BaseSmearingObj;
 
 public:
   //StoutSmearingFactory(){} //empty for no smearing
 
   StoutSmearingFactory(XML::node node){
     XML::descend(node, "Base", MANDATORY);
-    BaseSmearingObj.save(SmearingOperators::createSmearingOperatorFactory(node));
+    BaseSmearingObj.save(Smearings::createSmearingFactory(node));
   }
   
-  Smear_Stout* getSmearingOperator(){
-    return new Smear_Stout(BaseSmearingObj.get()->getSmearingOperator()); }
+  Smear_Stout* getSmearing(){
+    return new Smear_Stout(BaseSmearingObj.get()->getSmearing()); }
 };
 
 /*! @brief Class for containing a Smart Conf operator instantiation */
@@ -77,7 +77,7 @@ public:
     if (node != NULL) {
       XML::read(node, "levels" , smearing_lvls);
       StoutSmearingFactory* StoutSmearingObj = new StoutSmearingFactory(node); 
-      SmartConfObj.save(new SmartConf(smearing_lvls, *(StoutSmearingObj->getSmearingOperator())));
+      SmartConfObj.save(new SmartConf(smearing_lvls, *(StoutSmearingObj->getSmearing())));
       delete StoutSmearingObj;
     }
     else {

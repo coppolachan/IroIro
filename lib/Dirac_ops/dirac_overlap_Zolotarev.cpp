@@ -3,15 +3,7 @@
 //--------------------------------------------------------------------
 #include "dirac_overlap_Zolotarev.hpp"
 #include "Fields/field_expressions.hpp"
-#include "Tools/randNum_MP.h"
-#include "Geometry/siteIndex.hpp"
 using namespace std;
-
-void Dirac_overlap_Zolotarev::
-get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const{
-  Format::Format_F ff(Fopr_signH->Nvol()); // temporal hack
-  MPrand::mp_get_gauss(phi,rng,SiteIndex::instance()->get_gsite(),ff);
-}
 
 const Field Dirac_overlap_Zolotarev::mult(const Field& f) const{
   using namespace FieldExpression;
@@ -38,5 +30,3 @@ md_force(const Field& eta,const Field& zeta) const{
   Field fce(Fopr_signH->gsize());
   Fopr_signH->calc_force(fce,eta,zeta);
 }
-
-

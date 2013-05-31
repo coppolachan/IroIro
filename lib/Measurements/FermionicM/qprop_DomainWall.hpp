@@ -1,12 +1,13 @@
 /*!
- * @file qprop_optimalDomainWall.hpp
+ * @file qprop_DomainWall.hpp
  * @brief Definition of Qprop optimal domain wall fermions QpropDWF
+ Time-stamp: <2013-05-02 13:16:11 noaki>
  */
 #ifndef QPROP_OPTIMALDOMAINWALL_INCLUDED
 #define QPROP_OPTIMALDOMAINWALL_INCLUDED
 
 #include "quark_propagators.hpp"
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "include/commonPrms.hpp"
 #include "source.hpp"
 

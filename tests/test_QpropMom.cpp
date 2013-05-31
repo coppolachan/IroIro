@@ -19,10 +19,10 @@ int Test_QpropMom::run(){
   int Nsmear;                                    
   XML::read(smr_node,"Nsmear",Nsmear,MANDATORY);  
 
-  SmearingOperatorFactory* SmrFactory = 
-    SmearingOperators::createSmearingOperatorFactory(smr_node);
+  SmearingFactory* SmrFactory = 
+    Smearings::createSmearingFactory(smr_node);
   
-  Smear* SmearingObj = SmrFactory->getSmearingOperator();
+  Smear* SmearingObj = SmrFactory->getSmearing();
 
   smeared_u_= conf_; // Copy original configuration to smeared_u_ 
   for(int i=0; i<Nsmear; ++i){ // Do the actual smearing 

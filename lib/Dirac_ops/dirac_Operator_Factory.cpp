@@ -1,148 +1,156 @@
-#include "dirac_Operator_Factory.hpp"
-
-#include <string.h>
+/*! @file dirac_Operator_Factory.cpp
+ *  @brief Implementation of the FactoryCreator for Dirac operators
+ * Time-stamp: <2013-05-27 17:05:39 noaki>
+ */
+#include "dirac_Operator_FactoryCreator.hpp"
+#include "Solver/solver_Factory.hpp"
 #include "Communicator/comm_io.hpp"
+/*
+#include "dirac_wilson.hpp"
+#include "dirac_wilson_EvenOdd.hpp"
+#include "dirac_wilson_Brillouin.hpp"
+#include "dirac_clover.hpp"
+#include "dirac_DomainWall_4D_fullSolv.hpp"
+#include "dirac_DomainWall_4D_eoSolv.hpp"
+#include "dirac_DomainWall.hpp"
+#include "dirac_DomainWall_EvenOdd.hpp"
+#include "dirac_staggered_EvenOdd.hpp"
+#include "dirac_staggered_EvenOdd_Adjoint.hpp"
+*/
+#include "eoUtils.hpp"
+#include <string.h>
 
-namespace DiracOperators {
+/// Dirac_Wilson
+Dirac_Wilson* DiracWilsonFactory::getDiracWL(Field* const Gfield){
+  return new Dirac_Wilson(Dirac_node_,Gfield);
+}
+/// Dirac_Wilson_EvenOdd
+Dirac_Wilson_EvenOdd* DiracWilsonEvenOddFactory::
+getDiracEO(Field* const Gfield){
+  return new Dirac_Wilson_EvenOdd(Dirac_node_,Gfield);
+}
 
-  DiracWilsonLikeOperatorFactory* 
-  createDiracWilsonLikeOperatorFactory(const XML::node node){
-    if (node !=NULL) {
-      const char* Dirac_name = node.attribute("name").value();
+/// Dirac_Wilson_Brillouin
+Dirac_Wilson_Brillouin* DiracWilsonBrillouinFactory::
+getDiracWL(Field* const Gfield){
+  return new Dirac_Wilson_Brillouin(Dirac_node_,Gfield,type_);}
 
-      if (!strcmp(Dirac_name, "")) {
-	std::cerr << "No name provided for Dirac Operator. Request by <"
-		  << node.name() << ">\n";
-	abort();
-      }
-      if (!strcmp(Dirac_name, "DiracWilson"))  
-	return new DiracWilsonFactory(node);
-      if (!strcmp(Dirac_name, "DiracWilson_EvenOdd")) 
-	return new DiracWilsonEvenOddFactory(node);
-      if (!strcmp(Dirac_name, "DiracWilson_Brillouin")) 
-	return new DiracWilsonBrillouinFactory(node);
-      if (!strcmp(Dirac_name, "DiracWilson_Brillouin_Imp")) 
-	return new DiracWilsonBrillouinImpFactory(node);
-      if (!strcmp(Dirac_name, "DiracClover"))  
-	return new DiracCloverFactory(node);
-      if (!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
-	return new DiracDWF5dFactory(node);
-      if (!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
-	return new DiracDWF5dEvenOddFactory(node);
-      if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
-	return new DiracDWF4DfullFactory(node);
-      if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
-	return new DiracDWF4DeoFactory(node);
-      std::cerr<<"No Dirac Operator available with name ["
-	       << Dirac_name << "]. Request by <" << node.name() << ">\n";
-      abort();
-    }else{
-      std::cout<<"Mandatory node is missing in input file (Dirac Object)\n";
-      abort();
-    }
-  }
+/// Dirac_Clover
+Dirac_Clover* DiracCloverFactory::getDiracWL(Field* const Gfield){
+  return new Dirac_Clover(Dirac_node_,Gfield); }
 
-  DiracDWF4dOperatorFactory* 
-  createDiracDWF4dOperatorFactory(const XML::node node){
-    if (node !=NULL) {
-      const char* Dirac_name = node.attribute("name").value();
-      if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
-	return new DiracDWF4DfullFactory(node);
-      if (!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
-	return new DiracDWF4DeoFactory(node);
-      std::cerr<<"No Dirac Operator available with name ["
-	       << Dirac_name << "]. Request by <" << node.name() << ">\n";
-      abort();
-    }else{
-      std::cout<<"Mandatory node is missing in input file (Dirac Object)\n";
-      abort();
-    }
-  }
+/// Dirac_Mobius
+DiracMobiusFactory::DiracMobiusFactory(XML::node node)
+  :Dirac_node_(node){
+  XML::node dnode = node;
+  XML::descend(dnode,"Dirac_denominator",MANDATORY);
+  XML::descend(node,"Solver",MANDATORY);
 
-  // this one forces to have a PauliVillars operator
-  // useful in the case of the DomainWall5d action
-  DiracDWF5dOperatorFactory* 
-  createDiracDWF5dOperatorFactory(const XML::node node){
-    if (node !=NULL) {
-      const char* Dirac_name = node.attribute("name").value();
+  DiracFactory_.save(Diracs::createDiracWilsonLikeFactory(dnode));
+  SolverFactory_.save(Solvers::createSolverFactory(node));
+}
 
-      if (!strcmp(Dirac_name, "")) {
-	std::cerr << "No name provided for DWF Dirac Operator. Request by <"
-		  << node.name() << ">\n";
-	abort();
-      }
-      if (!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
-	return new DiracDWF5dFactory(node);
-      if (!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
-	return new DiracDWF5dEvenOddFactory(node);
-      
-      std::cerr <<"No Dirac Operator available with name ["
-		<< Dirac_name << "]. Request by <" << node.name() << ">\n";
-      abort();
-    }else{
-      std::cout<<"Mandatory node is missing in input file (DWF Dirac Object)\n";
-      abort();
-    }
-  }
+Dirac_Mobius* DiracMobiusFactory::getDiracWL(Field* const Gfield){
+  D_.save(DiracFactory_.get()->getDiracWL(Gfield));
+  Fopr_.save(new Fopr_DdagD_Precondition(D_.get()));
+  Solver_.save(SolverFactory_.get()->getSolver(Fopr_.get()));
+  return new Dirac_Mobius(Dirac_node_,D_.get(),Solver_.get());
+}
+
+/// Dirac_optimalDomainWall
+DiracDomainWall5dFactory::DiracDomainWall5dFactory(XML::node node):Dirac_node_(node){
+  XML::descend(node,"BaseKernel", MANDATORY);
+  KernelFactory_.save(Diracs::createDiracWilsonLikeFactory(node));
+}
+
+Dirac_optimalDomainWall* DiracDomainWall5dFactory::getDiracWL(Field* const Gfield){
+  return new Dirac_optimalDomainWall(Dirac_node_,
+				     KernelFactory_.get()->getDiracWL(Gfield),
+				     Gfield); 
+}
+
+Dirac_optimalDomainWall* DiracDomainWall5dFactory::getDiracPV(Field* const Gfield){
+  return new Dirac_optimalDomainWall(Dirac_node_,
+				     KernelFactory_.get()->getDiracWL(Gfield),
+				     Gfield,PauliVillars); 
+}
+
+/// Dirac_optimalDomainWall_EvenOdd
+DiracDomainWall5dEvenOddFactory::DiracDomainWall5dEvenOddFactory(XML::node node)
+:Dirac_node_(node){
+  XML::descend(node,"BaseKernel", MANDATORY);
+  KernelFactory_.save(Diracs::createDiracWilsonLikeEvenOddFactory(node));
+}
+
+Dirac_optimalDomainWall_EvenOdd* 
+DiracDomainWall5dEvenOddFactory::getDiracWL(Field* const Gfield){
+  Kernel_.save(KernelFactory_.get()->getDiracEO(Gfield));
+  return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get(),Gfield); 
+}
+
+Dirac_optimalDomainWall_EvenOdd* 
+DiracDomainWall5dEvenOddFactory::getDiracPV(Field* const Gfield){
+  Kernel_.save(KernelFactory_.get()->getDiracEO(Gfield));
+  return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get(),
+					     Gfield,PauliVillars); 
+}
+
+/// Dirac_DWF4DfullSolv
+DiracDWF4DfullFactory::DiracDWF4DfullFactory(XML::node node)
+:Dirac_node_(node){
+  XML::descend(node,"Kernel5d", MANDATORY);
+  DiracFactory_.save(new DiracDomainWall5dFactory(node));
+  XML::next_sibling(node, "SolverDWF", MANDATORY);
+  SolverFactory_.save(Solvers::createSolverFactory(node));
+}
+
+Dirac_optimalDomainWall_4D* DiracDWF4DfullFactory::
+getDirac4D(Field* const Gfield){
+
+  DW5D_.save(DiracFactory_.get()->getDiracWL(Gfield));
+  Fopr_.save(new Fopr_DdagD_Precondition(DW5D_.get()));
+  Solver_.save(SolverFactory_.get()->getSolver(Fopr_.get()));
+
+  DW5D_PV_.save(DiracFactory_.get()->getDiracPV(Gfield));
+  Fopr_PV_.save(new Fopr_DdagD_Precondition(DW5D_PV_.get()));
+  Solver_PV_.save(SolverFactory_.get()->getSolver(Fopr_PV_.get()));
+
+  return new Dirac_optimalDomainWall_4D_fullSolv(DW5D_.get(),DW5D_PV_.get(),
+						 Solver_.get(),Solver_PV_.get());
+}
+
+/// Dirac_DWF4DeoSolv
+DiracDWF4DeoFactory::DiracDWF4DeoFactory(XML::node node)
+:Dirac_node_(node){
+  XML::descend(node,"Kernel5d", MANDATORY);
+  DiracEOFactory_.save(new DiracDomainWall5dEvenOddFactory(node));
+  XML::next_sibling(node,"SolverDWF", MANDATORY);
+  SolverFactory_.save(Solvers::createSolverFactory(node));
+}
+
+Dirac_optimalDomainWall_4D* DiracDWF4DeoFactory::
+getDirac4D(Field* const Gfield){
+  DW5D_EO_.save(DiracEOFactory_.get()->getDiracWL(Gfield));
+  FoprEO_.save(new Fopr_DdagD(DW5D_EO_.get()));
+  SolverEO_.save(SolverFactory_.get()->getSolver(FoprEO_.get()));
+  Inv_.save(new EvenOddUtils::Inverter_WilsonLike(DW5D_EO_.get(),SolverEO_.get()));
+
+  DW5D_EO_PV_.save(DiracEOFactory_.get()->getDiracPV(Gfield));
+  FoprEO_PV_.save(new Fopr_DdagD(DW5D_EO_PV_.get()));
+  SolverEO_PV_.save(SolverFactory_.get()->getSolver(FoprEO_PV_.get()));
+  Inv_PV_.save(new EvenOddUtils::Inverter_WilsonLike(DW5D_EO_PV_.get(),SolverEO_PV_.get()));
   
-  // another clasification of the operator where inversion is not considered
-  // like in the case of eigenmode calculation.
-  DiracOperatorFactory* createGeneralDiracOperatorFactory(const XML::node node){
-    // temporal hack
-    return createGeneralDiracWilsonLikeOperatorFactory(node);
-  }
+  return new Dirac_optimalDomainWall_4D_eoSolv(Dirac_node_,Inv_.get(),Inv_PV_.get());
+}
 
-  DiracWilsonLikeOperatorFactory* 
-  createGeneralDiracWilsonLikeOperatorFactory(const XML::node node){
-    if (node !=NULL) {
-      const char* DWL_name = node.attribute("name").value();
+/// Dirac_staggered_EvenOdd
+Dirac_staggered_EvenOdd* DiracStaggeredEvenOddFactory::
+getDiracSTG(Dstagg::Dtype dt,Field* const Gfield){
+  return new Dirac_staggered_EvenOdd(Dirac_node_,dt,Gfield); }
 
-      if (!strcmp(DWL_name, "")) {
-	std::cerr << "No name provided for DiracWilsonLike Operator. Request by <"
-		  << node.name() << ">\n";
-	abort();
-      }
-      if (!strcmp(DWL_name, "DiracWilson"))  
-	return new DiracWilsonFactory(node);
-      if (!strcmp(DWL_name, "DiracClover"))  
-	return new DiracCloverFactory(node);
-      if (!strcmp(DWL_name, "DiracOptimalDomainWall5d"))  
-	return new DiracDWF5dFactory(node);
-      if (!strcmp(DWL_name, "DiracOptimalDomainWall4d"))  
-	return new DiracDWF4DfullFactory(node);
-      std::cerr<<"No DiracWilsonLike Operator available with name ["
-	       << DWL_name << "]. Request by <" << node.name() << ">\n";
-      abort();
-    }else{
-      std::cout<<"Mandatory node is missing in input file (Dirac Object)\n";
-      abort();
-    }
-  }
-
-  DiracStaggeredEvenOddLikeOperatorFactory* 
-  createDiracStaggeredEvenOddLikeOperatorFactory(const XML::node node){
-    if (node !=NULL) {
-      const char* Dirac_name = node.attribute("name").value();
-
-      if (!strcmp(Dirac_name, "")) {
-	std::cerr<<"No name provided for DiracStaggeredLike Operator. Request by <"
-		 << node.name() << ">\n";
-	abort();
-      }
-      if (!strcmp(Dirac_name, "DiracStaggeredEvenOdd"))  
-	return new DiracStaggeredEvenOddFactory(node);
-
-      //Only for NC=3
-      #if NC_==3
-      if (!strcmp(Dirac_name, "DiracStaggeredEvenOddAdjoint"))  
-	return new DiracStaggeredEvenOddAdjointFactory(node);
-      #endif
-
-      abort();
-    }else{
-      std::cout<<"Mandatory node is missing in input file (DiracStaggered Object)\n";
-      abort();
-    }
-  }
-
-} //end of namespace
+/// Dirac_staggered_EvenOdd_Adjoint
+#if NC_==3
+Dirac_staggered_EvenOdd_Adjoint* DiracStaggeredEvenOddAdjointFactory::
+getDiracSTG(Dstagg::Dtype dt,Field* const Gfield){
+  return new Dirac_staggered_EvenOdd_Adjoint(Dirac_node_,dt,Gfield); }
+#endif

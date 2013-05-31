@@ -2,13 +2,15 @@
  * @file fopr.h 
  * @brief Definition of Fopr classes 
  * @authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>, Jun-Ichi Noaki}
+Time-stamp: <2013-04-20 07:20:51 noaki>
  */
 
 #ifndef FOPR_INCLUDED
 #define FOPR_INCLUDED
 
 #include "field.h"
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_WilsonLike.hpp"
+#include "Dirac_ops/dirac_staggeredLike.hpp"
 
 class Fopr{
 public:

@@ -1,9 +1,7 @@
 /*!
   @file siteIndexEO.cpp
-
-  @brief Declares the interface for site indexing 
-
-  EVEN-ODD
+  @brief Declares the interface for site indexing EVEN-ODD
+  Time-stamp: <2013-04-24 10:37:13 noaki>
 */
 #include "siteIndex.hpp"
 #include "Communicator/communicator.hpp"

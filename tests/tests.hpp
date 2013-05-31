@@ -30,9 +30,11 @@ namespace TestEnv{
 
     //Initialize GaugeField using XML input
     GaugeGlobal GaugeF(geom);
+    CCIO::cout<<"intializing GaugeF\n";
+
     GaugeF.initialize(top_node);
     CCIO::cout<<"GaugeF initialized"<<std::endl;
-
+    
     // Echo of input xml
     JobUtils::echo_input(Options.filename);
 

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-05-14 10:09:51 neo>
+# Time-stamp: <2013-05-30 14:06:52 noaki>
 
 ###########################################
 # Initial definitions 
@@ -49,7 +49,6 @@ endif #USE_MPI
 ############################################
 # Sources by architecture
 if IBM_BGQKERNELS
-DWF_BGQ_SRC += Dirac_ops/dirac_DomainWall_BGQ.cpp
 DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
@@ -82,42 +81,47 @@ AM_LDFLAGS +=
 bin_PROGRAMS = main_hmc
 lib_LIBRARIES = libcommcode.a 
 
-EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp			\
-		Main/documentation_pages.h			\
-                Dirac_ops/dirac_wilson_improved.code    	\
-                Dirac_ops/dirac_staggered_EvenOdd_improved.code	\
+
+EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
+		Main/documentation_pages.h	\
+                Dirac_ops/dirac_wilson_improved.code    \
+                Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_standard.code    	\
+                Dirac_ops/dirac_DomainWall_BGQ.code \
 		Fields/field.inl
 
-libcommcode_a_SOURCES = Main/commonPrms.cpp			\
-		$(COMMUNICATOR_SRCS)     	        	\
-		$(SITE_INDEXING_SRCS)				\
-		Action/action.cpp				\
-		Action/action_gauge_wilson.cpp			\
-	 	Action/action_gauge_wilson_adjoint.testing.cpp	\
-		$(ACTION_SRCS)					\
-		Action/action_gaugetype_factory_creator.cpp     \
-		Action/action_gaugetype_factory.cpp     	\
-		Action/action_Nf2.cpp				\
-		Action/action_Nf2_ratio.cpp			\
-		Action/action_Nf.cpp				\
-		Action/action_Nf_ratio.cpp			\
-		Action/action_staggered.cpp			\
-		Action/action_staggered_ratio.cpp		\
-		Action/action_Nf2_DomainWall.cpp		\
-		Action/action_fermiontype_factory_creator.cpp	\
-		Action/action_fermiontype_factory.cpp		\
-		Communicator/comm_io.cpp			\
-		Dirac_ops/dirac.cpp     			\
-		Dirac_ops/dirac_wilson.cpp			\
-		Dirac_ops/dirac_wilson_EvenOdd.cpp		\
-		Dirac_ops/dirac_wilson_Brillouin.cpp		\
-		Dirac_ops/dirac_wilson_Brillouin_Imp.cpp	\
-		Dirac_ops/staggered_Utils.cpp	        	\
-		Dirac_ops/dirac_staggered_EvenOdd.cpp		\
+libcommcode_a_SOURCES = Main/commonPrms.cpp		\
+		$(COMMUNICATOR_SRCS)     	        \
+		$(SITE_INDEXING_SRCS)			\
+		Action/action.cpp			\
+		Action/action_gauge_wilson.cpp		\
+	 	Action/action_gauge_wilson_adjoint.cpp	\
+		$(ACTION_SRCS)				\
+	 	Action/action_gaugetype_factory_creator.cpp\
+		Action/action_gaugetype_factory.cpp     \
+		Action/action_Nf2.cpp			\
+		Action/action_Nf2_ratio.cpp		\
+		Action/action_Nf.cpp			\
+		Action/action_Nf_ratio.cpp		\
+		Action/action_staggered.cpp		\
+		Action/action_staggered_ratio.cpp	\
+		Action/action_Nf2_DomainWall.cpp	\
+                Action/action_fermiontype_factory_creator.cpp\
+		Action/action_fermiontype_factory.cpp	\
+		Communicator/comm_io.cpp		\
+		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
+		Dirac_ops/dirac_Operator_Factory.cpp	\
+		Dirac_ops/dirac.cpp     		\
+		Dirac_ops/dirac_WilsonLike.cpp		\
+		Dirac_ops/dirac_staggeredLike.cpp	\
+		Dirac_ops/dirac_wilson.cpp		\
+		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
+		Dirac_ops/dirac_wilson_Brillouin.cpp	\
+		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
+		Dirac_ops/dirac_Mobius.cpp			\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
 		Dirac_ops/dirac_DomainWall.cpp   		\
@@ -287,17 +291,19 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Geometry/shiftField.hpp			\
 			Main/gaugeConf.hpp			\
 			Main/gaugeGlobal.hpp			\
+		        Dirac_ops/dirac_Operator_FactoryCreator.hpp  \
 			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac.hpp			\
+			Dirac_ops/dirac_WilsonLike.hpp		\
+			Dirac_ops/dirac_staggeredLike.hpp	\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
-			Dirac_ops/dirac_wilson_Brillouin_Imp.hpp\
-			Dirac_ops/staggered_Utils.hpp	        \
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
+			Dirac_ops/dirac_Mobius.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
@@ -360,7 +366,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/RationalApprox/rationalapprox.hpp	\
 			Tools/Bagel/bfm_storage.hpp		\
 			Tools/RandomNumGen/dcmt_wrapper.hpp	\
-			Tools/RandomNumGen/randNum_MT19937.h	\
+                        Tools/RandomNumGen/randNum_MT19937.h    \
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	

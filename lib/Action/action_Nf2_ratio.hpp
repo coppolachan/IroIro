@@ -1,13 +1,14 @@
 /*!
  * @file action_Nf2_ratio.hpp
  * @brief Declaration of Action_Nf2_ratio class
+ Time-stamp: <2013-04-20 07:10:39 noaki>
  */
 #ifndef ACTION_NF2_RATIO_INCLUDED
 #define ACTION_NF2_RATIO_INCLUDED
 
 #include "Tools/randNum_MP.h"
 #include "Action/action.hpp"
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "Solver/solver.hpp"
 #include "Smearing/smartConf.hpp"
 /*!

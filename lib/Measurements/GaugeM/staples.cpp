@@ -7,10 +7,14 @@
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 #include <algorithm>
+#ifdef IBM_BGQ_WILSON
+#include <omp.h>
+#include "bgqthread.h"
+#endif
 
 using namespace FieldUtils;
 using namespace SUNmatUtils;
-
+using namespace Mapping;
 //------------------------------------------------------------
 double Staples::plaquette(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaquette called\n");
@@ -22,12 +26,51 @@ double Staples::plaq_s(const GaugeField& F)const {
   double plaq = 0.0;
   GaugeField1D stpl(Nvol_);
 
+#ifdef IBM_BGQ_WILSON
+  GaugeField1D U_mu, U_nu;
+  GaugeField1D UpNu, UpMu;
+  GaugeField1D pl;
+  //pointers
+  double* F_ptr = const_cast<GaugeField&>(F).data.getaddr(0);
+  double* stpl_ptr = stpl.data.getaddr(0);
+  double* U_mu_ptr = U_mu.data.getaddr(0);
+  double* U_nu_ptr = U_nu.data.getaddr(0);
+  double* UpMu_ptr = UpMu.data.getaddr(0);
+  double* UpNu_ptr = UpNu.data.getaddr(0);
+  double* pl_ptr = pl.data.getaddr(0);
+
+  BGQThread_Init();
+
+#pragma omp parallel 
+  {
+    const int ns = Nvol_/omp_get_num_threads();
+    const int CC2 = NC_*NC_*2;
+    const int str2 = CC2*ns*omp_get_thread_num();
+
+    for(int mu=0; mu<NDIM_-1; ++mu){
+      BGWilsonSU3_MatEquate(U_mu_ptr+str2,F_ptr+mu*Nvol_*CC2+str2,ns); //U_mu links
+      int nu = (mu+1)%(NDIM_-1);
+      BGWilsonSU3_MatEquate(U_nu_ptr+str2,F_ptr+nu*Nvol_*CC2+str2,ns); //U_nu links
+
+      shiftField(UpMu,U_nu_ptr,mu,Forward());
+      shiftField(UpNu,U_mu_ptr,nu,Forward());
+      // upper staple
+      BGWilsonSU3_MatMult_NND(stpl_ptr+str2,U_nu_ptr+str2,UpNu_ptr+str2,UpMu_ptr+str2,ns);
+      // plaquette 
+      BGWilsonSU3_MatMult_ND(pl_ptr+str2,U_mu_ptr+str2,stpl_ptr+str2,ns);
+#pragma omp for reduction(+:plaq)
+      for(int site=0; site<Nvol_; ++site)
+	  plaq += pl_ptr[CC2*site]+pl_ptr[8+CC2*site]+pl_ptr[16+CC2*site]; ///ReTr
+    }
+  }
+#else
   for(int i=0;i<NDIM_-1;++i){
     int j = (i+1)%(NDIM_-1);
     stpl = lower(F,i,j);
     for(int site=0; site<Nvol_; ++site)
       plaq += ReTr(mat(F,site,i)*mat_dag(stpl,site));  // P_ij
   }
+#endif
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*NC_*(NDIM_-1));
 }
@@ -37,11 +80,50 @@ double Staples::plaq_t(const GaugeField& F)const {
   double plaq = 0.0;
   GaugeField1D stpl(Nvol_);
 
+#ifdef IBM_BGQ_WILSON
+  GaugeField1D U_mu, U_nu;
+  GaugeField1D UpNu, UpMu;
+  GaugeField1D pl;
+  //pointers
+  double* F_ptr = const_cast<GaugeField&>(F).data.getaddr(0);
+  double* stpl_ptr = stpl.data.getaddr(0);
+  double* U_mu_ptr = U_mu.data.getaddr(0);
+  double* U_nu_ptr = U_nu.data.getaddr(0);
+  double* UpMu_ptr = UpMu.data.getaddr(0);
+  double* UpNu_ptr = UpNu.data.getaddr(0);
+  double* pl_ptr = pl.data.getaddr(0);
+
+  BGQThread_Init();
+
+#pragma omp parallel 
+  {
+    const int ns = Nvol_/omp_get_num_threads();
+    const int CC2 = NC_*NC_*2;
+    const int str2 = CC2*ns*omp_get_thread_num();
+
+    int mu=TDIR;
+    BGWilsonSU3_MatEquate(U_mu_ptr+str2,F_ptr+mu*Nvol_*CC2+str2,ns); //U_mu links
+    for(int nu=0; nu<NDIM_-1; ++nu){
+      BGWilsonSU3_MatEquate(U_nu_ptr+str2,F_ptr+nu*Nvol_*CC2+str2,ns); //U_nu links
+
+      shiftField(UpMu,U_nu_ptr,mu,Forward());
+      shiftField(UpNu,U_mu_ptr,nu,Forward());
+      // upper staple
+      BGWilsonSU3_MatMult_NND(stpl_ptr+str2,U_nu_ptr+str2,UpNu_ptr+str2,UpMu_ptr+str2,ns);
+      // plaquette 
+      BGWilsonSU3_MatMult_ND(pl_ptr+str2,U_mu_ptr+str2,stpl_ptr+str2,ns);
+#pragma omp for reduction(+:plaq)
+      for(int site=0; site<Nvol_; ++site)
+	  plaq += pl_ptr[CC2*site]+pl_ptr[8+CC2*site]+pl_ptr[16+CC2*site]; ///ReTr
+    }
+  }
+#else
   for(int nu=0; nu < NDIM_-1; ++nu){
     stpl = lower(F,TDIR,nu);
     for(int site=0; site<Nvol_; ++site)
       plaq += ReTr(mat(F,site,TDIR)*mat_dag(stpl,site));  // P_zx
   }
+#endif
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*NC_*(NDIM_-1));
 }
@@ -125,7 +207,6 @@ double Staples::plaq_min(const GaugeField& F,double threshold)const {
 //------------------------------------------------------------
 GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu) const{
   _Message(DEBUG_VERB_LEVEL, "Staples::upper_lower called\n");
-  using namespace Mapping;
   //       mu,v                               
   //      +-->--+                                                    
   // nu,w |     |t_dag(site+mu,nu)
@@ -157,7 +238,7 @@ GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu) const{
   return c;
 }
 
-GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu, const Field aux) const{
+GaugeField1D Staples::upper_lower(const GaugeField& G,int mu,int nu,const Field aux)const{
   _Message(DEBUG_VERB_LEVEL, "Staples::upper_lower called\n");
   using namespace Mapping;
   //       mu,v                               
@@ -177,24 +258,16 @@ GaugeField1D Staples::upper_lower(const GaugeField& G, int mu, int nu, const Fie
   double sign = 1.0;
   int sector = -1;
   
-  if (mu > nu) {
+  if (mu>nu){
     mu_aux = nu;
     nu_aux = mu;
     sign = -1.0;
   }
-  
-
-  for (int m = 0; m <= mu_aux; m++) {
-    if (m < mu_aux)
-      limit = NDIM_-1;
-    else
-      limit = nu_aux;
-    for (int n = m+1; n <= limit; n++) 
-      sector++;
+  for(int m=0; m<= mu_aux; m++){
+    if(m<mu_aux) limit = NDIM_-1;
+    else         limit = nu_aux;
+    for(int n=m+1; n<=limit; n++) sector++;
   }
-  //CCIO::cout << "mu, nu, sector "<< mu<< " "<< nu << "  "<< sector << "\n";
-
-  
   for(int site=0; site<Nvol_; ++site){
     std::slice isl = c.format.islice(site);
     //std::complex<double>     fact(aux[2*site+2*Nvol_*sector],  sign*aux[2*site+1+2*Nvol_*sector]);
@@ -219,16 +292,25 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
 
 #ifdef IBM_BGQ_WILSON 
   GaugeField1D v,w,c, WupMu;
+  double* G_ptr = const_cast<GaugeField&>(G).data.getaddr(0);
   double* c_ptr = c.data.getaddr(0);
   double* v_ptr = v.data.getaddr(0);
   double* WupMu_ptr = WupMu.data.getaddr(0);
   double* w_ptr = w.data.getaddr(0);
 
-  DirSliceBGQ(v,G,mu);
-  DirSliceBGQ(w,G,nu);
-  shiftField(WupMu,w_ptr,mu,Forward());
+  BGQThread_Init();
 
-  BGWilsonSU3_MatMult_DNN(c_ptr, w_ptr, v_ptr, WupMu_ptr, Nvol_);
+#pragma omp parallel 
+  {
+    const int ns = Nvol_/omp_get_num_threads();
+    const int CC2 = NC_*NC_*2;
+    const int str2 = CC2*ns*omp_get_thread_num();
+
+    BGWilsonSU3_MatEquate(v_ptr+str2,G_ptr+mu*Nvol_*CC2+str2,ns); //U_mu links
+    BGWilsonSU3_MatEquate(w_ptr+str2,G_ptr+nu*Nvol_*CC2+str2,ns); //U_nu links
+    shiftField(WupMu,w_ptr,mu,Forward());
+    BGWilsonSU3_MatMult_DNN(c_ptr+str2,w_ptr+str2,v_ptr+str2,WupMu_ptr+str2,ns);
+  }
 #else
   GaugeField1D v = DirSlice(G,mu);
   GaugeField1D w = DirSlice(G,nu);
@@ -251,19 +333,29 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
   //  site+     +              
  
 #ifdef IBM_BGQ_WILSON 
-  GaugeField1D v, WupMu, VupNu;
-  GaugeField1D c(G.Nvol());
+  GaugeField1D c,v,WupMu,VupNu;
+  double* G_ptr = const_cast<GaugeField&>(G).data.getaddr(0);
   double* c_ptr = c.data.getaddr(0);
   double* v_ptr = v.data.getaddr(0);
   double* VupNu_ptr = VupNu.data.getaddr(0);
   double* WupMu_ptr = WupMu.data.getaddr(0);
 
-  DirSliceBGQ(v,G,mu); 
-  shiftField(VupNu,v_ptr,nu,Forward());
-  DirSliceBGQ(v,G,nu);
-  shiftField(WupMu,v_ptr,mu,Forward());
- 
-  BGWilsonSU3_MatMult_NND(c_ptr, v_ptr, VupNu_ptr, WupMu_ptr, Nvol_);
+  BGQThread_Init();
+
+#pragma omp parallel 
+  {
+    const int ns = Nvol_/omp_get_num_threads();
+    const int CC2 = NC_*NC_*2;
+    const int str2 = CC2*ns*omp_get_thread_num();
+
+    BGWilsonSU3_MatEquate(v_ptr+str2,G_ptr+mu*Nvol_*CC2+str2,ns); //U_mu links
+    shiftField(VupNu,v_ptr,nu,Forward());
+
+    BGWilsonSU3_MatEquate(v_ptr+str2,G_ptr+nu*Nvol_*CC2+str2,ns); //U_nu links
+    shiftField(WupMu,v_ptr,mu,Forward());
+
+    BGWilsonSU3_MatMult_NND(c_ptr+str2,v_ptr+str2,VupNu_ptr+str2,WupMu_ptr+str2,ns);
+  }
 #else
   GaugeField1D v = DirSlice(G,mu);
   GaugeField1D w = DirSlice(G,nu);
@@ -300,7 +392,38 @@ Staples::fieldStrength(const GaugeField& G,int mu,int nu) const{
 
   GaugeField1D Fmn(Nvol_);
   GaugeField1D Ut(Nvol_);            // temporal objects
+  
+#ifdef IBM_BGQ_WILSON
+  // temporal fields
+  GaugeField1D U1;
+  // pointers
+  double* G_ptr = const_cast<GaugeField&>(G).data.getaddr(0);
+  double* Vup_ptr = Vup.data.getaddr(0);
+  double* Vdn_ptr = Vdn.data.getaddr(0);
+  double* Fmn_ptr = Fmn.data.getaddr(0);
+  double* Ut_ptr = Ut.data.getaddr(0);
 
+  double* U1_ptr = U1.data.getaddr(0);
+
+  BGQThread_Init();
+
+#pragma omp parallel 
+  {  
+    const int ns = Nvol_/omp_get_num_threads();
+    const int CC2 = NC_*NC_*2;
+    const int str2 = CC2*ns*omp_get_thread_num();
+    
+    BGWilsonSU3_MatEquate(U1_ptr+str2,G_ptr+mu*Nvol_*CC2+str2,ns); //U_mu links     
+    BGWilsonSU3_MatSub(Vup_ptr+str2,Vdn_ptr+str2,ns);              // Left leaves
+
+    BGWilsonSU3_MatMult_ND(Fmn_ptr+str2,U1_ptr+str2,Vup_ptr+str2,ns);
+    BGWilsonSU3_MatMult_DN(Ut_ptr+str2,Vup_ptr+str2,U1_ptr+str2,ns);
+    shiftField(U1, Ut_ptr,mu,Backward());
+
+    BGWilsonSU3_MatAdd(Fmn_ptr+str2,U1_ptr+str2,ns); // Fmn 
+  }
+  Fmn = TracelessAntihermite(Fmn);  // traceless, anti-hermite
+#else
   for(int site=0; site<Nvol_; ++site){
     SUNmat u = mat(G,site,mu);    
     SUNmat v = mat_dag(Vup,site); 
@@ -315,6 +438,8 @@ Staples::fieldStrength(const GaugeField& G,int mu,int nu) const{
   //    +--<--+     +--<--+  
 
   Fmn += shiftField(Ut,mu,Backward());
+#endif
+
   Fmn *= 0.25;
   return Fmn;
 }

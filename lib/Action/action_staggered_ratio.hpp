@@ -1,13 +1,14 @@
 /*!
  * @file action_staggered_ratio.hpp
  * @brief Declaration of Action_staggered_ratio class
+ Time-stamp: <2013-04-20 07:23:49 noaki>
  */
 #ifndef ACTION_STAGGERED_RATIO_INCLUDED
 #define ACTION_STAGGERED_RATIO_INCLUDED
 
 #include "Tools/randNum_MP.h"
 #include "Action/action.hpp"
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_staggeredLike.hpp"
 #include "Solver/solver.hpp"
 #include "Smearing/smartConf.hpp"
 /*!

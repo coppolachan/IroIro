@@ -74,6 +74,7 @@ int GaugeGlobal::initialize(XML::node node){
 }
 
 int GaugeGlobal::initialize(XML::node node,std::string filename){
+  CCIO::cout<<"filename\n";
   try{
     XML::descend(node,"Configuration");
     if(!XML::attribute_compare(node,"Type","TextFile")){

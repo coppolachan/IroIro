@@ -2,22 +2,16 @@
  *@file dirac_DomainWall_EvenOdd.cpp
  *
  *@brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op)
+ Time-stamp: <2013-05-30 10:13:09 noaki>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"
-#include "Tools/randNum_MP.h"
 #include<stdlib.h>
 #include<stdio.h>
 #include<cassert>
 #include<math.h>
 
 using namespace std;
-
-void Dirac_optimalDomainWall_EvenOdd::get_RandGauss(valarray<double>& phi,
-					     const RandNum& rng)const{
-  MPrand::mp_get_gauss(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),
-		       Deo_.getFermionFormat());
-}
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult_ee(const Field& f)const{
   return Deo_.mult_hop5(f);
@@ -52,66 +46,60 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_oe_dag(const Field& f)const{
 
 const Field Dirac_optimalDomainWall_EvenOdd::mult(const Field& f) const{
 #ifdef  IBM_BGQ_WILSON
-  // just slightly faster (but only BGQ)
-  Field res(Deo_.fsize());
+  Field w(Deo_.fsize()); // just slightly faster (but only BGQ)
+  //Doe_->mult_hop(w,f);
   
   double* f_ptr = const_cast<Field&>(f).getaddr(0);
 #pragma omp parallel
   {
-    Deo_.mult_hop_omp(res, f_ptr);
+    Deo_.mult_hop_omp(w,f_ptr);
   }
-  
-  return res;
 #else
   Field w(f);
   w -= mult_eo(mult_oe(f));
-  return w;
 #endif
+  return w;
 }
+
 const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
+  
 #ifdef IBM_BGQ_WILSON  
-  Field res(Deo_.fsize());
+  timeval start_, end_;
+  gettimeofday(&start_,NULL);
+
+  Field w(Deo_.fsize());
+  //Deo_.mult_hop_dag(w,f);
   
   double* f_ptr = const_cast<Field&>(f).getaddr(0);
 #pragma omp parallel
   {
-    Deo_.mult_hop_dag_omp(res,f_ptr);
+    Deo_.mult_hop_dag_omp(w,f_ptr);
   }
-  return res;
+  gettimeofday(&end_,NULL);
+  multdag_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
+  multdag_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
 #else
   Field w(f);
   w -= mult_oe_dag(mult_eo_dag(f));
-  return w;
 #endif   
+  return w;
 }
 
 void Dirac_optimalDomainWall_EvenOdd::
 md_force_eo(Field& fce, const Field& eta,const Field& zeta) const{
-#ifdef IBM_BGQ_WILSON  
-  Deo_.md_force_p_BGQ(fce,eta,mult_ee_dinv(zeta));
-  Doe_.md_force_m_BGQ(fce,eta,mult_ee_dinv(zeta));
-#else
   Deo_.md_force_p(fce,eta,mult_ee_dinv(zeta));
   Doe_.md_force_m(fce,eta,mult_ee_dinv(zeta));
-#endif
-
 }
 
 void Dirac_optimalDomainWall_EvenOdd::
 md_force_oe(Field& fce, const Field& eta,const Field& zeta) const{
-#ifdef IBM_BGQ_WILSON  
-  Doe_.md_force_p_BGQ(fce,eta,mult_oo_dinv(zeta));
-  Deo_.md_force_m_BGQ(fce,eta,mult_oo_dinv(zeta));
-#else
   Doe_.md_force_p(fce,eta,mult_oo_dinv(zeta));
   Deo_.md_force_m(fce,eta,mult_oo_dinv(zeta));
-#endif
-
 }
 
 const Field Dirac_optimalDomainWall_EvenOdd::
 md_force(const Field& eta,const Field& zeta) const{
-  Field fce(gsize());
+  Field fce(Deo_.gsize());
   md_force_eo(fce,mult_oe(eta),zeta);
   md_force_oe(fce,eta,mult_eo_dag(zeta));
   fce *= 0.5;
@@ -126,16 +114,15 @@ void  Dirac_optimalDomainWall_EvenOdd::solve_eo(Field& out,
 						SolverOutput& SO, 
 						int Niter, 
 						double stop_cond) const{
-  Deo_.solve_eo_5d(out, in, SO, Niter, stop_cond);
+  Deo_.solve_eo_5d(out,in,SO,Niter,stop_cond);
 }
 void Dirac_optimalDomainWall_EvenOdd::solve_ms_eo(prop_t& xq,
 						  const Field& b,
 						  SolverOutput& SO, 
 						  const vector<double>& sigma,
 						  int MaxIter, 
-						  double GoalPrecision) const
-{
-  Deo_.solve_ms_eo_5d(xq, b, SO, sigma, MaxIter, GoalPrecision);
+						  double GoalPrecision) const{
+  Deo_.solve_ms_eo_5d(xq,b,SO,sigma,MaxIter,GoalPrecision);
 }
 
 #endif

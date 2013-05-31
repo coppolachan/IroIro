@@ -60,12 +60,11 @@ Field Action_staggered_ratio::DdagD2e_inv(const Field& src){
 void Action_staggered_ratio::init(const RandNum& rand){
 
   std::valarray<double> ph(fsize_);
-  MPrand::mp_get_gauss(ph,rand);//D_->get_RandGauss(ph,rand);
+  MPrand::mp_get_gauss(ph,rand);
 
   Field xi(ph);
   xi -= mr_*D_->mult_eo(D_->mult_oe(Field(ph)));
-
-  MPrand::mp_get_gauss(ph,rand);//D_->get_RandGauss(ph,rand);
+  MPrand::mp_get_gauss(ph,rand);
   
   xi += (mr_-1.0)*D_->mult_eo(Field(ph));
   slv2e_->solve(phi_,xi);

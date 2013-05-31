@@ -23,9 +23,9 @@ int Test_WilsonFlow::run(){
   
   for(int t=0; t<wflow.Nstep(); ++t){            // wilson flow 
     tau.push_back(wflow.tau(t));
+    wflow.evolve_step();
     ttEstd.push_back(wflow.Edens_plaq(t));
     ttEsym.push_back(wflow.Edens_clover(t));
-    wflow.evolve_step();
     if(!((t+1)%Mstep)){
       CCIO::cout<<"Monitor at t="<<t+1<<"\n";
       monitor(wflow.getU(),q);                      // topology monitor

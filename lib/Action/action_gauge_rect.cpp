@@ -2,7 +2,7 @@
   @file action_gauge_rect.cpp
   @brief Definition of the ActionGaugeRect class
 
-  Time-stamp: <2013-04-25 16:18:27 neo>
+  Time-stamp: <2013-05-21 14:58:43 noaki>
 */
 
 #include "action_gauge_rect.hpp"
@@ -90,9 +90,6 @@ double ActionGaugeRect::calc_H(){
 	   << plaq/(Nvol_*NP*NDIM_*(NDIM_-1.0)/2.0) << "\n");
   return Hgauge;
 }
-
-
-
 
 GaugeField ActionGaugeRect::md_force(){
  using namespace Mapping;

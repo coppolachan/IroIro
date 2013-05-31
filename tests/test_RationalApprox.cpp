@@ -1,18 +1,16 @@
 //------------------------------------------------------------------------
 /*!
  * @file test_RationalApprox.cpp
- *
  * @brief run() function for Test_RationalApprox class test
- *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
 
 #include "Tools/RationalApprox/rationalapprox.hpp"
 #include "test_RationalApprox.hpp"
-
+#include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "Solver/multiShiftSolver_CG.hpp"
-#include "Solver/rationalSolver.hpp"
+#include "Solver/rationalSolver_CG.hpp"
 #include "include/format_F.h"
 #include "include/fopr.h"
 #include "include/factories.hpp"
@@ -52,12 +50,12 @@ int Test_RationalApprox::run(){
   
   // Create smearing factory from node information
   CCIO::cout<<"SmearingFactory...\n";
-  SmearingOperatorFactory* Sm_Factory = 
-    SmearingOperators::createSmearingOperatorFactory(SmearObjNode);
+  SmearingFactory* Sm_Factory = 
+    Smearings::createSmearingFactory(SmearObjNode);
   
   CCIO::cout<<"SmearingObject...\n";
   // Create smearing objects from the factory
-  SmearingObj = Sm_Factory->getSmearingOperator();
+  SmearingObj = Sm_Factory->getSmearing();
   
   // Copy original configuration to smeared_u_ 
   // smeared_u_ will be passed to the operators
@@ -108,9 +106,9 @@ int Test_RationalApprox::run(){
 
   XML::node kernel_node = RA_node;
   XML::descend(kernel_node, "Kernel");
-  DiracWilsonLikeOperatorFactory* KernelF = 
-    DiracOperators::createDiracWilsonLikeOperatorFactory(kernel_node);
-  DiracWilsonLike* Kernel = KernelF->getDiracOperatorWL(&(smeared_u_.data));
+  DiracWilsonLikeFactory* KernelF = 
+    Diracs::createDiracWilsonLikeFactory(kernel_node);
+  DiracWilsonLike* Kernel = KernelF->getDiracWL(&(smeared_u_.data));
 
 
   // Find Max eigenvalue

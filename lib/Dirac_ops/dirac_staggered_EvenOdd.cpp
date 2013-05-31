@@ -9,7 +9,6 @@
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/sunVec.hpp"
-#include "Tools/randNum_MP.h"
 #include "Measurements/GaugeM/staples.hpp"
 #include <iostream>
 
@@ -18,11 +17,6 @@ using namespace FieldUtils;
 using namespace SUNmatUtils;
 using namespace SUNvecUtils;
 using namespace Mapping;
-
-void Dirac_staggered_EvenOdd::
-get_RandGauss(std::valarray<double>& phi,const RandNum& rng)const{
-  MPrand::mp_get_gauss(phi,rng,SiteIndex_EvenOdd::instance()->get_gsite(),ff_);
-}
 
 void (Dirac_staggered_EvenOdd::*Dirac_staggered_EvenOdd::mult_type[])
 (Field&,const Field&) const = {&Dirac_staggered_EvenOdd::mult_DdagDee,

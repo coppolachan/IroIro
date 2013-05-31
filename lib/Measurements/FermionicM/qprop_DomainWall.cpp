@@ -23,7 +23,7 @@ void QpropDWF::calc(prop_t& xq,
 		    int color) const{
   xq.clear();
   CCIO::cout << "Dirac = " << dirac_index 
-	    << " Color = " << color << std::endl;
+	     <<" Color = " << color << std::endl;
   xq.push_back(Dgw_.mult_inv(src.mksrc(dirac_index,color)));
 
 }

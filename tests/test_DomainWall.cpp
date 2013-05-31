@@ -82,8 +82,12 @@ int Test_optimalDomainWall::run(){
   double mq = 0.02;
   vector<double> omega(N5d,1.0);
 
-  Dirac_optimalDomainWall Ddwf_5d(b,c,M0,mq,omega,&(conf_.data));
-  Dirac_optimalDomainWall_EvenOdd Ddwf_5d_eo(b,c,M0,mq,omega,&(conf_.data));
+  const Field* u= &(conf_.data);
+  Dirac_Wilson Dw(M0,u);
+  Dirac_optimalDomainWall Ddwf_5d(b,c,M0,mq,omega,&Dw,u);
+  Dirac_Wilson_EvenOdd DEO(M0,u);
+  Dirac_optimalDomainWall_EvenOdd 
+    Ddwf_5d_eo(b,c,M0,mq,omega,DEO.getDeo(),DEO.getDoe(),u);
   /////////////////////////////
   XML::node QuarkProp_node = DWFnode;
   // operator using factories
@@ -114,8 +118,8 @@ int Test_optimalDomainWall::run(){
   double mq1 = 0.05;
   double mq2 = 0.10;
   
-  Dirac_optimalDomainWall Ddwf1(b,c,M0,mq1,omega,&(conf_.data));
-  Dirac_optimalDomainWall Ddwf2(b,c,M0,mq2,omega,&(conf_.data));
+  Dirac_optimalDomainWall Ddwf1(b,c,M0,mq1,omega,&Dw,u);
+  Dirac_optimalDomainWall Ddwf2(b,c,M0,mq2,omega,&Dw,u);
   Fopr_DdagD DdagD2(&Ddwf2);
   Solver_CG SolvR2(10e-12,1000,&DdagD2);
 
