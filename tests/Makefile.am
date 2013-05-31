@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-04-26 15:39:05 neo>
+# Time-stamp: <2013-05-22 01:38:42 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -18,6 +18,9 @@ BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HA
 BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
 BFM_LINKAGE= -lbfm -lbagel
 BMF_TESTPROGS += test_Solver_BFM
+BMF_TESTPROGS += test_BFM_Operator
+BMF_TESTPROGS += test_BFM_Moebius
+BMF_TESTPROGS += test_BFM_Inverter
 endif
 
 if IBM_BGQ
@@ -213,6 +216,17 @@ if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
                                 testerSolver_BFM.cpp            \
                                 ../lib/Tools/Bagel/bfm_storage.cpp
+
+test_BFM_Operator_SOURCES =     test_BFM_Operator.cpp             \
+                                testerSolver_BFM.cpp            \
+                                ../lib/Tools/Bagel/bfm_storage.cpp
+test_BFM_Moebius_SOURCES =     test_BFM_Moebius.cpp             \
+                                testerSolver_BFM.cpp            \
+                                ../lib/Tools/Bagel/bfm_storage.cpp
+test_BFM_Inverter_SOURCES =     test_BFM_Inverter.cpp             \
+                                testerSolver_BFM.cpp            \
+                                ../lib/Tools/Bagel/bfm_storage.cpp
+
 endif
 
 

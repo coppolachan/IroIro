@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-04-26 16:09:08 cossu>
+ * Time-stamp: <2013-05-20 23:40:22 cossu>
  *
  */
 
@@ -107,6 +107,30 @@ transfer_fw(double *bin,double *data,int size,int dir) const{
   
 }
 
+/*
+void Communicator::
+transfer_fw_async(double *bin,double *data,int size,int dir) const{
+  int p_recv = nd_up_[dir];
+  // data is the source pointer 
+  // we will have 8 buffers identified by their dir
+  int sendID = dir;//in the bw direction shift by 4
+  int recvID = sendID + 4; 
+  uinst64_t send_offset = 0;
+  uinst64_t recv_offset = 0;
+  uint64_t size_byte = size*sizeof(double);
+  int rcounterID = sendID;
+
+  // prepare the ids for the async comm
+  BGNET_SetSendBuffer(data,sendID ,size_byte);
+  BGNET_SetRecvBuffer(bin, recvID, size_byte);
+
+  //syncronize after initialization
+  BGNET_GlobalBarrier();
+
+  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,0,recvID,recv_offset,rcounterID);
+}
+*/
+
 void Communicator::
 transfer_fw(varray_double& bin,const varray_double& data,int dir) const{
   transfer_fw(&bin[0],&(const_cast<varray_double& >(data))[0],
@@ -150,12 +174,33 @@ void Communicator::
 transfer_bk(double *bin,double *data,int size,int dir) const{
   int p_send = nd_up_[dir];
   int p_recv = nd_dn_[dir];
-  int Ndim = CommonPrms::instance()->Ndim();
-  int tag1 = (Ndim +dir)*Nproc_+my_rank_;
-  int tag2 = (Ndim +dir)*Nproc_+p_recv;
 
   BGNET_Sendrecv(0,data,size*sizeof(double),p_send,bin,size*sizeof(double),p_recv);
 }
+
+/*
+void Communicator::
+transfer_bk_async(double *bin,double *data,int size,int dir) const{
+  int p_recv = nd_dn_[dir];
+  // data is the source pointer 
+  // we will have 8 buffers identified by their dir
+  int sendID = dir+4;//in the bw direction shift by 4
+  int recvID = dir; 
+  uinst64_t send_offset = 0;
+  uinst64_t recv_offset = 0;
+  uint64_t size_byte = size*sizeof(double);
+  int rcounterID = sendID;
+
+  // prepare the ids for the async comm
+  BGNET_SetSendBuffer(data,sendID ,size_byte);
+  BGNET_SetRecvBuffer(bin, recvID, size_byte);
+
+  //syncronize after initialization
+  BGNET_GlobalBarrier();
+
+  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,0,recvID,recv_offset,rcounterID);
+}
+*/
 
 void Communicator::
 transfer_bk(varray_double& bin,const varray_double& data,int dir) const{

@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-04-26 15:39:05 neo>
+# Time-stamp: <2013-05-22 01:38:42 cossu>
 
 
 VPATH = @srcdir@
@@ -44,7 +44,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
-@USE_BFM_TRUE@am__append_1 = test_Solver_BFM
+@USE_BFM_TRUE@am__append_1 = test_Solver_BFM test_BFM_Operator \
+@USE_BFM_TRUE@	test_BFM_Moebius test_BFM_Inverter
 @IBM_BGQ_TRUE@am__append_2 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_3 = -qsmp=omp:auto
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_4 = -lbgqwilson3x4smp -lbgqthread
@@ -80,19 +81,49 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/include/config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-@USE_BFM_TRUE@am__EXEEXT_1 = test_Solver_BFM$(EXEEXT)
+@USE_BFM_TRUE@am__EXEEXT_1 = test_Solver_BFM$(EXEEXT) \
+@USE_BFM_TRUE@	test_BFM_Operator$(EXEEXT) \
+@USE_BFM_TRUE@	test_BFM_Moebius$(EXEEXT) \
+@USE_BFM_TRUE@	test_BFM_Inverter$(EXEEXT)
 am__EXEEXT_2 = $(am__EXEEXT_1)
 am__installdirs = "$(DESTDIR)$(testdir)" "$(DESTDIR)$(includedir)"
 PROGRAMS = $(test_PROGRAMS)
+am__test_BFM_Inverter_SOURCES_DIST = test_BFM_Inverter.cpp \
+	testerSolver_BFM.cpp ../lib/Tools/Bagel/bfm_storage.cpp
+@USE_BFM_TRUE@am_test_BFM_Inverter_OBJECTS =  \
+@USE_BFM_TRUE@	test_BFM_Inverter.$(OBJEXT) \
+@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
+test_BFM_Inverter_OBJECTS = $(am_test_BFM_Inverter_OBJECTS)
+test_BFM_Inverter_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
+test_BFM_Inverter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+am__test_BFM_Moebius_SOURCES_DIST = test_BFM_Moebius.cpp \
+	testerSolver_BFM.cpp ../lib/Tools/Bagel/bfm_storage.cpp
+@USE_BFM_TRUE@am_test_BFM_Moebius_OBJECTS =  \
+@USE_BFM_TRUE@	test_BFM_Moebius.$(OBJEXT) \
+@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
+test_BFM_Moebius_OBJECTS = $(am_test_BFM_Moebius_OBJECTS)
+test_BFM_Moebius_LDADD = $(LDADD)
+test_BFM_Moebius_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+am__test_BFM_Operator_SOURCES_DIST = test_BFM_Operator.cpp \
+	testerSolver_BFM.cpp ../lib/Tools/Bagel/bfm_storage.cpp
+@USE_BFM_TRUE@am_test_BFM_Operator_OBJECTS =  \
+@USE_BFM_TRUE@	test_BFM_Operator.$(OBJEXT) \
+@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
+test_BFM_Operator_OBJECTS = $(am_test_BFM_Operator_OBJECTS)
+test_BFM_Operator_LDADD = $(LDADD)
+test_BFM_Operator_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_BaryonSpectrum_Nf2p1_OBJECTS =  \
 	test_BaryonSpectrum_Nf2p1.$(OBJEXT) \
 	testerBaryonSpectrumNf2p1.$(OBJEXT)
 test_BaryonSpectrum_Nf2p1_OBJECTS =  \
 	$(am_test_BaryonSpectrum_Nf2p1_OBJECTS)
 test_BaryonSpectrum_Nf2p1_LDADD = $(LDADD)
-am__DEPENDENCIES_1 =
-am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
 test_BaryonSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am_test_Clover_OBJECTS = test_clover.$(OBJEXT) testerClover.$(OBJEXT)
@@ -312,7 +343,9 @@ am__v_CXXLD_0 = @echo "  CXXLD " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
+SOURCES = $(test_BFM_Inverter_SOURCES) $(test_BFM_Moebius_SOURCES) \
+	$(test_BFM_Operator_SOURCES) \
+	$(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
 	$(test_DomainWall_SOURCES) $(test_EigenModesSolver_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
 	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
@@ -331,12 +364,14 @@ SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
 	$(test_WilsonFlow_SOURCES) $(test_Wilson_Brillouin_SOURCES) \
 	$(test_Wilson_Brillouin_Imp_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES)
-DIST_SOURCES = $(test_BaryonSpectrum_Nf2p1_SOURCES) \
-	$(test_Clover_SOURCES) $(test_DomainWall_SOURCES) \
-	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
-	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
-	$(test_HMC_EvenOdd_SOURCES) $(test_HMC_noFactories_SOURCES) \
-	$(test_HMC_smear_noF_SOURCES) \
+DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
+	$(am__test_BFM_Moebius_SOURCES_DIST) \
+	$(am__test_BFM_Operator_SOURCES_DIST) \
+	$(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
+	$(test_DomainWall_SOURCES) $(test_EigenModesSolver_SOURCES) \
+	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
+	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_EvenOdd_SOURCES) \
+	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_HeatBath_SOURCES) \
 	$(test_IO_SOURCES) $(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
@@ -631,6 +666,18 @@ test_HeatBath_SOURCES = test_HeatBath.cpp	\
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
 @USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
 
+@USE_BFM_TRUE@test_BFM_Operator_SOURCES = test_BFM_Operator.cpp             \
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
+@USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
+
+@USE_BFM_TRUE@test_BFM_Moebius_SOURCES = test_BFM_Moebius.cpp             \
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
+@USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
+
+@USE_BFM_TRUE@test_BFM_Inverter_SOURCES = test_BFM_Inverter.cpp             \
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
+@USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
+
 include_HEADERS = tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
@@ -734,6 +781,15 @@ uninstall-testPROGRAMS:
 
 clean-testPROGRAMS:
 	-test -z "$(test_PROGRAMS)" || rm -f $(test_PROGRAMS)
+test_BFM_Inverter$(EXEEXT): $(test_BFM_Inverter_OBJECTS) $(test_BFM_Inverter_DEPENDENCIES) 
+	@rm -f test_BFM_Inverter$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_BFM_Inverter_OBJECTS) $(test_BFM_Inverter_LDADD) $(LIBS)
+test_BFM_Moebius$(EXEEXT): $(test_BFM_Moebius_OBJECTS) $(test_BFM_Moebius_DEPENDENCIES) 
+	@rm -f test_BFM_Moebius$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_BFM_Moebius_OBJECTS) $(test_BFM_Moebius_LDADD) $(LIBS)
+test_BFM_Operator$(EXEEXT): $(test_BFM_Operator_OBJECTS) $(test_BFM_Operator_DEPENDENCIES) 
+	@rm -f test_BFM_Operator$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_BFM_Operator_OBJECTS) $(test_BFM_Operator_LDADD) $(LIBS)
 test_BaryonSpectrum_Nf2p1$(EXEEXT): $(test_BaryonSpectrum_Nf2p1_OBJECTS) $(test_BaryonSpectrum_Nf2p1_DEPENDENCIES) 
 	@rm -f test_BaryonSpectrum_Nf2p1$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_BaryonSpectrum_Nf2p1_OBJECTS) $(test_BaryonSpectrum_Nf2p1_LDADD) $(LIBS)
@@ -844,6 +900,9 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfm_storage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Moebius.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Operator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BaryonSpectrum_Nf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolver.Po@am__quote@
