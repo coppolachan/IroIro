@@ -3,7 +3,7 @@
  *
  * @brief Collection of simple error handling functions
  *
- * Time-stamp: <2013-06-03 14:27:03 neo>
+ * Time-stamp: <2013-06-03 15:38:42 neo>
  */
 
 #ifndef ERRORS_HPP_
@@ -32,6 +32,11 @@ namespace Errors{
   void XMLerr(std::ostringstream& output);
   void XMLerr(const char*);
   void XMLwarning(std::ostringstream& output);
+
+  void ParameterErr(const char*);
+  void ParameterErr(std::ostringstream& output);
+  void ParameterWarning(std::ostringstream& output);
+
 }
 
 #endif

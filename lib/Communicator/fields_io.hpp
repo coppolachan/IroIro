@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-06-03 15:25:41 neo>
+ * Time-stamp: <2013-06-03 15:50:35 neo>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -28,6 +28,7 @@ namespace CCIO {
     virtual void get_value(std::string, int& ) = 0;
     virtual void get_value(std::string, double& ) = 0;
     virtual void get_value(std::string, std::string& ) = 0;
+    virtual void print() = 0;
   };
 
   // definitions of storage format
@@ -47,7 +48,7 @@ namespace CCIO {
     void get_value(std::string, int&);
     void get_value(std::string, double& );
     void get_value(std::string, std::string& );
-    void print_map();
+    void print();
     Text_header();
 
   };

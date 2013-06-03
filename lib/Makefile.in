@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-06-03 15:28:17 neo>
+# Time-stamp: <2013-06-03 15:39:21 neo>
 
 
 
@@ -208,6 +208,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/ErrorsHandling/base_errors.cpp \
 	Tools/ErrorsHandling/io_errors.cpp \
 	Tools/ErrorsHandling/convergence_errors.cpp \
+	Tools/ErrorsHandling/parameter_errors.cpp \
 	Tools/RandomNumGen/dcmt_wrapper.cpp \
 	Tools/RandomNumGen/randNum_MT19937.cpp \
 	Tools/Timings/timings.cpp UpdatingAlg/HeatBath/heatbath.cpp \
@@ -282,9 +283,9 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT) \
 	xml_errors.$(OBJEXT) allocation_errors.$(OBJEXT) \
 	base_errors.$(OBJEXT) io_errors.$(OBJEXT) \
-	convergence_errors.$(OBJEXT) $(am__objects_6) \
-	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
-	HBActions_SUN.$(OBJEXT)
+	convergence_errors.$(OBJEXT) parameter_errors.$(OBJEXT) \
+	$(am__objects_6) randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) \
+	heatbath.$(OBJEXT) HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -615,6 +616,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/base_errors.cpp	\
 		Tools/ErrorsHandling/io_errors.cpp	\
 		Tools/ErrorsHandling/convergence_errors.cpp\
+		Tools/ErrorsHandling/parameter_errors.cpp\
 		$(DCMT_SRCS)				\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
@@ -988,6 +990,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_leapfrog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/measGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multiShiftSolver_CG.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parameter_errors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/polyakovLoop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pugi_interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pugixml.Po@am__quote@
@@ -2593,6 +2596,20 @@ convergence_errors.obj: Tools/ErrorsHandling/convergence_errors.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/convergence_errors.cpp' object='convergence_errors.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o convergence_errors.obj `if test -f 'Tools/ErrorsHandling/convergence_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/convergence_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/convergence_errors.cpp'; fi`
+
+parameter_errors.o: Tools/ErrorsHandling/parameter_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parameter_errors.o -MD -MP -MF $(DEPDIR)/parameter_errors.Tpo -c -o parameter_errors.o `test -f 'Tools/ErrorsHandling/parameter_errors.cpp' || echo '$(srcdir)/'`Tools/ErrorsHandling/parameter_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/parameter_errors.Tpo $(DEPDIR)/parameter_errors.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/parameter_errors.cpp' object='parameter_errors.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parameter_errors.o `test -f 'Tools/ErrorsHandling/parameter_errors.cpp' || echo '$(srcdir)/'`Tools/ErrorsHandling/parameter_errors.cpp
+
+parameter_errors.obj: Tools/ErrorsHandling/parameter_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parameter_errors.obj -MD -MP -MF $(DEPDIR)/parameter_errors.Tpo -c -o parameter_errors.obj `if test -f 'Tools/ErrorsHandling/parameter_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/parameter_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/parameter_errors.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/parameter_errors.Tpo $(DEPDIR)/parameter_errors.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/parameter_errors.cpp' object='parameter_errors.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parameter_errors.obj `if test -f 'Tools/ErrorsHandling/parameter_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/parameter_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/parameter_errors.cpp'; fi`
 
 dcmt_wrapper.o: Tools/RandomNumGen/dcmt_wrapper.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dcmt_wrapper.o -MD -MP -MF $(DEPDIR)/dcmt_wrapper.Tpo -c -o dcmt_wrapper.o `test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/dcmt_wrapper.cpp
