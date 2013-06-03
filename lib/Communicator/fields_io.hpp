@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-05-31 17:51:34 neo>
+ * Time-stamp: <2013-06-03 11:50:39 neo>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -14,6 +14,7 @@
 #include "Geometry/siteIndex.hpp"
 #include "Tools/byteswap.hpp"
 #include <stdio.h>
+#include <map>
 
 #define CCIO_FILE_APPEND_MODE true
 #define FORTRAN_CONTROL_WORDS 4  //number of fortran bytes for control
@@ -27,13 +28,27 @@ namespace CCIO {
   typedef void (*GenericReader)(double*,FILE *,int,
 				int ,int ,int);
 
-  struct QCDheader {  /* Structure to hold ASCII header tokens */
-    int ntoken;
-    char **token;
-    char **value;
+  //Abstract class for headers
+  class QCDheader {
+  public:
+    virtual void get_value(std::string, int& ) = 0;
+    virtual void get_value(std::string, double& ) = 0;
+    virtual void get_value(std::string, std::string& ) = 0;
+    
+  };
+
+  class Text_header: public QCDheader {
+    std::map<std::string, char*> tokens;
+  public:
+    void add_element(std::string, char*);
+    void get_value(std::string, int&);
+    void get_value(std::string, double& );
+    void get_value(std::string, std::string& );
+    Text_header();
+
   };
   
-  typedef QCDheader * (*GenericHeader)(FILE*, fpos_t *);
+  typedef QCDheader* (*GenericHeader)(FILE*, fpos_t *);
 
   typedef struct  {
     StorageFormat format;
@@ -70,8 +85,9 @@ namespace CCIO {
 				    int block_size){
     //Read just as it is
     //order is (in, ex, sites)  
-    size_t res = fread(buffer,sizeof(float)*block_size,1, inputFile);
-    return res;} 
+    size_t res = fread(buffer,sizeof(float),block_size, inputFile);
+    return res;
+} 
   
   inline void ReadILDGBFormat(double* buffer,FILE *inputFile,
 			      int block_size,
@@ -85,21 +101,17 @@ namespace CCIO {
 		       int block_size,
 		       int tot_vol,int tot_in,int tot_ex){
     int bl = block_size/3*2;
-    std::cout << "bl :" << bl << "\n";
     float* uin = (float *) malloc(bl*sizeof(float));
     size_t res = ReadStdBinary_Float(uin, inputFile, bl);//now assuming 3x2 format
-    //byte_swap_double(uin, sizeof(uin)/sizeof(float));
-    byte_swap_float(uin, bl);
-    std::cout << "Reconstructing\n";
+    byte_swap(uin, bl);
     reconstruct3x3(buffer, uin, bl);
-    // eventually reconstruct
     // perform checks against header information
     free(uin);
   }
 
-  struct QCDheader* NOheader(FILE *inputFile, fpos_t *pos);
+  QCDheader* NOheader(FILE *inputFile, fpos_t *pos);
 
-  struct QCDheader* ReadNERSCheader(FILE *inputFile, fpos_t *pos);
+  QCDheader* ReadNERSCheader(FILE *inputFile, fpos_t *pos);
 
   inline void ReadJLQCDLegacyFormat(double* buffer,FILE *inputFile,
 				    int block_size,
@@ -254,7 +266,6 @@ namespace CCIO {
     if (readFormat.has_header){
       fpos_t pos;
       readFormat.header(inFile, &pos);
-      //fsetpos(inFile, &pos);
     }
 
     //Loop among nodes (master node)   
