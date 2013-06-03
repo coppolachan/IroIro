@@ -3,7 +3,7 @@
  *
  * @brief Collection of simple error handling functions
  *
- * Time-stamp: <2013-04-25 13:59:40 neo>
+ * Time-stamp: <2013-06-03 14:27:03 neo>
  */
 
 #ifndef ERRORS_HPP_
@@ -16,7 +16,7 @@
 typedef std::ostringstream ErrorString;
 
 namespace Errors{
-  typedef enum IOerrorType {FileNotFound} IOtype;
+  typedef enum IOerrorType {GenericError, FileNotFound, ParsingError} IOtype;
 
   void BaseErr(const char* type, std::ostringstream& output);
   void BaseWarning(const char* type, std::ostringstream& output);

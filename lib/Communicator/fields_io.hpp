@@ -3,11 +3,12 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-06-03 11:50:39 neo>
+ * Time-stamp: <2013-06-03 15:25:41 neo>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
 
+#include "include/config.h"
 #include "include/field.h"
 #include "include/messages_macros.hpp"
 #include "include/errors.hpp"
@@ -21,29 +22,32 @@
 
 ///////////////////////////////////////////////////////////////////
 namespace CCIO {
-  // definitions of storage format
-  typedef int (*StorageFormat)(int, int, int, 
-			       int, int, int);
-  
-  typedef void (*GenericReader)(double*,FILE *,int,
-				int ,int ,int);
-
   //Abstract class for headers
   class QCDheader {
   public:
     virtual void get_value(std::string, int& ) = 0;
     virtual void get_value(std::string, double& ) = 0;
     virtual void get_value(std::string, std::string& ) = 0;
-    
   };
 
+  // definitions of storage format
+  typedef int (*StorageFormat)(int, int, int, 
+			       int, int, int);
+  
+  typedef void (*GenericReader)(double*,FILE *,
+				int, int ,int ,int,
+				QCDheader*);
+
+
+
   class Text_header: public QCDheader {
-    std::map<std::string, char*> tokens;
+    std::map<std::string, std::string> tokens;
   public:
-    void add_element(std::string, char*);
+    void add_element(std::string, std::string);
     void get_value(std::string, int&);
     void get_value(std::string, double& );
     void get_value(std::string, std::string& );
+    void print_map();
     Text_header();
 
   };
@@ -91,31 +95,47 @@ namespace CCIO {
   
   inline void ReadILDGBFormat(double* buffer,FILE *inputFile,
 			      int block_size,
-			      int tot_vol,int tot_in,int tot_ex){
+			      int tot_vol,int tot_in,int tot_ex,
+			      QCDheader* QH){
     size_t res = ReadStdBinary(buffer, inputFile, block_size);
   }
-  
-  void reconstruct3x3(double* out, float* in, int block_size);
 
-  inline void ReadNERSCFormat(double* buffer,FILE *inputFile,
-		       int block_size,
-		       int tot_vol,int tot_in,int tot_ex){
-    int bl = block_size/3*2;
-    float* uin = (float *) malloc(bl*sizeof(float));
-    size_t res = ReadStdBinary_Float(uin, inputFile, bl);//now assuming 3x2 format
-    byte_swap(uin, bl);
-    reconstruct3x3(buffer, uin, bl);
-    // perform checks against header information
-    free(uin);
+  ////////////// NERSC format specific routines 
+  template <typename FLOAT>
+  void reconstruct3x3(double* out, FLOAT* in,int block3x2){
+    int matrix_block3x2 = 12; //3x2x2
+    int matrix_block3x3 = 18; //3x3x2
+    double* _p;
+    _p = out;
+    for (int i =0; i < block3x2/matrix_block3x2; i++){
+      //Copy first two columns
+      for (int s =0; s < matrix_block3x2; s++){
+	_p[s] = (double) in[i*matrix_block3x2+s];
+      }
+      _p[12] = _p[ 2]*_p[10] - _p[ 4]*_p[ 8] - _p[ 3]*_p[11] + _p[ 5]*_p[ 9];
+      _p[13] = _p[ 4]*_p[ 9] - _p[ 2]*_p[11] + _p[ 5]*_p[ 8] - _p[ 3]*_p[10];
+      _p[14] = _p[ 4]*_p[ 6] - _p[ 0]*_p[10] - _p[ 5]*_p[ 7] + _p[ 1]*_p[11];
+      _p[15] = _p[ 0]*_p[11] - _p[ 4]*_p[ 7] + _p[ 1]*_p[10] - _p[ 5]*_p[ 6];
+      _p[16] = _p[ 0]*_p[ 8] - _p[ 2]*_p[ 6] - _p[ 1]*_p[ 9] + _p[ 3]*_p[ 7];
+      _p[17] = _p[ 2]*_p[ 7] - _p[ 0]*_p[ 9] + _p[ 3]*_p[ 6] - _p[ 1]*_p[ 8];	
+      
+      _p += matrix_block3x3;	
+    }
   }
 
-  QCDheader* NOheader(FILE *inputFile, fpos_t *pos);
-
+  void NERSCtoIROIRO_f(double* out,FILE* inputFile, int block, bool is3x2);
+  void NERSCtoIROIRO_d(double* out,FILE* inputFile, int block, bool is3x2);
   QCDheader* ReadNERSCheader(FILE *inputFile, fpos_t *pos);
+  void ReadNERSCFormat(double* buffer,FILE *inputFile,
+		       int block_size,
+		       int tot_vol,int tot_in,int tot_ex,
+		       QCDheader* QH);
+  ////////////////////////////////////////////////////////
 
   inline void ReadJLQCDLegacyFormat(double* buffer,FILE *inputFile,
 				    int block_size,
-				    int tot_vol,int tot_in,int tot_ex){
+				    int tot_vol,int tot_in,int tot_ex,
+				    QCDheader* QH){
     //order is (in, sites, ex)
     //Read #tot_ex blocks
     int chunk = block_size/tot_ex;
@@ -130,7 +150,7 @@ namespace CCIO {
     fseek(inputFile, sizeof(double)*chunk, SEEK_CUR);
   }
 
-
+  QCDheader* NOheader(FILE *inputFile, fpos_t *pos);
   ////////////////////////////////////////////////////////////////////
 
   /*!
@@ -238,6 +258,7 @@ namespace CCIO {
     CommonPrms* cmprms = CommonPrms::instance();
     _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");
     T fmt(cmprms->Nvol());
+    QCDheader* HeaderInfo;
     size_t local_idx, global_idx;
     int num_nodes, total_vol, local_vol;
     
@@ -261,13 +282,15 @@ namespace CCIO {
       std::cout << "Reading (binary mode) "<<f.size()*comm->size()*sizeof(double)
 		<<" bytes from "<< filename << " with offset "<< offset <<"... ";
       fseek(inFile, offset, SEEK_SET);
-    }
     
-    if (readFormat.has_header){
-      fpos_t pos;
-      readFormat.header(inFile, &pos);
-    }
+    
+      if (readFormat.has_header){
+	fpos_t pos;
+	HeaderInfo  = readFormat.header(inFile, &pos);
+	// HeaderInfo gets allocated by a "new", cleanup at the end
+      }
 
+    }
     //Loop among nodes (master node)   
     for(int node_t = 0; node_t < cmprms->NPEt(); ++node_t){
       for(int t_slice = 0; t_slice < cmprms->Nt(); ++t_slice){
@@ -287,29 +310,18 @@ namespace CCIO {
 		    if(inFile!=NULL){
 		      readFormat.reader((double*)&copy[0],inFile,
 					copy.size(),total_vol,
-					fmt.Nin(),fmt.Nex());
-		      /*
-		      if(storeFormat == ILDGBinFormat) 
-			ReadILDGBFormat((double*)&copy[0],inFile,
-					copy.size(),total_vol,
-					fmt.Nin(),fmt.Nex());
-		      if(storeFormat == JLQCDLegacyFormat) 
-			ReadJLQCDLegacyFormat((double*)&copy[0],inFile,
-					      copy.size(),total_vol,
-					      fmt.Nin(),fmt.Nex());
-		      */
+					fmt.Nin(),fmt.Nex(),
+					HeaderInfo);
 		    }
 		    for(int x_idx = 0; x_idx < block_x.size(); ++x_idx){
 		      for(int ex =0; ex < fmt.Nex(); ++ex){	      
 			for(int in =0; in < fmt.Nin(); ++in){
 			  //Breaks universality
 			  local_idx = in +fmt.Nin()*(x_idx +block_x.size()*ex);
-			  /*
-			  global_idx = storeFormat(x_idx,in,ex,block_x.size(),
-						   fmt.Nin(),fmt.Nex());
-			  */
+
 			  global_idx = readFormat.format(x_idx,in,ex,block_x.size(),
 						   fmt.Nin(),fmt.Nex());
+
 			  local[local_idx] = copy[global_idx];
 			}
 		      }
@@ -337,6 +349,10 @@ namespace CCIO {
     if(comm->primaryNode()){
       fclose(inFile);
       std::cout << "done\n";
+
+      // Cleanup header if present
+      if (HeaderInfo != NULL)
+	delete HeaderInfo;
     }
     return 0;
   }

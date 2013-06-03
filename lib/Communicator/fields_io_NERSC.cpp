@@ -1,9 +1,9 @@
 /*! 
- * @file fields_io.cpp 
+ * @file fields_io_NERSC.cpp 
  *
- * @brief Declarations of MPI safe read/write routines for fields
+ * @brief Declarations of MPI safeNERSC format reading routines for fields
  *
- * Time-stamp: <2013-06-03 15:26:58 neo>
+ * Time-stamp: <2013-06-03 15:30:00 neo>
  */
 
 #include "fields_io.hpp"
@@ -37,6 +37,7 @@ namespace CCIO {
     std::cout << it->first << " => " << it->second << '\n';
   }
 
+  //////////////////////////////////////////////////////////////////
   QCDheader* ReadNERSCheader(FILE *in, fpos_t *pos) {
 #define MAX_LINE_LENGTH 1024
     Text_header* TH = new Text_header;
@@ -66,6 +67,7 @@ namespace CCIO {
     return TH;
   }
 
+  //////////////////////////////////////////////////////////////////
   void NERSCtoIROIRO_f(double* out, FILE* inputFile, int block, bool is3x2){
     //Allocate enough space
     float *uin = (float*) malloc(block*sizeof(float));
@@ -82,6 +84,7 @@ namespace CCIO {
     free(uin);
   }
 
+  ////////////////////////////////////////////////////////////////////
   void NERSCtoIROIRO_d(double* out,FILE* inputFile, int block, bool is3x2){
     //Allocate enough space
     double *uin = (double*) malloc(block*sizeof(double));
@@ -96,6 +99,7 @@ namespace CCIO {
     free(uin);
   }
 
+  ///////////////////////////////////////////////////////////////////////
   void ReadNERSCFormat(double* buffer,FILE *inputFile,
 		       int block_size,
 		       int tot_vol,int tot_in,int tot_ex,
@@ -136,5 +140,6 @@ namespace CCIO {
   }
 
 
+  ///////////////////////////////////////////////////////////////////////////
   QCDheader* NOheader(FILE *inputFile, fpos_t *pos){};
 }
