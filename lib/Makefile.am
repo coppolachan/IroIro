@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-06-04 10:14:38 neo>
+# Time-stamp: <2013-06-04 17:37:11 neo>
 
 ###########################################
 # Initial definitions 
@@ -110,8 +110,11 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
                 Action/action_fermiontype_factory_creator.cpp\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
-		Communicator/fields_io_NERSC.cpp	\
-		Communicator/fields_io_ILDG.cpp		\
+		IO/fields_io.cpp			\
+		IO/text_header.cpp			\
+		IO/binary_reader.cpp			\
+		IO/NERSC_reader.cpp			\
+		IO/JLQCDLegacy_reader.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\
@@ -286,7 +289,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
                         Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
-			Communicator/fields_io.hpp		\
+			IO/fields_io.hpp			\
 			Geometry/siteIndex.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
 			Geometry/siteMap.hpp			\
