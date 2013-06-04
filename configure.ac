@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-05-21 09:34:59 noaki>
+# Time-stamp: <2013-06-04 10:15:41 neo>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
@@ -150,6 +150,7 @@ AC_ARG_WITH(bfm,
 
 
 
+
 ######################################################################
 # many HPC systems are configured so that running parallel programs
 # interactively is disabled: on those systems, AC_PROG_F77 and AC_PROG_CC
@@ -173,7 +174,8 @@ ia64 | amd64 | ia32 )
      # list of tested compilers
       use_cpp="g++ icpc"; 
     fi
-    use_cpp_flags="-O3 -fopenmp" 
+    use_cpp_flags="-O3 -fopenmp -I${HOME}/lime/include" 
+    ld_flags="${LDFLAGS} -L${HOME}/lime/lib"       
     use_ar_flags="cru"
     ;;
 macppc | macx86 | mac86_64 )
@@ -185,8 +187,8 @@ macppc | macx86 | mac86_64 )
      # list of tested compilers
       use_cpp="icpc g++"; 
     fi
-    use_cpp_flags="-O3 -I/opt/local/include"
-    ld_flags="${LDFLAGS} -L/opt/local/lib"
+    use_cpp_flags="-O3 -I/opt/local/include -I${HOME}/lime/include"
+    ld_flags="${LDFLAGS} -L/opt/local/lib -L${HOME}/lime/lib"
     use_ar_flags="cru"
     ;;
 aix )
@@ -196,8 +198,8 @@ aix )
      hitachi=true
      AC_MSG_NOTICE([forcing cross compilation on AIX])
      use_cpp="mpCC";
-     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type  -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
-     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib"
+     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type  -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
+     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib"
      use_ar_flags="-X64 -c -ru"
      AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
      ;;
@@ -213,8 +215,8 @@ bgq )
      else
 	use_cpp="bgxlC";
      fi
-     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -q64 -qarch=qp -qtune=qp -I/bghome/scbadm/ibm-doi/lib -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
-     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib"
+     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -q64 -qarch=qp -qtune=qp -I/bghome/scbadm/ibm-doi/lib -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
+     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib"
      use_ar_flags="cru"
      AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
      ;;
@@ -300,10 +302,16 @@ AC_CHECK_LIB([gmp],[__gmpf_init],,
 	[AC_MSG_ERROR(GNU Multiple Precision GMP library was not found in your system.
 Please install or provide the correct path to your installation
 Info at: http://www.gmplib.org)])
+
 AC_CHECK_LIB([mpfr],[mpfr_init],,
 	[AC_MSG_ERROR(GNU Multiple Precision MPFR library was not found in your system.
 Please install or provide the correct path to your installation
 Info at: http://www.mpfr.org/)])
+
+AC_CHECK_LIB([lime],[limeCreateReader],,
+	[AC_MSG_ERROR(C-LIME library was not found in your system.
+Please install or provide the correct path to your installation [default search path ~/lime/]
+Info at: http://usqcd.jlab.org/usqcd-docs/c-lime/)])
 
 if [ ($dcmt_link) ]
 then

@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-06-03 15:50:35 neo>
+ * Time-stamp: <2013-06-04 11:03:15 neo>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -52,6 +52,18 @@ namespace CCIO {
     Text_header();
 
   };
+
+  class ILDG_header: public QCDheader {
+    
+  public:
+    void add_element(std::string, std::string);
+    void get_value(std::string, int&);
+    void get_value(std::string, double& );
+    void get_value(std::string, std::string& );
+    void print();
+    ILDG_header();
+
+  };
   
   typedef QCDheader* (*GenericHeader)(FILE*, fpos_t *);
 
@@ -62,7 +74,19 @@ namespace CCIO {
     bool has_header;
   } ReaderFormat;
   
+  ///////////////////////
+  // Abstract class for Reader
 
+  class GenReader {
+    //global info at contruction time
+  public:
+    int format(int gsite, int in, int ex);
+    int read(double *buffer, unsigned int size, QCDheader* QH);
+    // QCDheader contains infos about the source of data (FILE or LimeReader for example)
+    int header();//reads the header, if present
+  };
+
+  ///////////////////
 
   //////////////////////////////////////////////////
   // ILDG binary storage format
@@ -92,14 +116,20 @@ namespace CCIO {
     //order is (in, ex, sites)  
     size_t res = fread(buffer,sizeof(float),block_size, inputFile);
     return res;
-} 
-  
-  inline void ReadILDGBFormat(double* buffer,FILE *inputFile,
+  } 
+  /////////////////////////////
+  inline void ReadBinaryFormat(double* buffer,FILE *inputFile,
 			      int block_size,
 			      int tot_vol,int tot_in,int tot_ex,
 			      QCDheader* QH){
     size_t res = ReadStdBinary(buffer, inputFile, block_size);
   }
+  ///////////////// ILDG format specific routines
+  void ReadILDGFormat(double* buffer,FILE *inputFile,
+		      int block_size,
+		      int tot_vol,int tot_in,int tot_ex,
+		      QCDheader* QH);
+  QCDheader* ReadILDGheader(FILE *inputFile, fpos_t *pos);
 
   ////////////// NERSC format specific routines 
   template <typename FLOAT>
@@ -284,8 +314,7 @@ namespace CCIO {
 		<<" bytes from "<< filename << " with offset "<< offset <<"... ";
       fseek(inFile, offset, SEEK_SET);
     
-    
-      if (readFormat.has_header){
+       if (readFormat.has_header){
 	fpos_t pos;
 	HeaderInfo  = readFormat.header(inFile, &pos);
 	// HeaderInfo gets allocated by a "new", cleanup at the end
@@ -352,7 +381,7 @@ namespace CCIO {
       std::cout << "done\n";
 
       // Cleanup header if present
-      if (HeaderInfo != NULL)
+      if (HeaderInfo != NULL && readFormat.has_header )
 	delete HeaderInfo;
     }
     return 0;
@@ -361,7 +390,7 @@ namespace CCIO {
   // With default reader
   template <typename T>
   int ReadFromDisk(Field& f,const char* filename, int offset = 0){
-    ReaderFormat  DefaultStorage = {ILDGBinFormat,ReadILDGBFormat, NOheader, false};
+    ReaderFormat  DefaultStorage = {ILDGBinFormat,ReadBinaryFormat, NOheader, false};
     ReadFromDisk<T>(f, filename, offset, DefaultStorage);
   }
   

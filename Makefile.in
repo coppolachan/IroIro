@@ -249,6 +249,7 @@ EXTRA_DIST = m4	\
 		todo	\
 		reconfigure-script
 
+@DOXYGEN_DOC_TRUE@directory = $(top_srcdir)/docs/
 all: all-recursive
 
 .SUFFIXES:
@@ -748,12 +749,8 @@ uninstall-am:
 	uninstall uninstall-am
 
 
-#if DOXYGEN_DOC
-#directory = $(top_srcdir)/docs/
-#
-#doxyfile:
-#	(cd $(directory) && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; 
-#endif 
+@DOXYGEN_DOC_TRUE@doxyfile:
+@DOXYGEN_DOC_TRUE@	(cd $(directory) && $(MAKE) $(AM_MAKEFLAGS) $@) || exit 1; 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
