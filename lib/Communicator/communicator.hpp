@@ -3,7 +3,7 @@
  *
  * @brief Declares the Communicator class for multiprocessing
  *
- * Time-stamp: <2013-04-25 14:39:25 neo>
+ * Time-stamp: <2013-06-04 11:32:44 cossu>
  *
  */
 
@@ -57,6 +57,7 @@ public:
   void allgather(std::valarray<double>& bin,
 		 const std::valarray<double>& data)const;
 
+  // Forward transfers
   void transfer_fw(double *bin,double *data,int size,int dir)const;
 
   void transfer_fw(std::valarray<double>& bin,
@@ -66,6 +67,10 @@ public:
 		   const std::valarray<double>& data,
 		   const std::vector<int>& index,int dir)const;
 
+  // Asyncronous functions - forward
+  void transfer_fw_async(double *bin,double *data,unsigned int size,int dir) const;
+
+  // Backward transfers
   void transfer_bk(double *bin,double *data,int size,int dir)const;
 
   void transfer_bk(std::valarray<double>& bin,
@@ -74,6 +79,12 @@ public:
   void transfer_bk(std::valarray<double>& bin,
 		   const std::valarray<double>& data,
 		   const std::vector<int>& index,int dir)const;
+
+  // Asyncronous functions - backward
+  void transfer_bk_async(double *bin,double *data,unsigned int size,int dir) const;
+
+  // Wait function for async comms
+  void wait_async(int id, unsigned int size) const;
 
   void send_1to1(double *bin,double *data,int size,
 		 int p_to, int p_from, int tag)const;

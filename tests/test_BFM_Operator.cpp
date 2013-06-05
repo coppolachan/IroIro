@@ -101,9 +101,11 @@ int Test_Solver_BFM::run(){
   SiteIndex_EvenOdd* ieo = SiteIndex_EvenOdd::instance();
   vector<int> esec= ieo->esec();
   vector<int> osec= ieo->osec();
+  
   // source generation (spin, color)
   Field fe = src.mksrc(esec,2,0);
   Field fo = src.mksrc(osec,2,0);
+  
 #ifdef DEBUG
   valarray<double> phi(source.format.size()/2);
   MPrand::mp_get_gauss(phi, rand);
