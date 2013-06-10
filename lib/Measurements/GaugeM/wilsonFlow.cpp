@@ -4,7 +4,7 @@
 #include "wilsonFlow.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
-#include "Communicator/fields_io.hpp"
+#include "IO/fields_io.hpp"
 #ifdef IBM_BGQ_WILSON
 #include <omp.h>
 #include "bgqthread.h"

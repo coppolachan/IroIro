@@ -7,7 +7,7 @@
 //--------------------------------------------------------------------
 #include "hmcGeneral.hpp"
 #include "Communicator/comm_io.hpp"
-#include "Communicator/fields_io.hpp"
+#include "IO/fields_io.hpp"
 
 #include <string>
 #include <sstream>

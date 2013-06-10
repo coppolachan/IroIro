@@ -21,7 +21,9 @@
 //Communicator headers
 #include "Communicator/communicator.hpp"
 #include "Communicator/comm_io.hpp"
-#include "Communicator/fields_io.hpp"
+
+//IO headers
+#include "IO/fields_io.hpp"
 
 //XML interface
 #include "include/pugi_interface.h"

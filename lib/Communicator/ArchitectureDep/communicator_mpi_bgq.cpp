@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-06-05 12:00:07 cossu>
+ * Time-stamp: <2013-06-05 17:47:05 cossu>
  *
  */
 
@@ -110,12 +110,11 @@ transfer_fw(double *bin,double *data,int size,int dir) const{
 
 void Communicator::
 transfer_fw_async(double *bin,double *data,unsigned int size,int dir) const{
-  //int p_recv = nd_up_[dir];
-  int p_recv = nd_dn_[dir];
+  int p_recv = nd_up_[dir];
   // data is the source pointer 
   // we will have 8 buffers identified by their dir
   int sendID = dir;//in the bw direction shift by 4
-  int recvID = sendID + 4; 
+  int recvID = dir + 4; 
   uint64_t send_offset = 0;
   uint64_t recv_offset = 0;
   uint64_t size_byte = size*sizeof(double);
@@ -125,11 +124,37 @@ transfer_fw_async(double *bin,double *data,unsigned int size,int dir) const{
   BGNET_SetSendBuffer(data,sendID ,size_byte);
   BGNET_SetRecvBuffer(bin, recvID, size_byte);
 
-  //syncronize after initialization - really needed?
+  //syncronize after initialization
   BGNET_GlobalBarrier();
 
   BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,0,recvID,recv_offset,rcounterID);
+  BGNET_WaitForRecv(0, rcounterID, size_byte);
 }
+
+void Communicator::
+transfer_bk_async(double *bin,double *data,unsigned int size,int dir) const{
+  int p_recv = nd_dn_[dir];
+  // data is the source pointer 
+  // we will have 8 buffers identified by their dir
+  int sendID = dir + 4;
+  int recvID = dir; 
+  uint64_t send_offset = 0;
+  uint64_t recv_offset = 0;
+  uint64_t size_byte = size*sizeof(double);
+  int rcounterID = sendID;
+
+  // prepare the ids for the async comm
+  BGNET_SetSendBuffer(data,sendID ,size_byte);
+  BGNET_SetRecvBuffer(bin, recvID, size_byte);
+
+  //syncronize after initialization
+  BGNET_GlobalBarrier();
+
+  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,0,recvID,recv_offset,rcounterID);
+  BGNET_WaitForRecv(0, rcounterID, size_byte);
+
+}
+
 
 void Communicator::wait_async(int id, unsigned int size) const{
   BGNET_WaitForRecv(0, id, size);
@@ -183,28 +208,6 @@ transfer_bk(double *bin,double *data,int size,int dir) const{
 }
 
 
-void Communicator::
-transfer_bk_async(double *bin,double *data,unsigned int size,int dir) const{
-  //int p_recv = nd_dn_[dir];
-  int p_recv = nd_up_[dir];
-  // data is the source pointer 
-  // we will have 8 buffers identified by their dir
-  int sendID = dir+4;//in the bw direction shift by 4
-  int recvID = dir; 
-  uint64_t send_offset = 0;
-  uint64_t recv_offset = 0;
-  uint64_t size_byte = size*sizeof(double);
-  int rcounterID = sendID;
-
-  // prepare the ids for the async comm
-  BGNET_SetSendBuffer(data,sendID ,size_byte);
-  BGNET_SetRecvBuffer(bin, recvID, size_byte);
-
-  //syncronize after initialization
-  BGNET_GlobalBarrier();
-
-  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,0,recvID,recv_offset,rcounterID);
-}
 
 
 void Communicator::

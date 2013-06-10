@@ -8,8 +8,8 @@
 #include "gaugeConf.hpp"
 #include "include/field.h"
 #include "Communicator/communicator.hpp"
-#include "Communicator/fields_io.hpp"
 #include "Communicator/comm_io.hpp"
+#include "IO/fields_io.hpp"
 #include "Tools/sunMat.hpp"
 #include <vector>
 #include <valarray>
@@ -28,30 +28,23 @@ void GaugeConf_bin::init_conf(Field& u){
 void GaugeConf_JLQCDLegacy::init_conf(Field& u){
   using namespace CCIO;
   CCIO::cout << "Init from binary file (JLQCD Legacy format)\n";
-  ReaderFormat JLQCDLegacyStorage = {JLQCDLegacyFormat,
-				     ReadJLQCDLegacyFormat, 
-				     NOheader,
-				     false};
   ReadFromDisk< Format::Format_G >(u,file_.c_str(),
 				   FORTRAN_CONTROL_WORDS, 
-				   JLQCDLegacyStorage);
+				   "JLQCDLegacy");
 }
 
 void GaugeConf_NERSC::init_conf(Field& u){
   using namespace CCIO;
   CCIO::cout << "Init from binary file (NERSC format)\n";
-  ReaderFormat NERSC = {ILDGBinFormat,//3x3 format
-			ReadNERSCFormat, 
-			ReadNERSCheader,
-			true};
   ReadFromDisk< Format::Format_G >(u,file_.c_str(),
 				   0, 
-				   NERSC);
+				   "NERSC");
+  
 }
 
 
 
-
+// this functio exists already in byteswap.cpp
 double GaugeConf_csdt::conv_endian(double vald){
   unsigned char val[8];
   unsigned char valr[8];

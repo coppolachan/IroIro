@@ -149,11 +149,15 @@ int Test_Solver_BFM::run(){
   CCIO::cout << "Norm Exp = "<< Exported.norm() << "\n";
   CCIO::cout << "Norm Src = "<< EO_source.norm() << "\n";
 
-  // Running the dslash
+
+
+
+  // Running the BFM  dslash
   int dag=0;
   //  linop.Munprec(psi_h,chi_h,tmp,dag) ;
   int donrm=0;
   int cb=0;//even heckerboard to match conventions IroIro<->BFM
+
   linop.MprecTilde(psi_h[cb],chi_h[cb],tmp,dag,donrm) ;
    
   FermionField BFMsolution; 
@@ -164,48 +168,24 @@ int Test_Solver_BFM::run(){
   //Testing the correctness of the operator
   Dirac_Wilson_EvenOdd WilsonEO(mq, &(conf_.data));
   FermionField IroIroFull;
-  Field IroIroSol_eo = WilsonEO.mult_eo(fo);
-  Field IroIroSol_oe = WilsonEO.mult_oe(fe);
-  IroIroFull.data = WilsonEO.mult(EO_source.data);
-
+  Field IroIroSol_oe(fe.size());
+  Field IroIroSol_eo(fe.size());
+  //IroIroSol_eo = WilsonEO.mult_eo(fo);
+  //IroIroSol_oe = WilsonEO.mult_oe(fe);
+  IroIroSol_eo = WilsonEO.mult(fe);
 
   CCIO::cout << "kappa: "<< WilsonEO.getKappa() <<"\n";
-  //Normalization conventions
-  /*
-  IroIroSol_eo += fe;
-  IroIroSol_eo *= (0.5/WilsonEO.getKappa());
-
-  IroIroSol_oe += fo;
-  IroIroSol_oe *= (0.5/WilsonEO.getKappa());
-  */
-  //  IroIroFull.data *=  WilsonEO.getKappa();
-
-  // Debug lines
-  // Separated EO
-  /*
+  
   for (int i = 0; i < IroIroSol_eo.size(); i++){
     IroIroFull.data.set(i, IroIroSol_eo[i]);
-    IroIroFull.data.set(i+IroIroSol_eo.size(), IroIroSol_oe[i]);
+    IroIroFull.data.set(i+IroIroSol_eo.size(), 0);
  
     double diff = abs(IroIroFull.data[i]-BFMsolution.data[i]);
     if (diff>1e-8) CCIO::cout << "*";
     CCIO::cout << "["<<i<<"] "<<IroIroFull.data[i] << "  "<<BFMsolution.data[i]
                << "  "<< diff << "\n";
   }
-  */
-
-  // Full EO Field
-  for (int i = 0; i < IroIroFull.size(); i++){
-    double diff = abs(IroIroFull.data[i]-BFMsolution.data[i]);
-    if (diff>1e-8) CCIO::cout << "*";
-    double data_iroiro  = IroIroFull.data[i];
-    double data_bfm = BFMsolution.data[i];
-    if (abs(IroIroFull.data[i]) < 1e-40) data_iroiro = 0.0; 
-    if (abs(BFMsolution.data[i]) < 1e-40) data_bfm = 0.0; 
-    CCIO::cout << "["<<i<<"] "<<data_iroiro << "  "<<data_bfm
-               << "  "<< diff << "\n";
-  }
-
+  
 
   Difference = BFMsolution;
   Difference -= IroIroFull;

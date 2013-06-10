@@ -105,21 +105,19 @@ int Test_Wilson::run(){
   Qprop QuarkPropagator(Kernel,SolverCG);
   QuarkPropagator.calc(sq,src);
   //---------------------------------------------------------------------------
-  
+  CCIO::cout << "sq size " << sq.size()<< "\n";
+  for (int i = 0; i < sq.size(); i++){
+    Field temp = sq[i];
+    for (int j = 0; j < temp.size(); j++){
+      CCIO::cout << "["<<j<<"]["<<i<<"] "<<temp[j] <<  "\n";
+    }  
+  }
+
   //  QP = QP_Factory->getQuarkProp(conf_);
   //  QP->calc(sq,src);
   
   CCIO::cout<<"quark propagator obtained"<<std::endl;
   
-  // meson correlators
-  
-  MesonCorrelator meson(Pion);
-  vector<double> mcorr = meson.calculate<Format::Format_F>(sq,sq);  
-  vector<double>::const_iterator it=mcorr.begin();
-  int t=0;
-  while(it!=mcorr.end()) CCIO::cout << t++ << "  "<< *it++ << "\n";
-  
-
   return 0;
 }
 

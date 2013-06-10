@@ -5,7 +5,7 @@
 #include "GaugeM/staples.hpp"
 #include "GaugeM/gfixFactory.hpp"
 #include "Smearing/smearingFactories.hpp"
-#include "Communicator/fields_io.hpp"
+#include "IO/fields_io.hpp"
 #include <iostream>
 #include <string.h>
 using namespace std;
