@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-06-04 17:37:11 neo>
+# Time-stamp: <2013-06-05 10:06:58 neo>
 
 
 
@@ -148,7 +148,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Action/action_fermiontype_factory_creator.cpp \
 	Action/action_fermiontype_factory.cpp Communicator/comm_io.cpp \
 	IO/fields_io.cpp IO/text_header.cpp IO/binary_reader.cpp \
-	IO/NERSC_reader.cpp IO/JLQCDLegacy_reader.cpp \
+	IO/NERSC_reader.cpp IO/ILDG_reader.cpp \
+	IO/JLQCDLegacy_reader.cpp \
 	Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 	Dirac_ops/dirac_Operator_Factory.cpp Dirac_ops/dirac.cpp \
 	Dirac_ops/dirac_WilsonLike.cpp \
@@ -242,7 +243,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	fields_io.$(OBJEXT) text_header.$(OBJEXT) \
 	binary_reader.$(OBJEXT) NERSC_reader.$(OBJEXT) \
-	JLQCDLegacy_reader.$(OBJEXT) \
+	ILDG_reader.$(OBJEXT) JLQCDLegacy_reader.$(OBJEXT) \
 	dirac_Operator_FactoryCreator.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) dirac.$(OBJEXT) \
 	dirac_WilsonLike.$(OBJEXT) dirac_staggeredLike.$(OBJEXT) \
@@ -536,6 +537,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		IO/text_header.cpp			\
 		IO/binary_reader.cpp			\
 		IO/NERSC_reader.cpp			\
+		IO/ILDG_reader.cpp			\
 		IO/JLQCDLegacy_reader.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
@@ -919,6 +921,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HBActions_SUN.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ILDG_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JLQCDLegacy_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NERSC_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action.Po@am__quote@
@@ -1459,6 +1462,20 @@ NERSC_reader.obj: IO/NERSC_reader.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/NERSC_reader.cpp' object='NERSC_reader.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NERSC_reader.obj `if test -f 'IO/NERSC_reader.cpp'; then $(CYGPATH_W) 'IO/NERSC_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/NERSC_reader.cpp'; fi`
+
+ILDG_reader.o: IO/ILDG_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ILDG_reader.o -MD -MP -MF $(DEPDIR)/ILDG_reader.Tpo -c -o ILDG_reader.o `test -f 'IO/ILDG_reader.cpp' || echo '$(srcdir)/'`IO/ILDG_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ILDG_reader.Tpo $(DEPDIR)/ILDG_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/ILDG_reader.cpp' object='ILDG_reader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ILDG_reader.o `test -f 'IO/ILDG_reader.cpp' || echo '$(srcdir)/'`IO/ILDG_reader.cpp
+
+ILDG_reader.obj: IO/ILDG_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ILDG_reader.obj -MD -MP -MF $(DEPDIR)/ILDG_reader.Tpo -c -o ILDG_reader.obj `if test -f 'IO/ILDG_reader.cpp'; then $(CYGPATH_W) 'IO/ILDG_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/ILDG_reader.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ILDG_reader.Tpo $(DEPDIR)/ILDG_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/ILDG_reader.cpp' object='ILDG_reader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ILDG_reader.obj `if test -f 'IO/ILDG_reader.cpp'; then $(CYGPATH_W) 'IO/ILDG_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/ILDG_reader.cpp'; fi`
 
 JLQCDLegacy_reader.o: IO/JLQCDLegacy_reader.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JLQCDLegacy_reader.o -MD -MP -MF $(DEPDIR)/JLQCDLegacy_reader.Tpo -c -o JLQCDLegacy_reader.o `test -f 'IO/JLQCDLegacy_reader.cpp' || echo '$(srcdir)/'`IO/JLQCDLegacy_reader.cpp

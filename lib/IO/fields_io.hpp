@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-06-04 17:51:26 neo>
+ * Time-stamp: <2013-06-05 10:28:13 neo>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -22,6 +22,8 @@
 #include "binary_reader.hpp"
 #include "NERSC_reader.hpp"
 #include "JLQCDLegacy_reader.hpp"
+#include "ILDG_reader.hpp"
+
 
 #define CCIO_FILE_APPEND_MODE true
 #define FORTRAN_CONTROL_WORDS 4  //number of fortran bytes for control
@@ -157,6 +159,8 @@ namespace CCIO {
       reader = new NERSCReader(total_vol, fmt.Nin(), fmt.Nex());
     if (readerID.compare("JLQCDLegacy")==0)
       reader = new JLQCDLegacyReader(total_vol, fmt.Nin(), fmt.Nex());
+    if (readerID.compare("ILDG")==0)
+      reader = new ILDGReader(total_vol, fmt.Nin(), fmt.Nex());
 
     // Open the output file
     FILE * inFile;

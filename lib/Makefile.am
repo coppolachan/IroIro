@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-06-04 17:37:11 neo>
+# Time-stamp: <2013-06-05 10:06:58 neo>
 
 ###########################################
 # Initial definitions 
@@ -114,6 +114,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		IO/text_header.cpp			\
 		IO/binary_reader.cpp			\
 		IO/NERSC_reader.cpp			\
+		IO/ILDG_reader.cpp			\
 		IO/JLQCDLegacy_reader.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\

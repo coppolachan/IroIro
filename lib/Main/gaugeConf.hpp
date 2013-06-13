@@ -57,6 +57,14 @@ public:
   void init_conf(Field&);
 };
 
+class GaugeConf_ILDG:public GaugeConf{
+  std::string file_;
+public:
+  GaugeConf_ILDG(const Format::Format_G& fg, const std::string& fname)
+    :GaugeConf(fg), file_(fname){}
+  void init_conf(Field&);
+};
+
 
 // this class is for temporal hack. Its usage is very limited
 class GaugeConf_csdt:public GaugeConf{

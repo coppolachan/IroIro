@@ -14,6 +14,8 @@
 #ifndef COMMON_CODE_HPP_
 #define COMMON_CODE_HPP_
 
+#include "include/iroiro_config.h"
+
 //Fields and common parameters
 #include "include/common_fields.hpp"
 #include "include/commonPrms.hpp"

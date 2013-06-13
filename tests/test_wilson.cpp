@@ -105,7 +105,13 @@ int Test_Wilson::run(){
   Qprop QuarkPropagator(Kernel,SolverCG);
   QuarkPropagator.calc(sq,src);
   //---------------------------------------------------------------------------
-  
+  for (int i = 0; i < sq.size(); i++){
+    Field temp = sq[i];
+    for (int j = 0; j < temp.size(); j++){
+      CCIO::cout << "["<<j<<"]["<<i<<"] " <<temp[j] <<  "\n";
+    }  
+  }
+
   //  QP = QP_Factory->getQuarkProp(conf_);
   //  QP->calc(sq,src);
   

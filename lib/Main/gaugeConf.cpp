@@ -42,9 +42,18 @@ void GaugeConf_NERSC::init_conf(Field& u){
   
 }
 
+void GaugeConf_ILDG::init_conf(Field& u){
+  using namespace CCIO;
+  CCIO::cout << "Init from ILDG file (ILDG format)\n";
+  ReadFromDisk< Format::Format_G >(u,file_.c_str(),
+				   0, 
+				   "ILDG");
+  
+}
 
 
-// this functio exists already in byteswap.cpp
+
+// this function exists already in byteswap.cpp
 double GaugeConf_csdt::conv_endian(double vald){
   unsigned char val[8];
   unsigned char valr[8];
