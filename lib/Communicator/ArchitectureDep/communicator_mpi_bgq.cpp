@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-06-13 10:57:12 cossu>
+ * Time-stamp: <2013-06-13 16:01:05 cossu>
  *
  */
 
@@ -123,16 +123,16 @@ transfer_fw_async(double *bin,double *data,unsigned int size,int dir) const{
   int rcounterID = sendID;
   int nid = omp_get_num_threads();
   int threadID = omp_get_thread_num();
-  //CCIO::cout << "["<<threadID<<"] transfer_fw_async before BGNET_SetSendBuffer\n";
+
   // prepare the ids for the async comm
-  BGNET_SetSendBuffer(data,sendID ,size_byte);
-  //CCIO::cout << "["<<threadID<<"] transfer_fw_async before BGNET_SetRecvBuffer\n";
-  BGNET_SetRecvBuffer(bin, recvID, size_byte);
+  if (threadID == 0){
+    BGNET_SetSendBuffer(data,sendID ,size_byte);
+    BGNET_SetRecvBuffer(bin, recvID, size_byte);
 
   //syncronize after initialization
-  if (threadID == 0)
     BGNET_GlobalBarrier();
-   BGQThread_Barrier(0,nid);//?
+  }
+  BGQThread_Barrier(0,nid);
 
   BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,threadID,recvID,recv_offset,rcounterID);
  
@@ -153,15 +153,13 @@ transfer_bk_async(double *bin,double *data,unsigned int size,int dir) const{
   int threadID = omp_get_thread_num();
 
   // prepare the ids for the async comm
-  //CCIO::cout << "["<<threadID<<"] transfer_bk_async before BGNET_SetSendBuffer\n";
   BGNET_SetSendBuffer(data,sendID ,size_byte);
-  // CCIO::cout << "["<<threadID<<"] transfer_bk_async before BGNET_SetRecvBuffer\n";
   BGNET_SetRecvBuffer(bin, recvID, size_byte);
 
   //syncronize after initialization
   if (threadID == 0)
     BGNET_GlobalBarrier();
-  BGQThread_Barrier(0,nid);//?
+  BGQThread_Barrier(0,nid);
     
   BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,threadID,recvID,recv_offset,rcounterID);
 }

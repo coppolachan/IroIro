@@ -3,7 +3,7 @@
  *
  * @brief Declares the Communicator class for multiprocessing
  *
- * Time-stamp: <2013-06-12 14:03:20 cossu>
+ * Time-stamp: <2013-06-13 15:21:25 cossu>
  *
  */
 
@@ -46,7 +46,10 @@ public:
   static bool primaryNode();
 
   int nodeid(int x,int y,int z,int t) const;
-  
+  int node_up(int dir){return nd_up_[dir];}
+  int node_dn(int dir){return nd_dn_[dir];}
+
+
   double reduce_sum(double)const;
   void sync()const;
 

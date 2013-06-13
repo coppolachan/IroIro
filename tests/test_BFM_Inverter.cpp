@@ -32,9 +32,9 @@ int Test_Solver_BFM::run(){
 
   //Parameters
   int Nvol  =  CommonPrms::instance()->Nvol();
-  double mq = 0.5;
+  double mq = 0.01;
   double M5 = 1.6;
-  int Ls    = 8;
+  int Ls    = 12;
   double ht_scale = 2.0;
   int Nvol5d = Nvol*Ls;
   double c   = 1.0;
