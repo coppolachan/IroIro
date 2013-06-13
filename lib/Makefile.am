@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-06-05 10:06:58 neo>
+# Time-stamp: <2013-06-13 16:32:33 neo>
 
 ###########################################
 # Initial definitions 
@@ -123,7 +123,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
-		Dirac_ops/dirac_wilson_Brillouin.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
@@ -135,6 +134,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
+		Dirac_ops/dirac_wilson_Brillouin.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/boundaryCond.cpp      		\
@@ -208,6 +208,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
+
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)

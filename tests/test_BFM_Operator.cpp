@@ -86,8 +86,12 @@ int Test_Solver_BFM::run(){
   int Ls = 8;
   double ht_scale = 2.0;
 
-  //  dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
-  dwfa.pWilson(mq);
+  int threads =4;
+  bfmarg::Threads(threads);
+
+
+  //dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
+    dwfa.pWilson(mq);
   dwfa.rb_precondition_cb=Even;
   bfm_dp linop;
   linop.init(dwfa);
@@ -101,9 +105,11 @@ int Test_Solver_BFM::run(){
   SiteIndex_EvenOdd* ieo = SiteIndex_EvenOdd::instance();
   vector<int> esec= ieo->esec();
   vector<int> osec= ieo->osec();
+  
   // source generation (spin, color)
   Field fe = src.mksrc(esec,2,0);
   Field fo = src.mksrc(osec,2,0);
+  
 #ifdef DEBUG
   valarray<double> phi(source.format.size()/2);
   MPrand::mp_get_gauss(phi, rand);
@@ -124,18 +130,25 @@ int Test_Solver_BFM::run(){
 
   // Tests the import/export routines
   ///////////////////////////////////////
+  CCIO::cout << "Testing import/export routines\n";
   Fermion_t psi_h[2];
   Fermion_t chi_h[2];
+  CCIO::cout << "Bfm allocation of tmp\n";
   Fermion_t tmp = linop.allocFermion();
   FermionField Exported;
   for(int cb=0;cb<2;cb++){
+    CCIO::cout << "Bfm allocations of psi and chi cb="<<cb<<"\n";
     psi_h[cb] = linop.allocFermion();//half vector
     chi_h[cb] = linop.allocFermion();
     // Export fermion field to BFM
+    CCIO::cout << "Export to BFM cb="<<cb<<"\n";
     BFM_interface.FermionExport_to_BFM(EO_source,psi_h[cb],cb);//third argument is the CB 0=even, 1=odd
-    double nrm=linop.norm(psi_h[cb]);
-    CCIO::cout << "cb "<<cb<<" bfm norm "<<nrm<<"\n";
-    // Import back to IroIro
+    CCIO::cout << "Calculates norm cb="<<cb<<"\n";
+    
+    //double nrm=linop.norm(psi_h[cb]); // must be threaded
+    //CCIO::cout << "cb "<<cb<<" bfm norm "<<nrm<<"\n";
+    // Import to IroIro again
+    CCIO::cout << "Import from BFM cb="<<cb<<"\n";
     BFM_interface.FermionImport_from_BFM(Exported, psi_h[cb], cb);
   }
 
@@ -147,12 +160,20 @@ int Test_Solver_BFM::run(){
   CCIO::cout << "Norm Exp = "<< Exported.norm() << "\n";
   CCIO::cout << "Norm Src = "<< EO_source.norm() << "\n";
 
-  // Running the dslash
+
+
+
+  // Running the BFM  dslash
   int dag=0;
   //  linop.Munprec(psi_h,chi_h,tmp,dag) ;
   int donrm=0;
   int cb=0;//even heckerboard to match conventions IroIro<->BFM
-  linop.MprecTilde(psi_h[cb],chi_h[cb],tmp,dag,donrm) ;
+
+#pragma omp parallel for
+  for (int t=0;t<threads;t++){
+    linop.MprecTilde(psi_h[cb],chi_h[cb],tmp,dag,donrm) ;
+  }
+  
    
   FermionField BFMsolution; 
   for(int cb=0;cb<2;cb++){
@@ -162,52 +183,33 @@ int Test_Solver_BFM::run(){
   //Testing the correctness of the operator
   Dirac_Wilson_EvenOdd WilsonEO(mq, &(conf_.data));
   FermionField IroIroFull;
-  Field IroIroSol_eo = WilsonEO.mult_eo(fo);
-  Field IroIroSol_oe = WilsonEO.mult_oe(fe);
-  IroIroFull.data = WilsonEO.mult(EO_source.data);
-
+  Field IroIroSol_oe(fe.size());
+  Field IroIroSol_eo(fe.size());
+  //IroIroSol_eo = WilsonEO.mult_eo(fo);
+  //IroIroSol_oe = WilsonEO.mult_oe(fe);
+  IroIroSol_eo = WilsonEO.mult(fe);
 
   CCIO::cout << "kappa: "<< WilsonEO.getKappa() <<"\n";
-  //Normalization conventions
-  /*
-  IroIroSol_eo += fe;
-  IroIroSol_eo *= (0.5/WilsonEO.getKappa());
-
-  IroIroSol_oe += fo;
-  IroIroSol_oe *= (0.5/WilsonEO.getKappa());
-  */
-  //  IroIroFull.data *=  WilsonEO.getKappa();
-
-  // Debug lines
-  // Separated EO
-  /*
+  double tot_diff = 0;
   for (int i = 0; i < IroIroSol_eo.size(); i++){
     IroIroFull.data.set(i, IroIroSol_eo[i]);
-    IroIroFull.data.set(i+IroIroSol_eo.size(), IroIroSol_oe[i]);
+    IroIroFull.data.set(i+IroIroSol_eo.size(), 0);
  
     double diff = abs(IroIroFull.data[i]-BFMsolution.data[i]);
+    tot_diff += diff;
     if (diff>1e-8) CCIO::cout << "*";
     CCIO::cout << "["<<i<<"] "<<IroIroFull.data[i] << "  "<<BFMsolution.data[i]
                << "  "<< diff << "\n";
   }
-  */
-
-  // Full EO Field
-  for (int i = 0; i < IroIroFull.size(); i++){
-    double diff = abs(IroIroFull.data[i]-BFMsolution.data[i]);
-    if (diff>1e-8) CCIO::cout << "*";
-    double data_iroiro  = IroIroFull.data[i];
-    double data_bfm = BFMsolution.data[i];
-    if (abs(IroIroFull.data[i]) < 1e-40) data_iroiro = 0.0; 
-    if (abs(BFMsolution.data[i]) < 1e-40) data_bfm = 0.0; 
-    CCIO::cout << "["<<i<<"] "<<data_iroiro << "  "<<data_bfm
-               << "  "<< diff << "\n";
-  }
-
-
+  
+  Communicator::instance()->sync();
   Difference = BFMsolution;
   Difference -= IroIroFull;
-  CCIO::cout << "Operator Difference BFM-IroIro = "<< Difference.norm() << "\n";
-  
+
+  std::cout << "["<<Communicator::instance()->nodeid()
+  	    <<"] Operator Difference BFM-IroIro = "<< tot_diff << "\n";
+
+
+  CCIO::cout << "--- Operator Difference BFM-IroIro = "<< Difference.norm() << "\n";
   return 0;
 }
