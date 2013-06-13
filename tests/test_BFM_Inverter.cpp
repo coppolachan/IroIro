@@ -32,7 +32,7 @@ int Test_Solver_BFM::run(){
 
   //Parameters
   int Nvol  =  CommonPrms::instance()->Nvol();
-  double mq = 1.0;
+  double mq = 0.5;
   double M5 = 1.6;
   int Ls    = 8;
   double ht_scale = 2.0;
@@ -87,15 +87,15 @@ int Test_Solver_BFM::run(){
     }
   }
 
-  int threads =1;
-
+  int threads = 4;
   bfmarg::Threads(threads);
+
   bfmarg::UseCGdiagonalMee(1);
 
   dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
   dwfa.rb_precondition_cb=Even;
   dwfa.max_iter=10000;
-  dwfa.residual=1.0e-8;
+  dwfa.residual=1.0e-12;
   bfm_dp linop;
   linop.init(dwfa);
 
@@ -201,13 +201,9 @@ int Test_Solver_BFM::run(){
   }
   for (int s =0 ; s< Ls; s++){
     for (int i = 0; i < vect4d_hsize; i++){
-      //      fe.data.set(i+2*s*vect4d_hsize,IroIroSol_even[i+vect4d_hsize*s]);
       fe.set(i+vect4d_hsize*s, BFMsolution.data[i+2*s*vect4d_hsize]);
     }
   }
-
-
-
 
   //Apply operator back on the inverse
   FermionField IroIroFull(Nvol5d);
@@ -232,14 +228,15 @@ int Test_Solver_BFM::run(){
   }
   
 
-
+  /*
   for (int i = 0; i < IroIroFull.size() ; i++){
     double diff = abs(IroIroFull.data[i]-EO_source.data[i]);
     if (diff>1e-8) CCIO::cout << "*";
     CCIO::cout << "["<<i<<"] "<<IroIroFull.data[i] << "  "<<EO_source.data[i]
                << "  "<< diff << "\n";
   }
-  
+  */
+
   Difference = EO_source;
   Difference -= IroIroFull;
   CCIO::cout << "Operator Difference BFM-IroIro = "<< Difference.norm() << "\n";

@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-06-05 17:47:05 cossu>
+ * Time-stamp: <2013-06-13 10:57:12 cossu>
  *
  */
 
@@ -12,7 +12,9 @@
 #include "Communicator/comm_io.hpp"
 
 #include "bgnet.h"
+#include "bgqthread.h"
 #include <omp.h>
+
 
 int Communicator::my_rank_;
 int Communicator::Nproc_;
@@ -113,22 +115,27 @@ transfer_fw_async(double *bin,double *data,unsigned int size,int dir) const{
   int p_recv = nd_up_[dir];
   // data is the source pointer 
   // we will have 8 buffers identified by their dir
-  int sendID = dir;//in the bw direction shift by 4
-  int recvID = dir + 4; 
+  int sendID = dir + 1;//in the bw direction shift by 4
+  int recvID = dir + 5; 
   uint64_t send_offset = 0;
   uint64_t recv_offset = 0;
   uint64_t size_byte = size*sizeof(double);
   int rcounterID = sendID;
-
+  int nid = omp_get_num_threads();
+  int threadID = omp_get_thread_num();
+  //CCIO::cout << "["<<threadID<<"] transfer_fw_async before BGNET_SetSendBuffer\n";
   // prepare the ids for the async comm
   BGNET_SetSendBuffer(data,sendID ,size_byte);
+  //CCIO::cout << "["<<threadID<<"] transfer_fw_async before BGNET_SetRecvBuffer\n";
   BGNET_SetRecvBuffer(bin, recvID, size_byte);
 
   //syncronize after initialization
-  BGNET_GlobalBarrier();
+  if (threadID == 0)
+    BGNET_GlobalBarrier();
+   BGQThread_Barrier(0,nid);//?
 
-  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,0,recvID,recv_offset,rcounterID);
-  BGNET_WaitForRecv(0, rcounterID, size_byte);
+  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,threadID,recvID,recv_offset,rcounterID);
+ 
 }
 
 void Communicator::
@@ -136,28 +143,32 @@ transfer_bk_async(double *bin,double *data,unsigned int size,int dir) const{
   int p_recv = nd_dn_[dir];
   // data is the source pointer 
   // we will have 8 buffers identified by their dir
-  int sendID = dir + 4;
-  int recvID = dir; 
+  int sendID = dir + 5;
+  int recvID = dir + 1; 
   uint64_t send_offset = 0;
   uint64_t recv_offset = 0;
   uint64_t size_byte = size*sizeof(double);
   int rcounterID = sendID;
+  int nid = omp_get_num_threads();
+  int threadID = omp_get_thread_num();
 
   // prepare the ids for the async comm
+  //CCIO::cout << "["<<threadID<<"] transfer_bk_async before BGNET_SetSendBuffer\n";
   BGNET_SetSendBuffer(data,sendID ,size_byte);
+  // CCIO::cout << "["<<threadID<<"] transfer_bk_async before BGNET_SetRecvBuffer\n";
   BGNET_SetRecvBuffer(bin, recvID, size_byte);
 
   //syncronize after initialization
-  BGNET_GlobalBarrier();
-
-  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,0,recvID,recv_offset,rcounterID);
-  BGNET_WaitForRecv(0, rcounterID, size_byte);
-
+  if (threadID == 0)
+    BGNET_GlobalBarrier();
+  BGQThread_Barrier(0,nid);//?
+    
+  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,threadID,recvID,recv_offset,rcounterID);
 }
 
 
-void Communicator::wait_async(int id, unsigned int size) const{
-  BGNET_WaitForRecv(0, id, size);
+void Communicator::wait_async(int gid, int id, unsigned int size) const{
+  BGNET_WaitForRecv(gid, id, size);
 }
 
 void Communicator::

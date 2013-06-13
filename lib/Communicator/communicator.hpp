@@ -3,7 +3,7 @@
  *
  * @brief Declares the Communicator class for multiprocessing
  *
- * Time-stamp: <2013-06-04 11:32:44 cossu>
+ * Time-stamp: <2013-06-12 14:03:20 cossu>
  *
  */
 
@@ -84,7 +84,7 @@ public:
   void transfer_bk_async(double *bin,double *data,unsigned int size,int dir) const;
 
   // Wait function for async comms
-  void wait_async(int id, unsigned int size) const;
+  void wait_async(int gid, int id, unsigned int size) const;
 
   void send_1to1(double *bin,double *data,int size,
 		 int p_to, int p_from, int tag)const;
