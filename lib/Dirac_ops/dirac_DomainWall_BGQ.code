@@ -2,8 +2,9 @@
  * @file dirac_DomainWall_BGQ.code
  *
  * @brief Definition of some BGQ optimized methods for Dirac_optimalDomainWall (5d operator)
- *Time-stamp: <2013-05-30 14:01:37 noaki>
+ *Time-stamp: <2013-06-14 14:37:42 cossu>
  *-------------------------------------------------------------------------*/
+#include "include/timings.hpp"
 #include "Solver/solver.hpp"
 #include "bgqwilson.h"
 #include "bgqthread.h"
@@ -1182,6 +1183,7 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
     int is, ie, ns,s5;
     double pap, rrp, cr, rr, snorm;
     double tSum,t, temp;
+    double timer;
     
     nid = omp_get_num_threads();
     tid = omp_get_thread_num();
@@ -1237,6 +1239,10 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
 
     for(int it = 0; it < MaxIter; ++it){
       double tPAP;
+      
+      if (tid == 0)
+	FINE_TIMING_START(timer);
+      
       BGWilson_DW_Mult_hop(temp_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),p_ptr,
 			   kappa,BGWILSON_DIRAC);
       BGWilson_DW_Mult_hop_dag(s_ptr,(void*)(const_cast<Field *>(u_)->getaddr(0)),temp_ptr,
@@ -1285,10 +1291,20 @@ void Dirac_optimalDomainWall::solve_eo_5d(Field& w5,
       } 
 #endif
       BGQThread_Barrier(0,nid);
+ 
       if(rr*snorm < GoalPrecision){
 	if (tid==0) Out.Iterations = it;
 	break;
       }
+      
+     
+    
+      if (tid==0){
+      FINE_TIMING_END(timer);
+	_Message(DEBUG_VERB_LEVEL,"  CG iteration time: "<<timer<<" seconds\n");
+      }
+      
+
     }//end of iterations loop      
 
 #pragma omp single
@@ -1375,7 +1391,7 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
 		   (double*)&Params_.es_[0],(double*)&Params_.fs_[0]);
 
   _Message(SOLV_ITER_VERB_LEVEL, "Multi-shift solver Conjugate Gradient start\n");
-  CCIO::cout << " --------- optimized version\n"; 
+  CCIO::cout << " --------- BGQ optimized version\n"; 
   Out.Msg = "Multishift CG solver";
   Out.Iterations = -1;
 
@@ -1440,6 +1456,7 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
   {
     int tid, nid;
     int is, ie, ns,s5, ish;
+    double timer;
     double t, tSum, rrp;
     double alpha, alphah, beta, pap;
     double zeta, zetas, alphas, betas, zr;
@@ -1455,6 +1472,8 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
     double* pp = (double*)BGQThread_Malloc(sizeof(double)*sigma.size(), nid);
 
     for(int it = 0; it < MaxIter; it++){
+      if (tid == 0)
+	FINE_TIMING_START(timer);
       //   solve_ms_step(x,p,r,s,temp_ptr, rr, zeta1,zeta2,sigma,csh2,alphap,betap,
       //		  Nshift2,snorm, GoalPrecision);
       
@@ -1521,8 +1540,6 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
       
       alphah = 1.0 + alphap*beta/betap;
       
-      // BGQThread_Barrier(0,nid);
-
       for(ish = 1; ish<Nshift2; ++ish){
 	p_ptr = (Spinor*)(p[ish].getaddr(0));
 	x_ptr = (Spinor*)(x[ish].getaddr(0));
@@ -1567,7 +1584,7 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
       }
       //end of loop
       BGQThread_Barrier(0,nid);    
-
+ 
       for(ish = Nshift2-1; ish>=0; --ish){
 	if(pp[ish]> GoalPrecision){
 	  Nshift2 = ish+1;
@@ -1591,14 +1608,22 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
 	break;
       }
 
-    }
+     if(tid==0) {
+	FINE_TIMING_END(timer);
+	_Message(DEBUG_VERB_LEVEL,"  Multishift iteration time: "<<timer<<" seconds\n");
+      }	
+
+
+    }//for iter
     BGQThread_Barrier(0,nid);    
+  
 
     if (tid==0){
       if(Out.Iterations == -1) {
 	CCIO::cout << "Not converged.\n";
 	exit(1);
       }
+      
       _Message(SOLV_ITER_VERB_LEVEL, "  --- Summary of true residuals\n");
     }
     Out.diff = -1.0;

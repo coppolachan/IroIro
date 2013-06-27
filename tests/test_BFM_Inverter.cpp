@@ -32,9 +32,9 @@ int Test_Solver_BFM::run(){
 
   //Parameters
   int Nvol  =  CommonPrms::instance()->Nvol();
-  double mq = 0.01;
+  double mq = 0.0;
   double M5 = 1.6;
-  int Ls    = 12;
+  int Ls    = 8;
   double ht_scale = 2.0;
   int Nvol5d = Nvol*Ls;
   double c   = 1.0;
@@ -78,6 +78,7 @@ int Test_Solver_BFM::run(){
   dwfa.node_latt[2]  = CommonPrms::instance()->Nz();
   dwfa.node_latt[3]  = CommonPrms::instance()->Nt();
   dwfa.verbose = 1;
+  dwfa.time_report_iter=100;
 
   for(int mu=0;mu<4;mu++){
     if ( (CommonPrms::instance()->NPE(mu))>1 ) {
@@ -87,15 +88,15 @@ int Test_Solver_BFM::run(){
     }
   }
 
-  int threads = 4;
+  int threads = 64;
   bfmarg::Threads(threads);
 
   bfmarg::UseCGdiagonalMee(1);
 
   dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
   dwfa.rb_precondition_cb=Even;
-  dwfa.max_iter=10000;
-  dwfa.residual=1.0e-12;
+  dwfa.max_iter=50000;
+  dwfa.residual=1.0e-24;
   bfm_dp linop;
   linop.init(dwfa);
 
@@ -184,13 +185,14 @@ int Test_Solver_BFM::run(){
 
   //linop.MooeeInv(psi_h[cb],chi_h[cb],dag);
   //linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);
-  
+  for (int repeat = 0; repeat < 10; repeat++){
 #pragma omp parallel
   {
 #pragma omp for 
     for (int t=0;t<threads;t++){
       linop.CGNE_prec(chi_h[Even],psi_h[Even]);
     }
+  }
   }
 
   FermionField BFMsolution(Nvol5d);

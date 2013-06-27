@@ -72,6 +72,7 @@ int Test_Solver_BFM::run(){
   dwfa.node_latt[2]  = CommonPrms::instance()->Nz();
   dwfa.node_latt[3]  = CommonPrms::instance()->Nt();
   dwfa.verbose = 1;
+  dwfa.time_report_iter=100;
 
 
   for(int mu=0;mu<4;mu++){
