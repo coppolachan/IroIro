@@ -2,7 +2,7 @@
  * @file solver_CG.cpp
  * @brief Definition of Solver_CG class member functions
  *
- * Time-stamp: <2013-04-23 13:29:19 neo>
+ * Time-stamp: <2013-07-03 12:09:22 cossu>
  */
 
 #include <iostream>
@@ -41,7 +41,7 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   Field p = r;
   double rr = r*r;// (r,r)
   double snorm = b.norm();
-  snorm = 1.0/snorm;
+  snorm = 1.0/(snorm*snorm);//need the square of the norm
 
   _Message(SOLV_ITER_VERB_LEVEL, " Snorm = "<< snorm<<"\n" );
   _Message(SOLV_ITER_VERB_LEVEL, " Init  = "<< rr*snorm<<"\n" );
@@ -64,7 +64,7 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
 
   p = opr_->mult(x);
   p -= b;
-  Out.diff = p.norm();
+  Out.diff = p.norm()*sqrt(snorm);
 
   xq = x;
 
@@ -161,7 +161,7 @@ SolverOutput Solver_CG_Precondition::solve(Field& xq,
   Field p = r;
   double rr = r*r;
   double snorm = b.norm();
-  snorm = 1.0/snorm;
+  snorm = 1.0/(snorm*snorm);
 
 #if VERBOSITY > 1
   CCIO::cout<<" Snorm = "<<snorm<<std::endl;
@@ -183,7 +183,7 @@ SolverOutput Solver_CG_Precondition::solve(Field& xq,
 
   p = opr_->mult_prec(x);
   p -= b;
-  Out.diff = p.norm();
+  Out.diff = p.norm()*sqrt(snorm);
 
   xq = x;
 

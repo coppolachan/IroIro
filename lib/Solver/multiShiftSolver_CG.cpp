@@ -3,7 +3,7 @@
  *
  * @brief Declaration of MultiShiftSolver_CG functions
  *
- * Time-stamp: <2013-04-23 11:45:24 neo>
+ * Time-stamp: <2013-07-03 12:11:04 cossu>
  */
 #include "multiShiftSolver_CG.hpp"
 #include "Fields/field_expressions.hpp"
@@ -116,7 +116,8 @@ SolverOutput MultiShiftSolver_CG::solve(vector_Field& xq,
   int Nshift = sigma.size();
   size_t fsize = b.size();
 
-  double snorm = 1.0/b.norm();
+  double bnorm = b.norm();
+  double snorm = 1.0/(bnorm*bnorm);
   Nconv = -1;
   
   Field s = b;

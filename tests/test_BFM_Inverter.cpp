@@ -77,8 +77,8 @@ int Test_Solver_BFM::run(){
   dwfa.node_latt[1]  = CommonPrms::instance()->Ny();
   dwfa.node_latt[2]  = CommonPrms::instance()->Nz();
   dwfa.node_latt[3]  = CommonPrms::instance()->Nt();
-  dwfa.verbose = 1;
-  dwfa.time_report_iter=100;
+  dwfa.verbose = 0;
+  dwfa.time_report_iter=-100;
 
   for(int mu=0;mu<4;mu++){
     if ( (CommonPrms::instance()->NPE(mu))>1 ) {
@@ -96,7 +96,7 @@ int Test_Solver_BFM::run(){
   dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
   dwfa.rb_precondition_cb=Even;
   dwfa.max_iter=50000;
-  dwfa.residual=1.0e-24;
+  dwfa.residual=1.0e-12;
   bfm_dp linop;
   linop.init(dwfa);
 
@@ -185,7 +185,10 @@ int Test_Solver_BFM::run(){
 
   //linop.MooeeInv(psi_h[cb],chi_h[cb],dag);
   //linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);
+  SolverOutput SO;
+
   for (int repeat = 0; repeat < 10; repeat++){
+    /* 
 #pragma omp parallel
   {
 #pragma omp for 
@@ -193,7 +196,15 @@ int Test_Solver_BFM::run(){
       linop.CGNE_prec(chi_h[Even],psi_h[Even]);
     }
   }
+    */
+  // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_eo
+  Field output_f(vphi);
+  DWF_EO.solve_eo(output_f,fe, SO,  10000, dwfa.residual*dwfa.residual);
+  SO.print();
+  
   }
+
+
 
   FermionField BFMsolution(Nvol5d);
   int vect4d_hsize = fe.size()/Ls;   
@@ -215,7 +226,7 @@ int Test_Solver_BFM::run(){
 
   //Field IroIroSol_odd  = 0;
   Field IroIroSol_even = DWF_EO.mult_dag(DWF_EO.mult(fe));
-
+ 
 
   //////////////////////////////////////////////////////////////////////////////////  
   
@@ -238,9 +249,23 @@ int Test_Solver_BFM::run(){
                << "  "<< diff << "\n";
   }
   */
+  
 
   Difference = EO_source;
   Difference -= IroIroFull;
+
+  /*
+  Field F_Diff;
+  F_Diff = output_f;
+  F_Diff -= fe;
+  
+  for (int i = 0; i < fe.size() ; i++){
+    double diff = abs(fe[i]-output_f[i]);
+    if (diff>1e-8) CCIO::cout << "*";
+    CCIO::cout << "["<<i<<"] "<<fe[i] << "  "<<output_f[i]
+               << "  "<< diff << "\n";
+  }
+  */
   CCIO::cout << "Operator Difference BFM-IroIro = "<< Difference.norm() << "\n";
   
   return 0;
