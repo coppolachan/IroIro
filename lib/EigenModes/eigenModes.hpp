@@ -5,7 +5,7 @@
 #define EIGENMODES_INCLUDED
 
 #include "field.h"
-#include "Communicator/fields_io.hpp"
+#include "IO/fields_io.hpp"
 #include <vector>
 #include <string>
 #include <string.h>

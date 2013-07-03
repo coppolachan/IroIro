@@ -3,12 +3,12 @@
  *
  * @brief Definitions of functions for HeatBath update
  *
- * Time-stamp: <2013-04-02 17:43:07 neo>
+ * Time-stamp: <2013-06-04 15:24:20 neo>
  */
 //--------------------------------------------------------------------
 #include "heatbath.hpp"
 #include "Communicator/comm_io.hpp"
-#include "Communicator/fields_io.hpp"
+#include "IO/fields_io.hpp"
 
 #include <string>
 #include <sstream>

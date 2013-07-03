@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-07-03 13:42:22 noaki>
+# Time-stamp: <2013-07-04 03:26:29 noaki>
 
 
 
@@ -147,12 +147,14 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Action/action_Nf2_DomainWall.cpp \
 	Action/action_fermiontype_factory_creator.cpp \
 	Action/action_fermiontype_factory.cpp Communicator/comm_io.cpp \
+	IO/fields_io.cpp IO/text_header.cpp IO/binary_reader.cpp \
+	IO/NERSC_reader.cpp IO/ILDG_reader.cpp \
+	IO/JLQCDLegacy_reader.cpp \
 	Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 	Dirac_ops/dirac_Operator_Factory.cpp Dirac_ops/dirac.cpp \
 	Dirac_ops/dirac_WilsonLike.cpp \
 	Dirac_ops/dirac_staggeredLike.cpp Dirac_ops/dirac_wilson.cpp \
 	Dirac_ops/dirac_wilson_EvenOdd.cpp \
-	Dirac_ops/dirac_wilson_Brillouin.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp \
 	Dirac_ops/dirac_clover.cpp Dirac_ops/dirac_Mobius.cpp \
@@ -162,7 +164,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp \
 	Dirac_ops/dirac_DomainWall_EvenOdd.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
-	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp Dirac_ops/eoUtils.cpp \
+	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
+	Dirac_ops/dirac_wilson_Brillouin.cpp Dirac_ops/eoUtils.cpp \
 	Dirac_ops/boundaryCond.cpp Dirac_ops/subSpaceProjector.cpp \
 	Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 	Dirac_ops/dirac_LowModeDeflation_Approx.cpp \
@@ -203,14 +206,15 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/sunAdjMatUtils.cpp Tools/randNum.cpp \
 	Tools/randNum_MP.cpp Tools/randNum_Factory.cpp \
 	Tools/gammaMatrices.cpp Tools/sunAlgUtils.cpp \
-	Tools/Remez/alg_remez.cpp \
+	Tools/complexMatrix.cpp Tools/Remez/alg_remez.cpp \
 	Tools/RationalApprox/rationalapprox.cpp \
 	Tools/ErrorsHandling/xml_errors.cpp \
 	Tools/ErrorsHandling/allocation_errors.cpp \
 	Tools/ErrorsHandling/base_errors.cpp \
 	Tools/ErrorsHandling/io_errors.cpp \
 	Tools/ErrorsHandling/convergence_errors.cpp \
-	Tools/complexMatrix.cpp Tools/RandomNumGen/dcmt_wrapper.cpp \
+	Tools/ErrorsHandling/parameter_errors.cpp \
+	Tools/RandomNumGen/dcmt_wrapper.cpp \
 	Tools/RandomNumGen/randNum_MT19937.cpp \
 	Tools/Timings/timings.cpp UpdatingAlg/HeatBath/heatbath.cpp \
 	UpdatingAlg/HeatBath/HBActions_SUN.cpp
@@ -240,11 +244,13 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	action_Nf2_DomainWall.$(OBJEXT) \
 	action_fermiontype_factory_creator.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
+	fields_io.$(OBJEXT) text_header.$(OBJEXT) \
+	binary_reader.$(OBJEXT) NERSC_reader.$(OBJEXT) \
+	ILDG_reader.$(OBJEXT) JLQCDLegacy_reader.$(OBJEXT) \
 	dirac_Operator_FactoryCreator.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) dirac.$(OBJEXT) \
 	dirac_WilsonLike.$(OBJEXT) dirac_staggeredLike.$(OBJEXT) \
 	dirac_wilson.$(OBJEXT) dirac_wilson_EvenOdd.$(OBJEXT) \
-	dirac_wilson_Brillouin.$(OBJEXT) \
 	dirac_staggered_EvenOdd.$(OBJEXT) \
 	dirac_staggered_EvenOdd_Adjoint.$(OBJEXT) \
 	dirac_clover.$(OBJEXT) dirac_Mobius.$(OBJEXT) \
@@ -253,7 +259,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_DomainWall.$(OBJEXT) $(am__objects_5) \
 	dirac_DomainWall_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
-	dirac_DomainWall_4D_eoSolv.$(OBJEXT) eoUtils.$(OBJEXT) \
+	dirac_DomainWall_4D_eoSolv.$(OBJEXT) \
+	dirac_wilson_Brillouin.$(OBJEXT) eoUtils.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) boundaryCond.$(OBJEXT) \
 	subSpaceProjector.$(OBJEXT) \
 	dirac_LowModeDeflation_ExactEigen.$(OBJEXT) \
@@ -284,12 +291,13 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	sunAdjMatUtils.$(OBJEXT) randNum.$(OBJEXT) \
 	randNum_MP.$(OBJEXT) randNum_Factory.$(OBJEXT) \
 	gammaMatrices.$(OBJEXT) sunAlgUtils.$(OBJEXT) \
-	alg_remez.$(OBJEXT) rationalapprox.$(OBJEXT) \
-	xml_errors.$(OBJEXT) allocation_errors.$(OBJEXT) \
-	base_errors.$(OBJEXT) io_errors.$(OBJEXT) \
-	convergence_errors.$(OBJEXT) complexMatrix.$(OBJEXT) \
-	$(am__objects_6) randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) \
-	heatbath.$(OBJEXT) HBActions_SUN.$(OBJEXT)
+	complexMatrix.$(OBJEXT) alg_remez.$(OBJEXT) \
+	rationalapprox.$(OBJEXT) xml_errors.$(OBJEXT) \
+	allocation_errors.$(OBJEXT) base_errors.$(OBJEXT) \
+	io_errors.$(OBJEXT) convergence_errors.$(OBJEXT) \
+	parameter_errors.$(OBJEXT) $(am__objects_6) \
+	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
+	HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
 am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
@@ -533,6 +541,12 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
                 Action/action_fermiontype_factory_creator.cpp\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
+		IO/fields_io.cpp			\
+		IO/text_header.cpp			\
+		IO/binary_reader.cpp			\
+		IO/NERSC_reader.cpp			\
+		IO/ILDG_reader.cpp			\
+		IO/JLQCDLegacy_reader.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\
@@ -540,7 +554,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
-		Dirac_ops/dirac_wilson_Brillouin.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
@@ -553,6 +566,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
+		Dirac_ops/dirac_wilson_Brillouin.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/boundaryCond.cpp      		\
@@ -616,6 +630,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
 		Tools/sunAlgUtils.cpp			\
+		Tools/complexMatrix.cpp		        \
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
@@ -623,7 +638,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/base_errors.cpp	\
 		Tools/ErrorsHandling/io_errors.cpp	\
 		Tools/ErrorsHandling/convergence_errors.cpp\
-		Tools/complexMatrix.cpp		        \
+		Tools/ErrorsHandling/parameter_errors.cpp\
 		$(DCMT_SRCS)				\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
@@ -710,7 +725,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
                         Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
-			Communicator/fields_io.hpp		\
+			IO/fields_io.hpp			\
 			Geometry/siteIndex.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
 			Geometry/siteMap.hpp			\
@@ -925,6 +940,9 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HBActions_SUN.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ILDG_reader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JLQCDLegacy_reader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NERSC_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_Nf2.Po@am__quote@
@@ -947,6 +965,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/allocation_errors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/baryonCorrelator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/base_errors.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/binary_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/boundaryCond.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/comm_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commandline.Po@am__quote@
@@ -984,6 +1003,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenSorter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eoUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fieldUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fields_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/findminmax.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fopr_signH_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gammaMatrices.Po@am__quote@
@@ -1006,6 +1026,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_leapfrog.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/measGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/multiShiftSolver_CG.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parameter_errors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/polyakovLoop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pugi_interface.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pugixml.Po@am__quote@
@@ -1039,6 +1060,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunAdjMatUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunAlgUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/sunMatUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/text_header.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/topologyGeom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
@@ -1409,6 +1431,90 @@ comm_io.obj: Communicator/comm_io.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o comm_io.obj `if test -f 'Communicator/comm_io.cpp'; then $(CYGPATH_W) 'Communicator/comm_io.cpp'; else $(CYGPATH_W) '$(srcdir)/Communicator/comm_io.cpp'; fi`
 
+fields_io.o: IO/fields_io.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fields_io.o -MD -MP -MF $(DEPDIR)/fields_io.Tpo -c -o fields_io.o `test -f 'IO/fields_io.cpp' || echo '$(srcdir)/'`IO/fields_io.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fields_io.Tpo $(DEPDIR)/fields_io.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/fields_io.cpp' object='fields_io.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o fields_io.o `test -f 'IO/fields_io.cpp' || echo '$(srcdir)/'`IO/fields_io.cpp
+
+fields_io.obj: IO/fields_io.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fields_io.obj -MD -MP -MF $(DEPDIR)/fields_io.Tpo -c -o fields_io.obj `if test -f 'IO/fields_io.cpp'; then $(CYGPATH_W) 'IO/fields_io.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/fields_io.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/fields_io.Tpo $(DEPDIR)/fields_io.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/fields_io.cpp' object='fields_io.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o fields_io.obj `if test -f 'IO/fields_io.cpp'; then $(CYGPATH_W) 'IO/fields_io.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/fields_io.cpp'; fi`
+
+text_header.o: IO/text_header.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT text_header.o -MD -MP -MF $(DEPDIR)/text_header.Tpo -c -o text_header.o `test -f 'IO/text_header.cpp' || echo '$(srcdir)/'`IO/text_header.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/text_header.Tpo $(DEPDIR)/text_header.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/text_header.cpp' object='text_header.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o text_header.o `test -f 'IO/text_header.cpp' || echo '$(srcdir)/'`IO/text_header.cpp
+
+text_header.obj: IO/text_header.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT text_header.obj -MD -MP -MF $(DEPDIR)/text_header.Tpo -c -o text_header.obj `if test -f 'IO/text_header.cpp'; then $(CYGPATH_W) 'IO/text_header.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/text_header.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/text_header.Tpo $(DEPDIR)/text_header.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/text_header.cpp' object='text_header.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o text_header.obj `if test -f 'IO/text_header.cpp'; then $(CYGPATH_W) 'IO/text_header.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/text_header.cpp'; fi`
+
+binary_reader.o: IO/binary_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT binary_reader.o -MD -MP -MF $(DEPDIR)/binary_reader.Tpo -c -o binary_reader.o `test -f 'IO/binary_reader.cpp' || echo '$(srcdir)/'`IO/binary_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/binary_reader.Tpo $(DEPDIR)/binary_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/binary_reader.cpp' object='binary_reader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o binary_reader.o `test -f 'IO/binary_reader.cpp' || echo '$(srcdir)/'`IO/binary_reader.cpp
+
+binary_reader.obj: IO/binary_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT binary_reader.obj -MD -MP -MF $(DEPDIR)/binary_reader.Tpo -c -o binary_reader.obj `if test -f 'IO/binary_reader.cpp'; then $(CYGPATH_W) 'IO/binary_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/binary_reader.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/binary_reader.Tpo $(DEPDIR)/binary_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/binary_reader.cpp' object='binary_reader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o binary_reader.obj `if test -f 'IO/binary_reader.cpp'; then $(CYGPATH_W) 'IO/binary_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/binary_reader.cpp'; fi`
+
+NERSC_reader.o: IO/NERSC_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NERSC_reader.o -MD -MP -MF $(DEPDIR)/NERSC_reader.Tpo -c -o NERSC_reader.o `test -f 'IO/NERSC_reader.cpp' || echo '$(srcdir)/'`IO/NERSC_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/NERSC_reader.Tpo $(DEPDIR)/NERSC_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/NERSC_reader.cpp' object='NERSC_reader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NERSC_reader.o `test -f 'IO/NERSC_reader.cpp' || echo '$(srcdir)/'`IO/NERSC_reader.cpp
+
+NERSC_reader.obj: IO/NERSC_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NERSC_reader.obj -MD -MP -MF $(DEPDIR)/NERSC_reader.Tpo -c -o NERSC_reader.obj `if test -f 'IO/NERSC_reader.cpp'; then $(CYGPATH_W) 'IO/NERSC_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/NERSC_reader.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/NERSC_reader.Tpo $(DEPDIR)/NERSC_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/NERSC_reader.cpp' object='NERSC_reader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o NERSC_reader.obj `if test -f 'IO/NERSC_reader.cpp'; then $(CYGPATH_W) 'IO/NERSC_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/NERSC_reader.cpp'; fi`
+
+ILDG_reader.o: IO/ILDG_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ILDG_reader.o -MD -MP -MF $(DEPDIR)/ILDG_reader.Tpo -c -o ILDG_reader.o `test -f 'IO/ILDG_reader.cpp' || echo '$(srcdir)/'`IO/ILDG_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ILDG_reader.Tpo $(DEPDIR)/ILDG_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/ILDG_reader.cpp' object='ILDG_reader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ILDG_reader.o `test -f 'IO/ILDG_reader.cpp' || echo '$(srcdir)/'`IO/ILDG_reader.cpp
+
+ILDG_reader.obj: IO/ILDG_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ILDG_reader.obj -MD -MP -MF $(DEPDIR)/ILDG_reader.Tpo -c -o ILDG_reader.obj `if test -f 'IO/ILDG_reader.cpp'; then $(CYGPATH_W) 'IO/ILDG_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/ILDG_reader.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ILDG_reader.Tpo $(DEPDIR)/ILDG_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/ILDG_reader.cpp' object='ILDG_reader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ILDG_reader.obj `if test -f 'IO/ILDG_reader.cpp'; then $(CYGPATH_W) 'IO/ILDG_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/ILDG_reader.cpp'; fi`
+
+JLQCDLegacy_reader.o: IO/JLQCDLegacy_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JLQCDLegacy_reader.o -MD -MP -MF $(DEPDIR)/JLQCDLegacy_reader.Tpo -c -o JLQCDLegacy_reader.o `test -f 'IO/JLQCDLegacy_reader.cpp' || echo '$(srcdir)/'`IO/JLQCDLegacy_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/JLQCDLegacy_reader.Tpo $(DEPDIR)/JLQCDLegacy_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/JLQCDLegacy_reader.cpp' object='JLQCDLegacy_reader.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JLQCDLegacy_reader.o `test -f 'IO/JLQCDLegacy_reader.cpp' || echo '$(srcdir)/'`IO/JLQCDLegacy_reader.cpp
+
+JLQCDLegacy_reader.obj: IO/JLQCDLegacy_reader.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JLQCDLegacy_reader.obj -MD -MP -MF $(DEPDIR)/JLQCDLegacy_reader.Tpo -c -o JLQCDLegacy_reader.obj `if test -f 'IO/JLQCDLegacy_reader.cpp'; then $(CYGPATH_W) 'IO/JLQCDLegacy_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/JLQCDLegacy_reader.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/JLQCDLegacy_reader.Tpo $(DEPDIR)/JLQCDLegacy_reader.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/JLQCDLegacy_reader.cpp' object='JLQCDLegacy_reader.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o JLQCDLegacy_reader.obj `if test -f 'IO/JLQCDLegacy_reader.cpp'; then $(CYGPATH_W) 'IO/JLQCDLegacy_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/JLQCDLegacy_reader.cpp'; fi`
+
 dirac_Operator_FactoryCreator.o: Dirac_ops/dirac_Operator_FactoryCreator.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_Operator_FactoryCreator.o -MD -MP -MF $(DEPDIR)/dirac_Operator_FactoryCreator.Tpo -c -o dirac_Operator_FactoryCreator.o `test -f 'Dirac_ops/dirac_Operator_FactoryCreator.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_Operator_FactoryCreator.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_Operator_FactoryCreator.Tpo $(DEPDIR)/dirac_Operator_FactoryCreator.Po
@@ -1506,20 +1612,6 @@ dirac_wilson_EvenOdd.obj: Dirac_ops/dirac_wilson_EvenOdd.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_EvenOdd.cpp' object='dirac_wilson_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_EvenOdd.obj `if test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_EvenOdd.cpp'; fi`
-
-dirac_wilson_Brillouin.o: Dirac_ops/dirac_wilson_Brillouin.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_Brillouin.o -MD -MP -MF $(DEPDIR)/dirac_wilson_Brillouin.Tpo -c -o dirac_wilson_Brillouin.o `test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_Brillouin.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_Brillouin.Tpo $(DEPDIR)/dirac_wilson_Brillouin.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_Brillouin.cpp' object='dirac_wilson_Brillouin.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin.o `test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_Brillouin.cpp
-
-dirac_wilson_Brillouin.obj: Dirac_ops/dirac_wilson_Brillouin.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_Brillouin.obj -MD -MP -MF $(DEPDIR)/dirac_wilson_Brillouin.Tpo -c -o dirac_wilson_Brillouin.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_Brillouin.Tpo $(DEPDIR)/dirac_wilson_Brillouin.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_Brillouin.cpp' object='dirac_wilson_Brillouin.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin.cpp'; fi`
 
 dirac_staggered_EvenOdd.o: Dirac_ops/dirac_staggered_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_staggered_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_staggered_EvenOdd.Tpo -c -o dirac_staggered_EvenOdd.o `test -f 'Dirac_ops/dirac_staggered_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_staggered_EvenOdd.cpp
@@ -1688,6 +1780,20 @@ dirac_DomainWall_4D_eoSolv.obj: Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp' object='dirac_DomainWall_4D_eoSolv.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_4D_eoSolv.obj `if test -f 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp'; fi`
+
+dirac_wilson_Brillouin.o: Dirac_ops/dirac_wilson_Brillouin.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_Brillouin.o -MD -MP -MF $(DEPDIR)/dirac_wilson_Brillouin.Tpo -c -o dirac_wilson_Brillouin.o `test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_Brillouin.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_Brillouin.Tpo $(DEPDIR)/dirac_wilson_Brillouin.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_Brillouin.cpp' object='dirac_wilson_Brillouin.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin.o `test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_Brillouin.cpp
+
+dirac_wilson_Brillouin.obj: Dirac_ops/dirac_wilson_Brillouin.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_Brillouin.obj -MD -MP -MF $(DEPDIR)/dirac_wilson_Brillouin.Tpo -c -o dirac_wilson_Brillouin.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_Brillouin.Tpo $(DEPDIR)/dirac_wilson_Brillouin.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_Brillouin.cpp' object='dirac_wilson_Brillouin.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin.cpp'; fi`
 
 eoUtils.o: Dirac_ops/eoUtils.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eoUtils.o -MD -MP -MF $(DEPDIR)/eoUtils.Tpo -c -o eoUtils.o `test -f 'Dirac_ops/eoUtils.cpp' || echo '$(srcdir)/'`Dirac_ops/eoUtils.cpp
@@ -2557,6 +2663,20 @@ sunAlgUtils.obj: Tools/sunAlgUtils.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o sunAlgUtils.obj `if test -f 'Tools/sunAlgUtils.cpp'; then $(CYGPATH_W) 'Tools/sunAlgUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/sunAlgUtils.cpp'; fi`
 
+complexMatrix.o: Tools/complexMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT complexMatrix.o -MD -MP -MF $(DEPDIR)/complexMatrix.Tpo -c -o complexMatrix.o `test -f 'Tools/complexMatrix.cpp' || echo '$(srcdir)/'`Tools/complexMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/complexMatrix.Tpo $(DEPDIR)/complexMatrix.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/complexMatrix.cpp' object='complexMatrix.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o complexMatrix.o `test -f 'Tools/complexMatrix.cpp' || echo '$(srcdir)/'`Tools/complexMatrix.cpp
+
+complexMatrix.obj: Tools/complexMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT complexMatrix.obj -MD -MP -MF $(DEPDIR)/complexMatrix.Tpo -c -o complexMatrix.obj `if test -f 'Tools/complexMatrix.cpp'; then $(CYGPATH_W) 'Tools/complexMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/complexMatrix.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/complexMatrix.Tpo $(DEPDIR)/complexMatrix.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/complexMatrix.cpp' object='complexMatrix.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o complexMatrix.obj `if test -f 'Tools/complexMatrix.cpp'; then $(CYGPATH_W) 'Tools/complexMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/complexMatrix.cpp'; fi`
+
 alg_remez.o: Tools/Remez/alg_remez.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT alg_remez.o -MD -MP -MF $(DEPDIR)/alg_remez.Tpo -c -o alg_remez.o `test -f 'Tools/Remez/alg_remez.cpp' || echo '$(srcdir)/'`Tools/Remez/alg_remez.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/alg_remez.Tpo $(DEPDIR)/alg_remez.Po
@@ -2655,19 +2775,19 @@ convergence_errors.obj: Tools/ErrorsHandling/convergence_errors.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o convergence_errors.obj `if test -f 'Tools/ErrorsHandling/convergence_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/convergence_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/convergence_errors.cpp'; fi`
 
-complexMatrix.o: Tools/complexMatrix.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT complexMatrix.o -MD -MP -MF $(DEPDIR)/complexMatrix.Tpo -c -o complexMatrix.o `test -f 'Tools/complexMatrix.cpp' || echo '$(srcdir)/'`Tools/complexMatrix.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/complexMatrix.Tpo $(DEPDIR)/complexMatrix.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/complexMatrix.cpp' object='complexMatrix.o' libtool=no @AMDEPBACKSLASH@
+parameter_errors.o: Tools/ErrorsHandling/parameter_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parameter_errors.o -MD -MP -MF $(DEPDIR)/parameter_errors.Tpo -c -o parameter_errors.o `test -f 'Tools/ErrorsHandling/parameter_errors.cpp' || echo '$(srcdir)/'`Tools/ErrorsHandling/parameter_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/parameter_errors.Tpo $(DEPDIR)/parameter_errors.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/parameter_errors.cpp' object='parameter_errors.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o complexMatrix.o `test -f 'Tools/complexMatrix.cpp' || echo '$(srcdir)/'`Tools/complexMatrix.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parameter_errors.o `test -f 'Tools/ErrorsHandling/parameter_errors.cpp' || echo '$(srcdir)/'`Tools/ErrorsHandling/parameter_errors.cpp
 
-complexMatrix.obj: Tools/complexMatrix.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT complexMatrix.obj -MD -MP -MF $(DEPDIR)/complexMatrix.Tpo -c -o complexMatrix.obj `if test -f 'Tools/complexMatrix.cpp'; then $(CYGPATH_W) 'Tools/complexMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/complexMatrix.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/complexMatrix.Tpo $(DEPDIR)/complexMatrix.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/complexMatrix.cpp' object='complexMatrix.obj' libtool=no @AMDEPBACKSLASH@
+parameter_errors.obj: Tools/ErrorsHandling/parameter_errors.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT parameter_errors.obj -MD -MP -MF $(DEPDIR)/parameter_errors.Tpo -c -o parameter_errors.obj `if test -f 'Tools/ErrorsHandling/parameter_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/parameter_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/parameter_errors.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/parameter_errors.Tpo $(DEPDIR)/parameter_errors.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/ErrorsHandling/parameter_errors.cpp' object='parameter_errors.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o complexMatrix.obj `if test -f 'Tools/complexMatrix.cpp'; then $(CYGPATH_W) 'Tools/complexMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/complexMatrix.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o parameter_errors.obj `if test -f 'Tools/ErrorsHandling/parameter_errors.cpp'; then $(CYGPATH_W) 'Tools/ErrorsHandling/parameter_errors.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/ErrorsHandling/parameter_errors.cpp'; fi`
 
 dcmt_wrapper.o: Tools/RandomNumGen/dcmt_wrapper.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dcmt_wrapper.o -MD -MP -MF $(DEPDIR)/dcmt_wrapper.Tpo -c -o dcmt_wrapper.o `test -f 'Tools/RandomNumGen/dcmt_wrapper.cpp' || echo '$(srcdir)/'`Tools/RandomNumGen/dcmt_wrapper.cpp

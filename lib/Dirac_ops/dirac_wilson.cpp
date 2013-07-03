@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2013-06-07 13:46:17 noaki>
+ * Time-stamp: <2013-07-04 03:24:06 noaki>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"

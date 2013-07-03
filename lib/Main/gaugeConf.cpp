@@ -8,8 +8,8 @@
 #include "gaugeConf.hpp"
 #include "include/field.h"
 #include "Communicator/communicator.hpp"
-#include "Communicator/fields_io.hpp"
 #include "Communicator/comm_io.hpp"
+#include "IO/fields_io.hpp"
 #include "Tools/sunMat.hpp"
 #include <vector>
 #include <valarray>
@@ -21,16 +21,39 @@ int GaugeConf::getid(int x,int y,int z,int t){
 }
 
 void GaugeConf_bin::init_conf(Field& u){
-  CCIO::cout << "Init from binary file\n";
+  CCIO::cout << "Init from binary file (ILDG format - default)\n";
   CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str());
 }
 
 void GaugeConf_JLQCDLegacy::init_conf(Field& u){
-  CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str(),
-					 FORTRAN_CONTROL_WORDS, 
-					 CCIO::JLQCDLegacyFormat);
+  using namespace CCIO;
+  CCIO::cout << "Init from binary file (JLQCD Legacy format)\n";
+  ReadFromDisk< Format::Format_G >(u,file_.c_str(),
+				   FORTRAN_CONTROL_WORDS, 
+				   "JLQCDLegacy");
 }
 
+void GaugeConf_NERSC::init_conf(Field& u){
+  using namespace CCIO;
+  CCIO::cout << "Init from binary file (NERSC format)\n";
+  ReadFromDisk< Format::Format_G >(u,file_.c_str(),
+				   0, 
+				   "NERSC");
+  
+}
+
+void GaugeConf_ILDG::init_conf(Field& u){
+  using namespace CCIO;
+  CCIO::cout << "Init from ILDG file (ILDG format)\n";
+  ReadFromDisk< Format::Format_G >(u,file_.c_str(),
+				   0, 
+				   "ILDG");
+  
+}
+
+
+
+// this function exists already in byteswap.cpp
 double GaugeConf_csdt::conv_endian(double vald){
   unsigned char val[8];
   unsigned char valr[8];

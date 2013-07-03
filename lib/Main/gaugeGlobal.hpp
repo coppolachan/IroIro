@@ -2,7 +2,7 @@
  * @file gaugeGlobal.hpp
  * @brief definition of the GaugeGlobal class
  *
- * Time-stamp: <2013-04-26 17:02:23 neo>
+ * Time-stamp: <2013-06-05 10:11:03 neo>
  */
 #ifndef GAUGEGLOBAL_INCLUDED
 #define GAUGEGLOBAL_INCLUDED
@@ -29,6 +29,10 @@ public:
   void initializeCSDTbin(const std::string &Filename);
   /*! Intialization with "JLQCDlegacy" */
   void initializeJLQCDlegacy(const std::string &Filename);
+  /*! Intialization with "NERSC" */
+  void initializeNERSC(const std::string &Filename);
+ /*! Intialization with "NERSC" */
+  void initializeILDG(const std::string &Filename);
   
   int initialize(XML::node node);
   int initialize(XML::node node,std::string filename);

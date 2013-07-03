@@ -14,6 +14,8 @@
 #ifndef COMMON_CODE_HPP_
 #define COMMON_CODE_HPP_
 
+#include "include/iroiro_config.h"
+
 //Fields and common parameters
 #include "include/common_fields.hpp"
 #include "include/commonPrms.hpp"
@@ -22,7 +24,9 @@
 //Communicator headers
 #include "Communicator/communicator.hpp"
 #include "Communicator/comm_io.hpp"
-#include "Communicator/fields_io.hpp"
+
+//IO headers
+#include "IO/fields_io.hpp"
 
 //XML interface
 #include "include/pugi_interface.h"

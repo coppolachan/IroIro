@@ -9,6 +9,10 @@
  * @brief Tool to trasform an array of doubles from big-endian to little-endian format
  */
 
+typedef unsigned int uint32_t;
+
+
+
 inline void byte_swap_double(void *ptr, size_t nmemb)
 {
   unsigned int j;
@@ -52,3 +56,32 @@ inline void byte_swap_double(void *ptr, size_t nmemb)
   }
 }
 
+inline void byte_swap_float(void *ptr, size_t nmemb)
+{
+  union {
+    uint32_t uint_wrd;
+    char c[sizeof(uint32_t)];
+  } wrd;
+  register char chr;
+  int s;
+  uint32_t* _u = (uint32_t*) ptr;
+  for (s=0;s<nmemb;s++) {
+    wrd.uint_wrd = _u[s];
+    chr = wrd.c[0];
+    wrd.c[0] = wrd.c[3];
+    wrd.c[3] = chr;
+    chr = wrd.c[2];
+    wrd.c[2] = wrd.c[1];
+    wrd.c[1] = chr;
+    _u[s] = wrd.uint_wrd;
+  }
+}
+
+//Defines overloaded function
+inline void byte_swap(double *ptr, size_t nmemb){
+  byte_swap_double(ptr, nmemb);
+}
+
+inline void byte_swap(float *ptr, size_t nmemb){
+  byte_swap_float(ptr, nmemb);
+}

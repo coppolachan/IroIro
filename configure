@@ -3066,7 +3066,10 @@ ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value
 bluegeneq=false   # default value
-BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib/
+BLUEGENE_INCLUDE=/bghome/scbadm/ibm-doi/lib
+BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib
+#BLUEGENE_LIBS=/usr/local/bg/lib
+#BLUEGENE_INCLUDE=/usr/local/bg/include
 #####################################################################
 # identify architecture
 echo           Checking architecture
@@ -3215,6 +3218,7 @@ fi
 
 
 
+
 ######################################################################
 # many HPC systems are configured so that running parallel programs
 # interactively is disabled: on those systems, AC_PROG_F77 and AC_PROG_CC
@@ -3238,7 +3242,8 @@ ia64 | amd64 | ia32 )
      # list of tested compilers
       use_cpp="g++ icpc";
     fi
-    use_cpp_flags="-O3 -fopenmp"
+    use_cpp_flags="-O3 -fopenmp -I${HOME}/lime/include"
+    ld_flags="${LDFLAGS} -L${HOME}/lime/lib"
     use_ar_flags="cru"
     ;;
 macppc | macx86 | mac86_64 )
@@ -3250,8 +3255,8 @@ macppc | macx86 | mac86_64 )
      # list of tested compilers
       use_cpp="icpc g++";
     fi
-    use_cpp_flags="-O3 -I/opt/local/include"
-    ld_flags="${LDFLAGS} -L/opt/local/lib"
+    use_cpp_flags="-O3 -I/opt/local/include -I${HOME}/lime/include"
+    ld_flags="${LDFLAGS} -L/opt/local/lib -L${HOME}/lime/lib"
     use_ar_flags="cru"
     ;;
 aix )
@@ -3262,8 +3267,8 @@ aix )
      { $as_echo "$as_me:${as_lineno-$LINENO}: forcing cross compilation on AIX" >&5
 $as_echo "$as_me: forcing cross compilation on AIX" >&6;}
      use_cpp="mpCC";
-     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type  -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
-     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib"
+     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type  -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
+     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib"
      use_ar_flags="-X64 -c -ru"
 
 $as_echo "#define BIG_ENDIAN_TYPE /**/" >>confdefs.h
@@ -3282,8 +3287,8 @@ $as_echo "$as_me: forcing cross compilation on BG/Q" >&6;}
      else
 	use_cpp="bgxlC";
      fi
-     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -q64 -qarch=qp -qtune=qp -I/bghome/scbadm/ibm-doi/lib -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -qflag=i:s"
-     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib"
+     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -q64 -qarch=qp -qtune=qp -I${BLUEGENE_INCLUDE} -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
+     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib"
      use_ar_flags="cru"
 
 $as_echo "#define BIG_ENDIAN_TYPE /**/" >>confdefs.h
@@ -4734,6 +4739,7 @@ Please install or provide the correct path to your installation
 Info at: http://www.gmplib.org" "$LINENO" 5
 fi
 
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for mpfr_init in -lmpfr" >&5
 $as_echo_n "checking for mpfr_init in -lmpfr... " >&6; }
 if ${ac_cv_lib_mpfr_mpfr_init+:} false; then :
@@ -4781,6 +4787,56 @@ else
   as_fn_error $? "GNU Multiple Precision MPFR library was not found in your system.
 Please install or provide the correct path to your installation
 Info at: http://www.mpfr.org/" "$LINENO" 5
+fi
+
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for limeCreateReader in -llime" >&5
+$as_echo_n "checking for limeCreateReader in -llime... " >&6; }
+if ${ac_cv_lib_lime_limeCreateReader+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-llime  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char limeCreateReader ();
+int
+main ()
+{
+return limeCreateReader ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_lime_limeCreateReader=yes
+else
+  ac_cv_lib_lime_limeCreateReader=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_lime_limeCreateReader" >&5
+$as_echo "$ac_cv_lib_lime_limeCreateReader" >&6; }
+if test "x$ac_cv_lib_lime_limeCreateReader" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBLIME 1
+_ACEOF
+
+  LIBS="-llime $LIBS"
+
+else
+  as_fn_error $? "C-LIME library was not found in your system.
+Please install or provide the correct path to your installation default search path ~/lime/
+Info at: http://usqcd.jlab.org/usqcd-docs/c-lime/" "$LINENO" 5
 fi
 
 

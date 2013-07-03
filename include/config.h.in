@@ -40,6 +40,9 @@
 /* Define to 1 if you have the `gslcblas' library (-lgslcblas). */
 #undef HAVE_LIBGSLCBLAS
 
+/* Define to 1 if you have the `lime' library (-llime). */
+#undef HAVE_LIBLIME
+
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 

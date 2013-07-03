@@ -3,7 +3,7 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>8 8 8 8</Lattice>
+    <Lattice>16 16 16 16</Lattice>
     <Nodes>1 1 1 1</Nodes>
 
   </Geometry>

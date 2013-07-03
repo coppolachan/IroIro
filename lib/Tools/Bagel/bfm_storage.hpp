@@ -28,10 +28,11 @@
 
 class BFM_Storage {
   int Nx_, Ny_, Nz_, Nt_;
+  int Nvol_;
   GaugeField1D U_dag;
   bfm_dp& bfm_obj_;
 
-  FermionField BasisConversion(FermionField& F,int Conversion); 
+  void BasisConversion(FermionField& F_out, FermionField& F,int Conversion,int cb, int s); 
   BFM_Storage(); //Hide default Constructor
 public:
   BFM_Storage(bfm_dp&); //The allowed constructor
@@ -42,6 +43,9 @@ public:
 
   void FermionExport_to_BFM(FermionField& F, Fermion_t handle, int cb);
   void FermionImport_from_BFM(FermionField& F, Fermion_t handle, int cb);
+
+  void FermionExport_to_BFM_5D(FermionField& F, Fermion_t handle, int cb, int s);
+  void FermionImport_from_BFM_5D(FermionField& F, Fermion_t handle, int cb, int s);
 
 
 };

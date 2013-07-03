@@ -1,65 +1,34 @@
 /*! 
  * @file fields_io.hpp 
  *
- * @brief Definition of MPI safe read/write routines for fields
+ * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-04-25 16:22:23 neo>
+ * Time-stamp: <2013-06-05 10:28:13 neo>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
 
+#include "include/config.h"
 #include "include/field.h"
 #include "include/messages_macros.hpp"
 #include "include/errors.hpp"
+#include "generic_header.hpp"
 #include "Geometry/siteIndex.hpp"
 #include "Tools/byteswap.hpp"
 #include <stdio.h>
+#include <string.h>
+
+#include "general_reader.hpp"
+#include "binary_reader.hpp"
+#include "NERSC_reader.hpp"
+#include "JLQCDLegacy_reader.hpp"
+#include "ILDG_reader.hpp"
+
 
 #define CCIO_FILE_APPEND_MODE true
 #define FORTRAN_CONTROL_WORDS 4  //number of fortran bytes for control
 
-///////////////////////////////////////////////////////////////////
 namespace CCIO {
-  // definitions of storage format
-  typedef int (*StorageFormat)(int, int, int, 
-			       int, int, int);
-  
-  inline int ILDGBinFormat(int gsite,int in,int ex,
-			   int tot_vol,int tot_in,int tot_ex){
-    return in +tot_in*(ex+ tot_ex*gsite);
-  }
-  
-  inline int JLQCDLegacyFormat(int gsite,int in,int ex,
-			       int tot_vol,int tot_in,int tot_ex){
-    return in +tot_in*(gsite+ tot_vol*ex);
-  }
-  
-  // reading function for corresponding format
-  inline void ReadILDGBFormat(double* buffer,FILE *inputFile,
-			      int block_size,
-			      int tot_vol,int tot_in,int tot_ex){
-    //Read just as it is
-    //order is (in, ex, sites)  
-    size_t res = fread(buffer,sizeof(double),block_size,inputFile);}
-
-  inline void ReadJLQCDLegacyFormat(double* buffer,FILE *inputFile,
-				    int block_size,
-				    int tot_vol,int tot_in,int tot_ex){
-    //order is (in, sites, ex)
-    //Read #tot_ex blocks
-    int chunk = block_size/tot_ex;
-    fpos_t pos;
-    fgetpos(inputFile, &pos);
-    for(int ext=0; ext<tot_ex; ++ext){
-      //reads the ex blocks
-      size_t res = fread((buffer+ext*chunk), sizeof(double), chunk, inputFile);
-      fseek(inputFile, sizeof(double)*tot_vol*tot_in , SEEK_CUR);
-    }
-    fsetpos(inputFile, &pos);
-    fseek(inputFile, sizeof(double)*chunk, SEEK_CUR);
-  }
-  ////////////////////////////////////////////////////////////////////
-
   /*!
    * @brief Saves a Field on the disk 
    * @param append_mode Used to write several fields in the same file (default = off)
@@ -119,7 +88,7 @@ namespace CCIO {
 			for (int in =0; in < fmt.Nin(); ++in) {
 			  //Breaks universality
 			  local_idx = in +fmt.Nin()*(x_idx + block_x.size()*ex);
-			  global_idx = in +fmt.Nin()*(ex+ fmt.Nex()*x_idx);//ILDG
+			  global_idx = in +fmt.Nin()*(ex+ fmt.Nex()*x_idx);//ILDG default
 			  copy[global_idx] = local[local_idx];
 			}
 		      }
@@ -154,17 +123,21 @@ namespace CCIO {
     return result;
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////
   /*!
    * @brief Reads a Field from the disk 
    * @param storeFormat Function pointer to the storing format (ILDG / JLQCD legacy)
    * @param offset Starting point in file reading (byte offset)
    */
   template <typename T>
-  int ReadFromDisk(Field& f,const char* filename,int offset = 0, 
-		   StorageFormat storeFormat = ILDGBinFormat){
+  int ReadFromDisk(Field& f,
+		   const char* filename,
+		   const int offset = 0, 
+		   const std::string readerID = "Binary"){
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");
+    GeneralReader* reader;
     T fmt(cmprms->Nvol());
     size_t local_idx, global_idx;
     int num_nodes, total_vol, local_vol;
@@ -178,6 +151,17 @@ namespace CCIO {
     varray_double copy(fmt.Nin()*block_x.size()*fmt.Nex());
     varray_double local(fmt.Nin()*block_x.size()*fmt.Nex());
     
+    
+    //eventually move this into a separate function (GetReader factory);
+    if (readerID.compare("Binary")==0)
+      reader = new BinaryReader(total_vol, fmt.Nin(), fmt.Nex());
+    if (readerID.compare("NERSC")==0)
+      reader = new NERSCReader(total_vol, fmt.Nin(), fmt.Nex());
+    if (readerID.compare("JLQCDLegacy")==0)
+      reader = new JLQCDLegacyReader(total_vol, fmt.Nin(), fmt.Nex());
+    if (readerID.compare("ILDG")==0)
+      reader = new ILDGReader(total_vol, fmt.Nin(), fmt.Nex());
+
     // Open the output file
     FILE * inFile;
     if(comm->primaryNode()){
@@ -186,11 +170,14 @@ namespace CCIO {
       if (inFile == NULL)
 	Errors::IOErr(Errors::FileNotFound, filename);
 
-      std::cout << "Reading (binary mode) "<<f.size()*comm->size()*sizeof(double)
+      std::cout << "Reading "<<f.size()*comm->size()*sizeof(double)
 		<<" bytes from "<< filename << " with offset "<< offset <<"... ";
       fseek(inFile, offset, SEEK_SET);
-    }
     
+      reader->set_sources(inFile);
+      reader->header();
+
+    }
     //Loop among nodes (master node)   
     for(int node_t = 0; node_t < cmprms->NPEt(); ++node_t){
       for(int t_slice = 0; t_slice < cmprms->Nt(); ++t_slice){
@@ -208,22 +195,14 @@ namespace CCIO {
 		  //Read from file sequentially
 		  if(comm->primaryNode()){
 		    if(inFile!=NULL){
-		      if(storeFormat == ILDGBinFormat) 
-			ReadILDGBFormat((double*)&copy[0],inFile,
-					copy.size(),total_vol,
-					fmt.Nin(),fmt.Nex());
-		      if(storeFormat == JLQCDLegacyFormat) 
-			ReadJLQCDLegacyFormat((double*)&copy[0],inFile,
-					      copy.size(),total_vol,
-					      fmt.Nin(),fmt.Nex());
+		      reader->read((double*)&copy[0],copy.size());
 		    }
 		    for(int x_idx = 0; x_idx < block_x.size(); ++x_idx){
 		      for(int ex =0; ex < fmt.Nex(); ++ex){	      
 			for(int in =0; in < fmt.Nin(); ++in){
-			  //Breaks universality
+			  //Breaks universality (check this)
 			  local_idx = in +fmt.Nin()*(x_idx +block_x.size()*ex);
-			  global_idx = storeFormat(x_idx,in,ex,block_x.size(),
-						   fmt.Nin(),fmt.Nex());
+			  global_idx = reader->format(x_idx, in, ex);
 			  local[local_idx] = copy[global_idx];
 			}
 		      }
@@ -251,10 +230,12 @@ namespace CCIO {
     if(comm->primaryNode()){
       fclose(inFile);
       std::cout << "done\n";
+
     }
+    reader->check(f);
     return 0;
   }
-  
+
   template <typename T>
   int ReadFromDisk(std::vector<Field>& f, const char* filename, int num_objects) {
     //this functions should be heavily modified

@@ -2,7 +2,7 @@
  * @file gaugeGlobal.cpp
  * @brief Declaration of the GaugeGlobal class
  *
- * Time-stamp: <2013-04-26 17:06:11 neo>
+ * Time-stamp: <2013-06-05 10:16:10 neo>
  */
 
 #include "gaugeGlobal.hpp"
@@ -39,6 +39,17 @@ void GaugeGlobal::initializeJLQCDlegacy(const std::string &Filename) {
   gconf.init_conf(data);
 }
 
+void GaugeGlobal::initializeNERSC(const std::string &Filename) {
+  GaugeConf_NERSC gconf(format,Filename);
+  gconf.init_conf(data);
+}
+
+void GaugeGlobal::initializeILDG(const std::string &Filename) {
+  GaugeConf_ILDG gconf(format,Filename);
+  gconf.init_conf(data);
+}
+
+
 int GaugeGlobal::initialize(XML::node node){
   try{
     XML::descend(node, "Configuration");
@@ -66,6 +77,17 @@ int GaugeGlobal::initialize(XML::node node){
       initializeJLQCDlegacy(filename);
       return 0;
     }
+    if(!XML::attribute_compare(node,"Type","NERSC")){
+      std::string filename(node.child_value());
+      initializeNERSC(filename);
+      return 0;
+    }
+    if(!XML::attribute_compare(node,"Type","ILDG")){
+      std::string filename(node.child_value());
+      initializeILDG(filename);
+      return 0;
+    }
+
     Errors::XMLerr("Configuration type unknown");
   }catch(...) {
     Errors::XMLerr("Error in initialization of gauge field ");
@@ -93,6 +115,15 @@ int GaugeGlobal::initialize(XML::node node,std::string filename){
       initializeJLQCDlegacy(filename);
       return 0;
     }
+    if(!XML::attribute_compare(node,"Type","NERSC")){
+      initializeNERSC(filename);
+      return 0;
+    }
+    if(!XML::attribute_compare(node,"Type","ILDG")){
+      initializeILDG(filename);
+      return 0;
+    }
+
     std::cout << "Configuration type unknown\n";
     exit(1);
   }catch(...) {

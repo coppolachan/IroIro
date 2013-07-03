@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-04-26 16:09:08 cossu>
+ * Time-stamp: <2013-06-13 16:01:05 cossu>
  *
  */
 
@@ -12,7 +12,9 @@
 #include "Communicator/comm_io.hpp"
 
 #include "bgnet.h"
+#include "bgqthread.h"
 #include <omp.h>
+
 
 int Communicator::my_rank_;
 int Communicator::Nproc_;
@@ -107,6 +109,66 @@ transfer_fw(double *bin,double *data,int size,int dir) const{
   
 }
 
+
+void Communicator::
+transfer_fw_async(double *bin,double *data,unsigned int size,int dir) const{
+  int p_recv = nd_up_[dir];
+  // data is the source pointer 
+  // we will have 8 buffers identified by their dir
+  int sendID = dir + 1;//in the bw direction shift by 4
+  int recvID = dir + 5; 
+  uint64_t send_offset = 0;
+  uint64_t recv_offset = 0;
+  uint64_t size_byte = size*sizeof(double);
+  int rcounterID = sendID;
+  int nid = omp_get_num_threads();
+  int threadID = omp_get_thread_num();
+
+  // prepare the ids for the async comm
+  if (threadID == 0){
+    BGNET_SetSendBuffer(data,sendID ,size_byte);
+    BGNET_SetRecvBuffer(bin, recvID, size_byte);
+
+  //syncronize after initialization
+    BGNET_GlobalBarrier();
+  }
+  BGQThread_Barrier(0,nid);
+
+  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,threadID,recvID,recv_offset,rcounterID);
+ 
+}
+
+void Communicator::
+transfer_bk_async(double *bin,double *data,unsigned int size,int dir) const{
+  int p_recv = nd_dn_[dir];
+  // data is the source pointer 
+  // we will have 8 buffers identified by their dir
+  int sendID = dir + 5;
+  int recvID = dir + 1; 
+  uint64_t send_offset = 0;
+  uint64_t recv_offset = 0;
+  uint64_t size_byte = size*sizeof(double);
+  int rcounterID = sendID;
+  int nid = omp_get_num_threads();
+  int threadID = omp_get_thread_num();
+
+  // prepare the ids for the async comm
+  BGNET_SetSendBuffer(data,sendID ,size_byte);
+  BGNET_SetRecvBuffer(bin, recvID, size_byte);
+
+  //syncronize after initialization
+  if (threadID == 0)
+    BGNET_GlobalBarrier();
+  BGQThread_Barrier(0,nid);
+    
+  BGNET_Put(sendID,sendID, send_offset, size_byte, p_recv,threadID,recvID,recv_offset,rcounterID);
+}
+
+
+void Communicator::wait_async(int gid, int id, unsigned int size) const{
+  BGNET_WaitForRecv(gid, id, size);
+}
+
 void Communicator::
 transfer_fw(varray_double& bin,const varray_double& data,int dir) const{
   transfer_fw(&bin[0],&(const_cast<varray_double& >(data))[0],
@@ -150,12 +212,12 @@ void Communicator::
 transfer_bk(double *bin,double *data,int size,int dir) const{
   int p_send = nd_up_[dir];
   int p_recv = nd_dn_[dir];
-  int Ndim = CommonPrms::instance()->Ndim();
-  int tag1 = (Ndim +dir)*Nproc_+my_rank_;
-  int tag2 = (Ndim +dir)*Nproc_+p_recv;
 
   BGNET_Sendrecv(0,data,size*sizeof(double),p_send,bin,size*sizeof(double),p_recv);
 }
+
+
+
 
 void Communicator::
 transfer_bk(varray_double& bin,const varray_double& data,int dir) const{

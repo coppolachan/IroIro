@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-07-03 13:42:22 noaki>
+# Time-stamp: <2013-07-04 03:26:29 noaki>
 
 ###########################################
 # Initial definitions 
@@ -110,6 +110,12 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
                 Action/action_fermiontype_factory_creator.cpp\
 		Action/action_fermiontype_factory.cpp	\
 		Communicator/comm_io.cpp		\
+		IO/fields_io.cpp			\
+		IO/text_header.cpp			\
+		IO/binary_reader.cpp			\
+		IO/NERSC_reader.cpp			\
+		IO/ILDG_reader.cpp			\
+		IO/JLQCDLegacy_reader.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\
@@ -117,7 +123,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
-		Dirac_ops/dirac_wilson_Brillouin.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
@@ -130,6 +135,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
+		Dirac_ops/dirac_wilson_Brillouin.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/boundaryCond.cpp      		\
@@ -193,6 +199,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/randNum_Factory.cpp		\
 		Tools/gammaMatrices.cpp			\
 		Tools/sunAlgUtils.cpp			\
+		Tools/complexMatrix.cpp		        \
 		Tools/Remez/alg_remez.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
@@ -200,12 +207,13 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/base_errors.cpp	\
 		Tools/ErrorsHandling/io_errors.cpp	\
 		Tools/ErrorsHandling/convergence_errors.cpp\
-		Tools/complexMatrix.cpp		        \
+		Tools/ErrorsHandling/parameter_errors.cpp\
 		$(DCMT_SRCS)				\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
+
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)
@@ -288,7 +296,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
                         Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
-			Communicator/fields_io.hpp		\
+			IO/fields_io.hpp			\
 			Geometry/siteIndex.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
 			Geometry/siteMap.hpp			\
