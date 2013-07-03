@@ -6,9 +6,9 @@
 #define TEST_CLOVER_INCLUDED
 
 #include "include/iroiro_code.hpp"
-#include "tests.hpp"
+#include "tests/tests.hpp"
 
-class Test_Clover : public TestGeneral{
+class Test_Clover {
 private:
   const char* test_name;
   XML::node clover_node_;

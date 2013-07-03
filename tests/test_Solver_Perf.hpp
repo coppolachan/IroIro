@@ -10,7 +10,7 @@
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
-class Test_Solver_Performance: public TestGeneral{
+class Test_Solver_Performance{
 private:
   const char* test_name;
   XML::node DWFnode;
@@ -18,7 +18,7 @@ private:
 
 public:
   Test_Solver_Performance(XML::node node,GaugeField conf):DWFnode(node),
-							      conf_(conf){
+							  conf_(conf){
     test_name = "Test_Performance";
     XML::descend(DWFnode, test_name, MANDATORY);
   }

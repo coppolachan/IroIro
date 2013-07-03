@@ -5,17 +5,11 @@
 #define TEST_POLYAKOVLOOP_INCLUDED
 
 #include "include/iroiro_code.hpp"
-#include "Communicator/comm_io.hpp"
-
+#include "tests/tests.hpp"
 class Test_PolyakovLoop{
- private:
-  XML::node node_;
-  GaugeField conf_;
-  std::string output_;
+  const Measurements::Input input_;
  public:
-  Test_PolyakovLoop(XML::node node,const GaugeField& conf,
-		    const RandNum&, std::string file)
-    :node_(node),conf_(conf),output_(file){
+  Test_PolyakovLoop(const Measurements::Input& input):input_(input){
     CCIO::cout<<"Test_PolyakovLoop called"<<std::endl;
   }
   int run();

@@ -8,8 +8,7 @@
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
-class Test_QpropMom: public TestGeneral{
-private:
+class Test_QpropMom{
   const char* test_name;
   XML::node node_;
   GaugeField conf_;

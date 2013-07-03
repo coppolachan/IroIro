@@ -8,8 +8,7 @@
 #include "include/iroiro_code.hpp"
 #include "tests.hpp"
 
-class Test_Wilson_EvenOdd : public TestGeneral{
-private:
+class Test_Wilson_EvenOdd{
   const char* test_name;
   XML::node Wilson_EO_node_;
   GaugeField conf_;

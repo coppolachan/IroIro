@@ -17,15 +17,11 @@ void QpropDWF::calc(prop_t& xq,Source& src) const{
 }
 
 //for testing purposes
-void QpropDWF::calc(prop_t& xq,
-		    Source& src,
-		    int dirac_index,
-		    int color) const{
+void QpropDWF::calc(prop_t& xq,Source& src,int dirac_index,int color) const{
   xq.clear();
   CCIO::cout << "Dirac = " << dirac_index 
 	     <<" Color = " << color << std::endl;
   xq.push_back(Dgw_.mult_inv(src.mksrc(dirac_index,color)));
-
 }
 
 void QpropDWF::calc(prop_t& xq,const prop_t& prp)const{

@@ -8,12 +8,14 @@
 
   </Geometry>
   <!-- Input configuration -->
-  <Configuration Type="Unit">conf_08080808.txt</Configuration> 
+  <!-- Input configuration -->
+  <Configuration Type="TextFile">conf_08080808.txt</Configuration> 
 
   <TestWilson>
     <QuarkPropagator name="Qprop">
      <Kernel name="DiracWilson">
        <mass>0.1666666666666666666</mass>
+<!--       <mass>-3.925</mass>-->
      </Kernel> 
      <Solver type="Solver_BiCGStab">
        <MaxIter>1000</MaxIter>
@@ -22,4 +24,5 @@
     </QuarkPropagator>
   </TestWilson>
 </Parameters>
+
 

@@ -1,7 +1,7 @@
 /*!
  * @file qprop_DomainWall.hpp
  * @brief Definition of Qprop optimal domain wall fermions QpropDWF
- Time-stamp: <2013-05-02 13:16:11 noaki>
+ Time-stamp: <2013-06-06 18:33:27 noaki>
  */
 #ifndef QPROP_OPTIMALDOMAINWALL_INCLUDED
 #define QPROP_OPTIMALDOMAINWALL_INCLUDED

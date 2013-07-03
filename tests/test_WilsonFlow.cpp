@@ -9,8 +9,9 @@
 using namespace std;
 
 int Test_WilsonFlow::run(){
-  XML::descend(node_,"WilsonFlow");               // object creation
-  WilsonFlow wflow(node_,conf_);
+  XML::node wnode = input_.node;
+  XML::descend(wnode,"WilsonFlow");               // object creation
+  WilsonFlow wflow(wnode,*(input_.gconf));
   int Nvol=CommonPrms::instance()->Nvol();
   vector<double> q(Nvol);                            // topology density
 
@@ -29,7 +30,7 @@ int Test_WilsonFlow::run(){
     if(!((t+1)%Mstep)){
       CCIO::cout<<"Monitor at t="<<t+1<<"\n";
       monitor(wflow.getU(),q);                      // topology monitor
-      topologyoutput(output_,t+1,q);                // saving topology density
+      topologyoutput(input_.output,t+1,q);          // saving topology density
       /*
       std::stringstream ofile_tmp;
       ofile_tmp << output_.c_str() <<"_cooledconf_at_t" << t+1;
@@ -39,9 +40,9 @@ int Test_WilsonFlow::run(){
   }
 
   ////// File Output //////
-  wflow.save_config(output_.c_str());    // saving evolved config (if required)
+  wflow.save_config(input_.output.c_str());    // saving evolved config (if required)
   std::stringstream ofile;
-  ofile << output_.c_str() <<"_ttE";     // output of ttE
+  ofile << input_.output.c_str() <<"_ttE";     // output of ttE
 
   CCIO::cout << " ---- Output in "<< ofile.str()<<"\n";
   if(Communicator::instance()->primaryNode()){
@@ -89,10 +90,10 @@ void Test_WilsonFlow::monitor(const GaugeField& U, vector<double>& q)const{
   CCIO::cout<<"   sp_admissible - sp_ave = "<<sp_adm-sp_ave <<"\n";
 }
 
-void Test_WilsonFlow::topologyoutput(string& fname, int t, vector<double>& q)const{
+void Test_WilsonFlow::topologyoutput(const string& fname,int t,vector<double>& q)const{
 
   int Lvol = CommonPrms::instance()->Lvol();
-  int Nvol=CommonPrms::instance()->Nvol();
+  int Nvol = CommonPrms::instance()->Nvol();
 
   // gathering topology density
   std::vector<double> q_tmp(Lvol,0.0);

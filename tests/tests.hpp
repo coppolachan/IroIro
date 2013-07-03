@@ -11,11 +11,6 @@
 #include "lib/Measurements/measGeneral.hpp"
 #include "lib/Tools/jobUtils.hpp"
 
-class TestGeneral {
-public:
-  virtual int run() = 0;
-};
-
 namespace TestEnv{
 
   template <class TestClass>
@@ -41,6 +36,7 @@ namespace TestEnv{
     return TestClass(top_node, GaugeF);
   }
 
+  /* For carrying out general measurements*/
   template <class TestClass>
   int StartRun(int argc, char* argv[]){
     CommandOptions Options = ReadCmdLine(argc, argv);

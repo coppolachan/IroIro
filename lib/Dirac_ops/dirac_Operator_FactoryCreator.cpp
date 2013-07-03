@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-05-23 11:14:10 noaki>
+ * Time-stamp: <2013-07-03 16:01:50 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 
@@ -26,11 +26,21 @@ namespace Diracs {
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
       return new DiracDomainWall5dFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
-      return new DiracDomainWall5dEvenOddFactory(node);
+      return new DiracEvenOdd_DWF5dFactory(node);
+    /*
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
       return new DiracDWF4DfullFactory(node);
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_LUprecond"))  
+      return new DiracDWF4DfullFactory(node,LUprecond);
+    */
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
       return new DiracDWF4DeoFactory(node);
+    if(!strcmp(Dirac_name, "DiracDWoverlap"))  
+      return new DiracDWoverlapFactory(node);
+    if(!strcmp(Dirac_name, "DiracDeflation_ExactEigen"))  
+      return new DiracDeflationExactFactory(node);
+    if(!strcmp(Dirac_name, "DiracDeflation_ApproxSubspace"))  
+      return new DiracDeflationApproxFactory(node);
     stopMsg(node);
   }
 
@@ -47,9 +57,12 @@ namespace Diracs {
   DiracDWF4dFactory* createDiracDWF4dFactory(const XML::node& node){
     nullCheck(node);
     const char* Dirac_name = node.attribute("name").value();
-
+    /*
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
       return new DiracDWF4DfullFactory(node);
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_LUprecond"))  
+      return new DiracDWF4DfullFactory(node,LUprecond);
+    */
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
       return new DiracDWF4DeoFactory(node);
     stopMsg(node);
@@ -64,10 +77,11 @@ namespace Diracs {
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
       return new DiracDomainWall5dFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
-      return new DiracDomainWall5dEvenOddFactory(node);
+      return new DiracEvenOdd_DWF5dFactory(node);
     stopMsg(node);      
   }
 
+  /*
   // This is for the Dirac-op creation beyond the WilsonLike framework
   DiracFactory* createGeneralDiracFactory(const XML::node& node){
     // temporal hack
@@ -91,6 +105,7 @@ namespace Diracs {
       return new DiracDWF4DfullFactory(node);
     stopMsg(node);      
   }
+  */
 
   DiracStaggeredEvenOddLikeFactory* 
   createDiracStaggeredEvenOddLikeFactory(const XML::node& node){

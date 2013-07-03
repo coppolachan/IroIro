@@ -9,6 +9,8 @@
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile" Input="FileList">
+    <starting_idx>0</starting_idx>
+    <idx_increment>1</idx_increment>
     <filename>conf_08080808.txt</filename>
   </Configuration> 
   <RandomNumberGen name="Mersenne Twister"> 
@@ -36,8 +38,6 @@
       <precision>1.0e-20</precision>
   </GaugeFixing>
   <Output>
-    <starting_idx>0</starting_idx>
-    <idx_increment>1</idx_increment>
     <output_prefix>Output/output_</output_prefix>
     <gauge_prefix>Output/smr_gtr_</gauge_prefix>
     <seed_prefix>Output/rng_seed_</seed_prefix>
@@ -64,6 +64,11 @@
 <!--
    <QuarkProp name="QpropDWF" >
       <Kernel4d name="DiracOptimalDomainWall4d_eo">
+        <LowModesPrecondition type="sgn"> 
+          <threshold>0.4</threshold>      
+          <eval_file>Output/eigenHT_Nsmr3_M1.0_4000_evals.txt</eval_file>
+          <evec_file>Output/eigenHT_Nsmr3_M1.0_4000</evec_file>
+        </LowModesPrecondition>
 	<Kernel5d>
 	  <Preconditioning>NoPreconditioner</Preconditioning>
 	  <wilson_mass>-1.6</wilson_mass>

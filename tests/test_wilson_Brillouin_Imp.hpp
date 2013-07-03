@@ -8,17 +8,13 @@
 #include "include/iroiro_code.hpp"
 #include "tests.hpp"
 
-class Test_Wilson_Brillouin_Imp : public TestGeneral{
-private:
+class Test_Wilson_Brillouin_Imp{
   XML::node wilson_node_;
   GaugeField& conf_;
 public:
   Test_Wilson_Brillouin_Imp(const XML::node node, GaugeField& conf)
-    :wilson_node_(node),
-     conf_(conf){}
+    :wilson_node_(node),conf_(conf){}
 
-  ~Test_Wilson_Brillouin_Imp(){}
-  
   int run();
 };
 

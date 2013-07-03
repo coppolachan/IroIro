@@ -1,6 +1,6 @@
 /*! @file dirac_WilsonLike.hpp
  *  @brief defines the abstract base classes for DiracWilsonLike 
- * Time-stamp: <2013-05-23 10:08:18 noaki>
+ * Time-stamp: <2013-07-03 09:53:13 noaki>
  */
 #ifndef DIRAC_WILSONLIKE_INCLUDED
 #define DIRAC_WILSONLIKE_INCLUDED
@@ -98,7 +98,6 @@ protected:
 public:
   virtual ~Dirac_optimalDomainWall_4D(){}
 
-  virtual double getMass()const =0;
   virtual const Field mult_inv(const Field&) const =0;
   virtual const Field mult_dag_inv(const Field&) const =0;
 };

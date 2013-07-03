@@ -8,26 +8,19 @@
 
 using namespace std;
 
-void LowModesHandler::eval_input_txt(const string& input){
-  ifstream reader(input.c_str()); 
-  int idummy;
-  double eval=0.0;
-  CCIO::cout<<"Reading eigenvalues from "<< input << ".\n";
-  int i=0;
-  while(reader >> idummy && eval < threshold_){
-    reader >> eval;
-    evals_.push_back(eval);
-    //CCIO::cout << idummy << "  " << evals_[i]<<endl;
-   i++;
-  }
-  CCIO::cout << i << " eigenvalues are loaded." <<endl;
-  Neig_=i;
-}
+namespace LowModes{
+  
+  const LowModesHandler* createHandler(XML::node node,
+				       const EigenModes* const ems){
 
-void LowModesHandler::evec_input_bin(const string& input){
-  CCIO::cout<<"LowModesHandler : Reading eigenvectors from "<< input << endl;
-  CCIO::ReadFromDisk<Format::Format_F>(evecs_,input.c_str(),Neig_);
-  CCIO::cout<< Neig_ << "eigenmodes are loaded."<< endl;
+    if(     !XML::attribute_compare(node,"InnerLowModes","Inverse")) 
+      return new LowModesHandler(ems,LowModes::Inverse());
+    else if(!XML::attribute_compare(node,"InnerLowModes","Sign")) 
+      return new LowModesHandler(ems,LowModes::Sign());
+    else if(!XML::attribute_compare(node,"InnerLowModes","Off")) 
+      return NULL;
+    else abort();
+  }
 }
 
 const Field LowModesHandler::proj_high(const Field& f) const{
@@ -42,17 +35,17 @@ const Field LowModesHandler::proj_high(const Field& f) const{
   vector<double> si(Neig_);
 
   for(int i=0; i<Neig_; ++i){
-    sr[i]=evecs_[i]*f;
-    si[i]=evecs_[i].im_prod(f);
+    sr[i]=eigs_->evec(i)*f;
+    si[i]=eigs_->evec(i).im_prod(f);
   }
-  for(int j=0; j<Neig_; ++j){
-    f_h.add(re, -sr[j]*evecs_[j][re]+si[j]*evecs_[j][im]);
-    f_h.add(im, -sr[j]*evecs_[j][im]-si[j]*evecs_[j][re]);
+  for(int i=0; i<Neig_; ++i){
+    f_h.add(re, -sr[i]*eigs_->evec(i,re)+si[i]*eigs_->evec(i,im));
+    f_h.add(im, -sr[i]*eigs_->evec(i,im)-si[i]*eigs_->evec(i,re));
   }
   return f_h;
 }
 
-const Field LowModesHandler::proj_appliedLow(const Field& f) const{
+const Field LowModesHandler::proj_low(const Field& f) const{
   size_t size = f.size();
   assert(size%2 ==0);
   Field f_l(size,0.0);
@@ -64,12 +57,12 @@ const Field LowModesHandler::proj_appliedLow(const Field& f) const{
   vector<double> si(Neig_);  
 
   for(int i=0; i<Neig_; ++i){
-    sr[i]=evecs_[i]*f;
-    si[i]=evecs_[i].im_prod(f);
+    sr[i]=eigs_->evec(i)*f;
+    si[i]=eigs_->evec(i).im_prod(f);
   }
   for(int i=0; i<Neig_; ++i){
-    f_l.add(re, applied_evals_[i]*(sr[i]*evecs_[i][re]-si[i]*evecs_[i][im]));
-    f_l.add(im, applied_evals_[i]*(sr[i]*evecs_[i][im]+si[i]*evecs_[i][re]));
+    f_l.add(re,evals_[i]*(sr[i]*eigs_->evec(i,re)-si[i]*eigs_->evec(i,im)));
+    f_l.add(im,evals_[i]*(sr[i]*eigs_->evec(i,im)+si[i]*eigs_->evec(i,re)));
   }
   return f_l;
 }

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-05-30 21:03:33 noaki>
+# Time-stamp: <2013-07-03 13:42:22 noaki>
 
 ###########################################
 # Initial definitions 
@@ -124,6 +124,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_Mobius.cpp			\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
+		Dirac_ops/dirac_DWoverlap.cpp    		\
 		Dirac_ops/dirac_DomainWall.cpp   		\
 		$(DWF_BGQ_SRC)					\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
@@ -132,13 +133,15 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/boundaryCond.cpp      		\
+		Dirac_ops/subSpaceProjector.cpp	  	        \
+		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
+		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
 		EigenModes/eigenCalcGeneral.cpp			\
 		EigenModes/eigenModesSolver_Factory.cpp		\
 		EigenModes/eigenModesSolver_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp		\
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
-		EigenModes/lowModesHandler.cpp			\
 		Measurements/measGeneral.cpp			\
 		Measurements/GaugeM/staples.cpp			\
 		Measurements/GaugeM/wilsonFlow.cpp		\
@@ -197,6 +200,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/base_errors.cpp	\
 		Tools/ErrorsHandling/io_errors.cpp	\
 		Tools/ErrorsHandling/convergence_errors.cpp\
+		Tools/complexMatrix.cpp		        \
 		$(DCMT_SRCS)				\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
@@ -237,6 +241,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/messages_macros.hpp	\
 			$(top_srcdir)/include/timings.hpp		\
 			$(top_srcdir)/include/errors.hpp		\
+			$(top_srcdir)/include/inputConfig.hpp		\
 			PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
@@ -279,7 +284,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Measurements/FermionicM/sources_factory.hpp	\
 			Measurements/FermionicM/meson_correlator.hpp	\
 			Measurements/FermionicM/baryonCorrelator.hpp	\
-			Measurements/FermionicM/fermion_meas_factory_abs.hpp \
 			Measurements/FermionicM/quark_prop_meas_factory.hpp \
                         Measurements/FermionicM/utils_DWF4d.hpp \
 			Communicator/communicator.hpp		\
@@ -294,6 +298,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Main/gaugeGlobal.hpp			\
 		        Dirac_ops/dirac_Operator_FactoryCreator.hpp  \
 			Dirac_ops/dirac_Operator_Factory.hpp	\
+			Dirac_ops/dirac_DWoverlap.hpp 		\
 			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac.hpp			\
 			Dirac_ops/dirac_WilsonLike.hpp		\
@@ -309,10 +314,13 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
 			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
-			Dirac_ops/preconditioner.hpp	        \
+			Dirac_ops/dirac_LowModeDeflation.hpp    \
+			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
+			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/boundaryCond.hpp      	\
 			Dirac_ops/antiPeriodicBC.hpp      	\
+			Dirac_ops/subSpaceProjector.hpp		\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\
@@ -321,8 +329,8 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenSorter.hpp		\
 			EigenModes/foprHermFactory_ChebyshevDdagDLin.hpp\
 			EigenModes/eigenProc_Zolotarev.h	\
+			EigenModes/eigenModes.hpp		\
 			EigenModes/findminmax.hpp		\
-			EigenModes/lowModesHandler.hpp		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/mdExec.hpp		                \
@@ -363,6 +371,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
 			Tools/gammaMatrices.hpp			\
+			Tools/complexMatrix.hpp 		\
 			Tools/Remez/alg_remez.hpp		\
 			Tools/Remez/bigfloat.hpp		\
 			Tools/RationalApprox/rationalapprox.hpp	\

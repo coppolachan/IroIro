@@ -36,7 +36,9 @@ int Test_QpropMom::run(){
   XML::descend(node_,"QuarkProp");
   QuarkPropagatorFactory* 
     qpfact = QuarkPropagators::createQuarkPropagatorFactory(node_);
-  QuarkPropagator* qprop = qpfact->getQuarkProp(smeared_u_);
+
+  InputConfig input(&smeared_u_);
+  QuarkPropagator* qprop = qpfact->getQuarkProp(input);
 
   //// source creation ////
   XML::next_sibling(node_,"Source");

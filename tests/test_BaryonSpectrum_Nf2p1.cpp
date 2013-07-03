@@ -12,22 +12,25 @@
 using namespace std;
 
 int Test_BaryonSpectrum_Nf2p1::run(){
+  XML::node node = input_.node;
+  InputConfig config = input_.getConfig();
+
   //// Quark Propagator ////
-  XML::descend(node_,"QuarkPropUpDown");
+  XML::descend(node,"QuarkPropUpDown");
   auto_ptr<QuarkPropagatorFactory> 
-    qpf_ud(QuarkPropagators::createQuarkPropagatorFactory(node_));
-  auto_ptr<QuarkPropagator> qprop_ud(qpf_ud->getQuarkProp(conf_));
+    qpf_ud(QuarkPropagators::createQuarkPropagatorFactory(node));
+  auto_ptr<QuarkPropagator> qprop_ud(qpf_ud->getQuarkProp(config));
 
   //// Quark Propagator(strange) ////
-  XML::next_sibling(node_,"QuarkPropStrange");
+  XML::next_sibling(node,"QuarkPropStrange");
   auto_ptr<QuarkPropagatorFactory> 
-    qpf_s(QuarkPropagators::createQuarkPropagatorFactory(node_));
-  auto_ptr<QuarkPropagator> qprop_s(qpf_s->getQuarkProp(conf_));
+    qpf_s(QuarkPropagators::createQuarkPropagatorFactory(node));
+  auto_ptr<QuarkPropagator> qprop_s(qpf_s->getQuarkProp(config));
   
   //// source creation ////
-  XML::next_sibling(node_,"Source");
+  XML::next_sibling(node,"Source");
   auto_ptr<SourceFactory> 
-    SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(node_));
+    SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(node));
   auto_ptr<Source> src(SrcFactory->getSource());
 
   prop_t sq_ud, sq_s;  //Defines a vector of fields
@@ -39,10 +42,10 @@ int Test_BaryonSpectrum_Nf2p1::run(){
 
   BaryonCorrelator baryon_correl(sq_ud,sq_s);
 
-  CCIO::cout << " ---- Output in "<< output_.c_str()<<"\n";
+  CCIO::cout << " ---- Output in "<< input_.output.c_str()<<"\n";
 
   //// begin output //////////////////////
-  ofstream writer(output_.c_str());
+  ofstream writer(input_.output.c_str());
 
   output(writer,baryon_correl.nucleon(UP),baryon_correl.nucleon(DN),
 	 "---nucleon---");

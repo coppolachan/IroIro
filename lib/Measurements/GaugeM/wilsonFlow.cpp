@@ -18,6 +18,9 @@ void WilsonFlow::update_U(const GaugeField& Z)const{
   double eps = -2.0*estep_;
   int Nvol = CommonPrms::instance()->Nvol();
 
+#ifdef IBM_BGQ_WILSON
+  Exponentiate_BGQ(U_,Z,eps,Nexp_);
+#else
   for(int m=0; m<NDIM_; ++m){
     for(int site=0; site<Nvol; ++site){
       SUNmat au = exponential(mat(Z,site,m)*eps,Nexp_);
@@ -26,6 +29,7 @@ void WilsonFlow::update_U(const GaugeField& Z)const{
       U_.data.set(U_.format.islice(site,m),au.getva());
     }
   }
+#endif
 }
 
 void WilsonFlow::evolve_step()const{

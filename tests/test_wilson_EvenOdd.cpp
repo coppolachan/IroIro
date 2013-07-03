@@ -7,10 +7,10 @@
 
 
 #include "test_wilson_EvenOdd.hpp"
-#include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
 #include "Dirac_ops/dirac_wilson_EvenOdd.hpp"
 #include "Solver/solver_CG.hpp"
 #include "Solver/solver_BiCGStab.hpp"
+#include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
 #include "Measurements/FermionicM/qprop.hpp"
 #include "Measurements/FermionicM/qprop_EvenOdd.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"

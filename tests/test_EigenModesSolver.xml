@@ -9,6 +9,8 @@
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile" Input="FileList">
+    <starting_idx>0</starting_idx>
+    <idx_increment>1</idx_increment>
     <filename>conf_04040408.txt</filename>
   </Configuration> 
   <RandomNumberGen name="Mersenne Twister"> 
@@ -17,8 +19,6 @@
   <Smearing type="Off"></Smearing>
   <GaugeFixing name="NoFixing"></GaugeFixing>
   <Output>
-    <starting_idx>0</starting_idx>
-    <idx_increment>1</idx_increment>
     <output_prefix>Output/eigen_</output_prefix>
   </Output>
   <Measurement>

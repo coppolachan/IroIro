@@ -18,6 +18,7 @@ namespace RNG_Env {
       if(!strcmp(RNG_name,"DC Mersenne Twister"))
 	return new RandNum_DCMT_Creator(node);
       #endif
+      if(!strcmp(RNG_name,"None")) return NULL;
 
       CCIO::cerr<< "No Random Number Generator available with name ["
 		<< RNG_name << "]" << std::endl;

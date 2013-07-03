@@ -32,7 +32,7 @@ public:
   EigenCalcGeneral(const XML::node& node);
   ~EigenCalcGeneral(){}
 
-  void do_calc(Field* const conf);
+  void do_calc(GaugeField* const conf);
   void output_txt(const std::string&)const;
   void output_bin(const std::string&)const;
 };

@@ -1,8 +1,6 @@
 /*!
  * @file test_smear.hpp
- *
  * @brief Tests for the smearing classes APE, Stout
- *
  */
 #ifndef TEST_SMEAR_H_
 #define TEST_SMEAR_H_
@@ -10,7 +8,7 @@
 #include "include/iroiro_code.hpp"
 #include "tests.hpp"
 
-class Test_Smear : public TestGeneral{
+class Test_Smear{
 private:
   const char* test_name;
   XML::node Smear_node_;

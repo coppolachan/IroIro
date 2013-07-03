@@ -1,7 +1,7 @@
 /*!
  * @file solver_Factory.cpp 
  * @brief Definition of Solver operators factories
- * Time-stamp: <2013-05-23 11:20:32 noaki>
+ * Time-stamp: <2013-07-03 13:34:23 noaki>
  */
 #include "solver_Factory.hpp"
 #include <string.h>
@@ -14,9 +14,6 @@ namespace Solvers {
       
       if(!strcmp(Solver_name, "Solver_CG")) 
 	return new SolverCGFactory(node);
-
-      if(!strcmp(Solver_name, "Solver_CG_Precondition")) 
-	return new SolverCGPrecFactory(node);
 
       if(!strcmp(Solver_name, "Solver_BiCGStab")) 
 	return new SolverBiCGStabFactory(node);

@@ -1,10 +1,10 @@
 /*!
  * @file test_wilson_Brillouin.cpp
  * @brief Tests for the Dirac_Wilson_Brillouin class
- Time-stamp: <2013-04-23 21:21:13 noaki>
+ Time-stamp: <2013-06-04 14:05:36 noaki>
  */
 #include "test_wilson_Brillouin_Imp.hpp"
-#include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
+#include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
 #include "Dirac_ops/dirac_wilson_Brillouin.hpp"
 #include "include/numerical_const.hpp"
 #include <stdio.h>

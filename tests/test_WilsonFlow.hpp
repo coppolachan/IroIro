@@ -7,17 +7,12 @@
 #include "include/iroiro_code.hpp"
 #include "tests.hpp"
 
-class Test_WilsonFlow: public TestGeneral{
-private:
-  XML::node node_;
-  GaugeField conf_;
-  std::string output_;
+class Test_WilsonFlow{
+  const Measurements::Input input_;
 public:
-  Test_WilsonFlow(XML::node node,const GaugeField& conf,
-		  const RandNum&,std::string file)
-    :node_(node),conf_(conf),output_(file){}
-  void monitor(const GaugeField&, std::vector<double> &) const;
-  void topologyoutput(std::string&, int, std::vector<double> &) const;
+  Test_WilsonFlow(const Measurements::Input& input):input_(input){}
+  void monitor(const GaugeField&,std::vector<double> &) const;
+  void topologyoutput(const std::string&,int,std::vector<double> &) const;
   int run();
 };
 

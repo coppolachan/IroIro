@@ -1,6 +1,6 @@
 /*! @filename dirac_wilson_Brillouin.hpp
  * @brief declaration of Dirac_Wilson_Brillouin class 
- * Time-stamp: <2013-05-24 15:08:19 noaki>
+ * Time-stamp: <2013-07-02 13:25:08 noaki>
  ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
@@ -17,6 +17,7 @@ class Dirac_Wilson_Brillouin: public DiracWilsonLike{
 private:
   int Nvol_,Nin_;
   double kbr_;
+  double mass_;
   const Communicator* comm_;
 
   const Field* const u_;
@@ -53,6 +54,7 @@ public:
   Dirac_Wilson_Brillouin(double mass,const Field* u,ImpType imp=Standard)
     :Nvol_(CommonPrms::instance()->Nvol()),
      mult_core(&Dirac_Wilson_Brillouin::mult_std),
+     mass_(mass),
      kbr_(1.0/(mass+15.0/8.0)),u_(u),
      comm_(Communicator::instance()),
      ff_(Nvol_),fsize_(ff_.size()),gf_(Nvol_),
@@ -89,7 +91,8 @@ public:
   }
   size_t fsize() const{return fsize_;}
   size_t gsize() const{return gf_.size();}
-
+  const Field* getGaugeField_ptr()const{return u_; }
+  
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
   const Field mult_del(const Field&)const;
@@ -97,6 +100,7 @@ public:
 
   const Field gamma5(const Field&) const;
   double getKappa() const {return kbr_;} 
+  double getMass() const {return mass_;} 
 };
 
 #endif

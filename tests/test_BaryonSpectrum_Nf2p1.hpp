@@ -8,17 +8,12 @@
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
-class Test_BaryonSpectrum_Nf2p1: public TestGeneral{
+class Test_BaryonSpectrum_Nf2p1{
 private:
-  XML::node node_;
-  GaugeField conf_;
-  std::string output_;
-  void output(std::ofstream&,const correl_t&,const correl_t&,
-	      std::string msg);
+  const Measurements::Input input_;
+  void output(std::ofstream&,const correl_t&,const correl_t&,std::string msg);
 public:
-  Test_BaryonSpectrum_Nf2p1(XML::node node,const GaugeField& conf,
-			   const RandNum&,std::string file)
-    :node_(node),conf_(conf),output_(file){}
+  Test_BaryonSpectrum_Nf2p1(const Measurements::Input& input):input_(input){}
   int run();
 };
 

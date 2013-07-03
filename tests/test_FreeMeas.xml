@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Input file for Residual Mass test -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="TextFile" Input="FileList">
+    <ConfigFiles>    
+      <filename>conf_08080808.txt</filename>
+    </ConfigFiles>
+  </Configuration> 
+  <RandomNumberGen name="None"></RandomNumberGen>
+  <GaugeFixing name="NoFixing"></GaugeFixing>
+  <Smearing type="Off"></Smearing>
+  <Output></Output>
+  <Measurement></Measurement>
+</Parameters>
+

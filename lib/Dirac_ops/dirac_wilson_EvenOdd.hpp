@@ -1,6 +1,6 @@
 /*! @file dirac_wilson_EvenOdd.hpp
   @brief Definition of Even Odd wilson operator
-  Time-stamp: <2013-05-23 10:07:36 noaki>
+  Time-stamp: <2013-07-02 13:51:07 noaki>
 */
 //---------------------------------------------------------
 #ifndef DIRAC_WILSON_EVENODD_INCLUDED
@@ -28,6 +28,7 @@ public:
   
   size_t fsize() const{return Deo_.fsize();}
   size_t gsize() const{return Deo_.gsize();}
+  double getMass()const{return Deo_.getMass();}
 
   const Field gamma5(const Field& f) const{return Deo_.gamma5(f);}
 
@@ -48,6 +49,8 @@ public:
   const DiracWilsonLike* getDeo()const{return &Deo_;}
   const DiracWilsonLike* getDoe()const{return &Doe_;}
 
+  const Field* getGaugeField_ptr()const{ return Deo_.getGaugeField_ptr(); }
+  
   double getKappa()const { return Deo_.getKappa();}
 };
 

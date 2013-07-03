@@ -1,6 +1,6 @@
 /*! @file  eoUtils.hpp
  *  @brief utilities related to even/odd preconditioning
- Time-stamp: <2013-05-04 06:30:05 noaki>
+ Time-stamp: <2013-06-20 13:07:33 noaki>
  */
 #ifndef EOUTILS_INCLUDED
 #define EOUTILS_INCLUDED
@@ -38,6 +38,8 @@ namespace EvenOddUtils{
        osub_(ff_.get_sub(idx_->osec())){ assert(D_);}
 
     void invert(Field& sol,const Field& src) const;
+    
+    const Field* getGaugeField_ptr()const{ return D_->getGaugeField_ptr(); }
     Field mult(const Field& in) const;
     void test(Field& Df, const Field& f) const;
   };

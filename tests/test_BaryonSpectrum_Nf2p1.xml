@@ -9,6 +9,8 @@
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile" Input="FileList">
+    <starting_idx>0</starting_idx>
+    <idx_increment>1</idx_increment>
     <filename>conf_08080808.txt</filename>
   </Configuration> 
   <RandomNumberGen name="Mersenne Twister"> 
@@ -36,8 +38,6 @@
       <precision>1e-20</precision>
   </GaugeFixing>
   <Output>
-    <starting_idx>0</starting_idx>
-    <idx_increment>1</idx_increment>
     <output_prefix>Output/output_</output_prefix>
     <gauge_prefix>Output/smr_gtr_</gauge_prefix>
     <seed_prefix>Output/rng_seed_</seed_prefix>

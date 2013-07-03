@@ -91,18 +91,16 @@ int Test_Overlap::ovsolver_subt(){
   eproc.calc(ed);
 
   Fopr_signH_Zolotarev signHw(Kernel,Eprms,&ed);  
-  Dirac* Overlap = new Dirac_overlap_Zolotarev(M0, mq, &signHw);
+  Dirac* Overlap = new Dirac_overlap_Zolotarev(M0,mq,&signHw);
   
-  std::cout << "Dirac_overlap_Zolotarev  was constructed"
-	    << std::endl;
+  std::cout << "Dirac_overlap_Zolotarev  was constructed\n";
 
   // construction of Qprop
   Solver* Solv = new Solver_CG(Eprms.stp_cnd, 
 			       Eprms.Niter, 
 			       new Fopr_DdagD(Overlap));
   Qprop qprop(Overlap, Solv);
-  std::cout << "Qprop was constructed"
-	    << std::endl;
+  std::cout << "Qprop was constructed\n";
 
   // source
   std::vector<int> spos(4,0); 
@@ -112,8 +110,6 @@ int Test_Overlap::ovsolver_subt(){
   std::vector<Field> sq;
   qprop.calc(sq,src);
   
-  
-
   GammaMatrices::Unit Gamma;//pion
   MesonCorrelator meson(Pion);
   std::vector<double> mcorr = meson.calculate< Format::Format_F >(sq,sq);

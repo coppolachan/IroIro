@@ -60,7 +60,7 @@ int Test_MultiShiftSolver::test1(){
   const Field* u= &(Gauge.data);
   Dirac_Wilson Dw(M0,u);
   Dirac_optimalDomainWall* Kernel 
-    = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&Dw,u);
+    = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&Dw);
 
   // Definition of the Solver
   int    Niter= 1000;

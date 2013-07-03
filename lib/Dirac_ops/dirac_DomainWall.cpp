@@ -1,7 +1,7 @@
 /*!--------------------------------------------------------------------------
  * @file dirac_DomainWall.cpp
  * @brief Definition of class methods for Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-05-30 13:57:34 noaki>
+ Time-stamp: <2013-06-26 18:57:41 noaki>
  *-------------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
@@ -25,8 +25,6 @@ Dirac_optimalDomainWall_params(XML::node DWF_node,DWFType Type){
   XML::descend(mynode,"BaseKernel", MANDATORY);
   XML::read(mynode, "mass", M0_, MANDATORY);
 
-  std::string Precond_string;
-  XML::read(DWF_node, "Preconditioning", Precond_string, MANDATORY);
   XML::read(DWF_node, "N5d", N5_, MANDATORY);
   XML::read(DWF_node, "b", b_, MANDATORY);
   XML::read(DWF_node, "c", c_, MANDATORY);
@@ -44,29 +42,18 @@ Dirac_optimalDomainWall_params(XML::node DWF_node,DWFType Type){
       omega_= DomainWallFermions::getOmega(N5_,lambda_min,lambda_max);
     }
     if (!strcmp(Approx_name, "Tanh"))  
-      for (int s=0; s<N5_; ++s) omega_.push_back(1.0);
+      for(int s=0; s<N5_; ++s) omega_.push_back(1.0);
   }else{
     CCIO::cout << "Error: missing [approximation] node or wrong entry\n";
     abort();
   }
-  // setup of the member arrays
-  set_arrays();
-  if (!EnumString<Preconditioners>::To( Preconditioning_, Precond_string )){
-    CCIO::cerr << "Error: string ["<< Precond_string <<"] not valid" 
-	       <<std::endl;
-    abort();
-  } else {
-    CCIO::cout << "Choosing preconditioner type: "
-	       << Precond_string << " Code: "<< Preconditioning_ <<std::endl;
-  }
+  set_arrays();   // setup of the member arrays
 }
 
 Dirac_optimalDomainWall_params::
 Dirac_optimalDomainWall_params(double b,double c,double M0,double mq,
-			       const std::vector<double>& omega, 
-			       Preconditioners Preconditioning)
-  :N5_(omega.size()),b_(b),c_(c),M0_(M0),mq_(mq),omega_(omega),
-   Preconditioning_(Preconditioning){
+			       const std::vector<double>& omega)
+  :N5_(omega.size()),b_(b),c_(c),M0_(M0),mq_(mq),omega_(omega){
   set_arrays();
 }
 
@@ -86,19 +73,6 @@ void Dirac_optimalDomainWall_params::set_arrays(){
   }
 }
 
-/////// member functions //////////////////////////////////////////
-
-Preconditioner* Dirac_optimalDomainWall::
-choose_Preconditioner(int PrecondID){
-  switch (PrecondID){
-  case NoPreconditioner:
-    return new NoPrecond(this);
-  case LUPreconditioner:
-    return new LUPrecond(this);
-  default:
-    return new NoPrecond(this);
-  }
-}
 
 /* @brief Namespace definining useful functions for DomainWallFermions*/
 namespace DomainWallFermions {
@@ -196,7 +170,7 @@ const Field Dirac_optimalDomainWall::R5g5(const Field& f5) const{
   }
   return w5;
 }
-
+/*
 const Field Dirac_optimalDomainWall::Bproj( const Field& f5) const{ 
   Field f4(f4size_),t4(f4size_);
 
@@ -216,7 +190,7 @@ const Field Dirac_optimalDomainWall::Bproj_dag(const Field& f4) const{
   //  set5d_c(f5,t4,-1.0,0);
   return f5;
 }
-
+*/
 void Dirac_optimalDomainWall::proj_p(Field& w,const Field& f5,int s)const{
   for(int site=0; site<Nvol_; ++site)
     projPcore(w.getaddr(ff_.index(0,site)),

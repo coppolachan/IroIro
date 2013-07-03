@@ -63,7 +63,7 @@ private:
   void (Dirac_staggered_EvenOdd_Adjoint::*mult_dag_core)(Field&,const Field&)const;
 
 public:
-  Dirac_staggered_EvenOdd_Adjoint(double mass,Dstagg::Dtype D,const Field* u,
+  Dirac_staggered_EvenOdd_Adjoint(const Field* u,double mass,Dstagg::Dtype D,
 				  const AntiPeriodicBC<AdjGaugeField>* bdry=NULL)
     :mq_(mass),u_(u),
      Nvh_(CommonPrms::instance()->Nvol()/2),
@@ -86,8 +86,8 @@ public:
     set_ustag();
   }
   
-  Dirac_staggered_EvenOdd_Adjoint(const XML::node& stg_node,
-				  Dstagg::Dtype D,const Field* u)
+  Dirac_staggered_EvenOdd_Adjoint(const XML::node& stg_node,const Field* u,
+				  Dstagg::Dtype D)
     :u_(u),
      Nvh_(CommonPrms::instance()->Nvol()/2),
      Ndim_(CommonPrms::instance()->Ndim()),
@@ -134,6 +134,8 @@ public:
   const Field mult_ee_inv(const Field& f)const {return f;}
 
   const Field md_force(const Field&,const Field&) const;
+
+  const Field* getGaugeField_ptr()const{ return u_; }
 
   void update_internal_state(){ set_ustag(); }
   double getMass()const{ return mq_;}

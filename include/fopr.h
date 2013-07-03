@@ -2,7 +2,7 @@
  * @file fopr.h 
  * @brief Definition of Fopr classes 
  * @authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>, Jun-Ichi Noaki}
-Time-stamp: <2013-04-20 07:20:51 noaki>
+Time-stamp: <2013-06-26 19:05:48 noaki>
  */
 
 #ifndef FOPR_INCLUDED
@@ -19,7 +19,7 @@ public:
   virtual const Field mult_dag(const Field&) const =0;
   virtual size_t fsize() const =0;
 };
-
+/*
 class Fopr_Precondition: public Fopr{
 public:
   virtual ~Fopr_Precondition(){}
@@ -28,7 +28,7 @@ public:
   virtual const Field mult_prec(const Field&) const =0;  
   virtual const Field mult_dag_prec(const Field&) const =0;
 };
-
+*/
 class Fopr_D:public Fopr{
 private:
   const Dirac* D_;
@@ -40,6 +40,7 @@ public:
   size_t fsize()const {return D_->fsize();}
 };
 
+/*
 class Fopr_D_Precondition:public Fopr_Precondition{
 private:
   const Dirac* D_;
@@ -51,6 +52,7 @@ public:
   const Field mult_dag_prec(const Field& f)const{return D_->mult_dag_prec(f);}
   size_t fsize()const {return D_->fsize();}
 };
+*/
 
 class Fopr_Ddag:public Fopr{
 private:
@@ -71,12 +73,14 @@ public:
   const Field mult_dag(const Field& f) const{return mult(f);}
 };
 
+/*
 class Fopr_Herm_Precondition : public Fopr_Herm{
 public:
   //mult_dag is a fallback
   virtual const Field mult_prec(const Field&) const = 0;  
   const Field mult_dag_prec(const Field& f) const{return mult_prec(f);}
 };
+*/
 
 /*!@brief use this when D is already hermitian */
 class Fopr_HD : public Fopr_Herm{
@@ -113,6 +117,7 @@ public:
   size_t fsize()const {return D_->fsize();}
 };
 
+/*
 class Fopr_DdagD_Precondition : public Fopr_Herm_Precondition{
 private:
   const Dirac* D_;
@@ -126,6 +131,7 @@ public:
 
   size_t fsize()const {return D_->fsize();}
 };
+*/
 
 class Fopr_DDdag: public Fopr_Herm {
 private:

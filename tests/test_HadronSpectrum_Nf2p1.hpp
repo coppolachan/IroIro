@@ -8,18 +8,13 @@
 #include "tests/tests.hpp"
 #include "Measurements/FermionicM/baryonCorrelator.hpp"
 
-class Test_HadronSpectrum_Nf2p1: public TestGeneral{
-private:
-  XML::node node_;
-  GaugeField conf_;
-  std::string output_;
+class Test_HadronSpectrum_Nf2p1{
+  const Measurements::Input input_;
   void output_meson( std::ofstream&,const std::vector<double>&,std::string);
   void output_baryon(std::ofstream&,const correl_t&,const correl_t&,
 		     std::string);
 public:
-  Test_HadronSpectrum_Nf2p1(XML::node node,const GaugeField& conf,
-			    const RandNum&,std::string file)
-    :node_(node),conf_(conf),output_(file){}
+  Test_HadronSpectrum_Nf2p1(const Measurements::Input& input):input_(input){}
   int run();
 };
 
