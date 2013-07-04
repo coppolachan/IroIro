@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-06-26 18:54:56 noaki>
+ Time-stamp: <2013-07-04 11:23:52 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_INCLUDED
@@ -182,6 +182,7 @@ public:
   size_t fsize() const{ return f5size_;}
   size_t gsize()const{return Dw_->gsize();}
   double getMass() const{return Params_.mq_;}
+
   const Field* getGaugeField_ptr()const{ return Dw_->getGaugeField_ptr(); }
 
   const Field mult(const Field&)const;

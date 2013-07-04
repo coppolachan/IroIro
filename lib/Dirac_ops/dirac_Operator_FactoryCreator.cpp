@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-07-03 16:01:50 noaki>
+ * Time-stamp: <2013-07-04 11:49:28 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 
@@ -27,12 +27,10 @@ namespace Diracs {
       return new DiracDomainWall5dFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
       return new DiracEvenOdd_DWF5dFactory(node);
-    /*
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
       return new DiracDWF4DfullFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_LUprecond"))  
       return new DiracDWF4DfullFactory(node,LUprecond);
-    */
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
       return new DiracDWF4DeoFactory(node);
     if(!strcmp(Dirac_name, "DiracDWoverlap"))  
@@ -57,12 +55,11 @@ namespace Diracs {
   DiracDWF4dFactory* createDiracDWF4dFactory(const XML::node& node){
     nullCheck(node);
     const char* Dirac_name = node.attribute("name").value();
-    /*
+
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
       return new DiracDWF4DfullFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_LUprecond"))  
       return new DiracDWF4DfullFactory(node,LUprecond);
-    */
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
       return new DiracDWF4DeoFactory(node);
     stopMsg(node);

@@ -11,7 +11,9 @@
   <Configuration Type="CSDTbinary" Input="FileList">
     <starting_idx>21</starting_idx>
     <idx_increment>1</idx_increment>
-    <filename>G0001.dat</filename>
+    <GaugeConfigs>
+      <filename>G0001.dat</filename>
+    </GaugeConfigs>
   </Configuration> 
   <RandomNumberGen name="Mersenne Twister"> 
     <!--   <seedFile>seed_file</seedFile>                      

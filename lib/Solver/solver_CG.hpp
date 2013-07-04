@@ -1,7 +1,7 @@
 /*!
  * @file solver_CG.hpp
  * @brief Declaration of Solver_CG class
- * Time-stamp: <2013-07-02 11:39:36 noaki>
+ * Time-stamp: <2013-07-04 14:55:17 noaki>
  */
 #ifndef SOLVER_CG_INCLUDED
 #define SOLVER_CG_INCLUDED
@@ -9,7 +9,6 @@
 #include <typeinfo>
 
 #include "include/pugi_interface.h"
-#include "Dirac_ops/preconditioner.hpp"
 #include "include/fopr.h"
 #include "solver.hpp"
 

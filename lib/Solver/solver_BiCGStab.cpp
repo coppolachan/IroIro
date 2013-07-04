@@ -29,7 +29,7 @@ solve(Field& xq, const Field& b)const{
   TIMING_START;
 
   double bnorm = b.norm();
-  double snorm = 1.0/bnorm;
+  double snorm = 1.0/(bnorm*bnorm);
 
   _Message(SOLV_ITER_VERB_LEVEL, "b.norm()="<<bnorm<<std::endl);
 
@@ -62,7 +62,7 @@ solve(Field& xq, const Field& b)const{
   if(Out.Iterations == -1) throw "Not converged.";
 
   p = opr_->mult(x) -b;
-  Out.diff = p.norm();
+  Out.diff = p.norm()*sqrt(snorm);
   xq = x;
 
   TIMING_END(Out.timing);

@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-07-04 02:17:53 noaki>
+ * Time-stamp: <2013-07-04 11:35:51 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -102,9 +102,12 @@ Dirac_optimalDomainWall_4D* DiracDWF4DfullFactory::createDirac(InputConfig& inpu
 
 /// Dirac_DWF4DeoSolv
 DiracDWF4DeoFactory::DiracDWF4DeoFactory(XML::node node):Dirac_node_(node){
-  XML::descend(node,"Kernel5d", MANDATORY);
-  DiracEOFactory_.save(new DiracEvenOdd_DWF5dFactory(node));
-  XML::next_sibling(node,"SolverDWF", MANDATORY);
+  XML::descend(Dirac_node_,"Kernel5d", MANDATORY);
+
+  XML::node node_DWF5d = Dirac_node_;
+  DiracEOFactory_.save(new DiracEvenOdd_DWF5dFactory(node_DWF5d));
+
+  XML::descend(node,"SolverDWF", MANDATORY);
   SolverFactory_.save(Solvers::createSolverFactory(node));
 }
 

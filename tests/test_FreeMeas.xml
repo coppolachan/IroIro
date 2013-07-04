@@ -9,9 +9,9 @@
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile" Input="FileList">
-    <ConfigFiles>    
+    <GaugeConfigs>    
       <filename>conf_08080808.txt</filename>
-    </ConfigFiles>
+    </GaugeConfigs>
   </Configuration> 
   <RandomNumberGen name="None"></RandomNumberGen>
   <GaugeFixing name="NoFixing"></GaugeFixing>

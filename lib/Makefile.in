@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-07-04 03:26:29 noaki>
+# Time-stamp: <2013-07-04 10:34:13 noaki>
 
 
 
@@ -169,6 +169,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/boundaryCond.cpp Dirac_ops/subSpaceProjector.cpp \
 	Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 	Dirac_ops/dirac_LowModeDeflation_Approx.cpp \
+	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp \
 	EigenModes/eigenCalcGeneral.cpp \
 	EigenModes/eigenModesSolver_Factory.cpp \
 	EigenModes/eigenModesSolver_IRL.cpp \
@@ -231,7 +232,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @IBM_BGQKERNELS_TRUE@	action_gauge_wilson_force.bgq.$(OBJEXT)
 @IBM_BGQKERNELS_TRUE@am__objects_4 = rationalSolver_DWF_BGQ.$(OBJEXT)
 am__objects_5 = $(am__objects_4)
-@USE_DCMT_TRUE@am__objects_6 = dcmt_wrapper.$(OBJEXT)
+@USE_BFM_TRUE@am__objects_6 = dirac_BFM_wrapper.$(OBJEXT)
+@USE_DCMT_TRUE@am__objects_7 = dcmt_wrapper.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) \
@@ -264,7 +266,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_Operator_Factory.$(OBJEXT) boundaryCond.$(OBJEXT) \
 	subSpaceProjector.$(OBJEXT) \
 	dirac_LowModeDeflation_ExactEigen.$(OBJEXT) \
-	dirac_LowModeDeflation_Approx.$(OBJEXT) \
+	dirac_LowModeDeflation_Approx.$(OBJEXT) $(am__objects_6) \
 	eigenCalcGeneral.$(OBJEXT) eigenModesSolver_Factory.$(OBJEXT) \
 	eigenModesSolver_IRL.$(OBJEXT) eigenProc_Zolotarev.$(OBJEXT) \
 	eigenSorter.$(OBJEXT) findminmax.$(OBJEXT) \
@@ -295,7 +297,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	rationalapprox.$(OBJEXT) xml_errors.$(OBJEXT) \
 	allocation_errors.$(OBJEXT) base_errors.$(OBJEXT) \
 	io_errors.$(OBJEXT) convergence_errors.$(OBJEXT) \
-	parameter_errors.$(OBJEXT) $(am__objects_6) \
+	parameter_errors.$(OBJEXT) $(am__objects_7) \
 	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
 	HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
@@ -489,7 +491,7 @@ top_srcdir = @top_srcdir@
 # Initial definitions 
 SUBDIRS = . 
 AM_CXXFLAGS = $(am__append_4)
-AM_LDFLAGS = $(am__append_5)
+AM_LDFLAGS = $(am__append_5) $(BFM_LIBS)
 OPTLIB = $(am__append_1) $(am__append_2) $(am__append_3)
 DWF_BGQ_SRC = $(am__append_6)
 @IBM_BGQ_FALSE@@USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
@@ -510,7 +512,14 @@ DWF_BGQ_SRC = $(am__append_6)
 ###########################################
 # Optional DCMT Random number generators
 @USE_DCMT_TRUE@DCMT_SRCS = Tools/RandomNumGen/dcmt_wrapper.cpp
-AM_CPPFLAGS = -I$(top_srcdir)
+###########################################
+# Optional for Peter's Bagel/BFM libs
+@USE_BFM_TRUE@BFM_HACK = /bgsys/drivers/V1R1M2/ppc64/
+@USE_BFM_TRUE@BFM_INCLUDE = -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
+@USE_BFM_TRUE@BFM_LIBS = -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
+@USE_BFM_FALSE@BFM_SRCS = 
+@USE_BFM_TRUE@BFM_SRCS = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 	
+AM_CPPFLAGS = -I$(top_srcdir) $(BFM_INCLUDE)
 AM_CFLAGS = -I$(top_srcdir) 
 lib_LIBRARIES = libcommcode.a 
 EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
@@ -573,6 +582,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
 		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
+		$(BFM_SRCS)					\
 		EigenModes/eigenCalcGeneral.cpp			\
 		EigenModes/eigenModesSolver_Factory.cpp		\
 		EigenModes/eigenModesSolver_IRL.cpp		\
@@ -726,6 +736,14 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\
+			IO/binary_reader.hpp			\
+			IO/general_reader.hpp			\
+			IO/generic_header.hpp			\
+			IO/ILDG_header.hpp			\
+			IO/ILDG_reader.hpp			\
+			IO/JLQCDLegacy_reader.hpp		\
+			IO/NERSC_reader.hpp			\
+			IO/text_header.hpp			\
 			Geometry/siteIndex.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
 			Geometry/siteMap.hpp			\
@@ -977,6 +995,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/convergence_errors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dcmt_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_BFM_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DWoverlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po@am__quote@
@@ -1864,6 +1883,20 @@ dirac_LowModeDeflation_Approx.obj: Dirac_ops/dirac_LowModeDeflation_Approx.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_LowModeDeflation_Approx.cpp' object='dirac_LowModeDeflation_Approx.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_LowModeDeflation_Approx.obj `if test -f 'Dirac_ops/dirac_LowModeDeflation_Approx.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_LowModeDeflation_Approx.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_LowModeDeflation_Approx.cpp'; fi`
+
+dirac_BFM_wrapper.o: Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_BFM_wrapper.o -MD -MP -MF $(DEPDIR)/dirac_BFM_wrapper.Tpo -c -o dirac_BFM_wrapper.o `test -f 'Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp' || echo '$(srcdir)/'`Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_BFM_wrapper.Tpo $(DEPDIR)/dirac_BFM_wrapper.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp' object='dirac_BFM_wrapper.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_BFM_wrapper.o `test -f 'Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp' || echo '$(srcdir)/'`Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp
+
+dirac_BFM_wrapper.obj: Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_BFM_wrapper.obj -MD -MP -MF $(DEPDIR)/dirac_BFM_wrapper.Tpo -c -o dirac_BFM_wrapper.obj `if test -f 'Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp'; then $(CYGPATH_W) 'Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_BFM_wrapper.Tpo $(DEPDIR)/dirac_BFM_wrapper.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp' object='dirac_BFM_wrapper.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_BFM_wrapper.obj `if test -f 'Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp'; then $(CYGPATH_W) 'Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp'; fi`
 
 eigenCalcGeneral.o: EigenModes/eigenCalcGeneral.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigenCalcGeneral.o -MD -MP -MF $(DEPDIR)/eigenCalcGeneral.Tpo -c -o eigenCalcGeneral.o `test -f 'EigenModes/eigenCalcGeneral.cpp' || echo '$(srcdir)/'`EigenModes/eigenCalcGeneral.cpp

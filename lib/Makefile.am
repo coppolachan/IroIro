@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-07-04 03:26:29 noaki>
+# Time-stamp: <2013-07-04 10:34:13 noaki>
 
 ###########################################
 # Initial definitions 
@@ -71,12 +71,22 @@ DCMT_SRCS = Tools/RandomNumGen/dcmt_wrapper.cpp
 else
 DCMT_SRCS = 
 endif
+###########################################
+# Optional for Peter's Bagel/BFM libs
+if USE_BFM
+BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
+BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
+BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
+BFM_SRCS = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 	
+else
+BFM_SRCS = 
+endif
 
 
-
-AM_CPPFLAGS=-I$(top_srcdir)
-AM_CFLAGS  =-I$(top_srcdir) 
-AM_LDFLAGS +=
+AM_CPPFLAGS =-I$(top_srcdir)
+AM_CPPFLAGS += $(BFM_INCLUDE)
+AM_CFLAGS   =-I$(top_srcdir) 
+AM_LDFLAGS  += $(BFM_LIBS)
 
 bin_PROGRAMS = main_hmc
 lib_LIBRARIES = libcommcode.a 
@@ -142,6 +152,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
 		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
+		$(BFM_SRCS)					\
 		EigenModes/eigenCalcGeneral.cpp			\
 		EigenModes/eigenModesSolver_Factory.cpp		\
 		EigenModes/eigenModesSolver_IRL.cpp		\
@@ -297,6 +308,14 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\
+			IO/binary_reader.hpp			\
+			IO/general_reader.hpp			\
+			IO/generic_header.hpp			\
+			IO/ILDG_header.hpp			\
+			IO/ILDG_reader.hpp			\
+			IO/JLQCDLegacy_reader.hpp		\
+			IO/NERSC_reader.hpp			\
+			IO/text_header.hpp			\
 			Geometry/siteIndex.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
 			Geometry/siteMap.hpp			\

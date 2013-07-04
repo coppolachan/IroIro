@@ -2,7 +2,7 @@
  * @file solver_CG.cpp
  * @brief Definition of Solver_CG class member functions
  *
- * Time-stamp: <2013-07-03 13:27:07 noaki>
+ * Time-stamp: <2013-07-04 10:07:06 noaki>
  */
 
 #include <iostream>
@@ -41,7 +41,7 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   Field p = r;
   double rr = r*r;// (r,r)
   double snorm = b.norm();
-  snorm = 1.0/snorm;
+  snorm = 1.0/(snorm*snorm);//need the square of the norm
 
   _Message(SOLV_ITER_VERB_LEVEL, " Snorm = "<< snorm<<"\n" );
   _Message(SOLV_ITER_VERB_LEVEL, " Init  = "<< rr*snorm<<"\n" );
@@ -64,7 +64,7 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
 
   p = opr_->mult(x);
   p -= b;
-  Out.diff = p.norm();
+  Out.diff = p.norm()*sqrt(snorm);
 
   xq = x;
 
@@ -135,7 +135,6 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr,
   //p += r; // p = p + p*(r_k,r_k)/(r,r)
 #endif
 }
-
 
 #ifdef IBM_BGQ_WILSON
 SolverOutput Solver_CG_DWF_Optimized::solve(Field& xq,const Field& b) const{ 

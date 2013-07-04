@@ -36,7 +36,8 @@ class BFM_Storage {
   BFM_Storage(); //Hide default Constructor
 public:
   BFM_Storage(bfm_dp&); //The allowed constructor
-  void GaugeExport_to_BFM(GaugeField& U);
+  void GaugeExport_to_BFM(GaugeField& U); // higher level
+  void GaugeExport_to_BFM(const Field* U); // higher level
   
   // Fermion routines need also Dirac basis tranformation
   // Dirac representation (IroIro) <-> Chiral representation (Bagel)

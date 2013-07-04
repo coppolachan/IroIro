@@ -9,14 +9,16 @@
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile" Input="FileList">
-    <filename>conf_08080808.txt</filename>
+    <GaugeConfigs>
+      <filename>conf_08080808.txt</filename>
+    </GaugeConfigs>
   </Configuration> 
-  <RandomNumberGen name="Mersenne Twister"> 
+  <RandomNumberGen name="None"> 
     <!--   <seedFile>seed_file</seedFile>                      
 	   Using seedFile superseeds the <init> line         
            that can be safely omitted                 
            It is ignored by factory in this case -->
-    <init>0x123 0x234 0x345 0x456</init>
+<!-- <init>0x123 0x234 0x345 0x456</init>-->
   </RandomNumberGen>
   <GaugeFixing name="NoFixing">
 <!--   <GaugeFixing name="Coulomb">
@@ -29,17 +31,17 @@
       <sdm_prm>1.6</sdm_prm>
       <precision>1e-5</precision>-->
   </GaugeFixing>
-  <Smearing type="Stout">
-    <Nsmear>0</Nsmear>
+  <Smearing type="Off">
+<!-- <Nsmear>3</Nsmear>
     <Base type="APE">
       <rho>0.1</rho>
-    </Base>
+    </Base>-->
   </Smearing>
   <Output>
     <starting_idx>0</starting_idx>
     <idx_increment>1</idx_increment>
+<!--    <output_prefix>Output/hadron_dw_new_fullsolv_</output_prefix>-->
     <output_prefix>Output/hadron_dw_new_eosolv_</output_prefix>
-<!--    <output_prefix>Output/hadron_new_eosolv_</output_prefix>-->
     <!--<gauge_prefix>Output/smr_gtr_</gauge_prefix>-->
     <!--<seed_prefix>Output/rng_seed_</seed_prefix>-->
   </Output>
@@ -67,9 +69,9 @@
     <!-- ud-quark propagator -->
 
     <QuarkPropUpDown name="QpropDWF" >
-      <Kernel4d name="DiracOptimalDomainWall4d_eo">
+<!--      <Kernel4d name="DiracOptimalDomainWall4d_eo">-->
+      <Kernel4d name="DiracOptimalDomainWall4d_LUprecond">
 	<Kernel5d>
-	  <Preconditioning>NoPreconditioner</Preconditioning>
 	  <N5d>4</N5d>
 	  <b>1.0</b>
 	  <c>1.0</c>
@@ -84,7 +86,7 @@
 	</Kernel5d>
 	<SolverDWF type="Solver_CG">
 	  <MaxIter>10000</MaxIter>
-	  <Precision>1e-4</Precision>
+	  <Precision>1e-16</Precision>
 	</SolverDWF>
       </Kernel4d>
     </QuarkPropUpDown>  
@@ -92,9 +94,9 @@
     <!-- strange-quark propagator -->
 
     <QuarkPropStrange name="QpropDWF" >
-      <Kernel4d name="DiracOptimalDomainWall4d_eo">
+<!--      <Kernel4d name="DiracOptimalDomainWall4d_eo">-->
+      <Kernel4d name="DiracOptimalDomainWall4d_LUprecond">
 	<Kernel5d>
-	  <Preconditioning>NoPreconditioner</Preconditioning>
 	  <N5d>4</N5d>
 	  <b>1.0</b>
 	  <c>1.0</c>
@@ -109,7 +111,7 @@
 	</Kernel5d>
 	<SolverDWF type="Solver_CG">
 	  <MaxIter>10000</MaxIter>
-	  <Precision>1e-4</Precision>
+	  <Precision>1e-16</Precision>
 	</SolverDWF>
       </Kernel4d>
     </QuarkPropStrange>  

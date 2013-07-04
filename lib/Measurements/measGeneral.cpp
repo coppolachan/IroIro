@@ -136,7 +136,7 @@ void MeasGeneral::input_FileList(XML::node inode){
   for(int c=0; c<meas_num_; ++c) number_list_.push_back(starting+increment*c);
 
   XML::node conf_node = inode;
-  XML::descend(conf_node,"ConfigFiles",MANDATORY);
+  XML::descend(conf_node,"GaugeConfigs",MANDATORY);
   for(XML::iterator it=conf_node.begin(); it!=conf_node.end();++it)
     config_list_.push_back(it->child_value());
   file_list_= true;

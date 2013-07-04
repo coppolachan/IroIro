@@ -1,7 +1,7 @@
 /*!
  * @file dirac.hpp
  * @brief Defines the abstract base classs for Dirac operators
- * Time-stamp: <2013-07-03 09:53:32 noaki>
+ * Time-stamp: <2013-07-04 10:14:02 noaki>
  */
 #ifndef DIRAC_H_
 #define DIRAC_H_
