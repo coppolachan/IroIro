@@ -123,17 +123,21 @@ void BFM_Storage::GaugeExport_to_BFM(GaugeField& U){
   }
 };
 
+void BFM_Storage::GaugeExport_to_BFM(const Field* U){
+  GaugeField GF = GaugeField(*U);
+  GaugeExport_to_BFM(GF);
+}
+
 void BFM_Storage::FermionExport_to_BFM(FermionField& F, Fermion_t handle, int cb){
   // BFM storage pattern
   // double psi   [x%2][t][z][y][x/2] [spin][color][realimag]
   double* F_ptr;
 
   //Convert Dirac basis: Dirac -> Chiral
-  FermionField F_transformed(F.Nvol());//to accomodate for 5d fermions
+  FermionField F_transformed(F.Nvol());
   BasisConversion(F_transformed, F, DIRAC_TO_CHIRAL,cb);
-
-  F_ptr = F_transformed.data.getaddr(0);
   
+  F_ptr = F_transformed.data.getaddr(0);
   bfm_obj_.importFermion(F_ptr,handle, cb);
   
 };
@@ -145,7 +149,7 @@ void BFM_Storage::FermionExport_to_BFM_5D(FermionField& F, Fermion_t handle, int
   int Ls = F.Nvol()/Nvol_;
 
   //Convert Dirac basis: Dirac -> Chiral
-  FermionField F_transformed(F.Nvol());//to accomodate for 5d fermions
+  FermionField F_transformed(F.Nvol());
   BasisConversion(F_transformed, F, DIRAC_TO_CHIRAL,cb,s);
 
   F_ptr = F_transformed.data.getaddr(0);

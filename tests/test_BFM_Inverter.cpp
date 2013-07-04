@@ -88,10 +88,11 @@ int Test_Solver_BFM::run(){
     }
   }
 
-  int threads = 64;
+  int threads = 4;
   bfmarg::Threads(threads);
 
   bfmarg::UseCGdiagonalMee(1);
+
 
   dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
   dwfa.rb_precondition_cb=Even;
@@ -186,25 +187,24 @@ int Test_Solver_BFM::run(){
   //linop.MooeeInv(psi_h[cb],chi_h[cb],dag);
   //linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);
   SolverOutput SO;
-
   for (int repeat = 0; repeat < 10; repeat++){
-    /* 
 #pragma omp parallel
-  {
+    {
+      linop.fill(chi_h[Even],0.0);// zeroes the output vector
 #pragma omp for 
-    for (int t=0;t<threads;t++){
-      linop.CGNE_prec(chi_h[Even],psi_h[Even]);
+      for (int t=0;t<threads;t++){
+	linop.CGNE_prec(chi_h[Even],psi_h[Even]);
+      }
     }
-  }
+
+    // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_eo
+    /*
+      Field output_f(vphi);
+      DWF_EO.solve_eo(output_f,fe, SO,  10000, dwfa.residual*dwfa.residual);
+      SO.print();
     */
-  // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_eo
-  Field output_f(vphi);
-  DWF_EO.solve_eo(output_f,fe, SO,  10000, dwfa.residual*dwfa.residual);
-  SO.print();
-  
+    
   }
-
-
 
   FermionField BFMsolution(Nvol5d);
   int vect4d_hsize = fe.size()/Ls;   

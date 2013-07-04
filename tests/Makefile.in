@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-05-31 10:38:16 cossu>
+# Time-stamp: <2013-07-03 16:23:21 cossu>
 
 
 VPATH = @srcdir@
@@ -45,7 +45,8 @@ build_triplet = @build@
 host_triplet = @host@
 target_triplet = @target@
 @USE_BFM_TRUE@am__append_1 = test_Solver_BFM test_BFM_Operator \
-@USE_BFM_TRUE@	test_BFM_Moebius test_BFM_Inverter
+@USE_BFM_TRUE@	test_BFM_Moebius test_BFM_Inverter \
+@USE_BFM_TRUE@	test_BFM_Inverter_wrapper
 @IBM_BGQ_TRUE@am__append_2 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_3 = -qsmp=omp:auto
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_4 = -lbgqwilson3x4smp -lbgqthread
@@ -84,7 +85,8 @@ CONFIG_CLEAN_VPATH_FILES =
 @USE_BFM_TRUE@am__EXEEXT_1 = test_Solver_BFM$(EXEEXT) \
 @USE_BFM_TRUE@	test_BFM_Operator$(EXEEXT) \
 @USE_BFM_TRUE@	test_BFM_Moebius$(EXEEXT) \
-@USE_BFM_TRUE@	test_BFM_Inverter$(EXEEXT)
+@USE_BFM_TRUE@	test_BFM_Inverter$(EXEEXT) \
+@USE_BFM_TRUE@	test_BFM_Inverter_wrapper$(EXEEXT)
 am__EXEEXT_2 = $(am__EXEEXT_1)
 am__installdirs = "$(DESTDIR)$(testdir)" "$(DESTDIR)$(includedir)"
 PROGRAMS = $(test_PROGRAMS)
@@ -99,6 +101,17 @@ am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 test_BFM_Inverter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+am__test_BFM_Inverter_wrapper_SOURCES_DIST =  \
+	test_BFM_Inverter_wrapper.cpp testerSolver_BFM.cpp \
+	../lib/Tools/Bagel/bfm_storage.cpp
+@USE_BFM_TRUE@am_test_BFM_Inverter_wrapper_OBJECTS =  \
+@USE_BFM_TRUE@	test_BFM_Inverter_wrapper.$(OBJEXT) \
+@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
+test_BFM_Inverter_wrapper_OBJECTS =  \
+	$(am_test_BFM_Inverter_wrapper_OBJECTS)
+test_BFM_Inverter_wrapper_LDADD = $(LDADD)
+test_BFM_Inverter_wrapper_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am__test_BFM_Moebius_SOURCES_DIST = test_BFM_Moebius.cpp \
 	testerSolver_BFM.cpp ../lib/Tools/Bagel/bfm_storage.cpp
@@ -341,8 +354,9 @@ am__v_CXXLD_0 = @echo "  CXXLD " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(test_BFM_Inverter_SOURCES) $(test_BFM_Moebius_SOURCES) \
-	$(test_BFM_Operator_SOURCES) \
+SOURCES = $(test_BFM_Inverter_SOURCES) \
+	$(test_BFM_Inverter_wrapper_SOURCES) \
+	$(test_BFM_Moebius_SOURCES) $(test_BFM_Operator_SOURCES) \
 	$(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
 	$(test_DWF_SOURCES) $(test_EigenModesSolver_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
@@ -363,6 +377,7 @@ SOURCES = $(test_BFM_Inverter_SOURCES) $(test_BFM_Moebius_SOURCES) \
 	$(test_Wilson_Brillouin_Imp_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
+	$(am__test_BFM_Inverter_wrapper_SOURCES_DIST) \
 	$(am__test_BFM_Moebius_SOURCES_DIST) \
 	$(am__test_BFM_Operator_SOURCES_DIST) \
 	$(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
@@ -672,7 +687,11 @@ test_DWF_SOURCES = test_DWF.cpp	\
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
 @USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
 
-@USE_BFM_TRUE@test_BFM_Inverter_SOURCES = test_BFM_Inverter.cpp             \
+@USE_BFM_TRUE@test_BFM_Inverter_SOURCES = test_BFM_Inverter.cpp 		\
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
+@USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
+
+@USE_BFM_TRUE@test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
 @USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
 
@@ -782,6 +801,9 @@ clean-testPROGRAMS:
 test_BFM_Inverter$(EXEEXT): $(test_BFM_Inverter_OBJECTS) $(test_BFM_Inverter_DEPENDENCIES) 
 	@rm -f test_BFM_Inverter$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_BFM_Inverter_OBJECTS) $(test_BFM_Inverter_LDADD) $(LIBS)
+test_BFM_Inverter_wrapper$(EXEEXT): $(test_BFM_Inverter_wrapper_OBJECTS) $(test_BFM_Inverter_wrapper_DEPENDENCIES) 
+	@rm -f test_BFM_Inverter_wrapper$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_BFM_Inverter_wrapper_OBJECTS) $(test_BFM_Inverter_wrapper_LDADD) $(LIBS)
 test_BFM_Moebius$(EXEEXT): $(test_BFM_Moebius_OBJECTS) $(test_BFM_Moebius_DEPENDENCIES) 
 	@rm -f test_BFM_Moebius$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_BFM_Moebius_OBJECTS) $(test_BFM_Moebius_LDADD) $(LIBS)
@@ -899,6 +921,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfm_storage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Moebius.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Operator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BaryonSpectrum_Nf2p1.Po@am__quote@

@@ -24,16 +24,6 @@
 using namespace std;
 
 int Test_Solver_BFM::run(){
-  /*
-  /////////////////////////////
-  XML::node QuarkProp_node = DWFnode;
-  XML::descend(QuarkProp_node, "QuarkPropagator");
-  QPropDWFFactory  QP_DomainWallFact(QuarkProp_node);//uses specific factory (this is a test program specific for DWF)
-  QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(conf_));
-  // the prevoius static_cast is absolutely safe since we know exaclty what class we are creating
-  
-  ///////////////////////////////////////
-  */
   CCIO::cout << ".::: Test Solver BFM" 
 	     <<std::endl;
 
@@ -55,24 +45,20 @@ int Test_Solver_BFM::run(){
   Source_local<Format::Format_F> src(spos,CommonPrms::instance()->Nvol());
   //Source_Gauss<Format::Format_F> src(spos,alpha, Nvol);
   
-  prop_t sq;
-
-  //  QuarkPropDW->calc(sq,src);
-  
   /********************************************************
 
    * Setup DWF operator
 
    ********************************************************
-
    */
+  
   bfmarg  dwfa;
   dwfa.node_latt[0]  = CommonPrms::instance()->Nx();
   dwfa.node_latt[1]  = CommonPrms::instance()->Ny();
   dwfa.node_latt[2]  = CommonPrms::instance()->Nz();
   dwfa.node_latt[3]  = CommonPrms::instance()->Nt();
   dwfa.verbose = 1;
-
+  
 
   for(int mu=0;mu<4;mu++){
     if ( (CommonPrms::instance()->NPE(mu))>1 ) {
@@ -89,9 +75,9 @@ int Test_Solver_BFM::run(){
   int threads =4;
   bfmarg::Threads(threads);
 
-
+  
   //dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
-    dwfa.pWilson(mq);
+  dwfa.pWilson(mq);
   dwfa.rb_precondition_cb=Even;
   bfm_dp linop;
   linop.init(dwfa);
@@ -146,7 +132,7 @@ int Test_Solver_BFM::run(){
     CCIO::cout << "Calculates norm cb="<<cb<<"\n";
     
     //double nrm=linop.norm(psi_h[cb]); // must be threaded
-    //CCIO::cout << "cb "<<cb<<" bfm norm "<<nrm<<"\n";
+    // CCIO::cout << "cb "<<cb<<" bfm norm "<<nrm<<"\n";
     // Import to IroIro again
     CCIO::cout << "Import from BFM cb="<<cb<<"\n";
     BFM_interface.FermionImport_from_BFM(Exported, psi_h[cb], cb);
