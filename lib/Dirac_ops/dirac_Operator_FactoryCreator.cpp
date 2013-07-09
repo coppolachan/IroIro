@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-07-04 11:49:28 noaki>
+ * Time-stamp: <2013-07-08 17:14:06 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 
@@ -33,6 +33,10 @@ namespace Diracs {
       return new DiracDWF4DfullFactory(node,LUprecond);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
       return new DiracDWF4DeoFactory(node);
+#ifdef IBM_BGQ_WILSON
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BGQeo"))  
+      return new DiracDWF4dBGQeoFactory(node);
+#endif
     if(!strcmp(Dirac_name, "DiracDWoverlap"))  
       return new DiracDWoverlapFactory(node);
     if(!strcmp(Dirac_name, "DiracDeflation_ExactEigen"))  
@@ -62,6 +66,10 @@ namespace Diracs {
       return new DiracDWF4DfullFactory(node,LUprecond);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_eo"))  
       return new DiracDWF4DeoFactory(node);
+#ifdef IBM_BGQ_WILSON
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BGQeo"))  
+      return new DiracDWF4dBGQeoFactory(node);
+#endif
     stopMsg(node);
   }
 

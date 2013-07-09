@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_EvenOdd.hpp
  * @brief Declaration of class Dirac_optimalDomainWall_EvenOdd (5d operator)
- Time-stamp: <2013-07-02 10:23:16 noaki>
+ Time-stamp: <2013-07-05 15:45:24 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
@@ -96,11 +96,9 @@ public:
 
   ////////////////////////////
 #ifdef IBM_BGQ_WILSON
-
- typedef std::vector<Field> prop_t;
-  void solve_eo(Field&, const Field&, SolverOutput&, int, double) const;
-  void solve_ms_eo(prop_t& , const Field& , SolverOutput&, 
-		   const std::vector<double>&, int, double)const;
+  void solve_eo(Field&,const Field&,SolverOutput&,int,double) const;
+  void solve_ms_eo(std::vector<Field>&,const Field&,SolverOutput&, 
+		   const std::vector<double>&,int,double)const;
 #endif
 };
 

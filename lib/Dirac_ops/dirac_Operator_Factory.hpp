@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-07-03 17:58:09 noaki>
+ Time-stamp: <2013-07-08 11:14:51 noaki>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -24,9 +24,8 @@
 #include "EigenModes/eigenModes.hpp"
 
 class SolverFactory;
-
+class SolverCG_DWF_opt_Factory;
 /* employed NVI (non-virtual-interface) idiom: Effective C++ (item 35) */
-
 
 /*! @brief Abstract base class for creating Dirac operators */
 class DiracFactory {
@@ -38,17 +37,14 @@ public:
 class DiracWilsonLikeFactory :public DiracFactory{
   virtual DiracWilsonLike* createDirac(InputConfig&) = 0;
 public:
-  DiracWilsonLike* getDirac(InputConfig& input){
-    return createDirac(input);}  //name surpression
-
+  DiracWilsonLike* getDirac(InputConfig& input){return createDirac(input);}
   virtual ~DiracWilsonLikeFactory(){}
 };
 
 class DiracWilsonLikeEvenOddFactory: virtual public DiracWilsonLikeFactory{
   virtual DiracWilsonLike_EvenOdd* createDirac(InputConfig&) = 0;
 public:
-  DiracWilsonLike_EvenOdd* getDirac(InputConfig& input){
-    return createDirac(input);} //name surpression
+  DiracWilsonLike_EvenOdd* getDirac(InputConfig& input){return createDirac(input);}
   virtual ~DiracWilsonLikeEvenOddFactory(){}
 };
 
@@ -57,12 +53,8 @@ class DiracDWF5dFactory :virtual public DiracWilsonLikeFactory{
   virtual DiracWilsonLike* createDirac(InputConfig&) = 0;
   virtual DiracWilsonLike* createDiracPV(InputConfig&) =0;
 public:
-  DiracWilsonLike* getDirac(InputConfig& input){
-    return createDirac(input);} //name surpression
-  
-  DiracWilsonLike* getDiracPV(InputConfig& input){
-    return createDiracPV(input);}
-
+  DiracWilsonLike* getDirac(InputConfig& input){return createDirac(input);} 
+  DiracWilsonLike* getDiracPV(InputConfig& input){return createDiracPV(input);}
   virtual ~DiracDWF5dFactory(){}
 };
 
@@ -72,7 +64,6 @@ class DiracDWF4dFactory :public DiracWilsonLikeFactory{
 public:
   Dirac_optimalDomainWall_4D* getDirac(InputConfig& input){
     return createDirac(input);} //name surpression
-
   virtual ~DiracDWF4dFactory(){}
 };
 
@@ -80,9 +71,7 @@ public:
 class DiracDeflationFactory :public DiracWilsonLikeFactory{
   virtual Dirac_LowModeDeflation* createDirac(InputConfig&) = 0;
 public:
-  Dirac_LowModeDeflation* getDirac(InputConfig& input){
-    return createDirac(input);} //name surpression
-
+  Dirac_LowModeDeflation* getDirac(InputConfig& input){return createDirac(input);}
   virtual ~DiracDeflationFactory(){}
 };
 
@@ -274,12 +263,32 @@ class DiracDWF4DeoFactory : public DiracDWF4dFactory{
   RaiiFactoryObj<Fopr_DdagD> FoprEOpv_;
   RaiiFactoryObj<Solver> SolverEOpv_;
   RaiiFactoryObj<EvenOddUtils::Inverter_WilsonLike> InvPV_;
-
   Dirac_optimalDomainWall_4D* createDirac(InputConfig&);
 public:
   DiracDWF4DeoFactory(XML::node node);
 };
 
+#ifdef IBM_BGQ_WILSON
+/*! @brief Concrete class for creating Dirac_optimalDomainWall_4D_eoSolv with BGQ solv*/
+class DiracDWF4dBGQeoFactory : public DiracDWF4dFactory{
+  XML::node Dirac_node_;
+  // Factories
+  RaiiFactoryObj<DiracEvenOdd_DWF5dFactory> DiracEOFactory_;
+  RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverFactory_;
+  // Objects (Dodwf)
+  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DW5dEO_;
+  RaiiFactoryObj<Solver> SolverEO_;
+  RaiiFactoryObj<EvenOddUtils::Inverter_WilsonLike> Inv_;
+  // Objects (PauliVillars)
+  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DW5dEOpv_;
+  RaiiFactoryObj<Solver> SolverEOpv_;
+  RaiiFactoryObj<EvenOddUtils::Inverter_WilsonLike> InvPV_;
+
+  Dirac_optimalDomainWall_4D* createDirac(InputConfig&);
+public:
+  DiracDWF4dBGQeoFactory(XML::node node);
+};
+#endif
 //////////////
 /*! @brief Concrete class for creating Dirac_staggered_EvenOdd */
 class DiracStaggeredEvenOddFactory: public DiracStaggeredEvenOddLikeFactory{

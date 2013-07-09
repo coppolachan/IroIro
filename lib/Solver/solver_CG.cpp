@@ -2,7 +2,7 @@
  * @file solver_CG.cpp
  * @brief Definition of Solver_CG class member functions
  *
- * Time-stamp: <2013-07-04 10:07:06 noaki>
+ * Time-stamp: <2013-07-05 15:17:26 noaki>
  */
 
 #include <iostream>
@@ -139,7 +139,7 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr,
 #ifdef IBM_BGQ_WILSON
 SolverOutput Solver_CG_DWF_Optimized::solve(Field& xq,const Field& b) const{ 
   SolverOutput Out;
-  opr_->solve_eo(xq, b, Out, Params.MaxIter,Params.GoalPrecision);
+  opr_->solve_eo(xq,b,Out,Params.MaxIter,Params.GoalPrecision);
   return Out;
 }
 #endif

@@ -2,7 +2,7 @@
  * @file dirac_DomainWall_4D_eoSolv.hpp
  * @brief Definition of Dirac_optimalDomainWall_4D_eoSolv class
  * which contains e/o-solver
- Time-stamp: <2013-07-04 02:16:34 noaki>
+ Time-stamp: <2013-07-08 10:15:53 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_4D_EOSOLV_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_4D_EOSOLV_INCLUDED
@@ -25,8 +25,6 @@ private:
   ffmt_t ff_;
   size_t fsize_;  
   double mq_;
-
-  // For ExactLowModePrecond
 public:
   Dirac_optimalDomainWall_4D_eoSolv(XML::node node,
 				    const EvenOddUtils::Inverter_WilsonLike* invD,
@@ -42,8 +40,8 @@ public:
 				    const EvenOddUtils::Inverter_WilsonLike* invD,
 				    const EvenOddUtils::Inverter_WilsonLike* invDpv)
     :invD_(invD),invDpv_(invDpv),
-     Nvol_(CommonPrms::instance()->Nvol()),N5_(N5),ff_(Nvol_),
-     fsize_(ff_.size()),mq_(mq){}
+     Nvol_(CommonPrms::instance()->Nvol()),
+     ff_(Nvol_),fsize_(ff_.size()),N5_(N5),mq_(mq){}
 
   size_t fsize() const {return fsize_;}
   size_t gsize()const{

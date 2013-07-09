@@ -1,7 +1,7 @@
 /*!--------------------------------------------------------------------------
  * @file dirac_DomainWall.cpp
  * @brief Definition of class methods for Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-06-26 18:57:41 noaki>
+ Time-stamp: <2013-07-05 14:52:28 noaki>
  *-------------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
@@ -221,10 +221,15 @@ void Dirac_optimalDomainWall::add5d(Field& f5,const Field& f4,int s) const{
 void Dirac_optimalDomainWall::set5d(Field& f5,const Field& f4,int s) const{
   for(int i=0; i<f4size_; ++i) f5.set(s*f4size_+i,f4[i]);
 }
+void Dirac_optimalDomainWall::mul5d(Field& f5,double fac,int s) const{
+  for(int i=0; i<f4size_; ++i) f5.set(s*f4size_+i,fac*f5[s*f4size_+i]);
+}
+
 
 //////////// environment-dependent parts /////////////////////////
 #ifdef IBM_BGQ_WILSON
 #include "dirac_DomainWall_BGQ.code"
+#include "domainWallSolver_BGQ.code"
 #else 
 /*! @brief mult without 4D-hopping parameters */
 
@@ -308,7 +313,8 @@ const Field Dirac_optimalDomainWall::mult_hop5_inv(const Field& f5) const{
   lf *= (Params_.dm_[N5_-1]/Params_.dp_[N5_-2]);
   add5d(w5,lf,N5_-1);
 
-  mul5d(w5,1.0/(Params_.dp_[N5_-1] +mq_*Params_.dm_[N5_-2]*Params_.es_[N5_-2]),N5_-1);  
+  mul5d(w5,1.0/(Params_.dp_[N5_-1] +mq_*Params_.dm_[N5_-2]*Params_.es_[N5_-2]),
+	N5_-1);  
 
   for(int s=N5_-2; s>=0; --s){
     proj_m(lf,w5,s+1);
@@ -336,14 +342,17 @@ const Field Dirac_optimalDomainWall::mult_hop5_dinv(const Field& f5) const{
 
   for(int s=1; s<N5_-1; ++s){
     proj_m(lmf,w5,s-1);                                         
-    lmf *= Params_.dm_[s-1];                                                     
+    lmf *= Params_.dm_[s-1];                                                    
+
     add5d(w5,lmf,s);                                                            
     v = get4d(w5,s);                                                            
-    v*= 1.0/Params_.dp_[s];                                                      
+    v*= 1.0/Params_.dp_[s];                                                    
+ 
     set5d(w5,v,s);                                                              
   }                                                                             
   proj_m(v,w5,N5_-2);                                                  
-  v*= Params_.dm_[N5_-2];                                                        
+  v*= Params_.dm_[N5_-2];                                                      
+ 
   add5d(w5,v,N5_-1);                                                            
   for(int s=0; s<N5_-1; ++s) {                                                  
     proj_p(fy,w5,s);                                             
@@ -445,7 +454,7 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5,const Field& f5) const{
     if(s==N5_-1) lmf *= -mq_;
 
     lpf += lmf;
-    get4d(v,f5,s);
+    v = get4d(f5,s);
     v *= Params_.bs_[s];
     v += Params_.cs_[s]*lpf;
     w = Dw_->mult(v);
@@ -526,34 +535,6 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
     Dw_->md_force_m(fce,w,get4d(psi,s));
   }
 }  
-
-void Dirac_optimalDomainWall::get4d(Field& f4,const Field& f5,int s) const{
-  for(int i=0; i<f4size_; ++i) f4.set(i,f5[s*f4size_+i]);
-}
-void Dirac_optimalDomainWall::get4d_c(Field& f4,const Field& f5,const double& c,int s) const{
-  double* f4_ptr = f4.getaddr(0);
-  double* f5_ptr = const_cast<Field&>(f5).getaddr(s*f4size_);
-
-  for(int i=0; i<f4size_; ++i) f4_ptr[i] = c*f5_ptr[i];
-}
-
-void Dirac_optimalDomainWall::set5d_c(Field& f5,const Field& f4,const double c,int s) const{
-  double* f5_ptr = f5.getaddr(s*f4size_);
-  double* f4_ptr = const_cast<Field&>(f4).getaddr(0);
-
-  for(int i=0; i<f4size_; ++i) f5_ptr[i] = c*f4_ptr[i];
-}
-
-void Dirac_optimalDomainWall::mul5d(Field& f5,double fac,int s) const{
-  for(int i=0; i<f4size_; ++i) f5.set(s*f4size_+i,fac*f5[s*f4size_+i]);
-}
-
-void Dirac_optimalDomainWall::add5d_c(Field& f5,const Field& f4,double c,int s) const{
-  for(int i=0; i<f4size_; ++i) f5.add(s*f4size_+i,c*f4[i]);
-}
-void Dirac_optimalDomainWall::add5d_from5d(Field& f5,const Field& f,int s) const{
-  for(int i=0; i<f4size_; ++i) f5.add(s*f4size_+i,f[s*f4size_+i]);
-}
 
 #endif
 

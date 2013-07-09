@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-07-04 11:35:51 noaki>
+ * Time-stamp: <2013-07-08 17:41:37 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -102,12 +102,11 @@ Dirac_optimalDomainWall_4D* DiracDWF4DfullFactory::createDirac(InputConfig& inpu
 
 /// Dirac_DWF4DeoSolv
 DiracDWF4DeoFactory::DiracDWF4DeoFactory(XML::node node):Dirac_node_(node){
-  XML::descend(Dirac_node_,"Kernel5d", MANDATORY);
+  XML::descend(Dirac_node_,"Kernel5d",MANDATORY);
 
   XML::node node_DWF5d = Dirac_node_;
   DiracEOFactory_.save(new DiracEvenOdd_DWF5dFactory(node_DWF5d));
-
-  XML::descend(node,"SolverDWF", MANDATORY);
+  XML::descend(node,"SolverDWF",MANDATORY);
   SolverFactory_.save(Solvers::createSolverFactory(node));
 }
 
@@ -117,13 +116,39 @@ Dirac_optimalDomainWall_4D* DiracDWF4DeoFactory::createDirac(InputConfig& input)
   SolverEO_.save(SolverFactory_.get()->getSolver(FoprEO_.get()));
   Inv_.save(new EvenOddUtils::Inverter_WilsonLike(DW5dEO_.get(),SolverEO_.get()));
 
-  DW5dEOpv_.save(new Dirac_optimalDomainWall_EvenOdd(*(DW5dEO_.get()),PauliVillars));
+  //DW5dEOpv_.save(new Dirac_optimalDomainWall_EvenOdd(*(DW5dEO_.get()),PauliVillars));
+  DW5dEOpv_.save(DiracEOFactory_.get()->getDiracPV(input));
   FoprEOpv_.save(new Fopr_DdagD(DW5dEOpv_.get()));
   SolverEOpv_.save(SolverFactory_.get()->getSolver(FoprEOpv_.get()));
   InvPV_.save(new EvenOddUtils::Inverter_WilsonLike(DW5dEOpv_.get(),SolverEOpv_.get()));
 
   return new Dirac_optimalDomainWall_4D_eoSolv(Dirac_node_,Inv_.get(),InvPV_.get());
 }
+
+#ifdef IBM_BGQ_WILSON
+/// Dirac_DWF4dBGQeoSolv
+DiracDWF4dBGQeoFactory::DiracDWF4dBGQeoFactory(XML::node node):Dirac_node_(node){
+  XML::descend(Dirac_node_,"Kernel5d",MANDATORY);
+  XML::node node_DWF5d = Dirac_node_;
+  DiracEOFactory_.save(new DiracEvenOdd_DWF5dFactory(node_DWF5d));
+
+  XML::descend(node,"SolverDWF",MANDATORY);
+  SolverFactory_.save(new SolverCG_DWF_opt_Factory(node));
+}
+
+Dirac_optimalDomainWall_4D* DiracDWF4dBGQeoFactory::createDirac(InputConfig& input){
+  DW5dEO_.save(DiracEOFactory_.get()->getDirac(input));
+  DW5dEOpv_.save(new Dirac_optimalDomainWall_EvenOdd(*(DW5dEO_.get()),PauliVillars));
+
+  SolverEO_.save(SolverFactory_.get()->getSolver(DW5dEO_.get()));
+  SolverEOpv_.save(SolverFactory_.get()->getSolver(DW5dEOpv_.get()));
+
+  Inv_.save(new EvenOddUtils::Inverter_WilsonLike(DW5dEO_.get(),SolverEO_.get()));
+  InvPV_.save(new EvenOddUtils::Inverter_WilsonLike(DW5dEOpv_.get(),SolverEOpv_.get()));
+
+  return new Dirac_optimalDomainWall_4D_eoSolv(Dirac_node_,Inv_.get(),InvPV_.get());
+}
+#endif
 
 /// Dirac_DWoverlap
 DiracDWoverlapFactory::DiracDWoverlapFactory(XML::node node):Dirac_node_(node){

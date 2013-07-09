@@ -1,7 +1,7 @@
 /*!
  * @file solver_CG.hpp
  * @brief Declaration of Solver_CG class
- * Time-stamp: <2013-07-04 14:55:17 noaki>
+ * Time-stamp: <2013-07-05 18:41:12 noaki>
  */
 #ifndef SOLVER_CG_INCLUDED
 #define SOLVER_CG_INCLUDED
@@ -19,7 +19,6 @@
 struct Solver_CG_Prms{
   int MaxIter;/*!< Maximum number of iteration for the solver */
   double GoalPrecision; /*!< Threshold for the final residual */
-
   
   Solver_CG_Prms(const XML::node node){
     XML::read(node, "MaxIter", MaxIter);
@@ -64,7 +63,6 @@ public:
     return (typeid(*opr_) == typeid(Fopr_DdagD));
   }
 };
-
 
 #ifdef IBM_BGQ_WILSON
 #include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"

@@ -1,7 +1,7 @@
 /*!
  * @file solver_Factory.hpp 
  * @brief Declaration of Solver operators factories
- * Time-stamp: <2013-07-03 13:40:46 noaki>
+ * Time-stamp: <2013-07-05 17:01:17 noaki>
  */
 #ifndef SOLVER_FACT_
 #define SOLVER_FACT_
@@ -61,16 +61,12 @@ public:
 class SolverCG_DWF_opt_Factory {
   const XML::node Solver_node;
 public:
-  
   Solver_CG_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr){
     return new Solver_CG_DWF_Optimized(Solver_node,DWFopr);
   }
-  
   SolverCG_DWF_opt_Factory(const XML::node node):Solver_node(node){};
-
 };
 #endif
-
 
 /*!
  @brief Concrete class for creating BiConjugate Gradient Stabilized Solver
@@ -126,7 +122,7 @@ public:
   RationalSolverCGFactory_DWF_Optimized(const XML::node node):Solver_node(node){}
 
   RationalSolver_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr) {
-    return new RationalSolver_DWF_Optimized(DWFopr, Solver_node);
+    return new RationalSolver_DWF_Optimized(DWFopr,Solver_node);
   }
 
 };

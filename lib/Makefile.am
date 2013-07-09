@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-07-04 10:34:13 noaki>
+# Time-stamp: <2013-07-05 14:56:07 noaki>
 
 ###########################################
 # Initial definitions 
@@ -99,6 +99,7 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_standard.code    	\
                 Dirac_ops/dirac_DomainWall_BGQ.code \
+                Dirac_ops/domainWallSolver_BGQ.code \
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
@@ -348,6 +349,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/boundaryCond.hpp      	\
 			Dirac_ops/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\
+			Dirac_ops/utils_BGQ.hpp	        	\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\

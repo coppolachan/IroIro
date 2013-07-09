@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-07-04 11:23:52 noaki>
+ Time-stamp: <2013-07-08 17:12:16 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_INCLUDED
@@ -75,23 +75,16 @@ private:
   size_t f4size_;
 
   const Field get4d(const Field& f5,int s) const;
-  void get4d(Field&, const Field& ,int ) const;
+
   void set5d(Field& f5,const Field& f4,int s) const;
   void add5d(Field& f5,const Field& f4,int s) const;
   void add5d(Field& f5,const Field& f4_1, const Field& f4_2,int s) const;
-
-#ifndef IBM_BGQ_WILSON
-  void get4d_c(Field&, const Field& ,const double&, int ) const;
-  void set5d_c(Field& f5,const Field& f4,const double c,int s) const;  
   void mul5d(Field& f5,double fac,int s) const;
-  void add5d_c(Field& f5,const Field& f4, double c,int s) const;
-  void add5d_from5d(Field& f5,const Field& f,int s) const;
-#endif
-  void mult_offdiag(Field&,const Field&)const;/*! @brief it returns -kpp*D*f */
-  void mult_full(Field&,const Field&)const;/*! @brief it returns (1-kpp*D)*f */
 
-  void mult_dag_offdiag(Field&,const Field&)const; /*! @brief it returns -kpp*D^dag*f */
-  void mult_dag_full(Field&,const Field&)const; /*! @brief it returns (1-kpp*D^dag)*f */
+  void mult_offdiag(Field&,const Field&)const;    /*! @brief  -kpp*D*f    */
+  void mult_full(Field&,const Field&)const;       /*! @brief  (1-kpp*D)*f */
+  void mult_dag_offdiag(Field&,const Field&)const;/*! @brief -kpp*D^dag*f    */
+  void mult_dag_full(Field&,const Field&)const;   /*! @brief (1-kpp*D^dag)*f */
 
   void(Dirac_optimalDomainWall::*mult_core)(Field&,const Field&)const;
   void(Dirac_optimalDomainWall::*mult_dag_core)(Field&,const Field&)const;
@@ -99,6 +92,13 @@ private:
   void proj_p(Field&,const Field&,int s=0)const;
   void proj_m(Field&,const Field&,int s=0)const;
 
+#ifdef IBM_BGQ_WILSON
+  void solve_ms_init(std::vector<Field>&,std::vector<Field>&,Field&,Field&,
+		     double& rr,
+		     std::vector<double>&,std::vector<double>&,
+		     std::vector<double>&,
+		     double&,double&) const;
+#endif
 public:
   /*! @brief constructors to create an instance with normal indexing */
   Dirac_optimalDomainWall(XML::node DWF_node,const DiracWilsonLike* Dw,
@@ -141,8 +141,8 @@ public:
      ff_(Dc.ff_),
      f5size_(Dc.f5size_),
      f4size_(Dc.f4size_),
-     mult_core(&Dirac_optimalDomainWall::mult_full),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_full){
+     mult_core(Dc.mult_core),
+     mult_dag_core(Dc.mult_dag_core){
     if(Type==PauliVillars) {
       mq_=1.0; 
       Params_.mq_=1.0;
@@ -188,16 +188,14 @@ public:
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
-  // mult in the heavy quark limit
-  const Field mult_hop5(const Field& f5)const;    /*! @brief mult in the heavy M0 limit*/
-  const Field mult_hop5_inv(const Field& f5)const;/*! @brief mult_inv in the heavy M0 limit*/
-  const Field mult_hop5_dag(const Field& f5)const;/*! @brief mult_dag in the heavy M0 limit*/
-  const Field mult_hop5_dinv(const Field& f5)const;/*! @brief mult in the heavy M0 limit*/
+  /*@! brief mult in the heavy M0 limit */
+  const Field mult_hop5(const Field& f5)const;    
+  const Field mult_hop5_inv(const Field& f5)const;
+  const Field mult_hop5_dag(const Field& f5)const;
+  const Field mult_hop5_dinv(const Field& f5)const;
 
   const Field Dminus(const Field&)const;
   const Field gamma5(const Field&)const;
-  //const Field Bproj(const Field& v5d)const;
-  //const Field Bproj_dag(const Field& v4d)const;
   const Field R5(const Field&)const;
   const Field R5g5(const Field&)const;
 
@@ -207,35 +205,15 @@ public:
   const Field md_force(const Field& eta,const Field& zeta)const;
   void update_internal_state(){}
 
-  // BGQ optimizations
+  // BGQ extensions: mult and solver for even/odd precond
 #ifdef IBM_BGQ_WILSON
-  void mult_hop(Field&,const Field&)const;
-  void mult_hop_omp(Field&,const void*)const;
-  void mult_hop_omp_allocated(Field&,const void*,void*,void*,int,int)const;
-  void mult_hop_dag(Field&,const Field&)const;
-  void mult_hop_dag_omp(Field&,const void*)const;
-  void mult_hop_dag_omp_allocated(Field&,const void*,void*,void*,int,int)const;
-
-  typedef std::vector<Field> prop_t;
-
+  void mult_hop_omp(Field& w,const void* f_ptr)const;
+  void mult_hop_dag_omp(Field& w,const void* f_ptr)const;
   void solve_eo_5d(Field&,const Field&,SolverOutput&,int,double)const;
 
-  void Dirac_optimalDomainWall::solve_ms_init(std::vector<Field>&,
-					      std::vector<Field>&,
-					      Field&, Field&,
-					      double& rr,
-					      std::vector<double>&,
-					      std::vector<double>&,
-					      std::vector<double>&,
-					      double&,
-					      double&) const;
-  void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t&, 
-					       const Field&,
-					       SolverOutput&, 
-					       const std::vector<double>&, 
-					       int, double) const;
+  void solve_ms_eo_5d(std::vector<Field>&,const Field&,SolverOutput&, 
+		      const std::vector<double>&,int,double) const;
 #endif
 };
-
 
 #endif

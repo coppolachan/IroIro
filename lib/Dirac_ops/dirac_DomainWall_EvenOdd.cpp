@@ -2,7 +2,7 @@
  *@file dirac_DomainWall_EvenOdd.cpp
  *
  *@brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op)
- Time-stamp: <2013-05-30 10:13:09 noaki>
+ Time-stamp: <2013-07-06 21:26:11 noaki>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"
@@ -76,8 +76,8 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
     Deo_.mult_hop_dag_omp(w,f_ptr);
   }
   gettimeofday(&end_,NULL);
-  multdag_timer += (end_.tv_sec - start_.tv_sec)*1000.0;
-  multdag_timer += (end_.tv_usec - start_.tv_usec) / 1000.0;   // us to ms
+  multdag_timer += (end_.tv_sec -start_.tv_sec)*1000.0;
+  multdag_timer += (end_.tv_usec -start_.tv_usec)/1000.0;   // us to ms
 #else
   Field w(f);
   w -= mult_oe_dag(mult_eo_dag(f));
@@ -116,13 +116,13 @@ void  Dirac_optimalDomainWall_EvenOdd::solve_eo(Field& out,
 						double stop_cond) const{
   Deo_.solve_eo_5d(out,in,SO,Niter,stop_cond);
 }
-void Dirac_optimalDomainWall_EvenOdd::solve_ms_eo(prop_t& xq,
+void Dirac_optimalDomainWall_EvenOdd::solve_ms_eo(vector<Field>& xq,
 						  const Field& b,
 						  SolverOutput& SO, 
 						  const vector<double>& sigma,
 						  int MaxIter, 
-						  double GoalPrecision) const{
-  Deo_.solve_ms_eo_5d(xq,b,SO,sigma,MaxIter,GoalPrecision);
+						  double target_prec) const{
+  Deo_.solve_ms_eo_5d(xq,b,SO,sigma,MaxIter,target_prec);
 }
 
 #endif
