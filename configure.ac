@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-06-06 13:48:04 cossu>
+# Time-stamp: <2013-07-10 14:23:48 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
@@ -218,7 +218,8 @@ bgq )
      else
 	use_cpp="bgxlC";
      fi
-     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -q64 -qarch=qp -qtune=qp -I${BLUEGENE_INCLUDE} -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
+     #use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -q64 -qarch=qp -qtune=qp -I${BLUEGENE_INCLUDE} -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
+     use_cpp_flags="-O3 -qlanglvl=stdc99 -qrtti=type -qhot=level=1 -qsimd=auto -q64 -qarch=qp -qtune=qp -I${BLUEGENE_INCLUDE} -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s" 
      ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib"
      use_ar_flags="cru"
      AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])

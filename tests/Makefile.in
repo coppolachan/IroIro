@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-07-03 16:23:21 cossu>
+# Time-stamp: <2013-07-10 10:47:07 cossu>
 
 
 VPATH = @srcdir@
@@ -91,10 +91,10 @@ am__EXEEXT_2 = $(am__EXEEXT_1)
 am__installdirs = "$(DESTDIR)$(testdir)" "$(DESTDIR)$(includedir)"
 PROGRAMS = $(test_PROGRAMS)
 am__test_BFM_Inverter_SOURCES_DIST = test_BFM_Inverter.cpp \
-	testerSolver_BFM.cpp ../lib/Tools/Bagel/bfm_storage.cpp
+	testerSolver_BFM.cpp
 @USE_BFM_TRUE@am_test_BFM_Inverter_OBJECTS =  \
 @USE_BFM_TRUE@	test_BFM_Inverter.$(OBJEXT) \
-@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
+@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT)
 test_BFM_Inverter_OBJECTS = $(am_test_BFM_Inverter_OBJECTS)
 test_BFM_Inverter_LDADD = $(LDADD)
 am__DEPENDENCIES_1 =
@@ -103,30 +103,29 @@ am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 test_BFM_Inverter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am__test_BFM_Inverter_wrapper_SOURCES_DIST =  \
-	test_BFM_Inverter_wrapper.cpp testerSolver_BFM.cpp \
-	../lib/Tools/Bagel/bfm_storage.cpp
+	test_BFM_Inverter_wrapper.cpp testerSolver_BFM.cpp
 @USE_BFM_TRUE@am_test_BFM_Inverter_wrapper_OBJECTS =  \
 @USE_BFM_TRUE@	test_BFM_Inverter_wrapper.$(OBJEXT) \
-@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
+@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT)
 test_BFM_Inverter_wrapper_OBJECTS =  \
 	$(am_test_BFM_Inverter_wrapper_OBJECTS)
 test_BFM_Inverter_wrapper_LDADD = $(LDADD)
 test_BFM_Inverter_wrapper_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am__test_BFM_Moebius_SOURCES_DIST = test_BFM_Moebius.cpp \
-	testerSolver_BFM.cpp ../lib/Tools/Bagel/bfm_storage.cpp
+	testerSolver_BFM.cpp
 @USE_BFM_TRUE@am_test_BFM_Moebius_OBJECTS =  \
 @USE_BFM_TRUE@	test_BFM_Moebius.$(OBJEXT) \
-@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
+@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT)
 test_BFM_Moebius_OBJECTS = $(am_test_BFM_Moebius_OBJECTS)
 test_BFM_Moebius_LDADD = $(LDADD)
 test_BFM_Moebius_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am__test_BFM_Operator_SOURCES_DIST = test_BFM_Operator.cpp \
-	testerSolver_BFM.cpp ../lib/Tools/Bagel/bfm_storage.cpp
+	testerSolver_BFM.cpp
 @USE_BFM_TRUE@am_test_BFM_Operator_OBJECTS =  \
 @USE_BFM_TRUE@	test_BFM_Operator.$(OBJEXT) \
-@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
+@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT)
 test_BFM_Operator_OBJECTS = $(am_test_BFM_Operator_OBJECTS)
 test_BFM_Operator_LDADD = $(LDADD)
 test_BFM_Operator_DEPENDENCIES = $(am__DEPENDENCIES_1) \
@@ -287,9 +286,9 @@ test_Smearing_LDADD = $(LDADD)
 test_Smearing_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am__test_Solver_BFM_SOURCES_DIST = test_Solver_BFM.cpp \
-	testerSolver_BFM.cpp ../lib/Tools/Bagel/bfm_storage.cpp
+	testerSolver_BFM.cpp
 @USE_BFM_TRUE@am_test_Solver_BFM_OBJECTS = test_Solver_BFM.$(OBJEXT) \
-@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT) bfm_storage.$(OBJEXT)
+@USE_BFM_TRUE@	testerSolver_BFM.$(OBJEXT)
 test_Solver_BFM_OBJECTS = $(am_test_Solver_BFM_OBJECTS)
 test_Solver_BFM_LDADD = $(LDADD)
 test_Solver_BFM_DEPENDENCIES = $(am__DEPENDENCIES_1) \
@@ -334,9 +333,6 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
-AM_V_lt = $(am__v_lt_$(V))
-am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
-am__v_lt_0 = --silent
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 AM_V_CXX = $(am__v_CXX_$(V))
@@ -676,24 +672,19 @@ test_DWF_SOURCES = test_DWF.cpp	\
 					testerDWF.cpp
 
 @USE_BFM_TRUE@test_Solver_BFM_SOURCES = test_Solver_BFM.cpp             \
-@USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
-@USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
 @USE_BFM_TRUE@test_BFM_Operator_SOURCES = test_BFM_Operator.cpp             \
-@USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
-@USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
 @USE_BFM_TRUE@test_BFM_Moebius_SOURCES = test_BFM_Moebius.cpp             \
-@USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
-@USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
 @USE_BFM_TRUE@test_BFM_Inverter_SOURCES = test_BFM_Inverter.cpp 		\
-@USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
-@USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
 @USE_BFM_TRUE@test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
-@USE_BFM_TRUE@                                testerSolver_BFM.cpp            \
-@USE_BFM_TRUE@                                ../lib/Tools/Bagel/bfm_storage.cpp
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
 include_HEADERS = tests.hpp			\
 				tests_all.hpp			\
@@ -919,7 +910,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfm_storage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Moebius.Po@am__quote@
@@ -1003,22 +993,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
-
-bfm_storage.o: ../lib/Tools/Bagel/bfm_storage.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT bfm_storage.o -MD -MP -MF $(DEPDIR)/bfm_storage.Tpo -c -o bfm_storage.o `test -f '../lib/Tools/Bagel/bfm_storage.cpp' || echo '$(srcdir)/'`../lib/Tools/Bagel/bfm_storage.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bfm_storage.Tpo $(DEPDIR)/bfm_storage.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../lib/Tools/Bagel/bfm_storage.cpp' object='bfm_storage.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o bfm_storage.o `test -f '../lib/Tools/Bagel/bfm_storage.cpp' || echo '$(srcdir)/'`../lib/Tools/Bagel/bfm_storage.cpp
-
-bfm_storage.obj: ../lib/Tools/Bagel/bfm_storage.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT bfm_storage.obj -MD -MP -MF $(DEPDIR)/bfm_storage.Tpo -c -o bfm_storage.obj `if test -f '../lib/Tools/Bagel/bfm_storage.cpp'; then $(CYGPATH_W) '../lib/Tools/Bagel/bfm_storage.cpp'; else $(CYGPATH_W) '$(srcdir)/../lib/Tools/Bagel/bfm_storage.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/bfm_storage.Tpo $(DEPDIR)/bfm_storage.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='../lib/Tools/Bagel/bfm_storage.cpp' object='bfm_storage.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o bfm_storage.obj `if test -f '../lib/Tools/Bagel/bfm_storage.cpp'; then $(CYGPATH_W) '../lib/Tools/Bagel/bfm_storage.cpp'; else $(CYGPATH_W) '$(srcdir)/../lib/Tools/Bagel/bfm_storage.cpp'; fi`
 install-includeHEADERS: $(include_HEADERS)
 	@$(NORMAL_INSTALL)
 	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"

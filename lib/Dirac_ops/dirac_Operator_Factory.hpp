@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-05-27 17:46:59 noaki>
+ Time-stamp: <2013-07-04 10:12:27 cossu>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -38,7 +38,8 @@ public:
 
 class DiracWilsonLikeEvenOddFactory: public DiracWilsonLikeFactory{
 public:
-  /*!@brief this virtual function is to be wrapped and to give eo-/oe- operators to the higher level operator */
+  /*!@brief this virtual function is to be wrapped and 
+    to give eo-/oe- operators to the higher level operator */
   virtual DiracWilsonLike_EvenOdd* getDiracEO(Field* const) = 0;
 
   DiracWilsonLike* getDiracWL(Field* const Gfield){
@@ -68,11 +69,11 @@ public:
   virtual DiracStaggeredEvenOddLike* 
   getDiracSTG(Dstagg::Dtype,Field* const) = 0;
   Dirac* getDirac(Field* const Gfield){
-    return getDiracSTG(dt_,Gfield);} // DdagDee is chosen as default
+    return getDiracSTG(dt_,Gfield);} // DdagDee is chosen by default
   virtual ~DiracStaggeredEvenOddLikeFactory(){}
 };
 
-/////////////////////// conclete classes ///////////////////////////
+/////////////////////// concrete classes ///////////////////////////
 
 /*! @brief Concrete class for creating Dirac Wilson operators */
 class DiracWilsonFactory : public DiracWilsonLikeFactory {
@@ -200,8 +201,8 @@ public:
 					       Field* const Gfield);
 };
 
-/*! @brief Concrete class for creating Dirac_staggered_EvenOdd_Adjoint */
-//Valid only in the case of NC=3
+/*! @brief Concrete class for creating Dirac_staggered_EvenOdd_Adjoint 
+  only for NC=3*/
 #if NC_==3
 class DiracStaggeredEvenOddAdjointFactory
   : public DiracStaggeredEvenOddLikeFactory{

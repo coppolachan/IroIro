@@ -1,22 +1,10 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-05-27 17:05:39 noaki>
+ * Time-stamp: <2013-07-04 10:14:40 cossu>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
 #include "Communicator/comm_io.hpp"
-/*
-#include "dirac_wilson.hpp"
-#include "dirac_wilson_EvenOdd.hpp"
-#include "dirac_wilson_Brillouin.hpp"
-#include "dirac_clover.hpp"
-#include "dirac_DomainWall_4D_fullSolv.hpp"
-#include "dirac_DomainWall_4D_eoSolv.hpp"
-#include "dirac_DomainWall.hpp"
-#include "dirac_DomainWall_EvenOdd.hpp"
-#include "dirac_staggered_EvenOdd.hpp"
-#include "dirac_staggered_EvenOdd_Adjoint.hpp"
-*/
 #include "eoUtils.hpp"
 #include <string.h>
 

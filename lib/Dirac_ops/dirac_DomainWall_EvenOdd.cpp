@@ -2,7 +2,7 @@
  *@file dirac_DomainWall_EvenOdd.cpp
  *
  *@brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op)
- Time-stamp: <2013-05-30 10:13:09 noaki>
+ Time-stamp: <2013-07-12 14:29:38 cossu>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"

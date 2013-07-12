@@ -10,7 +10,7 @@
 #include "Measurements/FermionicM/source_types.hpp"
 
 #include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp"
-
+#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
 
 using namespace std;
 
@@ -53,17 +53,27 @@ int Test_Solver_BFM::run(){
   Dirac_Wilson Dw_eo(M5,&(conf_.data),Dop::EOtag());
   Dirac_Wilson Dw_oe(M5,&(conf_.data),Dop::OEtag());
 
-  Dirac_optimalDomainWall_EvenOdd DWF_EO(b,c, M5, mq, omega, &Dw_eo, &Dw_oe, &(conf_.data));
+  Dirac_optimalDomainWall_EvenOdd DWF_EO(b,c, M5, mq,
+					 omega, &Dw_eo, &Dw_oe,
+					 &(conf_.data));
   
   ////////////////////////////////////////////////////////////
   //    Setup DWF operator
   ////////////////////////////////////////////////////////////
-  Dirac_BFM_Wrapper BFMoperator(&conf_.data);
-  BFMoperator.set_ScaledShamirCayleyTanh(mq, M5, Ls, ht_scale);
-  BFMoperator.solver_params(50000, 1e-12);
+  CCIO::cout << "Creating factory\n";
+  DiracBFMoperatorFactory BFMfactory(DWFnode);
+  CCIO::cout << "Creating object\n";
+  
+  Dirac_BFM_Wrapper* BFMop_with_fact = BFMfactory.getDiracWL(&conf_.data);
+  BFMop_with_fact->set_SolverParams(DWFnode);
+  BFMop_with_fact->initialize();
+  
+  
+  Dirac_BFM_Wrapper BFMoperator(DWFnode,&conf_.data, &DWF_EO);// standard creation
+  BFMoperator.set_SolverParams(DWFnode);
   BFMoperator.initialize();
-  //////////////////////////////////////////////////////////// 
 
+  //////////////////////////////////////////////////////////// 
   // Sources setup
   FermionField source(src.mksrc(0,0));
   SiteIndex_EvenOdd* ieo = SiteIndex_EvenOdd::instance();
@@ -80,9 +90,10 @@ int Test_Solver_BFM::run(){
   rand.get(vphi);
   Field fo(vphi);
   double phi_norm = phi.norm();
-  CCIO::cout << "phi,size,norm: " << phi.size() << " " << phi_norm << endl;
+  CCIO::cout << "fe norm : " << fe.norm() << endl;
 
   FermionField EO_source(Nvol5d);
+
   CCIO::cout << "EO_source size: "<< EO_source.size() <<"\n";
   
   // copy fields in the eo source CB blocked
@@ -95,17 +106,55 @@ int Test_Solver_BFM::run(){
     }
   }
   CCIO::cout << "EO_source filled\n";
+
+  ////////////////////////////////////////////////////////////////////////////////// 
+  // Force term 
+  Field force_BFM = BFMoperator.md_force(fe ,fe);
+  Field force_IroIro =  DWF_EO.md_force(fe, fe);
+
+
+  Field ForceDiff =  force_BFM;
+  ForceDiff -= force_IroIro;
+  CCIO::cout << "Force check BFM - IroIro  "<< force_BFM.norm() 
+  	     << "  "<< force_IroIro.norm() << "\n";
+
+  CCIO::cout << "Force check Difference BFM-IroIro = "<< ForceDiff.norm() << "\n";
+  /*
+ 
   ///////////////////////////////////////////////////////////////////////////////////////
   // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_eo
   SolverOutput SO;
   Field output_f(vphi);
   DWF_EO.solve_eo(output_f,fe, SO,  10000, 1.0e-24);
   SO.print();
-  
+
   ///////////////////////////////////////////////////////////////////////////////////////
- // Solver using BFM
+  // Solver MultishiftCG using BFM
+  vector_double shifts(3);
+  shifts[0] = 0.01;
+  shifts[1] = 0.02;
+  shifts[2] = 0.03;
+  vector_double mresiduals(3);
+  mresiduals[0] = 1e-12;
+  mresiduals[1] = 1e-12;
+  mresiduals[2] = 1e-12;
+
+  
+  std::vector < FermionField > BFM_ms_solution(shifts.size());
+  BFMop_with_fact->solve_CGNE_multishift(BFM_ms_solution, EO_source, shifts, mresiduals);
+
+  ////////////////////////////////////////////////////////////////////////////////// 
+  // Mult & Mult_dag
+  Field mult_BFM = BFMoperator.mult_test(fe);
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Solver CG using BFM
   FermionField BFMsolution(Nvol5d);
   BFMoperator.solve_CGNE(BFMsolution, EO_source);
+
+  // Using the factory object
+  FermionField BFMsolution2(Nvol5d);
+  BFMop_with_fact->solve_CGNE(BFMsolution2, EO_source);
   
   int vect4d_hsize = fe.size()/Ls;   
   for (int s =0 ; s< Ls; s++){
@@ -113,21 +162,22 @@ int Test_Solver_BFM::run(){
       fe.set(i+vect4d_hsize*s, BFMsolution.data[i+2*s*vect4d_hsize]);
     }
   }
-  //////////////////////////////////////////////////////////////////////////////////  
+  */
+
   // Check
+  /*
   Field F_Diff;
   F_Diff = output_f;
   F_Diff -= fe;
-  /*
+  
   for (int i = 0; i < fe.size() ; i++){
     double diff = abs(fe[i]-output_f[i]);
     if (diff>1e-8) CCIO::cout << "*";
     CCIO::cout << "["<<i<<"] "<<fe[i] << "  "<<output_f[i]
                << "  "<< diff << "\n";
   }
-  */
-
-  CCIO::cout << "Operator Difference BFM-IroIro = "<< F_Diff.norm() << "\n";
   
+  CCIO::cout << "Operator Difference BFM-IroIro = "<< F_Diff.norm() << "\n";
+  */
   return 0;
 }

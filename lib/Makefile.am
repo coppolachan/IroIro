@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-07-04 09:55:46 cossu>
+# Time-stamp: <2013-07-10 10:46:32 cossu>
 
 ###########################################
 # Initial definitions 
@@ -50,6 +50,7 @@ endif #USE_MPI
 # Sources by architecture
 if IBM_BGQKERNELS
 DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
+DWF_BGQ_SRC += Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
 else
@@ -77,7 +78,9 @@ if USE_BFM
 BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
 BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
 BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
-BFM_SRCS = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 	
+BFM_SRCS = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 
+BFM_SRCS += Tools/Bagel/bfm_storage.cpp 
+BFM_SRCS += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 else
 BFM_SRCS = 
 endif

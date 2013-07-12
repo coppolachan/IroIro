@@ -2,7 +2,7 @@
  * @file dirac_DomainWall_BGQ.code
  *
  * @brief Definition of some BGQ optimized methods for Dirac_optimalDomainWall (5d operator)
- *Time-stamp: <2013-07-03 12:05:49 cossu>
+ *Time-stamp: <2013-07-04 14:09:02 cossu>
  *-------------------------------------------------------------------------*/
 #include "include/timings.hpp"
 #include "Solver/solver.hpp"
@@ -1660,6 +1660,7 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
 	_Message(SOLV_ITER_VERB_LEVEL, "       ["<<i<<"]  "<<diff1<<"\n");
       
       if(diff1>Out.diff) Out.diff = diff1;
+      
     }
     if(tid==0)
       _Message(SOLV_ITER_VERB_LEVEL, " Maximum residual  = "<<Out.diff<<"\n");
@@ -1670,6 +1671,7 @@ void Dirac_optimalDomainWall::solve_ms_eo_5d(prop_t& xq,
       Spinor* xqi_ptr = (Spinor*)(xq[i].getaddr(0));
       for(s5=0;s5<N5_;s5++)
 	BGWilsonLA_Equate(xqi_ptr + s5*Nvol+is, x_ptr + s5*Nvol+is, ns);
+      
     }
     
     BGQThread_Free(pp,tid);

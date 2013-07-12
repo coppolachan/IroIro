@@ -1,7 +1,7 @@
 /*!
  * @file solver_Factory.hpp 
  * @brief Declaration of Solver operators factories
- * Time-stamp: <2013-05-23 11:20:26 noaki>
+ * Time-stamp: <2013-07-04 16:14:02 cossu>
  */
 #ifndef SOLVER_FACT_
 #define SOLVER_FACT_
@@ -95,8 +95,7 @@ public:
 };
 
 #ifdef IBM_BGQ_WILSON
-#include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
-#include "Solver/solver_CG.hpp"
+#include "Solver/Architecture_Optimized/solver_CG_DWF_BGQ.hpp"
 /*!
  @brief Concrete class for creating Conjugate Gradient Solver operator [Optimized version]
 */
