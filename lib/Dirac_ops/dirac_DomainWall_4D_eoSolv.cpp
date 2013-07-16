@@ -5,6 +5,7 @@
 #include "Fields/field_expressions.hpp"
 
 using namespace std;
+using namespace FieldExpression;
 
 const Field Dirac_optimalDomainWall_4D_eoSolv::mult(const Field& f)const{
   Field sol5(fsize_*N5_);
@@ -12,14 +13,14 @@ const Field Dirac_optimalDomainWall_4D_eoSolv::mult(const Field& f)const{
   return Bproj(sol5);
 }
 
-const Field Dirac_optimalDomainWall_4D_eoSolv::mult_dag(const Field& f)const{ 
-  return gamma5(mult(gamma5(f)));}
-
 const Field Dirac_optimalDomainWall_4D_eoSolv::mult_inv(const Field& f)const{
   Field sol5(fsize_*N5_);
   invD_->invert(sol5,invDpv_->mult(Bproj_dag(f)));// Dodw_^-1
   return Bproj(sol5);
 }
+
+const Field Dirac_optimalDomainWall_4D_eoSolv::mult_dag(const Field& f)const{ 
+  return gamma5(mult(gamma5(f)));}
 
 const Field Dirac_optimalDomainWall_4D_eoSolv::mult_dag_inv(const Field& f)const{ 
   return gamma5(mult_inv(gamma5(f)));}

@@ -9,7 +9,11 @@
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="CSDTbinary" Input="FileList">
-    <filename>G0001.dat</filename>
+    <starting_idx>21</starting_idx>
+    <idx_increment>1</idx_increment>
+    <GaugeConfigs>
+      <filename>G0001.dat</filename>
+    </GaugeConfigs>
   </Configuration> 
   <RandomNumberGen name="Mersenne Twister"> 
     <!--   <seedFile>seed_file</seedFile>                      
@@ -26,8 +30,6 @@
   </Smearing>
   <GaugeFixing name="NoFixing"></GaugeFixing>
   <Output>
-    <starting_idx>21</starting_idx>
-    <idx_increment>1</idx_increment>
     <output_prefix>Output/wflow_</output_prefix>
 <!--   <gauge_prefix>Output/smr_gtr_</gauge_prefix>-->
 <!--   <seed_prefix>Output/rng_seed_</seed_prefix>-->

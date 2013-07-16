@@ -13,16 +13,18 @@
 using namespace std;
 
 int Test_MesonSpectrum_SpMom::run(){
+  XML::node node = input_.node;
+  InputConfig config = input_.getConfig();  
 
   //// Quark Propagator ////
-  XML::descend(node_,"QuarkProp");
+  XML::descend(node,"QuarkProp");
   
-  auto_ptr<QuarkPropagatorFactory> qpfact(QuarkPropagators::createQuarkPropagatorFactory(node_));
-  auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(conf_));
+  auto_ptr<QuarkPropagatorFactory> qpfact(QuarkPropagators::createQuarkPropagatorFactory(node));
+  auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(config));
   
   //// source creation ////
-  XML::next_sibling(node_,"Source");
-  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(node_));
+  XML::next_sibling(node,"Source");
+  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(node));
   auto_ptr<Source> src(SrcFactory->getSource());
 
   prop_t sq;  //Defines a vector of fields
@@ -35,7 +37,7 @@ int Test_MesonSpectrum_SpMom::run(){
   MesonCorrelator pp(Pion), v1v1(Vector1), v2v2(Vector2), v3v3(Vector3);
   
   // output file open
-  ofstream writer(output_.c_str());  
+  ofstream writer(input_.output.c_str());  
 
   // Fourier Tr
   int Lx = CommonPrms::instance()->Lx();
@@ -59,7 +61,7 @@ int Test_MesonSpectrum_SpMom::run(){
 	//	vector<double> Cv3v3 = v3v3.calculate<Format::Format_F>(sq,sq,px,py,px);
 
 	// output
-	//CCIO::cout << " ---- Output p=("<<px<<","<<py<<","<<pz<<") in "<< output_.c_str()<<"\n";
+	//CCIO::cout << " ---- Output p=("<<px<<","<<py<<","<<pz<<") in "<< input_.output.c_str()<<"\n";
 
 	if(Communicator::instance()->primaryNode()){
 	  CCIO::cout << "calculation p=("<<px<<","<<py<<","<<pz<<")\n";

@@ -1,6 +1,5 @@
 /*!
  * @file test_MultiShiftSolver.hpp
- *
  * @brief Class to test MultiShiftSolver_CG 
  */
 
@@ -10,7 +9,7 @@
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
-class Test_MultiShiftSolver : public TestGeneral{
+class Test_MultiShiftSolver{
  private:
   const char* test_name;
   XML::node MS_node;

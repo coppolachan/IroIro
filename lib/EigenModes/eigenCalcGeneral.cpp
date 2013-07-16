@@ -4,9 +4,11 @@
 #include "eigenCalcGeneral.hpp"
 #include "foprHermFactory_ChebyshevDdagDLin.hpp"
 #include "eigenSorter_Factory.hpp"
-#include "include/field.h"
 #include "IO/fields_io.hpp"
 #include "Fields/field_expressions.hpp"
+#include "inputConfig.hpp"
+#include "field.h"
+
 #include <cassert>
 
 using namespace std;
@@ -25,12 +27,13 @@ EigenCalcGeneral::EigenCalcGeneral(const XML::node& node){
   
   XML::node eslvNode = node;
   XML::descend(eslvNode,"EigenModesSolver");
-  eslvFptr_.reset(EigenModes::createEigenSolverFactory(eslvNode));  
+  eslvFptr_.reset(EigenSolver::createEigenSolverFactory(eslvNode));  
 }
 
-void EigenCalcGeneral::do_calc(Field* const conf){
+void EigenCalcGeneral::do_calc(GaugeField* const gconf){
 
-  const auto_ptr<DiracWilsonLike> diracPtr(diracFptr_->getDiracWL(conf));
+  InputConfig input(gconf);
+  const auto_ptr<DiracWilsonLike> diracPtr(diracFptr_->getDirac(input));
   const auto_ptr<Fopr_Herm>       aoprPtr(opAccelFptr_->getFoprHerm(diracPtr.get()));
   const auto_ptr<EigenSorter>     sorterPtr(esortFptr_->getEigenSorter(aoprPtr.get()));
   const auto_ptr<EigenModesSolver> 
@@ -102,8 +105,14 @@ void EigenCalcGeneral::output_txt(const string& output)const{
 }
 
 void EigenCalcGeneral::output_bin(const string& output)const{
-  for(int i=0; i<Neig_; ++i)
+  std::string output_evals = output + "_evals.txt";
+  ofstream writer(output_evals.c_str());
+  for(int i=0; i<Neig_; ++i){
     CCIO::SaveOnDisk<Format::Format_F>(evecs_[i],output.c_str(),true);
+    writer<< setw(2) <<setiosflags(ios_base::right)<< i;
+    writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	  << evals_[i]<<endl;
+  }
 }
 
 FoprHermFactory* EigenCalcGeneral::createAccelOpFactory(const XML::node& node)const{

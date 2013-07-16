@@ -1,17 +1,17 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.hpp
  * @brief Definition of Dirac_optimalDomainWall_4D class with full Solver
- Time-stamp: <2013-05-03 08:20:13 noaki>
+ Time-stamp: <2013-07-04 02:29:31 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_4D_FULLSOLV_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_4D_FULLSOLV_INCLUDED
 
-#include "Dirac_ops/dirac_DomainWall.hpp"
+#include "dirac_DomainWall.hpp"
 #include "Solver/solver.hpp"
 #include "Solver/solver_CG.hpp"
 #include "include/fopr.h"
 
-class Format_F;
+enum DW5dPrecond{NoPrecond,LUprecond};
 
 /*!
  * @brief Container for parameter of the 4d Optimal Domain Wall operator
@@ -22,42 +22,52 @@ class Dirac_optimalDomainWall_4D_fullSolv : public Dirac_optimalDomainWall_4D{
 				      *with mass 1.0 (Pauli Villars operator) */
   const Solver* slv_odw_;/*!< @brief %Solver for the Domain Wall fermion operator*/
   const Solver* slv_pv_;/*!< @brief %Solver for the Pauli Villars operator */
-public:
 
+  const Field Bproj(const Field&) const;
+  const Field Bproj_dag(const Field&) const;
+
+  void(Dirac_optimalDomainWall_4D_fullSolv::*mult_core)(Field&,const Field&)const;
+  void(Dirac_optimalDomainWall_4D_fullSolv::*mult_inv_core)(Field&,const Field&)const;
+
+  void mult_std(    Field&,const Field&)const;
+  void mult_inv_std(Field&,const Field&)const;
+
+  void mult_LU(    Field&,const Field&)const;
+  void mult_inv_LU(Field&,const Field&)const;
+
+  double mq_;
+  size_t fsize_;
+public:
    /*!
    * @brief Constructor using external solvers (mostly used by factories)
    */
   Dirac_optimalDomainWall_4D_fullSolv(const Dirac_optimalDomainWall* D,
 				      const Dirac_optimalDomainWall* Dpv,
-				      const Solver* SolverODWF, 
-				      const Solver* SolverPV)
-    :Dodw_(D),Dpv_(Dpv),slv_odw_(SolverODWF),slv_pv_(SolverPV){}
-
-  /*!
-   * @brief Constructor using Solver_CG class as Solver
-   */
-  Dirac_optimalDomainWall_4D_fullSolv(const Dirac_optimalDomainWall* D,
-				      const double stp_cnd_odw, 
-				      const double stp_cnd_pv, 
-				      const int Niter)
-    :Dodw_(D),Dpv_(new Dirac_optimalDomainWall(*D,PauliVillars)),
-     slv_odw_(new Solver_CG(stp_cnd_odw,Niter,new Fopr_DdagD_Precondition(Dodw_))),
-     slv_pv_(new Solver_CG(stp_cnd_pv,Niter,  new Fopr_DdagD_Precondition(Dpv_))){}
-
-  ~Dirac_optimalDomainWall_4D_fullSolv(){}
+				      const Solver* SolverDW, 
+				      const Solver* SolverPV,
+				      DW5dPrecond precond=NoPrecond)
+    :Dodw_(D),Dpv_(Dpv),slv_odw_(SolverDW),slv_pv_(SolverPV),
+     mult_core(    &Dirac_optimalDomainWall_4D_fullSolv::mult_std),
+     mult_inv_core(&Dirac_optimalDomainWall_4D_fullSolv::mult_inv_std),
+     mq_(D->getMass()),fsize_(D->f4size()){
+    if(precond==LUprecond){
+      mult_core =     &Dirac_optimalDomainWall_4D_fullSolv::mult_LU;
+      mult_inv_core = &Dirac_optimalDomainWall_4D_fullSolv::mult_inv_LU;
+    }
+  }
   
-  size_t fsize() const {return Dodw_->f4size();}
+  size_t fsize() const {return fsize_;}
   size_t gsize() const {return Dodw_->gsize(); }
+  double getMass() const {return mq_;}
 
-  const Field mult    (const Field&)const;
+  const Field* getGaugeField_ptr()const{ return Dodw_->getGaugeField_ptr(); }
+
+  const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
-  const Field gamma5  (const Field&)const;
-
-  const Field mult_inv    (const Field&)const;
+  const Field mult_inv(const Field&)const;
   const Field mult_dag_inv(const Field&)const;
 
-  const Field signKernel(const Field&)const;
-  double getMass() const {return Dodw_->getMass();}
+  const Field gamma5(const Field&)const;
 };
 
 #endif

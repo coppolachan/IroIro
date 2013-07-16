@@ -1,59 +1,102 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.cpp
  * @brief Declaration of Dirac_optimalDomainWall_4D_fullSolv class 
- Time-stamp: <2013-05-28 16:41:07 noaki>
+ Time-stamp: <2013-07-04 02:40:25 noaki>
  */
 #include "dirac_DomainWall_4D_fullSolv.hpp"
-#include "Tools/randNum_MP.h"
+#include "Fields/field_expressions.hpp"
 
 using namespace std;
+using namespace FieldExpression;
 
-const Field Dirac_optimalDomainWall_4D_fullSolv::mult(const Field& f)const{
-  // D_dw(m)
-  Field t5 = Dodw_->mult(Dodw_->Bproj_dag(f));
+void Dirac_optimalDomainWall_4D_fullSolv::mult_std(Field& w,const Field& f)const{
   // Dpv_^-1
-  Field src = Dpv_->mult_dag_prec(Dpv_->left_prec(t5));
+  Field src = Dpv_->mult_dag(Dodw_->mult(Bproj_dag(f)));
   Field sol5(Dodw_->fsize());
   SolverOutput monitor = slv_pv_->solve(sol5,src);
-#if VERBOSITY > 0
+#if VERBOSITY > BASE_VERB_LEVEL
   monitor.print();
 #endif
-  return Dodw_->Bproj(Dpv_->right_prec(sol5));
+  w = Bproj(sol5);
 }
 
-const Field Dirac_optimalDomainWall_4D_fullSolv::mult_dag(const Field& f)const{
-  return gamma5(mult(gamma5(f)));
+void Dirac_optimalDomainWall_4D_fullSolv::mult_inv_std(Field& w,const Field& f)const{
+  // D_dw^-1
+  Field src = Dodw_->mult_dag(Dpv_->mult(Bproj_dag(f)));
+  Field sol5(Dodw_->fsize());
+  SolverOutput monitor = slv_odw_->solve(sol5,src);
+#if VERBOSITY > BASE_VERB_LEVEL
+  monitor.print();
+#endif
+  w = Bproj(sol5);
+}
+
+void Dirac_optimalDomainWall_4D_fullSolv::mult_LU(Field& w,const Field& f)const{
+  // Dpv_^-1
+  Field src = Dpv_->mult_hop5_dinv(Dpv_->mult_dag(Dodw_->mult(Bproj_dag(f))));
+  Field sol5(Dodw_->fsize());
+  SolverOutput monitor = slv_pv_->solve(sol5,src);
+#if VERBOSITY > BASE_VERB_LEVEL
+  monitor.print();
+#endif
+  w = Bproj(Dpv_->mult_hop5_inv(sol5));
+}
+
+void Dirac_optimalDomainWall_4D_fullSolv::mult_inv_LU(Field& w,const Field& f)const{
+  // D_dw^-1
+  Field src = Dodw_->mult_hop5_dinv(Dodw_->mult_dag(Dpv_->mult(Bproj_dag(f))));
+  Field sol5(Dodw_->fsize());
+  SolverOutput monitor = slv_odw_->solve(sol5,src);
+#if VERBOSITY > BASE_VERB_LEVEL
+  monitor.print();
+#endif
+  w = Bproj(Dodw_->mult_hop5_inv(sol5));
+}
+
+const Field Dirac_optimalDomainWall_4D_fullSolv::mult(const Field& f)const{
+  Field w(fsize_);
+  (this->*mult_core)(w,f);
+  return w;
 }
 
 const Field Dirac_optimalDomainWall_4D_fullSolv::mult_inv(const Field& f)const{
-  // D_pv
-  Field t5 = Dpv_->mult(Dodw_->Bproj_dag(f));
-  // D_dw^-1
-  Field src = Dodw_->mult_dag_prec(Dodw_->left_prec(t5));
-  Field sol5(Dodw_->fsize());
-  SolverOutput monitor = slv_odw_->solve(sol5,src);
-#if VERBOSITY > 0
-  monitor.print();
-#endif
-  return Dodw_->Bproj(Dodw_->right_prec(sol5));
+  Field w(fsize_);
+  (this->*mult_inv_core)(w,f);
+  return w;
 }
 
-const Field Dirac_optimalDomainWall_4D_fullSolv::
-mult_dag_inv(const Field& f)const{
-  // D_dw^dag^-1
-  Field src = Dodw_->right_dag_prec(Dodw_->Bproj_dag(f));
-  Field sol5(Dodw_->fsize());
-  SolverOutput monitor = slv_odw_->solve(sol5,src);
-#if VERBOSITY > 0
-  monitor.print();
-#endif
-  src = Dodw_->left_dag_prec(Dodw_->mult_prec(sol5));
-  // D_pv^dag
-  return Dodw_->Bproj(Dpv_->mult_dag(src));
-}
+const Field Dirac_optimalDomainWall_4D_fullSolv::mult_dag(const Field& f)const{
+  return gamma5(mult(gamma5(f)));}
+
+const Field Dirac_optimalDomainWall_4D_fullSolv::mult_dag_inv(const Field& f)const{
+  return gamma5(mult_inv(gamma5(f)));}
 
 const Field Dirac_optimalDomainWall_4D_fullSolv::gamma5(const Field& f)const{ 
   Field w(Dodw_->f4size());
   Dodw_->gamma5_4d(w,f);
   return w;
+}
+
+const Field Dirac_optimalDomainWall_4D_fullSolv::Bproj(const Field& f5) const{ 
+  Field f4(fsize_);
+  int N5 = Dodw_->fsize()/fsize_;
+  int Nvol = fsize_/ffmt_t::Nin();
+  ffmt_t ff(Nvol);
+  for(int site=0; site<Nvol; ++site)
+    BprojCore(f4.getaddr(ff.index(0,site)),
+	      const_cast<Field&>(f5).getaddr(ff.index(0,site,0)),
+	      const_cast<Field&>(f5).getaddr(ff.index(0,site,N5-1)));
+  return f4;
+}
+
+const Field Dirac_optimalDomainWall_4D_fullSolv::Bproj_dag(const Field& f4) const{
+  int N5 = Dodw_->fsize()/fsize_;
+  int Nvol = fsize_/ffmt_t::Nin();
+  ffmt_t ff(Nvol);
+  Field f5(Dodw_->fsize());
+  for(int site=0; site<Nvol; ++site)
+    BprojCore_dag(f5.getaddr(ff.index(0,site,0)),
+		  f5.getaddr(ff.index(0,site,N5-1)),
+		  const_cast<Field&>(f4).getaddr(ff.index(0,site)));
+  return f5;
 }

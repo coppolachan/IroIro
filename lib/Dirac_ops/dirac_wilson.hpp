@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.hpp
  * @brief Dirac_Wilson class 
- Time-stamp: <2013-05-03 09:21:26 noaki>
+ Time-stamp: <2013-07-02 11:25:12 noaki>
  */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
@@ -135,7 +135,7 @@ public:
     XML::read(node, "mass", mass);
     kpp_= 0.5/(4.0+mass);
   }
-  
+
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
@@ -151,9 +151,11 @@ public:
   void md_force_p(Field&,const Field&,const Field&)const;
   void md_force_m(Field&,const Field&,const Field&)const;
   double getKappa() const {return kpp_;}  
+  double getMass() const {return 0.5/kpp_-4.0;}  
 
   size_t fsize()const{return ff_.size();}
   size_t gsize()const{return gf_.size();}
+  const Field* getGaugeField_ptr()const{ return u_; }
 
   void update_internal_state(){}
 };

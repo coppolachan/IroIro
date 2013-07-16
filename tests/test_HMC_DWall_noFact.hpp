@@ -14,21 +14,17 @@
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
-class Test_HMC_DomainWall: TestGeneral{
-private:
+class Test_HMC_DomainWall{
   const char* test_name;
   XML::node HMC_DW_node;
   GaugeField Gfield_;
 public:
-  Test_HMC_DomainWall(XML::node node,
-		      GaugeField& Gfield):HMC_DW_node(node),
-					  Gfield_(Gfield){
+  Test_HMC_DomainWall(XML::node node,GaugeField& Gfield)
+    :HMC_DW_node(node),Gfield_(Gfield){
     test_name = "HMC";
-    XML::descend(HMC_DW_node, test_name);  
-}
-  
+    XML::descend(HMC_DW_node,test_name);  
+  }
   int run();  
 };
-
 
 #endif

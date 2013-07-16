@@ -1,6 +1,7 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-07-04 10:14:40 cossu>
+
+ * Time-stamp: <2013-07-12 17:42:48 cossu>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -9,27 +10,20 @@
 #include <string.h>
 
 /// Dirac_Wilson
-Dirac_Wilson* DiracWilsonFactory::getDiracWL(Field* const Gfield){
-  return new Dirac_Wilson(Dirac_node_,Gfield);
-}
-/// Dirac_Wilson_EvenOdd
-Dirac_Wilson_EvenOdd* DiracWilsonEvenOddFactory::
-getDiracEO(Field* const Gfield){
-  return new Dirac_Wilson_EvenOdd(Dirac_node_,Gfield);
-}
+DiracWilsonLike* DiracWilsonFactory::createDirac(InputConfig& input){
+  return new Dirac_Wilson(Dirac_node_,input.getGconf());}
 
 /// Dirac_Wilson_Brillouin
-Dirac_Wilson_Brillouin* DiracWilsonBrillouinFactory::
-getDiracWL(Field* const Gfield){
-  return new Dirac_Wilson_Brillouin(Dirac_node_,Gfield,type_);}
+DiracWilsonLike* DiracWilsonBrillouinFactory::createDirac(InputConfig& input){
+  return new Dirac_Wilson_Brillouin(Dirac_node_,input.getGconf());
+}
 
 /// Dirac_Clover
-Dirac_Clover* DiracCloverFactory::getDiracWL(Field* const Gfield){
-  return new Dirac_Clover(Dirac_node_,Gfield); }
+DiracWilsonLike* DiracCloverFactory::createDirac(InputConfig& input){
+  return new Dirac_Clover(Dirac_node_,input.getGconf());}
 
 /// Dirac_Mobius
-DiracMobiusFactory::DiracMobiusFactory(XML::node node)
-  :Dirac_node_(node){
+DiracMobiusFactory::DiracMobiusFactory(XML::node node):Dirac_node_(node){
   XML::node dnode = node;
   XML::descend(dnode,"Dirac_denominator",MANDATORY);
   XML::descend(node,"Solver",MANDATORY);
@@ -38,107 +32,178 @@ DiracMobiusFactory::DiracMobiusFactory(XML::node node)
   SolverFactory_.save(Solvers::createSolverFactory(node));
 }
 
-Dirac_Mobius* DiracMobiusFactory::getDiracWL(Field* const Gfield){
-  D_.save(DiracFactory_.get()->getDiracWL(Gfield));
-  Fopr_.save(new Fopr_DdagD_Precondition(D_.get()));
+DiracWilsonLike* DiracMobiusFactory::createDirac(InputConfig& input){
+  D_.save(DiracFactory_.get()->getDirac(input));
+  Fopr_.save(new Fopr_DdagD(D_.get()));
   Solver_.save(SolverFactory_.get()->getSolver(Fopr_.get()));
   return new Dirac_Mobius(Dirac_node_,D_.get(),Solver_.get());
 }
 
 /// Dirac_optimalDomainWall
-DiracDomainWall5dFactory::DiracDomainWall5dFactory(XML::node node):Dirac_node_(node){
+DiracDomainWall5dFactory::DiracDomainWall5dFactory(XML::node node)
+:Dirac_node_(node){
   XML::descend(node,"BaseKernel", MANDATORY);
   KernelFactory_.save(Diracs::createDiracWilsonLikeFactory(node));
 }
-
-Dirac_optimalDomainWall* DiracDomainWall5dFactory::getDiracWL(Field* const Gfield){
-  return new Dirac_optimalDomainWall(Dirac_node_,
-				     KernelFactory_.get()->getDiracWL(Gfield),
-				     Gfield); 
+Dirac_optimalDomainWall* DiracDomainWall5dFactory::createDirac(InputConfig& input){
+  if(!Kernel_.is_saved())
+    Kernel_.save(KernelFactory_.get()->getDirac(input));
+  return new Dirac_optimalDomainWall(Dirac_node_,Kernel_.get()); 
+}
+Dirac_optimalDomainWall* DiracDomainWall5dFactory::createDiracPV(InputConfig& input){
+  if(!Kernel_.is_saved())
+    Kernel_.save(KernelFactory_.get()->getDirac(input));
+  return new Dirac_optimalDomainWall(Dirac_node_,Kernel_.get(),PauliVillars); 
 }
 
-Dirac_optimalDomainWall* DiracDomainWall5dFactory::getDiracPV(Field* const Gfield){
-  return new Dirac_optimalDomainWall(Dirac_node_,
-				     KernelFactory_.get()->getDiracWL(Gfield),
-				     Gfield,PauliVillars); 
-}
+/// Dirac_Wilson_EvenOdd
+DiracWilsonLike_EvenOdd* DiracWilsonEvenOddFactory::createDirac(InputConfig& input){
+  return new Dirac_Wilson_EvenOdd(Dirac_node_,input.getGconf());}
 
 /// Dirac_optimalDomainWall_EvenOdd
-DiracDomainWall5dEvenOddFactory::DiracDomainWall5dEvenOddFactory(XML::node node)
+DiracEvenOdd_DWF5dFactory::DiracEvenOdd_DWF5dFactory(XML::node node)
 :Dirac_node_(node){
   XML::descend(node,"BaseKernel", MANDATORY);
   KernelFactory_.save(Diracs::createDiracWilsonLikeEvenOddFactory(node));
 }
 
-Dirac_optimalDomainWall_EvenOdd* 
-DiracDomainWall5dEvenOddFactory::getDiracWL(Field* const Gfield){
-  Kernel_.save(KernelFactory_.get()->getDiracEO(Gfield));
-  return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get(),Gfield); 
+Dirac_optimalDomainWall_EvenOdd* DiracEvenOdd_DWF5dFactory::createDirac(InputConfig& input){
+  if(!Kernel_.is_saved())
+    Kernel_.save(KernelFactory_.get()->getDirac(input));
+  return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get());
 }
-
-Dirac_optimalDomainWall_EvenOdd* 
-DiracDomainWall5dEvenOddFactory::getDiracPV(Field* const Gfield){
-  Kernel_.save(KernelFactory_.get()->getDiracEO(Gfield));
+Dirac_optimalDomainWall_EvenOdd* DiracEvenOdd_DWF5dFactory::createDiracPV(InputConfig& input){
+  if(!Kernel_.is_saved())
+    Kernel_.save(KernelFactory_.get()->getDirac(input));
   return new Dirac_optimalDomainWall_EvenOdd(Dirac_node_,Kernel_.get(),
-					     Gfield,PauliVillars); 
+					     PauliVillars); 
 }
 
 /// Dirac_DWF4DfullSolv
-DiracDWF4DfullFactory::DiracDWF4DfullFactory(XML::node node)
-:Dirac_node_(node){
+DiracDWF4DfullFactory::DiracDWF4DfullFactory(XML::node node,DW5dPrecond prec)
+:Dirac_node_(node),prec_(prec){
   XML::descend(node,"Kernel5d", MANDATORY);
   DiracFactory_.save(new DiracDomainWall5dFactory(node));
-  XML::next_sibling(node, "SolverDWF", MANDATORY);
-  SolverFactory_.save(Solvers::createSolverFactory(node));
-}
-
-Dirac_optimalDomainWall_4D* DiracDWF4DfullFactory::
-getDirac4D(Field* const Gfield){
-
-  DW5D_.save(DiracFactory_.get()->getDiracWL(Gfield));
-  Fopr_.save(new Fopr_DdagD_Precondition(DW5D_.get()));
-  Solver_.save(SolverFactory_.get()->getSolver(Fopr_.get()));
-
-  DW5D_PV_.save(DiracFactory_.get()->getDiracPV(Gfield));
-  Fopr_PV_.save(new Fopr_DdagD_Precondition(DW5D_PV_.get()));
-  Solver_PV_.save(SolverFactory_.get()->getSolver(Fopr_PV_.get()));
-
-  return new Dirac_optimalDomainWall_4D_fullSolv(DW5D_.get(),DW5D_PV_.get(),
-						 Solver_.get(),Solver_PV_.get());
-}
-
-/// Dirac_DWF4DeoSolv
-DiracDWF4DeoFactory::DiracDWF4DeoFactory(XML::node node)
-:Dirac_node_(node){
-  XML::descend(node,"Kernel5d", MANDATORY);
-  DiracEOFactory_.save(new DiracDomainWall5dEvenOddFactory(node));
   XML::next_sibling(node,"SolverDWF", MANDATORY);
   SolverFactory_.save(Solvers::createSolverFactory(node));
 }
 
-Dirac_optimalDomainWall_4D* DiracDWF4DeoFactory::
-getDirac4D(Field* const Gfield){
-  DW5D_EO_.save(DiracEOFactory_.get()->getDiracWL(Gfield));
-  FoprEO_.save(new Fopr_DdagD(DW5D_EO_.get()));
-  SolverEO_.save(SolverFactory_.get()->getSolver(FoprEO_.get()));
-  Inv_.save(new EvenOddUtils::Inverter_WilsonLike(DW5D_EO_.get(),SolverEO_.get()));
+Dirac_optimalDomainWall_4D* DiracDWF4DfullFactory::createDirac(InputConfig& input){
+  DW5D_.save(DiracFactory_.get()->getDirac(input));
+  Fopr_.save(new Fopr_DdagD(DW5D_.get()));
+  Solver_.save(SolverFactory_.get()->getSolver(Fopr_.get()));
 
-  DW5D_EO_PV_.save(DiracEOFactory_.get()->getDiracPV(Gfield));
-  FoprEO_PV_.save(new Fopr_DdagD(DW5D_EO_PV_.get()));
-  SolverEO_PV_.save(SolverFactory_.get()->getSolver(FoprEO_PV_.get()));
-  Inv_PV_.save(new EvenOddUtils::Inverter_WilsonLike(DW5D_EO_PV_.get(),SolverEO_PV_.get()));
-  
-  return new Dirac_optimalDomainWall_4D_eoSolv(Dirac_node_,Inv_.get(),Inv_PV_.get());
+  DW5dPV_.save(new Dirac_optimalDomainWall(*(DW5D_.get()),PauliVillars));
+  FoprPV_.save(new Fopr_DdagD(DW5dPV_.get()));
+  SolverPV_.save(SolverFactory_.get()->getSolver(FoprPV_.get()));
+
+  return new Dirac_optimalDomainWall_4D_fullSolv(DW5D_.get(),DW5dPV_.get(),
+						 Solver_.get(),SolverPV_.get(),prec_);
+}
+
+/// Dirac_DWF4DeoSolv
+DiracDWF4DeoFactory::DiracDWF4DeoFactory(XML::node node):Dirac_node_(node){
+  XML::descend(Dirac_node_,"Kernel5d",MANDATORY);
+
+  XML::node node_DWF5d = Dirac_node_;
+  DiracEOFactory_.save(new DiracEvenOdd_DWF5dFactory(node_DWF5d));
+  XML::descend(node,"SolverDWF",MANDATORY);
+  SolverFactory_.save(Solvers::createSolverFactory(node));
+}
+
+Dirac_optimalDomainWall_4D* DiracDWF4DeoFactory::createDirac(InputConfig& input){
+  DW5dEO_.save(DiracEOFactory_.get()->getDirac(input));
+  FoprEO_.save(new Fopr_DdagD(DW5dEO_.get()));
+  SolverEO_.save(SolverFactory_.get()->getSolver(FoprEO_.get()));
+  Inv_.save(new EvenOddUtils::Inverter_WilsonLike(DW5dEO_.get(),SolverEO_.get()));
+
+  //DW5dEOpv_.save(new Dirac_optimalDomainWall_EvenOdd(*(DW5dEO_.get()),PauliVillars));
+  DW5dEOpv_.save(DiracEOFactory_.get()->getDiracPV(input));
+  FoprEOpv_.save(new Fopr_DdagD(DW5dEOpv_.get()));
+  SolverEOpv_.save(SolverFactory_.get()->getSolver(FoprEOpv_.get()));
+  InvPV_.save(new EvenOddUtils::Inverter_WilsonLike(DW5dEOpv_.get(),SolverEOpv_.get()));
+
+  return new Dirac_optimalDomainWall_4D_eoSolv(Dirac_node_,Inv_.get(),InvPV_.get());
+}
+
+#ifdef IBM_BGQ_WILSON
+/// Dirac_DWF4dBGQeoSolv
+DiracDWF4dBGQeoFactory::DiracDWF4dBGQeoFactory(XML::node node):Dirac_node_(node){
+  XML::descend(Dirac_node_,"Kernel5d",MANDATORY);
+  XML::node node_DWF5d = Dirac_node_;
+  DiracEOFactory_.save(new DiracEvenOdd_DWF5dFactory(node_DWF5d));
+
+  XML::descend(node,"SolverDWF",MANDATORY);
+  SolverFactory_.save(new SolverCG_DWF_opt_Factory(node));
+}
+
+Dirac_optimalDomainWall_4D* DiracDWF4dBGQeoFactory::createDirac(InputConfig& input){
+  DW5dEO_.save(DiracEOFactory_.get()->getDirac(input));
+  DW5dEOpv_.save(new Dirac_optimalDomainWall_EvenOdd(*(DW5dEO_.get()),PauliVillars));
+
+  SolverEO_.save(SolverFactory_.get()->getSolver(DW5dEO_.get()));
+  SolverEOpv_.save(SolverFactory_.get()->getSolver(DW5dEOpv_.get()));
+
+  Inv_.save(new EvenOddUtils::Inverter_WilsonLike(DW5dEO_.get(),SolverEO_.get()));
+  InvPV_.save(new EvenOddUtils::Inverter_WilsonLike(DW5dEOpv_.get(),SolverEOpv_.get()));
+
+  return new Dirac_optimalDomainWall_4D_eoSolv(Dirac_node_,Inv_.get(),InvPV_.get());
+}
+#endif
+
+/// Dirac_DWoverlap
+DiracDWoverlapFactory::DiracDWoverlapFactory(XML::node node):Dirac_node_(node){
+  XML::descend(node,"Kernel4d",MANDATORY);
+  DW4dFactory_.save(Diracs::createDiracDWF4dFactory(node));
+}
+
+DiracWilsonLike* DiracDWoverlapFactory::createDirac(InputConfig& input){
+  DW4d_.save(DW4dFactory_.get()->getDirac(input));
+  return new Dirac_DWoverlap(DW4d_.get(),input.emode);
+}
+
+/// Dirac_LowModeDeflation with exact eigenmodes
+DiracDeflationExactFactory::DiracDeflationExactFactory(XML::node node)
+ :Dirac_node_(node){
+  XML::descend(node,"KernelCore",MANDATORY);
+  DwFactory_.save(Diracs::createDiracWilsonLikeFactory(node));
+}
+
+Dirac_LowModeDeflation* DiracDeflationExactFactory::createDirac(InputConfig& input){
+  Dw_.save(DwFactory_.get()->getDirac(input));
+  return new Dirac_LowModeDeflation_ExactEigen(Dw_.get(),input.emode);
+}
+
+/// Dirac_LowModeDeflation with approximated subspace
+DiracDeflationApproxFactory::DiracDeflationApproxFactory(XML::node node)
+ :Dirac_node_(node){
+  XML::descend(node,"KernelCore",MANDATORY);
+  DwFactory_.save(Diracs::createDiracWilsonLikeFactory(node));
+}
+
+Dirac_LowModeDeflation* DiracDeflationApproxFactory::createDirac(InputConfig& input){
+  Dw_.save(DwFactory_.get()->getDirac(input));
+  return new Dirac_LowModeDeflation_Approx(Dw_.get(),input.emode);
 }
 
 /// Dirac_staggered_EvenOdd
-Dirac_staggered_EvenOdd* DiracStaggeredEvenOddFactory::
-getDiracSTG(Dstagg::Dtype dt,Field* const Gfield){
-  return new Dirac_staggered_EvenOdd(Dirac_node_,dt,Gfield); }
+Dirac_staggered_EvenOdd* DiracStaggeredEvenOddFactory::createDirac(InputConfig& input){
+  return new Dirac_staggered_EvenOdd(Dirac_node_,input.getGconf(),Dstagg::DdagDee); 
+}
+Dirac_staggered_EvenOdd* DiracStaggeredEvenOddFactory::createDoo(InputConfig& input){
+  return new Dirac_staggered_EvenOdd(Dirac_node_,input.getGconf(),Dstagg::DdagDoo); 
+}
 
 /// Dirac_staggered_EvenOdd_Adjoint
 #if NC_==3
 Dirac_staggered_EvenOdd_Adjoint* DiracStaggeredEvenOddAdjointFactory::
-getDiracSTG(Dstagg::Dtype dt,Field* const Gfield){
-  return new Dirac_staggered_EvenOdd_Adjoint(Dirac_node_,dt,Gfield); }
+createDirac(InputConfig& input){
+  return new Dirac_staggered_EvenOdd_Adjoint(Dirac_node_,input.getGconf(),
+					     Dstagg::DdagDee); 
+}
+Dirac_staggered_EvenOdd_Adjoint* DiracStaggeredEvenOddAdjointFactory::
+createDoo(InputConfig& input){
+  return new Dirac_staggered_EvenOdd_Adjoint(Dirac_node_,input.getGconf(),
+					     Dstagg::DdagDoo); 
+}
 #endif

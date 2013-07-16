@@ -8,7 +8,7 @@
 #include "include/iroiro_code.hpp"
 #include "tests.hpp"
 
-class Test_Wilson : public TestGeneral{
+class Test_Wilson{
 private:
   XML::node wilson_node_;
   GaugeField& conf_;

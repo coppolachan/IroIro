@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-07-12 16:57:29 cossu>
+ * Time-stamp: <2013-07-16 10:26:23 cossu>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -25,6 +25,14 @@ Dirac_BFM_Wrapper_params::set_SolverParams(XML::node BFMnode){
   XML::descend(BFMnode, "Solver", MANDATORY);
   XML::read(BFMnode, "MaxIter", max_iter_, MANDATORY);
   XML::read(BFMnode, "Residual", target_, MANDATORY);
+}
+
+double Dirac_BFM_Wrapper::getMass() const{
+  return BFMparams.mq_;
+}
+
+const Field* Dirac_BFM_Wrapper::getGaugeField_ptr()const{
+  return u_;
 }
 
 Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node, const Field* u, DiracWilsonLike* Dirac )
@@ -59,11 +67,11 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node, const Field* u, DiracWilson
   }
 
   // Set Verbosity controls
-  parameters.verbose = 20;
-  parameters.time_report_iter=100;
+  parameters.verbose = -1;
+  parameters.time_report_iter=-100;
 
   // Threading control parameters
-  threads = 1;
+  threads = 64;
   bfmarg::Threads(threads);
 
   // Set up the diagonal part

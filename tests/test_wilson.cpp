@@ -1,16 +1,12 @@
 /*!
  * @file test_wilson.cpp
- *
  * @brief Tests for the propagators 
- *
  */
 #include "test_wilson.hpp"
-#include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
-
-
 #include "Dirac_ops/dirac_wilson.hpp"
 #include "Solver/solver_CG.hpp"
 #include "Solver/solver_BiCGStab.hpp"
+#include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 #include "Measurements/FermionicM/qprop.hpp"
 #include "Measurements/FermionicM/source_types.hpp"

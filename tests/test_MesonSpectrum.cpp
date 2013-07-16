@@ -13,16 +13,17 @@
 using namespace std;
 
 int Test_MesonSpectrum::run(){
-
+  XML::node node = input_.node;
   //// Quark Propagator ////
-  XML::descend(node_,"QuarkProp");
+  XML::descend(node,"QuarkProp");
   
-  auto_ptr<QuarkPropagatorFactory> qpfact(QuarkPropagators::createQuarkPropagatorFactory(node_));
-  auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(conf_));
+  auto_ptr<QuarkPropagatorFactory> qpfact(QuarkPropagators::createQuarkPropagatorFactory(node));
+  InputConfig config = input_.getConfig();
+  auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(config));
   
   //// source creation ////
-  XML::next_sibling(node_,"Source");
-  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(node_));
+  XML::next_sibling(node,"Source");
+  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(node));
   auto_ptr<Source> src(SrcFactory->getSource());
 
   prop_t sq;  //Defines a vector of fields
@@ -38,9 +39,9 @@ int Test_MesonSpectrum::run(){
   vector<double> Cv3v3 = v3v3.calculate<Format::Format_F>(sq,sq);  
 
   // output
-  CCIO::cout << " ---- Output in "<< output_.c_str()<<"\n";
+  CCIO::cout << " ---- Output in "<< input_.output.c_str()<<"\n";
   if(Communicator::instance()->primaryNode()){
-    ofstream writer(output_.c_str());
+    ofstream writer(input_.output.c_str());
 
     writer<< setiosflags(  ios_base::scientific);
     writer<<"---pp meson correlator---"<<endl;

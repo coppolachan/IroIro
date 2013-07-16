@@ -6,17 +6,12 @@
 
 #include "include/iroiro_code.hpp"
 #include "Communicator/comm_io.hpp"
-class RandNum;
+#include "tests.hpp"
 
 class Test_EigenModesSolver{
- private:
-  XML::node node_;
-  GaugeField conf_;
-  std::string output_;
+  const Measurements::Input input_;
  public:
-  Test_EigenModesSolver(XML::node node,const GaugeField& conf,
-			const RandNum&, std::string file)
-    :node_(node),conf_(conf),output_(file){
+  Test_EigenModesSolver(const Measurements::Input& input):input_(input){
     CCIO::cout<<"Test_EigenModesSolver called"<<std::endl;
   }
   int run();

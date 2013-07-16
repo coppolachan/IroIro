@@ -99,8 +99,10 @@ int Test_ResMass::run() {
   // Quark Propagator and source creation 
   XML::descend(node_, "QuarkDWFProp");
   QPropDWFFactory QP_DomainWallFact(node_);
+
+  InputConfig input(&smeared_u_);
   QpropDWF* QuarkPropDW 
-    = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(smeared_u_));
+    = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(input));
 
   XML::next_sibling(node_, "Source");
   SourceFactory* Source_Factory 

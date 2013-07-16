@@ -7,15 +7,10 @@
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
-class Test_MesonSpectrum_Nf2p1: public TestGeneral{
-private:
-  XML::node node_;
-  GaugeField conf_;
-  std::string output_;
+class Test_MesonSpectrum_Nf2p1{
+  const Measurements::Input input_;
 public:
-  Test_MesonSpectrum_Nf2p1(XML::node node,const GaugeField& conf,
-			   const RandNum&,std::string file)
-    :node_(node),conf_(conf),output_(file){}
+  Test_MesonSpectrum_Nf2p1(const Measurements::Input& input):input_(input){}
   int run();
 };
 

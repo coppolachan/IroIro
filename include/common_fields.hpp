@@ -3,7 +3,7 @@
  *
  * @brief Code for general fields initializations
  *
- * Time-stamp: <2013-04-25 17:20:07 neo>
+ * Time-stamp: <2013-07-02 11:51:33 noaki>
  */
 #ifndef COMMON_FIELDS_H_
 #define COMMON_FIELDS_H_

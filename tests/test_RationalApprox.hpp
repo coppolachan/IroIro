@@ -1,9 +1,7 @@
 //------------------------------------------------------------------------
 /*!
  * @file test_RationalApprox.hpp
- *
  * @brief Test for %RationalApprox class
- *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 //------------------------------------------------------------------------
@@ -13,22 +11,19 @@
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
-class Test_RationalApprox: TestGeneral{
-private:
+class Test_RationalApprox{
   const char* test_name;
   XML::node RA_node;
   GaugeField Gfield_;
 
-
 public:
-  Test_RationalApprox(XML::node node,GaugeField& Gfield):RA_node(node),
-							 Gfield_(Gfield){
+  Test_RationalApprox(XML::node node,GaugeField& Gfield)
+    :RA_node(node),Gfield_(Gfield){
     test_name = "RationalApprox";
     XML::descend(RA_node, test_name);    
   }
   
   int run();  
 };
-
 
 #endif

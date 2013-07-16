@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-void RandNum::get_complex_gauss(double *re, double *im, const double variance)const{
+void RandNum::get_complex_gauss(double *re,double *im,double variance)const{
   // get the gaussian random number with the variance 1/\sqrt(2)
   // Using the Box-Muller transform
   static double gauss_rand_re = 0;
@@ -39,7 +39,7 @@ void RandNum::get_complex_gauss(double *re, double *im, const double variance)co
   *im = x2 * w * variance;
 }
 
-double RandNum::get_gauss(const double variance)const{
+double RandNum::get_gauss(double variance)const{
   // get the gaussian random number with the variance 1/\sqrt(2)
   static bool has_rand = false;
   static double gauss_rand = 0;

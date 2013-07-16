@@ -1,7 +1,7 @@
 /*!
  * @file action_fermiontype_factory.hpp 
  * @brief Declaration of Fermion-type action factories
- * Time-stamp: <2013-05-23 11:16:08 noaki>
+ * Time-stamp: <2013-06-26 19:03:32 noaki>
  */
 #ifndef ACTION_FERMION_FACT_
 #define ACTION_FERMION_FACT_
@@ -33,11 +33,9 @@ class TwoFlavorActionFactory : public FermionActionFactory {
   const XML::node Action_node;
   bool smearing;
 
-  Action_Nf2* getFermionAction(GaugeField* const, 
-			       SmartConf* const);
+  Action_Nf2* getFermionAction(GaugeField* const,SmartConf* const);
 public:
   TwoFlavorActionFactory(XML::node);
-  ~TwoFlavorActionFactory(){}
 };
 
 //////////////////////////////////////////////////////////////////
@@ -55,7 +53,6 @@ class NfFlavorsActionFactory : public FermionActionFactory {
   Action_Nf* getFermionAction(GaugeField* const,SmartConf* const);
 public:
   NfFlavorsActionFactory(XML::node);
-  ~NfFlavorsActionFactory(){}
 };
 
 ////////////////////////////////////////////////////
@@ -75,7 +72,6 @@ class TwoFlavorRatioActionFactory :public FermionActionFactory {
 
   Action_Nf2_ratio* getFermionAction(GaugeField* const,SmartConf* const);
 public:
-  ~TwoFlavorRatioActionFactory(){}
   TwoFlavorRatioActionFactory(XML::node);
 };
 
@@ -96,7 +92,6 @@ class NfFlavorRatioActionFactory : public FermionActionFactory {
 
   Action_Nf_ratio* getFermionAction(GaugeField* const,SmartConf* const);
 public:
-  ~NfFlavorRatioActionFactory(){}
   NfFlavorRatioActionFactory(XML::node);
 };
 
@@ -108,8 +103,8 @@ class TwoFlavorDomainWall5dActionFactory :public FermionActionFactory {
 
   RaiiFactoryObj<DiracWilsonLike> DWF5d_Kernel;
   RaiiFactoryObj<DiracWilsonLike> DWF5d_KernelPV;
-  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOp;
-  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOpPV;
+  RaiiFactoryObj<Fopr_DdagD> HermitianOp;
+  RaiiFactoryObj<Fopr_DdagD> HermitianOpPV;
   RaiiFactoryObj<Solver> Solv;
   RaiiFactoryObj<Solver> SolvPV;
   
@@ -118,15 +113,37 @@ class TwoFlavorDomainWall5dActionFactory :public FermionActionFactory {
 
   Action_Nf2_ratio* getFermionAction(GaugeField* const,SmartConf* const);
 public:
-  ~TwoFlavorDomainWall5dActionFactory(){}
   TwoFlavorDomainWall5dActionFactory(XML::node);
 };
 
 ////////////////////////////////////////////////////
-#ifdef IBM_BGQ_WILSON
-class TwoFlavorDomainWall5dEO_BGQ_ActionFactory : public FermionActionFactory {
+class NfFlavorDomainWall5dActionFactory : public FermionActionFactory {
 
-  RaiiFactoryObj<DiracDomainWall5dEvenOddFactory> DiracObj;
+  RaiiFactoryObj<DiracDWF5dFactory> DiracObj;
+  RaiiFactoryObj<RationalSolverFactory> SolverObj;
+
+  RaiiFactoryObj<DiracWilsonLike> DWF5d_Kernel;
+  RaiiFactoryObj<DiracWilsonLike> DWF5d_KernelPV;
+  RaiiFactoryObj<Fopr_DdagD> HermitianOp;
+  RaiiFactoryObj<Fopr_DdagD> HermitianOpPV;
+  RaiiFactoryObj<RationalSolver> Solv;
+  RaiiFactoryObj<RationalSolver> SolvPV;
+  
+  const XML::node Action_node;
+  bool smearing;
+
+  Action_Nf_ratio* getFermionAction(GaugeField* const,SmartConf* const);
+public:
+  NfFlavorDomainWall5dActionFactory(XML::node);
+private:  
+
+};
+
+////////////////////////////////////////////////////
+#ifdef IBM_BGQ_WILSON
+class TwoFlavorDomainWall5dEO_BGQ_ActionFactory :public FermionActionFactory {
+
+  RaiiFactoryObj<DiracEvenOdd_DWF5dFactory> DiracObj;
   RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverObj;
 
   RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_Kernel;
@@ -137,18 +154,16 @@ class TwoFlavorDomainWall5dEO_BGQ_ActionFactory : public FermionActionFactory {
   const XML::node Action_node;
   bool smearing;
 
-  Action_Nf2_ratio* getFermionAction(GaugeField* const,
-				     SmartConf* const);
+  Action_Nf2_ratio* getFermionAction(GaugeField* const,SmartConf* const);
 public:
-  ~TwoFlavorDomainWall5dEO_BGQ_ActionFactory(){}
   TwoFlavorDomainWall5dEO_BGQ_ActionFactory(XML::node);
 };
 
 ////////////////////////////////////////////////////
 class TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory: public FermionActionFactory {
 
-  RaiiFactoryObj<DiracDomainWall5dEvenOddFactory> DiracNumObj;
-  RaiiFactoryObj<DiracDomainWall5dEvenOddFactory> DiracDenomObj;
+  RaiiFactoryObj<DiracEvenOdd_DWF5dFactory> DiracNumObj;
+  RaiiFactoryObj<DiracEvenOdd_DWF5dFactory> DiracDenomObj;
   RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverNumObj;
   RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverDenomObj;
 
@@ -162,39 +177,11 @@ class TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory: public FermionActionFactor
 
   Action_Nf2_ratio* getFermionAction(GaugeField* const,SmartConf* const);
 public:
-  ~TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory(){}
   TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory(XML::node);
 };
 
-#endif
-
-////////////////////////////////////////////////////
-class NfFlavorDomainWall5dActionFactory : public FermionActionFactory {
-
-  RaiiFactoryObj<DiracDWF5dFactory> DiracObj;
-  RaiiFactoryObj<RationalSolverFactory> SolverObj;
-
-  RaiiFactoryObj<DiracWilsonLike> DWF5d_Kernel;
-  RaiiFactoryObj<DiracWilsonLike> DWF5d_KernelPV;
-  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOp;
-  RaiiFactoryObj<Fopr_DdagD_Precondition> HermitianOpPV;
-  RaiiFactoryObj<RationalSolver> Solv;
-  RaiiFactoryObj<RationalSolver> SolvPV;
-  
-  const XML::node Action_node;
-  bool smearing;
-
-  Action_Nf_ratio* getFermionAction(GaugeField* const,SmartConf* const);
-public:
-  ~NfFlavorDomainWall5dActionFactory(){}
-  NfFlavorDomainWall5dActionFactory(XML::node);
-private:  
-
-};
-////////////////////////////////////////////////////
-#ifdef IBM_BGQ_WILSON
 class NfFlavorDomainWall5d_EO_BGQ_ActionFactory : public FermionActionFactory {
-  RaiiFactoryObj<DiracDomainWall5dEvenOddFactory> DiracObj;
+  RaiiFactoryObj<DiracEvenOdd_DWF5dFactory> DiracObj;
   RaiiFactoryObj<RationalSolverCGFactory_DWF_Optimized> SolverObj;
 
   RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_Kernel;
@@ -207,7 +194,6 @@ class NfFlavorDomainWall5d_EO_BGQ_ActionFactory : public FermionActionFactory {
 
   Action_Nf_ratio* getFermionAction(GaugeField* const,SmartConf* const);
 public:
-  ~NfFlavorDomainWall5d_EO_BGQ_ActionFactory(){}
   NfFlavorDomainWall5d_EO_BGQ_ActionFactory(XML::node);
 };
 #endif
@@ -226,7 +212,6 @@ class FourFlavorStaggeredActionFactory :public FermionActionFactory{
   Action_staggered* getFermionAction(GaugeField* const,SmartConf* const);
 public:
   FourFlavorStaggeredActionFactory(XML::node);  
-  ~FourFlavorStaggeredActionFactory(){}
 };
 ////////////////////////////////////////////////////
 class FourFlavorStaggeredRatioActionFactory :public FermionActionFactory{
@@ -248,7 +233,6 @@ class FourFlavorStaggeredRatioActionFactory :public FermionActionFactory{
   Action_staggered_ratio* getFermionAction(GaugeField* const,SmartConf* const);
 public:
   FourFlavorStaggeredRatioActionFactory(XML::node);
-  ~FourFlavorStaggeredRatioActionFactory(){}
 };
 
 // Add new factories here and in the .cpp file

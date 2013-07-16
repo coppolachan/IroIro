@@ -1,6 +1,6 @@
 /*----------------------------------------------------------------------
 !@filename fopr_signH_Zolotarev.h
-Time-stamp: <2013-04-23 16:52:21 noaki>
+Time-stamp: <2013-07-04 18:51:35 noaki>
 ------------------------------------------------------------------------*/
 
 #ifndef FOPR_SIGN_ZOLOTAREV_INCLUDED
@@ -88,6 +88,8 @@ public:
   const Field mult(const Field& f) const;
   const Field mult_dag(const Field& f) const{return mult(f);}
   const Field gamma5(const Field&f) const { return D_->gamma5(f); }
+
+  const Field* getGaugeField_ptr()const{ return D_->getGaugeField_ptr();}
 
   void calc_force(Field& force,const Field& eta,const Field& zeta) const; 
 

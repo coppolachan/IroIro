@@ -19,6 +19,7 @@
 //Fields and common parameters
 #include "include/common_fields.hpp"
 #include "include/commonPrms.hpp"
+#include "EigenModes/eigenModes.hpp"
 
 //Communicator headers
 #include "Communicator/communicator.hpp"

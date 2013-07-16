@@ -7,9 +7,10 @@
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
 
-class Test_NoMeas: public TestGeneral{
+class Test_NoMeas{
+  const Measurements::Input input_;
 public:
-  Test_NoMeas(XML::node,const GaugeField&,const RandNum&,std::string){}
+  Test_NoMeas(const Measurements::Input& input):input_(input){}
   int run(){
     CCIO::cout<<"Nothing to measure.\n";
   }

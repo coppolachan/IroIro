@@ -1,7 +1,7 @@
 /*!
  * @file solver_Factory.hpp 
  * @brief Declaration of Solver operators factories
- * Time-stamp: <2013-07-04 16:14:02 cossu>
+ * Time-stamp: <2013-07-12 17:51:55 cossu>
  */
 #ifndef SOLVER_FACT_
 #define SOLVER_FACT_
@@ -23,11 +23,6 @@ class SolverFactory {
 public:
   virtual Solver* getSolver(const Fopr*) = 0;
   virtual Solver* getSolver(const Fopr_Herm*) = 0;//for CG like inverters
-  virtual Solver* getSolver(const Fopr_Herm_Precondition*){
-    std::cerr<< "getSolver Error: not defined for Fopr_Herm_Precondition Operator" 
-	     << std::endl;
-    abort();
-  }//for Prec like inverters
 };
 
 /*!
@@ -38,11 +33,6 @@ class RationalSolverFactory{
 public:
   virtual RationalSolver* getSolver(const Fopr*) = 0;
   virtual RationalSolver* getSolver(const Fopr_Herm*) = 0;//for CG like inverters
-  virtual RationalSolver* getSolver(const Fopr_Herm_Precondition*){
-    std::cerr<< "getSolver Error: not defined for Fopr_Herm_Precondition Operator" 
-	     << std::endl;
-    abort();
-  }//for Prec like inverters
 };
 
 /////////////////////////////////////////////////
@@ -57,61 +47,27 @@ public:
   Solver_CG* getSolver(const Fopr_Herm* HermitianOp){
     return new Solver_CG(Solver_node, HermitianOp);
   }
-
-  Solver_CG* getSolver(const Fopr_Herm_Precondition* HermitianOp){
-    return new Solver_CG(Solver_node, HermitianOp);
-  }
-
-  Solver_CG* getSolver(const Fopr* LinearOp){
-    std::cerr<< "getSolver Error: Solver_CG requires Hermitian Operator" 
-	     << std::endl;
-    abort();
-  }
-};
-
-/*!
- @brief Concrete class for creating Conjugate Gradient Solver operator
-*/
-class SolverCGPrecFactory : public SolverFactory {
-  const XML::node Solver_node;
-public:
-  SolverCGPrecFactory(const XML::node node):Solver_node(node){}
-
-  Solver_CG_Precondition* getSolver(const Fopr_Herm_Precondition* HermitianOp){
-    return new Solver_CG_Precondition(Solver_node, HermitianOp);
-  }
-
-  Solver_CG_Precondition* getSolver(const Fopr_Herm* HermitianOp){
-    std::cerr<< "getSolver Error: Solver_CG_Precondition requires Hermitian Preconditioned Operator" 
-	     << std::endl;
-    abort();
-  }
-  
-  Solver_CG_Precondition* getSolver(const Fopr* LinearOp){
-    std::cerr<< "getSolver Error: Solver_CG_Precondition requires Hermitian Preconditioned Operator" 
-	     << std::endl;
-    abort();
-  }
+   Solver_CG* getSolver(const Fopr* LinearOp){
+     std::cerr<< "getSolver Error: Solver_CG requires Hermitian Operator\n";
+     abort();
+   }
 };
 
 #ifdef IBM_BGQ_WILSON
 #include "Solver/Architecture_Optimized/solver_CG_DWF_BGQ.hpp"
+
 /*!
  @brief Concrete class for creating Conjugate Gradient Solver operator [Optimized version]
 */
 class SolverCG_DWF_opt_Factory {
   const XML::node Solver_node;
 public:
-  
   Solver_CG_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr){
-    return new Solver_CG_DWF_Optimized(Solver_node, DWFopr);
+    return new Solver_CG_DWF_Optimized(Solver_node,DWFopr);
   }
-  
   SolverCG_DWF_opt_Factory(const XML::node node):Solver_node(node){};
-
 };
 #endif
-
 
 /*!
  @brief Concrete class for creating BiConjugate Gradient Stabilized Solver
@@ -124,13 +80,8 @@ public:
   SolverBiCGStabFactory(const XML::node node):Solver_node(node){}
 
   Solver_BiCGStab* getSolver(const Fopr_Herm* HermitianOp){
-    return new Solver_BiCGStab(Solver_node, HermitianOp);
+    return new Solver_BiCGStab(Solver_node,HermitianOp);
   }
-
-  Solver_BiCGStab* getSolver(const Fopr_Herm_Precondition* HermitianOp){
-    return new Solver_BiCGStab(Solver_node, HermitianOp);
-  }
-
   Solver_BiCGStab* getSolver(const Fopr* LinearOp){
     return new Solver_BiCGStab(Solver_node, LinearOp);
   }
@@ -148,17 +99,9 @@ public:
   RationalSolverCGFactory(const XML::node node):Solver_node(node){}
 
   RationalSolver_CG* getSolver(const Fopr_Herm* HermitianOp) {
-    MS_Solver.save(new MultiShiftSolver_CG(HermitianOp,
-					   Solver_node));
+    MS_Solver.save(new MultiShiftSolver_CG(HermitianOp,Solver_node));
     return new RationalSolver_CG(MS_Solver.get());
   }
-
-  RationalSolver_CG* getSolver(const Fopr_Herm_Precondition* HermitianOp) {
-    MS_Solver.save(new MultiShiftSolver_CG(HermitianOp,
-					   Solver_node));
-    return new RationalSolver_CG(MS_Solver.get());
-  }
-
   RationalSolver_CG*  getSolver(const Fopr* LinearOp){
     std::cerr<< "getSolver Error: RationalSolver requires Hermitian Operator" 
 	     << std::endl;
@@ -180,7 +123,7 @@ public:
   RationalSolverCGFactory_DWF_Optimized(const XML::node node):Solver_node(node){}
 
   RationalSolver_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr) {
-    return new RationalSolver_DWF_Optimized(DWFopr, Solver_node);
+    return new RationalSolver_DWF_Optimized(DWFopr,Solver_node);
   }
 
 };

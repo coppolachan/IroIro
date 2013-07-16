@@ -5,17 +5,12 @@
 #define TEST_MESONSPECTRUM_SPMOM_INCLUDED
 
 #include "include/iroiro_code.hpp"
-class RandNum;
+#include "tests.hpp"
 
 class Test_MesonSpectrum_SpMom {
-private:
-  XML::node node_;
-  GaugeField conf_;
-  std::string output_;
+  Measurements::Input input_;
 public:
-  Test_MesonSpectrum_SpMom(XML::node node,const GaugeField& conf,
-		     const RandNum&,std::string file)
-    :node_(node),conf_(conf),output_(file){}
+  Test_MesonSpectrum_SpMom(Measurements::Input input):input_(input){}
   int run();
 };
 

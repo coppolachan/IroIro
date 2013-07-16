@@ -9,8 +9,9 @@
 using namespace std;
 
 int Test_PolyakovLoop::run(){
-  XML::descend(node_,"PolyakovLoop");
-  const char* dir_name = node_.attribute("dir").value();
+  XML::node pnode = input_.node;
+  XML::descend(pnode,"PolyakovLoop");
+  const char* dir_name = pnode.attribute("dir").value();
 
   site_dir dir;
   if(     !strcmp(dir_name,"X")) dir = XDIR;
@@ -23,8 +24,8 @@ int Test_PolyakovLoop::run(){
   }
   PolyakovLoop plp(dir);
 
-  complex<double> pf = plp.calc_SUN(conf_);
-  double          pa = plp.calc_SUNadj(conf_);
+  complex<double> pf = plp.calc_SUN(*(input_.gconf));
+  double          pa = plp.calc_SUNadj(*(input_.gconf));
   
   CCIO::cout<<"fundamental representation:"<<endl;
   CCIO::cout<< setw(20)<<pf.real()<<" "<< setw(20)<<pf.imag()<<endl;

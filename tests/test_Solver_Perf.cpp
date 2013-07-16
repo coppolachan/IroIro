@@ -10,11 +10,13 @@
 using namespace std;
 
 int Test_Solver_Performance::run(){
+  InputConfig config(&conf_);
   /////////////////////////////
   XML::node QuarkProp_node = DWFnode;
   XML::descend(QuarkProp_node, "QuarkPropagator");
-  QPropDWFFactory  QP_DomainWallFact(QuarkProp_node);//uses specific factory (this is a test program specific for DWF)
-  QpropDWF* QuarkPropDW = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(conf_));
+  QPropDWFFactory  QP_DomainWallFact(DWFnode);//uses specific factory (this is a test program specific for DWF)
+  QpropDWF* QuarkPropDW 
+    = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(config));
   // the prevoius static_cast is absolutely safe since we know exaclty what class we are creating
   
   ///////////////////////////////////////

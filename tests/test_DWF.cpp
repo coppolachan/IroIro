@@ -27,7 +27,7 @@ int Test_DWF::run(){
   CCIO::cout<<"Test_DWF::run() called\n";
 
   Staples stpl;
-  double plq = stpl.plaquette(Gfield_);
+  double plq = stpl.plaquette(*(input_.gconf));
   CCIO::cout<<" plaq="<<plq<<std::endl;
 
   ///// Generating source vector 
@@ -53,7 +53,7 @@ int Test_DWF::run(){
   Field ff= src.mksrc(1,1);
 
   /************************************************************************************/
-  Field* u = &(Gfield_.data);
+  Field* u = &(input_.gconf->data);
   double M0 = -1.6;
 
   // creation of Dirac_Wilson operators 
@@ -77,8 +77,8 @@ int Test_DWF::run(){
   int max_iter = 600;
 
   ///////
-  Dirac_optimalDomainWall Ddwf(b,c,M0, mq,omega,&Dw,u);
-  Dirac_optimalDomainWall Ddpv(b,c,M0,1.0,omega,&Dw,u);
+  Dirac_optimalDomainWall Ddwf(b,c,M0, mq,omega,&Dw);
+  Dirac_optimalDomainWall Ddpv(b,c,M0,1.0,omega,&Dw);
 
   Fopr_DdagD DdagDdwf(&Ddwf);
   Fopr_DdagD DdagDdpv(&Ddpv);
@@ -86,11 +86,10 @@ int Test_DWF::run(){
   Solver_CG slv_dwf(prec,max_iter,&DdagDdwf);
   Solver_CG slv_dpv(prec,max_iter,&DdagDdpv);
 
-  Dirac_optimalDomainWall_4D_fullSolv D4f( &Ddwf,&Ddpv,&slv_dwf,&slv_dpv);
-  //Dirac_optimalDomainWall_4D_fullSolv D4f(&Ddwf,prec,prec,max_iter);
+  Dirac_optimalDomainWall_4D_fullSolv D4f( &Ddwf,&Ddpv,&slv_dwf,&slv_dpv,NoPrecond);
 
-  Dirac_optimalDomainWall_EvenOdd Ddwf_eo(b,c,M0, mq,omega,&Dw_eo,&Dw_oe,u);
-  Dirac_optimalDomainWall_EvenOdd Ddpv_eo(b,c,M0,1.0,omega,&Dw_eo,&Dw_oe,u);
+  Dirac_optimalDomainWall_EvenOdd Ddwf_eo(b,c,M0, mq,omega,&Dw_eo,&Dw_oe);
+  Dirac_optimalDomainWall_EvenOdd Ddpv_eo(b,c,M0,1.0,omega,&Dw_eo,&Dw_oe);
 
   Fopr_DdagD DdagDdwf_eo(&Ddwf_eo);
   Fopr_DdagD DdagDdpv_eo(&Ddpv_eo);
@@ -113,25 +112,26 @@ int Test_DWF::run(){
   CCIO::cout<<"Nwf="<<Nwf<<"\n";
 
   // e/o Wilson fermion
-  Field Sweo(Dw_eo.fsize()); Sweo.set(0,1.0);
+  Field Sweo(Dw_eo.fsize()); 
+  if(Communicator::instance()->primaryNode()) Sweo.set(0,1.0);
   Field Wweo =  Dw_eo.mult(Sweo);
   double Nweo = Wweo.norm();
   CCIO::cout<<"Nweo="<<Nweo<<"\n";
 
  // plain 5D DWF
   Field Sdwf(Ddwf.fsize()); 
-  Sdwf.set(fmt5d.index( 0,0,0),0.5);
-  Sdwf.set(fmt5d.index( 0,0,3),0.5);
-  Sdwf.set(fmt5d.index(12,0,3),0.5);
-
+  if(Communicator::instance()->primaryNode()) Sdwf.set(0,1.0);
+  if(Communicator::instance()->primaryNode()) Sdwf.set(5,1.0);
+  if(Communicator::instance()->primaryNode()) Sdwf.set(10,1.0);
   Field Wdwf = Ddwf.mult(Sdwf);
   double Ndwf =Wdwf.norm();
-  Wdwf = Ddwf.mult_dag(Sdwf);
-  double Ndwfd =Wdwf.norm();
-  CCIO::cout<<"Ndwf="<<Ndwf<<" Ndwfd="<<Ndwfd<<"\n";
-
+  CCIO::cout<<"Ndwf="<<Ndwf<<"\n";
+  
  // e/o 5D DWF
-  Field Sdweo(Ddwf_eo.fsize()); Sdweo.set(0,1.0);
+  Field Sdweo(Ddwf_eo.fsize()); 
+  if(Communicator::instance()->primaryNode()) Sdweo.set(0,1.0);
+  if(Communicator::instance()->primaryNode()) Sdweo.set(5,1.0);
+  if(Communicator::instance()->primaryNode()) Sdweo.set(10,1.0);
   Field Wdweo = Ddwf_eo.mult(Sdweo);
   double Ndweo =Wdweo.norm();
   CCIO::cout<<"Ndweo="<<Ndweo<<"\n";
@@ -140,14 +140,20 @@ int Test_DWF::run(){
   double nweo=0.0; 
 
   CCIO::cout<<"test of 4D full solver \n";
-  Field S4(D4f.fsize()); S4.set(0,1.0);
-  //Field wfl = D4f.mult(ff);
+  Field S4(D4f.fsize()); 
+  if(Communicator::instance()->primaryNode()) S4.set(0,1.0);
+  if(Communicator::instance()->primaryNode()) S4.set(5,1.0);
+  if(Communicator::instance()->primaryNode()) S4.set(10,1.0);
   Field wfl = D4f.mult(S4);
   nwfl = wfl.norm();
 
+  CCIO::cout<<"nwfl="<<nwfl<<"\n";
+
   CCIO::cout<<"test of 4D e/o solver \n";
-  Field S4eo(D4eo.fsize()); S4eo.set(0,1.0);  
-  //  Field weo = D4eo.mult(ff); 
+  Field S4eo(D4eo.fsize()); 
+  if(Communicator::instance()->primaryNode()) S4eo.set(0,1.0);
+  if(Communicator::instance()->primaryNode()) S4eo.set(5,1.0);
+  if(Communicator::instance()->primaryNode()) S4eo.set(10,1.0);
   Field weo = D4eo.mult(S4eo); 
   nweo = weo.norm();
 

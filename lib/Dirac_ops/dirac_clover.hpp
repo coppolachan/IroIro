@@ -79,6 +79,9 @@ public:
 
   size_t fsize() const{return ff_.size();}
   size_t gsize() const{return gf_.size();}
+  double getMass()const{return Dw_->getMass();}  
+
+  const Field* getGaugeField_ptr()const{return u_;}
 
   const Field gamma5(const Field&) const;
   const Field md_force(const Field& eta,const Field& zeta)const;

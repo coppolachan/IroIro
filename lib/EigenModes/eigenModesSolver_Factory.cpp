@@ -4,7 +4,7 @@
 #include "eigenModesSolver_Factory.hpp"
 #include <string.h>
 
-namespace EigenModes{
+namespace EigenSolver{
   EigenSolverFactory* createEigenSolverFactory(XML::node node){
     if(node != NULL){
       const char* eslv_name = node.attribute("name").value();

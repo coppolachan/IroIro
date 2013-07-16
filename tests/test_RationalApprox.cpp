@@ -108,8 +108,8 @@ int Test_RationalApprox::run(){
   XML::descend(kernel_node, "Kernel");
   DiracWilsonLikeFactory* KernelF = 
     Diracs::createDiracWilsonLikeFactory(kernel_node);
-  DiracWilsonLike* Kernel = KernelF->getDiracWL(&(smeared_u_.data));
-
+  InputConfig input(&smeared_u_);
+  DiracWilsonLike* Kernel = KernelF->getDirac(input);
 
   // Find Max eigenvalue
   Fopr_DdagD* FoprKernel = new Fopr_DdagD(Kernel);

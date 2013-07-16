@@ -1,6 +1,6 @@
 /*! @file dirac_BFM_wrapper_factory.hpp 
  *  @brief Declaration of BFM Dirac operators factories
- Time-stamp: <2013-07-12 17:28:14 cossu>
+ Time-stamp: <2013-07-16 10:01:54 cossu>
  */
 #ifndef DIRAC_BFM_FACT_
 #define DIRAC_BFM_FACT_
@@ -16,6 +16,7 @@ class DiracBFMoperatorFactory : public DiracWilsonLikeFactory {
 
   RaiiFactoryObj<DiracWilsonLikeFactory> DiracWL_factory_;
   RaiiFactoryObj<DiracWilsonLike> DiracWilson_;
+  Dirac_BFM_Wrapper* createDirac(InputConfig&);
 public:
   DiracBFMoperatorFactory(const XML::node node):Dirac_node_(node){
     CCIO::cout << "Creating the factory\n";
@@ -24,7 +25,11 @@ public:
     DiracWL_factory_.save(Diracs::createDiracWilsonLikeFactory(current_node));
   
   }
-  Dirac_BFM_Wrapper* getDiracWL(Field* const Gfield);
+
+  Dirac_BFM_Wrapper* getDirac(InputConfig& input) {
+    return createDirac(input);
+  }
+  
 };
 
 

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-07-10 10:47:07 cossu>
+# Time-stamp: <2013-07-12 17:54:21 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -72,7 +72,6 @@ EXTRA_DIST = 	testResults.info	\
 		test_Gauge.xml		\
 		test_NoMeas.xml	        \
 		test_Overlap.xml	\
-		test_HMC_EvenOdd.xml	\
 		test_HMC_DWF.xml	\
 		test_MultiShiftSolver.xml	\
 		test_RationalApprox.xml	\
@@ -82,7 +81,6 @@ EXTRA_DIST = 	testResults.info	\
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
-		test_HMC_EvenOdd	\
 		test_HMC_smear_noF	\
 		test_HMC_DWall_noF	\
 		test_Gauge		\
@@ -126,9 +124,6 @@ test_RHMC_noFactories_SOURCES = test_RHMC_noFactories.cpp 	\
 
 test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
 			  	testerHMC.cpp
-
-test_HMC_EvenOdd_SOURCES  =	test_HMC_EvenOdd.cpp		\
-				testerHMCeven-odd.cpp
 
 test_HMC_DWall_noF_SOURCES =	test_HMC_DWall_noFact.cpp	\
 				testerHMC_DWall_noFact.cpp
@@ -232,7 +227,6 @@ endif
 include_HEADERS 	=	tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
-				test_HMC_EvenOdd.hpp		\
 				test_HMC_DWall_noFact.hpp	\
 				test_wilson.hpp 		\
 				test_clover.hpp 		\

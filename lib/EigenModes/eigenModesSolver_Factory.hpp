@@ -27,7 +27,7 @@ public:
   }
 };
 
-namespace EigenModes{
+namespace EigenSolver{
   EigenSolverFactory* createEigenSolverFactory(XML::node);
 }
 

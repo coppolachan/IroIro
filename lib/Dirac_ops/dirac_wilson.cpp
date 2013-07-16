@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2013-06-07 15:37:28 cossu>
+ * Time-stamp: <2013-07-04 03:24:06 noaki>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -84,12 +84,14 @@ void Dirac_Wilson::mult_ptr(double* w, double* const f) const{
 }
 void Dirac_Wilson::mult_dag_ptr(double* w, double* const f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);
-  
+  BGWilson_Mult_Dag(w,pU,f,-kpp_,BGWILSON_DIRAC);
+  /*
   double* temp = (double*) malloc(ff_.size()*sizeof(double));
   gamma5core(w,f);
   BGWilson_Mult(temp, pU,w,-kpp_,BGWILSON_DIRAC);
   gamma5core(w,temp);
   free(temp);
+  */
 }
 void Dirac_Wilson::mult_ptr_EO(double* w, double* const f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);

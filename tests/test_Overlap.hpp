@@ -11,7 +11,7 @@
 #include "tests.hpp"
 
 
-class Test_Overlap : public TestGeneral {
+class Test_Overlap {
  private:
   XML::node OverlapNode;
   GaugeField& Gauge;

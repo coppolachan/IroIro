@@ -57,7 +57,7 @@ private:
   void (Dirac_staggered_EvenOdd::*mult_dag_core)(Field&,const Field&)const;
 
 public:
-  Dirac_staggered_EvenOdd(double mass,Dstagg::Dtype D,const Field* u,
+  Dirac_staggered_EvenOdd(const Field* u,double mass,Dstagg::Dtype D,
 			  const BoundaryCond* bdry = NULL)
     :mq_(mass),u_(u),
      Nvh_(CommonPrms::instance()->Nvol()/2),
@@ -79,8 +79,8 @@ public:
     set_ustag();
   }
   
-  Dirac_staggered_EvenOdd(const XML::node& stg_node,
-			  Dstagg::Dtype D,const Field* u)
+  Dirac_staggered_EvenOdd(const XML::node& stg_node,const Field* u,
+			  Dstagg::Dtype D)
     :u_(u),
      Nvh_(CommonPrms::instance()->Nvol()/2),
      Ndim_(CommonPrms::instance()->Ndim()),
@@ -123,6 +123,9 @@ public:
   const Field mult_ee(const Field& f)const {return f;}
   const Field mult_oo_inv(const Field& f)const {return f;}
   const Field mult_ee_inv(const Field& f)const {return f;}
+
+
+  const Field* getGaugeField_ptr()const{ return u_; }
 
   const Field md_force(const Field&,const Field&) const;
 

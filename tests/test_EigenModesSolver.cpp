@@ -7,13 +7,14 @@
 using namespace std;
 
 int Test_EigenModesSolver::run(){
-  XML::node eig_node= node_;
+  
+  XML::node eig_node= input_.node;
   XML::descend(eig_node,"EigenModesCalc");
   EigenCalcGeneral eigen(eig_node);
   
   try{
-    eigen.do_calc(&(conf_.data));
-    eigen.output_bin(output_);
+    eigen.do_calc(input_.gconf);
+    eigen.output_bin(input_.output);
   }catch(const char* error){
     CCIO::cout<<error<<"\n";
   }

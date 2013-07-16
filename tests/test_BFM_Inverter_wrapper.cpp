@@ -53,9 +53,10 @@ int Test_Solver_BFM::run(){
   Dirac_Wilson Dw_eo(M5,&(conf_.data),Dop::EOtag());
   Dirac_Wilson Dw_oe(M5,&(conf_.data),Dop::OEtag());
 
+  InputConfig Iconf(&conf_);
+
   Dirac_optimalDomainWall_EvenOdd DWF_EO(b,c, M5, mq,
-					 omega, &Dw_eo, &Dw_oe,
-					 &(conf_.data));
+					 omega, &Dw_eo, &Dw_oe);
   
   ////////////////////////////////////////////////////////////
   //    Setup DWF operator
@@ -64,7 +65,7 @@ int Test_Solver_BFM::run(){
   DiracBFMoperatorFactory BFMfactory(DWFnode);
   CCIO::cout << "Creating object\n";
   
-  Dirac_BFM_Wrapper* BFMop_with_fact = BFMfactory.getDiracWL(&conf_.data);
+  Dirac_BFM_Wrapper* BFMop_with_fact = BFMfactory.getDirac(Iconf);
   BFMop_with_fact->set_SolverParams(DWFnode);
   BFMop_with_fact->initialize();
   
@@ -119,7 +120,7 @@ int Test_Solver_BFM::run(){
   	     << "  "<< force_IroIro.norm() << "\n";
 
   CCIO::cout << "Force check Difference BFM-IroIro = "<< ForceDiff.norm() << "\n";
-  /*
+  
  
   ///////////////////////////////////////////////////////////////////////////////////////
   // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_eo
@@ -145,7 +146,7 @@ int Test_Solver_BFM::run(){
 
   ////////////////////////////////////////////////////////////////////////////////// 
   // Mult & Mult_dag
-  Field mult_BFM = BFMoperator.mult_test(fe);
+  //Field mult_BFM = BFMoperator.mult_test(fe);
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // Solver CG using BFM
@@ -162,22 +163,22 @@ int Test_Solver_BFM::run(){
       fe.set(i+vect4d_hsize*s, BFMsolution.data[i+2*s*vect4d_hsize]);
     }
   }
-  */
+  
 
   // Check
-  /*
+  
   Field F_Diff;
   F_Diff = output_f;
   F_Diff -= fe;
-  
+  /*
   for (int i = 0; i < fe.size() ; i++){
     double diff = abs(fe[i]-output_f[i]);
     if (diff>1e-8) CCIO::cout << "*";
     CCIO::cout << "["<<i<<"] "<<fe[i] << "  "<<output_f[i]
                << "  "<< diff << "\n";
   }
-  
+  */ 
   CCIO::cout << "Operator Difference BFM-IroIro = "<< F_Diff.norm() << "\n";
-  */
+  
   return 0;
 }

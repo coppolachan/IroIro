@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-07-12 16:58:04 cossu>
+ * Time-stamp: <2013-07-12 18:16:41 cossu>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -87,6 +87,9 @@ public:
   const Field mult    (const Field&)const;
   Field mult_test    (const Field&);
   const Field mult_dag(const Field&)const;
+
+  double getMass()const;
+  const Field* getGaugeField_ptr()const;
 
   const Field gamma5(const Field&) const{};
   const Field md_force(const Field& eta,const Field& zeta)const;

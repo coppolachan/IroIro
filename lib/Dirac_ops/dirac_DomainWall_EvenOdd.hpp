@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_EvenOdd.hpp
  * @brief Declaration of class Dirac_optimalDomainWall_EvenOdd (5d operator)
- Time-stamp: <2013-05-02 09:45:39 noaki>
+ Time-stamp: <2013-07-05 15:45:24 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
@@ -32,12 +32,11 @@ class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
 public:
   Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,
 				  DiracWilsonLike_EvenOdd* Kernel,
-				  const Field* u,
 				  DWFType Type=Regular)
-    :Deo_(DWF_node,Kernel->getDeo(),u,DomainWallFermions::EvenOdd_tag(),Type),
-     Doe_(DWF_node,Kernel->getDoe(),u,DomainWallFermions::EvenOdd_tag(),Type){
+    :Deo_(DWF_node,Kernel->getDeo(),DomainWallFermions::EvenOdd_tag(),Type),
+     Doe_(DWF_node,Kernel->getDoe(),DomainWallFermions::EvenOdd_tag(),Type){
     //
-#if VERBOSITY>4
+#if VERBOSITY>DEBUG_VERB_LEVEL 
     CCIO::cout<<"Dirac_optimalDomainWall_Evenodd created"<<std::endl;
 #endif
   }
@@ -50,10 +49,9 @@ public:
   Dirac_optimalDomainWall_EvenOdd(double b,double c,double M0,double mq,
 				  const std::vector<double>& omega,
 				  const DiracWilsonLike* Keo,
-				  const DiracWilsonLike* Koe,
-				  const Field* u)
-    :Deo_(b,c,M0,mq,omega,Keo,u,DomainWallFermions::EvenOdd_tag()),
-     Doe_(b,c,M0,mq,omega,Koe,u,DomainWallFermions::EvenOdd_tag()){}
+				  const DiracWilsonLike* Koe)
+    :Deo_(b,c,M0,mq,omega,Keo,DomainWallFermions::EvenOdd_tag()),
+     Doe_(b,c,M0,mq,omega,Koe,DomainWallFermions::EvenOdd_tag()){}
   
   ~Dirac_optimalDomainWall_EvenOdd(){
     CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";
@@ -68,6 +66,9 @@ public:
   const DiracWilsonLike* getDoe()const{ return &Doe_;}
   
   double getMass() const{return Deo_.getMass();}
+
+  const Field* getGaugeField_ptr()const{ return Deo_.getGaugeField_ptr(); }
+
   const Field mult(const Field&)const;
   const Field mult_dag(const Field&)const;
 
@@ -95,11 +96,9 @@ public:
 
   ////////////////////////////
 #ifdef IBM_BGQ_WILSON
-
- typedef std::vector<Field> prop_t;
-  void solve_eo(Field&, const Field&, SolverOutput&, int, double) const;
-  void solve_ms_eo(prop_t& , const Field& , SolverOutput&, 
-		   const std::vector<double>&, int, double)const;
+  void solve_eo(Field&,const Field&,SolverOutput&,int,double) const;
+  void solve_ms_eo(std::vector<Field>&,const Field&,SolverOutput&, 
+		   const std::vector<double>&,int,double)const;
 #endif
 };
 

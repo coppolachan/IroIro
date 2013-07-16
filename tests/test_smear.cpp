@@ -3,7 +3,7 @@
  * @brief Tests for the propagators 
  */
 #include "test_smear.hpp"
-#include "Measurements/FermionicM/fermion_meas_factory_abs.hpp"
+#include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
 #include "Dirac_ops/dirac_wilson.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 #include "Measurements/FermionicM/qprop.hpp"

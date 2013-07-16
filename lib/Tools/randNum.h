@@ -27,10 +27,10 @@ public:
   virtual ~RandNum(){}
   
   double get()const{ return do_rand();}
-  double get_gauss(const double variance = 1.0)const;
+  double get_gauss(double variance = 1.0)const;
   void get_complex_gauss(double *re,
 			 double *im, 
-			 const double variance = 1.0)const;
+			 double variance = 1.0)const;
   
   void get(std::valarray<double>& rn) const;
   void get_gauss(std::valarray<double>& rn) const;
