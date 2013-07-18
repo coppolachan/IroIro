@@ -1,7 +1,7 @@
 /*!
  * @file action_Nf2_ratio.hpp
  * @brief Declaration of Action_Nf2_ratio class
- Time-stamp: <2013-04-20 07:10:39 noaki>
+ Time-stamp: <2013-07-16 17:25:40 cossu>
  */
 #ifndef ACTION_NF2_RATIO_INCLUDED
 #define ACTION_NF2_RATIO_INCLUDED

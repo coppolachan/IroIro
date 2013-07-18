@@ -12,10 +12,12 @@
 #include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp"
 #include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
 
+#include "Action/action_fermiontype_factory.hpp"
+
 using namespace std;
 
 int Test_Solver_BFM::run(){
-  CCIO::cout << ".::: Test Solver BFM Moebius" 
+  CCIO::cout << ".::: Test Solver BFM Factories" 
 	     <<std::endl;
 
 
@@ -61,17 +63,20 @@ int Test_Solver_BFM::run(){
   ////////////////////////////////////////////////////////////
   //    Setup DWF operator
   ////////////////////////////////////////////////////////////
+  XML::node top_Node = DWFnode;
+  XML::node SolverNode = DWFnode;
+  XML::descend (SolverNode, "Solver",MANDATORY);
+
   CCIO::cout << "Creating factory\n";
   DiracBFMoperatorFactory BFMfactory(DWFnode);
   CCIO::cout << "Creating object\n";
   
   Dirac_BFM_Wrapper* BFMop_with_fact = BFMfactory.getDirac(Iconf);
-  BFMop_with_fact->set_SolverParams(DWFnode);
+  BFMop_with_fact->set_SolverParams(SolverNode);
   BFMop_with_fact->initialize();
   
-  
   Dirac_BFM_Wrapper BFMoperator(DWFnode,&conf_.data, &DWF_EO);// standard creation
-  BFMoperator.set_SolverParams(DWFnode);
+  BFMoperator.set_SolverParams(SolverNode);
   BFMoperator.initialize();
 
   //////////////////////////////////////////////////////////// 
@@ -120,8 +125,24 @@ int Test_Solver_BFM::run(){
   	     << "  "<< force_IroIro.norm() << "\n";
 
   CCIO::cout << "Force check Difference BFM-IroIro = "<< ForceDiff.norm() << "\n";
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Solver CG using SolverFactory
+  SolverCG_DWF_opt_Factory SolveBFM(SolverNode); 
+  Solver_CG_DWF_Optimized *SolverCGNE = SolveBFM.getSolver(BFMop_with_fact);
+  FermionField BFMsolution3(Nvol5d);
+  SolverCGNE->solve(BFMsolution3.data,fe);
   
- 
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Action Nf2 using BFM
+  SmartConf SConf;
+  SConf.ThinLinks = &conf_;
+  
+  XML::descend(top_Node, "TestAction", MANDATORY);
+  TwoFlavorDomainWall5dEO_BFM_ActionFactory Act(top_Node);
+  Act.getAction(&conf_, &SConf);
+  
+
   ///////////////////////////////////////////////////////////////////////////////////////
   // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_eo
   SolverOutput SO;
@@ -143,10 +164,29 @@ int Test_Solver_BFM::run(){
   
   std::vector < FermionField > BFM_ms_solution(shifts.size());
   BFMop_with_fact->solve_CGNE_multishift(BFM_ms_solution, EO_source, shifts, mresiduals);
-
+  
   ////////////////////////////////////////////////////////////////////////////////// 
   // Mult & Mult_dag
-  //Field mult_BFM = BFMoperator.mult_test(fe);
+  Field mult_BFM = BFMoperator.mult(fe);
+  Field mult_IroIro = DWF_EO.mult(fe);
+
+  Field multDiff =  mult_BFM;
+  multDiff -= mult_IroIro;
+  CCIO::cout << "Mult check BFM - IroIro  "<< mult_BFM.norm() 
+  	     << "  "<< mult_IroIro.norm() << "\n";
+
+  CCIO::cout << "Mult check Difference BFM-IroIro = "<< multDiff.norm() << "\n";
+
+  Field mult_dag_BFM = BFMoperator.mult_dag(fe);
+  Field mult_dag_IroIro = DWF_EO.mult_dag(fe);
+
+  Field mult_dag_Diff =  mult_dag_BFM;
+  mult_dag_Diff -= mult_dag_IroIro;
+  CCIO::cout << "Mult_dag check BFM - IroIro  "<< mult_dag_BFM.norm() 
+  	     << "  "<< mult_dag_IroIro.norm() << "\n";
+
+  CCIO::cout << "Mult_dag check Difference BFM-IroIro = "<< mult_dag_Diff.norm() << "\n";
+
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // Solver CG using BFM
@@ -157,27 +197,26 @@ int Test_Solver_BFM::run(){
   FermionField BFMsolution2(Nvol5d);
   BFMop_with_fact->solve_CGNE(BFMsolution2, EO_source);
   
-  int vect4d_hsize = fe.size()/Ls;   
+  
+  // Check of solver output
+  int vect4d_hsize = fe.size()/Ls;   //half Nvol size * LS
   for (int s =0 ; s< Ls; s++){
     for (int i = 0; i < vect4d_hsize; i++){
-      fe.set(i+vect4d_hsize*s, BFMsolution.data[i+2*s*vect4d_hsize]);
+      fe.set(i+vect4d_hsize*s, BFMsolution3.data[i+2*s*vect4d_hsize]);//copy the even part
     }
   }
-  
 
-  // Check
-  
   Field F_Diff;
   F_Diff = output_f;
   F_Diff -= fe;
-  /*
+  
   for (int i = 0; i < fe.size() ; i++){
     double diff = abs(fe[i]-output_f[i]);
     if (diff>1e-8) CCIO::cout << "*";
     CCIO::cout << "["<<i<<"] "<<fe[i] << "  "<<output_f[i]
                << "  "<< diff << "\n";
   }
-  */ 
+   
   CCIO::cout << "Operator Difference BFM-IroIro = "<< F_Diff.norm() << "\n";
   
   return 0;

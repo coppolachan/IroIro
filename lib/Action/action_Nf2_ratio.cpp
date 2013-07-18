@@ -56,10 +56,9 @@ void Action_Nf2_ratio::init(const RandNum& rand){
   _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::init"
 	   << " - Random numbers timing = "
 	   << rnd_timing << std::endl);     
- 
+
   phi_= D1_->mult_dag(Field(ph));
   phi_= D2_->mult(DdagD2_inv(phi_));
-
 }
 
 double Action_Nf2_ratio::calc_H(){

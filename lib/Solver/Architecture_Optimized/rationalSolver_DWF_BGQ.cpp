@@ -9,6 +9,24 @@
 
 #include "Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp"
 
+void RationalSolver_DWF_Optimized::internal_solve(vector_Field& v_sol, 
+						  const Field& source,
+						  const vector_double& Shifts,
+						  SolverOutput& out) const {
+
+   if (is_BFM){
+    std::vector < FermionField > BFM_ms_solution(v_sol.size());
+    FermionField source_FF;
+    vector_double mresiduals(size_t(v_sol.size()), sqrt(Params.GoalPrecision));
+    BFM_opr_->solve_CGNE_multishift(BFM_ms_solution,source_FF, Poles, mresiduals);
+    for (int i=0; i< v_sol.size(); ++i) {
+      v_sol[i] = BFM_ms_solution[i].data;
+    }
+  } else {
+    opr_->solve_ms_eo(v_sol, source, out, Shifts, Params.MaxIter, Params.GoalPrecision);
+  }
+}
+
 SolverOutput RationalSolver_DWF_Optimized::solve(Field& sol, 
 						 const Field& source) const {
  SolverOutput out;
@@ -16,19 +34,18 @@ SolverOutput RationalSolver_DWF_Optimized::solve(Field& sol,
     CCIO::cout << "[RationalSolver] Rational Approximation not initialized yet\n";
     abort();
   }
-  Field temp;
   vector_Field shifted_sol;
-  shifted_sol.resize(Residuals.size());
   sol.resize(source.size());
-  
+  shifted_sol.resize(Residuals.size());
   for (int i=0; i< shifted_sol.size(); ++i) {
     shifted_sol[i].resize(source.size());
   }
-  temp.resize(source.size());
   
-  opr_->solve_ms_eo(shifted_sol, source, out, Poles, Params.MaxIter, Params.GoalPrecision);
+  internal_solve(shifted_sol, source, Poles, out);
 
   // Reconstruct solution (M^dag M)^(a/b)
+  Field temp;
+  temp.resize(source.size());
   sol = source;
   sol *= ConstTerm;
 
@@ -57,8 +74,8 @@ SolverOutput RationalSolver_DWF_Optimized::solve_inv(Field& sol,
   }
   temp.resize(source.size());
 
-  opr_->solve_ms_eo(shifted_sol, source, out, InvPoles, Params.MaxIter, Params.GoalPrecision);
- 
+  //opr_->solve_ms_eo(shifted_sol, source, out, InvPoles, Params.MaxIter, Params.GoalPrecision);
+  internal_solve(shifted_sol, source, InvPoles, out);
 
   // Reconstruct solution (M^dag M)^(-a/b)
   sol = source;
@@ -89,7 +106,8 @@ SolverOutput RationalSolver_DWF_Optimized::solve_noReconstruct(std::vector<Field
     shifted_sol[i].resize(source.size());
   }
 
-  opr_->solve_ms_eo(shifted_sol, source, out, InvPoles, Params.MaxIter, Params.GoalPrecision);
+  //opr_->solve_ms_eo(shifted_sol, source, out, InvPoles, Params.MaxIter, Params.GoalPrecision);
+  internal_solve(shifted_sol, source, InvPoles, out);
 
   return out;
 }
@@ -111,8 +129,8 @@ SolverOutput RationalSolver_DWF_Optimized::solve_noReconstruct_inv(std::vector<F
     shifted_sol[i].resize(source.size());
   }
  
-  opr_->solve_ms_eo(shifted_sol, source, out, Poles, Params.MaxIter, Params.GoalPrecision);
-
+  //opr_->solve_ms_eo(shifted_sol, source, out, Poles, Params.MaxIter, Params.GoalPrecision);
+  internal_solve(shifted_sol, source, Poles, out);
 
   return out;
 }

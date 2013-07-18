@@ -1,7 +1,7 @@
 /*!
  * @file solver_Factory.hpp 
  * @brief Declaration of Solver operators factories
- * Time-stamp: <2013-07-12 17:51:55 cossu>
+ * Time-stamp: <2013-07-16 11:03:00 cossu>
  */
 #ifndef SOLVER_FACT_
 #define SOLVER_FACT_
@@ -65,6 +65,10 @@ public:
   Solver_CG_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr){
     return new Solver_CG_DWF_Optimized(Solver_node,DWFopr);
   }
+  Solver_CG_DWF_Optimized* getSolver(Dirac_BFM_Wrapper* BFMopr){
+    return new Solver_CG_DWF_Optimized(Solver_node,BFMopr);
+  }
+
   SolverCG_DWF_opt_Factory(const XML::node node):Solver_node(node){};
 };
 #endif

@@ -15,6 +15,7 @@
 #include "include/pugi_interface.h"
 #include "Solver/solver.hpp"
 #include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
+#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp"
 #include "Solver/solver_CG_params.hpp"
 /*!
  * @brief Solves \f$Dx = b\f$ using 
@@ -27,32 +28,36 @@
  */
 class Solver_CG_DWF_Optimized: public Solver{
 private:
+  // This duplication of internal pointers must be changed later 
+  Dirac_BFM_Wrapper* BFM_opr_;
+  bool is_BFM;
+
   const Dirac_optimalDomainWall_EvenOdd* opr_;
   const Solver_CG_Prms Params;/*!< @brief Inputs container */
-  const int nodeid_;
 
 public:
   // Create different constructors for BFM
   // pass a BFM dirac operator
-  /*
-  Solver_CG_DWF_Optimized(const double prec,const int MaxIterations,
-			  const Dirac_BFM* BFMKernel)
-    :opr_(BFMKernel),
-     nodeid_(Communicator::instance()->nodeid()),
-     Params(Solver_CG_Prms(prec, MaxIterations)){}
-  */
+  Solver_CG_DWF_Optimized(const XML::node Solver_node,
+			  Dirac_BFM_Wrapper* BFMKernel)
+    :BFM_opr_(BFMKernel),
+     Params(Solver_CG_Prms(Solver_node)),
+     is_BFM(true){
+    BFM_opr_->set_SolverParams(Solver_node);
+      }
+  
 
   Solver_CG_DWF_Optimized(const double prec,const int MaxIterations,
 			  const Dirac_optimalDomainWall_EvenOdd* DWFopr)
     :opr_(DWFopr),
-     nodeid_(Communicator::instance()->nodeid()),
-     Params(Solver_CG_Prms(prec, MaxIterations)){}
+     Params(Solver_CG_Prms(prec, MaxIterations)),
+     is_BFM(false){}
 
   Solver_CG_DWF_Optimized(const XML::node Solver_node,
 			  const Dirac_optimalDomainWall_EvenOdd* DWFopr)
     :opr_(DWFopr),
      Params(Solver_CG_Prms(Solver_node)),
-     nodeid_(Communicator::instance()->nodeid()){}
+     is_BFM(false){}
 
   ~Solver_CG_DWF_Optimized(){}
 

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-07-12 18:16:41 cossu>
+ * Time-stamp: <2013-07-16 17:32:59 cossu>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -19,6 +19,8 @@
 #include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "include/pugi_interface.h"
 
+enum Type_5d_DWF {Regular5D, PauliVillars5D};
+
 struct Dirac_BFM_Wrapper_params {
   std::string operator_name_;
   double mq_;
@@ -31,6 +33,7 @@ struct Dirac_BFM_Wrapper_params {
   double target_;
 
   Dirac_BFM_Wrapper_params(XML::node BFMnode);
+
   set_SolverParams(XML::node BFMnode);
 };
 
@@ -40,7 +43,7 @@ struct Dirac_BFM_Wrapper_params {
  *! @class Dirac_BFM_Wrapper
  * @brief Declaration of abstract base class for Dirac operators
  */
-class Dirac_BFM_Wrapper: public DiracWilsonLike_EvenOdd {
+class Dirac_BFM_Wrapper: public DiracWilsonLike {
 private:
   Dirac_BFM_Wrapper_params BFMparams;
   bfmarg parameters;
@@ -76,16 +79,16 @@ private:
   Dirac_BFM_Wrapper(); //hides default constructor
   void AllocateFields();
 public:
-  Dirac_BFM_Wrapper(XML::node, const Field*, DiracWilsonLike*);
+  Dirac_BFM_Wrapper(XML::node, const Field*, DiracWilsonLike*, const Type_5d_DWF= Regular5D);
   ~Dirac_BFM_Wrapper();
-  size_t fsize() const{};
-  size_t gsize() const{};
+  size_t fsize() const;
+  size_t gsize() const;
 
   void initialize();
+
   // Slow implementation: don't use this, use the solver
   // here just for compatibility
   const Field mult    (const Field&)const;
-  Field mult_test    (const Field&);
   const Field mult_dag(const Field&)const;
 
   double getMass()const;
@@ -94,21 +97,6 @@ public:
   const Field gamma5(const Field&) const{};
   const Field md_force(const Field& eta,const Field& zeta)const;
   void update_internal_state(){};
-
-  // Even/Odd part - now dummy, not needed
-  const Field mult_eo(const Field&) const{};
-  const Field mult_oe(const Field&) const{};
-  const Field mult_eo_dag(const Field&) const{};
-  const Field mult_oe_dag(const Field&) const{};
-  
-  const Field mult_ee(const Field&) const{};
-  const Field mult_oo(const Field&) const{};
-  const Field mult_ee_inv(const Field&) const{};
-  const Field mult_oo_inv(const Field&) const{};
-  
-  const DiracWilsonLike* getDeo() const{};
-  const DiracWilsonLike* getDoe() const{};
-  
 
   // Solvers wrapper
   void solve_CGNE(FermionField& out, FermionField& in);

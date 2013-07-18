@@ -3,7 +3,7 @@
 
   @brief Definition of createFermionActionFactory function
 
-  Time-stamp: <2013-04-22 16:50:05 neo>
+  Time-stamp: <2013-07-16 13:54:03 cossu>
 */
 
 #include "action_fermiontype_factory.hpp"
@@ -52,6 +52,8 @@ namespace FermionAction {
 #ifdef IBM_BGQ_WILSON
       if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D-EO_BGQ"))
 	return new TwoFlavorDomainWall5dEO_BGQ_ActionFactory(node);
+      if (!strcmp(Action_name, "TwoFlavorsDomainWall_5D-EO_BFM"))
+	return new TwoFlavorDomainWall5dEO_BFM_ActionFactory(node);
       if (!strcmp(Action_name, "TwoFlavorsRatioDomainWall_5D-EO_BGQ"))
 	return new TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory(node);
       if (!strcmp(Action_name, "NfFlavorsDomainWall_5D-EO_BGQ")) 

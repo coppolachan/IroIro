@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-07-16 10:26:23 cossu>
+ * Time-stamp: <2013-07-18 10:29:02 cossu>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -13,18 +13,18 @@
 Dirac_BFM_Wrapper_params::Dirac_BFM_Wrapper_params(XML::node BFMnode){
   XML::node top_BFM_node = BFMnode;
 
-  XML::descend(top_BFM_node, "KernelName", MANDATORY);
+  XML::descend(top_BFM_node, "BFMKernel", MANDATORY);
   // Now specific for the scaled shamir kernel
   XML::read(top_BFM_node, "mass", mq_, MANDATORY);
   XML::read(top_BFM_node, "M5", M5_, MANDATORY);
   XML::read(top_BFM_node, "N5d", Ls_, MANDATORY);
   XML::read(top_BFM_node, "scale", scale_, MANDATORY);
+
 }
 
 Dirac_BFM_Wrapper_params::set_SolverParams(XML::node BFMnode){
-  XML::descend(BFMnode, "Solver", MANDATORY);
   XML::read(BFMnode, "MaxIter", max_iter_, MANDATORY);
-  XML::read(BFMnode, "Residual", target_, MANDATORY);
+  XML::read(BFMnode, "Precision", target_, MANDATORY);
 }
 
 double Dirac_BFM_Wrapper::getMass() const{
@@ -35,7 +35,10 @@ const Field* Dirac_BFM_Wrapper::getGaugeField_ptr()const{
   return u_;
 }
 
-Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node, const Field* u, DiracWilsonLike* Dirac )
+Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node, 
+				     const Field* u, 
+				     DiracWilsonLike* Dirac,
+				     Type_5d_DWF Type)
   :u_(u),
    BFMparams(node),
    BFM_interface(linop),
@@ -43,6 +46,7 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node, const Field* u, DiracWilson
    has_solver_params(false),
    Internal_EO(Dirac){
 
+  CCIO::cout << "Creating BFM object\n";
   // Lattice local volume
   parameters.node_latt[0]  = CommonPrms::instance()->Nx();
   parameters.node_latt[1]  = CommonPrms::instance()->Ny();
@@ -67,11 +71,11 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node, const Field* u, DiracWilson
   }
 
   // Set Verbosity controls
-  parameters.verbose = -1;
+  parameters.verbose = 0;
   parameters.time_report_iter=-100;
 
   // Threading control parameters
-  threads = 64;
+  threads = 4;
   bfmarg::Threads(threads);
 
   // Set up the diagonal part
@@ -79,6 +83,9 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node, const Field* u, DiracWilson
   
   // Choose checkerboard
   parameters.rb_precondition_cb=Even;
+
+  // Check if PauliVillars
+  if (Type == PauliVillars5D) BFMparams.mq_ = 1.0;
 
   // Set the operator depending on parameters
   set_ScaledShamirCayleyTanh(BFMparams.mq_, BFMparams.M5_, 
@@ -89,17 +96,27 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node, const Field* u, DiracWilson
 
   // can be changed on the fly
   //...................
+
+  
+
 }
 
 Dirac_BFM_Wrapper::~Dirac_BFM_Wrapper(){
-  for(int cb=0;cb<2;cb++){
-    linop.freeFermion(psi_h[cb]);
-    linop.freeFermion(chi_h[cb]);
-  } 
-  linop.freeFermion(tmp);
+  if (is_initialized) {
+    for(int cb=0;cb<2;cb++){
+      linop.freeFermion(psi_h[cb]);
+      linop.freeFermion(chi_h[cb]);
+    } 
+    linop.freeFermion(tmp);
+  }
 }
 
 const Field Dirac_BFM_Wrapper::mult(const Field& Fin)const{
+  // Now, july 2013, just a safe implementation
+  return Internal_EO->mult(Fin);
+
+  // Here comes the BFM stuff
+  /*
   if(is_initialized){
     Dirac_BFM_Wrapper * pThis = const_cast< Dirac_BFM_Wrapper *>(this);
     CCIO::cout << "Dirac_BFM_Wrapper::mult Gauge Export\n";
@@ -121,39 +138,16 @@ const Field Dirac_BFM_Wrapper::mult(const Field& Fin)const{
   } else {
     CCIO::cout << "The operator was not initialized yet\n";
   }
-  
+  */
 }
-
-Field Dirac_BFM_Wrapper::mult_test(const Field& Fin){
-  if(is_initialized){
-    CCIO::cout << "Dirac_BFM_Wrapper::mult_test Gauge Export\n";
-    BFM_interface.GaugeExport_to_BFM(u_);
-    int donrm = 0;
-    int cb = Even;
-    FermionField FermF(Fin);
-    
-    LoadSource(FermF,cb);
-    CCIO::cout << "Dirac_BFM_Wrapper::mult Exporting Fermions\n";
-    linop.comm_init();
-#pragma omp parallel for
-    for (int t=0;t<threads;t++){
-      linop.MprecTilde(psi_h[cb],chi_h[cb],tmp,0,donrm);// dag=0 cb=0;
-    }
-    linop.comm_end();
-    CCIO::cout << "Dirac_BFM_Wrapper::mult Importing Fermions\n";
-    BFM_interface.FermionImport_from_BFM(FermF, chi_h[cb], cb);
-    
-    return FermF.data;
-   
-  } else {
-    CCIO::cout << "The operator was not initialized yet\n";
-  }
-  
-}
-
-
 
 const Field Dirac_BFM_Wrapper::mult_dag(const Field& Fin)const{
+ // Now, july 2013, just a safe implementation
+  return Internal_EO->mult_dag(Fin);
+
+
+  // Here comes the BFM stuff
+  /*
   if(is_initialized){
     Dirac_BFM_Wrapper * pThis = const_cast< Dirac_BFM_Wrapper *>(this);
     pThis->BFM_interface.GaugeExport_to_BFM(u_);
@@ -172,7 +166,7 @@ const Field Dirac_BFM_Wrapper::mult_dag(const Field& Fin)const{
   } else {
     CCIO::cout << "The operator was not initialized yet\n";
   }
-  
+  */
 }
 
 const Field Dirac_BFM_Wrapper::md_force(const Field& eta,const Field& zeta)const{
@@ -258,8 +252,24 @@ void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source)
 	     << export_timing << std::endl); 
     int cb = Even;// by default
     // Load the fermion field to BFM
-    LoadSource(source, cb);
-    LoadGuess(solution, cb);
+    // temporary source vector for the BFM data 
+    FermionField BFMsource(Nvol_*BFMparams.Ls_);
+    FermionField BFMsol(Nvol_*BFMparams.Ls_);
+
+    int half_vec = source.size()/BFMparams.Ls_;
+    for (int s =0 ; s< BFMparams.Ls_; s++){
+      for (int i = 0; i < half_vec; i++){
+	BFMsource.data.set(i+    2*s*half_vec, source.data[i+half_vec*s]);//just even part is enough
+	BFMsource.data.set(i+(2*s+1)*half_vec, 0.0);//just even part is enough
+
+	BFMsol.data.set(i+    2*s*half_vec, solution.data[i+half_vec*s]);//just even part is enough
+	BFMsol.data.set(i+(2*s+1)*half_vec, 0.0);//just even part is enough
+      }
+    }
+    
+
+    LoadSource(BFMsource, cb);
+    LoadGuess(BFMsol, cb);
 
     // need to initialize the comms because of the buffer 
     // assignments by BGNET library
@@ -281,7 +291,14 @@ void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source)
     linop.comm_end();
     
     // Get the solution from BFM 
-    GetSolution(solution,cb);
+    GetSolution(BFMsol,cb);
+    for (int s =0 ; s< BFMparams.Ls_; s++){
+      for (int i = 0; i < half_vec; i++){
+	solution.data.set(i+half_vec*s, BFMsol.data[i+2*s*half_vec]);//copy the even part
+      }
+    }
+
+
   } else {
     CCIO::cout << "The operator was not initialized yet\n";
   }
@@ -418,6 +435,15 @@ void Dirac_BFM_Wrapper::initialize(){
 void Dirac_BFM_Wrapper::set_SolverParams(XML::node node){
   BFMparams.set_SolverParams(node);
   parameters.max_iter = BFMparams.max_iter_;
-  parameters.residual = BFMparams.target_;
+  parameters.residual = sqrt(BFMparams.target_);
   has_solver_params = true;
+}
+
+
+size_t Dirac_BFM_Wrapper::fsize() const {
+  return Internal_EO->fsize();
+}
+
+size_t Dirac_BFM_Wrapper::gsize() const {
+  return Internal_EO->gsize();
 }

@@ -12,9 +12,13 @@
 #include "Solver/rationalSolver.hpp"
 #include "Solver/multiShiftSolver_CG.hpp"
 #include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
-
+#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp"
 
 class RationalSolver_DWF_Optimized: public RationalSolver {
+  // This duplication of internal pointers must be changed later 
+  Dirac_BFM_Wrapper* BFM_opr_;
+  bool is_BFM;
+
   const Dirac_optimalDomainWall_EvenOdd* opr_;
   const MultiShiftSolver_CG_Params Params;
 
@@ -25,6 +29,8 @@ class RationalSolver_DWF_Optimized: public RationalSolver {
   vector_double InvResiduals;
   vector_double InvPoles;
   double InvConstTerm;
+
+  void internal_solve(vector_Field&, const Field&, const vector_double&, SolverOutput&) const;
 
 public:
   // Standard Constructor
@@ -54,6 +60,21 @@ public:
      InvResiduals(0),
      InvPoles(0),
      InvConstTerm(0){};
+
+  RationalSolver_DWF_Optimized(Dirac_BFM_Wrapper* BFMopr,
+			       const XML::node node)
+    :BFM_opr_(BFMopr),
+     Params(MultiShiftSolver_CG_Params(node)),
+     Residuals(0),
+     Poles(0),
+     ConstTerm(0),
+     InvResiduals(0),
+     InvPoles(0),
+     InvConstTerm(0),
+     is_BFM(true){
+    BFM_opr_->set_SolverParams(node); 
+  };
+
 
   void set_Approx(RationalApprox& RA) {
     Residuals = RA.Residuals();
