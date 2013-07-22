@@ -35,7 +35,6 @@ namespace Mapping{
     AutoMap(){}//default constructor
 
   public:
-    ~AutoMap();
     // using the regular site indexing <-
     AutoMap(int dir)
       :bdry_t_(SiteMap::shiftSite.bdry_map(dir,Top)),

@@ -15,7 +15,6 @@ namespace Mapping{
   static double *class_send_f, *class_recv_f;
   static double *class_send_b, *class_recv_b;
 
-  AutoMap::~AutoMap(){}
 
   /////////////// AutoMap ///////////////
   /// for experimental use

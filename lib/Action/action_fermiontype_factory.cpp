@@ -1,7 +1,7 @@
 /*!
  * @file action_fermiontype_factory.cpp 
  * @brief Definition of methods for Fermion-type action factories
- * Time-stamp: <2013-07-16 17:41:30 cossu>
+ * Time-stamp: <2013-07-22 16:05:52 cossu>
  */
 #include "action_fermiontype_factory.hpp"
 #include "inputConfig.hpp"
@@ -231,7 +231,7 @@ getFermionAction(GaugeField* const F,SmartConf* const SC){
   InputConfig input(SC->select_conf(smearing));
   
   DiracNumerator.save(DiracNumObj.get()->getDirac(input));
-  DiracDenominator.save(DiracDenomObj.get()->getDiracPV(input));
+  DiracDenominator.save(DiracDenomObj.get()->getDirac(input));
   
   Solver1.save(SolverNumObj.get()->getSolver(DiracNumerator.get()));
   Solver2.save(SolverDenomObj.get()->getSolver(DiracDenominator.get()));

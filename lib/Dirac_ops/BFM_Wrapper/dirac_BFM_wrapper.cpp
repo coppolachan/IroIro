@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-07-18 10:29:02 cossu>
+ * Time-stamp: <2013-07-19 14:31:40 cossu>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -75,7 +75,7 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
   parameters.time_report_iter=-100;
 
   // Threading control parameters
-  threads = 4;
+  threads = 16;
   bfmarg::Threads(threads);
 
   // Set up the diagonal part

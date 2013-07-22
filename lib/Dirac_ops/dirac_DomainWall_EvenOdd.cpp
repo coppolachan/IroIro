@@ -3,7 +3,7 @@
  *
  *@brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op)
 
- Time-stamp: <2013-07-12 17:42:20 cossu>
+ Time-stamp: <2013-07-22 16:15:05 cossu>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"
@@ -69,8 +69,6 @@ const Field Dirac_optimalDomainWall_EvenOdd::mult_dag(const Field& f) const{
   gettimeofday(&start_,NULL);
 
   Field w(Deo_.fsize());
-  //Deo_.mult_hop_dag(w,f);
-  
   double* f_ptr = const_cast<Field&>(f).getaddr(0);
 #pragma omp parallel
   {
