@@ -1,7 +1,7 @@
 /*!
  * @file action_fermiontype_factory.cpp 
  * @brief Definition of methods for Fermion-type action factories
- * Time-stamp: <2013-07-22 16:05:52 cossu>
+ * Time-stamp: <2013-08-08 10:18:36 neo>
  */
 #include "action_fermiontype_factory.hpp"
 #include "inputConfig.hpp"
@@ -173,6 +173,7 @@ getFermionAction(GaugeField* const F,SmartConf* const SC){
 			      smearing, SC);
 }
 ///////////////////////////////////////////////////////////////////////////////
+#ifdef HAVE_LIBBFM
 TwoFlavorDomainWall5dEO_BFM_ActionFactory::
 TwoFlavorDomainWall5dEO_BFM_ActionFactory(XML::node node)
 :Action_node(node),smearing(false){
@@ -210,6 +211,7 @@ getFermionAction(GaugeField* const F,SmartConf* const SC){
 			      smearing, SC);
   
 }
+#endif
 ///////////////////////////////////////////////////////////////////////////////
 TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory::
 TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory(XML::node node)
