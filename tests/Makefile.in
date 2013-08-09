@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-07-12 17:54:21 cossu>
+# Time-stamp: <2013-08-08 15:00:50 neo>
 
 
 VPATH = @srcdir@
@@ -85,7 +85,8 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_Solver_Perf$(EXEEXT) $(am__EXEEXT_2) test_RNG$(EXEEXT) \
 	test_IO$(EXEEXT) test_RationalApprox$(EXEEXT) \
 	test_RHMC_noFactories$(EXEEXT) test_SUNRepresentation$(EXEEXT) \
-	test_HeatBath$(EXEEXT) test_DWF$(EXEEXT)
+	test_HeatBath$(EXEEXT) test_DWF$(EXEEXT) \
+	test_Smearing_Polyakov$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -295,6 +296,12 @@ test_Smearing_OBJECTS = $(am_test_Smearing_OBJECTS)
 test_Smearing_LDADD = $(LDADD)
 test_Smearing_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
+am_test_Smearing_Polyakov_OBJECTS = test_smeared_polyakov.$(OBJEXT) \
+	get_eval.$(OBJEXT) testerSmear.$(OBJEXT)
+test_Smearing_Polyakov_OBJECTS = $(am_test_Smearing_Polyakov_OBJECTS)
+test_Smearing_Polyakov_LDADD = $(LDADD)
+test_Smearing_Polyakov_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am__test_Solver_BFM_SOURCES_DIST = test_Solver_BFM.cpp \
 	testerSolver_BFM.cpp
 @USE_BFM_TRUE@am_test_Solver_BFM_OBJECTS = test_Solver_BFM.$(OBJEXT) \
@@ -377,9 +384,10 @@ SOURCES = $(test_BFM_Inverter_SOURCES) \
 	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
 	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_SUNRepresentation_SOURCES) \
-	$(test_Smearing_SOURCES) $(test_Solver_BFM_SOURCES) \
-	$(test_Solver_Perf_SOURCES) $(test_Wilson_SOURCES) \
-	$(test_WilsonFlow_SOURCES) $(test_Wilson_Brillouin_SOURCES) \
+	$(test_Smearing_SOURCES) $(test_Smearing_Polyakov_SOURCES) \
+	$(test_Solver_BFM_SOURCES) $(test_Solver_Perf_SOURCES) \
+	$(test_Wilson_SOURCES) $(test_WilsonFlow_SOURCES) \
+	$(test_Wilson_Brillouin_SOURCES) \
 	$(test_Wilson_Brillouin_Imp_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES)
 DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
@@ -400,7 +408,8 @@ DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
 	$(test_QpropMom_SOURCES) $(test_RHMC_noFactories_SOURCES) \
 	$(test_RNG_SOURCES) $(test_RationalApprox_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_SUNRepresentation_SOURCES) \
-	$(test_Smearing_SOURCES) $(am__test_Solver_BFM_SOURCES_DIST) \
+	$(test_Smearing_SOURCES) $(test_Smearing_Polyakov_SOURCES) \
+	$(am__test_Solver_BFM_SOURCES_DIST) \
 	$(test_Solver_Perf_SOURCES) $(test_Wilson_SOURCES) \
 	$(test_WilsonFlow_SOURCES) $(test_Wilson_Brillouin_SOURCES) \
 	$(test_Wilson_Brillouin_Imp_SOURCES) \
@@ -558,7 +567,7 @@ AM_LDFLAGS = $(BFM_LIBS)
 @USE_BFM_TRUE@BFM_INCLUDE = -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
 @USE_BFM_TRUE@BFM_LIBS = -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
 @USE_BFM_TRUE@BFM_LINKAGE = -lbfm -lbagel
-LDADD = -L../lib/ -lcommcode  $(BFM_LINKAGE) $(OPTLIB)
+LDADD = -L../lib/ -lcommcode -llapacke $(BFM_LINKAGE) $(OPTLIB)
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/lib/
 EXTRA_DIST = testResults.info	\
@@ -595,7 +604,7 @@ EXTRA_DIST = testResults.info	\
 		test_RationalApprox.xml	\
 		test_Solver_Perf.xml	\
 		test_sunRep.xml		\
-		test_noFact.xml
+		test_noFact.xml		
 
 test_HMC_SOURCES = test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -665,6 +674,10 @@ test_MultiShiftSolver_SOURCES = test_MultiShiftSolver.cpp	\
 				testerMultiShiftSolver.cpp
 
 test_Smearing_SOURCES = test_smear.cpp                  \
+                                testerSmear.cpp
+
+test_Smearing_Polyakov_SOURCES = test_smeared_polyakov.cpp        \
+				get_eval.cpp			\
                                 testerSmear.cpp
 
 test_RNG_SOURCES = test_RNG.cpp
@@ -899,6 +912,9 @@ test_SUNRepresentation$(EXEEXT): $(test_SUNRepresentation_OBJECTS) $(test_SUNRep
 test_Smearing$(EXEEXT): $(test_Smearing_OBJECTS) $(test_Smearing_DEPENDENCIES) $(EXTRA_test_Smearing_DEPENDENCIES) 
 	@rm -f test_Smearing$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Smearing_OBJECTS) $(test_Smearing_LDADD) $(LIBS)
+test_Smearing_Polyakov$(EXEEXT): $(test_Smearing_Polyakov_OBJECTS) $(test_Smearing_Polyakov_DEPENDENCIES) $(EXTRA_test_Smearing_Polyakov_DEPENDENCIES) 
+	@rm -f test_Smearing_Polyakov$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Smearing_Polyakov_OBJECTS) $(test_Smearing_Polyakov_LDADD) $(LIBS)
 test_Solver_BFM$(EXEEXT): $(test_Solver_BFM_OBJECTS) $(test_Solver_BFM_DEPENDENCIES) $(EXTRA_test_Solver_BFM_DEPENDENCIES) 
 	@rm -f test_Solver_BFM$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Solver_BFM_OBJECTS) $(test_Solver_BFM_LDADD) $(LIBS)
@@ -927,6 +943,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_eval.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Moebius.Po@am__quote@
@@ -958,6 +975,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_WilsonFlow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_clover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smeared_polyakov.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_sunRepres.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_Brillouin.Po@am__quote@

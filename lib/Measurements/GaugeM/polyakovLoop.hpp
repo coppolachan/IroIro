@@ -4,6 +4,7 @@
 #ifndef POLYAKOVLOOP_INCLUDED
 #define POLYAKOVLOOP_INCLUDED
 
+#include "include/field.h"
 #include "Geometry/mapping.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -15,7 +16,8 @@ private:
   int mu_dir_,Nmu_,NPmu_,slsize_;
 
   template<typename MAT> 
-  void calc(std::valarray<double>& plp, const GaugeField& G)const;
+  void calc(GaugeField1D& PL_matrices, const GaugeField& G)const;
+
 public:
   PolyakovLoop(site_dir mu)
     :com_(Communicator::instance()), 
@@ -24,12 +26,14 @@ public:
      NPmu_(CommonPrms::instance()->node_num(mu)),
      slsize_(SiteIndex::instance()->slsize(0,mu)){}
 
+  GaugeField1D get_PLField(const GaugeField&)const;
+
   std::complex<double> calc_SUN(const GaugeField&) const;
   double calc_SUNadj(const GaugeField&) const;
 }; 
 
 template<typename MAT>
-void PolyakovLoop::calc(std::valarray<double>& plp,const GaugeField& G)const{
+void PolyakovLoop::calc(GaugeField1D& PL_matrix_field,const GaugeField& G)const{
   using namespace SUNmatUtils;
   using namespace FieldUtils;
   
@@ -41,22 +45,24 @@ void PolyakovLoop::calc(std::valarray<double>& plp,const GaugeField& G)const{
     for(int xmu=1; xmu<Nmu_; ++xmu)
       pt *= MAT(mat(G,SiteMap::shiftSite.xslice(xmu,s,mu_dir_),mu_dir_));
 
-    plp[std::slice(Nin*s,Nin,1)] = pt.getva();
+    
+    PL_matrix_field.data.set(std::slice(Nin*s,Nin,1), pt.getva());
   }
 
-  std::valarray<double> pc = plp;
-  std::valarray<double> pfw(pc.size());
+  GaugeField1D pc = PL_matrix_field;
+  varray_double pfw(pc.size());
+
   for(int pmu=1; pmu<NPmu_; ++pmu){
-    com_->transfer_fw(pfw,pc,mu_dir_);
+    com_->transfer_fw(pfw,pc.data.getva(),mu_dir_);
 
     for(int s=0; s<slsize_; ++s){
       std::slice ms(Nin*s,Nin,1);
-      MAT pt = MAT(plp[ms]);
+      MAT pt = MAT(PL_matrix_field.data[ms]);
 
       pt *= MAT(pfw[ms]);
-      plp[ms] = pt.getva();
+      PL_matrix_field.data.set(ms,pt.getva());
     }
-    pc = pfw;
+    pc.data = pfw;
   }
 }
 

@@ -12,7 +12,7 @@
 using namespace std;
 using namespace Format;
 
-extern  int write_eig(double*);
+extern  int write_eig(int, int, int, int, double*);
 
 int Test_Smear::run(){
   using namespace FieldUtils;
@@ -64,10 +64,16 @@ int Test_Smear::run(){
   
   GaugeField1D PL_field = PLoop.get_PLField(smeared_u_);
   for (int s = 0; s< (SiteIndex::instance()->slsize(0,3)); s++){
+    int global_site = SiteIndex::instance()->get_gsite(s);
+    int gx = SiteIndex::instance()->g_x(global_site);
+    int gy = SiteIndex::instance()->g_y(global_site);
+    int gz = SiteIndex::instance()->g_z(global_site);
+    int gt = SiteIndex::instance()->g_t(global_site);
+
       SUNmat PL_mat = mat(PL_field,s);
       //PL_mat.print();
       varray_double matrix = PL_mat.getva();
-      write_eig(&matrix[0]);
+      write_eig(gx, gy, gz, gt, &matrix[0]);
     }
   
   return 0;

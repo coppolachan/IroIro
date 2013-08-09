@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-07-12 17:54:21 cossu>
+# Time-stamp: <2013-08-08 15:00:50 neo>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -39,7 +39,7 @@ endif
 AM_CXXFLAGS += $(BFM_INCLUDE) 
 AM_LDFLAGS += $(BFM_LIBS)
 
-LDADD = -L../lib/ -lcommcode  $(BFM_LINKAGE) $(OPTLIB)
+LDADD = -L../lib/ -lcommcode -llapacke $(BFM_LINKAGE) $(OPTLIB)
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
@@ -77,7 +77,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_RationalApprox.xml	\
 		test_Solver_Perf.xml	\
 		test_sunRep.xml		\
-		test_noFact.xml
+		test_noFact.xml		
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
@@ -111,7 +111,8 @@ test_PROGRAMS = test_HMC 		\
 		test_RHMC_noFactories 	\
 		test_SUNRepresentation	\
 		test_HeatBath           \
-                test_DWF              	
+                test_DWF     		\
+		test_Smearing_Polyakov 	
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -182,6 +183,10 @@ test_MultiShiftSolver_SOURCES =	test_MultiShiftSolver.cpp	\
 				testerMultiShiftSolver.cpp
 
 test_Smearing_SOURCES   =       test_smear.cpp                  \
+                                testerSmear.cpp
+
+test_Smearing_Polyakov_SOURCES   =  test_smeared_polyakov.cpp        \
+				get_eval.cpp			\
                                 testerSmear.cpp
 
 test_RNG_SOURCES 	= 	test_RNG.cpp

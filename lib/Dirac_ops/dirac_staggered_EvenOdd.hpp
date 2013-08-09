@@ -10,7 +10,7 @@
 #include "dirac_staggeredLike.hpp"
 #include "include/format_S.h"
 #include "Geometry/shiftField.hpp"
-#include "boundaryCond.hpp"
+#include "BoundaryConditions/boundaryCond.hpp"
 #include <memory>
 
 typedef Format::Format_S sfmt_t;     // fermions (fundamental rep.)

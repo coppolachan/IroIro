@@ -1,7 +1,7 @@
 /*! 
  * @file action_Nf2.h
  * @brief Declaration of the Action_Nf2 class
- *Time-stamp: <2013-04-23 12:41:11 noaki>
+ *Time-stamp: <2013-08-08 11:30:07 neo>
  */
 #ifndef ACTION_NF2_INCLUDED
 #define ACTION_NF2_INCLUDED
@@ -11,7 +11,7 @@
 #include "Solver/solver.hpp"
 #include "Smearing/smartConf.hpp"
 
-#include "Dirac_ops/boundaryCond.hpp"
+#include "Dirac_ops/BoundaryConditions/boundaryCond.hpp"
 
 /*!
  * @class Action_Nf
@@ -27,7 +27,7 @@ private:
   bool smeared_;             /*!< Asserts if the action is smeared */
   SmartConf* smart_conf_;    /*!< Pointer to the Smart Configurations */
   
-  BoundaryCond* BC;
+  BoundaryCond* BC; // now it is an experimental support
 
   Field DdagD_inv(const Field& src);
   void attach_smearing(SmartConf*);
