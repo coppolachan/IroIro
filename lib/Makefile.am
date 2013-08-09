@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-07-17 15:45:58 cossu>
+# Time-stamp: <2013-08-09 11:53:33 cossu>
 
 ###########################################
 # Initial definitions 
@@ -15,14 +15,16 @@ AM_LDFLAGS =
 OPTLIB =
 
 DWF_BGQ_SRC = 
-
+SMEAR_SRCS =
 ###########################################
 # Configure driven path selector
 if USE_MPI
 
 if IBM_BGQ
 # NB: Libraries ordering is essential
-OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+OPTLIB += -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+
 COMMUNICATOR_SRCS = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
 
 if IBM_BGQWILSON_SMP
@@ -53,9 +55,11 @@ DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 DWF_BGQ_SRC += Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
+SMEAR_SRCS += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
 else
 ACTION_SRCS = Action/action_gauge_rect.cpp
 ACTION_SRCS += Action/action_gauge_wilson_force.cpp
+SMEAR_SRCS += Smearing/stoutSmear_core.cpp
 endif 
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
@@ -202,7 +206,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/rationalSolver_CG.cpp		\
 		Solver/solver.cpp			\
 		Smearing/APEsmear.cpp			\
-		Smearing/stoutSmear.cpp			\
+		Smearing/stoutSmear_base.cpp		\
+		$(SMEAR_SRCS)				\
 		Smearing/smartConf.cpp			\
 		Smearing/smearingFactories.cpp		\
 		Tools/fieldUtils.cpp			\

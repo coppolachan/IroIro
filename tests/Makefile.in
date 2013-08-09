@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-07-12 17:54:21 cossu>
+# Time-stamp: <2013-08-09 11:55:44 cossu>
 
 
 VPATH = @srcdir@
@@ -47,7 +47,9 @@ target_triplet = @target@
 @USE_BFM_TRUE@am__append_1 = test_Solver_BFM test_BFM_Operator \
 @USE_BFM_TRUE@	test_BFM_Moebius test_BFM_Inverter \
 @USE_BFM_TRUE@	test_BFM_Inverter_wrapper
-@IBM_BGQ_TRUE@am__append_2 = -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
+
+#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
+@IBM_BGQ_TRUE@am__append_2 = -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_3 = -qsmp=omp:auto
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_4 = -lbgqwilson3x4smp -lbgqthread
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@am__append_5 = -lbgqwilson3x4

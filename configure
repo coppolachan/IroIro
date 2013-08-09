@@ -3871,8 +3871,9 @@ fi
 if (test x$dcmt_link = xtrue); then
   LDFLAGS+=" -L$dcmt_lib"
 fi
+#AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/lib -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"],,)
 if (test x$bluegeneq = xtrue); then
-  LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"
+  LDFLAGS+=" -L$DRIVER/comm/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"
 fi
 echo configure: setting library flags... done
 

@@ -4,7 +4,7 @@
 
   Optimized version for BlueGeneQ architecture
 
-  Time-stamp: <2013-04-26 16:09:40 cossu>
+  Time-stamp: <2013-07-25 18:21:30 cossu>
 */
 
 #include "Action/action_gauge_rect.hpp"
@@ -159,6 +159,10 @@ GaugeField ActionGaugeRect::md_force(){
   double* Cdn2_ptr = Cdn2.data.getaddr(0);
   double* Cup2_ptr = Cup2.data.getaddr(0);
   double* Cup1_ptr = Cup1.data.getaddr(0);
+  double *inmat, *outmat;
+  double trace;
+
+  double factor = 0.5*Params.beta/NC_;
 
   BGQThread_Init();
   
@@ -243,7 +247,8 @@ GaugeField ActionGaugeRect::md_force(){
 	//force_rect += res;
 	BGWilsonSU3_MatAdd((double*)force_rect_ptr+str2, 
 			   res_ptr+str2,ns); 
-      }
+      }//nu
+
       //force_pl   *= Params.c_plaq;
       BGWilsonSU3_MatMultScalar((double*)force_pl_ptr+str2,
 				Params.c_plaq,ns);
@@ -258,17 +263,33 @@ GaugeField ActionGaugeRect::md_force(){
       BGWilsonSU3_MatMult_ND(Cdn1_ptr+str2,U_mu_ptr+str2, 
 			     force_rect.data.getaddr(0)+str2,ns);
 
-
-#pragma omp single 
-      {    
-	SetSlice(force, TracelessAntihermite(Cdn1),mu);
-      }
-      
-    }
-
+      for(int site = is; site < (is+ns); ++site){
+	inmat  = Cdn1_ptr + 2*NC_*NC_*site;//CC2*(site+mu*Nvol);
+	outmat = force.data.getaddr(0)  +2*NC_*NC_*(site+mu*Nvol_);
+	
+	trace = factor*(inmat[1]+inmat[9]+inmat[17])/NC_;// imtrace
+	for(int a=0; a<NC_; ++a){
+	  for(int b=a; b<NC_; ++b){
+	    
+	    int ab = 2*(NC_*a+b);
+	    int ba = 2*(NC_*b+a);
+	    
+	    *(outmat+ab)   = factor*0.5*(*(inmat+ab)  -*(inmat+ba));
+	    *(outmat+ab+1) = factor*0.5*(*(inmat+ab+1)+*(inmat+ba+1));
+	    
+	    *(outmat+ba)   = -*(outmat+ab);
+	    *(outmat+ba+1) = *(outmat+ab+1);
+	    
+	  }
+       }
+	outmat[1] -= trace;
+	outmat[9] -= trace;
+	outmat[17] -= trace;
+	
+      }     
+    }//mu
   }
 
-  force *= 0.5*Params.beta/NC_;
   _MonitorMsg(ACTION_VERB_LEVEL,Action,force,"ActionGaugeRect");
 
   return force;

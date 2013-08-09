@@ -70,11 +70,35 @@ double Action_Nf2_ratio::calc_H(){
 
 GaugeField Action_Nf2_ratio::md_force(){
   Field eta = DdagD1_inv(D2_->mult_dag(phi_));
+  long double timing;
+  FINE_TIMING_START(timing);
+
   GaugeField fce(D1_->md_force(eta,D1_->mult(eta)));
   fce -= GaugeField(D2_->md_force(eta,phi_));
 
+  FINE_TIMING_END(timing);
+  _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::md_force"
+           << " - Force terms timing = "
+           << timing << std::endl);
+
+  FINE_TIMING_START(timing);
+
   if(smeared_) smart_conf_->smeared_force(fce);
+
+  FINE_TIMING_END(timing);
+  _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::md_force"
+           << " - Smeared force timing = "
+           << timing << std::endl);
+
+  FINE_TIMING_START(timing);
+
   GaugeField force = FieldUtils::TracelessAntihermite(fce); 
+
+  FINE_TIMING_END(timing);
+  _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::md_force"
+           << " - TracelessAntihermite timing = "
+           << timing << std::endl);
+
 
   _MonitorMsg(ACTION_VERB_LEVEL, Action,force, name_);
   return force;

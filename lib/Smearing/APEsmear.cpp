@@ -5,7 +5,9 @@
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 
-
+#include "timings.hpp"
+#include "include/messages_macros.hpp"
+#include <omp.h>
 
 //====================================================================
 std::vector<double> Smear_APE::set_rho(const double common_rho)const{
@@ -25,43 +27,68 @@ void Smear_APE::smear(GaugeField& u_smr, const GaugeField& u) const{
   GaugeField1D Cup;
   Staples stpl;
 
+  u_smr = 0.0;
+
 #ifdef IBM_BGQ_WILSON 
   init_shiftField();
-  GaugeField1D v, w, Cdn;
+  //GaugeField1D v, w;
+  GaugeField1D Cdn;
   GaugeField1D WupMu, VupNu;
   int Nvol = CommonPrms::instance()->Nvol();
-  double* v_ptr     = v.data.getaddr(0);
-  double* w_ptr     = w.data.getaddr(0);
+  double* v_ptr;//     = v.data.getaddr(0);
+  double* w_ptr;//     = w.data.getaddr(0);
   double* VupNu_ptr = VupNu.data.getaddr(0);
   double* WupMu_ptr = WupMu.data.getaddr(0);
   double* Cup_ptr   = Cup.data.getaddr(0);
-#endif
+  double* Cdn_ptr   = Cdn.data.getaddr(0);
+  double* u_smr_ptr   = u_smr.data.getaddr(0);
+  double* U_ptr = const_cast<GaugeField&>(u).data.getaddr(0);
+  const int CC2 = 2*NC_*NC_;
 
-  u_smr = 0.0;
+#pragma omp parallel
+  { 
+    const int nid = omp_get_num_threads();
+    const int tid = omp_get_thread_num();
+    const int is = tid*Nvol/nid;
+    const int ie = (tid + 1)*Nvol/nid;
+    const int ns = ie - is;
+    const int str2 = is*CC2;
+
+    for(int mu=0; mu<NDIM_; ++mu){
+      v_ptr = U_ptr + mu*Nvol*CC2;
+      for(int nu=0; nu<NDIM_; ++nu){
+	d_rho = rho[mu + NDIM_ * nu];
+	//Explicit staple calculation avoiding temporaries
+	w_ptr = U_ptr + nu*Nvol*CC2;
+	
+	shiftField(WupMu,w_ptr ,mu,Forward());
+	shiftField(VupNu,v_ptr ,nu,Forward());
+	
+	BGWilsonSU3_MatMult_NND(Cup_ptr+str2, w_ptr+str2, VupNu_ptr+str2, WupMu_ptr+str2, ns);
+	BGWilsonSU3_MatMult_DNN(VupNu_ptr+str2, w_ptr+str2, v_ptr+str2, WupMu_ptr+str2, ns);
+	shiftField(Cdn,VupNu_ptr,nu,Backward());
+	BGWilsonSU3_MatAdd(Cup_ptr+str2, 
+			   Cdn_ptr+str2,ns); 
+	//c++ Cup *= d_rho;
+	BGWilsonSU3_MatMultScalar(Cup_ptr+str2, d_rho,ns);
+
+	//c++ AddSlice(u_smr, Cup, mu);
+	BGWilsonSU3_MatAdd(u_smr_ptr+str2+Nvol*CC2*mu, 
+			   Cup_ptr+str2,ns); 
+      }
+    }
+  }
+#else
   for(int mu=0; mu<NDIM_; ++mu){
     for(int nu=0; nu<NDIM_; ++nu){
-  
-#ifdef IBM_BGQ_WILSON 
-      //Explicit staple calculation avoiding temporaries
-      DirSliceBGQ(v, u, mu);
-      DirSliceBGQ(w, u, nu);
-
-      shiftField(WupMu,w_ptr ,mu,Forward());
-      shiftField(VupNu,v_ptr ,nu,Forward());
-       
-      BGWilsonSU3_MatMult_NND(Cup_ptr, w_ptr, VupNu_ptr, WupMu_ptr, Nvol);
-      BGWilsonSU3_MatMult_DNN(VupNu_ptr, w_ptr, v_ptr, WupMu_ptr, Nvol);
-      shiftField(Cdn,VupNu_ptr,nu,Backward());
-      Cup+=Cdn;
-#else
-      Cup = stpl.upper_lower(u,mu,nu);
-#endif
-
       d_rho = rho[mu + NDIM_ * nu];
+      Cup = stpl.upper_lower(u,mu,nu);
       Cup *= d_rho;
       AddSlice(u_smr, Cup, mu);
     }
   }
+#endif
+  
 }
 //====================================================================
 void Smear_APE::derivative(GaugeField& SigmaTerm,
@@ -89,6 +116,7 @@ void Smear_APE::derivative(GaugeField& SigmaTerm,
   double* U_mu_ptr       = U_mu.data.getaddr(0);
   double* VupNu_ptr = VupNu.data.getaddr(0);
   double* WupMu_ptr = WupMu.data.getaddr(0);
+  double* SigmaTerm_ptr = SigmaTerm.data.getaddr(0);
 #endif
 
   int Nvol = CommonPrms::instance()->Nvol();
@@ -113,23 +141,35 @@ void Smear_APE::derivative(GaugeField& SigmaTerm,
       BGWilsonSU3_MatMult_NND(staple_ptr, U_nu_ptr, VupNu_ptr, WupMu_ptr, Nvol);
 
       BGWilsonSU3_MatMult_DN(u_tmp_ptr, staple_ptr, iLambda_nu_ptr, Nvol);
-      u_tmp *= -rho_numu;
-      AddSlice(SigmaTerm, u_tmp, mu);
+      BGWilsonSU3_MatMultScalar(u_tmp_ptr, -rho_numu,Nvol);
+      //u_tmp *= -rho_numu;
+      //AddSlice(SigmaTerm, u_tmp, mu);
+      BGWilsonSU3_MatAdd(SigmaTerm_ptr+Nvol*18*mu,
+			 u_tmp_ptr,Nvol);
+
       //-r_numu*U_nu(x+mu)*Udag_mu(x+nu)*Udag_nu(x)*Lambda_nu(x)
 
       shiftField(sh_field, iLambda_nu_ptr, mu, Forward());
 
       BGWilsonSU3_MatMult_ND(u_tmp_ptr, sh_field_ptr, staple_ptr, Nvol);
-      u_tmp *= rho_numu;
-      AddSlice(SigmaTerm, u_tmp, mu);
+      BGWilsonSU3_MatMultScalar(u_tmp_ptr, rho_numu,Nvol);
+      //u_tmp *= rho_numu;
+      //AddSlice(SigmaTerm, u_tmp, mu);
+      BGWilsonSU3_MatAdd(SigmaTerm_ptr+Nvol*18*mu,
+                         u_tmp_ptr,Nvol);
+
       //r_numu*Lambda_nu(mu)*U_nu(x+mu)*Udag_mu(x+nu)*Udag_nu(x)
 
       shiftField(sh_field, iLambda_mu_ptr, nu, Forward());
 
       BGWilsonSU3_MatMult_NND(u_tmp_ptr, U_nu_ptr, sh_field_ptr, U_nu_ptr, Nvol);
       BGWilsonSU3_MatMult_DN(sh_field_ptr, staple_ptr, u_tmp_ptr, Nvol);
-      sh_field *= -rho_munu;
-      AddSlice(SigmaTerm, sh_field, mu);
+      BGWilsonSU3_MatMultScalar(sh_field_ptr, -rho_munu,Nvol);
+      //sh_field *= -rho_munu;
+      //AddSlice(SigmaTerm, sh_field, mu);
+      BGWilsonSU3_MatAdd(SigmaTerm_ptr+Nvol*18*mu,
+                         sh_field_ptr,Nvol);
+
       //-r_munu*U_nu(x+mu)*Udag_mu(x+nu)*Lambda_mu(x+nu)*Udag_nu(x)
 
       staple = 0.0;

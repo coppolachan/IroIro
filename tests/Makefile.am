@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-07-12 17:54:21 cossu>
+# Time-stamp: <2013-08-09 11:55:44 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -25,7 +25,8 @@ BMF_TESTPROGS += test_BFM_Inverter_wrapper
 endif
 
 if IBM_BGQ
-OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
+#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
+OPTLIB += -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 
 if IBM_BGQWILSON_SMP
 AM_CXXFLAGS += -qsmp=omp:auto

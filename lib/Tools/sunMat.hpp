@@ -310,12 +310,20 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator/=(double rhs){
 // modified Gram-Schmidt method
 template <size_t COLORS>
 SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
-
+  double nrm_i;
   std::valarray<double> u(2*COLORS);
   for(int a=0; a<COLORS; ++a){
-    for(int cc=0; cc<2*COLORS; ++cc) u[cc] = va_[a*2*COLORS +cc];
-    double nrm_i = 1.0/sqrt((u*u).sum());
-    for(int cc=0; cc<2*COLORS; ++cc) va_[a*2*COLORS +cc] = u[cc]*nrm_i;
+    nrm_i =0.0;
+    for(int cc=0; cc<2*COLORS; ++cc)
+      {
+	//u[cc] = va_[a*2*COLORS +cc];
+	nrm_i += va_[a*2*COLORS +cc]*va_[a*2*COLORS +cc];
+      }
+      nrm_i = 1.0/sqrt(nrm_i);
+      for(int cc=0; cc<2*COLORS; cc+=2){
+	va_[a*2*COLORS +cc]*=nrm_i;
+	va_[a*2*COLORS +cc+1]*=nrm_i;
+      }
 
     for(int b=a+1; b<COLORS; ++b){
       double prr = 0.0;

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-07-10 14:23:48 cossu>
+# Time-stamp: <2013-08-09 12:01:11 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
@@ -263,7 +263,8 @@ echo configure: setting c++ compiler flags... done
 LDFLAGS=$ld_flags
 AM_COND_IF([USE_BFM], [LDFLAGS+=" -L$bfm_lib"],,)
 AM_COND_IF([USE_DCMT], [LDFLAGS+=" -L$dcmt_lib"],,)
-AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"],,)
+#AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/lib -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"],,)
+AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"],,)
 echo configure: setting library flags... done
 
 if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
