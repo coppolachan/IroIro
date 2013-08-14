@@ -1,7 +1,7 @@
 /*!
  * @file action_Nf2_ratio.hpp
  * @brief Declaration of Action_Nf2_ratio class
- Time-stamp: <2013-07-16 17:25:40 cossu>
+ Time-stamp: <2013-08-12 12:57:25 cossu>
  */
 #ifndef ACTION_NF2_RATIO_INCLUDED
 #define ACTION_NF2_RATIO_INCLUDED
@@ -11,6 +11,9 @@
 #include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "Solver/solver.hpp"
 #include "Smearing/smartConf.hpp"
+
+#include "Dirac_ops/BoundaryConditions/boundaryCond.hpp"
+
 /*!
  * @class Action_Nf2_ratio
  * @brief Class to calculate HMC action term \f$det(D1)/det(D2)\f$
@@ -28,6 +31,8 @@ private:
   const char* name_;
   SmartConf* smart_conf_;
 
+  BoundaryCond* BC; // now it is an experimental support
+
   Field DdagD1_inv(const Field& src);
   Field DdagD2_inv(const Field& src);
   void attach_smearing(SmartConf*);
@@ -44,7 +49,8 @@ private:
      fsize_(D1->fsize()),
      phi_(fsize_),
      name_(n),
-     smeared_(smeared){
+     smeared_(smeared),
+     BC(new BoundaryCond_antiPeriodic(TDIR)){
     if (smeared_ && smart_conf !=NULL) attach_smearing(smart_conf);
   }
   

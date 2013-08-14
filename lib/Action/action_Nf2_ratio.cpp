@@ -7,6 +7,10 @@
 #include "include/messages_macros.hpp"
 #include "include/timings.hpp"
 
+////////////// Temporary hack
+//#define ANTIPERIODIC_BC 
+
+
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2_ratio::observer_update() {
   D1_->update_internal_state();  
@@ -57,18 +61,39 @@ void Action_Nf2_ratio::init(const RandNum& rand){
 	   << " - Random numbers timing = "
 	   << rnd_timing << std::endl);     
 
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
   phi_= D1_->mult_dag(Field(ph));
   phi_= D2_->mult(DdagD2_inv(phi_));
+  
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
 }
 
 double Action_Nf2_ratio::calc_H(){
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
   Field zeta = D2_->mult_dag(phi_);//2 flavors
   double H_nf2r = zeta*DdagD1_inv(zeta);
+
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
   _Message(ACTION_VERB_LEVEL,"    ["<<name_<<"] H = "<<H_nf2r<<"\n");
   return H_nf2r;
 }
 
 GaugeField Action_Nf2_ratio::md_force(){
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
   Field eta = DdagD1_inv(D2_->mult_dag(phi_));
   long double timing;
   FINE_TIMING_START(timing);
@@ -81,7 +106,12 @@ GaugeField Action_Nf2_ratio::md_force(){
            << " - Force terms timing = "
            << timing << std::endl);
 
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
   FINE_TIMING_START(timing);
+
 
   if(smeared_) smart_conf_->smeared_force(fce);
 

@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-09 11:53:33 cossu>
+# Time-stamp: <2013-08-09 14:32:17 cossu>
 
 
 
@@ -147,7 +147,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
 	Dirac_ops/dirac_wilson_Brillouin.cpp Dirac_ops/eoUtils.cpp \
-	Dirac_ops/boundaryCond.cpp Dirac_ops/subSpaceProjector.cpp \
+	Dirac_ops/BoundaryConditions/boundaryCond.cpp \
+	Dirac_ops/subSpaceProjector.cpp \
 	Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 	Dirac_ops/dirac_LowModeDeflation_Approx.cpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp \
@@ -568,7 +569,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
-		Dirac_ops/boundaryCond.cpp      		\
+		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
 		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
@@ -764,10 +765,12 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
 			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
 			Dirac_ops/eoUtils.hpp            	\
-			Dirac_ops/boundaryCond.hpp      	\
-			Dirac_ops/antiPeriodicBC.hpp      	\
+			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
+			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\
 			Dirac_ops/utils_BGQ.hpp	        	\
+			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
+			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\
@@ -786,6 +789,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			HMC/mdExec_leapfrog_eigen.hpp		\
 			HMC/mdExec_factory.hpp			\
 			HMC/mdExec_factory_abs.hpp		\
+			Solver/solver_CG_params.hpp		\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.hpp		\
 			Solver/solver.hpp			\
@@ -795,6 +799,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Solver/rationalSolver.hpp		\
 			Solver/rationalSolver_CG.hpp		\
 			Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp\
+			Solver/Architecture_Optimized/solver_CG_DWF_BGQ.hpp\
 			Smearing/APEsmear.hpp			\
 			Smearing/baseSmear.hpp			\
 			Smearing/stoutSmear.hpp			\
@@ -1945,21 +1950,21 @@ eoUtils.obj: Dirac_ops/eoUtils.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eoUtils.obj `if test -f 'Dirac_ops/eoUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/eoUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/eoUtils.cpp'; fi`
 
-boundaryCond.o: Dirac_ops/boundaryCond.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT boundaryCond.o -MD -MP -MF $(DEPDIR)/boundaryCond.Tpo -c -o boundaryCond.o `test -f 'Dirac_ops/boundaryCond.cpp' || echo '$(srcdir)/'`Dirac_ops/boundaryCond.cpp
+boundaryCond.o: Dirac_ops/BoundaryConditions/boundaryCond.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT boundaryCond.o -MD -MP -MF $(DEPDIR)/boundaryCond.Tpo -c -o boundaryCond.o `test -f 'Dirac_ops/BoundaryConditions/boundaryCond.cpp' || echo '$(srcdir)/'`Dirac_ops/BoundaryConditions/boundaryCond.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/boundaryCond.Tpo $(DEPDIR)/boundaryCond.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/boundaryCond.cpp' object='boundaryCond.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/BoundaryConditions/boundaryCond.cpp' object='boundaryCond.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o boundaryCond.o `test -f 'Dirac_ops/boundaryCond.cpp' || echo '$(srcdir)/'`Dirac_ops/boundaryCond.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o boundaryCond.o `test -f 'Dirac_ops/BoundaryConditions/boundaryCond.cpp' || echo '$(srcdir)/'`Dirac_ops/BoundaryConditions/boundaryCond.cpp
 
-boundaryCond.obj: Dirac_ops/boundaryCond.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT boundaryCond.obj -MD -MP -MF $(DEPDIR)/boundaryCond.Tpo -c -o boundaryCond.obj `if test -f 'Dirac_ops/boundaryCond.cpp'; then $(CYGPATH_W) 'Dirac_ops/boundaryCond.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/boundaryCond.cpp'; fi`
+boundaryCond.obj: Dirac_ops/BoundaryConditions/boundaryCond.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT boundaryCond.obj -MD -MP -MF $(DEPDIR)/boundaryCond.Tpo -c -o boundaryCond.obj `if test -f 'Dirac_ops/BoundaryConditions/boundaryCond.cpp'; then $(CYGPATH_W) 'Dirac_ops/BoundaryConditions/boundaryCond.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/BoundaryConditions/boundaryCond.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/boundaryCond.Tpo $(DEPDIR)/boundaryCond.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/boundaryCond.cpp' object='boundaryCond.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Dirac_ops/BoundaryConditions/boundaryCond.cpp' object='boundaryCond.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o boundaryCond.obj `if test -f 'Dirac_ops/boundaryCond.cpp'; then $(CYGPATH_W) 'Dirac_ops/boundaryCond.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/boundaryCond.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o boundaryCond.obj `if test -f 'Dirac_ops/BoundaryConditions/boundaryCond.cpp'; then $(CYGPATH_W) 'Dirac_ops/BoundaryConditions/boundaryCond.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/BoundaryConditions/boundaryCond.cpp'; fi`
 
 subSpaceProjector.o: Dirac_ops/subSpaceProjector.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT subSpaceProjector.o -MD -MP -MF $(DEPDIR)/subSpaceProjector.Tpo -c -o subSpaceProjector.o `test -f 'Dirac_ops/subSpaceProjector.cpp' || echo '$(srcdir)/'`Dirac_ops/subSpaceProjector.cpp

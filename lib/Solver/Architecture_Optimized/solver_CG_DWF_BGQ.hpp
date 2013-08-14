@@ -15,8 +15,12 @@
 #include "include/pugi_interface.h"
 #include "Solver/solver.hpp"
 #include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
-#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp"
 #include "Solver/solver_CG_params.hpp"
+
+#ifdef HAVE_LIBBFM
+#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp"
+#endif
+
 /*!
  * @brief Solves \f$Dx = b\f$ using 
  * <a href="http://en.wikipedia.org/wiki/Conjugate_gradient_method">Conjugate Gradient method</a>
@@ -28,14 +32,17 @@
  */
 class Solver_CG_DWF_Optimized: public Solver{
 private:
+#ifdef HAVE_LIBBFM
   // This duplication of internal pointers must be changed later 
   Dirac_BFM_Wrapper* BFM_opr_;
+#endif
   bool is_BFM;
 
   const Dirac_optimalDomainWall_EvenOdd* opr_;
   const Solver_CG_Prms Params;/*!< @brief Inputs container */
 
 public:
+#ifdef HAVE_LIBBFM
   // Create different constructors for BFM
   // pass a BFM dirac operator
   Solver_CG_DWF_Optimized(const XML::node Solver_node,
@@ -45,7 +52,7 @@ public:
      is_BFM(true){
     BFM_opr_->set_SolverParams(Solver_node);
       }
-  
+#endif  
 
   Solver_CG_DWF_Optimized(const double prec,const int MaxIterations,
 			  const Dirac_optimalDomainWall_EvenOdd* DWFopr)

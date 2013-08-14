@@ -13,7 +13,7 @@ void RationalSolver_DWF_Optimized::internal_solve(vector_Field& v_sol,
 						  const Field& source,
 						  const vector_double& Shifts,
 						  SolverOutput& out) const {
-
+#ifdef HAVE_LIBBFM
    if (is_BFM){
     std::vector < FermionField > BFM_ms_solution(v_sol.size());
     FermionField source_FF;
@@ -22,7 +22,9 @@ void RationalSolver_DWF_Optimized::internal_solve(vector_Field& v_sol,
     for (int i=0; i< v_sol.size(); ++i) {
       v_sol[i] = BFM_ms_solution[i].data;
     }
-  } else {
+  } else 
+#endif
+     {
     opr_->solve_ms_eo(v_sol, source, out, Shifts, Params.MaxIter, Params.GoalPrecision);
   }
 }

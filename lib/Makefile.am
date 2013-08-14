@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-09 11:53:33 cossu>
+# Time-stamp: <2013-08-09 14:32:17 cossu>
 
 ###########################################
 # Initial definitions 
@@ -156,7 +156,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
-		Dirac_ops/boundaryCond.cpp      		\
+		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
 		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
@@ -354,10 +354,12 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
 			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
 			Dirac_ops/eoUtils.hpp            	\
-			Dirac_ops/boundaryCond.hpp      	\
-			Dirac_ops/antiPeriodicBC.hpp      	\
+			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
+			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\
 			Dirac_ops/utils_BGQ.hpp	        	\
+			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
+			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\
@@ -376,6 +378,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			HMC/mdExec_leapfrog_eigen.hpp		\
 			HMC/mdExec_factory.hpp			\
 			HMC/mdExec_factory_abs.hpp		\
+			Solver/solver_CG_params.hpp		\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.hpp		\
 			Solver/solver.hpp			\
@@ -385,6 +388,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Solver/rationalSolver.hpp		\
 			Solver/rationalSolver_CG.hpp		\
 			Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp\
+			Solver/Architecture_Optimized/solver_CG_DWF_BGQ.hpp\
 			Smearing/APEsmear.hpp			\
 			Smearing/baseSmear.hpp			\
 			Smearing/stoutSmear.hpp			\

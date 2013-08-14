@@ -6,19 +6,22 @@
  * \image html JICFUSsymbolmark170px.png 
  * 
  *
- * JLQCD branch of the code for lattice simulations of QCD  
+ * JLQCD code for lattice simulations of QCD  
  * 
  *
  * \section feat Features
  *
  * Current implementation:
  * - Actions (Gauge: Wilson, Rectangle, Fermion: 2 flavors, 2 flavors Ratio, RHMC Nf flavors, RHMC Nf flavors ratio, Overlap)
- * - %Dirac operators (Wilson, Clover, Staggered, Overlap, Even-odd preconditioned Wilson, Generalized Domain Wall (4d - 5d) )
- * - Linear Solvers (Conjugate Gradient Unpreconditioned, Conjugate Gradient Preconditioned, BiConjugate Gradient)
- * - Measurements (Quark Propagator [Wilson, Domain Wall], Meson and Baryon correlators, Gauge Quantities)
+ * - %Dirac operators (Wilson, Clover, Staggered, Adjoint Staggered, Overlap, Even-odd preconditioned Wilson, Generalized Domain Wall (4d-5d), Wilson Brillouin, Hybrid DomainWall-Overlap, Moebius Kernel)
+ * - Linear %Solvers (Conjugate Gradient, BiCG Stabilized, Rational-Multishift)
+ * - Measurements (Quark propagators [Wilson, Domain Wall], momentum space propagators, Meson and Baryon correlators, Eigenmodes, Low mode preconditioning, Gauge fixing - Coulomb & Landau,Gauge quantities [Plaquette, Polyakov Loop, Wilson Loop], Topological charge, Wilson Flow)
  * - Smearing (APE, Stout analytic), HMC Smeared runs
- * - Random Number Generators (Mersenne Twister)
+ * - Random Number Generators (Mersenne Twister, Dynamic Creation Mersenne Twister)
+ * - I/O support (Plain ASCII, Plain binary, ILDG, NERSC, MILC, JLQCD-legacy)
+ * - Peter Boyle's <a href="http://www2.ph.ed.ac.uk/~paboyle/bagel/">BAGEL</a>/BFM integration
  * - %XML control of program behavior
+ * - Lightweight, compiles in a minute...
  *
  *
  * \section Plat Supported platforms
@@ -28,7 +31,13 @@
  * - <a href="http://software.intel.com/en-us/articles/c-compilers/">INTEL compiler</a> (tested with icpc version 12.1.2)
  * - <a href="http://www-01.ibm.com/software/awdtools/xlcpp/">IBM XLC compiler</a> (tested with xlC version 11.1, cross platform compilation)
  *
- * \authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>,  Shoji Hashimoto, Jun-Ichi Noaki}
+ * \section Dev Development
+ * 
+ * - Main developers: <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>, J. Noaki
+ * - Specific routine development: Y. Cho, H. Fukaya 
+ * - Code mantainers: G. Cossu, J. Noaki 
+ * - Performance optimization:  P. Boyle (BFM), G. Cossu, J. Doi (IBM libs)
+ * - Testers:  S. Hashimoto,  T. Kaneko, J. Noaki
  *
  */
 #include "documentation_pages.h"
