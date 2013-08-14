@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-09 14:32:17 cossu>
+# Time-stamp: <2013-08-14 16:25:11 cossu>
 
 ###########################################
 # Initial definitions 
@@ -56,10 +56,14 @@ DWF_BGQ_SRC += Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
 SMEAR_SRCS += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
+SMEAR_SRCS += Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
+SMEAR_SRCS += Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
 else
 ACTION_SRCS = Action/action_gauge_rect.cpp
 ACTION_SRCS += Action/action_gauge_wilson_force.cpp
 SMEAR_SRCS += Smearing/stoutSmear_core.cpp
+SMEAR_SRCS += Smearing/smartConf_core.cpp
+SMEAR_SRCS += Smearing/APEsmear.cpp
 endif 
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
@@ -205,10 +209,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
 		Solver/rationalSolver_CG.cpp		\
 		Solver/solver.cpp			\
-		Smearing/APEsmear.cpp			\
 		Smearing/stoutSmear_base.cpp		\
+		Smearing/smartConf_base.cpp		\
 		$(SMEAR_SRCS)				\
-		Smearing/smartConf.cpp			\
 		Smearing/smearingFactories.cpp		\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\

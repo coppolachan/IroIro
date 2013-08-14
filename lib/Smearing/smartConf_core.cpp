@@ -1,6 +1,6 @@
 /*!
-  @file smartConf.cpp
-  @brief Defines the SmartConf class member functions
+  @file smartConf_core.cpp
+  @brief Defines the SmartConf class member core functions
 */
 #include "smartConf.hpp"
 #include "Geometry/mapping.hpp"
@@ -8,34 +8,10 @@
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 
-
-
 #include <omp.h>
 
 typedef std::complex<double> dcomplex;
 
-//====================================================================
-/*! @brief Returns top level configuration */
-GaugeField* SmartConf::get_current_conf() const{
-  return const_cast<GaugeField*>(&(SmearedSet[smearingLevels-1]));
-}
-//====================================================================
-/*! @brief Returns smeared configuration at level 'Level' */
-const GaugeField& SmartConf::get_smeared_conf(int Level) const{
-  return SmearedSet[Level];
-}
-//====================================================================
-void SmartConf::fill_smearedSet(){
-  GaugeField previous_u;
- 
-  _Message(DEBUG_VERB_LEVEL, "[SmartConf] Filling SmearedSet\n");
- 
-  previous_u = *ThinLinks;
-  for(int smearLvl = 0; smearLvl < smearingLevels; ++smearLvl){
-    StoutSmearing.smear(SmearedSet[smearLvl],previous_u);
-    previous_u = SmearedSet[smearLvl];
-  }
-}
 //====================================================================
 void SmartConf::smeared_force(GaugeField& SigmaTilde)const {
   using namespace FieldUtils;
@@ -45,53 +21,6 @@ void SmartConf::smeared_force(GaugeField& SigmaTilde)const {
   
   GaugeField force = SigmaTilde;//actually = U*SigmaTilde
 
-
-#ifdef IBM_BGQ_WILSON
-  const int CC2 = 2*NC_*NC_;
-
-  double* ThinLinks_ptr;
-  double* force_ptr;
-  double* SigmaTilde_ptr;
-  double* SmearedSet_ptr;
-
-#pragma omp parallel
- { 
-   const int nid = omp_get_num_threads();
-   const int tid = omp_get_thread_num();
-   const int is = tid*Nvol/nid;
-   const int ns = Nvol/nid;
-   const int str2 = is*CC2*NDIM_;
-
-   // for(int mu = 0; mu < NDIM_; ++mu){
-    SmearedSet_ptr = const_cast<Field&>(SmearedSet[smearingLevels-1].data).getaddr(0); 
-    force_ptr      = force.data.getaddr(0);  
-    BGWilsonSU3_MatMult_DN(force_ptr+str2, SmearedSet_ptr+str2, force_ptr+str2, ns*NDIM_);
-    //}
-
- }
-  for(int ismr = smearingLevels - 1; ismr > 0; --ismr)
-    force = AnalyticSmearedForce(force,get_smeared_conf(ismr-1));
-  
-  force = AnalyticSmearedForce(force,*ThinLinks);
-
-
-  //for(int mu = 0; mu < NDIM_; ++mu){
-#pragma omp parallel
- { 
-   const int nid = omp_get_num_threads();
-   const int tid = omp_get_thread_num();
-   const int is = tid*Nvol/nid;
-   const int ns = Nvol/nid;
-   const int str2 = is*CC2*NDIM_;
-
-    ThinLinks_ptr  = ThinLinks->data.getaddr(0);  
-    force_ptr      = force.data.getaddr(0);// + 18*Nvol*mu;  
-    SigmaTilde_ptr = SigmaTilde.data.getaddr(0);// + 18*Nvol*mu;  
-    BGWilsonSU3_MatMult_NN(SigmaTilde_ptr+str2, ThinLinks_ptr+str2, force_ptr+str2, ns*NDIM_);
-
- }
-    //}
-#else
   for(int mu = 0; mu < NDIM_; ++mu)
     for(int site = 0; site < Nvol; ++site)
       SetMat(force,
@@ -101,13 +30,10 @@ void SmartConf::smeared_force(GaugeField& SigmaTilde)const {
     force = AnalyticSmearedForce(force,get_smeared_conf(ismr-1));
   
   force = AnalyticSmearedForce(force,*ThinLinks);
-
-
+  
   for(int mu = 0; mu < NDIM_; ++mu)
     for (int site = 0; site < Nvol; ++site)
       SetMat(SigmaTilde, mat(*ThinLinks,site,mu)*mat(force,site,mu),site,mu);
-#endif
-
 }
 //====================================================================
 GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
@@ -123,43 +49,21 @@ GaugeField SmartConf::AnalyticSmearedForce(const GaugeField& SigmaKPrime,
   StoutSmearing.BaseSmear(C,GaugeK);
 
   for(int mu = 0; mu < NDIM_; ++mu){
-#ifdef IBM_BGQ_WILSON  
-    BGWilsonSU3_MatMult_ND(e_iQ.data.getaddr(0)+ 18*Nvol*mu, 
-			   C.data.getaddr(0) + 18*Nvol*mu, 
-			   const_cast<Field&>(GaugeK.data).getaddr(0)+ 18*Nvol*mu, 
-			   Nvol);
-  }
-  iQ = TracelessAntihermite(e_iQ);
-#else
     for(int site = 0; site < Nvol; ++site)
       SetMat(iQ, 
 	     anti_hermite_traceless(mat(C,site,mu)*mat_dag(GaugeK,site,mu)), 
 	     site, mu);  // created iQ
 
   }
-#endif
-  
 
   set_iLambda(iLambda, e_iQ, iQ, SigmaKPrime, GaugeK);
 
-#ifdef IBM_BGQ_WILSON  
-  for(int mu=0; mu<NDIM_; ++mu){
-    double* SigmaK_ptr          = SigmaK.data.getaddr(0)+18*Nvol*mu;
-    double* SigmaKPrime_ptr     = const_cast<Field&>(SigmaKPrime.data).getaddr(0)+18*Nvol*mu;
-    double* C_ptr               = C.data.getaddr(0)+18*Nvol*mu;
-    double* e_iQ_ptr            = e_iQ.data.getaddr(0)+18*Nvol*mu;
-    double* iLambda_ptr         = iLambda.data.getaddr(0)+18*Nvol*mu;
-    BGWilsonSU3_MatMult_NN(SigmaK_ptr, SigmaKPrime_ptr, e_iQ_ptr, Nvol);
-    BGWilsonSU3_MatMultAdd_DN(SigmaK_ptr, SigmaK_ptr, C_ptr, iLambda_ptr, Nvol);
-  }
-#else
   for(int mu=0; mu<NDIM_; ++mu){
     for(int site=0; site<Nvol; ++site){
       SetMat(SigmaK,mat(SigmaKPrime,site,mu)*mat(e_iQ,site,mu),site,mu);
       AddMat(SigmaK,mat_dag(C,site,mu)*mat(iLambda,site,mu),site,mu);
     }
   }
-#endif
 
   StoutSmearing.derivative(SigmaK, iLambda, GaugeK);
   
@@ -305,33 +209,6 @@ void SmartConf::set_iLambda(GaugeField& iLambda,
 }
 
 //====================================================================
-void SmartConf::set_fj(dcomplex& f0, dcomplex& f1, dcomplex& f2,
-		       const double& u, const double& w)const{
-  double xi0 = func_xi0(w);
-  double u2 = u*u;
-  double w2 = w*w;
-  double cosw = cos(w);
-
-  dcomplex ixi0 = dcomplex(0.0,xi0);
-  dcomplex emiu = dcomplex(cos(u),-sin(u));
-  dcomplex e2iu = dcomplex(cos(2.0*u),sin(2.0*u));
-
-  dcomplex h0 = e2iu * dcomplex(u2-w2,0.0) 
-    + emiu*(dcomplex(8.0*u2*cosw,0.0) +dcomplex(2.0*u*(3.0*u2 + w2),0.0)*ixi0);
-  
-  dcomplex h1 = dcomplex(2*u,0.0) * e2iu 
-    - emiu*(dcomplex(2.0*u*cosw,0.0) -dcomplex(3.0*u2-w2,0.0)*ixi0);
-
-  dcomplex h2 = e2iu -emiu*(dcomplex(cosw,0.0) +dcomplex(3.0*u,0.0)*ixi0);
-
-  double fden = 1.0/(9.0*u2 -w2);
-
-  f0 = h0 * dcomplex(fden,0.0);
-  f1 = h1 * dcomplex(fden,0.0);
-  f2 = h2 * dcomplex(fden,0.0);
-}
-
-//====================================================================
 void SmartConf::set_uw(double& u, double& w,
 		       const SUNmat& iQ2,
 		       const SUNmat& iQ3)const{
@@ -349,21 +226,4 @@ void SmartConf::set_uw(double& u, double& w,
   double theta = acos(c0/c0max);
   u = sqrt(c1/3.0) * cos(theta/3.0);
   w = sqrt(c1) * sin(theta/3.0);
-}
-
-//====================================================================
-double SmartConf::func_xi0(double w)const{
-
-  double xi0 = sin(w)/w;
-  if(w<0.0001) CCIO::cout<<"w too small: "<<w<<"\n";
-  return xi0;
-}
-
-//====================================================================
-double SmartConf::func_xi1(double w)const{
-
-  double xi1 = cos(w)/(w*w) - sin(w)/(w*w*w);
-  if(w<0.0001) CCIO::cout<<"w too small: "<<w<<"\n";
-
-  return xi1;
 }

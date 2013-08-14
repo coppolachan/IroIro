@@ -112,7 +112,6 @@ GaugeField Action_Nf2_ratio::md_force(){
 
   FINE_TIMING_START(timing);
 
-
   if(smeared_) smart_conf_->smeared_force(fce);
 
   FINE_TIMING_END(timing);

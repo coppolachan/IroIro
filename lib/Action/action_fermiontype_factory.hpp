@@ -1,7 +1,7 @@
 /*!
  * @file action_fermiontype_factory.hpp 
  * @brief Declaration of Fermion-type action factories
- * Time-stamp: <2013-08-14 10:06:05 cossu>
+ * Time-stamp: <2013-08-14 10:21:58 cossu>
  */
 #ifndef ACTION_FERMION_FACT_
 #define ACTION_FERMION_FACT_
@@ -22,7 +22,7 @@
 #include "Solver/solver_Factory.hpp"
 
 #ifdef HAVE_LIBBFM
-//#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
+#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
 #endif
 
 ///////////////////////////////////////////////////////////////////////

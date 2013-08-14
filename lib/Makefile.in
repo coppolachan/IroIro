@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-09 14:32:17 cossu>
+# Time-stamp: <2013-08-14 16:25:11 cossu>
 
 
 
@@ -60,8 +60,12 @@ target_triplet = @target@
 # Sources by architecture
 @IBM_BGQKERNELS_TRUE@am__append_6 = Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
-@IBM_BGQKERNELS_TRUE@am__append_7 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
-@IBM_BGQKERNELS_FALSE@am__append_8 = Smearing/stoutSmear_core.cpp
+@IBM_BGQKERNELS_TRUE@am__append_7 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
+@IBM_BGQKERNELS_FALSE@am__append_8 = Smearing/stoutSmear_core.cpp \
+@IBM_BGQKERNELS_FALSE@	Smearing/smartConf_core.cpp \
+@IBM_BGQKERNELS_FALSE@	Smearing/APEsmear.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
@@ -184,12 +188,14 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	PugiXML/pugi_interface.cpp Solver/solver_BiCGStab.cpp \
 	Solver/solver_CG.cpp Solver/solver_Factory.cpp \
 	Solver/multiShiftSolver_CG.cpp Solver/rationalSolver_CG.cpp \
-	Solver/solver.cpp Smearing/APEsmear.cpp \
-	Smearing/stoutSmear_base.cpp \
+	Solver/solver.cpp Smearing/stoutSmear_base.cpp \
+	Smearing/smartConf_base.cpp \
 	Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp \
-	Smearing/stoutSmear_core.cpp Smearing/smartConf.cpp \
-	Smearing/smearingFactories.cpp Tools/fieldUtils.cpp \
-	Tools/jobUtils.cpp Tools/sunMatUtils.cpp \
+	Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp \
+	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp \
+	Smearing/stoutSmear_core.cpp Smearing/smartConf_core.cpp \
+	Smearing/APEsmear.cpp Smearing/smearingFactories.cpp \
+	Tools/fieldUtils.cpp Tools/jobUtils.cpp Tools/sunMatUtils.cpp \
 	Tools/sunAdjMatUtils.cpp Tools/randNum.cpp \
 	Tools/randNum_MP.cpp Tools/randNum_Factory.cpp \
 	Tools/gammaMatrices.cpp Tools/sunAlgUtils.cpp \
@@ -222,8 +228,12 @@ am__objects_5 = $(am__objects_4)
 @USE_BFM_TRUE@am__objects_6 = dirac_BFM_wrapper.$(OBJEXT) \
 @USE_BFM_TRUE@	bfm_storage.$(OBJEXT) \
 @USE_BFM_TRUE@	dirac_BFM_wrapper_factory.$(OBJEXT)
-@IBM_BGQKERNELS_TRUE@am__objects_7 = stoutSmear_core_BGQ.$(OBJEXT)
-@IBM_BGQKERNELS_FALSE@am__objects_8 = stoutSmear_core.$(OBJEXT)
+@IBM_BGQKERNELS_TRUE@am__objects_7 = stoutSmear_core_BGQ.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@	smartConf_core_BGQ.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@	APEsmear_BGQ.$(OBJEXT)
+@IBM_BGQKERNELS_FALSE@am__objects_8 = stoutSmear_core.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@	smartConf_core.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@	APEsmear.$(OBJEXT)
 am__objects_9 = $(am__objects_7) $(am__objects_8)
 @USE_DCMT_TRUE@am__objects_10 = dcmt_wrapper.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
@@ -279,8 +289,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	pugi_interface.$(OBJEXT) solver_BiCGStab.$(OBJEXT) \
 	solver_CG.$(OBJEXT) solver_Factory.$(OBJEXT) \
 	multiShiftSolver_CG.$(OBJEXT) rationalSolver_CG.$(OBJEXT) \
-	solver.$(OBJEXT) APEsmear.$(OBJEXT) stoutSmear_base.$(OBJEXT) \
-	$(am__objects_9) smartConf.$(OBJEXT) \
+	solver.$(OBJEXT) stoutSmear_base.$(OBJEXT) \
+	smartConf_base.$(OBJEXT) $(am__objects_9) \
 	smearingFactories.$(OBJEXT) fieldUtils.$(OBJEXT) \
 	jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	sunAdjMatUtils.$(OBJEXT) randNum.$(OBJEXT) \
@@ -618,10 +628,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
 		Solver/rationalSolver_CG.cpp		\
 		Solver/solver.cpp			\
-		Smearing/APEsmear.cpp			\
 		Smearing/stoutSmear_base.cpp		\
+		Smearing/smartConf_base.cpp		\
 		$(SMEAR_SRCS)				\
-		Smearing/smartConf.cpp			\
 		Smearing/smearingFactories.cpp		\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
@@ -952,6 +961,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HBActions_SUN.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ILDG_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JLQCDLegacy_reader.Po@am__quote@
@@ -1064,7 +1074,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndexEO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteMap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smartConf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smartConf_base.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smartConf_core.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smartConf_core_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/smearingFactories.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/solver_BiCGStab.Po@am__quote@
@@ -2766,22 +2778,6 @@ solver.obj: Solver/solver.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o solver.obj `if test -f 'Solver/solver.cpp'; then $(CYGPATH_W) 'Solver/solver.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/solver.cpp'; fi`
 
-APEsmear.o: Smearing/APEsmear.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT APEsmear.o -MD -MP -MF $(DEPDIR)/APEsmear.Tpo -c -o APEsmear.o `test -f 'Smearing/APEsmear.cpp' || echo '$(srcdir)/'`Smearing/APEsmear.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/APEsmear.Tpo $(DEPDIR)/APEsmear.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/APEsmear.cpp' object='APEsmear.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o APEsmear.o `test -f 'Smearing/APEsmear.cpp' || echo '$(srcdir)/'`Smearing/APEsmear.cpp
-
-APEsmear.obj: Smearing/APEsmear.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT APEsmear.obj -MD -MP -MF $(DEPDIR)/APEsmear.Tpo -c -o APEsmear.obj `if test -f 'Smearing/APEsmear.cpp'; then $(CYGPATH_W) 'Smearing/APEsmear.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/APEsmear.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/APEsmear.Tpo $(DEPDIR)/APEsmear.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/APEsmear.cpp' object='APEsmear.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o APEsmear.obj `if test -f 'Smearing/APEsmear.cpp'; then $(CYGPATH_W) 'Smearing/APEsmear.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/APEsmear.cpp'; fi`
-
 stoutSmear_base.o: Smearing/stoutSmear_base.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stoutSmear_base.o -MD -MP -MF $(DEPDIR)/stoutSmear_base.Tpo -c -o stoutSmear_base.o `test -f 'Smearing/stoutSmear_base.cpp' || echo '$(srcdir)/'`Smearing/stoutSmear_base.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stoutSmear_base.Tpo $(DEPDIR)/stoutSmear_base.Po
@@ -2797,6 +2793,22 @@ stoutSmear_base.obj: Smearing/stoutSmear_base.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/stoutSmear_base.cpp' object='stoutSmear_base.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stoutSmear_base.obj `if test -f 'Smearing/stoutSmear_base.cpp'; then $(CYGPATH_W) 'Smearing/stoutSmear_base.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/stoutSmear_base.cpp'; fi`
+
+smartConf_base.o: Smearing/smartConf_base.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf_base.o -MD -MP -MF $(DEPDIR)/smartConf_base.Tpo -c -o smartConf_base.o `test -f 'Smearing/smartConf_base.cpp' || echo '$(srcdir)/'`Smearing/smartConf_base.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf_base.Tpo $(DEPDIR)/smartConf_base.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smartConf_base.cpp' object='smartConf_base.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf_base.o `test -f 'Smearing/smartConf_base.cpp' || echo '$(srcdir)/'`Smearing/smartConf_base.cpp
+
+smartConf_base.obj: Smearing/smartConf_base.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf_base.obj -MD -MP -MF $(DEPDIR)/smartConf_base.Tpo -c -o smartConf_base.obj `if test -f 'Smearing/smartConf_base.cpp'; then $(CYGPATH_W) 'Smearing/smartConf_base.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smartConf_base.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf_base.Tpo $(DEPDIR)/smartConf_base.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smartConf_base.cpp' object='smartConf_base.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf_base.obj `if test -f 'Smearing/smartConf_base.cpp'; then $(CYGPATH_W) 'Smearing/smartConf_base.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smartConf_base.cpp'; fi`
 
 stoutSmear_core_BGQ.o: Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stoutSmear_core_BGQ.o -MD -MP -MF $(DEPDIR)/stoutSmear_core_BGQ.Tpo -c -o stoutSmear_core_BGQ.o `test -f 'Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp' || echo '$(srcdir)/'`Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
@@ -2814,6 +2826,38 @@ stoutSmear_core_BGQ.obj: Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stoutSmear_core_BGQ.obj `if test -f 'Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp'; then $(CYGPATH_W) 'Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp'; fi`
 
+smartConf_core_BGQ.o: Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf_core_BGQ.o -MD -MP -MF $(DEPDIR)/smartConf_core_BGQ.Tpo -c -o smartConf_core_BGQ.o `test -f 'Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp' || echo '$(srcdir)/'`Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf_core_BGQ.Tpo $(DEPDIR)/smartConf_core_BGQ.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp' object='smartConf_core_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf_core_BGQ.o `test -f 'Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp' || echo '$(srcdir)/'`Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
+
+smartConf_core_BGQ.obj: Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf_core_BGQ.obj -MD -MP -MF $(DEPDIR)/smartConf_core_BGQ.Tpo -c -o smartConf_core_BGQ.obj `if test -f 'Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp'; then $(CYGPATH_W) 'Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf_core_BGQ.Tpo $(DEPDIR)/smartConf_core_BGQ.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp' object='smartConf_core_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf_core_BGQ.obj `if test -f 'Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp'; then $(CYGPATH_W) 'Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp'; fi`
+
+APEsmear_BGQ.o: Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT APEsmear_BGQ.o -MD -MP -MF $(DEPDIR)/APEsmear_BGQ.Tpo -c -o APEsmear_BGQ.o `test -f 'Smearing/Architecture_Optimized/APEsmear_BGQ.cpp' || echo '$(srcdir)/'`Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/APEsmear_BGQ.Tpo $(DEPDIR)/APEsmear_BGQ.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/Architecture_Optimized/APEsmear_BGQ.cpp' object='APEsmear_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o APEsmear_BGQ.o `test -f 'Smearing/Architecture_Optimized/APEsmear_BGQ.cpp' || echo '$(srcdir)/'`Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
+
+APEsmear_BGQ.obj: Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT APEsmear_BGQ.obj -MD -MP -MF $(DEPDIR)/APEsmear_BGQ.Tpo -c -o APEsmear_BGQ.obj `if test -f 'Smearing/Architecture_Optimized/APEsmear_BGQ.cpp'; then $(CYGPATH_W) 'Smearing/Architecture_Optimized/APEsmear_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/Architecture_Optimized/APEsmear_BGQ.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/APEsmear_BGQ.Tpo $(DEPDIR)/APEsmear_BGQ.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/Architecture_Optimized/APEsmear_BGQ.cpp' object='APEsmear_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o APEsmear_BGQ.obj `if test -f 'Smearing/Architecture_Optimized/APEsmear_BGQ.cpp'; then $(CYGPATH_W) 'Smearing/Architecture_Optimized/APEsmear_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/Architecture_Optimized/APEsmear_BGQ.cpp'; fi`
+
 stoutSmear_core.o: Smearing/stoutSmear_core.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT stoutSmear_core.o -MD -MP -MF $(DEPDIR)/stoutSmear_core.Tpo -c -o stoutSmear_core.o `test -f 'Smearing/stoutSmear_core.cpp' || echo '$(srcdir)/'`Smearing/stoutSmear_core.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/stoutSmear_core.Tpo $(DEPDIR)/stoutSmear_core.Po
@@ -2830,21 +2874,37 @@ stoutSmear_core.obj: Smearing/stoutSmear_core.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o stoutSmear_core.obj `if test -f 'Smearing/stoutSmear_core.cpp'; then $(CYGPATH_W) 'Smearing/stoutSmear_core.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/stoutSmear_core.cpp'; fi`
 
-smartConf.o: Smearing/smartConf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf.o -MD -MP -MF $(DEPDIR)/smartConf.Tpo -c -o smartConf.o `test -f 'Smearing/smartConf.cpp' || echo '$(srcdir)/'`Smearing/smartConf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf.Tpo $(DEPDIR)/smartConf.Po
+smartConf_core.o: Smearing/smartConf_core.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf_core.o -MD -MP -MF $(DEPDIR)/smartConf_core.Tpo -c -o smartConf_core.o `test -f 'Smearing/smartConf_core.cpp' || echo '$(srcdir)/'`Smearing/smartConf_core.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf_core.Tpo $(DEPDIR)/smartConf_core.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smartConf.cpp' object='smartConf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smartConf_core.cpp' object='smartConf_core.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf.o `test -f 'Smearing/smartConf.cpp' || echo '$(srcdir)/'`Smearing/smartConf.cpp
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf_core.o `test -f 'Smearing/smartConf_core.cpp' || echo '$(srcdir)/'`Smearing/smartConf_core.cpp
 
-smartConf.obj: Smearing/smartConf.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf.obj -MD -MP -MF $(DEPDIR)/smartConf.Tpo -c -o smartConf.obj `if test -f 'Smearing/smartConf.cpp'; then $(CYGPATH_W) 'Smearing/smartConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smartConf.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf.Tpo $(DEPDIR)/smartConf.Po
+smartConf_core.obj: Smearing/smartConf_core.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smartConf_core.obj -MD -MP -MF $(DEPDIR)/smartConf_core.Tpo -c -o smartConf_core.obj `if test -f 'Smearing/smartConf_core.cpp'; then $(CYGPATH_W) 'Smearing/smartConf_core.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smartConf_core.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/smartConf_core.Tpo $(DEPDIR)/smartConf_core.Po
 @am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smartConf.cpp' object='smartConf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smartConf_core.cpp' object='smartConf_core.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf.obj `if test -f 'Smearing/smartConf.cpp'; then $(CYGPATH_W) 'Smearing/smartConf.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smartConf.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smartConf_core.obj `if test -f 'Smearing/smartConf_core.cpp'; then $(CYGPATH_W) 'Smearing/smartConf_core.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smartConf_core.cpp'; fi`
+
+APEsmear.o: Smearing/APEsmear.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT APEsmear.o -MD -MP -MF $(DEPDIR)/APEsmear.Tpo -c -o APEsmear.o `test -f 'Smearing/APEsmear.cpp' || echo '$(srcdir)/'`Smearing/APEsmear.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/APEsmear.Tpo $(DEPDIR)/APEsmear.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/APEsmear.cpp' object='APEsmear.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o APEsmear.o `test -f 'Smearing/APEsmear.cpp' || echo '$(srcdir)/'`Smearing/APEsmear.cpp
+
+APEsmear.obj: Smearing/APEsmear.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT APEsmear.obj -MD -MP -MF $(DEPDIR)/APEsmear.Tpo -c -o APEsmear.obj `if test -f 'Smearing/APEsmear.cpp'; then $(CYGPATH_W) 'Smearing/APEsmear.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/APEsmear.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/APEsmear.Tpo $(DEPDIR)/APEsmear.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/APEsmear.cpp' object='APEsmear.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o APEsmear.obj `if test -f 'Smearing/APEsmear.cpp'; then $(CYGPATH_W) 'Smearing/APEsmear.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/APEsmear.cpp'; fi`
 
 smearingFactories.o: Smearing/smearingFactories.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT smearingFactories.o -MD -MP -MF $(DEPDIR)/smearingFactories.Tpo -c -o smearingFactories.o `test -f 'Smearing/smearingFactories.cpp' || echo '$(srcdir)/'`Smearing/smearingFactories.cpp
