@@ -1,8 +1,6 @@
 /* Improved version of Dirac Kernel 
-   Time-stamp: <2013-08-20 17:19:26 cossu>
+   Time-stamp: <2013-05-03 09:19:16 noaki>
 */
-
-#include <omp.h>
 
 void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   int Nih = ND_*NC_; /*!< @brief num of elements of a half spinor */
@@ -11,8 +9,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   int is = 0;
   int Xb = 0;
   int Nbdry = (this->*slice_isize)(Xb,XDIR);
-  double vbd[Nih*Nbdry]; /*!< @brief data on the lower slice */
-  
+  double vbd[Nih*Nbdry]; /*!< @brief data on the lower slice */   
   for(int k=0; k<Nbdry; ++k){
     const double* v 
       = const_cast<Field&>(f).getaddr(ff_.index(0,(this->*slice_in)(Xb,k,XDIR)));
@@ -23,19 +20,39 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
     is += Nih;
   }
 
-
   double vbc[Nih*Nbdry]; /*!< @brief data on the upper slice */   
-  //comm_->transfer_fw(vbc,vbd,Nih*Nbdry,XDIR);
-  comm_->transfer_bk_async(vbc,vbd,Nih*Nbdry,XDIR);
+  comm_->transfer_fw(vbc,vbd,Nih*Nbdry,XDIR);
 
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];     
   is = 0;
   Xb = Nx_-1;
   Nbdry = (this->*slice_osize)(Xb,XDIR);
 
+  for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
+    int xc = (this->*slice_out)(Xb,k,XDIR);
+    const double* U 
+      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(xc),XDIR));
+    double* res = fp.getaddr(ff_.index(0,xc));    
+
+    for(int c=0; c<NC_; ++c){
+      v1r[c] = 0.0; v1i[c] = 0.0;
+      v2r[c] = 0.0; v2i[c] = 0.0;
+      
+      for(int c1=0; c1<NC_; ++c1){
+	v1r[c]+= U[re(c,c1)]*vbc[r0(c1)+is] -U[im(c,c1)]*vbc[i0(c1)+is];
+	v1i[c]+= U[im(c,c1)]*vbc[r0(c1)+is] +U[re(c,c1)]*vbc[i0(c1)+is];
+	v2r[c]+= U[re(c,c1)]*vbc[r1(c1)+is] -U[im(c,c1)]*vbc[i1(c1)+is];
+	v2i[c]+= U[im(c,c1)]*vbc[r1(c1)+is] +U[re(c,c1)]*vbc[i1(c1)+is];
+      }
+      res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
+      res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
+      res[r2(c)] += v2i[c];      res[i2(c)] -= v2r[c];
+      res[r3(c)] += v1i[c];      res[i3(c)] -= v1r[c];
+    }
+    is += Nih;
+  }
   /// bulk part ///
   double w1r[NC_], w1i[NC_], w2r[NC_], w2i[NC_];
-
 
   for(int x=0; x<Xb; ++x){
     int Nslice = (this->*slice_osize)(x,XDIR);
@@ -68,34 +85,6 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
       }
     }
   }
-
-  comm_->wait_async(0, XDIR+5, sizeof(double)*Nih*Nbdry);
-
-  for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
-    int xc = (this->*slice_out)(Xb,k,XDIR);
-    const double* U 
-      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(xc),XDIR));
-    double* res = fp.getaddr(ff_.index(0,xc));    
-
-    for(int c=0; c<NC_; ++c){
-      v1r[c] = 0.0; v1i[c] = 0.0;
-      v2r[c] = 0.0; v2i[c] = 0.0;
-      
-      for(int c1=0; c1<NC_; ++c1){
-	v1r[c]+= U[re(c,c1)]*vbc[r0(c1)+is] -U[im(c,c1)]*vbc[i0(c1)+is];
-	v1i[c]+= U[im(c,c1)]*vbc[r0(c1)+is] +U[re(c,c1)]*vbc[i0(c1)+is];
-	v2r[c]+= U[re(c,c1)]*vbc[r1(c1)+is] -U[im(c,c1)]*vbc[i1(c1)+is];
-	v2i[c]+= U[im(c,c1)]*vbc[r1(c1)+is] +U[re(c,c1)]*vbc[i1(c1)+is];
-      }
-      res[r0(c)] += v1r[c];      res[i0(c)] += v1i[c];
-      res[r1(c)] += v2r[c];      res[i1(c)] += v2i[c];
-      res[r2(c)] += v2i[c];      res[i2(c)] -= v2r[c];
-      res[r3(c)] += v1i[c];      res[i3(c)] -= v1r[c];
-    }
-    is += Nih;
-  }
-
-
 }
 
 void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{

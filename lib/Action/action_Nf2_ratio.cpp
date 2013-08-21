@@ -7,9 +7,11 @@
 #include "include/messages_macros.hpp"
 #include "include/timings.hpp"
 
+
+
 ////////////// Temporary hack
 //#define ANTIPERIODIC_BC 
-
+#include "Measurements/GaugeM/polyakovLoop.hpp"
 
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2_ratio::observer_update() {
@@ -86,6 +88,14 @@ double Action_Nf2_ratio::calc_H(){
 #endif
 
   _Message(ACTION_VERB_LEVEL,"    ["<<name_<<"] H = "<<H_nf2r<<"\n");
+
+  //Also calculate other observables
+  
+  PolyakovLoop PLmeas(TDIR);
+  std::complex<double> pl = PLmeas.calc_SUN(*u_);
+  _Message(ACTION_VERB_LEVEL,"    ["<<name_<<"] PL = "<<pl.real()<< "  "<< pl.imag() << "\n");
+  
+
   return H_nf2r;
 }
 
