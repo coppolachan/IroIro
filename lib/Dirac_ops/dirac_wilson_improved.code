@@ -1,5 +1,5 @@
 /* Improved version of Dirac Kernel 
-   Time-stamp: <2013-08-20 17:19:26 cossu>
+   Time-stamp: <2013-08-21 13:52:47 noaki>
 */
 
 #include <omp.h>
@@ -25,8 +25,8 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 
 
   double vbc[Nih*Nbdry]; /*!< @brief data on the upper slice */   
-  //comm_->transfer_fw(vbc,vbd,Nih*Nbdry,XDIR);
-  comm_->transfer_bk_async(vbc,vbd,Nih*Nbdry,XDIR);
+  comm_->transfer_fw(vbc,vbd,Nih*Nbdry,XDIR);
+  //comm_->transfer_bk_async(vbc,vbd,Nih*Nbdry,XDIR);
 
   double v1r[NC_], v1i[NC_], v2r[NC_], v2i[NC_];     
   is = 0;
@@ -69,7 +69,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
     }
   }
 
-  comm_->wait_async(0, XDIR+5, sizeof(double)*Nih*Nbdry);
+  //comm_->wait_async(0, XDIR+5, sizeof(double)*Nih*Nbdry);
 
   for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
     int xc = (this->*slice_out)(Xb,k,XDIR);

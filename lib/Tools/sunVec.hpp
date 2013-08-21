@@ -9,7 +9,6 @@
 #define SUNVEC_INCLUDED
 
 #include "sunMat.hpp"
-#include <valarray>
 
 template <size_t COLORS>
 class SUNvector{
