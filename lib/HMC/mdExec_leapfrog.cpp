@@ -109,8 +109,7 @@ double MDexec_leapfrog::calc_H()const{
   return H;
 }
 
-void MDexec_leapfrog::
-integrator_step(int cl,std::vector<int>& clock){
+void MDexec_leapfrog::integrator_step(int cl,std::vector<int>& clock){
   // cl  : current level
   // fl  : final level
   // eps : current step size
@@ -155,8 +154,7 @@ integrator_step(int cl,std::vector<int>& clock){
   }
 }
 
-void MDexec_leapfrog::
-integrator(int cl,std::vector<int>& clock){
+void MDexec_leapfrog::integrator(int cl,std::vector<int>& clock){
   // cl  : current level
   // fl  : final level
   // eps : current step size
