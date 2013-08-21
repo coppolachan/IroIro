@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-07-05 14:56:07 noaki>
+# Time-stamp: <2013-08-14 16:25:11 cossu>
 
 ###########################################
 # Initial definitions 
@@ -15,14 +15,16 @@ AM_LDFLAGS =
 OPTLIB =
 
 DWF_BGQ_SRC = 
-
+SMEAR_SRCS =
 ###########################################
 # Configure driven path selector
 if USE_MPI
 
 if IBM_BGQ
 # NB: Libraries ordering is essential
-OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+OPTLIB += -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+
 COMMUNICATOR_SRCS = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
 
 if IBM_BGQWILSON_SMP
@@ -50,11 +52,18 @@ endif #USE_MPI
 # Sources by architecture
 if IBM_BGQKERNELS
 DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
+DWF_BGQ_SRC += Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
+SMEAR_SRCS += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
+SMEAR_SRCS += Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
+SMEAR_SRCS += Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
 else
 ACTION_SRCS = Action/action_gauge_rect.cpp
 ACTION_SRCS += Action/action_gauge_wilson_force.cpp
+SMEAR_SRCS += Smearing/stoutSmear_core.cpp
+SMEAR_SRCS += Smearing/smartConf_core.cpp
+SMEAR_SRCS += Smearing/APEsmear.cpp
 endif 
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
@@ -77,7 +86,9 @@ if USE_BFM
 BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
 BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
 BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
-BFM_SRCS = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 	
+BFM_SRCS = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 
+BFM_SRCS += Tools/Bagel/bfm_storage.cpp 
+BFM_SRCS += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 else
 BFM_SRCS = 
 endif
@@ -149,7 +160,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
-		Dirac_ops/boundaryCond.cpp      		\
+		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
 		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
@@ -198,9 +209,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/multiShiftSolver_CG.cpp		\
 		Solver/rationalSolver_CG.cpp		\
 		Solver/solver.cpp			\
-		Smearing/APEsmear.cpp			\
-		Smearing/stoutSmear.cpp			\
-		Smearing/smartConf.cpp			\
+		Smearing/stoutSmear_base.cpp		\
+		Smearing/smartConf_base.cpp		\
+		$(SMEAR_SRCS)				\
 		Smearing/smearingFactories.cpp		\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
@@ -346,10 +357,12 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
 			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
 			Dirac_ops/eoUtils.hpp            	\
-			Dirac_ops/boundaryCond.hpp      	\
-			Dirac_ops/antiPeriodicBC.hpp      	\
+			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
+			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\
 			Dirac_ops/utils_BGQ.hpp	        	\
+			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
+			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\
@@ -368,6 +381,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			HMC/mdExec_leapfrog_eigen.hpp		\
 			HMC/mdExec_factory.hpp			\
 			HMC/mdExec_factory_abs.hpp		\
+			Solver/solver_CG_params.hpp		\
 			Solver/solver_Factory.hpp		\
 			Solver/solver_BiCGStab.hpp		\
 			Solver/solver.hpp			\
@@ -377,6 +391,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Solver/rationalSolver.hpp		\
 			Solver/rationalSolver_CG.hpp		\
 			Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp\
+			Solver/Architecture_Optimized/solver_CG_DWF_BGQ.hpp\
 			Smearing/APEsmear.hpp			\
 			Smearing/baseSmear.hpp			\
 			Smearing/stoutSmear.hpp			\

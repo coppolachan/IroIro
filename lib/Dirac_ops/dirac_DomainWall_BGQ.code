@@ -2,7 +2,8 @@
  * @file dirac_DomainWall_BGQ.code
  *
  * @brief Definition of some BGQ optimized methods for Dirac_optimalDomainWall (5d operator)
- *Time-stamp: <2013-07-06 21:48:49 noaki>
+ * Time-stamp: <2013-07-22 16:14:30 cossu>
+
  *-------------------------------------------------------------------------*/
 #include "utils_BGQ.hpp"
 
@@ -235,6 +236,7 @@ void Dirac_optimalDomainWall::mult_offdiag(Field& w5,const Field& f5) const{
     f5_ptr += f4size_;
     w5_ptr += f4size_;
   }
+
 }
 
 void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
@@ -282,7 +284,7 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
   Spinor* lmf_ptr = (Spinor*)lmf.getaddr(0);
   Spinor* w_ptr = (Spinor*)w.getaddr(0);
   Spinor* phi_ptr = (Spinor*)const_cast<Field&>(phi).getaddr(0);
-  
+
   for(int s=0; s<N5_; ++s){
 #pragma omp parallel 
     {
@@ -301,6 +303,7 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
     }
     Dw_->md_force_p(fce,w,get4d(psi,s));
   }
+
 } 
 
 /*! @brief contribution to the MD-force from backward difference */
@@ -316,7 +319,7 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
   Spinor* lmf_ptr = (Spinor*)lmf.getaddr(0);
   Spinor* w_ptr   = (Spinor*)w.getaddr(0);
   Spinor* phi_ptr = (Spinor*)const_cast<Field&>(phi).getaddr(0);
-  
+ 
   for(int s=0; s<N5_; ++s){
 #pragma omp parallel 
     {
@@ -335,6 +338,7 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
     }
     Dw_->md_force_m(fce,w,get4d(psi,s));
   }
+
 }  
 
 void Dirac_optimalDomainWall::mult_hop_omp(Field& w5, const void* f5) const{
@@ -357,12 +361,19 @@ void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const void* f5) const{
   int tid = omp_get_thread_num();
 
   BGQThread_Barrier(0,nid);
-  if(tid == 0) BGWilson_DW_Init(N5_,mq_,M0_,
-				(double*)&Params_.dp_[0],(double*)&Params_.dm_[0],
-				(double*)&Params_.bs_[0],(double*)&Params_.cs_[0],
-				(double*)&Params_.es_[0],(double*)&Params_.fs_[0]);
+
+  if(tid == 0) {
+    BGWilson_DW_Init(N5_,mq_,M0_,
+		     (double*)&Params_.dp_[0],(double*)&Params_.dm_[0],
+		     (double*)&Params_.bs_[0],(double*)&Params_.cs_[0],
+		     (double*)&Params_.es_[0],(double*)&Params_.fs_[0]);
+  }
   BGQThread_Barrier(0,nid);
+
   double kappa = 0.5/(4.0+M0_);
   double* u = const_cast<Field *>(Dw_->getGaugeField_ptr())->getaddr(0);
-  BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)u,(void*)f5,kappa,BGWILSON_DIRAC);
+
+  BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)u,(void*)f5,
+			   kappa,BGWILSON_DIRAC);
+
 }

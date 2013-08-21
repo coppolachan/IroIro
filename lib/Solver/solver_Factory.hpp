@@ -1,7 +1,7 @@
 /*!
  * @file solver_Factory.hpp 
  * @brief Declaration of Solver operators factories
- * Time-stamp: <2013-07-05 17:01:17 noaki>
+ * Time-stamp: <2013-08-14 10:13:30 cossu>
  */
 #ifndef SOLVER_FACT_
 #define SOLVER_FACT_
@@ -54,7 +54,8 @@ public:
 };
 
 #ifdef IBM_BGQ_WILSON
-#include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
+#include "Solver/Architecture_Optimized/solver_CG_DWF_BGQ.hpp"
+
 /*!
  @brief Concrete class for creating Conjugate Gradient Solver operator [Optimized version]
 */
@@ -64,6 +65,12 @@ public:
   Solver_CG_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr){
     return new Solver_CG_DWF_Optimized(Solver_node,DWFopr);
   }
+#ifdef HAVE_LIBBFM
+  Solver_CG_DWF_Optimized* getSolver(Dirac_BFM_Wrapper* BFMopr){
+    return new Solver_CG_DWF_Optimized(Solver_node,BFMopr);
+  }
+#endif
+
   SolverCG_DWF_opt_Factory(const XML::node node):Solver_node(node){};
 };
 #endif

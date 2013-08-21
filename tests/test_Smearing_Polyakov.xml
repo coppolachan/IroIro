@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>16 16 16 4</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+
+  </Geometry>
+  <Configuration Type="CSDTbinary">/home/neo/DATA/AdjointFermions/beta-5.95-L-16-T-4-m=0.10-pbc/G1500.dat</Configuration> 
+
+  <TestSmear>
+    <Nsmearing>10</Nsmearing>
+    <Smearing type="Stout">
+      <Base type="APE">
+	<rho>0.05</rho>
+      </Base>
+      <exclude>NONE</exclude>
+    </Smearing>
+
+  </TestSmear>
+</Parameters>
+

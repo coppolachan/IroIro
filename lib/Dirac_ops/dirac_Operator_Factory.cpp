@@ -1,6 +1,7 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-07-08 17:41:37 noaki>
+
+ * Time-stamp: <2013-07-12 17:42:48 cossu>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"

@@ -1,6 +1,8 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-07-08 11:14:51 noaki>
+
+ Time-stamp: <2013-07-12 17:44:37 cossu>
+
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_

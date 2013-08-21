@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-06-05 10:28:13 neo>
+ * Time-stamp: <2013-07-05 16:20:59 cossu>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -227,12 +227,12 @@ namespace CCIO {
       }
     }// end of node_t
     comm->sync();    
+    reader->check(f);
     if(comm->primaryNode()){
       fclose(inFile);
       std::cout << "done\n";
 
     }
-    reader->check(f);
     return 0;
   }
 

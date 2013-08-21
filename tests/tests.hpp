@@ -11,6 +11,12 @@
 #include "lib/Measurements/measGeneral.hpp"
 #include "lib/Tools/jobUtils.hpp"
 
+class TestGeneral {
+public:
+  virtual int run() = 0;
+};
+
+
 namespace TestEnv{
 
   template <class TestClass>

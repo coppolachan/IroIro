@@ -63,7 +63,7 @@ int Test_Solver_BFM::run(){
   Dirac_Wilson Dw_oe(-M5,&(conf_.data),Dop::OEtag());
 
 
-  Dirac_optimalDomainWall_EvenOdd DWF_EO(b,c, -M5, mq, omega, &Dw_eo, &Dw_oe, &(conf_.data));
+  Dirac_optimalDomainWall_EvenOdd DWF_EO(b,c, -M5, mq, omega, &Dw_eo, &Dw_oe);
   
   /********************************************************
 
@@ -77,6 +77,11 @@ int Test_Solver_BFM::run(){
   dwfa.node_latt[1]  = CommonPrms::instance()->Ny();
   dwfa.node_latt[2]  = CommonPrms::instance()->Nz();
   dwfa.node_latt[3]  = CommonPrms::instance()->Nt();
+
+  for(int mu=0;mu<4;mu++){
+    dwfa.neighbour_plus[mu]  = Communicator::instance()->node_up(mu);
+    dwfa.neighbour_minus[mu] = Communicator::instance()->node_dn(mu);
+  }
   dwfa.verbose = 0;
   dwfa.time_report_iter=-100;
 
@@ -88,7 +93,7 @@ int Test_Solver_BFM::run(){
     }
   }
 
-  int threads = 4;
+  int threads = 64;
   bfmarg::Threads(threads);
 
   bfmarg::UseCGdiagonalMee(1);
@@ -187,24 +192,60 @@ int Test_Solver_BFM::run(){
   //linop.MooeeInv(psi_h[cb],chi_h[cb],dag);
   //linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);
   SolverOutput SO;
-  for (int repeat = 0; repeat < 10; repeat++){
+  // Test CGNE solver
 #pragma omp parallel
-    {
-      linop.fill(chi_h[Even],0.0);// zeroes the output vector
+  {
+    linop.fill(chi_h[Even],0.0);// zeroes the output vector
 #pragma omp for 
-      for (int t=0;t<threads;t++){
-	linop.CGNE_prec(chi_h[Even],psi_h[Even]);
-      }
+    for (int t=0;t<threads;t++){
+      linop.CGNE_prec(chi_h[Even],psi_h[Even]);
     }
-
-    // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_eo
-    /*
-      Field output_f(vphi);
-      DWF_EO.solve_eo(output_f,fe, SO,  10000, dwfa.residual*dwfa.residual);
-      SO.print();
-    */
-    
   }
+  
+  // Test CGNE Multishift solver
+  // Allocate fields
+  Fermion_t m_chi[3];
+  double masses[3];
+  double m_alpha[3];
+  double mresid[3];
+  masses[0] = 0.01;
+  masses[1] = 0.02;
+  masses[2] = 0.03;
+  // m_alpha has to be 1.0 (bug)
+  m_alpha[0] = 1.0;
+  m_alpha[1] = 1.0;
+  m_alpha[2] = 1.0;
+  mresid[0] = 1e-12;
+  mresid[1] = 1e-12;
+  mresid[2] = 1e-12;
+  for (int i = 0; i < 3; i++){
+    m_chi[i] = linop.allocFermion();
+  }
+  CCIO::cout << "Allocated fermions for Multishift \n";
+#pragma omp parallel
+  {
+#pragma omp for 
+    for (int t=0;t<threads;t++){
+      linop.CGNE_prec_MdagM_multi_shift(m_chi,psi_h[Even],masses, m_alpha, 3, mresid, 0 );
+    }
+  }
+  
+  // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_eo
+  Field output_f(vphi);
+  DWF_EO.solve_eo(output_f,fe, SO,  10000, dwfa.residual*dwfa.residual);
+  SO.print();
+  
+  // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_ms_eo_5d 
+  std::vector<Field> xq(3); 
+   for (int i=0; i< xq.size(); ++i) {
+    xq[i].resize(fe.size());
+  }
+  std::vector<double> sigma(3);;
+  sigma[0] = masses[0];
+  sigma[1] = masses[1];
+  sigma[2] = masses[2];
+  DWF_EO.solve_ms_eo(xq, fe, SO, sigma, 10000, 1e-24);
+  SO.print();
 
   FermionField BFMsolution(Nvol5d);
   int vect4d_hsize = fe.size()/Ls;   

@@ -2,7 +2,7 @@
  * @file solver_CG.cpp
  * @brief Definition of Solver_CG class member functions
  *
- * Time-stamp: <2013-07-05 15:17:26 noaki>
+ * Time-stamp: <2013-07-12 18:18:55 cossu>
  */
 
 #include <iostream>
@@ -14,9 +14,6 @@
 #include "include/errors.hpp"
 #include "solver_CG.hpp"
 
-#ifdef IBM_BGQ_WILSON
-#include "bgqwilson.h"
-#endif
 
 /*!
  * @brief Solves the linear equation (no preconditioning)
@@ -136,10 +133,5 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr,
 #endif
 }
 
-#ifdef IBM_BGQ_WILSON
-SolverOutput Solver_CG_DWF_Optimized::solve(Field& xq,const Field& b) const{ 
-  SolverOutput Out;
-  opr_->solve_eo(xq,b,Out,Params.MaxIter,Params.GoalPrecision);
-  return Out;
-}
-#endif
+
+

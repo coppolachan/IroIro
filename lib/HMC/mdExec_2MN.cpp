@@ -34,8 +34,15 @@ void MDexec_2MN::register_observers(){
 
 
 void MDexec_2MN::notify_observers(){
+  long double timing;
+  FINE_TIMING_START(timing);
+ 
   for(int elem=0; elem<observers_.size(); ++elem)
     observers_[elem]->observer_update();
+
+  FINE_TIMING_END(timing);
+  _Message(TIMING_VERB_LEVEL, "[Timing] - MDexec_2MN::notify_observers - Total timing = "
+	   << timing << std::endl);
 }
 
 

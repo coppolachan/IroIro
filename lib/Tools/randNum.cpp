@@ -59,7 +59,15 @@ void RandNum::get(std::valarray<double>& rn) const  {
   for(int n=0; n<rn.size(); ++n) rn[n] = do_rand();
 }
 void RandNum::get_gauss(std::valarray<double>& rn) const{
+  if (rn.size() & 1)
     for(int n = 0; n < rn.size(); ++n)  rn[n] = get_gauss();
+  else
+    for(int n = 0; n < rn.size(); n+=2){
+      get_complex_gauss(&rn[n], &rn[n+1]);
+    }
+  
+
+  // for(int n = 0; n < rn.size(); ++n)  rn[n] = get_gauss();
 }
 
 

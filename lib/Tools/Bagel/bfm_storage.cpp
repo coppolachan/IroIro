@@ -15,6 +15,7 @@
 #include "lib/Geometry/shiftField.hpp"
 #include "Tools/fieldUtils.hpp"
 
+#include "omp.h"
 
 
 BFM_Storage::BFM_Storage(bfm_dp& bfm):Nx_(CommonPrms::instance()->Nx()),
@@ -96,30 +97,33 @@ void BFM_Storage::GaugeExport_to_BFM(GaugeField& U){
   // double gauge [x%2][t][z][y][x/2] [row][column][realimag]  
   using namespace Mapping;
   using namespace FieldUtils;
-
   double* U_Ptr; 
 
   GaugeField1D Umu;
-  
   for (int mu = 0; mu < NDIM_; mu++) {
-
+    //CCIO::cout << "Dirslice\n";
     Umu = DirSlice(U, mu);
+    //CCIO::cout << "ShiftField \n";
     U_dag = shiftField(Umu, mu, Backward()); // U(x-mu)
 
     int dir = 2*mu+1;
-    //    CCIO::cout << "Direction : "<<dir<<"\n";
+    //CCIO::cout << "Direction : "<<dir<<"\n";
     U_Ptr = Umu.data.getaddr(0);
+    //CCIO::cout << "ImportGauge BFM function...";
     bfm_obj_.importGauge(U_Ptr, dir); //BFM function
-
+    //CCIO::cout << "complete\n";
     dir = 2*mu;
-    //    CCIO::cout << "Direction2 : "<<dir<<"\n";
+    //CCIO::cout << "Direction2 : "<<dir<<"\n";
     
     for(int site = 0; site<U.format.Nvol(); ++site)
       U_dag.data[U_dag.format.cslice(0,site)] =
 	mat_dag(U_dag,site).getva();
 
     U_Ptr = U_dag.data.getaddr(0);
+
+    //CCIO::cout << "ImportGauge BFM function 2...";
     bfm_obj_.importGauge(U_Ptr, dir); //BFM function
+    //CCIO::cout << "complete\n";
   }
 };
 
@@ -127,6 +131,45 @@ void BFM_Storage::GaugeExport_to_BFM(const Field* U){
   GaugeField GF = GaugeField(*U);
   GaugeExport_to_BFM(GF);
 }
+
+void BFM_Storage::GaugeImport_from_BFM(Field* U, Matrix_t handle, int dir, int cb){
+  int Ndircoco=36; /*4 directions stored*/
+  int Ncoco=9;
+  Format::Format_G GaugeFormat(Nvol_);
+  double *U_ptr = U->getaddr(0);
+  omp_set_num_threads(bfm_obj_.nthread);
+#pragma omp parallel 
+  {    
+#pragma omp for 
+    for (int site=0;site<Nx_*Ny_*Nz_*Nt_;site++ ) { 
+      
+      int x[4] ;
+      int s=site;
+      x[0]=s%Nx_;    s=s/Nx_;
+      x[1]=s%Ny_;    s=s/Ny_;
+      x[2]=s%Nz_;    s=s/Nz_;
+      x[3]=s%Nt_;
+      
+      if ( ((x[0]+x[1]+x[2]+x[3])&0x1) == cb ) {      
+	int bbase = dir*9;
+	int siteIdxEO = SiteIndex::instance()->site(x[0], x[1], x[2], x[3]);
+	for ( int coco=0;coco<9;coco++ ) { 
+	  for ( int reim=0;reim<2;reim++ ) { 
+	    double* bagel = (double *)handle;
+	    int idx = GaugeFormat.index(2*coco+reim, siteIdxEO,dir);
+	    int bidx = bfm_obj_.bagel_idx(x,reim,coco+bbase,Ndircoco,1);
+	    // CCIO::cout << "idx = "<<idx<< " bidx = "<<bidx << "\n";
+	    //CCIO::cout << "bagel: "<<bagel[bidx] <<"\n";
+	    U_ptr[idx] = bagel[bidx];
+	    
+	  }
+	}
+      }
+    }
+  }
+}
+
+
 
 void BFM_Storage::FermionExport_to_BFM(FermionField& F, Fermion_t handle, int cb){
   // BFM storage pattern
@@ -158,7 +201,6 @@ void BFM_Storage::FermionExport_to_BFM_5D(FermionField& F, Fermion_t handle, int
   
 };
 
-
 void BFM_Storage::FermionImport_from_BFM(FermionField&F, Fermion_t handle, int cb){
   // BFM storage pattern      
   // double psi   [x%2][t][z][y][x/2] [spin][color][realimag]    
@@ -182,6 +224,8 @@ void BFM_Storage::FermionImport_from_BFM_5D(FermionField&F, Fermion_t handle, in
 
   //Convert Dirac basis: Chiral -> Dirac 
   BasisConversion(F, F_temp, CHIRAL_TO_DIRAC,cb,s);
+
+  
 
 };
 

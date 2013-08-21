@@ -10,7 +10,7 @@
 #include <complex>
 
 #include <omp.h>
-
+#include "timings.hpp"
 
 using namespace std;
 typedef complex<double> dcomplex;
@@ -20,36 +20,30 @@ void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
   using namespace SUNmatUtils;
   using namespace FieldUtils;
 
-  register int Nvol = CommonPrms::instance()->Nvol();
+  long double timing;
+ 
 
+  register int Nvol = CommonPrms::instance()->Nvol();
   GaugeField u_tmp1, q_mu;
-  GaugeField1D U_mu;
-  SUNmat ut;
 
   _Message(DEBUG_VERB_LEVEL, "Stout smearing started\n");
+
+  // Smear the configuration
   SmearBase->smear(u_tmp1,u_in);
 
+  GaugeField1D U_mu;
+  SUNmat ut;
   for(int mu = 0; mu < NDIM_; ++mu){
     U_mu = DirSlice(u_in, mu);
+#pragma omp parallel for
     for(int site = 0; site < Nvol; ++site){
       ut = mat(u_tmp1,site,mu) * mat_dag(U_mu,site);//Omega_mu
       SetMat(q_mu, anti_hermite_traceless(ut), site, mu);
     }
   }
+  
   exponentiate_iQ(u_tmp1, q_mu);
 
-#ifdef IBM_BGQ_WILSON
-  double* U_mu_ptr = U_mu.data.getaddr(0);
-  double* utmp_ptr;
-  double* u_smr_ptr;
-
-  for(int mu = 0; mu < NDIM_; ++mu){
-    utmp_ptr  = u_tmp1.data.getaddr(0) + 18*Nvol*mu;
-    u_smr_ptr = u_smr.data.getaddr(0)  + 18*Nvol*mu;
-    DirSliceBGQ(U_mu, u_in, mu);
-    BGWilsonSU3_MatMult_NN(u_smr_ptr, utmp_ptr, U_mu_ptr, Nvol);
-  }
-#else
   for(int mu = 0; mu < NDIM_; ++mu){
     U_mu = DirSlice(u_in, mu);
     for(int site = 0; site < Nvol; ++site){
@@ -57,29 +51,18 @@ void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
       SetMat(u_smr, ut, site, mu);
     }
   }
-#endif
-
 
   _Message(DEBUG_VERB_LEVEL, "Stout smearing completed \n");
-}
-
-void Smear_Stout::BaseSmear(GaugeField& C, const GaugeField& u_in)const{
-  SmearBase->smear(C, u_in);}
-
-void Smear_Stout::derivative(GaugeField& SigmaTerm, 
-			     const GaugeField& iLambda,
-			     const GaugeField& Gauge)const{
-  SmearBase->derivative(SigmaTerm, iLambda, Gauge);
 }
 
 void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ,const GaugeField& iQ)const{
   using namespace SUNmatUtils;
   using namespace FieldUtils;
+  register int Nvol = e_iQ.format.Nvol();
+  register int Nex  = e_iQ.format.Nex();
 
 #pragma omp parallel 
   {
-    register int Nvol = e_iQ.format.Nvol();
-    register int Nex  = e_iQ.format.Nex();
     int tid, nid;
     int ns,is;
 
@@ -89,7 +72,6 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ,const GaugeField& iQ)const{
     is = tid*Nvol / nid;
     ns = Nvol / nid;
 
-    
     SUNmat iQ0, iQ1, iQ2, iQ3;
     iQ0 = unity();
     
@@ -152,8 +134,3 @@ void Smear_Stout::exponentiate_iQ(GaugeField& e_iQ,const GaugeField& iQ)const{
   }
 }
 
-double Smear_Stout::func_xi0(double w) const{
-  double xi0 = sin(w)/w;
-  if( w < 1e-4 ) CCIO::cout << "[Smear_stout] w too small: "<< w <<"\n";
-  return xi0;
-}

@@ -7,6 +7,12 @@
 #include "include/messages_macros.hpp"
 #include "include/timings.hpp"
 
+
+
+////////////// Temporary hack
+//#define ANTIPERIODIC_BC 
+#include "Measurements/GaugeM/polyakovLoop.hpp"
+
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2_ratio::observer_update() {
   D1_->update_internal_state();  
@@ -56,26 +62,82 @@ void Action_Nf2_ratio::init(const RandNum& rand){
   _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::init"
 	   << " - Random numbers timing = "
 	   << rnd_timing << std::endl);     
- 
+
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
   phi_= D1_->mult_dag(Field(ph));
   phi_= D2_->mult(DdagD2_inv(phi_));
-
+  
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
 }
 
 double Action_Nf2_ratio::calc_H(){
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
   Field zeta = D2_->mult_dag(phi_);//2 flavors
   double H_nf2r = zeta*DdagD1_inv(zeta);
+
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
   _Message(ACTION_VERB_LEVEL,"    ["<<name_<<"] H = "<<H_nf2r<<"\n");
+
+  //Also calculate other observables
+  
+  PolyakovLoop PLmeas(TDIR);
+  std::complex<double> pl = PLmeas.calc_SUN(*u_);
+  _Message(ACTION_VERB_LEVEL,"    ["<<name_<<"] PL = "<<pl.real()<< "  "<< pl.imag() << "\n");
+  
+
   return H_nf2r;
 }
 
 GaugeField Action_Nf2_ratio::md_force(){
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
   Field eta = DdagD1_inv(D2_->mult_dag(phi_));
+  long double timing;
+  FINE_TIMING_START(timing);
+
   GaugeField fce(D1_->md_force(eta,D1_->mult(eta)));
   fce -= GaugeField(D2_->md_force(eta,phi_));
 
+  FINE_TIMING_END(timing);
+  _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::md_force"
+           << " - Force terms timing = "
+           << timing << std::endl);
+
+#ifdef ANTIPERIODIC_BC
+  BC->apply_bc(*u_);
+#endif
+
+  FINE_TIMING_START(timing);
+
   if(smeared_) smart_conf_->smeared_force(fce);
+
+  FINE_TIMING_END(timing);
+  _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::md_force"
+           << " - Smeared force timing = "
+           << timing << std::endl);
+
+  FINE_TIMING_START(timing);
+
   GaugeField force = FieldUtils::TracelessAntihermite(fce); 
+
+  FINE_TIMING_END(timing);
+  _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf2_ratio::md_force"
+           << " - TracelessAntihermite timing = "
+           << timing << std::endl);
+
 
   _MonitorMsg(ACTION_VERB_LEVEL, Action,force, name_);
   return force;

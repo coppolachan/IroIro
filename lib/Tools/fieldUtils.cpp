@@ -4,8 +4,12 @@
  */
 #include "fieldUtils.hpp"
 #include "sunMatUtils.hpp"
-
+#include "include/macros.hpp"
+#include "timings.hpp"
+#include "include/messages_macros.hpp"
 #include <omp.h>
+
+#include "bgqthread.h"
 
 class RandNum;
 
@@ -61,11 +65,47 @@ namespace FieldUtils{
   }
 
 #ifdef IBM_BGQ_WILSON  
+  void reunit_BGQ(double* out, double* in) {
+    double nrm_i;
+    for(int a=0; a<NC_; ++a){
+      nrm_i =0.0;
+      for(int cc=0; cc<2*NC_; ++cc){
+	out[a*2*NC_ +cc]=in[a*2*NC_ +cc];
+	nrm_i += in[a*2*NC_ +cc]*in[a*2*NC_ +cc];
+      }
+      
+      nrm_i = 1.0/sqrt(nrm_i);
+      
+      for(int cc=0; cc<2*NC_; cc++)
+	out[a*2*NC_ +cc]*=nrm_i;
+
+      for(int b=a+1; b<NC_; ++b){
+	double prr = 0.0;
+	double pri = 0.0;
+	for(int c=0; c<NC_; ++c){
+	  int ac = a*NC_+c;      
+	  int bc = b*NC_+c;
+	  prr += in[2*ac]*in[2*bc  ] +in[2*ac+1]*in[2*bc+1];
+	  pri += in[2*ac]*in[2*bc+1] -in[2*ac+1]*in[2*bc  ];
+	}
+	for(int c=0; c<NC_; ++c){
+	  int ac = a*NC_+c;      
+	  int bc = b*NC_+c;
+	  out[2*bc  ] = in[2*bc  ]- prr*in[2*ac  ] -pri*in[2*ac+1];
+	  out[2*bc+1] = in[2*bc+1]- prr*in[2*ac+1] +pri*in[2*ac  ];
+	}
+      }
+    }
+    
+  }
+
   void Exponentiate_BGQ(GaugeField& U,const GaugeField& G,double d,int N){
     using namespace SUNmatUtils;
-    GaugeField temp;
-    GaugeField unit, temp2;
+    GaugeField temp; //allocate fields here instead of creating objects
+    GaugeField unit, temp2; //same here
     register int Nvol = G.Nvol();
+
+    BGQThread_Init(); //initializing BGQ fast threading routines
 
     double* temp_ptr  = temp.data.getaddr(0);
     double* G_ptr  = const_cast<GaugeField&>(G).data.getaddr(0);
@@ -77,18 +117,19 @@ namespace FieldUtils{
     {
       int nid = omp_get_num_threads();
       int tid = omp_get_thread_num();
- 
+
       int is = tid*Nvol / nid;
       int ns = Nvol / nid;
       int is2 = is*G.Nex();
       int ns2 = ns*G.Nex();
-      register int jump = is2*9;
-      register int jump2 = is2*18;
+      register int jump2 = is2*G.Nin();
 
       BGWilsonSU3_MatUnity(unit_ptr+jump2,ns2);
       BGWilsonSU3_MatUnity(temp_ptr+jump2,ns2);
-
-#pragma omp barrier            
+      
+      //#pragma omp barrier   
+      BGQThread_Barrier(0,nid);
+      
       for (int i = N; i>=1;--i){
 	BGWilsonSU3_MatMultScalar(temp_ptr+jump2,d/i,ns2);
 	BGWilsonSU3_MatMultAdd_NN(temp2_ptr+jump2,unit_ptr+jump2, 
@@ -96,20 +137,25 @@ namespace FieldUtils{
 	BGWilsonSU3_MatEquate(temp_ptr+jump2,
 			      temp2_ptr+jump2,ns2);
       }
-#pragma omp barrier      
+      //#pragma omp barrier   
+      BGQThread_Barrier(0,nid);
       for(int mu=0; mu<G.Nex(); ++mu)
 	for(int site=is; site<is+ns; ++site)
-	  SetMat(temp,reunit(mat(temp2,site,mu)),site,mu);
+	  reunit_BGQ(temp_ptr+(site+Nvol*mu)*18, temp2_ptr+(site+Nvol*mu)*18);
+	
     
-#pragma omp barrier          
+      //#pragma omp barrier  
+      BGQThread_Barrier(0,nid);
       BGWilsonSU3_MatMult_NN(temp2_ptr+jump2,temp_ptr+jump2,U_ptr+jump2,ns2);
-#pragma omp barrier          
-      
+      //#pragma omp barrier          
+      BGQThread_Barrier(0,nid);
       for(int mu=0; mu<G.Nex(); ++mu)
 	for(int site=is; site<is+ns; ++site)
-	  SetMat(U,reunit(mat(temp2,site,mu)),site,mu);
+	  reunit_BGQ(U_ptr+(site+Nvol*mu)*18, temp2_ptr+(site+Nvol*mu)*18);
+	
+
     }
-    //   U = ReUnit(temp2);
+
   } 
 #endif
 
@@ -155,6 +201,7 @@ namespace FieldUtils{
     using namespace SUNmatUtils;
     GaugeField TAField(G.Nvol());
     for(int mu=0; mu<G.Nex(); ++mu){
+#pragma omp parallel for
       for(int site=0; site<G.Nvol(); ++site){
 	SetMat(TAField,anti_hermite_traceless(mat(G,site,mu)),site,mu);
       }

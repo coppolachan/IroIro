@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-07-04 10:06:01 noaki>
+# Time-stamp: <2013-08-09 14:32:50 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -25,7 +25,8 @@ BMF_TESTPROGS += test_BFM_Inverter_wrapper
 endif
 
 if IBM_BGQ
-OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
+#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
+OPTLIB += -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 
 if IBM_BGQWILSON_SMP
 AM_CXXFLAGS += -qsmp=omp:auto
@@ -39,7 +40,8 @@ endif
 AM_CXXFLAGS += $(BFM_INCLUDE) 
 AM_LDFLAGS += $(BFM_LIBS)
 
-LDADD = -L../lib/ -lcommcode  $(BFM_LINKAGE) $(OPTLIB)
+#LDADD = -L../lib/ -lcommcode -llapacke $(BFM_LINKAGE) $(OPTLIB)
+LDADD = -L../lib/ -lcommcode $(BFM_LINKAGE) $(OPTLIB)
 AM_CPPFLAGS=-I$(top_srcdir) -I$(top_srcdir)/lib/
 AM_CFLAGS  =-I$(top_srcdir) -I$(top_srcdir)/lib/
 
@@ -77,7 +79,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_RationalApprox.xml	\
 		test_Solver_Perf.xml	\
 		test_sunRep.xml		\
-		test_noFact.xml
+		test_noFact.xml		
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
@@ -111,7 +113,7 @@ test_PROGRAMS = test_HMC 		\
 		test_RHMC_noFactories 	\
 		test_SUNRepresentation	\
 		test_HeatBath           \
-                test_DWF              	
+                test_DWF     		
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -184,6 +186,10 @@ test_MultiShiftSolver_SOURCES =	test_MultiShiftSolver.cpp	\
 test_Smearing_SOURCES   =       test_smear.cpp                  \
                                 testerSmear.cpp
 
+#test_Smearing_Polyakov_SOURCES   =  test_smeared_polyakov.cpp        \
+#				get_eval.cpp			\
+#                                testerSmear.cpp
+
 test_RNG_SOURCES 	= 	test_RNG.cpp
 
 test_IO_SOURCES 	= 	test_IO.cpp 			\
@@ -209,22 +215,17 @@ test_DWF_SOURCES 		=	test_DWF.cpp	\
 ## Put all BFM related tests here
 if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
-                                testerSolver_BFM.cpp            \
-                                ../lib/Tools/Bagel/bfm_storage.cpp
+                                testerSolver_BFM.cpp            
 
 test_BFM_Operator_SOURCES =     test_BFM_Operator.cpp             \
-                                testerSolver_BFM.cpp            \
-                                ../lib/Tools/Bagel/bfm_storage.cpp
+                                testerSolver_BFM.cpp            
 test_BFM_Moebius_SOURCES =     test_BFM_Moebius.cpp             \
-                                testerSolver_BFM.cpp            \
-                                ../lib/Tools/Bagel/bfm_storage.cpp
+                                testerSolver_BFM.cpp            
 test_BFM_Inverter_SOURCES =     test_BFM_Inverter.cpp 		\
-                                testerSolver_BFM.cpp            \
-                                ../lib/Tools/Bagel/bfm_storage.cpp
+                                testerSolver_BFM.cpp            
 
 test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
-                                testerSolver_BFM.cpp            \
-                                ../lib/Tools/Bagel/bfm_storage.cpp
+                                testerSolver_BFM.cpp            
 
 endif
 
@@ -258,4 +259,5 @@ include_HEADERS 	=	tests.hpp			\
 	                        test_Solver_Perf.hpp		\
 				test_sunRepres.hpp		\
 				test_HeatBath.hpp               \
+				test_Solver_BFM.hpp		\
                                 test_DWF.hpp

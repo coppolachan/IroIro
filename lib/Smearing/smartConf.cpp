@@ -45,6 +45,53 @@ void SmartConf::smeared_force(GaugeField& SigmaTilde)const {
   
   GaugeField force = SigmaTilde;//actually = U*SigmaTilde
 
+
+#ifdef IBM_BGQ_WILSON
+  const int CC2 = 2*NC_*NC_;
+
+  double* ThinLinks_ptr;
+  double* force_ptr;
+  double* SigmaTilde_ptr;
+  double* SmearedSet_ptr;
+
+#pragma omp parallel
+ { 
+   const int nid = omp_get_num_threads();
+   const int tid = omp_get_thread_num();
+   const int is = tid*Nvol/nid;
+   const int ns = Nvol/nid;
+   const int str2 = is*CC2*NDIM_;
+
+   // for(int mu = 0; mu < NDIM_; ++mu){
+    SmearedSet_ptr = const_cast<Field&>(SmearedSet[smearingLevels-1].data).getaddr(0); 
+    force_ptr      = force.data.getaddr(0);  
+    BGWilsonSU3_MatMult_DN(force_ptr+str2, SmearedSet_ptr+str2, force_ptr+str2, ns*NDIM_);
+    //}
+
+ }
+  for(int ismr = smearingLevels - 1; ismr > 0; --ismr)
+    force = AnalyticSmearedForce(force,get_smeared_conf(ismr-1));
+  
+  force = AnalyticSmearedForce(force,*ThinLinks);
+
+
+  //for(int mu = 0; mu < NDIM_; ++mu){
+#pragma omp parallel
+ { 
+   const int nid = omp_get_num_threads();
+   const int tid = omp_get_thread_num();
+   const int is = tid*Nvol/nid;
+   const int ns = Nvol/nid;
+   const int str2 = is*CC2*NDIM_;
+
+    ThinLinks_ptr  = ThinLinks->data.getaddr(0);  
+    force_ptr      = force.data.getaddr(0);// + 18*Nvol*mu;  
+    SigmaTilde_ptr = SigmaTilde.data.getaddr(0);// + 18*Nvol*mu;  
+    BGWilsonSU3_MatMult_NN(SigmaTilde_ptr+str2, ThinLinks_ptr+str2, force_ptr+str2, ns*NDIM_);
+
+ }
+    //}
+#else
   for(int mu = 0; mu < NDIM_; ++mu)
     for(int site = 0; site < Nvol; ++site)
       SetMat(force,
@@ -55,17 +102,7 @@ void SmartConf::smeared_force(GaugeField& SigmaTilde)const {
   
   force = AnalyticSmearedForce(force,*ThinLinks);
 
-#ifdef IBM_BGQ_WILSON
-  double* ThinLinks_ptr;
-  double* force_ptr;
-  double* SigmaTilde_ptr;
-  for(int mu = 0; mu < NDIM_; ++mu){
-    ThinLinks_ptr  = ThinLinks->data.getaddr(0) + 18*Nvol*mu;  
-    force_ptr      = force.data.getaddr(0) + 18*Nvol*mu;  
-    SigmaTilde_ptr = SigmaTilde.data.getaddr(0) + 18*Nvol*mu;  
-    BGWilsonSU3_MatMult_NN(SigmaTilde_ptr, ThinLinks_ptr, force_ptr, Nvol);
-  }
-#else
+
   for(int mu = 0; mu < NDIM_; ++mu)
     for (int site = 0; site < Nvol; ++site)
       SetMat(SigmaTilde, mat(*ThinLinks,site,mu)*mat(force,site,mu),site,mu);

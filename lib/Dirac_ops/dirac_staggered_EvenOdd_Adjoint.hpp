@@ -14,7 +14,7 @@
 #include "include/format_A.h"
 #include "include/format_Ga.h"
 #include "Geometry/shiftField.hpp"
-#include "antiPeriodicBC.hpp"
+#include "BoundaryConditions/antiPeriodicBC.hpp"
 #include <memory>
 
 typedef Format::Format_Ga gafmt_t;   // link valiables (adjoint rep.)

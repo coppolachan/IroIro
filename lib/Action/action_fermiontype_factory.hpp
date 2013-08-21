@@ -1,7 +1,7 @@
 /*!
  * @file action_fermiontype_factory.hpp 
  * @brief Declaration of Fermion-type action factories
- * Time-stamp: <2013-06-26 19:03:32 noaki>
+ * Time-stamp: <2013-08-21 10:43:09 cossu>
  */
 #ifndef ACTION_FERMION_FACT_
 #define ACTION_FERMION_FACT_
@@ -20,6 +20,10 @@
 #include "Action/action_staggered_ratio.hpp"
 #include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
+
+#ifdef HAVE_LIBBFM
+#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 class TwoFlavorActionFactory : public FermionActionFactory {
@@ -158,7 +162,50 @@ class TwoFlavorDomainWall5dEO_BGQ_ActionFactory :public FermionActionFactory {
 public:
   TwoFlavorDomainWall5dEO_BGQ_ActionFactory(XML::node);
 };
+////////////////////////////////////////////////////
+#ifdef HAVE_LIBBFM
+class TwoFlavorDomainWall5dEO_BFM_ActionFactory :public FermionActionFactory {
 
+  RaiiFactoryObj<DiracBFMoperatorFactory> DiracObj;
+  RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverObj;
+
+  RaiiFactoryObj<Dirac_BFM_Wrapper> BFM_Kernel;
+  RaiiFactoryObj<Dirac_BFM_Wrapper> BFM_KernelPV;
+  RaiiFactoryObj<Solver> Solv;
+  RaiiFactoryObj<Solver> SolvPV;
+  
+  const XML::node Action_node;
+  XML::node SolverNode;
+  bool smearing;
+
+  Action_Nf2_ratio* getFermionAction(GaugeField* const,SmartConf* const);
+public:
+  TwoFlavorDomainWall5dEO_BFM_ActionFactory(XML::node);
+};
+////////////////////////////////////////////////////
+class TwoFlavorRatioDomainWall5dEO_BFM_ActionFactory: public FermionActionFactory {
+
+  RaiiFactoryObj<DiracBFMoperatorFactory> DiracNumObj; // Numerator
+  RaiiFactoryObj<DiracBFMoperatorFactory> DiracDenObj; // Denominator
+  RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverNumObj;
+  RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverDenObj;
+
+  RaiiFactoryObj<Dirac_BFM_Wrapper> BFM_Kernel_Num;
+  RaiiFactoryObj<Dirac_BFM_Wrapper> BFM_Kernel_Den;
+
+  RaiiFactoryObj<Solver> SolverNum;
+  RaiiFactoryObj<Solver> SolverDen;
+
+  const XML::node Action_node;
+  XML::node SolverNumNode;
+  XML::node SolverDenNode;
+  bool smearing;
+
+  Action_Nf2_ratio* getFermionAction(GaugeField* const,SmartConf* const);
+public:
+  TwoFlavorRatioDomainWall5dEO_BFM_ActionFactory(XML::node);
+};
+#endif
 ////////////////////////////////////////////////////
 class TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory: public FermionActionFactory {
 
