@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2013-08-20 16:32:48 cossu>
+ * Time-stamp: <2013-08-22 11:07:05 cossu>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -88,13 +88,6 @@ void Dirac_Wilson::mult_ptr(double* w, double* const f) const{
 void Dirac_Wilson::mult_dag_ptr(double* w, double* const f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);
   BGWilson_Mult_Dag(w,pU,f,-kpp_,BGWILSON_DIRAC);
-  /*
-  double* temp = (double*) malloc(ff_.size()*sizeof(double));
-  gamma5core(w,f);
-  BGWilson_Mult(temp, pU,w,-kpp_,BGWILSON_DIRAC);
-  gamma5core(w,temp);
-  free(temp);
-  */
 }
 void Dirac_Wilson::mult_ptr_EO(double* w, double* const f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);
@@ -162,39 +155,11 @@ void Dirac_Wilson::md_force_p(Field& fce,
 	fce.add(gf_.cslice(0,gsite,mu),f.getva());
       } 
       
-      /*
-      for(int site=is; site<is+ns; ++site){
-	int gsite = (this->*gp)(site);
-	int shift = 2*NC_*NC_*(gsite+Nvol_*mu);
-	for(int a=0; a<NC_; ++a){
-	  for(int b=0; b<NC_; ++b){
-	    double fre = 0.0;
-	    double fim = 0.0;
-	    for(int s=0; s<ND_; ++s){
-	      
-	      size_t ra =ff_.index_r(a,s,site);
-	      size_t ia =ff_.index_i(a,s,site);
-	      
-	      size_t rb =ff_.index_r(b,s,site);
-	      size_t ib =ff_.index_i(b,s,site);
-	      
-	      fre += zeta[rb]*xie[ra] +zeta[ib]*xie[ia];
-	      fim += zeta[rb]*xie[ia] -zeta[ib]*xie[ra];
-	    }
-	    fce_ptr[shift+ 2*(a*NC_+b)  ] += fre;
-	    fce_ptr[shift+ 2*(a*NC_+b)+1] += fim;
-	    //	    f.set(a,b,fre,fim);
-	  }
-	}
-	//fce.add(gf_.cslice(0,gsite,mu),f.getva());
-      } 
-      */
-
     }
   }
 
   FINE_TIMING_END(timing);
-  _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_Wilson::md_force_p"
+  _Message(DEBUG_VERB_LEVEL, "[Timing] - Dirac_Wilson::md_force_p"
            << " - total timing = "
            << timing << std::endl);
 

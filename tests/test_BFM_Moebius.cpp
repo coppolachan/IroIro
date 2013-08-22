@@ -147,7 +147,7 @@ int Test_Solver_BFM::run(){
     CCIO::cout << "cb "<<cb<<" bfm norm "<<nrm<<"\n";
     // Import back to IroIro
     for (int s = 0; s< Ls; s++)
-      BFM_interface.FermionImport_from_BFM_5D(Exported, psi_h[cb], cb,s);
+      BFM_interface.FermionImport_from_BFM_5D(Exported, psi_h[cb], cb,s,Ls);
   }
 
   // Check correctness of Import/Export routines
@@ -177,7 +177,7 @@ int Test_Solver_BFM::run(){
   FermionField BFMsolution(Nvol5d); 
   for(int cb=0;cb<2;cb++){
     for (int s = 0; s< Ls; s++)
-      BFM_interface.FermionImport_from_BFM_5D(BFMsolution, chi_h[cb], cb,s);
+      BFM_interface.FermionImport_from_BFM_5D(BFMsolution, chi_h[cb], cb,s,Ls);
   }
 
   FermionField IroIroFull(Nvol5d);

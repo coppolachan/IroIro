@@ -25,7 +25,7 @@ int Test_Solver_BFM::run(){
 
   //Parameters
   int Nvol  =  CommonPrms::instance()->Nvol();
-  double mq = 0.0;
+  double mq = 0.01;
   double M5 = -1.6;
   int Ls    = 8;
   double ht_scale = 2.0;
@@ -130,7 +130,7 @@ int Test_Solver_BFM::run(){
   // Solver CG using SolverFactory
   SolverCG_DWF_opt_Factory SolveBFM(SolverNode); 
   Solver_CG_DWF_Optimized *SolverCGNE = SolveBFM.getSolver(BFMop_with_fact);
-  FermionField BFMsolution3(Nvol5d);
+  FermionField BFMsolution3(Nvol5d/2);//half vector
   SolverCGNE->solve(BFMsolution3.data,fe);
   
   ///////////////////////////////////////////////////////////////////////////////////////
@@ -160,13 +160,33 @@ int Test_Solver_BFM::run(){
   mresiduals[0] = 1e-12;
   mresiduals[1] = 1e-12;
   mresiduals[2] = 1e-12;
-
   
+  vector_Field shifted_sol;
+  shifted_sol.resize(shifts.size());
+  for (int i=0; i< shifted_sol.size(); ++i) {
+    shifted_sol[i].resize(fe.size());
+  }
+
+  DWF_EO.solve_ms_eo(shifted_sol,fe, SO, shifts,  10000, 1.0e-24);
+  SO.print();
+
   std::vector < FermionField > BFM_ms_solution(shifts.size());
-  BFMop_with_fact->solve_CGNE_multishift(BFM_ms_solution, EO_source, shifts, mresiduals);
+  FermionField fe_FF(fe);
+  BFMop_with_fact->solve_CGNE_multishift(BFM_ms_solution, fe_FF, shifts, mresiduals);
+
+  for(int nsol = 0; nsol < 3; nsol++){
+    Field F_Diff = shifted_sol[nsol];
+    //F_Diff -= fe;
+    F_Diff -= BFM_ms_solution[nsol].data;
+    CCIO::cout << "Operator IroIro ["<<nsol<<"] = "<< shifted_sol[nsol].norm() << "\n";
+    CCIO::cout << "Operator BFM ["<<nsol<<"] = "<< BFM_ms_solution[nsol].norm() << "\n";
+ 
+    CCIO::cout << "Operator Difference BFM-IroIro ["<<nsol<<"] = "<< F_Diff.norm() << "\n";
+  }
   
   ////////////////////////////////////////////////////////////////////////////////// 
   // Mult & Mult_dag
+  
   Field mult_BFM = BFMoperator.mult(fe);
   Field mult_IroIro = DWF_EO.mult(fe);
 
@@ -186,37 +206,29 @@ int Test_Solver_BFM::run(){
   	     << "  "<< mult_dag_IroIro.norm() << "\n";
 
   CCIO::cout << "Mult_dag check Difference BFM-IroIro = "<< mult_dag_Diff.norm() << "\n";
-
-
+  
+  
   ///////////////////////////////////////////////////////////////////////////////////////
   // Solver CG using BFM
+  /*
   FermionField BFMsolution(Nvol5d);
   BFMoperator.solve_CGNE(BFMsolution, EO_source);
 
   // Using the factory object
   FermionField BFMsolution2(Nvol5d);
   BFMop_with_fact->solve_CGNE(BFMsolution2, EO_source);
-  
-  
-  // Check of solver output
-  int vect4d_hsize = fe.size()/Ls;   //half Nvol size * LS
-  for (int s =0 ; s< Ls; s++){
-    for (int i = 0; i < vect4d_hsize; i++){
-      fe.set(i+vect4d_hsize*s, BFMsolution3.data[i+2*s*vect4d_hsize]);//copy the even part
-    }
-  }
-
-  Field F_Diff;
-  F_Diff = output_f;
-  F_Diff -= fe;
-  
+  */
+ 
+  Field F_Diff = output_f;
+  F_Diff -= BFMsolution3.data;
+  /*
   for (int i = 0; i < fe.size() ; i++){
-    double diff = abs(fe[i]-output_f[i]);
+    double diff = abs(BFMsolution3.data[i]-output_f[i]);
     if (diff>1e-8) CCIO::cout << "*";
-    CCIO::cout << "["<<i<<"] "<<fe[i] << "  "<<output_f[i]
+    CCIO::cout << "["<<i<<"] "<<BFMsolution3.data[i] << "  "<<output_f[i]
                << "  "<< diff << "\n";
   }
-   
+  */
   CCIO::cout << "Operator Difference BFM-IroIro = "<< F_Diff.norm() << "\n";
   
   return 0;

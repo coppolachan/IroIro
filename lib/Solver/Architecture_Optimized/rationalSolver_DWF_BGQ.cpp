@@ -15,13 +15,14 @@ void RationalSolver_DWF_Optimized::internal_solve(vector_Field& v_sol,
 						  SolverOutput& out) const {
 #ifdef HAVE_LIBBFM
    if (is_BFM){
-    std::vector < FermionField > BFM_ms_solution(v_sol.size());
-    FermionField source_FF;
-    vector_double mresiduals(size_t(v_sol.size()), sqrt(Params.GoalPrecision));
-    BFM_opr_->solve_CGNE_multishift(BFM_ms_solution,source_FF, Poles, mresiduals);
+    std::vector < FermionField > BFM_ms_solution(Shifts.size());
+    FermionField source_FF(source);
+    vector_double mresiduals(size_t(Shifts.size()), sqrt(Params.GoalPrecision));
+    BFM_opr_->solve_CGNE_multishift(BFM_ms_solution,source_FF, Shifts, mresiduals);
     for (int i=0; i< v_sol.size(); ++i) {
       v_sol[i] = BFM_ms_solution[i].data;
     }
+    CCIO::cout << "Norm v_sol[0] : "<< v_sol[0].norm() << "\n";
   } else 
 #endif
      {

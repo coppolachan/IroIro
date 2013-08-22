@@ -166,7 +166,7 @@ int Test_Solver_BFM::run(){
     }
     // Import back to IroIro
     for (int s = 0; s< Ls; s++)
-      BFM_interface.FermionImport_from_BFM_5D(Exported, psi_h[cb], cb,s);
+      BFM_interface.FermionImport_from_BFM_5D(Exported, psi_h[cb], cb,s,Ls);
   }
   //////////////////////////////////////////////////////////////////////////////////////
   // Check correctness of Import/Export routines
@@ -251,7 +251,7 @@ int Test_Solver_BFM::run(){
   int vect4d_hsize = fe.size()/Ls;   
   for(int cb=0;cb<2;cb++){
     for (int s = 0; s< Ls; s++)
-      BFM_interface.FermionImport_from_BFM_5D(BFMsolution, chi_h[cb], cb,s);
+      BFM_interface.FermionImport_from_BFM_5D(BFMsolution, chi_h[cb], cb,s,Ls);
   }
   for (int s =0 ; s< Ls; s++){
     for (int i = 0; i < vect4d_hsize; i++){

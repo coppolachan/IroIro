@@ -47,7 +47,7 @@ public:
   void FermionImport_from_BFM(FermionField& F, Fermion_t handle, int cb);
 
   void FermionExport_to_BFM_5D(FermionField& F, Fermion_t handle, int cb, int s);
-  void FermionImport_from_BFM_5D(FermionField& F, Fermion_t handle, int cb, int s);
+  void FermionImport_from_BFM_5D(FermionField& F, Fermion_t handle, int cb, int s, int Ls);
 
 
 };

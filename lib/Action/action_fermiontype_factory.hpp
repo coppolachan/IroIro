@@ -1,7 +1,7 @@
 /*!
  * @file action_fermiontype_factory.hpp 
  * @brief Declaration of Fermion-type action factories
- * Time-stamp: <2013-08-21 10:43:09 cossu>
+ * Time-stamp: <2013-08-21 13:08:51 cossu>
  */
 #ifndef ACTION_FERMION_FACT_
 #define ACTION_FERMION_FACT_
@@ -204,6 +204,24 @@ class TwoFlavorRatioDomainWall5dEO_BFM_ActionFactory: public FermionActionFactor
   Action_Nf2_ratio* getFermionAction(GaugeField* const,SmartConf* const);
 public:
   TwoFlavorRatioDomainWall5dEO_BFM_ActionFactory(XML::node);
+};
+////////////////////////////////////////////////////
+class NfFlavorDomainWall5d_EO_BFM_ActionFactory : public FermionActionFactory {
+  RaiiFactoryObj<DiracBFMoperatorFactory> DiracObj;
+  RaiiFactoryObj<RationalSolverCGFactory_DWF_Optimized> SolverObj;
+
+  RaiiFactoryObj<Dirac_BFM_Wrapper> BFM_Kernel;
+  RaiiFactoryObj<Dirac_BFM_Wrapper> BFM_KernelPV;
+  RaiiFactoryObj<RationalSolver_DWF_Optimized> Solv;
+  RaiiFactoryObj<RationalSolver_DWF_Optimized> SolvPV;
+  
+  const XML::node Action_node;
+  XML::node SolverNode;
+  bool smearing;
+
+  Action_Nf_ratio* getFermionAction(GaugeField* const,SmartConf* const);
+public:
+  NfFlavorDomainWall5d_EO_BFM_ActionFactory(XML::node);
 };
 #endif
 ////////////////////////////////////////////////////
