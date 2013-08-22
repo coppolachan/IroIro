@@ -103,6 +103,8 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
       CCIO::cout<<      setw(25)<<setiosflags(ios_base::left) <<tta[i];
       CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<<res<<endl;
       
+      // Kaneko san claims this is not good because prec_ depends on 
+      // if the acceleration is used or not:  
       if(res<prec_){  /*!<@brief counting converged eigenmodes */
         i_conv.push_back(i);
         if(esorter_->beyond_thrs(tta[i])) ++Nover; 

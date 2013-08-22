@@ -6,7 +6,6 @@
 #ifndef SUNMATUTILS_H_
 #define SUNMATUTILS_H_
 
-#include "sunMat.hpp"
 #include "sunVec.hpp"
 #include "include/common_fields.hpp"
 #include <complex>

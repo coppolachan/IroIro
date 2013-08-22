@@ -9,7 +9,9 @@
 #include "include/messages_macros.hpp"
 #include <omp.h>
 
+#ifdef IBM_BGQ_WILSON
 #include "bgqthread.h"
+#endif
 
 class RandNum;
 
