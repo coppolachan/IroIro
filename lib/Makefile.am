@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-14 16:25:11 cossu>
+# Time-stamp: <2013-08-22 17:00:11 cossu>
 
 ###########################################
 # Initial definitions 

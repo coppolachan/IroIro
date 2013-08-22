@@ -5,6 +5,7 @@
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 
+#include "bgqthread.h"
 #include "timings.hpp"
 #include "include/messages_macros.hpp"
 #include <omp.h>
@@ -177,6 +178,8 @@ void Smear_APE::derivative(GaugeField& SigmaTerm,
 
 	BGWilsonSU3_MatMult_DN(u_tmp_ptr+str2, U_nu_ptr+str2, iLambda_nu_ptr+str2, ns);
 
+	BGQThread_Barrier(0, nid);
+
 	shiftField(sh_field, u_tmp_ptr, mu, Forward());
 
 	BGWilsonSU3_MatMult_ND(u_tmp_ptr+str2, sh_field_ptr+str2, U_mu_ptr+str2, ns);
@@ -185,6 +188,8 @@ void Smear_APE::derivative(GaugeField& SigmaTerm,
 	BGWilsonSU3_MatAdd(staple_ptr+str2, 
 			   sh_field_ptr+str2,ns); 
 
+
+	BGQThread_Barrier(0, nid);
 	shiftField(sh_field, staple_ptr, nu, Backward());
 	BGWilsonSU3_MatAdd(SigmaTerm_ptr+Nvol*CC2*mu+str2,
 			   sh_field_ptr+str2,ns);
