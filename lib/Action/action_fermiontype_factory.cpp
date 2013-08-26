@@ -1,7 +1,7 @@
 /*!
  * @file action_fermiontype_factory.cpp 
  * @brief Definition of methods for Fermion-type action factories
- * Time-stamp: <2013-08-21 10:43:17 cossu>
+ * Time-stamp: <2013-08-21 13:08:58 cossu>
  */
 #include "action_fermiontype_factory.hpp"
 #include "inputConfig.hpp"
@@ -251,8 +251,44 @@ getFermionAction(GaugeField* const F,SmartConf* const SC){
 			      "TwoFlavorsRatioDomainWall_5D-EO_BFM",
 			      smearing, SC); 
 }
+///////////////////////////////////////////////////////////////////////////////
 
+NfFlavorDomainWall5d_EO_BFM_ActionFactory::
+NfFlavorDomainWall5d_EO_BFM_ActionFactory(XML::node node)
+:Action_node(node),smearing(false){
+  XML::read(node,"smeared",smearing);
+  
+  XML::descend(node,"Kernel5D",MANDATORY);
+  DiracObj.save(new DiracBFMoperatorFactory(node));
+  XML::next_sibling(node,"RationalSolver",MANDATORY);
+  SolverNode = node;
+  SolverObj.save(new RationalSolverCGFactory_DWF_Optimized(node));
+}
 
+Action_Nf_ratio* NfFlavorDomainWall5d_EO_BFM_ActionFactory::
+getFermionAction(GaugeField* const F,SmartConf* const SC){
+  // select links according to smearing
+  InputConfig input(SC->select_conf(smearing));
+  
+  BFM_Kernel.save(  DiracObj.get()->getDirac(input));
+  BFM_KernelPV.save(DiracObj.get()->getDiracPV(input));
+  
+  Solv.save(  SolverObj.get()->getSolver(BFM_Kernel.get()));
+  SolvPV.save(SolverObj.get()->getSolver(BFM_KernelPV.get()));
+
+  BFM_Kernel.get()->set_SolverParams(SolverNode);
+  BFM_KernelPV.get()->set_SolverParams(SolverNode);
+  
+  BFM_Kernel.get()->initialize();
+  BFM_KernelPV.get()->initialize();
+
+  return new Action_Nf_ratio(input.gconf,
+			     BFM_Kernel.get(),BFM_KernelPV.get(),
+			     Solv.get(),SolvPV.get(),
+			     Action_Nf_ratio_params(Action_node),
+			     "NfFlavorsDomainWall_5D-EO_BFM",
+			     smearing,SC);
+}
 
 #endif
 ///////////////////////////////////////////////////////////////////////////////

@@ -4,6 +4,8 @@
   @brief Routines to convert IroIro fields to BFM (Bagel) type
 
   Class definitions
+  
+  Written by Guido Cossu
 */ 
 //---------------------------------------------------------------------
 
@@ -213,13 +215,12 @@ void BFM_Storage::FermionImport_from_BFM(FermionField&F, Fermion_t handle, int c
 
 };
 
-void BFM_Storage::FermionImport_from_BFM_5D(FermionField&F, Fermion_t handle, int cb, int s){
+void BFM_Storage::FermionImport_from_BFM_5D(FermionField&F, Fermion_t handle, int cb, int s, int Ls){
   // BFM storage pattern      
   // double psi   [x%2][t][z][y][x/2] [spin][color][realimag]  
-  FermionField F_temp(F.Nvol());//to accomodate for 5d fermions
+  FermionField F_temp(Nvol_*Ls);//to accomodate for 5d fermions
   double* F_ptr = F_temp.data.getaddr(0);
-  int Ls = F.Nvol()/Nvol_;
-  
+
   bfm_obj_.impexFermion(F_ptr+Nvol_*F.Nin()*s,handle, 0, cb, Ls - 1-s);  
 
   //Convert Dirac basis: Chiral -> Dirac 

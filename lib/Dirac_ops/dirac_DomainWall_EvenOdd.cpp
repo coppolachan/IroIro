@@ -3,7 +3,7 @@
  *
  *@brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op)
 
- Time-stamp: <2013-08-15 10:48:41 cossu>
+ Time-stamp: <2013-08-22 16:26:24 cossu>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"
@@ -108,21 +108,21 @@ md_force(const Field& eta,const Field& zeta) const{
   md_force_eo(fce,mult_oe(eta),zeta);
 
   FINE_TIMING_END(timing);
-  _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_optimalDomainWall_EvenOdd::md_force"
+  _Message(DEBUG_VERB_LEVEL, "[Timing] - Dirac_optimalDomainWall_EvenOdd::md_force"
            << " - md_force_eo timing = "
            << timing << std::endl);
 
   FINE_TIMING_START(timing);
   md_force_oe(fce,eta,mult_eo_dag(zeta));
   FINE_TIMING_END(timing);
-  _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_optimalDomainWall_EvenOdd::md_force"
+  _Message(DEBUG_VERB_LEVEL, "[Timing] - Dirac_optimalDomainWall_EvenOdd::md_force"
            << " - md_force_oe timing = "
            << timing << std::endl);
 
   FINE_TIMING_START(timing);
   fce *= 0.5;
   FINE_TIMING_END(timing);
-  _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_optimalDomainWall_EvenOdd::md_force"
+  _Message(DEBUG_VERB_LEVEL, "[Timing] - Dirac_optimalDomainWall_EvenOdd::md_force"
            << " - 0.5 mult timing = "
            << timing << std::endl);
   return fce;

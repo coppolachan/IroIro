@@ -1,13 +1,15 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-08-21 10:57:24 cossu>
+ * Time-stamp: <2013-08-22 16:20:20 cossu>
  */
 
 #include "dirac_BFM_wrapper.hpp"
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
 #include <stdlib.h>     /* atoi */
+#include <stdio.h>
+
 
 Dirac_BFM_Wrapper_params::Dirac_BFM_Wrapper_params(XML::node BFMnode){
   XML::node top_BFM_node = BFMnode;
@@ -45,7 +47,7 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
    has_solver_params(false),
    Internal_EO(Dirac){
 
-  CCIO::cout << "Creating BFM object\n";
+  
   // Lattice local volume
   parameters.node_latt[0]  = CommonPrms::instance()->Nx();
   parameters.node_latt[1]  = CommonPrms::instance()->Ny();
@@ -176,69 +178,6 @@ const Field Dirac_BFM_Wrapper::md_force(const Field& eta,const Field& zeta)const
   }
 
 }
-  /*
-    Dirac_BFM_Wrapper * pThis = const_cast< Dirac_BFM_Wrapper *>(this);
-    Matrix_t force[2];
-    FermionField etaF(eta);
-    FermionField zetaF(zeta);
-
-    force[0] = pThis->linop.allocMatrix();
-    force[1] = pThis->linop.allocMatrix();
-
-    CCIO::cout << "Dirac_BFM_Wrapper::md_force Allocating Fermions\n";
-    //Fermion_t X  = pThis->linop.threadedAllocFermion();
-    //Fermion_t Y  = pThis->linop.threadedAllocFermion();
-    Fermion_t X  = pThis->linop.allocFermion();
-    Fermion_t Y  = pThis->linop.allocFermion();
-    int cb = Even;
-
-    CCIO::cout << "Dirac_BFM_Wrapper::md_force Gauge Export\n";
-    pThis->BFM_interface.GaugeExport_to_BFM(u_);
-
-    CCIO::cout << "Norms etaF zetaF "<< etaF.norm() << "  "<< zetaF.norm() << "\n";
-    // this level of export is not needed here - change it
-    CCIO::cout << "Dirac_BFM_Wrapper::md_force Exporting Fermions\n";
- 
-    for (int s = 0; s< BFMparams.Ls_; s++){
-      pThis->BFM_interface.FermionExport_to_BFM_5D(etaF,X,cb,s); 
-      pThis->BFM_interface.FermionExport_to_BFM_5D(zetaF,Y,cb,s); 
-    }
-
-    int dagno=0;
-    int dagyes=1;
-    CCIO::cout << "Dirac_BFM_Wrapper::md_force Barrier\n";
-    //int me = pThis->linop.thread_barrier();
-    pThis->linop.comm_init();
-   
-    CCIO::cout << "Dirac_BFM_Wrapper::md_force ZeroMatrix\n";
-
-    
-#pragma omp parallel for 
-    for (int t=0;t<threads;t++){
-      pThis->linop.zeroMatrix(force[0]);
-      pThis->linop.zeroMatrix(force[1]);
-      
-      CCIO::cout << "Norms: "<< pThis->linop.norm(X) << 
-	"  " << pThis->linop.norm(Y) <<"\n";
-      pThis->linop.MprecDeriv(Y,X,force,dagno ,-1.0);
-      //CCIO::cout << "Dirac_BFM_Wrapper::md_force MprecDeriv-2\n";
-      //pThis->linop.MprecDeriv(X,Y,force,dagyes,-1.0); // no because we are taking antihermite part later
-    }
-    pThis->linop.comm_end();
-    
-    // need a gauge import
-    GaugeField G_Force;
-    for (int dir = 0; dir < CommonPrms::instance()->Nd(); dir++){
-      pThis->BFM_interface.GaugeImport_from_BFM(&G_Force.data, force[Even], dir, Even);
-      pThis->BFM_interface.GaugeImport_from_BFM(&G_Force.data, force[Odd] , dir, Odd);
-    }
-    G_Force.data *= 0.5;
-    return G_Force.data;
-    */
- 
-  
-
-
 
 void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source){
   if(is_initialized){
@@ -293,7 +232,7 @@ void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source)
     GetSolution(BFMsol,cb);
     for (int s =0 ; s< BFMparams.Ls_; s++){
       for (int i = 0; i < half_vec; i++){
-	solution.data.set(i+half_vec*s, BFMsol.data[i+2*s*half_vec]);//copy the even part
+	solution.data.set(i+half_vec*s, BFMsol.data[i+2*s*half_vec]);//copy only the even part
       }
     }
 
@@ -302,34 +241,47 @@ void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source)
     CCIO::cout << "The operator was not initialized yet\n";
   }
 }
-
 void Dirac_BFM_Wrapper::solve_CGNE_multishift(std::vector < FermionField > & solutions, 
-					      FermionField& source,
-					      vector_double shifts,
-					      vector_double mresiduals){
+                                              FermionField& source,
+                                              vector_double shifts,
+                                              vector_double mresiduals){
   if(is_initialized){
- 
-    long double export_timing;
-    FINE_TIMING_START(export_timing); 
-    BFM_interface.GaugeExport_to_BFM(u_);
-    FINE_TIMING_END(export_timing);
-    _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_BFM_Wrapper::solve_CGNE"
-	     << " - Gauge Export to BFM timing = "
-	     << export_timing << std::endl); 
-    int cb = Even;// by default
-
-    std::vector< Fermion_t > ms_chi(shifts.size());
-      
+    std::vector < FermionField > internal_sol(shifts.size());
+    FermionField BFMsource(Nvol_*BFMparams.Ls_);
+    Fermion_t ms_chi[shifts.size()];
     vector_double m_alpha(shifts.size());
-    int do_sum = 0;
+    long double export_timing;
+    int cb = Even;// by default
+    int dont_sum = 0;
+    int half_vec = source.size()/BFMparams.Ls_;
+
+    // Import gauge field
+    BFM_interface.GaugeExport_to_BFM(u_);
+
     // Allocate the solutions fields in BFM
     for (int shift = 0; shift < shifts.size(); shift++){
-      solutions[shift].data.resize(source.size());
-      ms_chi[shift] = linop.allocFermion();//half vector
-      m_alpha[shift] = 1.0;
+      solutions[shift].data.resize(source.size());     //half vector
+      internal_sol[shift].data.resize(2*source.size());// full vector
+      ms_chi[shift] = linop.allocFermion();            //half vector
+      m_alpha[shift] = 1.0; //fixed
     }
-     // Load the fermion field to BFM
-    LoadSource(source, cb);
+
+    // assumes even/odd indexing
+    for (int s =0 ; s< BFMparams.Ls_; s++){
+      
+	memcpy((void*)&(BFMsource.data[2*s*half_vec]),
+	       (void*)&(source.data[s*half_vec]), 
+	       sizeof(double)*half_vec);
+      
+	/*	
+      for (int i = 0; i < half_vec; i++){
+	BFMsource.data.set(i+    2*s*half_vec, source.data[i+half_vec*s]);//just even part is enough
+	BFMsource.data.set(i+(2*s+1)*half_vec, 0.0);//just even part is enough
+	}*/
+	
+    }
+    // Load the fermion field to BFM
+    LoadSource(BFMsource, cb);
 
     // need to initialize the comms because of the buffer 
     // assignments by BGNET library
@@ -337,30 +289,40 @@ void Dirac_BFM_Wrapper::solve_CGNE_multishift(std::vector < FermionField > & sol
     // so we are doing right now.
     linop.comm_init();
 
-    //////////////////////////// Execute the solver
-    #pragma omp parallel
-    {
-    #pragma omp for 
-      for (int t=0;t<threads;t++){
-	linop.CGNE_prec_MdagM_multi_shift(&ms_chi[0],
-					  psi_h[cb],
-					  &shifts[0], 
-					  &m_alpha[0],
-					  shifts.size(), 
-					  &mresiduals[0],
-					  do_sum );
-      }
+   //////////////////////////// Execute the solver
+    #pragma omp parallel for
+    for (int t=0;t<threads;t++){
+      int iter = linop.CGNE_prec_MdagM_multi_shift(ms_chi,
+					psi_h[cb],
+					&shifts[0], 
+					&m_alpha[0],
+					shifts.size(), 
+					&mresiduals[0],
+					dont_sum);
+      
     }
+    
     ///////////////////////////////////////////////
     // close communications to free the buffers
     linop.comm_end(); 
-    
-    // Get the solution from BFM 
-    GetMultishiftSolutions(solutions,ms_chi,cb);
-    
+     
+    // Get the solution from BFM and convert basis 
+    GetMultishiftSolutions(internal_sol,ms_chi,cb);
+      
     for (int shift = 0; shift < shifts.size(); shift++){
+      for (int s =0 ; s< BFMparams.Ls_; s++){
+	
+	memcpy((void*)&(solutions[shift].data[half_vec*s]),
+	       (void*)&(internal_sol[shift].data[2*s*half_vec]), 
+	       sizeof(double)*half_vec);
+	/*
+	for (int i = 0; i < half_vec; i++){
+	  solutions[shift].data.set(i+half_vec*s, internal_sol[shift].data[i+2*s*half_vec]);//copy only the even part
+	}
+	*/
+      }
       linop.freeFermion(ms_chi[shift]);
-    }   
+    }
     
   } else {
     CCIO::cout << "The operator was not initialized yet\n";
@@ -368,31 +330,30 @@ void Dirac_BFM_Wrapper::solve_CGNE_multishift(std::vector < FermionField > & sol
 }
 
 void Dirac_BFM_Wrapper::LoadSource(FermionField& In,int cb){
- int Ls = In.Nvol()/Nvol_;
-  for (int s = 0; s< Ls; s++)
+  for (int s = 0; s< BFMparams.Ls_; s++)
     BFM_interface.FermionExport_to_BFM_5D(In,psi_h[cb],cb,s);//valid for 4d & 5d
 }
 
 void Dirac_BFM_Wrapper::LoadGuess(FermionField& In,int cb){
- int Ls = In.Nvol()/Nvol_;
-  for (int s = 0; s< Ls; s++)
+  for (int s = 0; s< BFMparams.Ls_; s++)
     BFM_interface.FermionExport_to_BFM_5D(In,chi_h[cb],cb,s);//valid for 4d & 5d
 }
 
 void Dirac_BFM_Wrapper::GetSolution(FermionField& Out,int cb){
- int Ls = Out.Nvol()/Nvol_;
+ int Ls = BFMparams.Ls_;
   for (int s = 0; s< Ls; s++)
-    BFM_interface.FermionImport_from_BFM_5D(Out,chi_h[cb],cb,s);//valid for 4d & 5d
+    BFM_interface.FermionImport_from_BFM_5D(Out,chi_h[cb],cb,s, Ls);//valid for 4d & 5d
 }
 
 void Dirac_BFM_Wrapper::GetMultishiftSolutions(std::vector < FermionField >& Out,
-					       std::vector < Fermion_t >& BFMsol,
+					       Fermion_t *BFMsol,
 					       int cb){
-  int Ls = Out[0].Nvol()/Nvol_;
-  for (int shift= 0; shift < Out.size(); shift++) 
-    for (int s = 0; s< Ls; s++)
-      BFM_interface.FermionImport_from_BFM_5D(Out[shift],BFMsol[shift],cb,s);//valid for 4d & 5d
-  
+   for (int shift= 0; shift < Out.size(); shift++) 
+    for (int s = 0; s< BFMparams.Ls_; s++)
+      BFM_interface.FermionImport_from_BFM_5D(Out[shift],
+					      BFMsol[shift],
+					      cb,s, BFMparams.Ls_);//valid for 4d & 5d
+   
 }
 
 

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-07-16 17:32:59 cossu>
+ * Time-stamp: <2013-08-22 10:14:22 cossu>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -74,7 +74,7 @@ private:
   void LoadGuess(FermionField&, int);
   void GetSolution(FermionField&, int);
   void GetMultishiftSolutions(std::vector< FermionField >&,
-			      std::vector< Fermion_t >&,
+			      Fermion_t *sol,
 			      int);
   Dirac_BFM_Wrapper(); //hides default constructor
   void AllocateFields();
