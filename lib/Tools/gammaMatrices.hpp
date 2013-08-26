@@ -38,6 +38,13 @@ namespace GammaMatrices {
   struct Gamma3_5: public Gamma {Gamma3_5();};
   struct Gamma4_5: public Gamma {Gamma4_5();};
 
+  struct Sigma12_5: public Gamma {Sigma12_5();};
+  struct Sigma13_5: public Gamma {Sigma13_5();};
+  struct Sigma14_5: public Gamma {Sigma14_5();};
+  struct Sigma23_5: public Gamma {Sigma23_5();};
+  struct Sigma24_5: public Gamma {Sigma24_5();};
+  struct Sigma34_5: public Gamma {Sigma34_5();};
+
   struct CConj:   public Gamma {CConj();};     //C= Gamma2*Gamma4
   struct CGamma1: public Gamma {CGamma1();};   //C*Gamma1
   struct CGamma2: public Gamma {CGamma2();};   //C*Gamma2

@@ -2,7 +2,7 @@
   @brief implementation of the utility functions for complex square matrix
 */
 #include "complexMatrix.hpp"
-#include <complex.h>
+#include <complex>
 #include <vector>
 
 using namespace std;
@@ -71,7 +71,7 @@ namespace ComplexMatrix{
     }
   }
 
-  void trace(double& tr,double& ti,const std::valarray<double>& M){
+  void trace(double& tr,double& ti,const valarray<double>& M){
     int Dim = sqrt(M.size()/2);
     
     tr = 0.0;
@@ -83,63 +83,67 @@ namespace ComplexMatrix{
     }
   }
 
-  void invert(std::valarray<double>& Mi,const std::valarray<double>& M){
+  void invert(valarray<double>& Mi,const valarray<double>& M){
     int Dim = sqrt(M.size()/2);
     
     vector<int> ip(Dim);
-    vector<double> vv(Dim);
-  
-    valarray<double> Mt(M);
-    double _Complex* Mtp = reinterpret_cast<double _Complex*>(&Mt[0]);
-    double _Complex* Mip = reinterpret_cast<double _Complex*>(&Mi[0]);
-
     for(int i=0; i<Dim; ++i) ip[i] = i;
 
+    vector<complex<double> > Mt(Dim);
+    for(int i=0; i< Dim; ++i)
+      Mt[i] = complex<double>(M[2*i],M[2*i+1]);
+  
+    vector<double> vv(Dim);
     for(int i=0; i<Dim; ++i){
       double big = 0.0;
       for(int j=0; j<Dim; ++j)
-	big = max(big,cabs(Mtp[i*Dim+j]));
+	big = max(big,abs(Mt[i*Dim+j]));
       vv[i] = 1.0/big;
     }
     
     for(int k=0; k<Dim; ++k){ 
       /// setting pivot     
       int l = k;    
-      double al = vv[ip[l]]*cabs(Mtp[ip[l]*Dim+k]);
+      double al = vv[ip[l]]*abs(Mt[ip[l]*Dim+k]);
       
       for(int i=k+1; i<Dim; ++i){
-	double tmp = vv[ip[i]]*cabs(Mtp[ip[i]*Dim+k]);
+	double tmp = vv[ip[i]]*abs(Mt[ip[i]*Dim+k]);
 	if(tmp>al){ al= tmp; l= i; }
       }
       if(l != k) swap(ip[k],ip[l]);
       
       /// Gauss elimination
-      Mtp[ip[k]*Dim+k] = 1.0/Mtp[ip[k]*Dim+k];
+      Mt[ip[k]*Dim+k] = 1.0/Mt[ip[k]*Dim+k];
       
       for(int i=k+1; i<Dim; ++i){
-	Mtp[ip[i]*Dim+k] *= Mtp[ip[k]*Dim+k];
+	Mt[ip[i]*Dim+k] *= Mt[ip[k]*Dim+k];
 
 	for(int j=k+1; j<Dim; ++j)
-	  Mtp[ip[i]*Dim+j] -= Mtp[ip[i]*Dim+k]*Mtp[ip[k]*Dim+j];
+	  Mt[ip[i]*Dim+j] -= Mt[ip[i]*Dim+k]*Mt[ip[k]*Dim+j];
       }
     }
     
     /******** Inversion of M ************/
     for(int j=0; j<Dim; ++j){
-      double _Complex tt;
+      complex<double> tt;
       
       for(int i=0; i<Dim; ++i){     // forward substitution 
 	tt = (ip[i] == j) ? 1.0 : 0.0;
 	for(int l=0; l<i; ++l)
-	  tt -= Mtp[ip[i]*Dim+l]*Mip[l*Dim+j];
-	Mip[i*Dim+j] = tt; 
+	  tt -= Mt[ip[i]*Dim+l]*complex<double>(Mi[2*(l*Dim+j)],Mi[2*(l*Dim+j)+1]);
+
+	Mi[2*(i*Dim+j)  ] = tt.real(); 
+	Mi[2*(i*Dim+j)+1] = tt.imag(); 
       }
       for(int i=Dim-1; i>=0; --i){ // backward substitution
-	tt = Mip[i*Dim+j];
+	tt = complex<double>(Mi[2*(i*Dim+j)],Mi[2*(i*Dim+j)+1]);
 	for(int l=i+1; l<Dim; ++l)
-	  tt -= Mtp[ip[i]*Dim+l]*Mip[l*Dim+j];
+	  tt -= Mt[ip[i]*Dim+l]*complex<double>(Mi[2*(l*Dim+j)],Mi[2*(l*Dim+j)+1]);
+
+	tt *= Mt[ip[i]*Dim+i];
 	
-	Mip[i*Dim+j] = tt*Mtp[ip[i]*Dim+i];
+	Mi[2*(i*Dim+j)  ] = tt.real();
+	Mi[2*(i*Dim+j)+1] = tt.imag();
       }
     }
   }

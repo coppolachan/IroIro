@@ -38,7 +38,7 @@ public:
 
     evecs_.clear();
     CCIO::cout<<"Reading eigenvectors from "<<evecfile<<"\n";
-    int Neig;
+    int Neig=i;
     CCIO::ReadFromDisk<FMT>(evecs_,evecfile.c_str(),Neig);
     CCIO::cout<< Neig << "eigenmodes are loaded."<<"\n";
   }

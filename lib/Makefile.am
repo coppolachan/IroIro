@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-14 16:25:11 cossu>
+# Time-stamp: <2013-08-26 13:19:01 noaki>
 
 ###########################################
 # Initial definitions 
@@ -108,7 +108,8 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_wilson_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
-                Dirac_ops/dirac_wilson_standard.code    	\
+                Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
+                Dirac_ops/dirac_wilson_Brillouin_BGQ.code    	\
                 Dirac_ops/dirac_DomainWall_BGQ.code \
                 Dirac_ops/domainWallSolver_BGQ.code \
 		Fields/field.inl

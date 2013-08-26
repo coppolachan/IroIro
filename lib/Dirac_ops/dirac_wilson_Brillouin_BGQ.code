@@ -1,0 +1,241 @@
+/*Brillouin code for the BG/Q (cho,2013/6/20) */
+// use BGWilson library as many as possible.
+
+//mult for the standard Brillouin
+void Dirac_Wilson_Brillouin::mult_std(Field& w,const Field& f)const{
+  using namespace FieldExpression;
+  Field df(fsize_),lf(fsize_);
+  df = mult_del(f);
+  lf = -0.5*mult_lap(f);
+  double *pdf = df.getaddr(0);  double *plf = lf.getaddr(0);
+  double *pf = const_cast<Field&>(f).getaddr(0);
+  double *pw = w.getaddr(0);
+  BGWilsonLA_AXPBYPZ(pw,pdf,plf,pf,kbr_,kbr_,Nvol_);
+}
+
+//mult for the improved Brillouin
+void Dirac_Wilson_Brillouin::mult_imp(Field& w,const Field& f)const{
+  using namespace FieldExpression;
+  Field fn = mult_lap(f);
+  double *pfn = fn.getaddr(0);
+  double *pw  = w.getaddr(0);
+  double *pf = const_cast<Field&>(f).getaddr(0);
+  w = mult_lap(fn);
+  BGWilsonLA_MultAddScalar(pw,pfn,-7.50,Nvol_);
+  BGWilsonLA_MultScalar(pw,pw,0.125,Nvol_);
+
+  BGWilsonLA_MultAddScalar(pfn,pf,-3.75,Nvol_);
+  BGWilsonLA_MultScalar_Add(pfn,pf,-1.0/12.0,Nvol_);
+
+  Field dr = mult_del(fn); 
+  double *pdr = dr.getaddr(0);
+  fn = mult_lap(dr);
+  BGWilsonLA_MultScalar(pfn,pfn,-1.0/12.0,Nvol_);
+  BGWilsonLA_MultAddScalar(pfn,pdr,21.0/16.0,Nvol_);
+  
+  BGWilsonLA_Add(pw,pfn,Nvol_);
+  BGWilsonLA_MultScalar_Add(pw,pf,kbr_,Nvol_);
+}
+
+inline const Field Dirac_Wilson_Brillouin::mult_del(const Field& f)const{
+  using namespace FieldExpression;
+  Field v(fsize_); double *pv=v.getaddr(0);
+  double *pf = const_cast<Field&>(f).getaddr(0);
+  //===preconcitiong=========================================================
+  Field f0p=sft_p(f,0);double *pf0p=f0p.getaddr(0);
+  Field f0m=sft_m(f,0);double *pf0m=f0m.getaddr(0);
+  Field f0 =f0p;       double *pf0 =f0.getaddr(0);
+  BGWilsonLA_Add(pf0,pf0m,Nvol_);BGWilsonLA_AXPBY(pf0,pf0,pf,0.25,4.0,Nvol_);
+  Field f1p = sft_p(f,1);double *pf1p=f1p.getaddr(0);
+  Field f1m = sft_m(f,1);double *pf1m=f1m.getaddr(0);
+  Field f1 = f1p;        double *pf1 =f1.getaddr(0);
+  BGWilsonLA_Add(pf1,pf1m,Nvol_);BGWilsonLA_AXPBY(pf1,pf1,pf,0.25,4.0,Nvol_);
+  Field f2p = sft_p(f,2);double *pf2p=f2p.getaddr(0);
+  Field f2m = sft_m(f,2);double *pf2m=f2m.getaddr(0);
+  Field f2 = f2p;        double *pf2=f2.getaddr(0);
+  BGWilsonLA_Add(pf2,pf2m,Nvol_);BGWilsonLA_AXPBY(pf2,pf2,pf,0.25,4.0,Nvol_);
+  Field f3p = sft_p(f,3);double *pf3p=f3p.getaddr(0);
+  Field f3m = sft_m(f,3);double *pf3m=f3m.getaddr(0);
+  Field f3 = f3p;        double *pf3=f3.getaddr(0);
+  BGWilsonLA_Add(pf3,pf3m,Nvol_);BGWilsonLA_AXPBY(pf3,pf3,pf,0.25,4.0,Nvol_);
+  //=========================================================================
+  for(int mu = 0; mu<NDIM_; ++mu){
+    Field w(fsize_);double *pw = w.getaddr(0);
+    Field xi3(fsize_),eta1(fsize_);
+    double *pxi3=xi3.getaddr(0);double *peta1=eta1.getaddr(0);
+    //===preconditioning===================================================
+    Field f0d=del(f0,mu,1.0);Field f1d=del(f1,mu,1.0);
+    Field f2d=del(f2,mu,1.0);Field f3d=del(f3,mu,1.0);
+    double *pf0d=f0d.getaddr(0);double *pf1d=f1d.getaddr(0);
+    double *pf2d=f2d.getaddr(0);double *pf3d=f3d.getaddr(0);
+    Field f0l(fsize_),f1l(fsize_),f2l(fsize_),f3l(fsize_);
+    double *pf0l=f0l.getaddr(0);double *pf1l=f1l.getaddr(0);
+    double *pf2l=f2l.getaddr(0);double *pf3l=f3l.getaddr(0);
+    if(mu==0)        { BGWilsonLA_AXMY(peta1,pf0p,pf0m,1.0,Nvol_);
+      f1l = lap(eta1,1,0.25);f2l = lap(eta1,2,0.25);f3l = lap(eta1,3,0.25);
+    }else if(mu == 1){ BGWilsonLA_AXMY(peta1,pf1p,pf1m,1.0,Nvol_);
+      f0l = lap(eta1,0,0.25);f2l = lap(eta1,2,0.25);f3l = lap(eta1,3,0.25);
+    }else if(mu == 2){ BGWilsonLA_AXMY(peta1,pf2p,pf2m,1.0,Nvol_);
+      f0l = lap(eta1,0,0.25);f1l = lap(eta1,1,0.25);f3l = lap(eta1,3,0.25);
+    }else if(mu == 3){ BGWilsonLA_AXMY(peta1,pf3p,pf3m,1.0,Nvol_);
+      f0l = lap(eta1,0,0.25);f1l = lap(eta1,1,0.25);f2l = lap(eta1,2,0.25);
+    }
+    //====================================================================
+    for(int nu=0; nu<NDIM_; ++nu){
+      Field xi2(fsize_),eta3(fsize_);
+      double *pxi2=xi2.getaddr(0);double *peta3=eta3.getaddr(0);
+      if(nu !=mu){
+	for(int rho=0; rho<NDIM_; ++rho){
+	  Field xi1(fsize_),eta2(fsize_);
+	  double *pxi1=xi1.getaddr(0);double *peta2=eta2.getaddr(0);
+	  if(rho !=nu && rho != mu){
+	    int dir = sgm(mu,nu,rho);
+	    //===accerate improvement================================
+	    if(dir == 0)      { BGWilsonLA_Add(pxi1,pf0,Nvol_);
+	      BGWilsonLA_Add_MultAddScalar(peta2,pf0d,pf0l,1.0,Nvol_);
+	    }else if(dir == 1){ BGWilsonLA_Add(pxi1,pf1,Nvol_);
+	      BGWilsonLA_Add_MultAddScalar(peta2,pf1d,pf1l,1.0,Nvol_);
+	    }else if(dir == 2){ BGWilsonLA_Add(pxi1,pf2,Nvol_);
+	      BGWilsonLA_Add_MultAddScalar(peta2,pf2d,pf2l,1.0,Nvol_);
+	    }else if(dir == 3){ BGWilsonLA_Add(pxi1,pf3,Nvol_);
+	      BGWilsonLA_Add_MultAddScalar(peta2,pf3d,pf3l,1.0,Nvol_);
+	    }
+	    //=======================================================
+	    xi2 += lap(xi1,rho,1.0/3);
+	    eta3 += lap(eta2,rho,1.0/3);
+	  }//rho if
+	}// rho loop
+	BGWilsonLA_MultAddScalar(pxi2,pf,16.0,Nvol_); // xi2 += 16.0*f;
+	eta3 += del(xi2,mu,1.0);
+	xi3 += lap(xi2,nu,0.5);
+	w += lap(eta3,nu,0.5/432);
+      }// nu if
+    }// nu loop
+    BGWilsonLA_MultAddScalar(pxi3,pf,64.0,Nvol_);     //    xi3 += 64.0*f;
+    w += del(xi3,mu,1.0/432);
+
+    //v += (this->*gm[mu])(w);
+    for(int site=0; site<Nvol_; ++site)
+      (this->*gm[mu])(xi3.getaddr(ff_.index(0,site)),
+		      const_cast<Field&>(w).getaddr(ff_.index(0,site)));
+
+    BGWilsonLA_Add(pv,pxi3,Nvol_);     //v += xi3;
+
+  } //mu loop
+  return v;
+}
+
+inline const Field Dirac_Wilson_Brillouin::mult_lap(const Field& f)const{
+  using namespace FieldExpression;
+  Field w(fsize_);
+  double *pf = const_cast<Field&>(f).getaddr(0);
+  //===preconditioning=================================================================
+  Field f0 = lap(f,0,0.25); double *pf0=f0.getaddr(0) ;
+  Field f1 = lap(f,1,0.25); double *pf1=f1.getaddr(0) ;
+  Field f2 = lap(f,2,0.25); double *pf2=f2.getaddr(0) ;
+  Field f3 = lap(f,3,0.25); double *pf3=f3.getaddr(0) ;
+  BGWilsonLA_MultAddScalar(pf0,pf,2.0,Nvol_);BGWilsonLA_MultAddScalar(pf1,pf,2.0,Nvol_);
+  BGWilsonLA_MultAddScalar(pf2,pf,2.0,Nvol_);BGWilsonLA_MultAddScalar(pf3,pf,2.0,Nvol_);
+  Field f01=lap(f0,1,1.0/3.0);Field f02=lap(f0,2,1.0/3.0);Field f03 = lap(f0,3,1.0/3.0);
+  double *pf01=f01.getaddr(0);double *pf02=f02.getaddr(0);double *pf03=f03.getaddr(0);
+  Field f10=lap(f1,0,1.0/3.0);Field f12=lap(f1,2,1.0/3.0);Field f13 = lap(f1,3,1.0/3.0);
+  double *pf10=f10.getaddr(0);double *pf12=f12.getaddr(0);double *pf13=f13.getaddr(0);
+  Field f20=lap(f2,0,1.0/3.0);Field f21=lap(f2,1,1.0/3.0);Field f23 = lap(f2,3,1.0/3.0);
+  double *pf20=f20.getaddr(0);double *pf21=f21.getaddr(0);double *pf23=f23.getaddr(0);
+  Field f30=lap(f3,0,1.0/3.0);Field f31=lap(f3,1,1.0/3.0);Field f32 = lap(f3,2,1.0/3.0);
+  double *pf30=f30.getaddr(0);double *pf31=f31.getaddr(0);double *pf32=f32.getaddr(0);
+  //====================================================================================
+  for(int mu=0; mu<NDIM_; ++mu){
+    Field fn(fsize_);double *pfn = fn.getaddr(0);
+    for(int nu=0; nu<NDIM_; ++nu){
+      Field fr(fsize_);double *pfr = fr.getaddr(0);
+      if(nu !=mu){
+	for(int rho=0; rho<NDIM_; ++rho){
+	  //Field ft(fsize_);
+	  if(rho !=nu && rho != mu){
+	    int dir = sgm(mu,nu,rho);
+	    //===accerate improvement====
+	    if(dir == 0){
+	      if(rho==1) BGWilsonLA_Add(pfr,pf01,Nvol_);
+	      else if(rho==2) BGWilsonLA_Add(pfr,pf02,Nvol_);
+	      else if(rho==3) BGWilsonLA_Add(pfr,pf03,Nvol_);
+	    }
+	    else if(dir == 1){
+	      if(rho==0)  BGWilsonLA_Add(pfr,pf10,Nvol_);
+	      else if(rho==2)  BGWilsonLA_Add(pfr,pf12,Nvol_);
+	      else if(rho==3)  BGWilsonLA_Add(pfr,pf13,Nvol_);
+	    }
+	    else if(dir == 2){
+	      if(rho==0)  BGWilsonLA_Add(pfr,pf20,Nvol_);
+	      else if(rho==1) BGWilsonLA_Add(pfr,pf21,Nvol_);
+	      else if(rho==3) BGWilsonLA_Add(pfr,pf23,Nvol_);
+	    }
+	    else if(dir == 3){
+	      if(rho==0) BGWilsonLA_Add(pfr,pf30,Nvol_);
+	      else if(rho==1)  BGWilsonLA_Add(pfr,pf31,Nvol_);
+	      else if(rho==2)  BGWilsonLA_Add(pfr,pf32,Nvol_);
+	    }
+	    //===========================
+	  }// rho if
+	}// rho looop
+	BGWilsonLA_MultAddScalar(pfr,pf,4.0,Nvol_);	//fr += 4.0*f;
+	fn += lap(fr,nu,0.5); 
+      }//nu if
+    }// nu loop
+    BGWilsonLA_MultAddScalar(pfn,pf,8.0,Nvol_);   //fn += 8.0*f;
+    w += lap(fn,mu,1.0/64);
+  }// mu loop
+  return w;
+}
+
+inline const Field Dirac_Wilson_Brillouin::lap(const Field& f,int dir,double a)const{
+  using  namespace FieldExpression;
+  Field w  = sft_p(f,dir);
+  Field fm = sft_m(f,dir);
+  double* pFm = fm.getaddr(0);
+  double* pw = w.getaddr(0);
+  BGWilsonLA_Add(pw,pFm,Nvol_); // w += fm;
+  BGWilsonLA_MultScalar(pw,pw,a,Nvol_); // w *= a;
+  return w;
+}
+
+inline const Field Dirac_Wilson_Brillouin::del(const Field& f,int dir,double a)const{
+  using namespace FieldExpression;
+  Field w  = sft_p(f,dir);
+  Field fm = sft_m(f,dir);
+  double* pFm = fm.getaddr(0);
+  double* pw = w.getaddr(0);
+  BGWilsonLA_Sub(pw,pFm,Nvol_); // w -= fm;
+  BGWilsonLA_MultScalar(pw,pw,a,Nvol_); // w *= a;
+  return w;
+}
+
+
+/*!@brief U_{x,\mu}\psi_{x+\hat{\mu}} */
+inline const Field Dirac_Wilson_Brillouin::sft_p(const Field& f,int dir) const{
+  Field fp(fsize_);
+  double* pF = const_cast<Field&>(f).getaddr(0);
+  double* pU = const_cast<Field *>(u_)->getaddr(0);
+  double* pFp = fp.getaddr(0);
+  BGWilson_Mult_Shift_Dir(pFp,pU,pF,dir,BGWILSON_FORWARD);
+  return fp;
+}
+
+/*! @brief  U_{x-\hat{\mu},\mu}^\dagger \psi_{x-\hat{\mu}} */
+inline const Field Dirac_Wilson_Brillouin::sft_m(const Field& f,int dir)const{
+  Field fm(fsize_);
+  double* pF = const_cast<Field&>(f).getaddr(0);
+  double* pU = const_cast<Field *>(u_)->getaddr(0);
+  double* pFm = fm.getaddr(0);
+  BGWilson_Mult_Shift_Dir(pFm,pU,pF,dir,BGWILSON_BACKWARD);
+  return fm;
+}
+
+
+
+
+
+
+
+
+

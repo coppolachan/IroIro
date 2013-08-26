@@ -110,6 +110,67 @@ namespace GammaMatrices{
     fac_[6] =-1.0;  
   }
 
+  // [,] denotes the commutation relation.
+  Sigma12_5::Sigma12_5(){ // (1/2)*[Gamma1,Gamma2]*Gamma5
+    int idx[] = {2,3,0,1,};
+    for(int i=0; i<NDIM_; ++i) idx_.push_back(idx[i]);
+
+    fac_[1] = 1.0;
+    fac_[3] =-1.0;
+    fac_[5] = 1.0;
+    fac_[7] =-1.0;
+  }
+
+  Sigma13_5::Sigma13_5(){ // (1/2)*[Gamma1,Gamma3]*Gamma5             
+    int idx[] = {3,2,1,0,};
+    for(int i=0; i<NDIM_; ++i) idx_.push_back(idx[i]);
+
+    fac_[0] = 1.0;
+    fac_[2] =-1.0;
+    fac_[4] = 1.0;
+    fac_[6] =-1.0;
+  }
+
+  Sigma14_5::Sigma14_5(){ // (1/2)*[Gamma1,Gamma4]*Gamma5       
+    int idx[] = {1,0,2,3,};
+    for(int i=0; i<NDIM_; ++i) idx_.push_back(idx[i]);
+
+    fac_[0] = 1.0;
+    fac_[2] = 1.0;
+    fac_[4] = 1.0;
+    fac_[6] = 1.0;
+  }
+
+  Sigma23_5::Sigma23_5(){ // (1/2)*[Gamma2,Gamma3]*Gamma5
+    int idx[] = {3,2,1,0,};
+    for(int i=0; i<NDIM_; ++i) idx_.push_back(idx[i]);
+
+    fac_[1] = 1.0;
+    fac_[3] = 1.0;
+    fac_[5] = 1.0;
+    fac_[7] = 1.0;
+  }
+
+  Sigma24_5::Sigma24_5(){ // (1/2)*[Gamma2,Gamma4]*Gamma5
+    int idx[] = {1,0,3,2,};
+    for(int i=0; i<NDIM_; ++i) idx_.push_back(idx[i]);
+
+    fac_[0] = 1.0;
+    fac_[2] = -1.0;
+    fac_[4] = 1.0;
+    fac_[6] = -1.0;
+  }
+
+  Sigma34_5::Sigma34_5(){ // (1/2)*[Gamma3,Gamma4]*Gamma5          
+    int idx[] = {0,1,2,3,};
+    for(int i=0; i<NDIM_; ++i) idx_.push_back(idx[i]);
+
+    fac_[1] = 1.0;
+    fac_[3] = -1.0;
+    fac_[5] = 1.0;
+    fac_[7] = -1.0;
+  }
+
   CConj::CConj(){ //Gamma2*Gamma4
     int idx[] = {3,2,1,0,}; 
     for(int i=0; i<NDIM_; ++i) idx_.push_back(idx[i]);

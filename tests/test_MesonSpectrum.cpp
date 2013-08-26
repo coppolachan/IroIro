@@ -45,25 +45,32 @@ int Test_MesonSpectrum::run(){
 
     writer<< setiosflags(  ios_base::scientific);
     writer<<"---pp meson correlator---"<<endl;
-    for(int t=0; t<Cpp.size(); ++t){
-      writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(20)<<setiosflags(ios_base::left )<< Cpp[t]<<endl;
-    }
+    for(int t=0; t<Cpp.size(); ++t)
+      writer<< setw(2) <<setiosflags(ios_base::right)<< t
+	    << setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Cpp[t]
+	    << endl;
+
     writer<<"---v1v1 meson correlator---"<<endl;
-    for(int t=0; t<Cv1v1.size(); ++t){
-      writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(20)<<setiosflags(ios_base::left )<< Cv1v1[t]<<endl;
-    }
+    for(int t=0; t<Cv1v1.size(); ++t)
+      writer<< setw(2) <<setiosflags(ios_base::right)<< t
+	    << setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Cv1v1[t]
+	    << endl;
+
     writer<<"---v2v2 meson correlator---"<<endl;
-    for(int t=0; t<Cv2v2.size(); ++t){
-      writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(20)<<setiosflags(ios_base::left )<< Cv2v2[t]<<endl;
-    }
+    for(int t=0; t<Cv2v2.size(); ++t)
+      writer<< setw(2) <<setiosflags(ios_base::right)<< t
+	    << setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Cv2v2[t]
+	    << endl;
+
     writer<<"---v3v3 meson correlator---"<<endl;
-    for(int t=0; t<Cv3v3.size(); ++t){
-      writer<< setw(2) <<setiosflags(ios_base::right)<< t;
-      writer<< setw(20)<<setiosflags(ios_base::left )<< Cv3v3[t]<<endl;
-    }
+    for(int t=0; t<Cv3v3.size(); ++t)
+      writer<< setw(2) <<setiosflags(ios_base::right)<< t
+	    << setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
+	    << Cv3v3[t]
+	    << endl;
     writer<< resetiosflags(ios_base::scientific);
     writer.close();
   }
