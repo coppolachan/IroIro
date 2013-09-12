@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-08-22 16:20:20 cossu>
+ * Time-stamp: <2013-08-23 11:09:54 cossu>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -32,6 +32,9 @@ double Dirac_BFM_Wrapper::getMass() const{
   return BFMparams.mq_;
 }
 
+int Dirac_BFM_Wrapper::getN5() const{
+  return BFMparams.Ls_;
+}
 const Field* Dirac_BFM_Wrapper::getGaugeField_ptr()const{
   return u_;
 }

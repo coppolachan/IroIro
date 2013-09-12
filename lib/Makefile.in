@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-22 17:00:11 cossu>
+# Time-stamp: <2013-08-23 11:43:07 cossu>
 
 
 
@@ -195,11 +195,12 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp \
 	Smearing/stoutSmear_core.cpp Smearing/smartConf_core.cpp \
 	Smearing/APEsmear.cpp Smearing/smearingFactories.cpp \
-	Tools/fieldUtils.cpp Tools/jobUtils.cpp Tools/sunMatUtils.cpp \
-	Tools/sunAdjMatUtils.cpp Tools/randNum.cpp \
-	Tools/randNum_MP.cpp Tools/randNum_Factory.cpp \
-	Tools/gammaMatrices.cpp Tools/sunAlgUtils.cpp \
-	Tools/complexMatrix.cpp Tools/Remez/alg_remez.cpp \
+	Tools/utils_BGQ.cpp Tools/fieldUtils.cpp Tools/jobUtils.cpp \
+	Tools/sunMatUtils.cpp Tools/sunAdjMatUtils.cpp \
+	Tools/randNum.cpp Tools/randNum_MP.cpp \
+	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp \
+	Tools/sunAlgUtils.cpp Tools/complexMatrix.cpp \
+	Tools/Remez/alg_remez.cpp \
 	Tools/RationalApprox/rationalapprox.cpp \
 	Tools/ErrorsHandling/xml_errors.cpp \
 	Tools/ErrorsHandling/allocation_errors.cpp \
@@ -291,8 +292,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	multiShiftSolver_CG.$(OBJEXT) rationalSolver_CG.$(OBJEXT) \
 	solver.$(OBJEXT) stoutSmear_base.$(OBJEXT) \
 	smartConf_base.$(OBJEXT) $(am__objects_9) \
-	smearingFactories.$(OBJEXT) fieldUtils.$(OBJEXT) \
-	jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
+	smearingFactories.$(OBJEXT) utils_BGQ.$(OBJEXT) \
+	fieldUtils.$(OBJEXT) jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	sunAdjMatUtils.$(OBJEXT) randNum.$(OBJEXT) \
 	randNum_MP.$(OBJEXT) randNum_Factory.$(OBJEXT) \
 	gammaMatrices.$(OBJEXT) sunAlgUtils.$(OBJEXT) \
@@ -632,6 +633,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/smartConf_base.cpp		\
 		$(SMEAR_SRCS)				\
 		Smearing/smearingFactories.cpp		\
+		Tools/utils_BGQ.cpp	        	\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
@@ -777,7 +779,6 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\
-			Dirac_ops/utils_BGQ.hpp	        	\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
                         EigenModes/eigenCalcGeneral.hpp  	\
@@ -814,6 +815,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Smearing/stoutSmear.hpp			\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
+			Tools/utils_BGQ.hpp	        	\
 			Tools/jobUtils.hpp			\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp   		\
@@ -1094,6 +1096,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/text_header.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/topologyGeom.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wilsonFlow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xml_errors.Po@am__quote@
@@ -2921,6 +2924,22 @@ smearingFactories.obj: Smearing/smearingFactories.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smearingFactories.cpp' object='smearingFactories.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smearingFactories.obj `if test -f 'Smearing/smearingFactories.cpp'; then $(CYGPATH_W) 'Smearing/smearingFactories.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smearingFactories.cpp'; fi`
+
+utils_BGQ.o: Tools/utils_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_BGQ.o -MD -MP -MF $(DEPDIR)/utils_BGQ.Tpo -c -o utils_BGQ.o `test -f 'Tools/utils_BGQ.cpp' || echo '$(srcdir)/'`Tools/utils_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utils_BGQ.Tpo $(DEPDIR)/utils_BGQ.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/utils_BGQ.cpp' object='utils_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o utils_BGQ.o `test -f 'Tools/utils_BGQ.cpp' || echo '$(srcdir)/'`Tools/utils_BGQ.cpp
+
+utils_BGQ.obj: Tools/utils_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_BGQ.obj -MD -MP -MF $(DEPDIR)/utils_BGQ.Tpo -c -o utils_BGQ.obj `if test -f 'Tools/utils_BGQ.cpp'; then $(CYGPATH_W) 'Tools/utils_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/utils_BGQ.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utils_BGQ.Tpo $(DEPDIR)/utils_BGQ.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/utils_BGQ.cpp' object='utils_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o utils_BGQ.obj `if test -f 'Tools/utils_BGQ.cpp'; then $(CYGPATH_W) 'Tools/utils_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/utils_BGQ.cpp'; fi`
 
 fieldUtils.o: Tools/fieldUtils.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fieldUtils.o -MD -MP -MF $(DEPDIR)/fieldUtils.Tpo -c -o fieldUtils.o `test -f 'Tools/fieldUtils.cpp' || echo '$(srcdir)/'`Tools/fieldUtils.cpp

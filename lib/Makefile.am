@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-22 17:00:11 cossu>
+# Time-stamp: <2013-08-23 11:43:07 cossu>
 
 ###########################################
 # Initial definitions 
@@ -213,6 +213,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/smartConf_base.cpp		\
 		$(SMEAR_SRCS)				\
 		Smearing/smearingFactories.cpp		\
+		Tools/utils_BGQ.cpp	        	\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
@@ -360,7 +361,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\
-			Dirac_ops/utils_BGQ.hpp	        	\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
                         EigenModes/eigenCalcGeneral.hpp  	\
@@ -397,6 +397,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Smearing/stoutSmear.hpp			\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
+			Tools/utils_BGQ.hpp	        	\
 			Tools/jobUtils.hpp			\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp   		\

@@ -35,7 +35,6 @@ void Smear_Stout::smear(GaugeField& u_smr, const GaugeField& u_in) const{
   SUNmat ut;
   for(int mu = 0; mu < NDIM_; ++mu){
     U_mu = DirSlice(u_in, mu);
-#pragma omp parallel for
     for(int site = 0; site < Nvol; ++site){
       ut = mat(u_tmp1,site,mu) * mat_dag(U_mu,site);//Omega_mu
       SetMat(q_mu, anti_hermite_traceless(ut), site, mu);

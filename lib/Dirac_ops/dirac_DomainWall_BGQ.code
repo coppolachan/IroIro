@@ -2,10 +2,10 @@
  * @file dirac_DomainWall_BGQ.code
  *
  * @brief Definition of some BGQ optimized methods for Dirac_optimalDomainWall (5d operator)
- * Time-stamp: <2013-07-22 16:14:30 cossu>
+ * Time-stamp: <2013-08-23 11:36:09 cossu>
 
  *-------------------------------------------------------------------------*/
-#include "utils_BGQ.hpp"
+#include "Tools/utils_BGQ.hpp"
 
 const Field Dirac_optimalDomainWall::mult_hop5(const Field& f5) const{
   Field w5(f5size_), v(f4size_);

@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-07-05 16:20:59 cossu>
+ * Time-stamp: <2013-09-12 11:27:34 cossu>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -133,7 +133,8 @@ namespace CCIO {
   int ReadFromDisk(Field& f,
 		   const char* filename,
 		   const int offset = 0, 
-		   const std::string readerID = "Binary"){
+		   const std::string readerID = "Binary",
+		   const bool is_GaugeConf = true){
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");
@@ -226,8 +227,16 @@ namespace CCIO {
 	}// end of node_z
       }
     }// end of node_t
-    comm->sync();    
-    reader->check(f);
+    comm->sync();  
+
+    if (is_GaugeConf){
+      if (reader->check(f) != CHECK_PASS) {
+	Errors::IOErr(Errors::GenericError, "Failed some basic tests on the gauge configuration");
+      }
+      CCIO::cout << "Tests passed!\n";
+    }
+
+
     if(comm->primaryNode()){
       fclose(inFile);
       std::cout << "done\n";

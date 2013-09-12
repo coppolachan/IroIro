@@ -80,15 +80,6 @@ namespace SUNmatUtils{
     }
     return f;
   }
-  /*
-  // Creates SUNmat from gausian random number 
-  const SUNmat random_mat(const RandNum& rand){
-    std::valarray<double> rn(SUNmat::size());
-    MPrand::mp_get_gauss(rn,rand);
-
-    return SUNmat(rn).reunit();
-  }
-  */
 
   const SU3mat lambda1(const SU3mat& u){
 
@@ -212,6 +203,10 @@ namespace SUNmatUtils{
     res -= lambda[b](lambda[a](unity()));
     return res;
   }
+
+
+
+
 
   // BLAS style optimization specific functions
   // not working, just containers now

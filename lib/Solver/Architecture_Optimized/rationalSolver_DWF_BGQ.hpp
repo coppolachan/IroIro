@@ -19,13 +19,12 @@
 
 class RationalSolver_DWF_Optimized: public RationalSolver {
 #ifdef HAVE_LIBBFM
-  // This duplication of internal pointers must be changed later 
   Dirac_BFM_Wrapper* BFM_opr_;
 #endif
+  const Dirac_optimalDomainWall_EvenOdd* opr_;
   bool is_BFM;
 
-
-  const Dirac_optimalDomainWall_EvenOdd* opr_;
+  int Nsites;
   const MultiShiftSolver_CG_Params Params;
 
   vector_double Residuals;
@@ -39,49 +38,23 @@ class RationalSolver_DWF_Optimized: public RationalSolver {
   void internal_solve(vector_Field&, const Field&, const vector_double&, SolverOutput&) const;
 
 public:
+#ifdef HAVE_LIBBFM
+  // Standard Constructor
+  RationalSolver_DWF_Optimized(Dirac_BFM_Wrapper* BFMopr,
+			       const XML::node node);
+#endif
   // Standard Constructor
   RationalSolver_DWF_Optimized(const Dirac_optimalDomainWall_EvenOdd* DWFopr,
 			       const XML::node node,
-			       RationalApprox& RA)
-    :opr_(DWFopr),
-     Params(MultiShiftSolver_CG_Params(node)),
-     Residuals(RA.Residuals()),
-     Poles(RA.Poles()),
-     ConstTerm(RA.Const()),
-     InvResiduals(RA.InvResiduals()),
-     InvPoles(RA.InvPoles()),
-     InvConstTerm(RA.InvConst()){};
-
-  // Destructor
-  ~RationalSolver_DWF_Optimized(){};
+			       RationalApprox& RA);
 
   // To be used in Action constructions
   RationalSolver_DWF_Optimized(const Dirac_optimalDomainWall_EvenOdd* DWFopr,
-			       const XML::node node)
-    :opr_(DWFopr),
-     Params(MultiShiftSolver_CG_Params(node)),
-     Residuals(0),
-     Poles(0),
-     ConstTerm(0),
-     InvResiduals(0),
-     InvPoles(0),
-     InvConstTerm(0){};
+			       const XML::node node);
 
-#ifdef HAVE_LIBBFM
-  RationalSolver_DWF_Optimized(Dirac_BFM_Wrapper* BFMopr,
-			       const XML::node node)
-    :BFM_opr_(BFMopr),
-     Params(MultiShiftSolver_CG_Params(node)),
-     Residuals(0),
-     Poles(0),
-     ConstTerm(0),
-     InvResiduals(0),
-     InvPoles(0),
-     InvConstTerm(0),
-     is_BFM(true){
-    BFM_opr_->set_SolverParams(node); 
-  };
-#endif
+
+  // Destructor
+  ~RationalSolver_DWF_Optimized(){};
 
   void set_Approx(RationalApprox& RA) {
     Residuals = RA.Residuals();

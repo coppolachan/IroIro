@@ -14,6 +14,8 @@
 
 #include "include/macros.hpp"
 
+#define CHECK_TOLERANCE 1e-24
+
 template <size_t COLORS = NC_>
 class SUNmatrix{
 private:
@@ -51,6 +53,8 @@ public:
   SUNmatrix& reunit();
   SUNmatrix& anti_hermite();
   
+  bool is_unitary();
+
   static int size(){return 2*COLORS*COLORS;}
   void print();
 
@@ -222,79 +226,7 @@ inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(const SUNmatrix& rhs){
   va_= tmp;
   return *this;
 }
-/*
-//specialization
-//total loop unrolling
-template <>
-inline SUNmatrix<3>& SUNmatrix<3>::operator*=(const SUNmatrix& rhs){
-  std::valarray<double> matrix(18);
 
-  matrix[0]   = va_[0]* rhs.va_[0] - va_[1]* rhs.va_[1] +
-                va_[2]* rhs.va_[6] - va_[3]* rhs.va_[7] +
-                va_[4]* rhs.va_[12]- va_[5]* rhs.va_[13];
-  matrix[1]   = va_[0]* rhs.va_[1] + va_[1]* rhs.va_[0] +
-                va_[2]* rhs.va_[7] + va_[3]* rhs.va_[6] +
-                va_[4]* rhs.va_[13]+ va_[5]* rhs.va_[12];
-
-  matrix[2]   = va_[0]* rhs.va_[2] - va_[1]* rhs.va_[3] +
-                va_[2]* rhs.va_[8] - va_[3]* rhs.va_[9] +
-                va_[4]* rhs.va_[14]- va_[5]* rhs.va_[15];
-  matrix[3]   = va_[0]* rhs.va_[3] + va_[1]* rhs.va_[2] +
-                va_[2]* rhs.va_[9] + va_[3]* rhs.va_[8] +
-                va_[4]* rhs.va_[15]+ va_[5]* rhs.va_[14];
-
-  matrix[4]   = va_[0]* rhs.va_[4]  - va_[1]* rhs.va_[5] +
-                va_[2]* rhs.va_[10] - va_[3]* rhs.va_[11] +
-                va_[4]* rhs.va_[16] - va_[5]* rhs.va_[17];
-  matrix[5]   = va_[0]* rhs.va_[5]  + va_[1]* rhs.va_[4] +
-                va_[2]* rhs.va_[11] + va_[3]* rhs.va_[10] +
-                va_[4]* rhs.va_[17] + va_[5]* rhs.va_[16];
-
-  matrix[6]   = va_[6] * rhs.va_[0]  - va_[7] * rhs.va_[1] +
-                va_[8] * rhs.va_[6]  - va_[9] * rhs.va_[7] +
-                va_[10]* rhs.va_[12] - va_[11]* rhs.va_[13];
-  matrix[7]   = va_[6] * rhs.va_[1]  + va_[7] * rhs.va_[0] +
-                va_[8] * rhs.va_[7]  + va_[9] * rhs.va_[6] +
-                va_[10]* rhs.va_[13] + va_[11]* rhs.va_[12];
-
-  matrix[8]   = va_[6] * rhs.va_[2]  - va_[7] * rhs.va_[3] +
-                va_[8] * rhs.va_[8]  - va_[9] * rhs.va_[9] +
-                va_[10]* rhs.va_[14] - va_[11]* rhs.va_[15];
-  matrix[9]   = va_[6] * rhs.va_[3]  + va_[7] * rhs.va_[2] +
-                va_[8] * rhs.va_[9]  + va_[9] * rhs.va_[8] +
-                va_[10]* rhs.va_[15] + va_[11]* rhs.va_[14];
-
-  matrix[10]  = va_[6] * rhs.va_[4]  - va_[7] * rhs.va_[5] +
-                va_[8] * rhs.va_[10] - va_[9] * rhs.va_[11] +
-                va_[10]* rhs.va_[16] - va_[11]* rhs.va_[17];
-  matrix[11]  = va_[6] * rhs.va_[5]  + va_[7] * rhs.va_[4] +
-                va_[8] * rhs.va_[11] + va_[9] * rhs.va_[10] +
-                va_[10]* rhs.va_[17] + va_[11]* rhs.va_[16];
-
-  matrix[12]  = va_[12]* rhs.va_[0]  - va_[13]* rhs.va_[1] +
-                va_[14]* rhs.va_[6]  - va_[15]* rhs.va_[7] +
-                va_[16]* rhs.va_[12] - va_[17]* rhs.va_[13];
-  matrix[13]  = va_[12]* rhs.va_[1]  + va_[13]* rhs.va_[0] +
-                va_[14]* rhs.va_[7]  + va_[15]* rhs.va_[6] +
-                va_[16]* rhs.va_[13] + va_[17]* rhs.va_[12];
-
-  matrix[14]  = va_[12]* rhs.va_[2]  - va_[13]* rhs.va_[3] +
-                va_[14]* rhs.va_[8]  - va_[15]* rhs.va_[9] +
-                va_[16]* rhs.va_[14] - va_[17]* rhs.va_[15];
-  matrix[15]  = va_[12]* rhs.va_[3]  + va_[13]* rhs.va_[2] +
-                va_[14]* rhs.va_[9]  + va_[15]* rhs.va_[8] +
-                va_[16]* rhs.va_[15] + va_[17]* rhs.va_[14];
-
-  matrix[16]  = va_[12]* rhs.va_[4]  - va_[13]* rhs.va_[5] +
-                va_[14]* rhs.va_[10] - va_[15]* rhs.va_[11] +
-                va_[16]* rhs.va_[16] - va_[17]* rhs.va_[17];
-  matrix[17]  = va_[12]* rhs.va_[5]  + va_[13]* rhs.va_[4] +
-                va_[14]* rhs.va_[11] + va_[15]* rhs.va_[10] +
-                va_[16]* rhs.va_[17] + va_[17]* rhs.va_[16];
-  va_= matrix;
-  return *this;
-}
-*/
 template <size_t COLORS>
 inline SUNmatrix<COLORS>& SUNmatrix<COLORS>::operator*=(double rhs){
   va_*= rhs;
@@ -345,37 +277,60 @@ SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
   return *this;
 }
 
-/*
-// classical Gram-Schmidt method
 template <size_t COLORS>
-SUNmatrix<COLORS>& SUNmatrix<COLORS>::reunit(){
+bool SUNmatrix<COLORS>::is_unitary(){
+  double diag_norm_r = 0;
+  double diag_norm_i = 0;
+  double offdiag_norm_r = 0;
+  double offdiag_norm_i = 0;
 
-  std::valarray<double> u(2*COLORS);
+  std::valarray<double> tmp(0.0,2*COLORS*COLORS);
   for(int a=0; a<COLORS; ++a){
-    for(int cc=0; cc<2*COLORS; ++cc) u[cc] = va_[a*2*COLORS +cc];
-
-    for(int b=0; b<a; ++b){
-      double prr = 0.0;
-      double pri = 0.0;
+    for(int b=0; b<COLORS; ++b){
+      int ab = 2*(COLORS*a+b);
       for(int c=0; c<COLORS; ++c){
-	int ac = a*COLORS+c;      
-	int bc = b*COLORS+c;
-	prr += va_[2*bc]*va_[2*ac  ] +va_[2*bc+1]*va_[2*ac+1];
-	pri += va_[2*bc]*va_[2*ac+1] -va_[2*bc+1]*va_[2*ac  ];
-      }
-      for(int c=0; c<COLORS; ++c){
-	int bc = b*COLORS+c;
-	u[2*c  ] -= prr*va_[2*bc  ] -pri*va_[2*bc+1];
-	u[2*c+1] -= prr*va_[2*bc+1] +pri*va_[2*bc  ];
+	int ac = 2*(COLORS*a+c);
+	int bc = 2*(COLORS*b+c);
+	tmp[ab]  +=  va_[ac  ]*va_[bc] + va_[ac+1]*va_[bc+1];
+	tmp[ab+1]+=  va_[ac+1]*va_[bc] - va_[ac  ]*va_[bc+1];
       }
     }
-    double nrm_i = 1.0/sqrt((u*u).sum());
-    for(int cc=0; cc<2*COLORS; ++cc) va_[a*2*COLORS +cc] = u[cc]*nrm_i;
   }
-  return *this;
-}
-*/
 
+  for (int a = 0; a < COLORS; a++){
+    int aa = 2*(COLORS*a+a);
+    diag_norm_r += (tmp[aa]-1.0)*(tmp[aa]-1.0);
+    diag_norm_i += tmp[aa+1]*tmp[aa+1];
+    
+    for (int b = a+1; b < COLORS; b++){
+      int ab = 2*(COLORS*a+b);
+      int ba = 2*(COLORS*b+a);
+      offdiag_norm_r  += tmp[ab]*tmp[ab];
+      offdiag_norm_r  += tmp[ba]*tmp[ba];
+      offdiag_norm_i  += tmp[ab+1]*tmp[ab+1];
+      offdiag_norm_i  += tmp[ba+1]*tmp[ba+1];
+    }
+  }
+ 
+
+
+  if (diag_norm_r > CHECK_TOLERANCE || diag_norm_i > CHECK_TOLERANCE ||
+      offdiag_norm_i > CHECK_TOLERANCE || offdiag_norm_i > CHECK_TOLERANCE){
+    /*
+    CCIO::cout << "diag_norm_r "<< diag_norm_r <<"\n";
+    CCIO::cout << "diag_norm_i "<< diag_norm_i <<"\n";
+    CCIO::cout << "offdiag_norm_r "<< offdiag_norm_r <<"\n";
+    CCIO::cout << "offdiag_norm_i "<< offdiag_norm_i <<"\n";
+    */
+    return false;
+
+  }
+  
+  return true;
+};
+
+
+// Utilities 
 template <size_t COLORS>
 void SUNmatrix<COLORS>::print(){
   for(int a=0; a<COLORS; ++a){
