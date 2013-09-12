@@ -44,19 +44,19 @@ void EigenCalcGeneral::do_calc(GaugeField* const gconf){
   const auto_ptr<Fopr_Herm> ooprPtr(opOrigFptr_->getFoprHerm(diracPtr.get()));
 
   if(Neig_> 0){
-    CCIO::cout<<"Calcuration successfully finished. Eigenvalues are:\n";
+    CCIO::cout<<"Calculation successfully finished. Eigenvalues are:\n";
     get_eval(ooprPtr.get()); // eigenvalues of oopr 
     
   }else if(Neig_== 0){
     CCIO::cout<<"NO converged eigenmode.\n";
-    throw "Calcuration did not successfully finished.";
+    throw "Calculation did not successfully finished.";
 
   }else if(Neig_< 0){/*!<@brief it means emslvPtr->calc() ended abnormally. */
     Neig_*= -1;           
     CCIO::cout<<Neig_<<" eigenvalues are obtained:\n";
 
     get_eval(ooprPtr.get()); // eigenvalues of oopr 
-    throw "Calcuration abnormally finished.\n";
+    throw "Calculation abnormally finished.\n";
   }
 }
 

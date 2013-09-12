@@ -105,7 +105,7 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
 			     << eigen_list_[2];
       std::stringstream evecfile;
       if(file_list_) evecfile<< eigen_list_[meas_num_+c];
-      else           evalfile<< eigen_list_[1]<< number_list_[c]
+      else           evecfile<< eigen_list_[1]<< number_list_[c]
 			     << eigen_list_[3];
       
       input_.eigen->initialize<Format::Format_F>(evalfile.str(),
