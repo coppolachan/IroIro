@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-09-12 13:27:07 cossu>
+# Time-stamp: <2013-09-12 16:08:40 cossu>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -135,8 +135,10 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		IO/fields_io.cpp			\
 		IO/text_header.cpp			\
 		IO/binary_reader.cpp			\
+		IO/binary_writer.cpp			\
 		IO/NERSC_reader.cpp			\
 		IO/ILDG_reader.cpp			\
+		IO/ILDG_writer.cpp			\
 		IO/JLQCDLegacy_reader.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
@@ -322,12 +324,17 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\
 			IO/binary_reader.hpp			\
+			IO/binary_writer.hpp			\
 			IO/general_reader.hpp			\
+			IO/general_writer.hpp			\
 			IO/generic_header.hpp			\
 			IO/ILDG_header.hpp			\
 			IO/ILDG_reader.hpp			\
+			IO/ILDG_writer.hpp			\
 			IO/JLQCDLegacy_reader.hpp		\
 			IO/NERSC_reader.hpp			\
+			IO/readers.hpp				\
+			IO/writers.hpp				\
 			IO/text_header.hpp			\
 			Geometry/siteIndex.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
