@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-09-12 17:07:40 cossu>
+ * Time-stamp: <2013-09-13 13:59:27 cossu>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -45,7 +45,7 @@ namespace CCIO {
   template <typename T>
   int SaveOnDisk(const Field& f, const char* filename,
 		 bool append_mode = false,
-		 const std::string writerID = "ILDG"){
+		 const std::string writerID = "Binary"){
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     T fmt(cmprms->Nvol());

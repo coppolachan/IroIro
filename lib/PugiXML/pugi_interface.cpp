@@ -26,6 +26,10 @@ namespace XML{
     return 0;
   }
 
+  int save_to_file(pugi::xml_document& doc,const char* filename){
+    doc.save_file(filename);
+  }
+
   node select_node(pugi::xml_document &doc, const char *name) {
     return doc.child(name);
   }

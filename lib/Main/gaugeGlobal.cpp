@@ -2,12 +2,19 @@
  * @file gaugeGlobal.cpp
  * @brief Declaration of the GaugeGlobal class
  *
- * Time-stamp: <2013-06-05 10:16:10 neo>
+ * Time-stamp: <2013-09-17 17:33:19 cossu>
  */
 
 #include "gaugeGlobal.hpp"
 #include "gaugeConf.hpp" 
 #include "include/errors.hpp"
+
+#include <dirent.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 void GaugeGlobal::initializeUnit(){
   GaugeConf_unit gconf(format);
@@ -51,52 +58,64 @@ void GaugeGlobal::initializeILDG(const std::string &Filename) {
 
 
 int GaugeGlobal::initialize(XML::node node){
-  try{
-    XML::descend(node, "Configuration");
-    if(!XML::attribute_compare(node,"Type","TextFile")){
-      std::string filename(node.child_value());
-      initializeTxt(filename);
-      return 0;
-    }
-    if(!XML::attribute_compare(node,"Type","Unit")){
-      initializeUnit();
-      return 0;
-    }
-    if(!XML::attribute_compare(node,"Type","Binary")){
-      std::string filename(node.child_value());
-      initializeBin(filename);
-      return 0;
-    }
-    if(!XML::attribute_compare(node,"Type","CSDTbinary")){
-      std::string filename(node.child_value());
-      initializeCSDTbin(filename);
-      return 0;
-    }
-    if(!XML::attribute_compare(node,"Type","JLQCDlegacy")){
-      std::string filename(node.child_value());
-      initializeJLQCDlegacy(filename);
-      return 0;
-    }
-    if(!XML::attribute_compare(node,"Type","NERSC")){
-      std::string filename(node.child_value());
-      initializeNERSC(filename);
-      return 0;
-    }
-    if(!XML::attribute_compare(node,"Type","ILDG")){
-      std::string filename(node.child_value());
-      initializeILDG(filename);
-      return 0;
-    }
+  XML::node main_node = node;
+  XML::descend(node, "Configuration");
+  std::string filename(node.child_value());
 
-    Errors::XMLerr("Configuration type unknown");
-  }catch(...) {
-    Errors::XMLerr("Error in initialization of gauge field ");
-  }
-  return 0;
+  if(!XML::attribute_compare(node,"Class","Trajectory")){
+    // Search for a file starting with the node content
+    // and appending the trajectory number at the end
+    
+    // Separate the filename into directory and prepend
+    const char* str = filename.c_str();
+    const char* token;
+    std::string directory, prepend ;
+    if ((token = strrchr(str, '/'))!=NULL){
+    directory = filename.substr(0,token-str+1);
+    prepend = filename.substr(token-str+1, filename.length());
+    } else {
+      directory = "./";
+      prepend = filename;
+    }
+    std::string filepath;
+    std::string latest_conf = prepend;
+    std::string fname;
+    
+    // Looks for the latest created file starting with
+    // filename
+    DIR *dir;
+    struct dirent *ent;
+    time_t latest_access = 0;
+    if ((dir = opendir (directory.c_str())) != NULL) {
+      // saves all the filenames in the dir 
+      struct stat filestat;
+      while (ent = readdir (dir)){
+	fname = ent->d_name;
+	filepath = directory.c_str()  + fname;
+	stat( filepath.c_str(), &filestat );
+	if (S_ISREG(filestat.st_mode) && fname.length() >= prepend.length()){
+	  //starts with filename
+	  if (0 == fname.compare(0, prepend.length(), prepend))
+	    if (filestat.st_mtime > latest_access){
+	      latest_access = filestat.st_mtime; 
+	      latest_conf = fname;
+	    }
+	}
+      }
+      closedir (dir);
+    } else {
+      // Directory not found
+      CCIO::cout << "The directory "<< directory << " was not found in your path.\n";
+      exit(1); 
+    }
+   
+
+    filename = directory.c_str() + latest_conf;
+  } 
+  initialize(main_node, filename);
 }
 
 int GaugeGlobal::initialize(XML::node node,std::string filename){
-  CCIO::cout<<"filename\n";
   try{
     XML::descend(node,"Configuration");
     if(!XML::attribute_compare(node,"Type","TextFile")){

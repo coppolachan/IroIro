@@ -22,6 +22,8 @@ namespace XML
 
   int load_file(pugi::xml_document &doc, const char *filename);
 
+  int save_to_file(pugi::xml_document& doc, const char* filename);
+
   node select_node(pugi::xml_document &doc, const char *name);
 
   node getInputXML(const char *filename);
