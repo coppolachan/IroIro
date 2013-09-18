@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-09-12 16:08:40 cossu>
+# Time-stamp: <2013-09-18 14:18:50 cossu>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -382,6 +382,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/findminmax.hpp		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
+			HMC/TrajectoryInfo.hpp			\
 			HMC/mdExec.hpp		                \
 			HMC/mdExec_leapfrog.hpp			\
 			HMC/mdExec_2MN.hpp	                \

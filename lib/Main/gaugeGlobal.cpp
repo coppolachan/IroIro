@@ -2,7 +2,7 @@
  * @file gaugeGlobal.cpp
  * @brief Declaration of the GaugeGlobal class
  *
- * Time-stamp: <2013-09-17 17:33:19 cossu>
+ * Time-stamp: <2013-09-18 14:23:00 cossu>
  */
 
 #include "gaugeGlobal.hpp"
@@ -57,11 +57,14 @@ void GaugeGlobal::initializeILDG(const std::string &Filename) {
 }
 
 
-int GaugeGlobal::initialize(XML::node node){
-  XML::node main_node = node;
-  XML::descend(node, "Configuration");
-  std::string filename(node.child_value());
+TrajInfo GaugeGlobal::initialize(XML::node node){
+  using namespace std;
 
+  TrajInfo Info;
+  XML::descend(node, "Configuration");
+  string filename(node.child_value());
+  
+  
   if(!XML::attribute_compare(node,"Class","Trajectory")){
     // Search for a file starting with the node content
     // and appending the trajectory number at the end
@@ -69,20 +72,24 @@ int GaugeGlobal::initialize(XML::node node){
     // Separate the filename into directory and prepend
     const char* str = filename.c_str();
     const char* token;
-    std::string directory, prepend ;
+    string directory, prepend ;
+    string filepath, fname;
+
     if ((token = strrchr(str, '/'))!=NULL){
-    directory = filename.substr(0,token-str+1);
-    prepend = filename.substr(token-str+1, filename.length());
+      directory = filename.substr(0,token-str+1);
+      prepend = filename.substr(token-str+1, filename.length());
     } else {
       directory = "./";
       prepend = filename;
     }
-    std::string filepath;
-    std::string latest_conf = prepend;
-    std::string fname;
-    
-    // Looks for the latest created file starting with
-    // filename
+ 
+    string latest_conf = prepend;
+
+    Info.Filename_prefix = filename;
+
+    // Looks for the latest created file starting 
+    // with filename
+
     DIR *dir;
     struct dirent *ent;
     time_t latest_access = 0;
@@ -94,30 +101,34 @@ int GaugeGlobal::initialize(XML::node node){
 	filepath = directory.c_str()  + fname;
 	stat( filepath.c_str(), &filestat );
 	if (S_ISREG(filestat.st_mode) && fname.length() >= prepend.length()){
-	  //starts with filename
+	  //starts with [filename]
 	  if (0 == fname.compare(0, prepend.length(), prepend))
 	    if (filestat.st_mtime > latest_access){
 	      latest_access = filestat.st_mtime; 
 	      latest_conf = fname;
+	      Info.StartingConfig = 
+		atoi(latest_conf.substr(prepend.length(),latest_conf.length()).c_str())+1;
 	    }
 	}
       }
       closedir (dir);
     } else {
       // Directory not found
-      CCIO::cout << "The directory "<< directory << " was not found in your path.\n";
-      exit(1); 
+      ostringstream msg;
+      msg << "The directory "<< directory << " was not found in your path.\n";
+      Errors::IOErr(msg);
     }
-   
-
     filename = directory.c_str() + latest_conf;
   } 
-  initialize(main_node, filename);
+  
+  int status = initialize(node, filename);
+
+  return Info;
 }
 
 int GaugeGlobal::initialize(XML::node node,std::string filename){
   try{
-    XML::descend(node,"Configuration");
+    //    XML::descend(node,"Configuration");
     if(!XML::attribute_compare(node,"Type","TextFile")){
       initializeTxt(filename);
       return 0;
@@ -142,11 +153,17 @@ int GaugeGlobal::initialize(XML::node node,std::string filename){
       initializeILDG(filename);
       return 0;
     }
+    
+    std::ostringstream msg;
+    msg << "Configuration type unknown\n";
+    Errors::BaseWarning("GaugeGlobal::initialize",msg);
+    return -1;
 
-    std::cout << "Configuration type unknown\n";
-    exit(1);
   }catch(...) {
-    std::cout << "Error in initialization of gauge field "<< std::endl;
+    std::ostringstream msg;
+    msg << "Error in initialization of the Gauge field\n ";
+    Errors::BaseWarning("GaugeGlobal::initialize",msg);
+    return -1;
   }
   return 0;
 }

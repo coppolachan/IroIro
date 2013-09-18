@@ -53,54 +53,59 @@
 #include "include/commandline.hpp"
 #include "include/geometry.hpp"
 #include "Main/gaugeGlobal.hpp"
+#include "HMC/hmcGeneral.hpp"
+#include "lib/Tools/jobUtils.hpp"
 
 using namespace XML;
 
-int run_hmc(GaugeField, node);
+int run_hmc(GaugeField, TrajInfo*, node);
 
 int main(int argc, char* argv[]){
   int status;
   CommandOptions Options = ReadCmdLine(argc, argv);
  
-  CCIO::header(IROIRO_PACKAGE_STRING);
- 
-  //Reading input file
+   //Reading input file
   node top_node = getInputXML(Options.filename);  
 
   //Initializing geometry using XML input
   Geometry geom(top_node);
 
-  //Initialize GaugeField using XML input
   GaugeGlobal GaugeF(geom);
-  GaugeF.initialize(top_node);
+  TrajInfo Info = GaugeF.initialize(top_node);
 
   node HMC_node = top_node;
   descend(HMC_node, "HMC");
+
+  // Echo of input xml
+  JobUtils::echo_input(Options.filename);
   
-  status = run_hmc(GaugeF, HMC_node);
+  status = run_hmc(GaugeF, &Info, HMC_node);
 
   return status;
 }
 
 
-int run_hmc(GaugeField Gfield_, node HMC_node) {
-  /*
+int run_hmc(GaugeField GaugeF_, TrajInfo* Info, node HMC_node) {
+
+  CCIO::header(IROIRO_PACKAGE_STRING);
+ 
+  
   CCIO::header("Starting HMC updater");
 
   RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
  
   Integrators::Integr = 
-    Integrators::createIntegratorFactory(HMC_node, Gfield_.Format);
+    Integrators::createIntegratorFactory(HMC_node);
 
   //Initialization of HMC classes from XML file
-  HMCgeneral hmc_general(HMC_node);
+  HMCgeneral hmc_general(HMC_node, Info);
 
   ////////////// HMC calculation starts /////////////////
   double elapsed_time;
   TIMING_START;
   try{
-    CCIO::cout<< "-----  HMC starts\n"<<std::endl;
-    hmc_general.evolve(Gfield_.U);
+    CCIO::cout<< "-------------------  HMC starts\n"<<std::endl;
+    hmc_general.evolve(GaugeF_);
   }catch(const char* error){
     CCIO::cerr << error << std::endl;
     return EXIT_FAILURE;
@@ -111,8 +116,8 @@ int run_hmc(GaugeField Gfield_, node HMC_node) {
   CCIO::cout << "Total elapsed time (s): "<< elapsed_time/1000.0 << "\n";
 
   CCIO::cout << "Saving configuration on disk in binary format\n";
-  CCIO::SaveOnDisk< Format::Format_G >(Gfield_.U, "final_conf.bin");
-  */
+  CCIO::SaveOnDisk< Format::Format_G >(GaugeF_.data, "final_conf.bin");
+  
   return 0;
 }
 
