@@ -34,10 +34,11 @@ struct HMCGeneralParams {
     ThermalizationSteps = Info.ThermalizationSteps;
     StartingConfig = Info.StartingConfig;
     Filename_prefix = Info.Filename_prefix;
-    TotalSweeps = 0;
+ 
 
     // -------------------
     XML::read(node,"Nsweeps", Nsweeps, MANDATORY);
+    TotalSweeps = StartingConfig+Nsweeps+1; //default
     if(XML::read(node,"TotalSweeps", TotalSweeps))
        CCIO::cout<< "Using default [TotalSweeps = "
 		<< Nsweeps << "]\n";     

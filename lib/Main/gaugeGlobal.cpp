@@ -2,7 +2,7 @@
  * @file gaugeGlobal.cpp
  * @brief Declaration of the GaugeGlobal class
  *
- * Time-stamp: <2013-09-18 14:23:00 cossu>
+ * Time-stamp: <2013-09-19 12:02:48 cossu>
  */
 
 #include "gaugeGlobal.hpp"
@@ -129,6 +129,10 @@ TrajInfo GaugeGlobal::initialize(XML::node node){
 int GaugeGlobal::initialize(XML::node node,std::string filename){
   try{
     //    XML::descend(node,"Configuration");
+   if(!XML::attribute_compare(node,"Type","Unit")){
+      initializeUnit();
+      return 0;
+    }
     if(!XML::attribute_compare(node,"Type","TextFile")){
       initializeTxt(filename);
       return 0;
@@ -156,9 +160,8 @@ int GaugeGlobal::initialize(XML::node node,std::string filename){
     
     std::ostringstream msg;
     msg << "Configuration type unknown\n";
-    Errors::BaseWarning("GaugeGlobal::initialize",msg);
-    return -1;
-
+    Errors::BaseErr("GaugeGlobal::initialize",msg);
+    
   }catch(...) {
     std::ostringstream msg;
     msg << "Error in initialization of the Gauge field\n ";
