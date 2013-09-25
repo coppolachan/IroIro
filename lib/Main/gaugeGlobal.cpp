@@ -2,7 +2,7 @@
  * @file gaugeGlobal.cpp
  * @brief Declaration of the GaugeGlobal class
  *
- * Time-stamp: <2013-09-19 12:02:48 cossu>
+ * Time-stamp: <2013-09-25 13:33:28 cossu>
  */
 
 #include "gaugeGlobal.hpp"
@@ -61,6 +61,7 @@ TrajInfo GaugeGlobal::initialize(XML::node node){
   using namespace std;
 
   TrajInfo Info;
+  XML::node top_node = node;
   XML::descend(node, "Configuration");
   string filename(node.child_value());
   
@@ -121,14 +122,14 @@ TrajInfo GaugeGlobal::initialize(XML::node node){
     filename = directory.c_str() + latest_conf;
   } 
   
-  int status = initialize(node, filename);
+  int status = initialize(top_node, filename);
 
   return Info;
 }
 
 int GaugeGlobal::initialize(XML::node node,std::string filename){
   try{
-    //    XML::descend(node,"Configuration");
+    XML::descend(node,"Configuration");
    if(!XML::attribute_compare(node,"Type","Unit")){
       initializeUnit();
       return 0;

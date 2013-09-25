@@ -4,10 +4,10 @@
 #ifndef MEASGENERAL_INCLUDED
 #define MEASGENERAL_INCLUDED
 
-//#include "format_F.h"
 #include "pugi_interface.h"
 #include "common_fields.hpp"
 #include "inputConfig.hpp"
+#include "include/messages_macros.hpp"
 #include "Tools/randNum_Factory.h"
 #include "Main/gaugeGlobal.hpp"
 #include "EigenModes/eigenModes.hpp"
@@ -27,7 +27,7 @@ namespace Measurements{
     
     Input(XML::node inode):node(inode),gconf(NULL),eigen(NULL),rng(NULL){
       XML::descend(node,"Measurement");
-      CCIO::cout<<"initialising RNG\n";
+      _Message(DEBUG_VERB_LEVEL, "initialising RNG\n");
       RNG_Env::RNG = RNG_Env::createRNGfactory(inode);// RNG is static value.
       if(RNG_Env::RNG) rng = RNG_Env::RNG->getRandomNumGenerator();
     }
@@ -76,15 +76,16 @@ public:
      seed_output_(false),
      has_eigen_(false){ 
 
-    CCIO::cout<<"constructing MeasGeneral\n";
+    _Message(DEBUG_VERB_LEVEL, "Constructing MeasGeneral object\n");
     setup(node);
-    CCIO::cout<<"MeasGeneral constructed\n";
+    _Message(DEBUG_VERB_LEVEL, "MeasGeneral object constructed\n");
   }
   template <typename MeasObj> void do_meas();
 };
 
 template<typename MeasObj> void MeasGeneral::do_meas(){
-
+  _Message(DEBUG_VERB_LEVEL, "Starting MeasGeneral::do_meas()\n");
+  
   for(int c=0; c<meas_num_; ++c){
 
     /* setting  gauge configuration */
@@ -95,7 +96,7 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
 
     Uin_.initialize(node_,infile.str());
     input_.gconf = &Uin_;
-    CCIO::cout<<"gauge configuration loaded from "<<infile.str()<<std::endl;
+    CCIO::cout<<"Gauge configuration loaded from "<<infile.str()<<std::endl;
 
     /* setting corresponding eigenmodes */
     if(has_eigen_){ 

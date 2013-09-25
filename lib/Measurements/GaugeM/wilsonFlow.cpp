@@ -48,39 +48,6 @@ void WilsonFlow::evolve_step()const{
   Z *= 0.75;                       // 17/36*Z0 -8/9*Z1 +3/4*Z2       
   update_U(Z);              // V(t+e) = exp(ep*(17/36*Z0 -8/9*Z1 +3/4*Z2))*W2
 }
-/*
-void WilsonFlow::evolve_step()const{
-                                    // W0 = U_
-  GaugeField Z0 = Sg_->md_force();  // Z0
-  Z0 *= 0.5;
-  update_U(Z0);                     // U_= W1 = exp(ep*Z0/2)*W0 
-  Z0 *= 2.0;
-
-  GaugeField Z1 = Sg_->md_force();  // Z1
-  GaugeField Zt = Z1;
-  Zt -= Z0;
-  Zt *= 1.0-sqrt(2.0)*0.5;          // (1-1/sqrt(2))*(Z1-Z0)  
-  update_U(Zt);                     // U_= W2 = exp(ep*Z0/2)*W1 
-
-  GaugeField Z2 = Sg_->md_force();  // Z2
-  Z2 *= 1.0+sqrt(2.0)*0.5;          // (1+1/sqrt(2))*Z2
-  Zt = Z2;
-  Zt -= Z1;
-  Z0 *= -0.5*(sqrt(2.0)-1.0);
-  Zt += Z0;                        // (1+1/sqrt(2))*Z2 -Z1 +(1/2-1/sqrt(2))*Z0
-  Z0 *= -2.0*(sqrt(2.0)+1.0);       
-  update_U(Zt);// U_= W3= exp(ep*((1+1/sqrt(2))*Z2 -Z1 +(1/2-1/sqrt(2))*Z0))*W1 
-
-  Zt = Sg_->md_force();     // Z3       
-  Z2 *= -4.0;             
-  Z1 *= 2.0*(1.0 +sqrt(2.0)); 
-  Zt += Z2;                 // Z3 -4*c2*Z2 
-  Zt += Z1;                 // Z3 -4*c2*Z2 +(6-4*c1)*Z1
-  Zt += Z0;                 // Z3 -4*c2*Z2 +(6-4*c1)*Z1 +Z0
-  Zt /= 6.0;
-  update_U(Zt);          
-}
-*/
 
 double WilsonFlow::Edens_plaq(int t)const{
   double td = tau(t);
