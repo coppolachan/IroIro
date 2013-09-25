@@ -9,6 +9,7 @@
 
 #include "sunMat.hpp"
 #include "sunVec.hpp"
+#include "include/errors.hpp"
 #include <complex>
 
 class RandNum;
@@ -53,8 +54,9 @@ namespace SUNmatUtils{
  // obtain the adjoint representation
   template<size_t COLORS>
   const std::valarray<double> adjoint(const SUNmatrix<COLORS>& u){
-    CCIO::cout<<"implemented only for COLOR=3"<<std::endl;
-    abort();
+    std::ostringstream msg;
+    msg << "implemented only for COLOR=3\n";
+    Errors::BaseErr("SU3mat::adjoint", msg);
   }
 
   template<>
