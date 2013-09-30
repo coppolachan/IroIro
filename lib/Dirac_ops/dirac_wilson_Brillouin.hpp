@@ -1,6 +1,6 @@
 /*! @filename dirac_wilson_Brillouin.hpp
  * @brief declaration of Dirac_Wilson_Brillouin class 
- * Time-stamp: <2013-07-02 13:25:08 noaki>
+ * Time-stamp: <2013-09-28 22:45:26 noaki>
  ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
@@ -24,6 +24,13 @@ private:
   const ffmt_t ff_;
   const gfmt_t gf_;
   const size_t fsize_;
+
+  ///
+  Format::Format_G Wfmt_;
+  Field W_;
+  Format::Format_G Ffmt_;
+  Field F_;
+  ///
 
   int sr(int s,int c)const{return 2*(s*NC_+c);}
   int si(int s,int c)const{return 2*(s*NC_+c)+1;}
@@ -49,6 +56,9 @@ private:
   void mult_imp(Field&,const Field&)const;
   
   int sgm(int,int,int)const;
+  void Wsetup(const Field* u);
+  void Fsetup(const Field* u);
+
 public:
  /*! @brief constructor to create instance with normal site indexing */
   Dirac_Wilson_Brillouin(double mass,const Field* u,ImpType imp=Standard)
@@ -58,7 +68,12 @@ public:
      kbr_(1.0/(mass+15.0/8.0)),u_(u),
      comm_(Communicator::instance()),
      ff_(Nvol_),fsize_(ff_.size()),gf_(Nvol_),
-     Nin_(ff_.Nin()){
+     Nin_(ff_.Nin()),Wfmt_(Nvol_,81),Ffmt_(Nvol_,6),
+     W_(Wfmt_.size()),F_(Ffmt_.size()){
+
+
+    Wsetup(u);
+    Fsetup(u);
     //
     if(imp==Improved){
       kbr_= 1.0/(mass+225.0/128.0);
@@ -72,7 +87,12 @@ public:
      mult_core(NULL),u_(u),
      comm_(Communicator::instance()),
      ff_(Nvol_),fsize_(ff_.size()),gf_(Nvol_),
-     Nin_(ff_.Nin()){
+     Nin_(ff_.Nin()),Wfmt_(Nvol_,81),Ffmt_(Nvol_,6),
+     W_(Wfmt_.size()),F_(Ffmt_.size()){
+
+    Wsetup(u);
+    Fsetup(u);
+
     //
     double mass;
     XML::read(node,"mass",mass,MANDATORY);

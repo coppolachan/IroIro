@@ -30,9 +30,8 @@ EigenCalcGeneral::EigenCalcGeneral(const XML::node& node){
   eslvFptr_.reset(EigenSolver::createEigenSolverFactory(eslvNode));  
 }
 
-void EigenCalcGeneral::do_calc(GaugeField* const gconf){
+void EigenCalcGeneral::do_calc(InputConfig& input){
 
-  InputConfig input(gconf);
   const auto_ptr<DiracWilsonLike> diracPtr(diracFptr_->getDirac(input));
   const auto_ptr<Fopr_Herm>       aoprPtr(opAccelFptr_->getFoprHerm(diracPtr.get()));
   const auto_ptr<EigenSorter>     sorterPtr(esortFptr_->getEigenSorter(aoprPtr.get()));

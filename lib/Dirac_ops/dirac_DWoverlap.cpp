@@ -1,6 +1,6 @@
 /*! @file dirac_DWoverlap.cpp
  *  @brief methods of the Dirac_DomainWall_4D class
- * Time-stamp: <2013-07-03 10:42:24 noaki>
+ * Time-stamp: <2013-09-19 08:21:47 noaki>
  */
 #include "dirac_DWoverlap.hpp"
 #include "subSpaceProjector.hpp"
@@ -9,7 +9,7 @@
 using namespace FieldExpression;
 
 const Field Dirac_DWoverlap::mult(const Field& f)const{
-  Field fp;
+  Field fp(f.size());
   SubSpace::project_real(fp,f,ems_->evecs_,sgnEv_); // sgn(lmd)*f_low
 
   Field w = gamma5(fp);          
