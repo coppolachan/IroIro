@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_EvenOdd.hpp
  * @brief Declaration of class Dirac_optimalDomainWall_EvenOdd (5d operator)
- Time-stamp: <2013-07-05 15:45:24 noaki>
+ Time-stamp: <2013-08-23 10:43:53 cossu>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
@@ -66,6 +66,7 @@ public:
   const DiracWilsonLike* getDoe()const{ return &Doe_;}
   
   double getMass() const{return Deo_.getMass();}
+  int getN5() const{return Deo_.getN5();}
 
   const Field* getGaugeField_ptr()const{ return Deo_.getGaugeField_ptr(); }
 

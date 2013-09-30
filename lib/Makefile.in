@@ -72,7 +72,8 @@ target_triplet = @target@
 @IBM_BGQKERNELS_TRUE@am__append_7 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
-@IBM_BGQKERNELS_FALSE@am__append_8 = Smearing/stoutSmear_core.cpp \
+@IBM_BGQKERNELS_TRUE@am__append_8 = Tools/utils_BGQ.hpp
+@IBM_BGQKERNELS_FALSE@am__append_9 = Smearing/stoutSmear_core.cpp \
 @IBM_BGQKERNELS_FALSE@	Smearing/smartConf_core.cpp \
 @IBM_BGQKERNELS_FALSE@	Smearing/APEsmear.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT)
@@ -147,8 +148,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Action/action_fermiontype_factory_creator.cpp \
 	Action/action_fermiontype_factory.cpp Communicator/comm_io.cpp \
 	IO/fields_io.cpp IO/text_header.cpp IO/binary_reader.cpp \
-	IO/NERSC_reader.cpp IO/ILDG_reader.cpp \
-	IO/JLQCDLegacy_reader.cpp \
+	IO/binary_writer.cpp IO/NERSC_reader.cpp IO/ILDG_reader.cpp \
+	IO/ILDG_writer.cpp IO/JLQCDLegacy_reader.cpp \
 	Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 	Dirac_ops/dirac_Operator_Factory.cpp Dirac_ops/dirac.cpp \
 	Dirac_ops/dirac_WilsonLike.cpp \
@@ -210,11 +211,12 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp \
 	Smearing/stoutSmear_core.cpp Smearing/smartConf_core.cpp \
 	Smearing/APEsmear.cpp Smearing/smearingFactories.cpp \
-	Tools/fieldUtils.cpp Tools/jobUtils.cpp Tools/sunMatUtils.cpp \
-	Tools/sunAdjMatUtils.cpp Tools/randNum.cpp \
-	Tools/randNum_MP.cpp Tools/randNum_Factory.cpp \
-	Tools/gammaMatrices.cpp Tools/sunAlgUtils.cpp \
-	Tools/complexMatrix.cpp Tools/Remez/alg_remez.cpp \
+	Tools/utils_BGQ.hpp Tools/fieldUtils.cpp Tools/jobUtils.cpp \
+	Tools/sunMatUtils.cpp Tools/sunAdjMatUtils.cpp \
+	Tools/randNum.cpp Tools/randNum_MP.cpp \
+	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp \
+	Tools/sunAlgUtils.cpp Tools/complexMatrix.cpp \
+	Tools/Remez/alg_remez.cpp \
 	Tools/RationalApprox/rationalapprox.cpp \
 	Tools/ErrorsHandling/xml_errors.cpp \
 	Tools/ErrorsHandling/allocation_errors.cpp \
@@ -250,7 +252,9 @@ am__objects_5 = $(am__objects_4)
 @IBM_BGQKERNELS_FALSE@	smartConf_core.$(OBJEXT) \
 @IBM_BGQKERNELS_FALSE@	APEsmear.$(OBJEXT)
 am__objects_9 = $(am__objects_7) $(am__objects_8)
-@USE_DCMT_TRUE@am__objects_10 = dcmt_wrapper.$(OBJEXT)
+am__objects_10 =
+am__objects_11 = $(am__objects_10)
+@USE_DCMT_TRUE@am__objects_12 = dcmt_wrapper.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) \
@@ -264,8 +268,9 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	action_fermiontype_factory_creator.$(OBJEXT) \
 	action_fermiontype_factory.$(OBJEXT) comm_io.$(OBJEXT) \
 	fields_io.$(OBJEXT) text_header.$(OBJEXT) \
-	binary_reader.$(OBJEXT) NERSC_reader.$(OBJEXT) \
-	ILDG_reader.$(OBJEXT) JLQCDLegacy_reader.$(OBJEXT) \
+	binary_reader.$(OBJEXT) binary_writer.$(OBJEXT) \
+	NERSC_reader.$(OBJEXT) ILDG_reader.$(OBJEXT) \
+	ILDG_writer.$(OBJEXT) JLQCDLegacy_reader.$(OBJEXT) \
 	dirac_Operator_FactoryCreator.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) dirac.$(OBJEXT) \
 	dirac_WilsonLike.$(OBJEXT) dirac_staggeredLike.$(OBJEXT) \
@@ -306,8 +311,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	multiShiftSolver_CG.$(OBJEXT) rationalSolver_CG.$(OBJEXT) \
 	solver.$(OBJEXT) stoutSmear_base.$(OBJEXT) \
 	smartConf_base.$(OBJEXT) $(am__objects_9) \
-	smearingFactories.$(OBJEXT) fieldUtils.$(OBJEXT) \
-	jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
+	smearingFactories.$(OBJEXT) $(am__objects_11) \
+	fieldUtils.$(OBJEXT) jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	sunAdjMatUtils.$(OBJEXT) randNum.$(OBJEXT) \
 	randNum_MP.$(OBJEXT) randNum_Factory.$(OBJEXT) \
 	gammaMatrices.$(OBJEXT) sunAlgUtils.$(OBJEXT) \
@@ -315,7 +320,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	rationalapprox.$(OBJEXT) xml_errors.$(OBJEXT) \
 	allocation_errors.$(OBJEXT) base_errors.$(OBJEXT) \
 	io_errors.$(OBJEXT) convergence_errors.$(OBJEXT) \
-	parameter_errors.$(OBJEXT) $(am__objects_10) \
+	parameter_errors.$(OBJEXT) $(am__objects_12) \
 	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
 	HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
@@ -344,6 +349,16 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD " $@;
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC    " $@;
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN   " $@;
@@ -511,7 +526,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-26 15:32:59 noaki>
+# Time-stamp: <2013-09-25 14:20:18 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -519,7 +534,8 @@ AM_CXXFLAGS = $(am__append_4)
 AM_LDFLAGS = $(am__append_5) $(BFM_LIBS)
 OPTLIB = $(am__append_1) $(am__append_2) $(am__append_3)
 DWF_BGQ_SRC = $(am__append_6)
-SMEAR_SRCS = $(am__append_7) $(am__append_8)
+SMEAR_SRCS = $(am__append_7) $(am__append_9)
+UTILS_SRCS = $(am__append_8)
 @IBM_BGQ_FALSE@@USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
 
@@ -583,8 +599,10 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		IO/fields_io.cpp			\
 		IO/text_header.cpp			\
 		IO/binary_reader.cpp			\
+		IO/binary_writer.cpp			\
 		IO/NERSC_reader.cpp			\
 		IO/ILDG_reader.cpp			\
+		IO/ILDG_writer.cpp			\
 		IO/JLQCDLegacy_reader.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
@@ -661,6 +679,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/smartConf_base.cpp		\
 		$(SMEAR_SRCS)				\
 		Smearing/smearingFactories.cpp		\
+		$(UTILS_SRCS)		        	\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
@@ -767,12 +786,17 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\
 			IO/binary_reader.hpp			\
+			IO/binary_writer.hpp			\
 			IO/general_reader.hpp			\
+			IO/general_writer.hpp			\
 			IO/generic_header.hpp			\
 			IO/ILDG_header.hpp			\
 			IO/ILDG_reader.hpp			\
+			IO/ILDG_writer.hpp			\
 			IO/JLQCDLegacy_reader.hpp		\
 			IO/NERSC_reader.hpp			\
+			IO/readers.hpp				\
+			IO/writers.hpp				\
 			IO/text_header.hpp			\
 			Geometry/siteIndex.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
@@ -806,7 +830,6 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\
-			Dirac_ops/utils_BGQ.hpp	        	\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
                         EigenModes/eigenCalcGeneral.hpp  	\
@@ -821,6 +844,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/findminmax.hpp		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
+			HMC/TrajectoryInfo.hpp			\
 			HMC/mdExec.hpp		                \
 			HMC/mdExec_leapfrog.hpp			\
 			HMC/mdExec_2MN.hpp	                \
@@ -843,6 +867,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Smearing/stoutSmear.hpp			\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
+			Tools/utils_BGQ.hpp	        	\
 			Tools/jobUtils.hpp			\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp   		\
@@ -995,6 +1020,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HBActions_SUN.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ILDG_reader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ILDG_writer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JLQCDLegacy_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NERSC_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action.Po@am__quote@
@@ -1021,6 +1047,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/base_errors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/bfm_storage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/binary_reader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/binary_writer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/boundaryCond.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/comm_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commandline.Po@am__quote@
@@ -1535,6 +1562,20 @@ binary_reader.obj: IO/binary_reader.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o binary_reader.obj `if test -f 'IO/binary_reader.cpp'; then $(CYGPATH_W) 'IO/binary_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/binary_reader.cpp'; fi`
 
+binary_writer.o: IO/binary_writer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT binary_writer.o -MD -MP -MF $(DEPDIR)/binary_writer.Tpo -c -o binary_writer.o `test -f 'IO/binary_writer.cpp' || echo '$(srcdir)/'`IO/binary_writer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/binary_writer.Tpo $(DEPDIR)/binary_writer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/binary_writer.cpp' object='binary_writer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o binary_writer.o `test -f 'IO/binary_writer.cpp' || echo '$(srcdir)/'`IO/binary_writer.cpp
+
+binary_writer.obj: IO/binary_writer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT binary_writer.obj -MD -MP -MF $(DEPDIR)/binary_writer.Tpo -c -o binary_writer.obj `if test -f 'IO/binary_writer.cpp'; then $(CYGPATH_W) 'IO/binary_writer.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/binary_writer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/binary_writer.Tpo $(DEPDIR)/binary_writer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/binary_writer.cpp' object='binary_writer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o binary_writer.obj `if test -f 'IO/binary_writer.cpp'; then $(CYGPATH_W) 'IO/binary_writer.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/binary_writer.cpp'; fi`
+
 NERSC_reader.o: IO/NERSC_reader.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT NERSC_reader.o -MD -MP -MF $(DEPDIR)/NERSC_reader.Tpo -c -o NERSC_reader.o `test -f 'IO/NERSC_reader.cpp' || echo '$(srcdir)/'`IO/NERSC_reader.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/NERSC_reader.Tpo $(DEPDIR)/NERSC_reader.Po
@@ -1562,6 +1603,20 @@ ILDG_reader.obj: IO/ILDG_reader.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/ILDG_reader.cpp' object='ILDG_reader.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ILDG_reader.obj `if test -f 'IO/ILDG_reader.cpp'; then $(CYGPATH_W) 'IO/ILDG_reader.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/ILDG_reader.cpp'; fi`
+
+ILDG_writer.o: IO/ILDG_writer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ILDG_writer.o -MD -MP -MF $(DEPDIR)/ILDG_writer.Tpo -c -o ILDG_writer.o `test -f 'IO/ILDG_writer.cpp' || echo '$(srcdir)/'`IO/ILDG_writer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ILDG_writer.Tpo $(DEPDIR)/ILDG_writer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/ILDG_writer.cpp' object='ILDG_writer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ILDG_writer.o `test -f 'IO/ILDG_writer.cpp' || echo '$(srcdir)/'`IO/ILDG_writer.cpp
+
+ILDG_writer.obj: IO/ILDG_writer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT ILDG_writer.obj -MD -MP -MF $(DEPDIR)/ILDG_writer.Tpo -c -o ILDG_writer.obj `if test -f 'IO/ILDG_writer.cpp'; then $(CYGPATH_W) 'IO/ILDG_writer.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/ILDG_writer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/ILDG_writer.Tpo $(DEPDIR)/ILDG_writer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='IO/ILDG_writer.cpp' object='ILDG_writer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o ILDG_writer.obj `if test -f 'IO/ILDG_writer.cpp'; then $(CYGPATH_W) 'IO/ILDG_writer.cpp'; else $(CYGPATH_W) '$(srcdir)/IO/ILDG_writer.cpp'; fi`
 
 JLQCDLegacy_reader.o: IO/JLQCDLegacy_reader.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT JLQCDLegacy_reader.o -MD -MP -MF $(DEPDIR)/JLQCDLegacy_reader.Tpo -c -o JLQCDLegacy_reader.o `test -f 'IO/JLQCDLegacy_reader.cpp' || echo '$(srcdir)/'`IO/JLQCDLegacy_reader.cpp

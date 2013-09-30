@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-26 15:32:59 noaki>
+# Time-stamp: <2013-09-25 14:20:18 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -15,6 +15,7 @@ OPTLIB =
 
 DWF_BGQ_SRC = 
 SMEAR_SRCS =
+UTILS_SRCS = 
 ###########################################
 # Configure driven path selector
 if USE_MPI
@@ -57,6 +58,7 @@ ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp
 SMEAR_SRCS += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
 SMEAR_SRCS += Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
 SMEAR_SRCS += Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
+UTILS_SRCS += Tools/utils_BGQ.hpp
 else
 ACTION_SRCS = Action/action_gauge_rect.cpp
 ACTION_SRCS += Action/action_gauge_wilson_force.cpp
@@ -135,8 +137,10 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		IO/fields_io.cpp			\
 		IO/text_header.cpp			\
 		IO/binary_reader.cpp			\
+		IO/binary_writer.cpp			\
 		IO/NERSC_reader.cpp			\
 		IO/ILDG_reader.cpp			\
+		IO/ILDG_writer.cpp			\
 		IO/JLQCDLegacy_reader.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
@@ -213,6 +217,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/smartConf_base.cpp		\
 		$(SMEAR_SRCS)				\
 		Smearing/smearingFactories.cpp		\
+		$(UTILS_SRCS)		        	\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
@@ -321,12 +326,17 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\
 			IO/binary_reader.hpp			\
+			IO/binary_writer.hpp			\
 			IO/general_reader.hpp			\
+			IO/general_writer.hpp			\
 			IO/generic_header.hpp			\
 			IO/ILDG_header.hpp			\
 			IO/ILDG_reader.hpp			\
+			IO/ILDG_writer.hpp			\
 			IO/JLQCDLegacy_reader.hpp		\
 			IO/NERSC_reader.hpp			\
+			IO/readers.hpp				\
+			IO/writers.hpp				\
 			IO/text_header.hpp			\
 			Geometry/siteIndex.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
@@ -360,7 +370,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\
-			Dirac_ops/utils_BGQ.hpp	        	\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
                         EigenModes/eigenCalcGeneral.hpp  	\
@@ -375,6 +384,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/findminmax.hpp		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
+			HMC/TrajectoryInfo.hpp			\
 			HMC/mdExec.hpp		                \
 			HMC/mdExec_leapfrog.hpp			\
 			HMC/mdExec_2MN.hpp	                \
@@ -397,6 +407,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Smearing/stoutSmear.hpp			\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
+			Tools/utils_BGQ.hpp	        	\
 			Tools/jobUtils.hpp			\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp   		\

@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-07-05 16:20:59 cossu>
+ * Time-stamp: <2013-09-13 13:59:27 cossu>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -12,40 +12,57 @@
 #include "include/field.h"
 #include "include/messages_macros.hpp"
 #include "include/errors.hpp"
-#include "generic_header.hpp"
 #include "Geometry/siteIndex.hpp"
-#include "Tools/byteswap.hpp"
 #include <stdio.h>
 #include <string.h>
 
-#include "general_reader.hpp"
-#include "binary_reader.hpp"
-#include "NERSC_reader.hpp"
-#include "JLQCDLegacy_reader.hpp"
-#include "ILDG_reader.hpp"
 
+#include "generic_header.hpp"
+#include "readers.hpp"
+#include "writers.hpp"
 
 #define CCIO_FILE_APPEND_MODE true
 #define FORTRAN_CONTROL_WORDS 4  //number of fortran bytes for control
 
 namespace CCIO {
   /*!
+   * @brief Factory for Readers
+   * @param ID string containing the ID of the input mode
+   */
+  GeneralReader* getReader(const std::string ID, int, int, int);
+
+  /*!
+   * @brief Factory for Readers
+   * @param ID string containing the ID of the input mode
+   */
+  GeneralWriter* getWriter(const std::string ID, int, int, int);
+
+  /*!
    * @brief Saves a Field on the disk 
    * @param append_mode Used to write several fields in the same file (default = off)
    * @param T is the format specification
    */
   template <typename T>
-  int SaveOnDisk(const Field& f, const char* filename, bool append_mode = false){
+  int SaveOnDisk(const Field& f, const char* filename,
+		 bool append_mode = false,
+		 const std::string writerID = "Binary"){
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     T fmt(cmprms->Nvol());
+    GeneralWriter *writer;
 
     size_t local_idx, global_idx;
-    int num_nodes, total_vol;
-     
+    int num_nodes, local_vol, total_vol;
+    
+    total_vol = cmprms->Lvol();
+    local_vol = cmprms->Nvol();
+    num_nodes = cmprms->NP();
+    
     vector_int block_x(cmprms->Nx());
     varray_double copy(fmt.Nin()*block_x.size()*fmt.Nex());
     varray_double local(fmt.Nin()*block_x.size()*fmt.Nex());
+
+    writer = getWriter(writerID, total_vol, fmt.Nin(), fmt.Nex()); 
 
     // Open the output file, uses C style
     FILE * outFile;
@@ -53,9 +70,17 @@ namespace CCIO {
       if(append_mode) 	outFile = fopen (filename,"a");
       else          	outFile = fopen (filename,"w");
 
-      std::cout << "Writing (binary mode) "<<f.size()*comm->size()*sizeof(double)
+    if (outFile == NULL)
+      Errors::IOErr(Errors::FileNotFound, filename);
+
+    std::cout << "Writing file of type ["<<writerID<<"] - size "<<f.size()*comm->size()*sizeof(double)
 		<<" bytes on "<< filename << "... ";
+
+      writer->set_output(outFile);
+      writer->header();      
     }
+
+
     //Loop among nodes (master node)   
     for(int node_t = 0; node_t < cmprms->NPEt(); ++node_t) {
       for(int t_slice = 0; t_slice < cmprms->Nt(); ++t_slice){
@@ -88,15 +113,15 @@ namespace CCIO {
 			for (int in =0; in < fmt.Nin(); ++in) {
 			  //Breaks universality
 			  local_idx = in +fmt.Nin()*(x_idx + block_x.size()*ex);
-			  global_idx = in +fmt.Nin()*(ex+ fmt.Nex()*x_idx);//ILDG default
+			  global_idx = writer->format(x_idx, in, ex);
 			  copy[global_idx] = local[local_idx];
 			}
 		      }
 		    }
 		    if (outFile!=NULL) 
-		      fwrite((const char*)&copy[0], sizeof(double), 
-			     local.size(), outFile);
-		  }// end of if
+		      writer->write((double*)&copy[0], copy.size());
+		    		    
+		  }// end of primaryNode
 		}// end of node_x
 	      }
 	    }// end of node_y
@@ -104,6 +129,7 @@ namespace CCIO {
 	}// end of node_z
       }
     }// end of node_t
+
     comm->sync();    
     if(comm->primaryNode()) {
       fclose(outFile);
@@ -133,34 +159,31 @@ namespace CCIO {
   int ReadFromDisk(Field& f,
 		   const char* filename,
 		   const int offset = 0, 
-		   const std::string readerID = "Binary"){
+		   const std::string readerID = "Binary",
+		   const bool is_GaugeConf = true){
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");
+
     GeneralReader* reader;
     T fmt(cmprms->Nvol());
+
     size_t local_idx, global_idx;
     int num_nodes, total_vol, local_vol;
     
     _Message(DEBUG_VERB_LEVEL, "Lattice constants initialization...\n");
-    total_vol = cmprms->Lvol();
+ 
+   total_vol = cmprms->Lvol();
     local_vol = cmprms->Nvol();
     num_nodes    = cmprms->NP();
        
+
     vector_int block_x(cmprms->Nx());
     varray_double copy(fmt.Nin()*block_x.size()*fmt.Nex());
     varray_double local(fmt.Nin()*block_x.size()*fmt.Nex());
     
-    
-    //eventually move this into a separate function (GetReader factory);
-    if (readerID.compare("Binary")==0)
-      reader = new BinaryReader(total_vol, fmt.Nin(), fmt.Nex());
-    if (readerID.compare("NERSC")==0)
-      reader = new NERSCReader(total_vol, fmt.Nin(), fmt.Nex());
-    if (readerID.compare("JLQCDLegacy")==0)
-      reader = new JLQCDLegacyReader(total_vol, fmt.Nin(), fmt.Nex());
-    if (readerID.compare("ILDG")==0)
-      reader = new ILDGReader(total_vol, fmt.Nin(), fmt.Nex());
+    // Get the reader class
+    reader = getReader(readerID, total_vol, fmt.Nin(), fmt.Nex());
 
     // Open the output file
     FILE * inFile;
@@ -170,14 +193,17 @@ namespace CCIO {
       if (inFile == NULL)
 	Errors::IOErr(Errors::FileNotFound, filename);
 
-      std::cout << "Reading "<<f.size()*comm->size()*sizeof(double)
-		<<" bytes from "<< filename << " with offset "<< offset <<"... ";
+      //check file size
+
+      std::cout << "Reading file of type ["<<readerID<<"] - size "<<f.size()*comm->size()*sizeof(double)
+		<<" bytes from "<< filename << " with offset "<< offset <<"... " << std::flush;
       fseek(inFile, offset, SEEK_SET);
     
       reader->set_sources(inFile);
       reader->header();
 
     }
+
     //Loop among nodes (master node)   
     for(int node_t = 0; node_t < cmprms->NPEt(); ++node_t){
       for(int t_slice = 0; t_slice < cmprms->Nt(); ++t_slice){
@@ -226,8 +252,16 @@ namespace CCIO {
 	}// end of node_z
       }
     }// end of node_t
-    comm->sync();    
-    reader->check(f);
+    comm->sync();  
+
+    if (is_GaugeConf){
+      if (reader->check(f) != CHECK_PASS) {
+	Errors::IOErr(Errors::GenericError, "Failed some basic tests on the gauge configuration");
+      }
+      CCIO::cout << "Tests passed!\n";
+    }
+
+
     if(comm->primaryNode()){
       fclose(inFile);
       std::cout << "done\n";

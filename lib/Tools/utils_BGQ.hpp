@@ -1,7 +1,8 @@
 /*!--------------------------------------------------------------------------
  * @file utils_BGQ.hpp
- * @brief typedef & grobal functions to be used on BGQ
- *Time-stamp: <2013-07-07 08:43:34 noaki>
+ * @brief typedef & global functions to be used on BGQ
+
+ * Time-stamp: <2013-08-23 11:42:05 cossu>
  *-------------------------------------------------------------------------*/
 #ifndef UTILS_BGQ_INCLUDED
 #define UTILS_BGQ_INCLUDED
@@ -22,13 +23,6 @@ typedef struct GaugeConf{
 
 #define ENABLE_THREADING
 
-double omp_norm(Spinor* pointer,int is,int ns,int nid,int tid){
-  double tSum;
-  BGWilsonLA_Norm(&tSum,pointer+is,ns);
-  tSum = BGQThread_GatherDouble(tSum,0,tid,nid);
-  if(tid == 0) tSum = Communicator::instance()->reduce_sum(tSum);
-  tSum = BGQThread_ScatterDouble(tSum,0,tid,nid);
-  return sqrt(tSum);
-}
+double omp_norm(Spinor* pointer,int is,int ns,int nid,int tid);
 
 #endif

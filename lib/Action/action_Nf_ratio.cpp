@@ -11,6 +11,7 @@
 #include "include/messages_macros.hpp"
 #include "include/timings.hpp"
 
+
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf_ratio::observer_update(){
   D1_->update_internal_state();
@@ -97,6 +98,7 @@ double Action_Nf_ratio::calc_H(){
 GaugeField Action_Nf_ratio::md_force(){
   using namespace FieldUtils;
   // Calculates the force
+  long double force_timing;
   GaugeField fce, gauge_temp;
   Field zeta1(fermion_size_), zeta3(fermion_size_);
   Field temp(fermion_size_);
@@ -115,29 +117,45 @@ GaugeField Action_Nf_ratio::md_force(){
     #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
     #endif 
-
+    
+    FINE_TIMING_START(force_timing); 
     //////////// Reconstruct term zeta1
     zeta1 = phi_[pf];
     zeta1 *= MolecularDynApprox_Den_.Const();
+    
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
       temp = eta1[i];
       temp *= MolecularDynApprox_Den_.Residuals()[i];
       zeta1 += temp;
     }
     //// zeta1
-
+    FINE_TIMING_END(force_timing); 
+    _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf_ratio::md_force"
+	     << " - Zeta1 PF#"<<pf<<" timing = "
+	     << force_timing << std::endl);   
+    
+    
     monitor =  slv1_->solve_noReconstruct(eta2, zeta1); 
     #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
     #endif     
-
+    
+    long double total_force_timing = 0.0;
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
       gauge_temp.data = D1_->md_force(eta2[i],D1_->mult(eta2[i]));
+      FINE_TIMING_START(force_timing); 
       gauge_temp.data *= MolecularDynApprox_.InvResiduals()[i];
       fce += gauge_temp;
+      FINE_TIMING_END(force_timing); 
+      total_force_timing += force_timing;
     }
-
+  
+    _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf_ratio::md_force"
+	     << " - force1 PF#"<<pf<<" timing = "
+	     << total_force_timing << std::endl);  
+    
     ///////////// Reconstruct term zeta3
+    FINE_TIMING_START(force_timing); 
     zeta3 = zeta1;
     zeta3 *= MolecularDynApprox_.InvConst();
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
@@ -145,21 +163,34 @@ GaugeField Action_Nf_ratio::md_force(){
       temp *= MolecularDynApprox_.InvResiduals()[i];
       zeta3 += temp;
     }
+    
     //// zeta3
-
+    FINE_TIMING_END(force_timing); 
+    _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf_ratio::md_force"
+	     << " - zeta3 PF#"<<pf<<" timing = "
+	     << force_timing << std::endl);  
+    
+    
     monitor =  slv2_->solve_noReconstruct_inv(eta2, zeta3); 
-    #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
+#if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
     monitor.print();
-    #endif 
-
+#endif 
+    
+    
+    FINE_TIMING_START(force_timing); 
     for(int i = 0; i < Params_.degree_[MDStep]; ++i) {
-     gauge_temp.data = D2_->md_force(eta1[i],D2_->mult(eta2[i]));
-     gauge_temp.data += D2_->md_force(eta2[i],D2_->mult(eta1[i]));
-     gauge_temp.data *= MolecularDynApprox_Den_.Residuals()[i];
-     fce += gauge_temp;
+      gauge_temp.data = D2_->md_force(eta1[i],D2_->mult(eta2[i]));
+      gauge_temp.data += D2_->md_force(eta2[i],D2_->mult(eta1[i]));
+      gauge_temp.data *= MolecularDynApprox_Den_.Residuals()[i];
+      fce += gauge_temp;
     }
+    FINE_TIMING_END(force_timing); 
+    _Message(TIMING_VERB_LEVEL, "[Timing] - Action_Nf_ratio::md_force"
+	     << " - force2 PF#"<<pf<<" timing = "
+	     << force_timing << std::endl); 
+    
   }
-
+  
   if(smeared_) smart_conf_->smeared_force(fce);
   force = FieldUtils::TracelessAntihermite(fce); 
   

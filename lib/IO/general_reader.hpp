@@ -3,7 +3,7 @@
  *
  * @brief Declaration of the GeneralReader abstract class
  *
- * Time-stamp: <2013-06-04 17:44:16 neo>
+ * Time-stamp: <2013-09-12 13:07:59 cossu>
  */
 #ifndef GENERAL_READER_HPP_
 #define GENERAL_READER_HPP_
@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include "include/field.h"
 
+#define CHECK_ERROR 10
+#define CHECK_PASS  0
+ 
 namespace CCIO {
   class GeneralReader {
     //global info at contruction time

@@ -3,23 +3,28 @@
  */
 #include "jobUtils.hpp"
 #include "lib/Communicator/comm_io.hpp"
+#include "lib/Communicator/communicator.hpp"
 #include <fstream>
 
 namespace JobUtils{
   void echo_input(const char* file_name){
-
+    
+    if (Communicator::instance()->primaryNode()){
+    
     std::ifstream input(file_name);
     std::string buf;
-    CCIO::cout<<"==== [begin] Contents of the input file "
-	      << file_name << "===="
-	      << std::endl;
+    std::cout<<"==== [begin] Contents of the input file "
+	      << file_name << "====\n";
 
     while(input && getline(input,buf))
-      CCIO::cout<< buf << std::endl;
+      std::cout<< buf << "\n";
 
-    CCIO::cout<<"==== [end] Contents of the input file "
-	      << file_name << "===="
-	      << std::endl;
+    std::cout<<"==== [end] Contents of the input file "
+	      << file_name << "====\n"
+	      << std::fflush;
+    }
+
+    Communicator::instance()->sync();
     return;
   }
 }

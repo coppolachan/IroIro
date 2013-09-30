@@ -2,13 +2,14 @@
  * @file gaugeGlobal.hpp
  * @brief definition of the GaugeGlobal class
  *
- * Time-stamp: <2013-06-05 10:11:03 neo>
+ * Time-stamp: <2013-09-18 14:20:19 cossu>
  */
 #ifndef GAUGEGLOBAL_INCLUDED
 #define GAUGEGLOBAL_INCLUDED
 
 #include "include/geometry.hpp"
 #include "include/common_fields.hpp"
+#include "HMC/TrajectoryInfo.hpp"
 
 class RandNum;
 
@@ -34,7 +35,7 @@ public:
  /*! Intialization with "NERSC" */
   void initializeILDG(const std::string &Filename);
   
-  int initialize(XML::node node);
+  TrajInfo initialize(XML::node node);
   int initialize(XML::node node,std::string filename);
 };
 

@@ -1,6 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  */
+
 #include "measGeneral.hpp"
 #include "GaugeM/staples.hpp"
 #include "GaugeM/gfixFactory.hpp"
@@ -11,38 +12,39 @@
 using namespace std;
 
 void MeasGeneral::setup(XML::node inode){
-   /// input files 
+  // input files 
   XML::descend(inode,"Configuration");
   if(     !XML::attribute_compare(inode,"Input","RegularStep")) input_RegularStep(inode);
   else if(!XML::attribute_compare(inode,"Input","NumberList" )) input_NumberList(inode);
   else if(!XML::attribute_compare(inode,"Input","FileList"   )) input_FileList(inode);
   else{
-     cerr<<"no correct Configuration node is found\n";
+    CCIO::cerr<<"No correct Configuration node is found\n";
      abort();
   }
 
-  CCIO::cout<<"initializing Output\n";
-  /// output file for the measurement    
+  CCIO::cout<<"MeasGeneral::setup - Initializing Output\n";
+  
+  /// Sets output file for the measurements    
   XML::node onode = node_;
   XML::descend(onode,"Output");
 
   if(XML::read(onode,"output_prefix",output_prefix_))
-    CCIO::cout<<"[default] output_prefix_= "<<output_prefix_<<std::endl;
-  else CCIO::cout<<       "output_prefix_= "<<output_prefix_<<std::endl;
+    CCIO::cout<<"[default] output_prefix_= "<<output_prefix_<<"\n";
+  else CCIO::cout<<       "output_prefix_= "<<output_prefix_<<"\n";
   
   // output of the pre-processed gauge config.
   if(XML::read(onode,"gauge_prefix",gauge_prefix_)){
-    CCIO::cout<<"#gauge fixed config is NOT saved"<<std::endl;
+    CCIO::cout<<"Warning: gauge fixed configuration is NOT saved"<<std::endl;
   }else{
     gauge_output_= true;
-    CCIO::cout<<"#gauge fixed config is saved in "<<gauge_prefix_<<std::endl;
+    CCIO::cout<<"gauge fixed config is saved in "<<gauge_prefix_<<std::endl;
   }
   // output of the rng seed
   if(XML::read(onode,"seed_prefix",seed_prefix_)){
-    CCIO::cout<<"#rng seed is NOT saved"<<std::endl;
+    CCIO::cout<<"Warning: random number seed is NOT saved"<<std::endl;
   }else{
     seed_output_= true;
-    CCIO::cout<<"#rng seed is saved in "<<seed_prefix_<<std::endl;
+    CCIO::cout<<"random number seed is saved in "<<seed_prefix_<<std::endl;
   }
 }
 
@@ -66,7 +68,7 @@ void MeasGeneral::input_RegularStep(XML::node inode){
     CCIO::cout<<"[default] starting_num= "<<starting<<"\n";
   int increment=1;
   if(XML::read(inode,"idx_increment",increment))
-    CCIO::cout<<"[default] inclement_num= "<<increment<<"\n";
+    CCIO::cout<<"[default] increment_num= "<<increment<<"\n";
   
   for(int c=0; c<meas_num_; ++c) number_list_.push_back(starting+increment*c);
 

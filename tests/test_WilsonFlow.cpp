@@ -9,34 +9,32 @@
 using namespace std;
 
 int Test_WilsonFlow::run(){
-  XML::node wnode = input_.node;
-  XML::descend(wnode,"WilsonFlow");               // object creation
-  WilsonFlow wflow(wnode,*(input_.gconf));
+  CCIO::header(" ---- Calculating Wilson flow\n");
+ 
   int Nvol=CommonPrms::instance()->Nvol();
   vector<double> q(Nvol);                            // topology density
-
-  CCIO::cout<<" ---- Calculating Wilson flow\n"; 
   vector<double> tau;
   vector<double> ttEstd;
   vector<double> ttEsym;
 
+  XML::node wnode = input_.node;
+  XML::descend(wnode,"WilsonFlow");                  // object creation
+  WilsonFlow wflow(wnode,*(input_.gconf));
+
   int Mstep = wflow.MonitorStep();
   
-  for(int t=0; t<wflow.Nstep(); ++t){            // wilson flow 
-    tau.push_back(wflow.tau(t));
+  for(int step = 0; step < wflow.Nstep(); ++step){         // wilson flow 
+    tau.push_back(wflow.tau(step));
     wflow.evolve_step();
-    ttEstd.push_back(wflow.Edens_plaq(t));
-    ttEsym.push_back(wflow.Edens_clover(t));
-    if(!((t+1)%Mstep)){
-      CCIO::cout<<"Monitor at t="<<t+1<<"\n";
-      monitor(wflow.getU(),q);                      // topology monitor
-      topologyoutput(input_.output,t+1,q);          // saving topology density
-      /*
-      std::stringstream ofile_tmp;
-      ofile_tmp << output_.c_str() <<"_cooledconf_at_t" << t+1;
-      wflow.save_config(ofile_tmp.str().c_str());
-      */
+    ttEstd.push_back(wflow.Edens_plaq(step));
+    ttEsym.push_back(wflow.Edens_clover(step));
+
+    if(!((step+1)%Mstep)){
+      CCIO::cout<<"------  Monitor at t = "<< step + 1 << "\n";
+      monitor(wflow.getU(),q);                         // topology monitor
+      topologyoutput(input_.output,step+1,q);          // saving topology density
     }
+
   }
 
   ////// File Output //////

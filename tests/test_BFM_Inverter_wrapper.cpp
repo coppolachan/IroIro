@@ -13,6 +13,8 @@
 #include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
 
 #include "Action/action_fermiontype_factory.hpp"
+#include "Tools/utils_BGQ.hpp"
+
 
 using namespace std;
 
@@ -184,6 +186,20 @@ int Test_Solver_BFM::run(){
     CCIO::cout << "Operator Difference BFM-IroIro ["<<nsol<<"] = "<< F_Diff.norm() << "\n";
   }
   
+  Field sol(fe);
+  Spinor *fe_ptr = (Spinor*)fe.getaddr(0);
+  Spinor *sol_ptr = (Spinor*)sol.getaddr(0);
+  
+  
+  //sol = source;
+  //sol *= ConstTerm; 
+  for (int i = 0; i < Ls; i++)
+    BGWilsonLA_MultScalar(sol_ptr+i*CommonPrms::Nvol(), 
+			  fe_ptr+i*CommonPrms::Nvol(), 
+			  2.0, CommonPrms::Nvol());
+  
+
+
   ////////////////////////////////////////////////////////////////////////////////// 
   // Mult & Mult_dag
   

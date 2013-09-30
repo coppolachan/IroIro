@@ -89,7 +89,7 @@ double Action_Nf2_ratio::calc_H(){
 
   _Message(ACTION_VERB_LEVEL,"    ["<<name_<<"] H = "<<H_nf2r<<"\n");
 
-  //Also calculate other observables
+  //Measure other observables
   
   PolyakovLoop PLmeas(TDIR);
   std::complex<double> pl = PLmeas.calc_SUN(*u_);
