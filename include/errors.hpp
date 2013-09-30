@@ -3,7 +3,7 @@
  *
  * @brief Collection of simple error handling functions
  *
- * Time-stamp: <2013-06-03 15:38:42 neo>
+ * Time-stamp: <2013-09-30 21:57:08 noaki>
  */
 
 #ifndef ERRORS_HPP_
@@ -11,7 +11,7 @@
 
 #include <sstream>
 
-#define EXIT_FAILURE 1
+#define EXIT_FAIL 1
 
 typedef std::ostringstream ErrorString;
 
