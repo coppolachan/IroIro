@@ -39,7 +39,7 @@ int Test_HB::run(){
     hb_general.update(Gfield_);
   }catch(const char* error){
     CCIO::cerr << error << std::endl;
-    return EXIT_FAILURE;
+    return EXIT_FAIL;
   }
 
   TIMING_END(elapsed_time);

@@ -55,7 +55,8 @@ target_triplet = @target@
 @IBM_BGQKERNELS_TRUE@am__append_7 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
-@IBM_BGQKERNELS_FALSE@am__append_8 = Smearing/stoutSmear_core.cpp \
+@IBM_BGQKERNELS_TRUE@am__append_8 = Tools/utils_BGQ.hpp
+@IBM_BGQKERNELS_FALSE@am__append_9 = Smearing/stoutSmear_core.cpp \
 @IBM_BGQKERNELS_FALSE@	Smearing/smartConf_core.cpp \
 @IBM_BGQKERNELS_FALSE@	Smearing/APEsmear.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT)
@@ -187,7 +188,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp \
 	Smearing/stoutSmear_core.cpp Smearing/smartConf_core.cpp \
 	Smearing/APEsmear.cpp Smearing/smearingFactories.cpp \
-	Tools/utils_BGQ.cpp Tools/fieldUtils.cpp Tools/jobUtils.cpp \
+	Tools/utils_BGQ.hpp Tools/fieldUtils.cpp Tools/jobUtils.cpp \
 	Tools/sunMatUtils.cpp Tools/sunAdjMatUtils.cpp \
 	Tools/randNum.cpp Tools/randNum_MP.cpp \
 	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp \
@@ -228,7 +229,9 @@ am__objects_5 = $(am__objects_4)
 @IBM_BGQKERNELS_FALSE@	smartConf_core.$(OBJEXT) \
 @IBM_BGQKERNELS_FALSE@	APEsmear.$(OBJEXT)
 am__objects_9 = $(am__objects_7) $(am__objects_8)
-@USE_DCMT_TRUE@am__objects_10 = dcmt_wrapper.$(OBJEXT)
+am__objects_10 =
+am__objects_11 = $(am__objects_10)
+@USE_DCMT_TRUE@am__objects_12 = dcmt_wrapper.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) \
@@ -285,7 +288,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	multiShiftSolver_CG.$(OBJEXT) rationalSolver_CG.$(OBJEXT) \
 	solver.$(OBJEXT) stoutSmear_base.$(OBJEXT) \
 	smartConf_base.$(OBJEXT) $(am__objects_9) \
-	smearingFactories.$(OBJEXT) utils_BGQ.$(OBJEXT) \
+	smearingFactories.$(OBJEXT) $(am__objects_11) \
 	fieldUtils.$(OBJEXT) jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	sunAdjMatUtils.$(OBJEXT) randNum.$(OBJEXT) \
 	randNum_MP.$(OBJEXT) randNum_Factory.$(OBJEXT) \
@@ -294,7 +297,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	rationalapprox.$(OBJEXT) xml_errors.$(OBJEXT) \
 	allocation_errors.$(OBJEXT) base_errors.$(OBJEXT) \
 	io_errors.$(OBJEXT) convergence_errors.$(OBJEXT) \
-	parameter_errors.$(OBJEXT) $(am__objects_10) \
+	parameter_errors.$(OBJEXT) $(am__objects_12) \
 	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
 	HBActions_SUN.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
@@ -323,6 +326,16 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD " $@;
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_$(V))
+am__v_CC_ = $(am__v_CC_$(AM_DEFAULT_VERBOSITY))
+am__v_CC_0 = @echo "  CC    " $@;
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_$(V))
+am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
+am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
@@ -484,7 +497,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-09-18 14:18:50 cossu>
+# Time-stamp: <2013-09-25 14:20:18 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -492,7 +505,8 @@ AM_CXXFLAGS = $(am__append_4)
 AM_LDFLAGS = $(am__append_5) $(BFM_LIBS)
 OPTLIB = $(am__append_1) $(am__append_2) $(am__append_3)
 DWF_BGQ_SRC = $(am__append_6)
-SMEAR_SRCS = $(am__append_7) $(am__append_8)
+SMEAR_SRCS = $(am__append_7) $(am__append_9)
+UTILS_SRCS = $(am__append_8)
 @IBM_BGQ_FALSE@@USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
 
@@ -636,7 +650,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/smartConf_base.cpp		\
 		$(SMEAR_SRCS)				\
 		Smearing/smearingFactories.cpp		\
-		Tools/utils_BGQ.cpp	        	\
+		$(UTILS_SRCS)		        	\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
@@ -1107,7 +1121,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/text_header.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/topologyGeom.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wilsonFlow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xml_errors.Po@am__quote@
@@ -2967,22 +2980,6 @@ smearingFactories.obj: Smearing/smearingFactories.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Smearing/smearingFactories.cpp' object='smearingFactories.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o smearingFactories.obj `if test -f 'Smearing/smearingFactories.cpp'; then $(CYGPATH_W) 'Smearing/smearingFactories.cpp'; else $(CYGPATH_W) '$(srcdir)/Smearing/smearingFactories.cpp'; fi`
-
-utils_BGQ.o: Tools/utils_BGQ.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_BGQ.o -MD -MP -MF $(DEPDIR)/utils_BGQ.Tpo -c -o utils_BGQ.o `test -f 'Tools/utils_BGQ.cpp' || echo '$(srcdir)/'`Tools/utils_BGQ.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utils_BGQ.Tpo $(DEPDIR)/utils_BGQ.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/utils_BGQ.cpp' object='utils_BGQ.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o utils_BGQ.o `test -f 'Tools/utils_BGQ.cpp' || echo '$(srcdir)/'`Tools/utils_BGQ.cpp
-
-utils_BGQ.obj: Tools/utils_BGQ.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_BGQ.obj -MD -MP -MF $(DEPDIR)/utils_BGQ.Tpo -c -o utils_BGQ.obj `if test -f 'Tools/utils_BGQ.cpp'; then $(CYGPATH_W) 'Tools/utils_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/utils_BGQ.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utils_BGQ.Tpo $(DEPDIR)/utils_BGQ.Po
-@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/utils_BGQ.cpp' object='utils_BGQ.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o utils_BGQ.obj `if test -f 'Tools/utils_BGQ.cpp'; then $(CYGPATH_W) 'Tools/utils_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/utils_BGQ.cpp'; fi`
 
 fieldUtils.o: Tools/fieldUtils.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT fieldUtils.o -MD -MP -MF $(DEPDIR)/fieldUtils.Tpo -c -o fieldUtils.o `test -f 'Tools/fieldUtils.cpp' || echo '$(srcdir)/'`Tools/fieldUtils.cpp

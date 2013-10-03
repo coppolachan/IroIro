@@ -35,7 +35,7 @@ int Test_HMC::run(){
     hmc_general.evolve(Gfield_);
   }catch(const char* error){
     CCIO::cerr << error << std::endl;
-    return EXIT_FAILURE;
+    return EXIT_FAIL;
   }
 
   TIMING_END(elapsed_time);

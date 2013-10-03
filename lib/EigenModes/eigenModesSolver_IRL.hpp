@@ -50,11 +50,15 @@ public:
     int Np;
     XML::read(node,"Np",Np,MANDATORY);
     Nm_= Nk_+Np;
-    
-    XML::read(node,"precision",prec_,MANDATORY);
+
+    double prec;
+    XML::read(node,"precision",prec,MANDATORY);
+    prec_= fopr->func(prec);
+ 
     XML::read(node,"max_iter",Niter_,MANDATORY);
    
-    CCIO::cout<<"EigenModesSolver_IRL constructed"<<std::endl;
+    CCIO::cout<<"EigenModesSolver_IRL constructed: precision= "
+	      <<prec_<<std::endl;
   }
   EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
 		       int Nk,int Np,double prec,int Niter,int Nthrs=10000)

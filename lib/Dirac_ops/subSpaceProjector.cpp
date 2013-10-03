@@ -23,9 +23,10 @@ namespace SubSpace{
       sr[i] = vsub[i]*f;
       si[i] = vsub[i].im_prod(f);
     }
+    w = 0.0;
     for(int i=0; i<Nq; ++i){
-      w.set(re,q[i]*(sr[i]*vsub[i][re] -si[i]*vsub[i][im]));
-      w.set(im,q[i]*(sr[i]*vsub[i][im] +si[i]*vsub[i][re]));
+      w.add(re,q[i]*(sr[i]*vsub[i][re] -si[i]*vsub[i][im]));
+      w.add(im,q[i]*(sr[i]*vsub[i][im] +si[i]*vsub[i][re]));
     }
   }
 
@@ -47,10 +48,10 @@ namespace SubSpace{
       sr[i] = cr*q[2*i  ] -ci*q[2*i+1];
       si[i] = cr*q[2*i+1] +ci*q[2*i];
     }
-
+    w = 0.0;
     for(int i=0; i<Nq; ++i){
-      w.set(re,sr[i]*vsub[i][re] -si[i]*vsub[i][im]);
-      w.set(im,sr[i]*vsub[i][im] +si[i]*vsub[i][re]);
+      w.add(re,sr[i]*vsub[i][re] -si[i]*vsub[i][im]);
+      w.add(im,sr[i]*vsub[i][im] +si[i]*vsub[i][re]);
     }
   }
 
@@ -69,9 +70,10 @@ namespace SubSpace{
       sr[i] = vsub[i]*f;
       si[i] = vsub[i].im_prod(f);
     }
+    w = 0.0;
     for(int i=0; i<Nq; ++i){
-      w.set(re,sr[i]*vsub[i][re] -si[i]*vsub[i][im]);
-      w.set(im,sr[i]*vsub[i][im] +si[i]*vsub[i][re]);
+      w.add(re,sr[i]*vsub[i][re] -si[i]*vsub[i][im]);
+      w.add(im,sr[i]*vsub[i][im] +si[i]*vsub[i][re]);
     }
   }
 

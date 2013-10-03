@@ -9,7 +9,7 @@ using namespace std;
 
 namespace ComplexMatrix{
   void hermite(std::valarray<double>& Md,const std::valarray<double>& M){
-    int Dim = sqrt(M.size()/2);
+    int Dim = sqrt(double(M.size()/2));
     
     for(int i=0; i<Dim; ++i){
       Md[2*(Dim*i+i)+1] = -M[2*(Dim*i+i)+1];
@@ -31,7 +31,7 @@ namespace ComplexMatrix{
   }
 
   void transpose(std::valarray<double>& Mt,const std::valarray<double>& M){
-    int Dim = sqrt(M.size()/2);
+    int Dim = sqrt(double(M.size()/2));
     
     for(int i=0; i<Dim; ++i){
       Mt[2*(Dim*i+i)+1] = M[2*(Dim*i+i)+1];
@@ -53,7 +53,7 @@ namespace ComplexMatrix{
   }
 
   void conjugate(std::valarray<double>& Mc,const std::valarray<double>& M){
-    int Dim = sqrt(M.size()/2);
+    int Dim = sqrt(double(M.size()/2));
     
     for(int i=0; i<Dim; ++i){
       Mc[2*(Dim*i+i)+1] = -M[2*(Dim*i+i)+1];
@@ -72,7 +72,7 @@ namespace ComplexMatrix{
   }
 
   void trace(double& tr,double& ti,const valarray<double>& M){
-    int Dim = sqrt(M.size()/2);
+    int Dim = sqrt(double(M.size()/2));
     
     tr = 0.0;
     ti = 0.0;
@@ -84,7 +84,7 @@ namespace ComplexMatrix{
   }
 
   void invert(valarray<double>& Mi,const valarray<double>& M){
-    int Dim = sqrt(M.size()/2);
+    int Dim = sqrt(double(M.size()/2));
     
     vector<int> ip(Dim);
     for(int i=0; i<Dim; ++i) ip[i] = i;

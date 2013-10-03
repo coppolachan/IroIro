@@ -93,7 +93,7 @@ int Test_HMC_DomainWall::run(){
     hmc_general.evolve(Gfield_);
   }catch(const char* error){
     CCIO::cerr << error << std::endl;
-    return EXIT_FAILURE;
+    return EXIT_FAIL;
   }
   /////////////////////////////////////////////////  
   delete CommonField;

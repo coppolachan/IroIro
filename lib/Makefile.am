@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-09-18 14:18:50 cossu>
+# Time-stamp: <2013-09-25 14:20:18 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -15,6 +15,7 @@ OPTLIB =
 
 DWF_BGQ_SRC = 
 SMEAR_SRCS =
+UTILS_SRCS = 
 ###########################################
 # Configure driven path selector
 if USE_MPI
@@ -57,6 +58,7 @@ ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp
 SMEAR_SRCS += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
 SMEAR_SRCS += Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
 SMEAR_SRCS += Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
+UTILS_SRCS += Tools/utils_BGQ.hpp
 else
 ACTION_SRCS = Action/action_gauge_rect.cpp
 ACTION_SRCS += Action/action_gauge_wilson_force.cpp
@@ -215,7 +217,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Smearing/smartConf_base.cpp		\
 		$(SMEAR_SRCS)				\
 		Smearing/smearingFactories.cpp		\
-		Tools/utils_BGQ.cpp	        	\
+		$(UTILS_SRCS)		        	\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\

@@ -30,8 +30,7 @@ public:
     int idummy, i=0;
     double eval=0.0;
 
-    while(reader >> idummy && eval < thold_){
-      reader >> eval;
+    while(reader>>idummy && reader>>eval && fabs(eval) < thold_){
       evals_.push_back(eval);
       i++;
     }
