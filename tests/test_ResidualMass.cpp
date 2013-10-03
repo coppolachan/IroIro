@@ -17,13 +17,14 @@
 using namespace FieldExpression;
 
 int Test_ResMass::run() {
-//create the factory for Rand Numbers Gen
+  //create the factory for Rand Numbers Gen
   RNG_Env::RNG = RNG_Env::createRNGfactory(node_); 
 
-// Prints plaquette (thin) link
+  // Prints plaquette (thin) link
   Staples Staple;
   CCIO::cout << "Plaquette (thin): " << Staple.plaquette(conf_) << std::endl;
-///////////////////////////////////////////////////////////////////////////////
+
+  ///////////////////////////////////////////////////////////////////////////////
   // Smearing objects
   Smear* SmearingObj;         // Empty pointer
   int Nsmear;                 // Number of smearing steps
@@ -57,7 +58,8 @@ int Test_ResMass::run() {
 
     double mq,vthrs,enorm;
     int Nk,Np,Niter;
-    
+
+    // names are obscure
     XML::read(eigen_node,"mq",mq,MANDATORY);
     XML::read(eigen_node,"vthrs",vthrs,MANDATORY);
     XML::read(eigen_node,"enorm",enorm,MANDATORY);
@@ -94,7 +96,7 @@ int Test_ResMass::run() {
     CCIO::cout << std::endl;
   }else if(!strcmp(eigen,"NoCalc")){ }
 
-/////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
 
   // Quark Propagator and source creation 
   XML::descend(node_, "QuarkDWFProp");
@@ -115,14 +117,14 @@ int Test_ResMass::run() {
   //  CCIO::ReadFromDisk < Format::Format_F >(sq, "propagator.bin", 12);
   //  CCIO::SaveOnDisk < Format::Format_F >(sq, "propagator.bin");
 
-/////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////
   //Pion Correlator
   MesonCorrelator Meson(Pion);
   std::vector<double> corr =  Meson.calculate <Format::Format_F>(sq,sq);
   for(int i=0; i<corr.size(); ++i) 
     CCIO::cout << i << "  " << corr[i] << std::endl;
 
-//////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
   // Residual mass calculation from quark propagator data
 
   // Cycle among Dirac and color indexes and contract
@@ -155,6 +157,6 @@ int Test_ResMass::run() {
   CCIO::cout<<"Residual mass = "<<mres_numerator/mres_denominator   <<std::endl;
   CCIO::cout<<"---------------------------------------------------------"
 	    <<std::endl;
-////////////////////////////////////////////////////////////////////////////////
+  ////////////////////////////////////////////////////////////////////////////////
   return 0;
 }

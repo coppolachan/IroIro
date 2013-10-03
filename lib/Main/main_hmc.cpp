@@ -94,10 +94,13 @@ int run_hmc(GaugeField GaugeF_, TrajInfo* Info, node HMC_node) {
 
   RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
  
+  CCIO::cout << "Creating integrator factory\n";
+
   Integrators::Integr = 
     Integrators::createIntegratorFactory(HMC_node);
 
   //Initialization of HMC classes from XML file
+  CCIO::cout << "Initialization of HMC classes from XML file\n";
   HMCgeneral hmc_general(HMC_node, Info);
 
   ////////////// HMC calculation starts /////////////////
