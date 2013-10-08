@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-09-25 14:20:18 neo>
+# Time-stamp: <2013-10-04 16:00:54 cossu>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -240,7 +240,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
-		UpdatingAlg/HeatBath/HBActions_SUN.cpp	
+		UpdatingAlg/HeatBath/HBActions_SUN.cpp	\
+		Laplacian/laplacian.cpp	
 
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
@@ -435,7 +436,8 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
                         Tools/RandomNumGen/randNum_MT19937.h    \
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
-			UpdatingAlg/HeatBath/HBActions_SUN.hpp	
+			UpdatingAlg/HeatBath/HBActions_SUN.hpp	\
+			Laplacian/laplacian.hpp	
 
 
 

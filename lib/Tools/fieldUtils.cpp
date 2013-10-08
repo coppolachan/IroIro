@@ -269,4 +269,12 @@ namespace FieldUtils{
   void AddVec(FermionField& F, const SUNvec& vec, int spin, int site){
     F.data.add(F.format.cslice(spin, site), vec.getva());
   }
+
+  void SetVec(FermionField1sp& F, const SUNvec& vec, int site){
+    F.data.set(F.format.cslice(0, site), vec.getva());
+  }
+  void AddVec(FermionField1sp& F, const SUNvec& vec, int site){
+    F.data.add(F.format.cslice(0, site), vec.getva());
+  }
+
 }

@@ -50,6 +50,9 @@ namespace FieldUtils{
   void SetVec(FermionField&, const SUNvec&, int spin, int site); 
   void AddVec(FermionField&, const SUNvec&, int spin, int site); 
 
+  void SetVec(FermionField1sp&, const SUNvec&, int site); 
+  void AddVec(FermionField1sp&, const SUNvec&, int site); 
+
   // Inline functions
   inline SUNmat mat(const GaugeField& F,int site,int dir){
     return SUNmat(F.data[F.format.islice(site,dir)]);  }
