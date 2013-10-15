@@ -30,7 +30,7 @@ public:
      Nc_(CommonPrms::instance()->Nc()),
      Ndim_(CommonPrms::instance()->Ndim()){}
   virtual ~GaugeConf(){}
-  virtual void init_conf(Field&) = 0;
+  virtual void init_conf(Field&,bool do_check=true) = 0;
 };  
 
 class GaugeConf_bin:public GaugeConf{
@@ -38,7 +38,7 @@ class GaugeConf_bin:public GaugeConf{
 public:
   GaugeConf_bin(const Format::Format_G& fg, const std::string& fname)
     :GaugeConf(fg), file_(fname){}
-  void init_conf(Field&);
+  void init_conf(Field&,bool do_check=true);
 };
 
 class GaugeConf_JLQCDLegacy:public GaugeConf{
@@ -46,7 +46,7 @@ class GaugeConf_JLQCDLegacy:public GaugeConf{
 public:
   GaugeConf_JLQCDLegacy(const Format::Format_G& fg, const std::string& fname)
     :GaugeConf(fg), file_(fname){}
-  void init_conf(Field&);
+  void init_conf(Field&,bool do_check=true);
 };
 
 class GaugeConf_NERSC:public GaugeConf{
@@ -54,7 +54,7 @@ class GaugeConf_NERSC:public GaugeConf{
 public:
   GaugeConf_NERSC(const Format::Format_G& fg, const std::string& fname)
     :GaugeConf(fg), file_(fname){}
-  void init_conf(Field&);
+  void init_conf(Field&,bool do_check=true);
 };
 
 class GaugeConf_ILDG:public GaugeConf{
@@ -62,9 +62,8 @@ class GaugeConf_ILDG:public GaugeConf{
 public:
   GaugeConf_ILDG(const Format::Format_G& fg, const std::string& fname)
     :GaugeConf(fg), file_(fname){}
-  void init_conf(Field&);
+  void init_conf(Field&,bool do_check=true);
 };
-
 
 // this class is for temporal hack. Its usage is very limited
 class GaugeConf_csdt:public GaugeConf{
@@ -73,7 +72,7 @@ class GaugeConf_csdt:public GaugeConf{
 public:
   GaugeConf_csdt(const Format::Format_G& fg, const std::string& fname)
     :GaugeConf(fg), file_(fname){}
-  void init_conf(Field&);
+  void init_conf(Field&,bool do_check=true);
 };
 
 class GaugeConf_txt:public GaugeConf{
@@ -81,13 +80,13 @@ class GaugeConf_txt:public GaugeConf{
 public:
   GaugeConf_txt(const Format::Format_G& fg, const std::string& fname)
     :GaugeConf(fg),file_(fname){}
-  void init_conf(Field&);
+  void init_conf(Field&,bool do_check=true);
 };
 
 class GaugeConf_unit:public GaugeConf{
 public:
   GaugeConf_unit(const Format::Format_G& fg):GaugeConf(fg){}
-  void init_conf(Field&);
+  void init_conf(Field&,bool do_check=true);
 };
 
 class GaugeConf_rand:public GaugeConf{
@@ -95,6 +94,6 @@ class GaugeConf_rand:public GaugeConf{
 public:
   GaugeConf_rand(const Format::Format_G& fg,const RandNum& rand)
     :GaugeConf(fg),rand_(rand){}
-  void init_conf(Field&);
+  void init_conf(Field&,bool do_check=true);
 };
 #endif

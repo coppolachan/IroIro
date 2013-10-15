@@ -3,7 +3,7 @@
  *
  * @brief Code for general fields initializations
  *
- * Time-stamp: <2013-07-02 11:51:33 noaki>
+ * Time-stamp: <2013-10-07 15:39:30 noaki>
  */
 #ifndef COMMON_FIELDS_H_
 #define COMMON_FIELDS_H_
@@ -43,9 +43,11 @@ public:
 
   explicit GeneralField(int LocalVol):format(LocalVol),data(format.size()){}
   explicit GeneralField(const Field& Fin)
-    :format(CommonPrms::instance()->Nvol()),data(Fin){
+  :format(CommonPrms::instance()->Nvol(),
+	  Fin.size()/CommonPrms::instance()->Nvol()/format.Nin()),
+   data(Fin){
     assert(Fin.size()== format.size());}
-
+  
   GeneralField(const Field& Fin,int LocalVol)
     :format(LocalVol),data(Fin){
     assert(Fin.size()== format.size());}

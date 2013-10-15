@@ -663,6 +663,8 @@ USE_EVENODD_FALSE
 USE_EVENODD_TRUE
 IBM_BGQKERNELS_FALSE
 IBM_BGQKERNELS_TRUE
+SR_WILSON_FALSE
+SR_WILSON_TRUE
 IBM_BGQWILSON_SMP_FALSE
 IBM_BGQWILSON_SMP_TRUE
 IBM_BGQWILSON_NOSMP_FALSE
@@ -758,6 +760,7 @@ enable_silent_rules
 enable_mpi
 enable_improved
 enable_bgq_improved
+enable_sr16k_improved
 enable_bgq_improved_smp
 enable_evenodd_idx
 with_dcmt
@@ -1405,6 +1408,8 @@ Optional Features:
   --enable-improved       Enable compilation of improved version of kernels.
   --enable-bgq-improved   Enable compilation of BlueGene/Q improved version of
                           kernels. Single threaded version.
+  --enable-sr16k-improved Enable compilation of Hitachi SR16K improved version
+                          of kernels.
   --enable-bgq-improved-smp
                           Enable compilation of BlueGene/Q improved version of
                           kernels. Multithreaded SMP version.
@@ -3066,6 +3071,9 @@ ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value
 bluegeneq=false   # default value
+SR_INCLUDE=
+SR_LIBS=
+
 BLUEGENE_INCLUDE=/bghome/scbadm/ibm-doi/lib
 BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib
 #BLUEGENE_LIBS=/usr/local/bg/lib
@@ -3133,6 +3141,20 @@ if test "${enable_bgq_improved+set}" = set; then :
    esac
 else
   bgq_kernels_nosmp=false
+fi
+
+
+###################################################################
+# Enabling Hitachi SR16K Wilson improved version routines single thread
+# Check whether --enable-sr16k-improved was given.
+if test "${enable_sr16k_improved+set}" = set; then :
+  enableval=$enable_sr16k_improved; case "${enableval}" in
+     	yes) sr16k_kernels=true  ;;
+     	no)  sr16k_kernels=false ;;
+     	*) as_fn_error $? "bad value ${enableval} for --enable-sr16k-improved . Compiling with standard kernels." "$LINENO" 5 ;;
+   esac
+else
+  sr16k_kernels=false
 fi
 
 
@@ -3267,7 +3289,7 @@ aix )
      { $as_echo "$as_me:${as_lineno-$LINENO}: forcing cross compilation on AIX" >&5
 $as_echo "$as_me: forcing cross compilation on AIX" >&6;}
      use_cpp="mpCC";
-     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type  -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
+     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${SR_INCLUDE} -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
      ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib"
      use_ar_flags="-X64 -c -ru"
 
@@ -3338,6 +3360,14 @@ fi
 else
   IBM_BGQWILSON_SMP_TRUE='#'
   IBM_BGQWILSON_SMP_FALSE=
+fi
+
+ if (test x$sr16k_kernels = xtrue); then
+  SR_WILSON_TRUE=
+  SR_WILSON_FALSE='#'
+else
+  SR_WILSON_TRUE='#'
+  SR_WILSON_FALSE=
 fi
 
  if  ($bgq_kernels_nosmp == true) || ($bgq_kernels_smp == true); then
@@ -4109,6 +4139,9 @@ fi
 #AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/lib -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"],,)
 if test -z "$IBM_BGQ_TRUE"; then :
   LDFLAGS+=" -L$DRIVER/comm/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"
+fi
+if test -z "$SR_WILSON_TRUE"; then :
+  LDFLAGS+=" -L$SR_LIBS"
 fi
 echo configure: setting library flags... done
 
@@ -4895,6 +4928,62 @@ fi
 
 fi
 
+# Hitashi SR16K specific stuff
+if  $sr16k_kernels
+then
+echo :::: Hitachi SR16K related stuff
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for SRWilson_Init in -lsrmwilson" >&5
+$as_echo_n "checking for SRWilson_Init in -lsrmwilson... " >&6; }
+if ${ac_cv_lib_srmwilson_SRWilson_Init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lsrmwilson  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char SRWilson_Init ();
+int
+main ()
+{
+return SRWilson_Init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"; then :
+  ac_cv_lib_srmwilson_SRWilson_Init=yes
+else
+  ac_cv_lib_srmwilson_SRWilson_Init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_srmwilson_SRWilson_Init" >&5
+$as_echo "$ac_cv_lib_srmwilson_SRWilson_Init" >&6; }
+if test "x$ac_cv_lib_srmwilson_SRWilson_Init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBSRMWILSON 1
+_ACEOF
+
+  LIBS="-lsrmwilson $LIBS"
+
+else
+  as_fn_error $? "SRWilson library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off SRWilson support." "$LINENO" 5
+fi
+
+echo enabled SRWilson support on Hitachi SR16K...
+fi
+
 # BGQ specific stuff
 if  $bluegeneq
 then
@@ -5309,6 +5398,28 @@ fi
 done
 
 
+
+# Checks for SRWilson specific headers
+if  $sr16k_kernels
+then
+for ac_header in srmwilson.h
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "srmwilson.h" "ac_cv_header_srmwilson_h" "$ac_includes_default"
+if test "x$ac_cv_header_srmwilson_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SRMWILSON_H 1
+_ACEOF
+
+else
+  as_fn_error $? "SRWilson header not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries." "$LINENO" 5
+fi
+
+done
+
+fi
+
 # Checks for BGQ specific headers
 if  $bgq_kernels_nosmp || $bgq_kernels_smp
 then
@@ -5382,7 +5493,15 @@ then
 
 $as_echo "#define HITACHISR16K /**/" >>confdefs.h
 
+
+if  $sr16k_kernels
+then
+
+$as_echo "#define SR16K_WILSON /**/" >>confdefs.h
+
 fi
+fi #hitachi
+
 
 if  $bluegeneq
 then
@@ -5724,6 +5843,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${IBM_BGQWILSON_SMP_TRUE}" && test -z "${IBM_BGQWILSON_SMP_FALSE}"; then
   as_fn_error $? "conditional \"IBM_BGQWILSON_SMP\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${SR_WILSON_TRUE}" && test -z "${SR_WILSON_FALSE}"; then
+  as_fn_error $? "conditional \"SR_WILSON\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${IBM_BGQKERNELS_TRUE}" && test -z "${IBM_BGQKERNELS_FALSE}"; then
@@ -7099,6 +7222,11 @@ echo -ne "- IBM kernels compilation       : "; if test "x$bgq_kernels_nosmp" = x
 else
 echo "- improved kernels compilation  : $improved_kernels"
 fi
+if  $hitachi
+then
+echo -ne "- SR kernels compilation        : "; if test "x$sr16k_kernels" = xtrue; then echo enabled; else echo not enabled; fi
+fi
+
 echo "- build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
 - graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
 - optional BFM library linking  : `if test "x$bfm_link" = xtrue; then echo yes; else echo no; fi`

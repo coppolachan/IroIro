@@ -16,7 +16,6 @@ public:
   virtual int run() = 0;
 };
 
-
 namespace TestEnv{
 
   template <class TestClass>

@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-09-13 13:59:27 cossu>
+ * Time-stamp: <2013-10-15 16:28:01 noaki>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -160,12 +160,11 @@ namespace CCIO {
 		   const char* filename,
 		   const int offset = 0, 
 		   const std::string readerID = "Binary",
-		   const bool is_GaugeConf = true){
+		   const bool do_check = true){
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");
 
-    GeneralReader* reader;
     T fmt(cmprms->Nvol());
 
     size_t local_idx, global_idx;
@@ -183,15 +182,14 @@ namespace CCIO {
     varray_double local(fmt.Nin()*block_x.size()*fmt.Nex());
     
     // Get the reader class
-    reader = getReader(readerID, total_vol, fmt.Nin(), fmt.Nex());
+    GeneralReader* reader = getReader(readerID, total_vol, fmt.Nin(), fmt.Nex());
 
     // Open the output file
     FILE * inFile;
     if(comm->primaryNode()){
       inFile = fopen(filename,"r");
       
-      if (inFile == NULL)
-	Errors::IOErr(Errors::FileNotFound, filename);
+      if(inFile == NULL) Errors::IOErr(Errors::FileNotFound, filename);
 
       //check file size
 
@@ -254,18 +252,16 @@ namespace CCIO {
     }// end of node_t
     comm->sync();  
 
-    if (is_GaugeConf){
-      if (reader->check(f) != CHECK_PASS) {
-	Errors::IOErr(Errors::GenericError, "Failed some basic tests on the gauge configuration");
-      }
+    if(do_check){
+      if(reader->check(f) != CHECK_PASS) 
+	Errors::IOErr(Errors::GenericError, 
+		      "Failed some basic tests on the gauge configuration");
       CCIO::cout << "Tests passed!\n";
     }
-
 
     if(comm->primaryNode()){
       fclose(inFile);
       std::cout << "done\n";
-
     }
     return 0;
   }

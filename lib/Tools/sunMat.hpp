@@ -14,7 +14,7 @@
 
 #include "include/macros.hpp"
 
-#define CHECK_TOLERANCE 1e-24
+#define CHECK_TOLERANCE 1e-22
 
 template <size_t COLORS = NC_>
 class SUNmatrix{

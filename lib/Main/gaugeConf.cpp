@@ -20,38 +20,30 @@ int GaugeConf::getid(int x,int y,int z,int t){
   return Communicator::instance()->nodeid(x/Nx_,y/Ny_,z/Nz_,t/Nt_);
 }
 
-void GaugeConf_bin::init_conf(Field& u){
+void GaugeConf_bin::init_conf(Field& u,bool do_check){
   CCIO::cout << "Init from binary file (ILDG format - default)\n";
-  CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str());
+  CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str(),0,"Binary",do_check);
 }
 
-void GaugeConf_JLQCDLegacy::init_conf(Field& u){
+void GaugeConf_JLQCDLegacy::init_conf(Field& u,bool do_check){
   using namespace CCIO;
   CCIO::cout << "Init from binary file (JLQCD Legacy format)\n";
-  ReadFromDisk< Format::Format_G >(u,file_.c_str(),
-				   FORTRAN_CONTROL_WORDS, 
-				   "JLQCDLegacy");
+  ReadFromDisk< Format::Format_G >(u,file_.c_str(),FORTRAN_CONTROL_WORDS, 
+				   "JLQCDLegacy",do_check);
 }
 
-void GaugeConf_NERSC::init_conf(Field& u){
+void GaugeConf_NERSC::init_conf(Field& u,bool do_check){
   using namespace CCIO;
   CCIO::cout << "Init from binary file (NERSC format)\n";
-  ReadFromDisk< Format::Format_G >(u,file_.c_str(),
-				   0, 
-				   "NERSC");
+  ReadFromDisk< Format::Format_G >(u,file_.c_str(),0,"NERSC",do_check);
   
 }
 
-void GaugeConf_ILDG::init_conf(Field& u){
+void GaugeConf_ILDG::init_conf(Field& u,bool do_check){
   using namespace CCIO;
   CCIO::cout << "Init from ILDG file (ILDG format)\n";
-  ReadFromDisk< Format::Format_G >(u,file_.c_str(),
-				   0, 
-				   "ILDG");
-  
+  ReadFromDisk< Format::Format_G >(u,file_.c_str(),0,"ILDG",do_check);
 }
-
-
 
 // this function exists already in byteswap.cpp
 double GaugeConf_csdt::conv_endian(double vald){
@@ -64,7 +56,7 @@ double GaugeConf_csdt::conv_endian(double vald){
   return vald;
 }
 
-void GaugeConf_csdt::init_conf(Field& u){
+void GaugeConf_csdt::init_conf(Field& u,bool do_check){
   CCIO::cout << "Init from binary file with (c,s,d,t) format\n";
 
   int Lx = CommonPrms::instance()->Lx();
@@ -140,7 +132,7 @@ void GaugeConf_csdt::init_conf(Field& u){
   for(int id = 0; id < NP; ++id) delete u_all[id];
 }
 
-void GaugeConf_txt::init_conf(Field& u){
+void GaugeConf_txt::init_conf(Field& u,bool do_check){
   
   int Lx = CommonPrms::instance()->Lx();
   int Ly = CommonPrms::instance()->Ly();
@@ -206,7 +198,7 @@ void GaugeConf_txt::init_conf(Field& u){
   for(int id = 0; id < NP; ++id) delete u_all[id];
 }
     
-void GaugeConf_unit::init_conf(Field& u){
+void GaugeConf_unit::init_conf(Field& u,bool do_check){
   for(int t = 0; t < Nt_; ++t){
     for(int z = 0; z < Nz_; ++z){
       for(int y = 0; y < Ny_; ++y){
@@ -225,7 +217,7 @@ void GaugeConf_unit::init_conf(Field& u){
   }
 }
 
-void GaugeConf_rand::init_conf(Field& Gfield){
+void GaugeConf_rand::init_conf(Field& Gfield,bool do_check){
   int Nvol= CommonPrms::instance()->Nvol();
 
   std::valarray<double> va(Gfield.size());

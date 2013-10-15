@@ -49,6 +49,9 @@
 /* Define to 1 if you have the `mpfr' library (-lmpfr). */
 #undef HAVE_LIBMPFR
 
+/* Define to 1 if you have the `srmwilson' library (-lsrmwilson). */
+#undef HAVE_LIBSRMWILSON
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
@@ -57,6 +60,9 @@
 
 /* Define to 1 if you have the `sqrt' function. */
 #undef HAVE_SQRT
+
+/* Define to 1 if you have the <srmwilson.h> header file. */
+#undef HAVE_SRMWILSON_H
 
 /* Define to 1 if stdbool.h conforms to C99. */
 #undef HAVE_STDBOOL_H
@@ -117,6 +123,9 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* Enable Hitachi SR16K optimized Wilson kernel */
+#undef SR16K_WILSON
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
