@@ -24,6 +24,7 @@ struct HMCGeneralParams {
   std::string Filename_prefix;
 
   HMCGeneralParams(pugi::xml_node node, TrajInfo* ExternalInfo) {
+    CCIO::cout << "Creating HMCGeneralParams\n";
     TrajInfo Info;
     // ---- Default values
     if (ExternalInfo != NULL) {
@@ -38,10 +39,6 @@ struct HMCGeneralParams {
 
     // -------------------
     XML::read(node,"Nsweeps", Nsweeps, MANDATORY);
-    TotalSweeps = StartingConfig+Nsweeps+1; //default
-    if(XML::read(node,"TotalSweeps", TotalSweeps))
-       CCIO::cout<< "Using default [TotalSweeps = "
-		<< Nsweeps << "]\n";     
     if(XML::read(node,"Thermalization", ThermalizationSteps))
       CCIO::cout<< "Using default [Thermalization = "
 		<< ThermalizationSteps << "]\n";
@@ -54,7 +51,13 @@ struct HMCGeneralParams {
     if(XML::read(node, "SavePrefix", Filename_prefix))
       CCIO::cout<< "Using default [SavePrefix = "
 		<< Filename_prefix << "]\n";
+    TotalSweeps = StartingConfig+Nsweeps+1; //default
+    if(XML::read(node,"TotalSweeps", TotalSweeps))
+       CCIO::cout<< "Using default [TotalSweeps = "
+		<< Nsweeps << "]\n";     
 
+    Communicator::instance()->sync();
+    CCIO::cout << std::flush;
     if (TotalSweeps <= StartingConfig){
       Nsweeps = 0;
       CCIO::cout<< "Run completed\n"; 

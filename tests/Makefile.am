@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-08-09 14:32:50 cossu>
+# Time-stamp: <2013-10-04 16:24:44 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -113,7 +113,8 @@ test_PROGRAMS = test_HMC 		\
 		test_RHMC_noFactories 	\
 		test_SUNRepresentation	\
 		test_HeatBath           \
-                test_DWF     		
+                test_DWF    		\
+		test_LapH
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -212,6 +213,9 @@ test_HeatBath_SOURCES 		=	test_HeatBath.cpp	\
 test_DWF_SOURCES 		=	test_DWF.cpp	\
 					testerDWF.cpp
 
+test_LapH_SOURCES 		=	test_Laplacian.cpp	\
+					testerLapH.cpp
+
 ## Put all BFM related tests here
 if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
@@ -260,4 +264,5 @@ include_HEADERS 	=	tests.hpp			\
 				test_sunRepres.hpp		\
 				test_HeatBath.hpp               \
 				test_Solver_BFM.hpp		\
-                                test_DWF.hpp
+                                test_DWF.hpp			\
+				test_Laplacian.hpp	

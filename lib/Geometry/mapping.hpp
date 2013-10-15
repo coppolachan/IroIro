@@ -6,8 +6,10 @@
 #define MAPPING_H_
 
 #include "include/common_fields.hpp"
+#include "include/errors.hpp"
 #include "Communicator/communicator.hpp"
 #include "siteMap.hpp"
+
 #include <vector>
 #include <valarray>
 
@@ -26,6 +28,7 @@ namespace Mapping{
   struct Backward{};
 
   class AutoMap{
+    int is_initialized_;
     int dir_;
     std::vector<int> bdry_t_;
     std::vector<int> bulk_t_;
@@ -41,24 +44,35 @@ namespace Mapping{
        bulk_t_(SiteMap::shiftSite.bulk_map(dir,Top)),
        bdry_b_(SiteMap::shiftSite.bdry_map(dir,Btm)),
        bulk_b_(SiteMap::shiftSite.bulk_map(dir,Btm)),
-       dir_(dir){}
+       dir_(dir),
+       is_initialized_(true){}
 
     template<typename FIELD>
     FIELD operator()(const FIELD& Fin,Forward)const{
+      if (!is_initialized_){
+	ErrorString msg;
+	msg << "The maps have not been initialized yet\n";
+	Errors::BaseErr("Initialization missing", msg);
+      }
+      
       FIELD Fout(Fin.Nvol());
       std::valarray<double> recv_bdry(bdry_t_.size()*Fin.Nin()*Fin.Nex());
-      
       Communicator::instance()->transfer_fw(recv_bdry,
 					    Fin.data[Fin.get_sub(bdry_b_)],
 					    dir_);
+      
       Fout.data.set(Fin.get_sub(bdry_t_),recv_bdry);
       Fout.data.set(Fin.get_sub(bulk_t_),Fin.data[Fin.get_sub(bulk_b_)]);
-      
       return Fout;
     }
 
     template<typename FIELD>
     FIELD operator()(const FIELD& Fin,Backward) const{
+      if (!is_initialized_){
+	ErrorString msg;
+	msg << "The maps have not been initialized yet\n";
+	Errors::BaseErr("Initialization missing", msg);
+      }
       FIELD Fout(Fin.Nvol());   
       std::valarray<double> recv_bdry(bdry_b_.size()*Fin.Nin()*Fin.Nex());
       
@@ -89,6 +103,7 @@ namespace Mapping{
   };
 
   class AutoMap_EvenOdd{
+    int is_initialized_;
     int dir_;
     std::vector<int> recv_bdry_t_;
     std::vector<int> recv_bulk_t_;
@@ -112,7 +127,8 @@ namespace Mapping{
        recv_bulk_t_(SiteMap::shiftSite_eo.bulk_map(dir,Top)),
        recv_bdry_b_(SiteMap::shiftSite_eo.bdry_map(dir,Btm)),
        recv_bulk_b_(SiteMap::shiftSite_eo.bulk_map(dir,Btm)),
-       dir_(dir){}
+       dir_(dir),
+       is_initialized_(true){}
 
     // using the e/o site indexing (o<-e)
     AutoMap_EvenOdd(int dir,OEtag)
@@ -124,10 +140,16 @@ namespace Mapping{
        recv_bulk_t_(SiteMap::shiftSite_oe.bulk_map(dir,Top)),
        recv_bdry_b_(SiteMap::shiftSite_oe.bdry_map(dir,Btm)),
        recv_bulk_b_(SiteMap::shiftSite_oe.bulk_map(dir,Btm)),
-       dir_(dir){}
+       dir_(dir),
+       is_initialized_(true){}
     
     template<typename FIELD>
     FIELD operator()(const FIELD& Fin,Forward)const{
+      if (!is_initialized_){
+	ErrorString msg;
+	msg << "The maps have not been initialized yet\n";
+	Errors::BaseErr("Initialization missing", msg);
+      }
       FIELD Fout(Fin.Nvol());
       std::valarray<double> recv_bdry(recv_bdry_t_.size()*Fin.Nin()*Fin.Nex());
 
@@ -141,6 +163,11 @@ namespace Mapping{
 
     template<typename FIELD>
     FIELD operator()(const FIELD& Fin,Backward)const{
+      if (!is_initialized_){
+	ErrorString msg;
+	msg << "The maps have not been initialized yet\n";
+	Errors::BaseErr("Initialization missing", msg);
+      }
       FIELD Fout(Fin.Nvol());
       std::valarray<double> recv_bdry(recv_bdry_b_.size()*Fin.Nin()*Fin.Nex());
       Communicator::instance()->transfer_bk(recv_bdry,
