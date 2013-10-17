@@ -56,14 +56,15 @@ FermionField1sp Laplacian::apply(const FermionField1sp& F){
     FermionField1sp psi =  shiftField(F, mu, Forward());
    
     for (int site = 0 ; site < Nvol; site++){
-      SU3mat loc_m = mat_dag(*u, site, mu);
-      SUNvec loc_v = vec(F, site);
+      SU3mat loc_m = mat(*u, site, mu);
+      SUNvec loc_v = vec(psi, site);
       SUNvec prod = loc_m * loc_v;
-      FieldUtils::SetVec(output1, prod, site);
-
-      loc_v = vec(psi, site);
-      prod = loc_m * loc_v;
       FieldUtils::SetVec(chi_1, prod, site);
+
+      loc_m.dag();
+      loc_v = vec(F, site);
+      prod = loc_m * loc_v;
+      FieldUtils::SetVec(output1, prod, site);
     }   
         
     FermionField1sp chi_2 = shiftField(output1, mu, Backward());
