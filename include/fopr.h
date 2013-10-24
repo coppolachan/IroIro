@@ -2,7 +2,7 @@
  * @file fopr.h 
  * @brief Definition of Fopr classes 
  * @authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>, Jun-Ichi Noaki}
-Time-stamp: <2013-06-26 19:05:48 noaki>
+Time-stamp: <2013-10-17 16:53:27 noaki>
  */
 
 #ifndef FOPR_INCLUDED
@@ -11,6 +11,7 @@ Time-stamp: <2013-06-26 19:05:48 noaki>
 #include "field.h"
 #include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "Dirac_ops/dirac_staggeredLike.hpp"
+#include "Scalar_ops/scalarOp.hpp"
 
 class Fopr{
 public:
@@ -142,6 +143,17 @@ public:
 
   const Field mult(const Field& f) const{return D_->mult(D_->mult_dag(f));}
   size_t fsize()const {return D_->fsize();}
+};
+
+class Fopr_Scalar: public Fopr_Herm{
+private:
+  const ScalarOp* Sop_;
+public:
+  Fopr_Scalar(const ScalarOp* S):Sop_(S){}
+  double func(double x) const{return x;}
+  
+  const Field mult(const Field& f) const{return Sop_->mult(f);}
+  size_t fsize()const {return Sop_->fsize();}
 };
 
 #endif

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-10-08 16:03:32 noaki>
+# Time-stamp: <2013-10-16 16:15:56 noaki>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
@@ -345,7 +345,7 @@ fi
 if [ $sr16k_kernels ]
 then
 echo :::: Hitachi SR16K related stuff
-AC_CHECK_LIB([srmwilson],[SRWilson_Init],,
+AC_CHECK_LIB([srmwilson],[SRWilsonLA_SetConst],,
 	[AC_MSG_ERROR(SRWilson library not found in your system or missing dependences.
 	Please install or provide the correct path to your installation
 	or switch off SRWilson support.)],[])

@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.hpp
  * @brief Dirac_Wilson class 
- Time-stamp: <2013-07-02 11:25:12 noaki>
+ Time-stamp: <2013-10-19 20:21:58 noaki>
  */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
@@ -132,7 +132,7 @@ public:
      mult_core(&Dirac_Wilson::mult_full){
     //
     double mass;
-    XML::read(node, "mass", mass);
+    XML::read(node, "mass", mass,MANDATORY);
     kpp_= 0.5/(4.0+mass);
   }
 

@@ -5,6 +5,7 @@
 
 #include "quark_propagators.hpp"
 #include "Dirac_ops/dirac.hpp"
+#include "include/commonPrms.hpp"
 #include "include/format_F.h"
 #include "source.hpp"
 #include <vector>

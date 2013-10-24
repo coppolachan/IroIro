@@ -6,15 +6,10 @@
 #ifndef SITEINDEX_INCLUDED
 #define SITEINDEX_INCLUDED
 
-#include "include/commonPrms.hpp"
 #include<vector>
-
-enum site_dir{XDIR,YDIR,ZDIR,TDIR};
 
 class SiteIndex{
 private:
-  enum{Ndim_max_= NDIM_};
-
   // Local dimensions
   int Nx_,Ny_,Nz_,Nt_;
   int NxNy_,NxNyNz_;

@@ -13,34 +13,26 @@
 #include <time.h>
 
 #include "test_Laplacian.hpp"
-#include "Laplacian/laplacian.hpp"
-
+#include "Scalar_ops/laplacian.hpp"
 
 int Test_LapH::run(){
   CCIO::cout << "Starting LapH" << std::endl;
-   
-  Laplacian LapH(&Gfield_);
-  
+  int Nt = CommonPrms::instance()->Nt();
   int Nvol = CommonPrms::instance()->Nvol();
-  
-  FermionField1sp input;
+
+  FermionField1sp input(Nvol/Nt);
   CCIO::cout << "Site  =" <<SiteIndex::instance()->site(2,2,2,2) << "\n";
   CCIO::cout << "input size  =" << input.size() << "\n";
-  input.data.set(input.format.index_r(0,SiteIndex::instance()->site(2,2,2,2)), 1.0); 
-  /*
-  for (int i = 0; i < input.size(); i++){
+  input.data.set(input.format.index(0,SiteIndex::instance()->site(2,2,2,0)), 1.0); 
+
+  for(int i=0; i<input.size(); ++i)
     CCIO::cout <<"in["<<i<<"] = "<< input.data[i] << "\n";
+   
+  for(int t=0; t<Nt; ++t){
+    Laplacian LapH(t,&(Gfield_.data));
+    Field output = LapH.mult(input.data);
+    for(int i=0; i<output.size(); ++i)
+      CCIO::cout <<"t="<<t<<" "<<"out["<<i<<"] = "<< output[i] << "\n";
   }
-  */
- 
-  
-  FermionField1sp output = LapH.apply(input);
-  
-
-  for (int i = 0; i < output.size(); i++){
-    CCIO::cout <<"out["<<i<<"] = "<< output.data[i] << "\n";
-  }
-
-
   return 0;
 }

@@ -5,7 +5,7 @@
 #ifndef SHIFTFIELD_INCLUDED
 #define SHIFTFIELD_INCLUDED
 
-#include "mapping.hpp"
+#include "autoMap.hpp"
 
 namespace Mapping{
   
@@ -20,6 +20,14 @@ namespace Mapping{
       maps_[dir](Fout,Fin,fb); }
 
     void init_maps();
+
+    template<typename MAP> 
+    void init_maps(const MAP& mm){
+      if(maps_.empty()){
+	for(int dir=0; dir<NDIM_; ++dir)
+	  maps_.push_back(AutoMap(dir,mm));
+      }
+    }
   };
 
   class ShiftField_eo{
@@ -51,12 +59,10 @@ namespace Mapping{
   // declaration of a global object
   extern ShiftField shiftField;
   void init_shiftField();
-  
+
   extern ShiftField_eo shiftField_eo;
   extern ShiftField_oe shiftField_oe;
   void init_shiftField_EvenOdd();
 }
-
-
 
 #endif

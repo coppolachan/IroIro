@@ -1,9 +1,9 @@
-/*! @file mapping_improved.cpp
+/*! @file autoMap_improved.cpp
     @brief Definisions of member functions of AutoMap & AutoMap_EvenOdd which 
            assume internal indexing for the Fields.
  */
 
-#include "mapping.hpp"
+#include "autoMap.hpp"
 #ifdef IBM_BGQ_WILSON
 #include <omp.h>
 #include "bgqthread.h"

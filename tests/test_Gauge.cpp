@@ -4,7 +4,6 @@
  */
 #include "test_Gauge.hpp"
 #include "Measurements/GaugeM/staples.hpp"
-#include "Geometry/mapping.hpp"
 
 using namespace std;
 

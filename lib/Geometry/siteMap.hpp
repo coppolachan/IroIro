@@ -8,8 +8,6 @@
 #include "siteIndex.hpp"
 #include "siteIndex_EvenOdd.hpp"
 
-enum TopBtm {Top,Btm};
-
 namespace SiteMap{
   class IndexOp{
     typedef int (SiteIndex::*SiteOp)(int hs) const;

@@ -2,8 +2,8 @@
  * @brief generalizes the eigenmodes calculation of fermion operators
  */
 #include "eigenCalcGeneral.hpp"
-#include "foprHermFactory_ChebyshevDdagDLin.hpp"
 #include "eigenSorter_Factory.hpp"
+#include "chebyshevAccelFunc.hpp"
 #include "IO/fields_io.hpp"
 #include "Fields/field_expressions.hpp"
 #include "inputConfig.hpp"
@@ -15,36 +15,78 @@ using namespace std;
 
 EigenCalcGeneral::EigenCalcGeneral(const XML::node& node){
 
-  XML::node diracNode = node;
-  XML::descend(diracNode,"WilsonLikeDirac");
-  diracFptr_.reset(Diracs::createDiracWilsonLikeFactory(diracNode));
+  XML::node targetOpNode = node;
+  XML::descend(targetOpNode,"HermitianOperator");
+  opOrigFptr_.reset(createFoprHermFactory(targetOpNode));
 
-  XML::node oprNode = node;
-  XML::descend(oprNode,"Operator");
-  opOrigFptr_.reset(createFoprHermFactory(oprNode));
-  opAccelFptr_.reset(createAccelOpFactory(oprNode));
-  esortFptr_.reset(createEigenSorterFactory(oprNode));
-  
+  XML::node setupNode = node;
+  XML::descend(setupNode,"Setup");
+  esortFptr_.reset(createEigenSorterFactory(setupNode));
+  XML::descend(setupNode,"Acceleration");
+  opAccelFptr_.reset(createAccelOpFunc(setupNode));
+
   XML::node eslvNode = node;
   XML::descend(eslvNode,"EigenModesSolver");
   eslvFptr_.reset(EigenSolver::createEigenSolverFactory(eslvNode));  
 }
 
+FoprHermFunc* EigenCalcGeneral::createAccelOpFunc(const XML::node& node)const{
+  XML::node ac_node = node;
+  XML::descend(ac_node,"Acceleration");
+  const char* ac_name = ac_node.attribute("name").value();
+  
+  if(!strcmp(ac_name,"None"))      return new FoprAsIsFunc();
+  if(!strcmp(ac_name,"Chebyshev")) return new ChebyshevAccelFunc(node);
+  CCIO::cout<<ac_name<<" is not compatible with current implementation.\n";
+  abort();
+}
+
+FoprHermFactory* EigenCalcGeneral::createFoprHermFactory(const XML::node& node)const{
+  const char* hf_name = node.attribute("name").value();
+  
+  if(!strcmp(hf_name,"g5D"))   return new FoprHermFactory_H(node);
+  if(!strcmp(hf_name,"DdagD")) return new FoprHermFactory_DdagD(node);
+  if(!strcmp(hf_name,"DDdag")) return new FoprHermFactory_DDdag(node);
+  if(!strcmp(hf_name,"Laplacian")) return new FoprHermFactory_Scalar(node);
+  CCIO::cout<<hf_name<<" is not compatible with current implementation.\n";
+  abort();
+}
+
+EigenSorterFactory* EigenCalcGeneral::createEigenSorterFactory(const XML::node& node)const{
+
+  const char* st_name = node.attribute("sorting").value();
+  double thrs;
+  XML::read(node,"threshold",thrs);
+
+  XML::node ac_node = node;
+  XML::descend(ac_node,"Acceleration");
+  const char* ac_name = ac_node.attribute("name").value();
+
+  if(!strcmp(ac_name,"None")){
+    if(     !strcmp(st_name,"Lowest") ) return new EigenSorterFactory_low(thrs);
+    else if(!strcmp(st_name,"Highest")) return new EigenSorterFactory_high(thrs);
+    else CCIO::cout<<st_name<<" is not compatible with current implementation.\n";
+
+  }else if(!strcmp(ac_name,"Chebyshev")){
+    return new EigenSorterFactory_high(thrs);
+
+  }else CCIO::cout<<ac_name<<" is not compatible with current implementation.\n";
+  abort();
+}
+
 void EigenCalcGeneral::do_calc(InputConfig& input){
 
-  const auto_ptr<DiracWilsonLike> diracPtr(diracFptr_->getDirac(input));
-  const auto_ptr<Fopr_Herm>       aoprPtr(opAccelFptr_->getFoprHerm(diracPtr.get()));
-  const auto_ptr<EigenSorter>     sorterPtr(esortFptr_->getEigenSorter(aoprPtr.get()));
-  const auto_ptr<EigenModesSolver> 
-    emslvPtr(eslvFptr_->getEigenSolver(aoprPtr.get(),sorterPtr.get()));
+  const auto_ptr<Fopr_Herm> opOrigPtr(opOrigFptr_->getFoprHerm(input));
+  const auto_ptr<Fopr_Herm> opAccelPtr(opAccelFptr_->getFoprHerm(opOrigPtr.get()));
+  const auto_ptr<EigenSorter> sorterPtr(esortFptr_->getEigenSorter(opAccelPtr.get()));
+  const auto_ptr<EigenModesSolver> emslvPtr(eslvFptr_->getEigenSolver(opAccelPtr.get(),
+								      sorterPtr.get()));
+
   emslvPtr->calc(evals_,evecs_,Neig_); /*!< @brief solving eigenproblem of aopr
 					 eval and evec are resized inside */
-
-  const auto_ptr<Fopr_Herm> ooprPtr(opOrigFptr_->getFoprHerm(diracPtr.get()));
-
   if(Neig_> 0){
     CCIO::cout<<"Calculation successfully finished. Eigenvalues are:\n";
-    get_eval(ooprPtr.get()); // eigenvalues of oopr 
+    get_eval(opOrigPtr.get()); // eigenvalues of oopr 
     
   }else if(Neig_== 0){
     CCIO::cout<<"NO converged eigenmode.\n";
@@ -54,7 +96,7 @@ void EigenCalcGeneral::do_calc(InputConfig& input){
     Neig_*= -1;           
     CCIO::cout<<Neig_<<" eigenvalues are obtained:\n";
 
-    get_eval(ooprPtr.get()); // eigenvalues of oopr 
+    get_eval(opOrigPtr.get()); // eigenvalues of oopr 
     throw "Calculation abnormally finished.\n";
   }
 }
@@ -113,49 +155,3 @@ void EigenCalcGeneral::output_bin(const string& output)const{
 	  << evals_[i]<<endl;
   }
 }
-
-FoprHermFactory* EigenCalcGeneral::createAccelOpFactory(const XML::node& node)const{
-  XML::node ac_node = node;
-  XML::descend(ac_node,"Acceleration");
-  const char* ac_name = ac_node.attribute("name").value();
-  
-  if(!strcmp(ac_name,"None"))    
-    return createFoprHermFactory(node);
-  if(!strcmp(ac_name,"Chebyshev")) 
-    return new FoprHermFactory_ChebyshevDdagDLin(node);
-  CCIO::cout<<ac_name<<" is not compatible with current implementation.\n";
-  abort();
-}
-
-FoprHermFactory* EigenCalcGeneral::createFoprHermFactory(const XML::node& node)const{
-  const char* name = node.attribute("name").value();
-  
-  if(!strcmp(name,"Hx"))    return new FoprHermFactory_H;
-  if(!strcmp(name,"DdagD")) return new FoprHermFactory_DdagD;
-  if(!strcmp(name,"DDdag")) return new FoprHermFactory_DDdag;
-  CCIO::cout<<name<<" is not compatible with current implementation.\n";
-  abort();
-}
-
-EigenSorterFactory* EigenCalcGeneral::createEigenSorterFactory(const XML::node& node)const{
-
-  const char* st_name = node.attribute("sorting").value();
-  double thrs;
-  XML::read(node,"threshold",thrs);
-
-  XML::node ac_node = node;
-  XML::descend(ac_node,"Acceleration");
-  const char* ac_name = ac_node.attribute("name").value();
-
-  if(!strcmp(ac_name,"None")){
-    if(     !strcmp(st_name,"Lowest") ) return new EigenSorterFactory_low(thrs);
-    else if(!strcmp(st_name,"Highest")) return new EigenSorterFactory_high(thrs);
-    else CCIO::cout<<st_name<<" is not compatible with current implementation.\n";
-
-  }else if(!strcmp(ac_name,"Chebyshev")){
-    return new EigenSorterFactory_high(thrs);
-
-  }else CCIO::cout<<ac_name<<" is not compatible with current implementation.\n";
-  abort();
-}
-

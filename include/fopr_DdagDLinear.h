@@ -24,8 +24,6 @@ public:
     w += b_*f;
     return w;
   }
-  const Field mult_dag(const Field& f) const{return mult(f);}
-
   double func(double x)const{return a_*x*x+b_;}
   size_t fsize()const {return D_->fsize();}
 };

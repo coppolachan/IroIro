@@ -1,5 +1,5 @@
 /*!
-  @file mapping.hpp
+  @file autoMap.hpp
   @brief Declares AutoMap class for the shift
 */
 #ifndef MAPPING_H_
@@ -9,6 +9,7 @@
 #include "include/errors.hpp"
 #include "Communicator/communicator.hpp"
 #include "siteMap.hpp"
+#include "myMap.hpp"
 
 #include <vector>
 #include <valarray>
@@ -20,6 +21,8 @@
 //   ^ bdry_b_                bdry_t_ ^
 
 namespace Mapping{
+
+  struct SpatialTag{};
 
   struct EOtag{};
   struct OEtag{};
@@ -39,19 +42,31 @@ namespace Mapping{
 
   public:
     // using the regular site indexing <-
-    AutoMap(int dir)
-      :bdry_t_(SiteMap::shiftSite.bdry_map(dir,Top)),
-       bulk_t_(SiteMap::shiftSite.bulk_map(dir,Top)),
-       bdry_b_(SiteMap::shiftSite.bdry_map(dir,Btm)),
-       bulk_b_(SiteMap::shiftSite.bulk_map(dir,Btm)),
-       dir_(dir),
-       is_initialized_(true){}
+    AutoMap(int dir):bdry_t_(SiteMap::shiftSite.bdry_map(dir,Top)),
+		     bulk_t_(SiteMap::shiftSite.bulk_map(dir,Top)),
+		     bdry_b_(SiteMap::shiftSite.bdry_map(dir,Btm)),
+		     bulk_b_(SiteMap::shiftSite.bulk_map(dir,Btm)),
+		     dir_(dir),
+		     is_initialized_(true){
+      if(bdry_t_.empty()||bulk_t_.empty()
+	 ||bdry_b_.empty()||bulk_b_.empty()) is_initialized_=false;
+    }
+    template<typename MAP>
+    AutoMap(int dir,const MAP& mm):bdry_t_(mm.bdry_map(dir,Top)),
+				   bulk_t_(mm.bulk_map(dir,Top)),
+				   bdry_b_(mm.bdry_map(dir,Btm)),
+				   bulk_b_(mm.bulk_map(dir,Btm)),
+				   dir_(dir),
+				   is_initialized_(true){
+      if(bdry_t_.empty()||bulk_t_.empty()
+	 ||bdry_b_.empty()||bulk_b_.empty()) is_initialized_=false;
+    }
 
     template<typename FIELD>
     FIELD operator()(const FIELD& Fin,Forward)const{
       if (!is_initialized_){
 	ErrorString msg;
-	msg << "The maps have not been initialized yet\n";
+	msg << "The maps is not initialized correctly. dir=" <<dir_<<"\n";
 	Errors::BaseErr("Initialization missing", msg);
       }
       
@@ -70,7 +85,7 @@ namespace Mapping{
     FIELD operator()(const FIELD& Fin,Backward) const{
       if (!is_initialized_){
 	ErrorString msg;
-	msg << "The maps have not been initialized yet\n";
+	msg << "The maps is not initialized correctly. dir=" <<dir_<<"\n";
 	Errors::BaseErr("Initialization missing", msg);
       }
       FIELD Fout(Fin.Nvol());   

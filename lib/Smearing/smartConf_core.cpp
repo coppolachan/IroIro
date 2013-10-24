@@ -3,7 +3,6 @@
   @brief Defines the SmartConf class member core functions
 */
 #include "smartConf.hpp"
-#include "Geometry/mapping.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"

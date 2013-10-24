@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-10-04 16:00:54 cossu>
+# Time-stamp: <2013-10-23 22:56:47 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -173,6 +173,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/eigenModesSolver_Factory.cpp		\
 		EigenModes/eigenModesSolver_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp		\
+		EigenModes/chebyshevAccelFunc.cpp            \
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
 		Measurements/measGeneral.cpp			\
@@ -192,8 +193,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
-		Geometry/mapping.cpp			\
-		Geometry/mapping_improved.cpp		\
+		Geometry/autoMap_improved.cpp		\
 		Geometry/siteIndex_EvenOdd.cpp		\
 		Geometry/siteMap.cpp			\
 		Geometry/shiftField.cpp			\
@@ -241,7 +241,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	\
-		Laplacian/laplacian.cpp	
+		Scalar_ops/laplacian.cpp	        \
+		Scalar_ops/scalar_Operator_FactoryCreator.cpp	
 
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
@@ -258,6 +259,8 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/factories.hpp		\
 			$(top_srcdir)/include/fopr_Chebyshev.h	        \
 			$(top_srcdir)/include/fopr_DdagDLinear.h        \
+			$(top_srcdir)/include/fopr_QuadLinear.h         \
+			$(top_srcdir)/include/fopr_Linear.h             \
 			$(top_srcdir)/include/fopr_Dhat.h		\
 			$(top_srcdir)/include/fopr_eo.h			\
 			$(top_srcdir)/include/fopr_eo_wilson.h		\
@@ -340,9 +343,11 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			IO/writers.hpp				\
 			IO/text_header.hpp			\
 			Geometry/siteIndex.hpp     		\
+			Geometry/siteIndex3d.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
 			Geometry/siteMap.hpp			\
-			Geometry/mapping.hpp			\
+			Geometry/myMap.hpp			\
+			Geometry/autoMap.hpp			\
 			Geometry/shiftField.hpp			\
 			Main/gaugeConf.hpp			\
 			Main/gaugeGlobal.hpp			\
@@ -379,7 +384,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenModesSolver_IRL.hpp	\
 			EigenModes/eigenSorter_Factory.hpp	\
 			EigenModes/eigenSorter.hpp		\
-			EigenModes/foprHermFactory_ChebyshevDdagDLin.hpp\
+			EigenModes/chebyshevAccelFunc.hpp\
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/eigenModes.hpp		\
 			EigenModes/findminmax.hpp		\
@@ -437,8 +442,9 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	\
-			Laplacian/laplacian.hpp	
-
+			Scalar_ops/laplacian.hpp	        \
+			Scalar_ops/scalar_Operator_Factory.hpp  \
+			Scalar_ops/scalar_Operator_FactoryCreator.hpp
 
 
 

@@ -5,9 +5,9 @@
 #define POLYAKOVLOOP_INCLUDED
 
 #include "include/field.h"
-#include "Geometry/mapping.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Tools/sunMatUtils.hpp"
+#include "Geometry/autoMap.hpp"
 #include <complex>
 
 class PolyakovLoop {
