@@ -3,7 +3,7 @@
  *
  *@brief Definition of class methods for Dirac_optimalDomainWall_EvenOdd (5d op)
 
- Time-stamp: <2013-08-22 16:26:24 cossu>
+ Time-stamp: <2013-10-17 16:25:24 cossu>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"
@@ -14,6 +14,8 @@
 
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
+
+#include "Tools/utils_BGQ.hpp"
 
 using namespace std;
 

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_EvenOdd.hpp
  * @brief Declaration of class Dirac_optimalDomainWall_EvenOdd (5d operator)
- Time-stamp: <2013-08-23 10:43:53 cossu>
+ Time-stamp: <2013-10-29 10:58:03 cossu>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
@@ -33,8 +33,8 @@ public:
   Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,
 				  DiracWilsonLike_EvenOdd* Kernel,
 				  DWFType Type=Regular)
-    :Deo_(DWF_node,Kernel->getDeo(),DomainWallFermions::EvenOdd_tag(),Type),
-     Doe_(DWF_node,Kernel->getDoe(),DomainWallFermions::EvenOdd_tag(),Type){
+    :Deo_(DWF_node,Kernel->getDeo(),DomainWallFermions::EvenOdd_tag(1),Type),
+     Doe_(DWF_node,Kernel->getDoe(),DomainWallFermions::EvenOdd_tag(2),Type){
     //
 #if VERBOSITY>DEBUG_VERB_LEVEL 
     CCIO::cout<<"Dirac_optimalDomainWall_Evenodd created"<<std::endl;
@@ -50,8 +50,8 @@ public:
 				  const std::vector<double>& omega,
 				  const DiracWilsonLike* Keo,
 				  const DiracWilsonLike* Koe)
-    :Deo_(b,c,M0,mq,omega,Keo,DomainWallFermions::EvenOdd_tag()),
-     Doe_(b,c,M0,mq,omega,Koe,DomainWallFermions::EvenOdd_tag()){}
+    :Deo_(b,c,M0,mq,omega,Keo,DomainWallFermions::EvenOdd_tag(1)),
+     Doe_(b,c,M0,mq,omega,Koe,DomainWallFermions::EvenOdd_tag(2)){}
   
   ~Dirac_optimalDomainWall_EvenOdd(){
     CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";

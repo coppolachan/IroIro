@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-08-23 10:43:57 cossu>
+ Time-stamp: <2013-10-29 10:58:44 cossu>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_INCLUDED
@@ -23,7 +23,11 @@ struct SolverOutput;
 #endif
 
 namespace DomainWallFermions {
-  struct EvenOdd_tag{};
+  struct EvenOdd_tag{
+    int EOtag;
+    EvenOdd_tag(int tag):EOtag(tag){};
+    EvenOdd_tag():EOtag(0){};
+  };
   const std::vector<double> getOmega(int Ns,double lmd_min,double lmd_max);
   double read_wilson_mass(const XML::node& node);
 }
@@ -74,6 +78,8 @@ private:
   size_t f5size_;
   size_t f4size_;
 
+  int EO_tag; // 0 if full indexing, 1-2 for EO-OE
+
   const Field get4d(const Field& f5,int s) const;
 
   void set5d(Field& f5,const Field& f4,int s) const;
@@ -91,6 +97,8 @@ private:
 
   void proj_p(Field&,const Field&,int s=0)const;
   void proj_m(Field&,const Field&,int s=0)const;
+
+
 
 #ifdef IBM_BGQ_WILSON
   void solve_ms_init(std::vector<Field>&,std::vector<Field>&,Field&,Field&,
@@ -151,7 +159,7 @@ public:
 
   /*! @brief constructor for EvenOdd */
   Dirac_optimalDomainWall(XML::node DWF_node,const DiracWilsonLike* Dw,
-			  DomainWallFermions::EvenOdd_tag,
+			  DomainWallFermions::EvenOdd_tag EO,
 			  DWFType Type= Regular)
     :Params_(DWF_node,Type),
      N5_(Params_.N5_),M0_(Params_.M0_),mq_(Params_.mq_),
@@ -161,12 +169,13 @@ public:
      f5size_(ff_.size()),
      f4size_(Dw->fsize()),
      mult_core(&Dirac_optimalDomainWall::mult_offdiag),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag){ assert(Dw_);}
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag),
+     EO_tag(EO.EOtag){ assert(Dw_);}
 
   Dirac_optimalDomainWall(double b,double c,double M0,double mq,
 			  const std::vector<double>& omega,
 			  const DiracWilsonLike* Dw,
-			  DomainWallFermions::EvenOdd_tag)
+			  DomainWallFermions::EvenOdd_tag EO)
     :Params_(b,c,M0,mq,omega),
      N5_(Params_.N5_),M0_(M0),mq_(mq),
      Dw_(Dw),
@@ -175,7 +184,8 @@ public:
      f5size_(ff_.size()),
      f4size_(Dw->fsize()),
      mult_core(&Dirac_optimalDomainWall::mult_offdiag),
-     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag){assert(Dw_);}
+     mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag),
+     EO_tag(EO.EOtag){assert(Dw_);}
 
 
   size_t f4size() const{ return f4size_;}
