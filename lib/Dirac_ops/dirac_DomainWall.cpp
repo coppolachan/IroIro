@@ -1,7 +1,7 @@
 /*!--------------------------------------------------------------------------
  * @file dirac_DomainWall.cpp
  * @brief Definition of class methods for Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-07-05 14:52:28 noaki>
+ Time-stamp: <2013-10-17 15:38:46 cossu>
  *-------------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
@@ -497,9 +497,14 @@ void Dirac_optimalDomainWall::mult_dag_offdiag(Field& w5,const Field& f5) const{
 void Dirac_optimalDomainWall::
 md_force_p(Field& fce,const Field& phi,const Field& psi)const{
   using namespace FieldExpression;
-
+  CCIO::cout << "Calling md_force_p\n";
   Field lpf(f4size_), lmf(f4size_);
-
+  Field xie(f4size_);
+  Field w(f4size_);
+  double* lpf_ptr  = lpf.getaddr(0);
+  double* lmf_ptr  = lmf.getaddr(0);
+  double* xie_ptr  = xie.getaddr(0);
+  
   for(int s=0; s<N5_; ++s){
     proj_p(lpf,phi,(s+N5_-1)%N5_);
     if(s == 0)     lpf *= -mq_;
@@ -507,11 +512,13 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
     if(s == N5_-1) lmf *= -mq_;
 
     Field w = get4d(phi,s); 
-
+    
     w *= Params_.bs_[s];
     w += Params_.cs_[s]*(lpf +lmf);
-
-    Dw_->md_force_p(fce,w,get4d(psi,s));
+    
+    Dw_->md_force_p(fce,w,get4d(psi,s));  
+    
+    
   }
 }  
 

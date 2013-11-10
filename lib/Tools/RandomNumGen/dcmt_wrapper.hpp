@@ -63,6 +63,16 @@ public:
   void saveSeed(const std::string& file) const;
   void loadSeed(const std::string& file);
 
+  // Specific versions
+  void saveSeed_Txt(const std::string& file) const;
+  void loadSeed_Txt(const std::string& file);
+
+  void saveSeed_Binary(const std::string& file) const;
+  void loadSeed_Binary(const std::string& file);
+
+
+
+
 };
 
 #endif

@@ -4,6 +4,7 @@
 */
 //--------------------------------------------------------------
 #include "dirac_wilson_EvenOdd.hpp"
+
 using namespace std;
 
 const Field Dirac_Wilson_EvenOdd::mult_eo(const Field& f) const{ 
@@ -51,8 +52,8 @@ md_force(const Field& eta,const Field& zeta) const{
   Field fce(gsize());
   md_force_eo(fce,mult_oe(eta),zeta);
   md_force_oe(fce,eta,mult_eo_dag(zeta));
-  
   fce *= getKappa();
+
   return fce;
 }
 

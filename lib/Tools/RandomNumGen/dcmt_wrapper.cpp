@@ -95,8 +95,15 @@ RandNum_DCMT::~RandNum_DCMT(){
     free_mt_struct(mts);
 }
 
-
 void RandNum_DCMT::saveSeed(const std::string& file) const{
+  saveSeed_Binary(file);
+}
+
+void RandNum_DCMT::loadSeed(const std::string& file){
+  loadSeed_Binary(file);
+}
+
+void RandNum_DCMT::saveSeed_Txt(const std::string& file) const{
   CCIO::cout << "Saving DC Mersenne Twister in file ["
 	     << file << "]\n";
   int state_size = (p/w+1);
@@ -134,7 +141,7 @@ void RandNum_DCMT::saveSeed(const std::string& file) const{
   }
 };
 
-void RandNum_DCMT::loadSeed(const std::string& file){
+void RandNum_DCMT::loadSeed_Txt(const std::string& file){
   CCIO::cout << "Loading DC Mersenne Twister structures from file ["
 	     << file << "]\n";
   int state_size = (p/w+1);
@@ -196,4 +203,74 @@ void RandNum_DCMT::loadSeed(const std::string& file){
   }
   Communicator::instance()->sync();
   free_mt_struct(temp_mt);
+};
+
+
+void RandNum_DCMT::saveSeed_Binary(const std::string& file) const{
+  CCIO::cout << "Saving DC Mersenne Twister in file ["
+	     << file << "] in Binary mode\n";
+  int state_size = (p/w+1);
+  std::ofstream writer;
+ 
+  for (int n = 0; n < Communicator::instance()->size(); n++) {
+    if (n == Communicator::instance()->id()) {
+      if (n == 0){
+	writer.open(file.c_str(), std::ios_base::binary); //open new file in binary mode
+	//Write header with some useful info
+	int np[4];
+	np[0] = CommonPrms::instance()->node_num(0);
+	np[1] = CommonPrms::instance()->node_num(1);
+	np[2] = CommonPrms::instance()->node_num(2);
+	np[3] = CommonPrms::instance()->node_num(3);
+	writer.write((char*)np, sizeof(np));
+	CCIO::cout << "Size of mts "<<sizeof(*mts)<<"\n";
+      } else {
+	//append data 
+	writer.open(file.c_str(),std::ofstream::app | std::ios_base::binary); 
+      }
+      
+      writer.write((char*)mts, sizeof(int)*9+sizeof(uint32_t)*6);
+      writer.write((char*)mts->state, sizeof(uint32_t)*state_size);
+      writer.close();
+    }
+    Communicator::instance()->sync();
+  }
+};
+
+void RandNum_DCMT::loadSeed_Binary(const std::string& file){
+  CCIO::cout << "Loading DC Mersenne Twister structures from file ["
+	     << file << "] in Binary mode\n";
+  int state_size = (p/w+1);
+  int np0, np1, np2, np3;
+  std::ifstream reader(file.c_str(), std::ios_base::binary);
+  //check that the number of processes match
+  //Read header with some useful info
+  int np[4];
+  reader.read((char*)np, sizeof(np));
+
+  if (Communicator::instance()->primaryNode()){
+    if ((np[0] == CommonPrms::instance()->node_num(0)) &&
+	(np[1] == CommonPrms::instance()->node_num(1)) &&
+	(np[2] == CommonPrms::instance()->node_num(2)) &&
+	(np[3] == CommonPrms::instance()->node_num(3))){
+      std::cout << "Number and distribution of nodes matches\n";
+    } else {
+      std::cout << np[0] << " " 
+		<< np[1] << " " 
+		<< np[2] << " " 
+		<< np[3] << std::endl; 
+      std::cout << "[Error] The Number and distribution of nodes does not match.";
+      exit(1);
+    }
+  }
+  Communicator::instance()->sync();
+  //allocate space for the structure.
+  mts = alloc_mt_struct(state_size);
+  // load and store data
+  size_t structure_size = sizeof(int)*9+sizeof(uint32_t)*6+sizeof(uint32_t)*state_size;
+  reader.seekg(structure_size*Communicator::instance()->id(), std::ios_base::cur);
+  reader.read((char*)mts, sizeof(int)*9+sizeof(uint32_t)*6);
+  reader.read((char*)mts->state, sizeof(uint32_t)*state_size);
+
+  Communicator::instance()->sync();
 };
