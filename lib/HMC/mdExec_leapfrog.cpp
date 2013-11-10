@@ -40,7 +40,7 @@ void MDexec_leapfrog::update_U(double ep){
   int Nvol = CommonPrms::instance()->Nvol();
 
 #ifdef IBM_BGQ_WILSON
-  Exponentiate_BGQ(*U_, P_, ep, Params.Nexp);
+  ExponentiateMult_BGQ(*U_, P_, ep, Params.Nexp);
   /*
   GaugeField eiP = Exponentiate(P_, ep, Params.Nexp);
   GaugeField aux;

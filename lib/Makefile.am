@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-10-23 22:56:47 noaki>
+# Time-stamp: <2013-10-24 13:40:11 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -384,9 +384,10 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenModesSolver_IRL.hpp	\
 			EigenModes/eigenSorter_Factory.hpp	\
 			EigenModes/eigenSorter.hpp		\
-			EigenModes/chebyshevAccelFunc.hpp\
+			EigenModes/chebyshevAccelFunc.hpp       \
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/eigenModes.hpp		\
+			EigenModes/foprHermFunc.hpp		\
 			EigenModes/findminmax.hpp		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
@@ -442,6 +443,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	\
+			Scalar_ops/scalarOp.hpp  	        \
 			Scalar_ops/laplacian.hpp	        \
 			Scalar_ops/scalar_Operator_Factory.hpp  \
 			Scalar_ops/scalar_Operator_FactoryCreator.hpp

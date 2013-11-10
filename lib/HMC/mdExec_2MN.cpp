@@ -53,7 +53,7 @@ void MDexec_2MN::update_U(double ep){
 
   ///////////////////////// Core of calculations
 #ifdef IBM_BGQ_WILSON
-  Exponentiate_BGQ(*U_, P_, ep, Params.Nexp);
+  ExponentiateMult_BGQ(*U_, P_, ep, Params.Nexp);
 #else    
   using namespace SUNmatUtils;
   int Ndim = CommonPrms::instance()->Ndim();

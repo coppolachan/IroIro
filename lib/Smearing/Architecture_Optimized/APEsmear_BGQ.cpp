@@ -1,7 +1,6 @@
 #include "Smearing/APEsmear.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 #include "Geometry/shiftField.hpp"
-#include "Geometry/mapping.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 

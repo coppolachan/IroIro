@@ -3,7 +3,7 @@
   @brief Defines the SmartConf class member functions
 */
 #include "Smearing/smartConf.hpp"
-#include "Geometry/mapping.hpp"
+#include "Geometry/autoMap.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"

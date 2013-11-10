@@ -13,10 +13,9 @@ public:
   virtual ~FoprHermFunc(){}
 };
 
-class FoprAsIsFunc: public FoprHermFunc{
+class FoprNULLfunc: public FoprHermFunc{
 public:
-  Fopr_Herm* getFoprHerm(const Fopr_Herm* foprH)const {
-    return const_cast<Fopr_Herm*>(foprH); }
+  Fopr_Herm* getFoprHerm(const Fopr_Herm* foprH)const { return NULL;}
 };
 
 class FoprChebyshevFunc: public FoprHermFunc{

@@ -7,6 +7,7 @@
 #define SITEINDEX3D_INCLUDED
 
 #include "include/commonPrms.hpp"
+#include "Communicator/communicator.hpp"
 #include<vector>
 
 class SiteIndex3d{
@@ -31,6 +32,8 @@ public:
     slsize_.push_back(Nx_*Ny_); Bdir_.push_back(Nz_-1);
     slsize_.push_back(0); Bdir_.push_back(0);
   }
+
+  //// mandatory functions for MyMap////
   int slice_x(int x,int n)const{return n*Nx_+x;}
   int slice_y(int y,int n)const{return (n/Nx_)*NxNy_+y*Nx_+n%Nx_;}
   int slice_z(int z,int n)const{return NxNy_*z +n;}
@@ -38,6 +41,18 @@ public:
 
   int slsize(int dir)const{return slsize_[dir];}
   int Bdir(int dir) const{return Bdir_[dir];}
+
+
+  //// optional functions ////
+  int site(int x,int y,int z)const{ return x +Nx_*y +NxNy_*z; }
+
+  int c_x(int site) const{ return site%Nx_;}
+  int c_y(int site) const{ return (site/Nx_)%Ny_;}
+  int c_z(int site) const{ return (site/NxNy_)%Nz_;}
+
+  int global_x(int x)const{ return Communicator::instance()->ipe(XDIR)*Nx_+x;}
+  int global_y(int y)const{ return Communicator::instance()->ipe(YDIR)*Ny_+y;}
+  int global_z(int z)const{ return Communicator::instance()->ipe(ZDIR)*Nz_+z;}
 };
 
 #endif

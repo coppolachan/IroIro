@@ -2,7 +2,7 @@
  * @file fopr.h 
  * @brief Definition of Fopr classes 
  * @authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>, Jun-Ichi Noaki}
-Time-stamp: <2013-10-17 16:53:27 noaki>
+Time-stamp: <2013-11-01 14:12:36 noaki>
  */
 
 #ifndef FOPR_INCLUDED
@@ -70,6 +70,7 @@ public:
 
 class Fopr_Herm : public Fopr{
 public:
+  ~Fopr_Herm(){}
   virtual double func(double)const = 0;
   const Field mult_dag(const Field& f) const{return mult(f);}
 };

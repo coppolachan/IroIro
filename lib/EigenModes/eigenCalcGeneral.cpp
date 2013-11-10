@@ -22,7 +22,6 @@ EigenCalcGeneral::EigenCalcGeneral(const XML::node& node){
   XML::node setupNode = node;
   XML::descend(setupNode,"Setup");
   esortFptr_.reset(createEigenSorterFactory(setupNode));
-  XML::descend(setupNode,"Acceleration");
   opAccelFptr_.reset(createAccelOpFunc(setupNode));
 
   XML::node eslvNode = node;
@@ -34,8 +33,8 @@ FoprHermFunc* EigenCalcGeneral::createAccelOpFunc(const XML::node& node)const{
   XML::node ac_node = node;
   XML::descend(ac_node,"Acceleration");
   const char* ac_name = ac_node.attribute("name").value();
-  
-  if(!strcmp(ac_name,"None"))      return new FoprAsIsFunc();
+
+  if(!strcmp(ac_name,"None"))      return new FoprNULLfunc();
   if(!strcmp(ac_name,"Chebyshev")) return new ChebyshevAccelFunc(node);
   CCIO::cout<<ac_name<<" is not compatible with current implementation.\n";
   abort();
@@ -76,14 +75,21 @@ EigenSorterFactory* EigenCalcGeneral::createEigenSorterFactory(const XML::node& 
 
 void EigenCalcGeneral::do_calc(InputConfig& input){
 
-  const auto_ptr<Fopr_Herm> opOrigPtr(opOrigFptr_->getFoprHerm(input));
-  const auto_ptr<Fopr_Herm> opAccelPtr(opAccelFptr_->getFoprHerm(opOrigPtr.get()));
-  const auto_ptr<EigenSorter> sorterPtr(esortFptr_->getEigenSorter(opAccelPtr.get()));
-  const auto_ptr<EigenModesSolver> emslvPtr(eslvFptr_->getEigenSolver(opAccelPtr.get(),
-								      sorterPtr.get()));
+  auto_ptr<Fopr_Herm> opOrigPtr(opOrigFptr_->getFoprHerm(input));
+  auto_ptr<Fopr_Herm> opAccelPtr(opAccelFptr_->getFoprHerm(opOrigPtr.get()));
 
-  emslvPtr->calc(evals_,evecs_,Neig_); /*!< @brief solving eigenproblem of aopr
-					 eval and evec are resized inside */
+  auto_ptr<EigenSorter> sorterPtr;
+  auto_ptr<EigenModesSolver> emslvPtr;
+
+  if(opAccelPtr.get() != NULL){ /// this really means Acceleration is on
+    sorterPtr.reset(esortFptr_->getEigenSorter(opAccelPtr.get()));
+    emslvPtr.reset(eslvFptr_->getEigenSolver(opAccelPtr.get(),sorterPtr.get()));
+  }else{
+    sorterPtr.reset(esortFptr_->getEigenSorter(opOrigPtr.get()));
+    emslvPtr.reset(eslvFptr_->getEigenSolver(opOrigPtr.get(),sorterPtr.get()));
+  }
+
+  emslvPtr->calc(evals_,evecs_,Neig_); 
   if(Neig_> 0){
     CCIO::cout<<"Calculation successfully finished. Eigenvalues are:\n";
     get_eval(opOrigPtr.get()); // eigenvalues of oopr 
@@ -120,14 +126,12 @@ void EigenCalcGeneral::get_eval(const Fopr_Herm* opr){
     CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<< res;
     CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<< vv-1.0 <<endl;
   }
-
   CCIO::cout<< resetiosflags(ios_base::scientific);
 }
 
 void EigenCalcGeneral::output_txt(const string& output)const{
   if(Communicator::instance()->primaryNode()){
     ofstream writer(output.c_str()); 
-    CCIO::cout<<"starting output\n";
     for(int i=0; i<Neig_; ++i){
       writer<< setw(2) <<setiosflags(ios_base::right)<< i;
       writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
@@ -141,12 +145,12 @@ void EigenCalcGeneral::output_txt(const string& output)const{
 	      << endl;
       }
     }
-    CCIO::cout<<"output finished\n";
   }
 }
 
 void EigenCalcGeneral::output_bin(const string& output)const{
   std::string output_evals = output + "_evals.txt";
+
   ofstream writer(output_evals.c_str());
   for(int i=0; i<Neig_; ++i){
     CCIO::SaveOnDisk<Format::Format_F>(evecs_[i],output.c_str(),true);

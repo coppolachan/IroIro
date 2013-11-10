@@ -22,7 +22,7 @@ public:
     :t_(time_slice),u_(u),
      gfmt_(CommonPrms::instance()->Nvol()),
      sfmt_(CommonPrms::instance()->Nvol()/CommonPrms::instance()->Nt()){
-    setup();
+    setup();    
   }
 
   Laplacian(const XML::node& node,Field* u)

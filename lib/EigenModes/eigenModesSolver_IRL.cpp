@@ -27,13 +27,19 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 
   ta.resize(Nm_);  V.resize(Nm_);
   for(int i=0; i<Nm_; ++i) V[i].resize(fsize,1.0);
-  
+
   double nv = V[0].norm();
   V[0] /= nv;                       /*!< @brief initial vector (uniform)*/
 
+  //for(int i=0; i<V[0].size();++i) 
+  // CCIO::cout<<"V[0]["<<i<<"]="<<(V[0])[i]<<"\n";
+
   vector<double> tb(Nm_);
   lanczos_init(ta,tb,V);            /*!< @brief initial Lanczos-decomp */
-
+  //
+  //for(int i=0; i<ta.size();++i) 
+  //CCIO::cout<<"ta["<<i<<"]="<<ta[i]<<"\n";
+  //
   vector<double> tta(Nm_),ttb(Nm_);
   vector<double> Qt(Nm_*Nm_);
 
@@ -50,7 +56,10 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
     /****** Restarting procedures ******/
     lanczos_ext(ta,tb,V,f);        /*!< @brief extended Lanczos-decomp*/
     tta = ta;  ttb = tb;           /*!< @brief getting shifts */
-
+    /*
+    for(int i=0; i<ta.size();++i) 
+      CCIO::cout<<"ta["<<i<<"]="<<ta[i]<<"\n";
+    */
     diagonalize(tta,ttb,Qt,Nm_); 
 
     esorter_->push(tta,Nm_);          /*!< @brief sort by the absolute values*/
@@ -103,8 +112,6 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
       CCIO::cout<<      setw(25)<<setiosflags(ios_base::left) <<tta[i];
       CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<<res<<endl;
       
-      // Kaneko san claims this is not good because prec_ depends on 
-      // if the acceleration is used or not:  
       if(res<prec_){  /*!<@brief counting converged eigenmodes */
         i_conv.push_back(i);
         if(esorter_->beyond_thrs(tta[i])) ++Nover; 
@@ -157,6 +164,8 @@ lanczos_init(vector<double>& ta,vector<double>& tb,vector<Field>& V)const{
   using namespace FieldExpression;
 
   Field f = opr_->mult(V[0]);
+  //  for(int i=0; i<f.size(); ++i) CCIO::cout<<"f["<<i<<"]="<<f[i]<<"\n";
+
   double ab = V[0]*f;
   f -= ab*V[0];
   ta[0] = ab;
@@ -262,9 +271,7 @@ void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
   int kmin = 0, kmax = Nk-1;
 
   for(int iter=0; iter<Niter; ++iter){
-    double sb = ta[kmax]-ta[kmax-1]; /*!< dealing with rightmost 2x2 block */
-    double dd = sqrt(sb*sb + 4.0*tb[kmax-1]*tb[kmax-1]);
-    double sft = 0.5*(ta[kmax-1]+ta[kmax] +dd*(sb/fabs(sb)));
+    double sft = ta[kmax];
 
     QRfact_Givens(ta,tb,Qt,Nk,sft,kmin,kmax); // transformation
     
