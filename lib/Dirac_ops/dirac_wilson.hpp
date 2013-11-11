@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.hpp
  * @brief Dirac_Wilson class 
- Time-stamp: <2013-11-10 14:50:57 noaki>
+ Time-stamp: <2013-11-12 08:39:06 noaki>
  */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
@@ -77,6 +77,7 @@ private:
   Dirac_Wilson(const Dirac_Wilson&); /*!< @brief simple copy is prohibited.*/
 
 #ifdef IBM_BGQ_WILSON
+  int EO_BGWilson;
   void BGQ_initialize_pointers();
 #endif
 
@@ -93,8 +94,12 @@ public:
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl_e),slice_osize(&Dirac_Wilson::slsize_e),
      slice_in(&Dirac_Wilson::xsl_o),slice_isize(&Dirac_Wilson::slsize_o),
-     mult_core(&Dirac_Wilson::mult_offdiag),
-     EO_BGWilson(1){BGQ_initialize_pointers();}
+     mult_core(&Dirac_Wilson::mult_offdiag)
+#ifdef IBM_BGQ_WILSON
+    ,EO_BGWilson(1){BGQ_initialize_pointers();}
+#else
+  {}
+#endif
 
   Dirac_Wilson(double mass,const Field* u,Dop::OEtag)
     :Nvol_(CommonPrms::instance()->Nvol()/2),
@@ -107,8 +112,12 @@ public:
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl_o),slice_osize(&Dirac_Wilson::slsize_o),
      slice_in(&Dirac_Wilson::xsl_e),slice_isize(&Dirac_Wilson::slsize_e),
-     mult_core(&Dirac_Wilson::mult_offdiag),
-     EO_BGWilson(2){BGQ_initialize_pointers();}
+     mult_core(&Dirac_Wilson::mult_offdiag)
+#ifdef IBM_BGQ_WILSON
+    ,EO_BGWilson(2){BGQ_initialize_pointers();}
+#else
+  {}
+#endif
 
   /*! @brief constructor to create instance with normal site indexing */
   Dirac_Wilson(double mass,const Field* u)

@@ -529,7 +529,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-10-24 13:40:11 noaki>
+# Time-stamp: <2013-11-12 08:42:48 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -877,7 +877,6 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Smearing/stoutSmear.hpp			\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
-			Tools/utils_BGQ.hpp	        	\
 			Tools/jobUtils.hpp			\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp   		\

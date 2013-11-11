@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2013-10-29 11:48:57 cossu>
+ * Time-stamp: <2013-11-12 08:40:09 noaki>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -101,9 +101,6 @@ void Dirac_Wilson::mult_dag_ptr_EO(double* w, double* const f) const{
   double* pU = const_cast<Field *>(u_)->getaddr(0);
   BGWilson_MultEO_Dag(w,pU,f,-kpp_,EO_BGWilson,BGWILSON_DIRAC);
 }
-
-#endif
-
 void Dirac_Wilson::BGQ_initialize_pointers(){
   xie.resize(ff_.size());//(double*)malloc(ff_.Nin()*Nvol_*sizeof(double));
   if (EO_BGWilson == 1)
@@ -111,7 +108,7 @@ void Dirac_Wilson::BGQ_initialize_pointers(){
   else
     global_sites = SiteIndex_EvenOdd::instance()->osec();
 }
-
+#endif
 
 /*!
  *  @brief MD-force contribution: \f$\zeta^\dagger\frac{dH_W}{d\tau}\eta\f$
