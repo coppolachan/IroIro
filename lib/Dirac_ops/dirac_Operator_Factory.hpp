@@ -1,7 +1,7 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
 
- Time-stamp: <2013-11-21 10:19:36 noaki>
+ Time-stamp: <2013-11-29 17:39:21 noaki>
 
  */
 #ifndef DIRAC_FACT_
@@ -13,6 +13,7 @@
 #include "inputConfig.hpp"
 #include "dirac_wilson_adjoint.hpp"
 #include "dirac_wilson_EvenOdd.hpp"
+#include "dirac_wilson_adjoint_EvenOdd.hpp"
 #include "dirac_wilson_Brillouin.hpp"
 #include "dirac_clover.hpp"
 #include "dirac_Mobius.hpp"
@@ -215,6 +216,15 @@ class DiracWilsonEvenOddFactory : public DiracWilsonLikeEvenOddFactory {
   DiracWilsonLike_EvenOdd* createDirac(InputConfig&);
 public:
   DiracWilsonEvenOddFactory(const XML::node& node):Dirac_node_(node){}
+};
+
+/////////////
+/*! @brief Concrete class for creating Dirac Wilson Adjoint EvenOdd operators */
+class DiracWilsonAdjointEvenOddFactory : public DiracWilsonLikeEvenOddFactory {
+  XML::node Dirac_node_;
+  DiracWilsonLike_EvenOdd* createDirac(InputConfig&);
+public:
+  DiracWilsonAdjointEvenOddFactory(const XML::node& node):Dirac_node_(node){}
 };
 
 //////////////

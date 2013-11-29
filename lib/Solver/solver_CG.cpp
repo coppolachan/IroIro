@@ -2,7 +2,7 @@
  * @file solver_CG.cpp
  * @brief Definition of Solver_CG class member functions
  *
- * Time-stamp: <2013-07-12 18:18:55 cossu>
+ * Time-stamp: <2013-11-29 18:34:41 noaki>
  */
 
 #include <iostream>

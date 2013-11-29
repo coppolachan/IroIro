@@ -1,6 +1,6 @@
 /*! @file dirac_wilson_adjoint.hpp
  * @brief Dirac_Wilson_Adjoint class 
- Time-stamp: <2013-11-28 00:22:34 noaki>
+ Time-stamp: <2013-11-29 20:13:03 noaki>
  */
 #ifndef DIRAC_WILSON_ADJOINT_INCLUDED
 #define DIRAC_WILSON_ADJOINT_INCLUDED
@@ -92,7 +92,7 @@ public:
 
   Dirac_Wilson_Adjoint(double mass,const Field* u,Dop::OEtag)
     :Nvol_(CommonPrms::instance()->Nvol()/2),
-     kpp_(0.5/(4.0+mass)),Dw_(mass,u,Dop::EOtag()),dm_(NADJ_),
+     kpp_(0.5/(4.0+mass)),Dw_(mass,u,Dop::OEtag()),dm_(NADJ_),
      ff_(Nvol_),af_(Nvol_),gf_(Nvol_*2),u_(u),
      gp(&Dirac_Wilson_Adjoint::osec),gm(&Dirac_Wilson_Adjoint::esec),
      mult_core(&Dirac_Wilson_Adjoint::mult_offdiag){}

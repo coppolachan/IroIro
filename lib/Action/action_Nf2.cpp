@@ -1,7 +1,7 @@
 /*! 
  * @file action_Nf2.cpp
  * @brief Definition of methods of Action_Nf2 class
- Time-stamp: <2013-11-21 13:47:11 noaki>
+ Time-stamp: <2013-11-29 18:30:21 noaki>
  */
 #include "action_Nf2.hpp"
 #include "Tools/randNum_MP.h"
@@ -32,7 +32,6 @@ void Action_Nf2::attach_smearing(SmartConf* SmearObj) {
 Field Action_Nf2::DdagD_inv(const Field& src){
   Field sol(fsize_);
   SolverOutput monitor = slv_->solve(sol,src);
-
 #if VERBOSITY >= SOLV_MONITOR_VERB_LEVEL
   monitor.print();
 #endif

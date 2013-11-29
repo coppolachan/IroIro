@@ -1,7 +1,7 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
 
- * Time-stamp: <2013-11-21 10:14:49 noaki>
+ * Time-stamp: <2013-11-29 16:37:30 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -63,6 +63,10 @@ Dirac_optimalDomainWall* DiracDomainWall5dFactory::createDiracPV(InputConfig& in
 /// Dirac_Wilson_EvenOdd
 DiracWilsonLike_EvenOdd* DiracWilsonEvenOddFactory::createDirac(InputConfig& input){
   return new Dirac_Wilson_EvenOdd(Dirac_node_,input.getGconf());}
+
+/// Dirac_Wilson_Adjoint_EvenOdd
+DiracWilsonLike_EvenOdd* DiracWilsonAdjointEvenOddFactory::createDirac(InputConfig& input){
+  return new Dirac_Wilson_Adjoint_EvenOdd(Dirac_node_,input.getGconf());}
 
 /// Dirac_optimalDomainWall_EvenOdd
 DiracEvenOdd_DWF5dFactory::DiracEvenOdd_DWF5dFactory(XML::node node)

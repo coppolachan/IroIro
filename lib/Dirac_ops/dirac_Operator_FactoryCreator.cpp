@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-11-21 09:49:43 noaki>
+ * Time-stamp: <2013-11-29 16:36:17 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 
@@ -17,6 +17,8 @@ namespace Diracs {
       return new DiracWilsonAdjointFactory(node);
     if(!strcmp(Dirac_name, "DiracWilson_EvenOdd")) 
       return new DiracWilsonEvenOddFactory(node);
+    if(!strcmp(Dirac_name, "DiracWilson_Adjoint_EvenOdd")) 
+      return new DiracWilsonAdjointEvenOddFactory(node);
     if(!strcmp(Dirac_name, "DiracWilson_Brillouin")) 
       return new DiracWilsonBrillouinFactory(node);
     if(!strcmp(Dirac_name, "DiracWilson_Brillouin_Imp")) 
@@ -53,8 +55,11 @@ namespace Diracs {
     nullCheck(node);
     const char* Dirac_name = node.attribute("name").value();
 
-    if(!strcmp(Dirac_name, "DiracWilson")) 
+    if(!strcmp(Dirac_name, "DiracWilson"))
       return new DiracWilsonEvenOddFactory(node);
+    if(!strcmp(Dirac_name, "DiracWilsonAdjoint"))
+      return new DiracWilsonAdjointEvenOddFactory(node);
+
     stopMsg(node);
   }
 
