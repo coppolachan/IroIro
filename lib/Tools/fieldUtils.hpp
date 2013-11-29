@@ -73,12 +73,13 @@ namespace FieldUtils{
 
   inline SUNmat mat_dag(const GaugeField1D& F,int site){
     return SUNmat(F.data[F.format.islice(site)]).dag();  }
+  
+  inline SUNvec vec(const FermionField& f,int spin,int site){
+    return SUNvec(f.data[f.format.cslice(spin,site)]);  }
 
-  inline SUNvec vec(const FermionField& F,int spin,int site){
-    return SUNvec(F.data[F.format.cslice(spin,site)]);  }
+  inline SUNvec vec(const FermionField1sp& f,int site){
+    return SUNvec(f.data[f.format.islice(site)]);  }
 
-  inline SUNvec vec(const FermionField1sp& F,int site){
-    return SUNvec(F.data[F.format.islice(site)]);  }
   //
   inline SUNadjMat mat(const AdjGaugeField& F,int site,int dir){
     return SUNadjMat(F.data[F.format.islice(site,dir)]);  }

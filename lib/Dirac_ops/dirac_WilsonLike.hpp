@@ -1,6 +1,6 @@
 /*! @file dirac_WilsonLike.hpp
  *  @brief defines the abstract base classes for DiracWilsonLike 
- * Time-stamp: <2013-07-03 09:53:13 noaki>
+ * Time-stamp: <2013-11-21 11:35:27 noaki>
  */
 #ifndef DIRAC_WILSONLIKE_INCLUDED
 #define DIRAC_WILSONLIKE_INCLUDED
@@ -9,8 +9,9 @@
 #include "include/format_F.h"
 #include "include/format_G.h"
 
-typedef Format::Format_F ffmt_t;
-typedef Format::Format_G gfmt_t;
+typedef Format::Format_F  ffmt_t;
+typedef Format::Format_Fa afmt_t;
+typedef Format::Format_G  gfmt_t;
 
 namespace Dop{
   // for EvenOdd
@@ -41,13 +42,6 @@ protected:
   int re(int c1,int c2)const{return 2*(NC_*c1+c2);}
   int im(int c1,int c2)const{return 2*(NC_*c1+c2)+1;}
 
-  void gammaXcore(double*,const double*)const;
-  void gammaYcore(double*,const double*)const;
-  void gammaZcore(double*,const double*)const;
-  void gammaTcore(double*,const double*)const;
-  void gamma5core(double*,const double*)const;
-  void projPcore(double*,const double*)const;
-  void projMcore(double*,const double*)const;
   //#endif
 public:
   virtual ~DiracWilsonLike(){}
@@ -92,9 +86,6 @@ public:
  * @brief Declaration of abstract base class for 4D-reducted Domain-Wall fermions
  */
 class Dirac_optimalDomainWall_4D : public DiracWilsonLike {
-protected:
-  void BprojCore(double* f,const double* f0,const double* fN)const;
-  void BprojCore_dag(double* f0,double* fN,const double* f) const;
 public:
   virtual ~Dirac_optimalDomainWall_4D(){}
 

@@ -1,6 +1,6 @@
 /*! @file  eoUtils.hpp
  *  @brief utilities related to even/odd preconditioning
- Time-stamp: <2013-06-20 13:07:33 noaki>
+ Time-stamp: <2013-11-20 16:58:33 noaki>
  */
 #ifndef EOUTILS_INCLUDED
 #define EOUTILS_INCLUDED

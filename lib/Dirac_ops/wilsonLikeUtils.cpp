@@ -1,50 +1,46 @@
-/*! @file dirac_WilsonLike.cpp
- *  @brief implementation of member functions of Dirac_WilsonLike
- Time-stamp: <2013-11-20 18:15:25 noaki>
- */
+#include "wilsonLikeUtils.hpp"
 
-#include "dirac_WilsonLike.hpp"
+void (GammaMatrix::*GammaMatrix::gamma[])
+(double*,const double*) const = {&GammaMatrix::gammaXcore,
+				 &GammaMatrix::gammaYcore,
+				 &GammaMatrix::gammaZcore,
+				 &GammaMatrix::gammaTcore,};
 
-void (DiracWilsonLike::*DiracWilsonLike::gamma[])
-(double*,const double*) const = {&DiracWilsonLike::gammaXcore,
-				 &DiracWilsonLike::gammaYcore,
-				 &DiracWilsonLike::gammaZcore,
-				 &DiracWilsonLike::gammaTcore,};
-
-void DiracWilsonLike::gammaXcore(double* w,const double* f)const{
-  for(int c=0; c<N; ++c){
+void GammaMatrix::gammaXcore(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
     w[r0(c)] = f[i3(c)];  w[i0(c)] =-f[r3(c)];
     w[r1(c)] = f[i2(c)];  w[i1(c)] =-f[r2(c)];
     w[r2(c)] =-f[i1(c)];  w[i2(c)] = f[r1(c)];
     w[r3(c)] =-f[i0(c)];  w[i3(c)] = f[r0(c)];
   }
 }
-void DiracWilsonLike::gammaYcore(double* w,const double* f)const{
-  for(int c=0; c<N; ++c){
+void GammaMatrix::gammaYcore(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
     w[r0(c)] =-f[r3(c)];  w[i0(c)] =-f[i3(c)];
     w[r1(c)] = f[r2(c)];  w[i1(c)] = f[i2(c)];
     w[r2(c)] = f[r1(c)];  w[i2(c)] = f[i1(c)];
     w[r3(c)] =-f[r0(c)];  w[i3(c)] =-f[i0(c)];
   }
 }
-void DiracWilsonLike::gammaZcore(double* w,const double* f)const{
-  for(int c=0; c<N; ++c){
+void GammaMatrix::gammaZcore(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
     w[r0(c)] = f[i2(c)];  w[i0(c)] =-f[r2(c)];
     w[r1(c)] =-f[i3(c)];  w[i1(c)] = f[r3(c)];
     w[r2(c)] =-f[i0(c)];  w[i2(c)] = f[r0(c)];
     w[r3(c)] = f[i1(c)];  w[i3(c)] =-f[r1(c)];
   }
 }
-void DiracWilsonLike::gammaTcore(double* w,const double* f)const{
-  for(int c=0; c<N; ++c){
+void GammaMatrix::gammaTcore(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
     w[r0(c)] = f[r0(c)];  w[i0(c)] = f[i0(c)];
     w[r1(c)] = f[r1(c)];  w[i1(c)] = f[i1(c)];
     w[r2(c)] =-f[r2(c)];  w[i2(c)] =-f[i2(c)];
     w[r3(c)] =-f[r3(c)];  w[i3(c)] =-f[i3(c)];
   }
 }
-void DiracWilsonLike::gamma5core(double* w,const double* f)const{
-  for(int c=0; c<N; ++c){
+
+void GammaMatrix::gamma5core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
     w[r0(c)] = f[r2(c)];  w[i0(c)] = f[i2(c)];
     w[r1(c)] = f[r3(c)];  w[i1(c)] = f[i3(c)];
     w[r2(c)] = f[r0(c)];  w[i2(c)] = f[i0(c)];
@@ -52,8 +48,8 @@ void DiracWilsonLike::gamma5core(double* w,const double* f)const{
   }
 }
 
-void DiracWilsonLike::projPcore(double* w,const double* f)const{
-  for(int c=0; c<N; ++c){
+void GammaMatrix::projPcore(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
     double fup_r = 0.5*(f[r0(c)] +f[r2(c)]);
     double fup_i = 0.5*(f[i0(c)] +f[i2(c)]);
     double fdn_r = 0.5*(f[r1(c)] +f[r3(c)]);
@@ -65,8 +61,8 @@ void DiracWilsonLike::projPcore(double* w,const double* f)const{
   }
 }
 
-void DiracWilsonLike::projMcore(double* w,const double* f)const{
-  for(int c=0; c<N; ++c){
+void GammaMatrix::projMcore(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
     double fup_r = 0.5*(f[r0(c)] -f[r2(c)]);
     double fup_i = 0.5*(f[i0(c)] -f[i2(c)]);
     double fdn_r = 0.5*(f[r1(c)] -f[r3(c)]);
@@ -78,9 +74,8 @@ void DiracWilsonLike::projMcore(double* w,const double* f)const{
   }
 }
 
-void Dirac_optimalDomainWall_4D::
-BprojCore(double* f,const double* f1,const double* fN)const{ 
-  for(int c=0; c<NC_; ++c){
+void DW5dMatrix::BprojCore(double* f,const double* f1,const double* fN)const{
+  for(int c=0; c<Ncol_; ++c){
     double fupNr = 0.5*(fN[r0(c)] +fN[r2(c)]);
     double fupNi = 0.5*(fN[i0(c)] +fN[i2(c)]);
     double fdnNr = 0.5*(fN[r1(c)] +fN[r3(c)]);
@@ -98,11 +93,9 @@ BprojCore(double* f,const double* f1,const double* fN)const{
   }
 }
 
-void Dirac_optimalDomainWall_4D::
-BprojCore_dag(double* f1,double* fN,const double* f) const{
-
-  // f1 = f5(0), fN = f5(N5_-1)
-  for(int c=0; c<NC_; ++c){
+void DW5dMatrix::BprojCore_dag(double* f1,double* fN,const double* f) const{
+// f1 = f5(0), fN = f5(N5_-1)
+  for(int c=0; c<Ncol_; ++c){
     double fup_r = 0.5*(f[r0(c)] +f[r2(c)]);
     double fup_i = 0.5*(f[i0(c)] +f[i2(c)]);
     double fdn_r = 0.5*(f[r1(c)] +f[r3(c)]);
@@ -124,7 +117,3 @@ BprojCore_dag(double* f1,double* fN,const double* f) const{
     f1[r3(c)] =-fdn_r;   f1[i3(c)] =-fdn_i;
   }
 }
-
-
-
-

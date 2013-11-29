@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.cpp
  * @brief Declaration of Dirac_optimalDomainWall_4D_fullSolv class 
- Time-stamp: <2013-07-04 02:40:25 noaki>
+ Time-stamp: <2013-11-20 19:02:46 noaki>
  */
 #include "dirac_DomainWall_4D_fullSolv.hpp"
 #include "Fields/field_expressions.hpp"
@@ -83,9 +83,9 @@ const Field Dirac_optimalDomainWall_4D_fullSolv::Bproj(const Field& f5) const{
   int Nvol = fsize_/ffmt_t::Nin();
   ffmt_t ff(Nvol);
   for(int site=0; site<Nvol; ++site)
-    BprojCore(f4.getaddr(ff.index(0,site)),
-	      const_cast<Field&>(f5).getaddr(ff.index(0,site,0)),
-	      const_cast<Field&>(f5).getaddr(ff.index(0,site,N5-1)));
+    d5_.BprojCore(f4.getaddr(ff.index(0,site)),
+		  const_cast<Field&>(f5).getaddr(ff.index(0,site,0)),
+		  const_cast<Field&>(f5).getaddr(ff.index(0,site,N5-1)));
   return f4;
 }
 
@@ -95,8 +95,8 @@ const Field Dirac_optimalDomainWall_4D_fullSolv::Bproj_dag(const Field& f4) cons
   ffmt_t ff(Nvol);
   Field f5(Dodw_->fsize());
   for(int site=0; site<Nvol; ++site)
-    BprojCore_dag(f5.getaddr(ff.index(0,site,0)),
-		  f5.getaddr(ff.index(0,site,N5-1)),
-		  const_cast<Field&>(f4).getaddr(ff.index(0,site)));
+    d5_.BprojCore_dag(f5.getaddr(ff.index(0,site,0)),
+		      f5.getaddr(ff.index(0,site,N5-1)),
+		      const_cast<Field&>(f4).getaddr(ff.index(0,site)));
   return f5;
 }

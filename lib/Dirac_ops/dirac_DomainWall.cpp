@@ -1,7 +1,7 @@
 /*!--------------------------------------------------------------------------
  * @file dirac_DomainWall.cpp
  * @brief Definition of class methods for Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-10-17 15:38:46 cossu>
+ Time-stamp: <2013-11-20 18:54:28 noaki>
  *-------------------------------------------------------------------------*/
 #include <stdlib.h>
 #include <stdio.h>
@@ -146,8 +146,8 @@ const Field Dirac_optimalDomainWall::gamma5(const Field& f5) const{
   
   for(int s=0; s<N5_; ++s){
     for(int site=0; site<Nvol_; ++site){
-      gamma5core(w5.getaddr(ff_.index(0,site,s)),
-		 const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
+      dm_.gamma5core(w5.getaddr(ff_.index(0,site,s)),
+		     const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
     }
   }
   return w5; 
@@ -164,43 +164,23 @@ const Field Dirac_optimalDomainWall::R5g5(const Field& f5) const{
 
   for(int s=0; s<N5_; ++s){
     for(int site=0; site<Nvol_; ++site){
-      gamma5core(w5.getaddr(ff_.index(0,site,N5_-s-1)),
-		 const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
+      dm_.gamma5core(w5.getaddr(ff_.index(0,site,N5_-s-1)),
+		     const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
     }
   }
   return w5;
 }
-/*
-const Field Dirac_optimalDomainWall::Bproj( const Field& f5) const{ 
-  Field f4(f4size_),t4(f4size_);
 
-  proj_p(f4,f5,N5_-1);
-  proj_m(t4,f5,0);
-  f4 += t4;
-  return f4;
-}
-
-const Field Dirac_optimalDomainWall::Bproj_dag(const Field& f4) const{
-  Field f5(f5size_),t4(f4size_);
-  proj_p(t4,f4);
-  set5d(f5,t4,N5_-1);
-  proj_m(t4,f4);
-  set5d(f5,t4,0);
-  //  t4 -= f4;
-  //  set5d_c(f5,t4,-1.0,0);
-  return f5;
-}
-*/
 void Dirac_optimalDomainWall::proj_p(Field& w,const Field& f5,int s)const{
   for(int site=0; site<Nvol_; ++site)
-    projPcore(w.getaddr(ff_.index(0,site)),
-	      const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
+    dm_.projPcore(w.getaddr(ff_.index(0,site)),
+		  const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
 }
 
 void Dirac_optimalDomainWall::proj_m(Field& w,const Field& f5,int s)const{
   for(int site=0; site<Nvol_; ++site)
-    projMcore(w.getaddr(ff_.index(0,site)),
-	      const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
+    dm_.projMcore(w.getaddr(ff_.index(0,site)),
+		  const_cast<Field&>(f5).getaddr(ff_.index(0,site,s)));
 }
 
 void Dirac_optimalDomainWall::gamma5_4d(Field& w,const Field& f)const{

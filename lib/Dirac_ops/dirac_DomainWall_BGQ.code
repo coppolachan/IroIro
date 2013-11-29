@@ -2,7 +2,7 @@
  * @file dirac_DomainWall_BGQ.code
  *
  * @brief Definition of some BGQ optimized methods for Dirac_optimalDomainWall (5d operator)
- * Time-stamp: <2013-10-29 17:30:32 cossu>
+ * Time-stamp: <2013-11-12 09:29:21 noaki>
 
  *-------------------------------------------------------------------------*/
 #include "Tools/utils_BGQ.hpp"
@@ -311,9 +311,9 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
   Spinor* psi_ptr = (Spinor*)const_cast<Field&>(psi).getaddr(0);
   double* zeta_ptr;
   std::vector<int> global_sites;
-  if (EO_tag == 1)
+  if (EOtag_ == 1)
     global_sites = SiteIndex_EvenOdd::instance()->esec();
-  else if (EO_tag == 2)
+  else if (EOtag_ == 2)
     global_sites = SiteIndex_EvenOdd::instance()->osec();
 
  #pragma omp parallel 
@@ -338,7 +338,7 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
       
       zeta_ptr = (double*)(psi_ptr+s*Nvol);
       for(int mu=0; mu<NDIM_; ++mu){
-	BGWilson_MultEO_Dir(xie_ptr, pU, w_ptr,  1.0, EO_tag, BGWILSON_DIRAC, mu, BGWILSON_FORWARD);
+	BGWilson_MultEO_Dir(xie_ptr, pU, w_ptr,  1.0, EOtag_, BGWILSON_DIRAC, mu, BGWILSON_FORWARD);
 	
 	for(int site=is; site<is+ns; ++site){
 	  unsigned int index = 2*NC_*ND_*site;
@@ -391,9 +391,9 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
   double* et5_ptr  = lmf.getaddr(0);
   double* zeta_ptr;
   std::vector<int> global_sites;
-  if (EO_tag == 1)
+  if (EOtag_== 1)
     global_sites = SiteIndex_EvenOdd::instance()->esec();
-  else if (EO_tag == 2)
+  else if (EOtag_== 2)
     global_sites = SiteIndex_EvenOdd::instance()->osec();
 
 
@@ -420,7 +420,7 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
 	BGWilsonLA_MultGamma5((Spinor*)(et5_ptr)+is, w_ptr+is, ns);
 	
 	for(int mu=0; mu<NDIM_; ++mu){
-	  BGWilson_MultEO_Dir(xie_ptr, pU, zt5_ptr,  1.0, EO_tag, BGWILSON_DIRAC, mu, BGWILSON_FORWARD);
+	  BGWilson_MultEO_Dir(xie_ptr, pU, zt5_ptr,  1.0, EOtag_, BGWILSON_DIRAC, mu, BGWILSON_FORWARD);
 	  
 	  for(int site=is; site<is+ns; ++site){
 	    unsigned int index = 2*NC_*ND_*site;

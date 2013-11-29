@@ -2,7 +2,7 @@
   @file field.h
   @brief Definition of a general class storing a field
 
-  Time-stamp: <2013-04-23 17:49:10 neo>
+  Time-stamp: <2013-11-20 15:56:24 noaki>
 */
 #ifndef FIELD_INCLUDED
 #define FIELD_INCLUDED
@@ -11,6 +11,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <complex>
 
 class Field{
 private:
@@ -157,6 +158,7 @@ public:
   Field& operator-=(const std::valarray<double>&);
 
   Field& operator*=(const double);
+  Field& operator*=(const std::complex<double>&);
   Field& operator/=(const double);
 
   double operator*(const Field&) const;

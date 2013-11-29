@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2013-11-12 08:40:09 noaki>
+ * Time-stamp: <2013-11-27 17:20:38 noaki>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -25,7 +25,6 @@ static Field xie;
 
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
-
 
 void (Dirac_Wilson::*Dirac_Wilson::mult_p[])
 (Field&,const Field&) const = {&Dirac_Wilson::mult_xp,
@@ -74,8 +73,8 @@ const Field Dirac_Wilson::mult(const Field& f) const{
 const Field Dirac_Wilson::gamma5(const Field& f)const{ 
   Field w(ff_.size());
   for(int site=0; site<Nvol_; ++site){
-    gamma5core(w.getaddr(ff_.index(0,site)),
-	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
+    dm_.gamma5core(w.getaddr(ff_.index(0,site)),
+		   const_cast<Field&>(f).getaddr(ff_.index(0,site)));
   }
   return w;
 }
@@ -126,15 +125,12 @@ void Dirac_Wilson::md_force_p(Field& fce,
 
   //#pragma omp parallel 
   //{
-    int tid, nid;
-    int is, ie, ns;
-    nid = omp_get_num_threads();
-    tid = omp_get_thread_num();
-    is = tid*Nvol_ / nid;
-    ns = Nvol_ / nid;
-    
+    int nid = omp_get_num_threads();
+    int ns = Nvol_/nid;
+    int is = omp_get_thread_num()*ns;
+
     for(int mu=0; mu<NDIM_; ++mu){
-      BGWilson_MultEO_Dir(xie_ptr, pU, eta_ptr,  1.0, EO_BGWilson, BGWILSON_DIRAC, mu, BGWILSON_FORWARD);
+      BGWilson_MultEO_Dir(xie_ptr, pU, eta_ptr, 1.0, EO_BGWilson, BGWILSON_DIRAC, mu, BGWILSON_FORWARD);
       
       for(int site=is; site<is+ns; ++site){
 	unsigned int index = ff_.Nin()*site;
@@ -154,7 +150,7 @@ void Dirac_Wilson::md_force_p(Field& fce,
       } //site
     }//mu
      
-    BGQThread_Barrier(0,nid);
+    //BGQThread_Barrier(0,nid);
     //}//omp
   
 #else
@@ -164,18 +160,12 @@ void Dirac_Wilson::md_force_p(Field& fce,
        
 #pragma omp parallel 
     {
-      int tid, nid;
-      int is, ie, ns;
-      nid = omp_get_num_threads();
-      tid = omp_get_thread_num();
-      is = tid*Nvol_ / nid;
-      ns = Nvol_ / nid;
-      
+      int ns = Nvol_/omp_get_num_threads();
+      int is = omp_get_thread_num()*ns;
       SUNmat f;
       
       for(int site=is; site<is+ns; ++site){
 	f = 0.0;
-	
 	for(int a=0; a<NC_; ++a){
 	  for(int b=0; b<NC_; ++b){
 	    double fre = 0.0;
@@ -197,23 +187,14 @@ void Dirac_Wilson::md_force_p(Field& fce,
 	int gsite = (this->*gp)(site);
 	fce.add(gf_.cslice(0,gsite,mu),f.getva());
       } 
-      
     }
   }
-
- 
 #endif
-
 }
-
-
-
 
 void Dirac_Wilson::md_force_m(Field& fce,const Field& eta,const Field& zeta)const{
   using namespace SUNmatUtils;
 
-  //Field et5 = gamma5(eta);
-  // Field zt5 = gamma5(zeta);
   Field zt5(ff_.size());
   Field et5(ff_.size());
 
@@ -225,8 +206,6 @@ void Dirac_Wilson::md_force_m(Field& fce,const Field& eta,const Field& zeta)cons
   Spinor* eta_ptr  = (Spinor*)const_cast<Field&>(eta).getaddr(0);
   double* pU = const_cast<Field *>(u_)->getaddr(0);
 
- 
-
   Field xz5(ff_.size());
   double* xz5_ptr  = xz5.getaddr(0);
   vector_int global_sites;
@@ -237,13 +216,8 @@ void Dirac_Wilson::md_force_m(Field& fce,const Field& eta,const Field& zeta)cons
 
 #pragma omp parallel 
   { 
-    //SUNmat f;
-    int tid, nid;
-    int is, ie, ns;
-    nid = omp_get_num_threads();
-    tid = omp_get_thread_num();
-    is = tid*Nvol_ / nid;
-    ns = Nvol_ / nid;
+    int ns = Nvol_/omp_get_num_threads();
+    int is = omp_get_thread_num()*ns;
     
     BGWilsonLA_MultGamma5((Spinor*)(zt5_ptr)+is, zeta_ptr+is, ns);
     BGWilsonLA_MultGamma5((Spinor*)(et5_ptr)+is, eta_ptr+is, ns);
@@ -283,17 +257,11 @@ void Dirac_Wilson::md_force_m(Field& fce,const Field& eta,const Field& zeta)cons
   for(int mu=0; mu<NDIM_; ++mu){
     Field xz5(ff_.size());
     (this->*mult_p[mu])(xz5, zt5);
-    
 
 #pragma omp parallel 
     {
-      int tid, nid;
-      int is, ie, ns;
-      nid = omp_get_num_threads();
-      tid = omp_get_thread_num();
-      is = tid*Nvol_ / nid;
-      ie = (tid + 1)*Nvol_ / nid;
-      ns = ie - is;
+      int ns = Nvol_/omp_get_num_threads();
+      int is = omp_get_thread_num()*ns;
       SUNmat f;
       
       for(int site=is; site<is+ns; ++site){

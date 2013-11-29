@@ -1,13 +1,13 @@
 /*! @filename dirac_wilson_Brillouin.hpp
  * @brief declaration of Dirac_Wilson_Brillouin class 
- * Time-stamp: <2013-09-28 22:45:26 noaki>
+ * Time-stamp: <2013-11-20 21:46:56 noaki>
  ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
 
+#include "wilsonLikeUtils.hpp"
 #include "dirac_WilsonLike.hpp"
 #include "include/pugi_interface.h"
-
 #include "Geometry/siteIndex.hpp"
 #include "Geometry/siteMap.hpp"
 
@@ -24,6 +24,7 @@ private:
   const ffmt_t ff_;
   const gfmt_t gf_;
   const size_t fsize_;
+  GammaMatrix dm_;
 
   ///
   Format::Format_G Wfmt_;
@@ -43,13 +44,6 @@ private:
   const Field sft_m(const Field& f,int dir)const;
   const Field lap(const Field& f,int dir,double a)const;
   const Field del(const Field& f,int dir,double a)const;
-
-  const Field gamma_x(const Field&)const;
-  const Field gamma_y(const Field&)const;
-  const Field gamma_z(const Field&)const;
-  const Field gamma_t(const Field&)const;
-
-  static void (Dirac_Wilson_Brillouin::*gm[])(double*, const double*)const;
 
   void(Dirac_Wilson_Brillouin::*mult_core)(Field&,const Field&)const;
   void mult_std(Field&,const Field&)const;

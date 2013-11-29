@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-11-12 08:42:48 noaki>
+# Time-stamp: <2013-11-21 11:06:58 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -145,9 +145,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\
-		Dirac_ops/dirac_WilsonLike.cpp		\
 		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
+		Dirac_ops/dirac_wilson_adjoint.cpp	\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
@@ -163,6 +163,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
+		Dirac_ops/wilsonLikeUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
@@ -359,6 +360,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_WilsonLike.hpp		\
 			Dirac_ops/dirac_staggeredLike.hpp	\
 			Dirac_ops/dirac_wilson.hpp		\
+			Dirac_ops/dirac_wilson_adjoint.hpp	\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
@@ -372,6 +374,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_LowModeDeflation.hpp    \
 			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
 			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
+			Dirac_ops/wilsonLikeUtils.hpp            	\
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\

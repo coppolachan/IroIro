@@ -1,7 +1,7 @@
 /*! 
  * @file action_Nf2.cpp
  * @brief Definition of methods of Action_Nf2 class
- Time-stamp: <2013-08-14 10:17:21 cossu>
+ Time-stamp: <2013-11-21 13:47:11 noaki>
  */
 #include "action_Nf2.hpp"
 #include "Tools/randNum_MP.h"
@@ -45,11 +45,9 @@ void Action_Nf2::init(const RandNum& rand){
 #ifdef ANTIPERIODIC_BC
   BC->apply_bc(*u_);
 #endif
-
+  
   MPrand::mp_get_gauss(ph,rand);
-
   phi_= D_->mult_dag(Field(ph));
-
 #ifdef ANTIPERIODIC_BC
   BC->apply_bc(*u_);
 #endif

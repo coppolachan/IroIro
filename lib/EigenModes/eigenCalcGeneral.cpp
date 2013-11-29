@@ -4,7 +4,6 @@
 #include "eigenCalcGeneral.hpp"
 #include "eigenSorter_Factory.hpp"
 #include "chebyshevAccelFunc.hpp"
-#include "IO/fields_io.hpp"
 #include "Fields/field_expressions.hpp"
 #include "inputConfig.hpp"
 #include "field.h"
@@ -148,14 +147,3 @@ void EigenCalcGeneral::output_txt(const string& output)const{
   }
 }
 
-void EigenCalcGeneral::output_bin(const string& output)const{
-  std::string output_evals = output + "_evals.txt";
-
-  ofstream writer(output_evals.c_str());
-  for(int i=0; i<Neig_; ++i){
-    CCIO::SaveOnDisk<Format::Format_F>(evecs_[i],output.c_str(),true);
-    writer<< setw(2) <<setiosflags(ios_base::right)<< i;
-    writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
-	  << evals_[i]<<endl;
-  }
-}

@@ -152,8 +152,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	IO/ILDG_writer.cpp IO/JLQCDLegacy_reader.cpp \
 	Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 	Dirac_ops/dirac_Operator_Factory.cpp Dirac_ops/dirac.cpp \
-	Dirac_ops/dirac_WilsonLike.cpp \
 	Dirac_ops/dirac_staggeredLike.cpp Dirac_ops/dirac_wilson.cpp \
+	Dirac_ops/dirac_wilson_adjoint.cpp \
 	Dirac_ops/dirac_wilson_EvenOdd.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp \
@@ -167,6 +167,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
 	Dirac_ops/dirac_wilson_Brillouin.cpp Dirac_ops/eoUtils.cpp \
+	Dirac_ops/wilsonLikeUtils.cpp \
 	Dirac_ops/BoundaryConditions/boundaryCond.cpp \
 	Dirac_ops/subSpaceProjector.cpp \
 	Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
@@ -275,8 +276,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	ILDG_writer.$(OBJEXT) JLQCDLegacy_reader.$(OBJEXT) \
 	dirac_Operator_FactoryCreator.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) dirac.$(OBJEXT) \
-	dirac_WilsonLike.$(OBJEXT) dirac_staggeredLike.$(OBJEXT) \
-	dirac_wilson.$(OBJEXT) dirac_wilson_EvenOdd.$(OBJEXT) \
+	dirac_staggeredLike.$(OBJEXT) dirac_wilson.$(OBJEXT) \
+	dirac_wilson_adjoint.$(OBJEXT) dirac_wilson_EvenOdd.$(OBJEXT) \
 	dirac_staggered_EvenOdd.$(OBJEXT) \
 	dirac_staggered_EvenOdd_Adjoint.$(OBJEXT) \
 	dirac_clover.$(OBJEXT) dirac_Mobius.$(OBJEXT) \
@@ -287,8 +288,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
 	dirac_DomainWall_4D_eoSolv.$(OBJEXT) \
 	dirac_wilson_Brillouin.$(OBJEXT) eoUtils.$(OBJEXT) \
-	dirac_Operator_Factory.$(OBJEXT) boundaryCond.$(OBJEXT) \
-	subSpaceProjector.$(OBJEXT) \
+	wilsonLikeUtils.$(OBJEXT) dirac_Operator_Factory.$(OBJEXT) \
+	boundaryCond.$(OBJEXT) subSpaceProjector.$(OBJEXT) \
 	dirac_LowModeDeflation_ExactEigen.$(OBJEXT) \
 	dirac_LowModeDeflation_Approx.$(OBJEXT) $(am__objects_6) \
 	eigenCalcGeneral.$(OBJEXT) eigenModesSolver_Factory.$(OBJEXT) \
@@ -529,7 +530,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-11-12 08:42:48 noaki>
+# Time-stamp: <2013-11-21 11:06:58 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -610,9 +611,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\
-		Dirac_ops/dirac_WilsonLike.cpp		\
 		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
+		Dirac_ops/dirac_wilson_adjoint.cpp	\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
@@ -628,6 +629,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
+		Dirac_ops/wilsonLikeUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
@@ -822,6 +824,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_WilsonLike.hpp		\
 			Dirac_ops/dirac_staggeredLike.hpp	\
 			Dirac_ops/dirac_wilson.hpp		\
+			Dirac_ops/dirac_wilson_adjoint.hpp	\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
@@ -835,6 +838,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_LowModeDeflation.hpp    \
 			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
 			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
+			Dirac_ops/wilsonLikeUtils.hpp            	\
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
@@ -1086,7 +1090,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Mobius.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Operator_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Operator_FactoryCreator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_WilsonLike.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_clover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_overlap_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_staggeredLike.Po@am__quote@
@@ -1095,6 +1098,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_Brillouin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_EvenOdd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenCalcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_IRL.Po@am__quote@
@@ -1169,6 +1173,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/topologyGeom.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wilsonFlow.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wilsonLikeUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xml_errors.Po@am__quote@
 
 .cpp.o:
@@ -1689,20 +1694,6 @@ dirac.obj: Dirac_ops/dirac.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac.obj `if test -f 'Dirac_ops/dirac.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac.cpp'; fi`
 
-dirac_WilsonLike.o: Dirac_ops/dirac_WilsonLike.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_WilsonLike.o -MD -MP -MF $(DEPDIR)/dirac_WilsonLike.Tpo -c -o dirac_WilsonLike.o `test -f 'Dirac_ops/dirac_WilsonLike.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_WilsonLike.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_WilsonLike.Tpo $(DEPDIR)/dirac_WilsonLike.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_WilsonLike.cpp' object='dirac_WilsonLike.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_WilsonLike.o `test -f 'Dirac_ops/dirac_WilsonLike.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_WilsonLike.cpp
-
-dirac_WilsonLike.obj: Dirac_ops/dirac_WilsonLike.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_WilsonLike.obj -MD -MP -MF $(DEPDIR)/dirac_WilsonLike.Tpo -c -o dirac_WilsonLike.obj `if test -f 'Dirac_ops/dirac_WilsonLike.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_WilsonLike.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_WilsonLike.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_WilsonLike.Tpo $(DEPDIR)/dirac_WilsonLike.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_WilsonLike.cpp' object='dirac_WilsonLike.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_WilsonLike.obj `if test -f 'Dirac_ops/dirac_WilsonLike.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_WilsonLike.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_WilsonLike.cpp'; fi`
-
 dirac_staggeredLike.o: Dirac_ops/dirac_staggeredLike.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_staggeredLike.o -MD -MP -MF $(DEPDIR)/dirac_staggeredLike.Tpo -c -o dirac_staggeredLike.o `test -f 'Dirac_ops/dirac_staggeredLike.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_staggeredLike.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_staggeredLike.Tpo $(DEPDIR)/dirac_staggeredLike.Po
@@ -1730,6 +1721,20 @@ dirac_wilson.obj: Dirac_ops/dirac_wilson.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson.cpp' object='dirac_wilson.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson.obj `if test -f 'Dirac_ops/dirac_wilson.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson.cpp'; fi`
+
+dirac_wilson_adjoint.o: Dirac_ops/dirac_wilson_adjoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_adjoint.o -MD -MP -MF $(DEPDIR)/dirac_wilson_adjoint.Tpo -c -o dirac_wilson_adjoint.o `test -f 'Dirac_ops/dirac_wilson_adjoint.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_adjoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_adjoint.Tpo $(DEPDIR)/dirac_wilson_adjoint.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_adjoint.cpp' object='dirac_wilson_adjoint.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_adjoint.o `test -f 'Dirac_ops/dirac_wilson_adjoint.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_adjoint.cpp
+
+dirac_wilson_adjoint.obj: Dirac_ops/dirac_wilson_adjoint.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_adjoint.obj -MD -MP -MF $(DEPDIR)/dirac_wilson_adjoint.Tpo -c -o dirac_wilson_adjoint.obj `if test -f 'Dirac_ops/dirac_wilson_adjoint.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_adjoint.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_adjoint.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_adjoint.Tpo $(DEPDIR)/dirac_wilson_adjoint.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_adjoint.cpp' object='dirac_wilson_adjoint.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_adjoint.obj `if test -f 'Dirac_ops/dirac_wilson_adjoint.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_adjoint.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_adjoint.cpp'; fi`
 
 dirac_wilson_EvenOdd.o: Dirac_ops/dirac_wilson_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_wilson_EvenOdd.Tpo -c -o dirac_wilson_EvenOdd.o `test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_EvenOdd.cpp
@@ -1954,6 +1959,20 @@ eoUtils.obj: Dirac_ops/eoUtils.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/eoUtils.cpp' object='eoUtils.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eoUtils.obj `if test -f 'Dirac_ops/eoUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/eoUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/eoUtils.cpp'; fi`
+
+wilsonLikeUtils.o: Dirac_ops/wilsonLikeUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT wilsonLikeUtils.o -MD -MP -MF $(DEPDIR)/wilsonLikeUtils.Tpo -c -o wilsonLikeUtils.o `test -f 'Dirac_ops/wilsonLikeUtils.cpp' || echo '$(srcdir)/'`Dirac_ops/wilsonLikeUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wilsonLikeUtils.Tpo $(DEPDIR)/wilsonLikeUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/wilsonLikeUtils.cpp' object='wilsonLikeUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o wilsonLikeUtils.o `test -f 'Dirac_ops/wilsonLikeUtils.cpp' || echo '$(srcdir)/'`Dirac_ops/wilsonLikeUtils.cpp
+
+wilsonLikeUtils.obj: Dirac_ops/wilsonLikeUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT wilsonLikeUtils.obj -MD -MP -MF $(DEPDIR)/wilsonLikeUtils.Tpo -c -o wilsonLikeUtils.obj `if test -f 'Dirac_ops/wilsonLikeUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/wilsonLikeUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/wilsonLikeUtils.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/wilsonLikeUtils.Tpo $(DEPDIR)/wilsonLikeUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/wilsonLikeUtils.cpp' object='wilsonLikeUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o wilsonLikeUtils.obj `if test -f 'Dirac_ops/wilsonLikeUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/wilsonLikeUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/wilsonLikeUtils.cpp'; fi`
 
 boundaryCond.o: Dirac_ops/BoundaryConditions/boundaryCond.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT boundaryCond.o -MD -MP -MF $(DEPDIR)/boundaryCond.Tpo -c -o boundaryCond.o `test -f 'Dirac_ops/BoundaryConditions/boundaryCond.cpp' || echo '$(srcdir)/'`Dirac_ops/BoundaryConditions/boundaryCond.cpp

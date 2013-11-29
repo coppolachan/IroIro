@@ -114,9 +114,9 @@ inline const Field Dirac_Wilson_Brillouin::mult_del(const Field& f)const{
     BGWilsonLA_MultAddScalar(pxi3,pf,64.0,Nvol_);     //    xi3 += 64.0*f;
     w += del(xi3,mu,1.0/432);
 
-    //v += (this->*gm[mu])(w);
+    //v += (this->*gamma[mu])(w);
     for(int site=0; site<Nvol_; ++site)
-      (this->*gm[mu])(xi3.getaddr(ff_.index(0,site)),
+      (this->*gamma[mu])(xi3.getaddr(ff_.index(0,site)),
 		      const_cast<Field&>(w).getaddr(ff_.index(0,site)));
 
     BGWilsonLA_Add(pv,pxi3,Nvol_);     //v += xi3;

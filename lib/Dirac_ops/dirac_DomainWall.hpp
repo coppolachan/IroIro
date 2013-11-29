@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_optimalDomainWall (5d operator)
- Time-stamp: <2013-10-29 10:58:44 cossu>
+ Time-stamp: <2013-11-20 18:55:31 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_INCLUDED
@@ -12,7 +12,7 @@
 #include "include/macros.hpp"
 
 #include "include/pugi_interface.h"
-
+#include "wilsonLikeUtils.hpp"
 #include "dirac_wilson.hpp"
 
 static double wilson_mult_timer;
@@ -23,11 +23,12 @@ struct SolverOutput;
 #endif
 
 namespace DomainWallFermions {
+
   struct EvenOdd_tag{
     int EOtag;
-    EvenOdd_tag(int tag):EOtag(tag){};
-    EvenOdd_tag():EOtag(0){};
+    EvenOdd_tag(int tag=0):EOtag(tag){}
   };
+
   const std::vector<double> getOmega(int Ns,double lmd_min,double lmd_max);
   double read_wilson_mass(const XML::node& node);
 }
@@ -70,7 +71,7 @@ private:
   size_t N5_;/*!< @brief Length of 5th dimension */
   double M0_;
   double mq_;
-
+  GammaMatrix dm_;
   const DiracWilsonLike* Dw_; /*!< @brief Dirac Kernel - any WilsonLike op */ 
 
   int Nvol_;
@@ -78,7 +79,7 @@ private:
   size_t f5size_;
   size_t f4size_;
 
-  int EO_tag; // 0 if full indexing, 1-2 for EO-OE
+  int EOtag_; // 0 if full indexing, 1-2 for EO-OE
 
   const Field get4d(const Field& f5,int s) const;
 
@@ -170,7 +171,7 @@ public:
      f4size_(Dw->fsize()),
      mult_core(&Dirac_optimalDomainWall::mult_offdiag),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag),
-     EO_tag(EO.EOtag){ assert(Dw_);}
+     EOtag_(EO.EOtag){ assert(Dw_);}
 
   Dirac_optimalDomainWall(double b,double c,double M0,double mq,
 			  const std::vector<double>& omega,
@@ -185,15 +186,13 @@ public:
      f4size_(Dw->fsize()),
      mult_core(&Dirac_optimalDomainWall::mult_offdiag),
      mult_dag_core(&Dirac_optimalDomainWall::mult_dag_offdiag),
-     EO_tag(EO.EOtag){assert(Dw_);}
-
+     EOtag_(EO.EOtag){assert(Dw_);}
 
   size_t f4size() const{ return f4size_;}
   size_t fsize() const{ return f5size_;}
   size_t gsize()const{return Dw_->gsize();}
   double getMass() const{return Params_.mq_;}
   int getN5() const{return Params_.N5_;}
-
 
   const Field* getGaugeField_ptr()const{ return Dw_->getGaugeField_ptr(); }
 

@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-10-04 16:24:44 cossu>
+# Time-stamp: <2013-11-27 21:29:04 noaki>
 
 
 VPATH = @srcdir@
@@ -87,7 +87,8 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_Solver_Perf$(EXEEXT) $(am__EXEEXT_2) test_RNG$(EXEEXT) \
 	test_IO$(EXEEXT) test_RationalApprox$(EXEEXT) \
 	test_RHMC_noFactories$(EXEEXT) test_SUNRepresentation$(EXEEXT) \
-	test_HeatBath$(EXEEXT) test_DWF$(EXEEXT) test_LapH$(EXEEXT)
+	test_HeatBath$(EXEEXT) test_DWF$(EXEEXT) \
+	test_DiracWilson_Adjoint$(EXEEXT) test_LapH$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -164,6 +165,14 @@ am_test_DWF_OBJECTS = test_DWF.$(OBJEXT) testerDWF.$(OBJEXT)
 test_DWF_OBJECTS = $(am_test_DWF_OBJECTS)
 test_DWF_LDADD = $(LDADD)
 test_DWF_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+am_test_DiracWilson_Adjoint_OBJECTS =  \
+	test_DiracWilson_Adjoint.$(OBJEXT) \
+	testerDiracWilsonAdj.$(OBJEXT)
+test_DiracWilson_Adjoint_OBJECTS =  \
+	$(am_test_DiracWilson_Adjoint_OBJECTS)
+test_DiracWilson_Adjoint_LDADD = $(LDADD)
+test_DiracWilson_Adjoint_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_EigenModesSolver_OBJECTS = test_EigenModesSolver.$(OBJEXT) \
 	testerEigenModesSolver.$(OBJEXT)
 test_EigenModesSolver_OBJECTS = $(am_test_EigenModesSolver_OBJECTS)
@@ -370,10 +379,10 @@ SOURCES = $(test_BFM_Inverter_SOURCES) \
 	$(test_BFM_Inverter_wrapper_SOURCES) \
 	$(test_BFM_Moebius_SOURCES) $(test_BFM_Operator_SOURCES) \
 	$(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
-	$(test_DWF_SOURCES) $(test_EigenModesSolver_SOURCES) \
-	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
-	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_noFactories_SOURCES) \
-	$(test_HMC_smear_noF_SOURCES) \
+	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
+	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
+	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
+	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_HeatBath_SOURCES) \
 	$(test_IO_SOURCES) $(test_LapH_SOURCES) \
 	$(test_MesonSpectrum_SOURCES) \
@@ -394,10 +403,10 @@ DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
 	$(am__test_BFM_Moebius_SOURCES_DIST) \
 	$(am__test_BFM_Operator_SOURCES_DIST) \
 	$(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
-	$(test_DWF_SOURCES) $(test_EigenModesSolver_SOURCES) \
-	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
-	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_noFactories_SOURCES) \
-	$(test_HMC_smear_noF_SOURCES) \
+	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
+	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
+	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
+	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_HeatBath_SOURCES) \
 	$(test_IO_SOURCES) $(test_LapH_SOURCES) \
 	$(test_MesonSpectrum_SOURCES) \
@@ -703,6 +712,9 @@ test_HeatBath_SOURCES = test_HeatBath.cpp	\
 test_DWF_SOURCES = test_DWF.cpp	\
 					testerDWF.cpp
 
+test_DiracWilson_Adjoint_SOURCES = test_DiracWilson_Adjoint.cpp	\
+					testerDiracWilsonAdj.cpp
+
 test_LapH_SOURCES = test_Laplacian.cpp	\
 					testerLapH.cpp
 
@@ -752,6 +764,7 @@ include_HEADERS = tests.hpp			\
 				test_HeatBath.hpp               \
 				test_Solver_BFM.hpp		\
                                 test_DWF.hpp			\
+                                test_DiracWilson_Adjoint.hpp	\
 				test_Laplacian.hpp	
 
 all: all-am
@@ -849,6 +862,9 @@ test_Clover$(EXEEXT): $(test_Clover_OBJECTS) $(test_Clover_DEPENDENCIES) $(EXTRA
 test_DWF$(EXEEXT): $(test_DWF_OBJECTS) $(test_DWF_DEPENDENCIES) $(EXTRA_test_DWF_DEPENDENCIES) 
 	@rm -f test_DWF$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_DWF_OBJECTS) $(test_DWF_LDADD) $(LIBS)
+test_DiracWilson_Adjoint$(EXEEXT): $(test_DiracWilson_Adjoint_OBJECTS) $(test_DiracWilson_Adjoint_DEPENDENCIES) $(EXTRA_test_DiracWilson_Adjoint_DEPENDENCIES) 
+	@rm -f test_DiracWilson_Adjoint$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_DiracWilson_Adjoint_OBJECTS) $(test_DiracWilson_Adjoint_LDADD) $(LIBS)
 test_EigenModesSolver$(EXEEXT): $(test_EigenModesSolver_OBJECTS) $(test_EigenModesSolver_DEPENDENCIES) $(EXTRA_test_EigenModesSolver_DEPENDENCIES) 
 	@rm -f test_EigenModesSolver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModesSolver_OBJECTS) $(test_EigenModesSolver_LDADD) $(LIBS)
@@ -955,6 +971,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Operator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BaryonSpectrum_Nf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DWF.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DiracWilson_Adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC.Po@am__quote@
@@ -989,6 +1006,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerBaryonSpectrumNf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerClover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerDWF.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerDiracWilsonAdj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerEigenModesSolver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerGauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@

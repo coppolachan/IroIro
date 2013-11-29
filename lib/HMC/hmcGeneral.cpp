@@ -38,6 +38,7 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
     CCIO::cout << "---------------------------\n";
     double timer;
     TIMING_START;
+
     Hdiff = evolve_step(Uin);
     TIMING_END(timer);
     CCIO::cout<< "[Timing] Trajectory time (s) : "<< timer/1000.0 << "\n";
@@ -66,7 +67,6 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
 double HMCgeneral::evolve_step(GaugeField& Uin)const{
   std::vector<int> clock;
   md_->init(clock,Uin,*rand_);     // set U and initialize P and phi's 
-
   int init_level = 0;
   double H0 = md_->calc_H();     // current state            
   CCIO::cout<<"Total H_before = "<< H0 << "\n";

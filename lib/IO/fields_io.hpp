@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-10-15 16:28:01 noaki>
+ * Time-stamp: <2013-11-28 13:22:03 noaki>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -13,9 +13,9 @@
 #include "include/messages_macros.hpp"
 #include "include/errors.hpp"
 #include "Geometry/siteIndex.hpp"
+#include "Geometry/siteIndex3d.hpp"
 #include <stdio.h>
 #include <string.h>
-
 
 #include "generic_header.hpp"
 #include "readers.hpp"
@@ -70,16 +70,15 @@ namespace CCIO {
       if(append_mode) 	outFile = fopen (filename,"a");
       else          	outFile = fopen (filename,"w");
 
-    if (outFile == NULL)
-      Errors::IOErr(Errors::FileNotFound, filename);
+      if(outFile == NULL) Errors::IOErr(Errors::FileNotFound, filename);
 
-    std::cout << "Writing file of type ["<<writerID<<"] - size "<<f.size()*comm->size()*sizeof(double)
-		<<" bytes on "<< filename << "... ";
-
+      std::cout << "Writing file of type ["<<writerID<<"] - size "
+		<< f.size()*comm->size()*sizeof(double)
+		<< " bytes on "<< filename << "... ";
+      
       writer->set_output(outFile);
       writer->header();      
     }
-
 
     //Loop among nodes (master node)   
     for(int node_t = 0; node_t < cmprms->NPEt(); ++node_t) {
@@ -96,21 +95,21 @@ namespace CCIO {
 		  //Copy a block of dimension Nx into the master node and save
 
 		  //Fill vector with indices
-		  for (int x_idx = 0; x_idx < block_x.size(); ++x_idx)
+		  for(int x_idx = 0; x_idx < block_x.size(); ++x_idx)
 		    block_x[x_idx] =
 		      SiteIndex::instance()->site(x_idx, y_slice, z_slice, t_slice);
 
 		  copy = f[fmt.get_sub(block_x)];
 	
 		  // copy to the master node
-		  comm->send_1to1(local, copy, local.size(), 0, node, node);
+		  comm->send_1to1(local,copy,local.size(),0,node,node);
 	
 		  comm->sync();    
 		  //Save to file sequentially
-		  if (comm->primaryNode()){
-		    for (int x_idx = 0; x_idx < block_x.size(); ++x_idx){
-		      for (int ex =0; ex < fmt.Nex(); ++ex) {	      
-			for (int in =0; in < fmt.Nin(); ++in) {
+		  if(comm->primaryNode()){
+		    for(int x_idx = 0; x_idx < block_x.size(); ++x_idx){
+		      for(int ex =0; ex < fmt.Nex(); ++ex) {	      
+			for(int in =0; in < fmt.Nin(); ++in) {
 			  //Breaks universality
 			  local_idx = in +fmt.Nin()*(x_idx + block_x.size()*ex);
 			  global_idx = writer->format(x_idx, in, ex);
@@ -118,9 +117,7 @@ namespace CCIO {
 			}
 		      }
 		    }
-		    if (outFile!=NULL) 
-		      writer->write((double*)&copy[0], copy.size());
-		    		    
+		    if(outFile!=NULL) writer->write((double*)&copy[0], copy.size());
 		  }// end of primaryNode
 		}// end of node_x
 	      }
@@ -147,6 +144,99 @@ namespace CCIO {
     for (int field_num = 0; field_num < f.size(); ++field_num) 
       result = SaveOnDisk<T>(f[field_num], filename, CCIO_FILE_APPEND_MODE);
     return result;
+  }
+
+  template <typename T>
+  int SaveOnDisk3D(const Field& f, const char* filename,
+		   bool append_mode = false,
+		   const std::string writerID = "Binary"){
+
+    Communicator* comm = Communicator::instance();
+    CommonPrms* cmprms = CommonPrms::instance();
+    assert(cmprms->NPEt()==1); // only works with NPEt=1
+
+    T fmt(cmprms->Nvol());
+    GeneralWriter *writer;
+
+    size_t local_idx, global_idx;
+    int num_nodes, local_vol, total_vol;
+    
+    total_vol = cmprms->Lvol()/cmprms->Lt();
+    local_vol = cmprms->Nvol()/cmprms->Nt();
+    num_nodes = cmprms->NP();
+    
+    SiteIndex3d idx3d;
+
+    vector_int block_x(cmprms->Nx());
+    varray_double copy(fmt.Nin()*block_x.size()*fmt.Nex());
+    varray_double local(fmt.Nin()*block_x.size()*fmt.Nex());
+
+    writer = getWriter(writerID,total_vol,fmt.Nin(),fmt.Nex()); 
+
+    // Open the output file, uses C style
+    FILE * outFile;
+    if(comm->primaryNode()) {
+      if(append_mode) 	outFile = fopen (filename,"a");
+      else          	outFile = fopen (filename,"w");
+
+      if(outFile == NULL) Errors::IOErr(Errors::FileNotFound, filename);
+
+      std::cout << "Writing file of type ["<<writerID<<"] - size "
+		<< f.size()*comm->size()*sizeof(double)
+		<< " bytes on "<< filename << "... ";
+      
+      writer->set_output(outFile);
+      writer->header();      
+    }
+
+    //Loop among nodes (master node)   
+    int node_t = 0;
+    for(int node_z = 0; node_z < cmprms->NPEz(); ++node_z) {
+      for(int z_slice = 0; z_slice <cmprms->Nz(); ++z_slice){
+	    
+	for(int node_y = 0; node_y < cmprms->NPEy(); ++node_y) {
+	  for(int y_slice = 0; y_slice < cmprms->Ny(); ++y_slice){
+		
+	    for(int node_x = 0; node_x < cmprms->NPEx(); ++node_x) {
+	      int node = comm->nodeid(node_x,node_y,node_z,node_t);
+	      //Copy a block of dimension Nx into the master node and save
+
+	      //Fill vector with indices
+	      for(int x_idx = 0; x_idx < block_x.size(); ++x_idx)
+		block_x[x_idx] = idx3d.site(x_idx, y_slice, z_slice);
+
+	      copy = f[fmt.get_sub(block_x)];
+	
+	      // copy to the master node
+	      comm->send_1to1(local,copy,local.size(),0,node,node);
+	
+	      comm->sync();    
+	      //Save to file sequentially
+	      if(comm->primaryNode()){
+		for(int x_idx = 0; x_idx < block_x.size(); ++x_idx){
+		  for(int ex =0; ex < fmt.Nex(); ++ex) {	      
+		    for(int in =0; in < fmt.Nin(); ++in) {
+		      //Breaks universality
+		      local_idx = in +fmt.Nin()*(x_idx + block_x.size()*ex);
+		      global_idx = writer->format(x_idx, in, ex);
+		      copy[global_idx] = local[local_idx];
+		    }
+		  }
+		}
+		if(outFile!=NULL) writer->write((double*)&copy[0], copy.size());
+	      }// end of primaryNode
+	    }// end of node_x
+	  }
+	}// end of node_y
+      }
+    }// end of node_z
+    
+    comm->sync();    
+    if(comm->primaryNode()) {
+      fclose(outFile);
+      std::cout << "write completed succesfully\n";
+    }
+    return 0;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.hpp
  * @brief Definition of Dirac_optimalDomainWall_4D class with full Solver
- Time-stamp: <2013-07-04 02:29:31 noaki>
+ Time-stamp: <2013-11-20 19:04:35 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_4D_FULLSOLV_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_4D_FULLSOLV_INCLUDED
@@ -26,6 +26,7 @@ class Dirac_optimalDomainWall_4D_fullSolv : public Dirac_optimalDomainWall_4D{
   const Field Bproj(const Field&) const;
   const Field Bproj_dag(const Field&) const;
 
+
   void(Dirac_optimalDomainWall_4D_fullSolv::*mult_core)(Field&,const Field&)const;
   void(Dirac_optimalDomainWall_4D_fullSolv::*mult_inv_core)(Field&,const Field&)const;
 
@@ -35,6 +36,7 @@ class Dirac_optimalDomainWall_4D_fullSolv : public Dirac_optimalDomainWall_4D{
   void mult_LU(    Field&,const Field&)const;
   void mult_inv_LU(Field&,const Field&)const;
 
+  DW5dMatrix d5_;
   double mq_;
   size_t fsize_;
 public:

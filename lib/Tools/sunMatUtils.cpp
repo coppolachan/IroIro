@@ -9,6 +9,7 @@
 using namespace std;
 
 namespace SUNmatUtils{
+
   SUNmat unity(){ return SUNmat().unity();}
   SUNmat zero(){  return SUNmat(); }
 
@@ -82,7 +83,6 @@ namespace SUNmatUtils{
   }
 
   const SU3mat lambda1(const SU3mat& u){
-
     SU3mat res(0.0);
     res.set(0, u.r(1,0),u.i(1,0));
     res.set(1, u.r(1,1),u.i(1,1));
@@ -95,7 +95,6 @@ namespace SUNmatUtils{
   }
 
   const SU3mat lambda2(const SU3mat& u){
-
     SU3mat res(0.0);
     res.set(0, u.i(1,0),-u.r(1,0));
     res.set(1, u.i(1,1),-u.r(1,1));
@@ -108,7 +107,6 @@ namespace SUNmatUtils{
   }
 
   const SU3mat lambda3(const SU3mat& u){
-
     SU3mat res(0.0);
     res.set(0, u.r(0,0),u.i(0,0));
     res.set(1, u.r(0,1),u.i(0,1));
@@ -121,7 +119,6 @@ namespace SUNmatUtils{
   }
 
   const SU3mat lambda4(const SU3mat& u){
-
     SU3mat res(0.0);
     res.set(0, u.r(2,0),u.i(2,0));
     res.set(1, u.r(2,1),u.i(2,1));
@@ -134,7 +131,6 @@ namespace SUNmatUtils{
   }
 
   const SU3mat lambda5(const SU3mat& u){
-
     SU3mat res(0.0);
     res.set(0, u.i(2,0),-u.r(2,0));
     res.set(1, u.i(2,1),-u.r(2,1));
@@ -147,7 +143,6 @@ namespace SUNmatUtils{
   }
 
   const SU3mat lambda6(const SU3mat& u){
-
     SU3mat res(0.0);
     res.set(3, u.r(2,0),u.i(2,0));
     res.set(4, u.r(2,1),u.i(2,1));
@@ -160,7 +155,6 @@ namespace SUNmatUtils{
   }
 
   const SU3mat lambda7(const SU3mat& u){
-
     SU3mat res(0.0);
     res.set(3, u.i(2,0),-u.r(2,0));
     res.set(4, u.i(2,1),-u.r(2,1));
@@ -173,7 +167,6 @@ namespace SUNmatUtils{
   }
 
   const SU3mat lambda8(const SU3mat& u){
-
     SU3mat res(u);
     res.set(6, -2.0*u.r(2,0),-2.0*u.i(2,0));
     res.set(7, -2.0*u.r(2,1),-2.0*u.i(2,1));
@@ -182,31 +175,101 @@ namespace SUNmatUtils{
     return res;
   }
 
+  const SU3mat lambda1(){
+    SU3mat res(0.0);
+    res.setr(1, 1.0);
+    res.setr(3, 1.0);
+    return res;
+  }
+
+  const SU3mat lambda2(){
+    SU3mat res(0.0);
+    res.seti(1,-1.0);
+    res.seti(3, 1.0);
+    return res;
+  }
+
+  const SU3mat lambda3(){
+    SU3mat res(0.0);
+    res.setr(0, 1.0);
+    res.setr(4,-1.0);
+    return res;
+  }
+
+  const SU3mat lambda4(){
+    SU3mat res(0.0);
+    res.setr(2, 1.0);
+    res.setr(6, 1.0);
+    return res;
+  }
+
+  const SU3mat lambda5(){
+    SU3mat res(0.0);
+    res.seti(2,-1.0); 
+    res.seti(6, 1.0);
+    return res;
+  }
+
+  const SU3mat lambda6(){
+    SU3mat res(0.0);
+    res.setr(5, 1.0);
+    res.setr(7, 1.0);
+    return res;
+  }
+
+  const SU3mat lambda7(){
+    SU3mat res(0.0);
+    res.seti(5,-1.0);
+    res.seti(7, 1.0);
+    return res;
+  }
+
+  const SU3mat lambda8(){
+    SU3mat res(0.0);
+    res.setr(0, 1.0/sqrt(3.0));
+    res.setr(4, 1.0/sqrt(3.0));
+    res.setr(8,-2.0/sqrt(3.0));
+    return res;
+  }
+
+  const SU3mat lambdaA(){
+    SU3mat res(0.0);
+    res.setr(0, 1.0);
+    res.setr(8,-1.0);
+    return res;
+  }
+  const SU3mat lambdaB(){
+    SU3mat res(0.0);
+    res.setr(4, 1.0);
+    res.setr(8,-1.0);
+    return res;
+  }
+
   #if NC_==3
   // specialization for NC_=3
   template<> 
   const valarray<double> adjoint(const SU3mat& u){
-    int dim = 8;
-    valarray<double> vt(dim*dim);
 
-    for(int a=0; a<dim; ++a){
-      SU3mat lu = lambda[a](u);
+    valarray<double> vt(NADJ_*NADJ_);
 
-      for(int b=0; b<dim; ++b)
-	vt[dim*a+b] = ReTr(lu*lambda[b](dag(u)))*0.5;
+    for(int a=0; a<NADJ_; ++a){
+      SU3mat lu = lambda_mul[a](u);
+
+      for(int b=0; b<NADJ_; ++b)
+	vt[NADJ_*a+b] = ReTr(lu*lambda_mul[b](dag(u)))*0.5;
     }
     return vt;
   }
-
+  /*
   const SU3mat lmd_commutator(int a,int b){
-    SU3mat res = lambda[a](lambda[b](unity()));
-    res -= lambda[b](lambda[a](unity()));
+    SU3mat res = lambda_mul[a](lambda_mul[b](unity()));
+    res -= lambda_mul[b](lambda_mul[a](unity()));
     return res;
   }
-
-
-
-
+  */
+  const SU3mat lmd_commutator(int a,int b){
+    return xI(lambda[su3alg[a*NADJ_+b]]())*2.0*su3str[a*NADJ_+b];
+  }
 
   // BLAS style optimization specific functions
   // not working, just containers now

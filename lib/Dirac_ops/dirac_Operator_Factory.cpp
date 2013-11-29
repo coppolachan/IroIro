@@ -1,7 +1,7 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
 
- * Time-stamp: <2013-08-29 15:43:48 noaki>
+ * Time-stamp: <2013-11-21 10:14:49 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -12,6 +12,10 @@
 /// Dirac_Wilson
 DiracWilsonLike* DiracWilsonFactory::createDirac(InputConfig& input){
   return new Dirac_Wilson(Dirac_node_,input.getGconf());}
+
+/// Dirac_Wilson_Adjoint
+DiracWilsonLike* DiracWilsonAdjointFactory::createDirac(InputConfig& input){
+  return new Dirac_Wilson_Adjoint(Dirac_node_,input.getGconf());}
 
 /// Dirac_Wilson_Brillouin
 DiracWilsonLike* DiracWilsonBrillouinFactory::createDirac(InputConfig& input){
