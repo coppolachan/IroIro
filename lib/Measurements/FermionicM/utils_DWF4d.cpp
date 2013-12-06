@@ -13,7 +13,7 @@ namespace Utils_DWF4D{
    * It uses the equation
    * \f[{\rm sign}(H_{kernel}) = 2 \gamma_5 D(m=0) - \gamma_5\f]
    */
-  const Field signKernel(const Dirac_optimalDomainWall_4D& Ddwf,
+  const Field signKernel(const Dirac_DomainWall_4D& Ddwf,
 			 const Field& f){
     using namespace FieldExpression;
 
@@ -28,7 +28,7 @@ namespace Utils_DWF4D{
   }
 
   /*! @brief  Delta function = 1/4 * (1- sign^2(Hw)) */
-  const Field delta(const Dirac_optimalDomainWall_4D& Ddwf,const Field& phi){
+  const Field delta(const Dirac_DomainWall_4D& Ddwf,const Field& phi){
 
     Field delta = signKernel(Ddwf,signKernel(Ddwf,phi));  //sign^2(Hw)
     delta -= phi;  //sign^2(Hw) -1  

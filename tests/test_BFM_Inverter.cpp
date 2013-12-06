@@ -63,7 +63,7 @@ int Test_Solver_BFM::run(){
   Dirac_Wilson Dw_oe(-M5,&(conf_.data),Dop::OEtag());
 
 
-  Dirac_optimalDomainWall_EvenOdd DWF_EO(b,c, -M5, mq, omega, &Dw_eo, &Dw_oe);
+  Dirac_DomainWall_EvenOdd DWF_EO(b,c, -M5, mq, omega, &Dw_eo, &Dw_oe);
   
   /********************************************************
 
@@ -230,12 +230,12 @@ int Test_Solver_BFM::run(){
     }
   }
   
-  // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_eo
+  // Solver using internal Dirac_DomainWall_EvenOdd method solve_eo
   Field output_f(vphi);
   DWF_EO.solve_eo(output_f,fe, SO,  10000, dwfa.residual*dwfa.residual);
   SO.print();
   
-  // Solver using internal Dirac_optimalDomainWall_EvenOdd method solve_ms_eo_5d 
+  // Solver using internal Dirac_DomainWall_EvenOdd method solve_ms_eo_5d 
   std::vector<Field> xq(3); 
    for (int i=0; i< xq.size(); ++i) {
     xq[i].resize(fe.size());

@@ -1,6 +1,6 @@
 /*!
  * @file test_DomainWall.cpp
- * @brief Definition of classes for testing the Dirac_optimalDomainWall classes and factories
+ * @brief Definition of classes for testing the Dirac_DomainWall classes and factories
  *
  */
 #include "test_DomainWall.hpp"
@@ -12,8 +12,8 @@
 
 using namespace std;
 
-int Test_optimalDomainWall::
-mult5d_test(const Dirac_optimalDomainWall& DWF5d,
+int Test_DomainWall::
+mult5d_test(const Dirac_DomainWall& DWF5d,
 	    const Field& phi,int times){
   
   Field Dphi(phi.size());
@@ -25,8 +25,8 @@ mult5d_test(const Dirac_optimalDomainWall& DWF5d,
   return TEST_PASSED;
 }
 
-int Test_optimalDomainWall::
-mult5d_dag_test(const Dirac_optimalDomainWall& DWF5d,
+int Test_DomainWall::
+mult5d_dag_test(const Dirac_DomainWall& DWF5d,
 		const Field& phi,int times){
   
   Field Dphi(phi.size());
@@ -38,8 +38,8 @@ mult5d_dag_test(const Dirac_optimalDomainWall& DWF5d,
   return TEST_PASSED;
 }
 
-int Test_optimalDomainWall::
-mult5d_gamma5_test(const Dirac_optimalDomainWall& DWF5d,
+int Test_DomainWall::
+mult5d_gamma5_test(const Dirac_DomainWall& DWF5d,
 		   const Field& phi,int times){
 
   Field g5psi(phi.size());
@@ -71,8 +71,8 @@ mult5d_gamma5_test(const Dirac_optimalDomainWall& DWF5d,
   }
 }
 
-int Test_optimalDomainWall::run(){
-  Dirac_optimalDomainWall* DiracODWF;
+int Test_DomainWall::run(){
+  Dirac_DomainWall* DiracODWF;
 
   // operator without factories
   int N5d   = 6;
@@ -84,9 +84,9 @@ int Test_optimalDomainWall::run(){
 
   const Field* u= &(conf_.data);
   Dirac_Wilson Dw(M0,u);
-  Dirac_optimalDomainWall Ddwf_5d(b,c,M0,mq,omega,&Dw,u);
+  Dirac_DomainWall Ddwf_5d(b,c,M0,mq,omega,&Dw,u);
   Dirac_Wilson_EvenOdd DEO(M0,u);
-  Dirac_optimalDomainWall_EvenOdd 
+  Dirac_DomainWall_EvenOdd 
     Ddwf_5d_eo(b,c,M0,mq,omega,DEO.getDeo(),DEO.getDoe(),u);
   /////////////////////////////
   XML::node QuarkProp_node = DWFnode;
@@ -118,8 +118,8 @@ int Test_optimalDomainWall::run(){
   double mq1 = 0.05;
   double mq2 = 0.10;
   
-  Dirac_optimalDomainWall Ddwf1(b,c,M0,mq1,omega,&Dw,u);
-  Dirac_optimalDomainWall Ddwf2(b,c,M0,mq2,omega,&Dw,u);
+  Dirac_DomainWall Ddwf1(b,c,M0,mq1,omega,&Dw,u);
+  Dirac_DomainWall Ddwf2(b,c,M0,mq2,omega,&Dw,u);
   Fopr_DdagD DdagD2(&Ddwf2);
   Solver_CG SolvR2(10e-12,1000,&DdagD2);
 
@@ -145,20 +145,20 @@ int Test_optimalDomainWall::run(){
 
   // mult test
   clock_t start;
-  CCIO::cout << ".::: Test Dirac_optimalDomainWall.mult(f)\n";
+  CCIO::cout << ".::: Test Dirac_DomainWall.mult(f)\n";
   start = clock();
   mult5d_test(*DiracODWF,phi,100);
   CCIO::cout<< "Time for 100 calls : " 
 	    << ( ( clock() - start ) / (double)CLOCKS_PER_SEC ) <<'\n';
 
-  CCIO::cout << ".::: Test Dirac_optimalDomainWall.mult_dag(f)\n";
+  CCIO::cout << ".::: Test Dirac_DomainWall.mult_dag(f)\n";
   start = clock();
   mult5d_dag_test(*DiracODWF,phi,100);
   CCIO::cout<< "Time for 100 calls : " 
 	    << ( ( clock() - start ) / (double)CLOCKS_PER_SEC ) <<'\n';
 
   // Gamma 5 Hermiticity
-  CCIO::cout << ".::: Test Dirac_optimalDomainWall gamma5 hermiticity " 
+  CCIO::cout << ".::: Test Dirac_DomainWall gamma5 hermiticity " 
 	     << " vdiff = ( G5 D G5 - D.hc ) psi \n";
   start = clock();
   mult5d_gamma5_test(*DiracODWF,phi,100);
@@ -180,10 +180,10 @@ int Test_optimalDomainWall::run(){
   rand.get(vphi2);
   Field phi_eo(vphi2);    // phi: generated from random numbers
 
-  CCIO::cout << ".::: Test Dirac_optimalDomainWall solver eo Standard version \n";
+  CCIO::cout << ".::: Test Dirac_DomainWall solver eo Standard version \n";
   monitor = SolvEO.solve(sol_eo,phi_eo);
   monitor.print();
-  CCIO::cout << ".::: Test Dirac_optimalDomainWall solver eo BGQ version \n";
+  CCIO::cout << ".::: Test Dirac_DomainWall solver eo BGQ version \n";
   for (int test= 0; test< 30 ; ++test){
   Ddwf_5d_eo.solve_eo(sol_eo, phi_eo, monitor,  Niter, stop_cond);
   monitor.print();
@@ -193,16 +193,16 @@ int Test_optimalDomainWall::run(){
 
 
   // It follows a standard construction (factories will use a similar one)
-  //Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
-  Dirac_optimalDomainWall Ddwf_PV(*DiracODWF, PauliVillars);
+  //Dirac_DomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
+  Dirac_DomainWall Ddwf_PV(*DiracODWF, PauliVillars);
   // Solver* SolvDWF = new Solver_CG(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
   Solver* SolvDWF = new Solver_CG(stop_cond,Niter , new Fopr_DdagD(DiracODWF));
   Solver* SolvPV  = new Solver_CG(stop_cond,Niter , new Fopr_DdagD(&Ddwf_PV ));
-  Dirac_optimalDomainWall_4D_fullSolv Ddwf4(DiracODWF,&Ddwf_PV,SolvDWF, SolvPV);
+  Dirac_DomainWall_4D_fullSolv Ddwf4(DiracODWF,&Ddwf_PV,SolvDWF, SolvPV);
   QpropDWF QuarkPropagator(Ddwf4);
   //////////////////////////////////// 
   /*
-  CCIO::cout << ".::: Test Dirac_optimalDomainWall meson correlator" 
+  CCIO::cout << ".::: Test Dirac_DomainWall meson correlator" 
 	     <<std::endl;
   // Here uses the default constructor with default solver
   // QpropDWF QuarkPropagator(Ddwf_5d,stop_cond,Niter);

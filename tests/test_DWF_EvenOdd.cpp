@@ -57,8 +57,8 @@ int Test_Wilson_EvenOdd::run(){
   std::vector<double> omega(N5,1.0);
   
   // creation of Domain-Wall Dirac operators 
-  Dirac_optimalDomainWall         Ddwf(   b,c,M0,mq,omega,&Dw,u);
-  Dirac_optimalDomainWall_EvenOdd Ddwf_eo(b,c,M0,mq,omega,&Dw_eo,&Dw_oe,u);
+  Dirac_DomainWall         Ddwf(   b,c,M0,mq,omega,&Dw,u);
+  Dirac_DomainWall_EvenOdd Ddwf_eo(b,c,M0,mq,omega,&Dw_eo,&Dw_oe,u);
 
   SiteIndex_eo* ieo = SiteIndex_eo::instance();
   vector<int> esec= ieo->esec();

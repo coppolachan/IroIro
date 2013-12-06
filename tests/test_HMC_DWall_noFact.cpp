@@ -45,9 +45,9 @@ int Test_HMC_DomainWall::run(){
 
   const Field* u = &(CommonField->data); 
   Dirac_Wilson Dw(M0,u);
-  Dirac_optimalDomainWall Ddwf1( b,c,M0,mq1,omega,&Dw);
-  Dirac_optimalDomainWall DdwfPV(b,c,M0,1.0,omega,&Dw);
-  Dirac_optimalDomainWall Ddwf2( b,c,M0,mq2,omega,&Dw);
+  Dirac_DomainWall Ddwf1( b,c,M0,mq1,omega,&Dw);
+  Dirac_DomainWall DdwfPV(b,c,M0,1.0,omega,&Dw);
+  Dirac_DomainWall Ddwf2( b,c,M0,mq2,omega,&Dw);
 
   // gauge term
   ActionLevel al_1, al_2, al_3;

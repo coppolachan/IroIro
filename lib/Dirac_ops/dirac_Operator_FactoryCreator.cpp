@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-11-29 16:36:17 noaki>
+ * Time-stamp: <2013-12-05 13:10:46 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 
@@ -29,8 +29,12 @@ namespace Diracs {
       return new DiracMobiusFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
       return new DiracDomainWall5dFactory(node);
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall5dAdjoint"))  
+      return new DiracDomainWall5dAdjointFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
       return new DiracEvenOdd_DWF5dFactory(node);
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall5dAdjointEvenOdd"))  
+      return new DiracEvenOdd_DWF5dAdjointFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
       return new DiracDWF4DfullFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_LUprecond"))  
@@ -57,7 +61,7 @@ namespace Diracs {
 
     if(!strcmp(Dirac_name, "DiracWilson"))
       return new DiracWilsonEvenOddFactory(node);
-    if(!strcmp(Dirac_name, "DiracWilsonAdjoint"))
+    if(!strcmp(Dirac_name, "DiracWilson_Adjoint"))
       return new DiracWilsonAdjointEvenOddFactory(node);
 
     stopMsg(node);
@@ -88,8 +92,12 @@ namespace Diracs {
 
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  
       return new DiracDomainWall5dFactory(node);
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall5dAdjoint"))  
+      return new DiracDomainWall5dAdjointFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5dEvenOdd"))  
       return new DiracEvenOdd_DWF5dFactory(node);
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall5dAdjointEvenOdd"))  
+      return new DiracEvenOdd_DWF5dAdjointFactory(node);
     stopMsg(node);      
   }
 

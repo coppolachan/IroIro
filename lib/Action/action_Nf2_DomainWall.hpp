@@ -20,8 +20,8 @@ private:
   Action_Nf2_ratio action_;
 public:
   Action_Nf2_DomainWall(GaugeField* const F,
-			Dirac_optimalDomainWall* const D,
-			Dirac_optimalDomainWall* const Dpv,
+			Dirac_DomainWall* const D,
+			Dirac_DomainWall* const Dpv,
 			const Solver* Solv,
 			const Solver* SolvPv,
 			bool smeared = false,

@@ -59,16 +59,13 @@ int Test_MultiShiftSolver::test1(){
 
   const Field* u= &(Gauge.data);
   Dirac_Wilson Dw(M0,u);
-  Dirac_optimalDomainWall* Kernel 
-    = new Dirac_optimalDomainWall(b,c,M0,mq,omega,&Dw);
+  Dirac_DomainWall* Kernel = new Dirac_DomainWall(b,c,M0,mq,omega,&Dw);
 
   // Definition of the Solver
   int    Niter= 1000;
   double stop_cond = 1.0e-24;
   MultiShiftSolver* Solver = 
-    new MultiShiftSolver_CG(new Fopr_DdagD(Kernel),
-			    stop_cond,
-			    Niter);
+    new MultiShiftSolver_CG(new Fopr_DdagD(Kernel),stop_cond,Niter);
 
   // Solver test
   xqs.resize(mass_shifts.size());
@@ -77,9 +74,6 @@ int Test_MultiShiftSolver::test1(){
   double residual;
   int Nconv;
   Solver->solve(xqs, Source5d.mksrc(0,0), mass_shifts, residual, Nconv);
-
-
-
   
   // Quark Propagator test
   /*

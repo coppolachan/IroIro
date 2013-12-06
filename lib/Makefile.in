@@ -68,7 +68,9 @@ target_triplet = @target@
 ############################################
 # Sources by architecture
 @IBM_BGQKERNELS_TRUE@am__append_6 = Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp \
-@IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
+@IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/domainWallCore_BGQ.hpp \
+@IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
 @IBM_BGQKERNELS_TRUE@am__append_7 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
@@ -154,17 +156,19 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_Operator_Factory.cpp Dirac_ops/dirac.cpp \
 	Dirac_ops/dirac_staggeredLike.cpp Dirac_ops/dirac_wilson.cpp \
 	Dirac_ops/dirac_wilson_adjoint.cpp \
-	Dirac_ops/dirac_wilson_EvenOdd.cpp \
-	Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp \
 	Dirac_ops/dirac_clover.cpp Dirac_ops/dirac_Mobius.cpp \
 	Dirac_ops/fopr_signH_Zolotarev.cpp \
 	Dirac_ops/dirac_overlap_Zolotarev.cpp \
-	Dirac_ops/dirac_DWoverlap.cpp Dirac_ops/dirac_DomainWall.cpp \
+	Dirac_ops/dirac_DWoverlap.cpp Dirac_ops/domainWallCore.cpp \
+	Dirac_ops/domainWallUtils.cpp \
 	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp \
 	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp \
+	Solver/Architecture_Optimized/domainWallCore_BGQ.hpp \
+	Solver/Architecture_Optimized/domainWallCore_BGQ.cpp \
 	Dirac_ops/dirac_DomainWall_EvenOdd.cpp \
+	Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
 	Dirac_ops/dirac_wilson_Brillouin.cpp Dirac_ops/eoUtils.cpp \
@@ -244,7 +248,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @IBM_BGQKERNELS_TRUE@am__objects_3 = action_gauge_rect.bgq.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	action_gauge_wilson_force.bgq.$(OBJEXT)
 @IBM_BGQKERNELS_TRUE@am__objects_4 = rationalSolver_DWF_BGQ.$(OBJEXT) \
-@IBM_BGQKERNELS_TRUE@	solver_CG_DWF_BGQ.$(OBJEXT)
+@IBM_BGQKERNELS_TRUE@	solver_CG_DWF_BGQ.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@	domainWallCore_BGQ.$(OBJEXT)
 am__objects_5 = $(am__objects_4)
 @USE_BFM_TRUE@am__objects_6 = dirac_BFM_wrapper.$(OBJEXT) \
 @USE_BFM_TRUE@	bfm_storage.$(OBJEXT) \
@@ -278,15 +283,15 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_Operator_FactoryCreator.$(OBJEXT) \
 	dirac_Operator_Factory.$(OBJEXT) dirac.$(OBJEXT) \
 	dirac_staggeredLike.$(OBJEXT) dirac_wilson.$(OBJEXT) \
-	dirac_wilson_adjoint.$(OBJEXT) dirac_wilson_EvenOdd.$(OBJEXT) \
-	dirac_wilson_adjoint_EvenOdd.$(OBJEXT) \
+	dirac_wilson_adjoint.$(OBJEXT) \
 	dirac_staggered_EvenOdd.$(OBJEXT) \
 	dirac_staggered_EvenOdd_Adjoint.$(OBJEXT) \
 	dirac_clover.$(OBJEXT) dirac_Mobius.$(OBJEXT) \
 	fopr_signH_Zolotarev.$(OBJEXT) \
 	dirac_overlap_Zolotarev.$(OBJEXT) dirac_DWoverlap.$(OBJEXT) \
-	dirac_DomainWall.$(OBJEXT) $(am__objects_5) \
-	dirac_DomainWall_EvenOdd.$(OBJEXT) \
+	domainWallCore.$(OBJEXT) domainWallUtils.$(OBJEXT) \
+	$(am__objects_5) dirac_DomainWall_EvenOdd.$(OBJEXT) \
+	dirac_DomainWall_adjoint_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
 	dirac_DomainWall_4D_eoSolv.$(OBJEXT) \
 	dirac_wilson_Brillouin.$(OBJEXT) eoUtils.$(OBJEXT) \
@@ -532,7 +537,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-11-29 17:57:36 noaki>
+# Time-stamp: <2013-12-05 10:06:22 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -578,9 +583,8 @@ EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
-                Dirac_ops/dirac_wilson_Brillouin_BGQ.code    	\
-                Dirac_ops/dirac_DomainWall_BGQ.code \
-                Dirac_ops/domainWallSolver_BGQ.code \
+                Dirac_ops/Architecture_Optimized/dirac_wilson_Brillouin_BGQ.code    	\
+                Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.code \
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
@@ -616,8 +620,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_adjoint.cpp	\
-		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
-		Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
@@ -625,9 +627,11 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
 		Dirac_ops/dirac_DWoverlap.cpp    		\
-		Dirac_ops/dirac_DomainWall.cpp   		\
+		Dirac_ops/domainWallCore.cpp            	\
+		Dirac_ops/domainWallUtils.cpp            	\
 		$(DWF_BGQ_SRC)					\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
+		Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
@@ -829,20 +833,23 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_adjoint.hpp	\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
-			Dirac_ops/dirac_wilson_adjoint_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_Mobius.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
+			Dirac_ops/dirac_DomainWall_adjoint.hpp  \
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
+			Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
-			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
+			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp\
 			Dirac_ops/dirac_LowModeDeflation.hpp    \
 			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
 			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
-			Dirac_ops/wilsonLikeUtils.hpp            	\
+			Dirac_ops/domainWallCore.hpp            \
+			Dirac_ops/domainWallUtils.hpp           \
+			Dirac_ops/wilsonLikeUtils.hpp           \
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
@@ -1085,10 +1092,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_BFM_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_BFM_wrapper_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DWoverlap.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_4D_fullSolv.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_EvenOdd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_DomainWall_adjoint_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_LowModeDeflation_Approx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_LowModeDeflation_ExactEigen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_Mobius.Po@am__quote@
@@ -1101,9 +1108,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_staggered_EvenOdd_Adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_Brillouin.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_adjoint.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_adjoint_EvenOdd.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallCore.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallCore_BGQ.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenCalcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_IRL.Po@am__quote@
@@ -1741,34 +1749,6 @@ dirac_wilson_adjoint.obj: Dirac_ops/dirac_wilson_adjoint.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_adjoint.obj `if test -f 'Dirac_ops/dirac_wilson_adjoint.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_adjoint.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_adjoint.cpp'; fi`
 
-dirac_wilson_EvenOdd.o: Dirac_ops/dirac_wilson_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_wilson_EvenOdd.Tpo -c -o dirac_wilson_EvenOdd.o `test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_EvenOdd.Tpo $(DEPDIR)/dirac_wilson_EvenOdd.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_EvenOdd.cpp' object='dirac_wilson_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_EvenOdd.o `test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_EvenOdd.cpp
-
-dirac_wilson_EvenOdd.obj: Dirac_ops/dirac_wilson_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_EvenOdd.obj -MD -MP -MF $(DEPDIR)/dirac_wilson_EvenOdd.Tpo -c -o dirac_wilson_EvenOdd.obj `if test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_EvenOdd.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_EvenOdd.Tpo $(DEPDIR)/dirac_wilson_EvenOdd.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_EvenOdd.cpp' object='dirac_wilson_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_EvenOdd.obj `if test -f 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_EvenOdd.cpp'; fi`
-
-dirac_wilson_adjoint_EvenOdd.o: Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_adjoint_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_wilson_adjoint_EvenOdd.Tpo -c -o dirac_wilson_adjoint_EvenOdd.o `test -f 'Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_adjoint_EvenOdd.Tpo $(DEPDIR)/dirac_wilson_adjoint_EvenOdd.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp' object='dirac_wilson_adjoint_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_adjoint_EvenOdd.o `test -f 'Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp
-
-dirac_wilson_adjoint_EvenOdd.obj: Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_adjoint_EvenOdd.obj -MD -MP -MF $(DEPDIR)/dirac_wilson_adjoint_EvenOdd.Tpo -c -o dirac_wilson_adjoint_EvenOdd.obj `if test -f 'Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_adjoint_EvenOdd.Tpo $(DEPDIR)/dirac_wilson_adjoint_EvenOdd.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp' object='dirac_wilson_adjoint_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_adjoint_EvenOdd.obj `if test -f 'Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp'; fi`
-
 dirac_staggered_EvenOdd.o: Dirac_ops/dirac_staggered_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_staggered_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_staggered_EvenOdd.Tpo -c -o dirac_staggered_EvenOdd.o `test -f 'Dirac_ops/dirac_staggered_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_staggered_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_staggered_EvenOdd.Tpo $(DEPDIR)/dirac_staggered_EvenOdd.Po
@@ -1867,19 +1847,33 @@ dirac_DWoverlap.obj: Dirac_ops/dirac_DWoverlap.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DWoverlap.obj `if test -f 'Dirac_ops/dirac_DWoverlap.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DWoverlap.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DWoverlap.cpp'; fi`
 
-dirac_DomainWall.o: Dirac_ops/dirac_DomainWall.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall.Tpo -c -o dirac_DomainWall.o `test -f 'Dirac_ops/dirac_DomainWall.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall.Tpo $(DEPDIR)/dirac_DomainWall.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_DomainWall.cpp' object='dirac_DomainWall.o' libtool=no @AMDEPBACKSLASH@
+domainWallCore.o: Dirac_ops/domainWallCore.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallCore.o -MD -MP -MF $(DEPDIR)/domainWallCore.Tpo -c -o domainWallCore.o `test -f 'Dirac_ops/domainWallCore.cpp' || echo '$(srcdir)/'`Dirac_ops/domainWallCore.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallCore.Tpo $(DEPDIR)/domainWallCore.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/domainWallCore.cpp' object='domainWallCore.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall.o `test -f 'Dirac_ops/dirac_DomainWall.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallCore.o `test -f 'Dirac_ops/domainWallCore.cpp' || echo '$(srcdir)/'`Dirac_ops/domainWallCore.cpp
 
-dirac_DomainWall.obj: Dirac_ops/dirac_DomainWall.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall.obj -MD -MP -MF $(DEPDIR)/dirac_DomainWall.Tpo -c -o dirac_DomainWall.obj `if test -f 'Dirac_ops/dirac_DomainWall.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall.Tpo $(DEPDIR)/dirac_DomainWall.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_DomainWall.cpp' object='dirac_DomainWall.obj' libtool=no @AMDEPBACKSLASH@
+domainWallCore.obj: Dirac_ops/domainWallCore.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallCore.obj -MD -MP -MF $(DEPDIR)/domainWallCore.Tpo -c -o domainWallCore.obj `if test -f 'Dirac_ops/domainWallCore.cpp'; then $(CYGPATH_W) 'Dirac_ops/domainWallCore.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/domainWallCore.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallCore.Tpo $(DEPDIR)/domainWallCore.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/domainWallCore.cpp' object='domainWallCore.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall.obj `if test -f 'Dirac_ops/dirac_DomainWall.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallCore.obj `if test -f 'Dirac_ops/domainWallCore.cpp'; then $(CYGPATH_W) 'Dirac_ops/domainWallCore.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/domainWallCore.cpp'; fi`
+
+domainWallUtils.o: Dirac_ops/domainWallUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallUtils.o -MD -MP -MF $(DEPDIR)/domainWallUtils.Tpo -c -o domainWallUtils.o `test -f 'Dirac_ops/domainWallUtils.cpp' || echo '$(srcdir)/'`Dirac_ops/domainWallUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallUtils.Tpo $(DEPDIR)/domainWallUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/domainWallUtils.cpp' object='domainWallUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallUtils.o `test -f 'Dirac_ops/domainWallUtils.cpp' || echo '$(srcdir)/'`Dirac_ops/domainWallUtils.cpp
+
+domainWallUtils.obj: Dirac_ops/domainWallUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallUtils.obj -MD -MP -MF $(DEPDIR)/domainWallUtils.Tpo -c -o domainWallUtils.obj `if test -f 'Dirac_ops/domainWallUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/domainWallUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/domainWallUtils.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallUtils.Tpo $(DEPDIR)/domainWallUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/domainWallUtils.cpp' object='domainWallUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallUtils.obj `if test -f 'Dirac_ops/domainWallUtils.cpp'; then $(CYGPATH_W) 'Dirac_ops/domainWallUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/domainWallUtils.cpp'; fi`
 
 rationalSolver_DWF_BGQ.o: Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalSolver_DWF_BGQ.o -MD -MP -MF $(DEPDIR)/rationalSolver_DWF_BGQ.Tpo -c -o rationalSolver_DWF_BGQ.o `test -f 'Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp' || echo '$(srcdir)/'`Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
@@ -1909,6 +1903,20 @@ solver_CG_DWF_BGQ.obj: Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o solver_CG_DWF_BGQ.obj `if test -f 'Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp'; then $(CYGPATH_W) 'Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp'; fi`
 
+domainWallCore_BGQ.o: Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallCore_BGQ.o -MD -MP -MF $(DEPDIR)/domainWallCore_BGQ.Tpo -c -o domainWallCore_BGQ.o `test -f 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp' || echo '$(srcdir)/'`Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallCore_BGQ.Tpo $(DEPDIR)/domainWallCore_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/Architecture_Optimized/domainWallCore_BGQ.cpp' object='domainWallCore_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallCore_BGQ.o `test -f 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp' || echo '$(srcdir)/'`Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
+
+domainWallCore_BGQ.obj: Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallCore_BGQ.obj -MD -MP -MF $(DEPDIR)/domainWallCore_BGQ.Tpo -c -o domainWallCore_BGQ.obj `if test -f 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; then $(CYGPATH_W) 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallCore_BGQ.Tpo $(DEPDIR)/domainWallCore_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/Architecture_Optimized/domainWallCore_BGQ.cpp' object='domainWallCore_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallCore_BGQ.obj `if test -f 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; then $(CYGPATH_W) 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; fi`
+
 dirac_DomainWall_EvenOdd.o: Dirac_ops/dirac_DomainWall_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_EvenOdd.Tpo -c -o dirac_DomainWall_EvenOdd.o `test -f 'Dirac_ops/dirac_DomainWall_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall_EvenOdd.Tpo $(DEPDIR)/dirac_DomainWall_EvenOdd.Po
@@ -1922,6 +1930,20 @@ dirac_DomainWall_EvenOdd.obj: Dirac_ops/dirac_DomainWall_EvenOdd.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_DomainWall_EvenOdd.cpp' object='dirac_DomainWall_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_EvenOdd.obj `if test -f 'Dirac_ops/dirac_DomainWall_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_EvenOdd.cpp'; fi`
+
+dirac_DomainWall_adjoint_EvenOdd.o: Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_adjoint_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_adjoint_EvenOdd.Tpo -c -o dirac_DomainWall_adjoint_EvenOdd.o `test -f 'Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall_adjoint_EvenOdd.Tpo $(DEPDIR)/dirac_DomainWall_adjoint_EvenOdd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp' object='dirac_DomainWall_adjoint_EvenOdd.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_adjoint_EvenOdd.o `test -f 'Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp
+
+dirac_DomainWall_adjoint_EvenOdd.obj: Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_adjoint_EvenOdd.obj -MD -MP -MF $(DEPDIR)/dirac_DomainWall_adjoint_EvenOdd.Tpo -c -o dirac_DomainWall_adjoint_EvenOdd.obj `if test -f 'Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_DomainWall_adjoint_EvenOdd.Tpo $(DEPDIR)/dirac_DomainWall_adjoint_EvenOdd.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp' object='dirac_DomainWall_adjoint_EvenOdd.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_DomainWall_adjoint_EvenOdd.obj `if test -f 'Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp'; fi`
 
 dirac_DomainWall_4D_fullSolv.o: Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_4D_fullSolv.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_4D_fullSolv.Tpo -c -o dirac_DomainWall_4D_fullSolv.o `test -f 'Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp

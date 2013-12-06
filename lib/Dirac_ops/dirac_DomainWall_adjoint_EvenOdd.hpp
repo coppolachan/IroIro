@@ -1,63 +1,53 @@
 /*!
- * @file dirac_DomainWall_EvenOdd.hpp
- * @brief Declaration of class Dirac_DomainWall_EvenOdd (5d operator)
- Time-stamp: <2013-12-05 11:11:10 noaki>
+ * @file dirac_DomainWall_adjoint_EvenOdd.hpp
+ * @brief Declaration of class Dirac_DomainWall_Adjoint_EvenOdd (5d operator)
+ Time-stamp: <2013-12-05 11:08:41 noaki>
  */
-#ifndef DIRAC_DOMAINWALL_EVENODD_INCLUDED
-#define DIRAC_DOMAINWALL_EVENODD_INCLUDED
+#ifndef DIRAC_DOMAINWALL_ADJOINT_EVENODD_INCLUDED
+#define DIRAC_DOMAINWALL_ADJOINT_EVENODD_INCLUDED
 
-#include "dirac_DomainWall.hpp"
-
-#ifdef IBM_BGQ_WILSON
-struct SolverOutput;
-#endif
-
-static  double mult_timer;
-static  double multdag_timer;
+#include "dirac_DomainWall_adjoint.hpp"
 /*!
- * @brief Defines the 5d Domain Wall operator with even/odd site indexing
+ * @brief Defines the 5d DW-adjoint operator with even/odd site indexing
  */
-
-class Dirac_DomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
-
-  const Dirac_DomainWall Deo_;
-  const Dirac_DomainWall Doe_;
+class Dirac_DomainWall_Adjoint_EvenOdd :public DiracWilsonLike_EvenOdd {
+private:
+  const Dirac_DomainWall_Adjoint Deo_;
+  const Dirac_DomainWall_Adjoint Doe_;
 
   void md_force_eo(Field&,const Field&,const Field&)const;
   void md_force_oe(Field&,const Field&,const Field&)const;
   
-  Dirac_DomainWall_EvenOdd(const Dirac_DomainWall_EvenOdd&);
+  Dirac_DomainWall_Adjoint_EvenOdd(const Dirac_DomainWall_Adjoint_EvenOdd&);
   /*!< simple copy is prohibited */
 
 public:
-  Dirac_DomainWall_EvenOdd(XML::node dw_node,
-			   DiracWilsonLike_EvenOdd* Kernel,
-			   DWFType Type=Regular)
-    :Deo_(dw_node,Kernel->getDeo(),DWF::EvenOdd_tag(1),Type),
-     Doe_(dw_node,Kernel->getDoe(),DWF::EvenOdd_tag(2),Type){
+  Dirac_DomainWall_Adjoint_EvenOdd(XML::node dw_node,
+				   DiracWilsonLike_EvenOdd* Kernel,
+				   DWFType Type=Regular)
+    :Deo_(dw_node,Kernel->getDeo(),DWF::EvenOdd_tag(),Type),
+     Doe_(dw_node,Kernel->getDoe(),DWF::EvenOdd_tag(),Type){
     //
+    assert(Kernel->fsize() == afmt_t::Nin()*CommonPrms::instance()->Nvol()/2);
 #if VERBOSITY>DEBUG_VERB_LEVEL 
     CCIO::cout<<"Dirac_DomainWall_Evenodd created"<<std::endl;
 #endif
   }
 
   /*! @brief copy constractor to create Pauli-Villars operator */
-  Dirac_DomainWall_EvenOdd(const Dirac_DomainWall_EvenOdd& D, 
-			   DWFType Type=Regular)
+  Dirac_DomainWall_Adjoint_EvenOdd(const Dirac_DomainWall_Adjoint_EvenOdd& D, 
+				   DWFType Type=Regular)
     :Deo_(D.Deo_,DWF::EvenOdd_tag(),Type),
      Doe_(D.Doe_,DWF::EvenOdd_tag(),Type){}
   
-  Dirac_DomainWall_EvenOdd(double b,double c,double M0,double mq,
-			   const std::vector<double>& omega,
-			   const DiracWilsonLike* Keo,
-			   const DiracWilsonLike* Koe)
-    :Deo_(b,c,M0,mq,omega,Keo,DWF::EvenOdd_tag(1)),
-     Doe_(b,c,M0,mq,omega,Koe,DWF::EvenOdd_tag(2)){}
+  Dirac_DomainWall_Adjoint_EvenOdd(double b,double c,double M0,double mq,
+				   const std::vector<double>& omega,
+				   const DiracWilsonLike* Keo,
+				   const DiracWilsonLike* Koe)
+    :Deo_(b,c,M0,mq,omega,Keo,DWF::EvenOdd_tag()),
+     Doe_(b,c,M0,mq,omega,Koe,DWF::EvenOdd_tag()){}
   
-  ~Dirac_DomainWall_EvenOdd(){
-    CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";
-    CCIO::cout << "DWF Timer multdag: "<< multdag_timer << "\n";
-  }
+  ~Dirac_DomainWall_Adjoint_EvenOdd(){}
   
   size_t f4size()const{ return Deo_.f4size();}
   size_t fsize()const{ return Deo_.fsize();}
@@ -96,13 +86,6 @@ public:
 
   void update_internal_state(){} 
 
-  ////////////////////////////
-#ifdef IBM_BGQ_WILSON
-  void solve_eo(Field&,const Field&,SolverOutput&,int,double) const;
-  void solve_ms_eo(std::vector<Field>&,const Field&,SolverOutput&, 
-		   const std::vector<double>&,int,double)const;
-#endif
 };
-
 
 #endif

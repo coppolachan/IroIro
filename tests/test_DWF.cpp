@@ -20,7 +20,7 @@
 
 using namespace std;
 using namespace Format;
-using namespace DomainWallFermions;
+using namespace DWF;
 using namespace EvenOddUtils;
 
 int Test_DWF::run(){
@@ -52,7 +52,7 @@ int Test_DWF::run(){
   // source generation
   Field ff= src.mksrc(1,1);
 
-  /************************************************************************************/
+  /***************************************************************/
   Field* u = &(input_.gconf->data);
   double M0 = -1.6;
 
@@ -77,8 +77,8 @@ int Test_DWF::run(){
   int max_iter = 600;
 
   ///////
-  Dirac_optimalDomainWall Ddwf(b,c,M0, mq,omega,&Dw);
-  Dirac_optimalDomainWall Ddpv(b,c,M0,1.0,omega,&Dw);
+  Dirac_DomainWall Ddwf(b,c,M0, mq,omega,&Dw);
+  Dirac_DomainWall Ddpv(b,c,M0,1.0,omega,&Dw);
 
   Fopr_DdagD DdagDdwf(&Ddwf);
   Fopr_DdagD DdagDdpv(&Ddpv);
@@ -86,10 +86,10 @@ int Test_DWF::run(){
   Solver_CG slv_dwf(prec,max_iter,&DdagDdwf);
   Solver_CG slv_dpv(prec,max_iter,&DdagDdpv);
 
-  Dirac_optimalDomainWall_4D_fullSolv D4f( &Ddwf,&Ddpv,&slv_dwf,&slv_dpv,NoPrecond);
+  Dirac_DomainWall_4D_fullSolv D4f( &Ddwf,&Ddpv,&slv_dwf,&slv_dpv,NoPrecond);
 
-  Dirac_optimalDomainWall_EvenOdd Ddwf_eo(b,c,M0, mq,omega,&Dw_eo,&Dw_oe);
-  Dirac_optimalDomainWall_EvenOdd Ddpv_eo(b,c,M0,1.0,omega,&Dw_eo,&Dw_oe);
+  Dirac_DomainWall_EvenOdd Ddwf_eo(b,c,M0, mq,omega,&Dw_eo,&Dw_oe);
+  Dirac_DomainWall_EvenOdd Ddpv_eo(b,c,M0,1.0,omega,&Dw_eo,&Dw_oe);
 
   Fopr_DdagD DdagDdwf_eo(&Ddwf_eo);
   Fopr_DdagD DdagDdpv_eo(&Ddpv_eo);
@@ -100,7 +100,7 @@ int Test_DWF::run(){
   Inverter_WilsonLike invDdwf(&Ddwf_eo,&slv_dwf_eo);
   Inverter_WilsonLike invDdpv(&Ddpv_eo,&slv_dpv_eo);
 
-  Dirac_optimalDomainWall_4D_eoSolv D4eo(N5,mq,&invDdwf,&invDdpv);
+  Dirac_DomainWall_4D_eoSolv D4eo(N5,mq,&invDdwf,&invDdpv);
 
   /*--------mult test---------*/
 

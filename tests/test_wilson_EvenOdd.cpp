@@ -38,8 +38,8 @@ int Test_Wilson_EvenOdd::run(){
     src(rand,CommonPrms::instance()->Nvol());    
 
   //Dirac Kernel definition ---------------------------------------------
-  Dirac_Wilson_EvenOdd Deo(1.0/6.0, &(conf_.data));
-  Dirac_Wilson         D(  1.0/6.0, &(conf_.data));
+  Dirac_Wilson_EvenOdd<Dirac_Wilson> Deo(1.0/6.0, &(conf_.data));
+  Dirac_Wilson                       D(  1.0/6.0, &(conf_.data));
   SiteIndex_EvenOdd* ieo = SiteIndex_EvenOdd::instance();
 
   vector<int> esec= ieo->esec();

@@ -1,6 +1,6 @@
 /*! @file dirac_WilsonLike.hpp
  *  @brief defines the abstract base classes for DiracWilsonLike 
- * Time-stamp: <2013-11-21 11:35:27 noaki>
+ * Time-stamp: <2013-12-05 09:35:12 noaki>
  */
 #ifndef DIRAC_WILSONLIKE_INCLUDED
 #define DIRAC_WILSONLIKE_INCLUDED
@@ -82,12 +82,12 @@ public:
 };
 
 /*!
- * @class Dirac_OptimalDomainWall_4D
+ * @class Dirac_DomainWall_4D
  * @brief Declaration of abstract base class for 4D-reducted Domain-Wall fermions
  */
-class Dirac_optimalDomainWall_4D : public DiracWilsonLike {
+class Dirac_DomainWall_4D : public DiracWilsonLike {
 public:
-  virtual ~Dirac_optimalDomainWall_4D(){}
+  virtual ~Dirac_DomainWall_4D(){}
 
   virtual const Field mult_inv(const Field&) const =0;
   virtual const Field mult_dag_inv(const Field&) const =0;

@@ -1,11 +1,11 @@
 /*!
  * @file dirac_DomainWall_4D_eoSolv.hpp
- * @brief Definition of Dirac_optimalDomainWall_4D_eoSolv class
+ * @brief Definition of Dirac_DomainWall_4D_eoSolv class
  * which contains e/o-solver
- Time-stamp: <2013-11-20 21:43:37 noaki>
+ Time-stamp: <2013-12-05 10:02:04 noaki>
  */
-#ifndef DIRAC_OPTIMALDOMAINWALL_4D_EOSOLV_INCLUDED
-#define DIRAC_OPTIMALDOMAINWALL_4D_EOSOLV_INCLUDED
+#ifndef DIRAC_DOMAINWALL_4D_EOSOLV_INCLUDED
+#define DIRAC_DOMAINWALL_4D_EOSOLV_INCLUDED
 
 #include "dirac_DomainWall.hpp"
 #include "eoUtils.hpp"
@@ -13,7 +13,7 @@
 #include "Solver/solver_CG.hpp"
 #include "include/fopr.h"
 
-class Dirac_optimalDomainWall_4D_eoSolv : public Dirac_optimalDomainWall_4D{
+class Dirac_DomainWall_4D_eoSolv : public Dirac_DomainWall_4D{
 private:
   const EvenOddUtils::Inverter_WilsonLike* invD_;  /*!< @brief eo-inverter    */
   const EvenOddUtils::Inverter_WilsonLike* invDpv_;/*!< @brief eo-inverter(PV)*/
@@ -28,9 +28,9 @@ private:
   GammaMatrix dm_;
   DW5dMatrix d5_;
 public:
-  Dirac_optimalDomainWall_4D_eoSolv(XML::node node,
-				    const EvenOddUtils::Inverter_WilsonLike* invD,
-				    const EvenOddUtils::Inverter_WilsonLike* invDpv)
+  Dirac_DomainWall_4D_eoSolv(XML::node node,
+			     const EvenOddUtils::Inverter_WilsonLike* invD,
+			     const EvenOddUtils::Inverter_WilsonLike* invDpv)
     :invD_(invD),invDpv_(invDpv),
      Nvol_(CommonPrms::instance()->Nvol()),
      ff_(Nvol_),fsize_(ff_.size()){
@@ -38,9 +38,9 @@ public:
     XML::read(node,"mass",mq_,MANDATORY);
   }
   
-  Dirac_optimalDomainWall_4D_eoSolv(int N5,double mq,
-				    const EvenOddUtils::Inverter_WilsonLike* invD,
-				    const EvenOddUtils::Inverter_WilsonLike* invDpv)
+  Dirac_DomainWall_4D_eoSolv(int N5,double mq,
+			     const EvenOddUtils::Inverter_WilsonLike* invD,
+			     const EvenOddUtils::Inverter_WilsonLike* invDpv)
     :invD_(invD),invDpv_(invDpv),
      Nvol_(CommonPrms::instance()->Nvol()),
      ff_(Nvol_),fsize_(ff_.size()),N5_(N5),mq_(mq){}

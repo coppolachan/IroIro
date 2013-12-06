@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-11-29 17:57:36 noaki>
+# Time-stamp: <2013-12-05 10:06:22 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -53,6 +53,8 @@ endif #USE_MPI
 if IBM_BGQKERNELS
 DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 DWF_BGQ_SRC += Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
+DWF_BGQ_SRC += Solver/Architecture_Optimized/domainWallCore_BGQ.hpp
+DWF_BGQ_SRC += Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
 ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
 SMEAR_SRCS += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
@@ -110,9 +112,8 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
-                Dirac_ops/dirac_wilson_Brillouin_BGQ.code    	\
-                Dirac_ops/dirac_DomainWall_BGQ.code \
-                Dirac_ops/domainWallSolver_BGQ.code \
+                Dirac_ops/Architecture_Optimized/dirac_wilson_Brillouin_BGQ.code    	\
+                Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.code \
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
@@ -148,8 +149,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_adjoint.cpp	\
-		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
-		Dirac_ops/dirac_wilson_adjoint_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
@@ -157,9 +156,11 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
 		Dirac_ops/dirac_DWoverlap.cpp    		\
-		Dirac_ops/dirac_DomainWall.cpp   		\
+		Dirac_ops/domainWallCore.cpp            	\
+		Dirac_ops/domainWallUtils.cpp            	\
 		$(DWF_BGQ_SRC)					\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
+		Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
@@ -363,20 +364,23 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_adjoint.hpp	\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
-			Dirac_ops/dirac_wilson_adjoint_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_Mobius.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
+			Dirac_ops/dirac_DomainWall_adjoint.hpp  \
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
+			Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
-			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
+			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp\
 			Dirac_ops/dirac_LowModeDeflation.hpp    \
 			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
 			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
-			Dirac_ops/wilsonLikeUtils.hpp            	\
+			Dirac_ops/domainWallCore.hpp            \
+			Dirac_ops/domainWallUtils.hpp           \
+			Dirac_ops/wilsonLikeUtils.hpp           \
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\

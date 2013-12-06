@@ -1,6 +1,6 @@
 /*!
- * @file qprop_optimalDomainWall.cpp
- * @brief Declaration of Qprop optimal domain wall fermions QpropDWF
+ * @file qprop_DomainWall.cpp
+ * @brief Declaration of Qprop domain wall fermions QpropDWF
  */
 #include "qprop_DomainWall.hpp"
 #include "Communicator/comm_io.hpp"
