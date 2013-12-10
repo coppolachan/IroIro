@@ -3,7 +3,7 @@
  *
  * @brief Code for general fields initializations
  *
- * Time-stamp: <2013-11-28 22:05:47 noaki>
+ * Time-stamp: <2013-12-10 16:51:00 noaki>
  */
 #ifndef COMMON_FIELDS_H_
 #define COMMON_FIELDS_H_
@@ -39,15 +39,15 @@ public:
   FORMAT format;
   DATA data;
 
-  //GeneralField():format(CommonPrms::instance()->Nvol()),data(format.size()){}
+  //GeneralField():format(CommonPrms::Nvol()),data(format.size()){}
 
   explicit GeneralField(const Field& Fin)
-  :format(CommonPrms::instance()->Nvol(),
-	  Fin.size()/CommonPrms::instance()->Nvol()/format.Nin()),
+  :format(CommonPrms::Nvol(),
+	  Fin.size()/CommonPrms::Nvol()/format.Nin()),
    data(Fin){
     assert(Fin.size()== format.size());}
 
-  GeneralField(int LocalVol= CommonPrms::instance()->Nvol())
+  GeneralField(int LocalVol= CommonPrms::Nvol())
     :format(LocalVol),data(format.size()){}
 
   GeneralField(const Field& Fin,int LocalVol)
@@ -134,7 +134,7 @@ typedef GeneralField<std::vector<Field>,Format::Format_F> PropagatorField;
 /*
 template <> 
 inline GaugeField1D::GeneralField()
-  :format(CommonPrms::instance()->Nvol(),1),data(format.size()){}
+  :format(CommonPrms::Nvol(),1),data(format.size()){}
 */
 template <> 
 inline GaugeField1D::GeneralField(int LocalVol)
@@ -142,7 +142,7 @@ inline GaugeField1D::GeneralField(int LocalVol)
 /*
 template <> 
 inline FermionField1sp::GeneralField()
-  :format(CommonPrms::instance()->Nvol(),1),data(format.size()){}
+  :format(CommonPrms::Nvol(),1),data(format.size()){}
 */
 template <> 
 inline FermionField1sp::GeneralField(int LocalVol)

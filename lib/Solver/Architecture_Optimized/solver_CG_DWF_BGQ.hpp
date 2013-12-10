@@ -38,7 +38,7 @@ private:
 #endif
   bool is_BFM;
 
-  const Dirac_optimalDomainWall_EvenOdd* opr_;
+  const Dirac_DomainWall_EvenOdd* opr_;
   const Solver_CG_Prms Params;/*!< @brief Inputs container */
 
 public:
@@ -55,13 +55,13 @@ public:
 #endif  
 
   Solver_CG_DWF_Optimized(const double prec,const int MaxIterations,
-			  const Dirac_optimalDomainWall_EvenOdd* DWFopr)
+			  const Dirac_DomainWall_EvenOdd* DWFopr)
     :opr_(DWFopr),
      Params(Solver_CG_Prms(prec, MaxIterations)),
      is_BFM(false){}
 
   Solver_CG_DWF_Optimized(const XML::node Solver_node,
-			  const Dirac_optimalDomainWall_EvenOdd* DWFopr)
+			  const Dirac_DomainWall_EvenOdd* DWFopr)
     :opr_(DWFopr),
      Params(Solver_CG_Prms(Solver_node)),
      is_BFM(false){}

@@ -69,18 +69,21 @@ target_triplet = @target@
 # Sources by architecture
 @IBM_BGQKERNELS_TRUE@am__append_6 = Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp \
-@IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/domainWallCore_BGQ.hpp \
-@IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
-@IBM_BGQKERNELS_TRUE@am__append_7 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@	Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@	Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@	Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp
+@IBM_BGQKERNELS_TRUE@am__append_7 = Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.hpp
+@IBM_BGQKERNELS_TRUE@am__append_8 = Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp
+@IBM_BGQKERNELS_TRUE@am__append_9 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
-@IBM_BGQKERNELS_TRUE@am__append_8 = Tools/utils_BGQ.hpp
-@IBM_BGQKERNELS_FALSE@am__append_9 = Smearing/stoutSmear_core.cpp \
+@IBM_BGQKERNELS_TRUE@am__append_10 = Tools/utils_BGQ.hpp
+@IBM_BGQKERNELS_FALSE@am__append_11 = Smearing/stoutSmear_core.cpp \
 @IBM_BGQKERNELS_FALSE@	Smearing/smartConf_core.cpp \
 @IBM_BGQKERNELS_FALSE@	Smearing/APEsmear.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
-DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
+DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/ac_prog_doxygen.m4 \
@@ -165,8 +168,10 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/domainWallUtils.cpp \
 	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp \
 	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp \
-	Solver/Architecture_Optimized/domainWallCore_BGQ.hpp \
-	Solver/Architecture_Optimized/domainWallCore_BGQ.cpp \
+	Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp \
+	Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp \
+	Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp \
+	Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp \
 	Dirac_ops/dirac_DomainWall_EvenOdd.cpp \
 	Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
@@ -217,12 +222,11 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp \
 	Smearing/stoutSmear_core.cpp Smearing/smartConf_core.cpp \
 	Smearing/APEsmear.cpp Smearing/smearingFactories.cpp \
-	Tools/utils_BGQ.hpp Tools/fieldUtils.cpp Tools/jobUtils.cpp \
-	Tools/sunMatUtils.cpp Tools/sunAdjMatUtils.cpp \
-	Tools/randNum.cpp Tools/randNum_MP.cpp \
-	Tools/randNum_Factory.cpp Tools/gammaMatrices.cpp \
-	Tools/sunAlgUtils.cpp Tools/complexMatrix.cpp \
-	Tools/Remez/alg_remez.cpp \
+	Tools/fieldUtils.cpp Tools/jobUtils.cpp Tools/sunMatUtils.cpp \
+	Tools/sunAdjMatUtils.cpp Tools/randNum.cpp \
+	Tools/randNum_MP.cpp Tools/randNum_Factory.cpp \
+	Tools/gammaMatrices.cpp Tools/sunAlgUtils.cpp \
+	Tools/complexMatrix.cpp Tools/Remez/alg_remez.cpp \
 	Tools/RationalApprox/rationalapprox.cpp \
 	Tools/ErrorsHandling/xml_errors.cpp \
 	Tools/ErrorsHandling/allocation_errors.cpp \
@@ -249,20 +253,22 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @IBM_BGQKERNELS_TRUE@	action_gauge_wilson_force.bgq.$(OBJEXT)
 @IBM_BGQKERNELS_TRUE@am__objects_4 = rationalSolver_DWF_BGQ.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	solver_CG_DWF_BGQ.$(OBJEXT) \
-@IBM_BGQKERNELS_TRUE@	domainWallCore_BGQ.$(OBJEXT)
+@IBM_BGQKERNELS_TRUE@	domainWallCore_BGQ.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@	domainWallSolver_BGQ.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@	domainWallExtra_BGQ.$(OBJEXT)
 am__objects_5 = $(am__objects_4)
-@USE_BFM_TRUE@am__objects_6 = dirac_BFM_wrapper.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@am__objects_6 = dirac_wilson_BGQ.$(OBJEXT)
+am__objects_7 = $(am__objects_6)
+@USE_BFM_TRUE@am__objects_8 = dirac_BFM_wrapper.$(OBJEXT) \
 @USE_BFM_TRUE@	bfm_storage.$(OBJEXT) \
 @USE_BFM_TRUE@	dirac_BFM_wrapper_factory.$(OBJEXT)
-@IBM_BGQKERNELS_TRUE@am__objects_7 = stoutSmear_core_BGQ.$(OBJEXT) \
+@IBM_BGQKERNELS_TRUE@am__objects_9 = stoutSmear_core_BGQ.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	smartConf_core_BGQ.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	APEsmear_BGQ.$(OBJEXT)
-@IBM_BGQKERNELS_FALSE@am__objects_8 = stoutSmear_core.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@am__objects_10 = stoutSmear_core.$(OBJEXT) \
 @IBM_BGQKERNELS_FALSE@	smartConf_core.$(OBJEXT) \
 @IBM_BGQKERNELS_FALSE@	APEsmear.$(OBJEXT)
-am__objects_9 = $(am__objects_7) $(am__objects_8)
-am__objects_10 =
-am__objects_11 = $(am__objects_10)
+am__objects_11 = $(am__objects_9) $(am__objects_10)
 @USE_DCMT_TRUE@am__objects_12 = dcmt_wrapper.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
@@ -290,7 +296,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	fopr_signH_Zolotarev.$(OBJEXT) \
 	dirac_overlap_Zolotarev.$(OBJEXT) dirac_DWoverlap.$(OBJEXT) \
 	domainWallCore.$(OBJEXT) domainWallUtils.$(OBJEXT) \
-	$(am__objects_5) dirac_DomainWall_EvenOdd.$(OBJEXT) \
+	$(am__objects_5) $(am__objects_7) \
+	dirac_DomainWall_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_adjoint_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
 	dirac_DomainWall_4D_eoSolv.$(OBJEXT) \
@@ -298,7 +305,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	wilsonLikeUtils.$(OBJEXT) dirac_Operator_Factory.$(OBJEXT) \
 	boundaryCond.$(OBJEXT) subSpaceProjector.$(OBJEXT) \
 	dirac_LowModeDeflation_ExactEigen.$(OBJEXT) \
-	dirac_LowModeDeflation_Approx.$(OBJEXT) $(am__objects_6) \
+	dirac_LowModeDeflation_Approx.$(OBJEXT) $(am__objects_8) \
 	eigenCalcGeneral.$(OBJEXT) eigenModesSolver_Factory.$(OBJEXT) \
 	eigenModesSolver_IRL.$(OBJEXT) eigenProc_Zolotarev.$(OBJEXT) \
 	chebyshevAccelFunc.$(OBJEXT) eigenSorter.$(OBJEXT) \
@@ -320,9 +327,9 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	solver_CG.$(OBJEXT) solver_Factory.$(OBJEXT) \
 	multiShiftSolver_CG.$(OBJEXT) rationalSolver_CG.$(OBJEXT) \
 	solver.$(OBJEXT) stoutSmear_base.$(OBJEXT) \
-	smartConf_base.$(OBJEXT) $(am__objects_9) \
-	smearingFactories.$(OBJEXT) $(am__objects_11) \
-	fieldUtils.$(OBJEXT) jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
+	smartConf_base.$(OBJEXT) $(am__objects_11) \
+	smearingFactories.$(OBJEXT) fieldUtils.$(OBJEXT) \
+	jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	sunAdjMatUtils.$(OBJEXT) randNum.$(OBJEXT) \
 	randNum_MP.$(OBJEXT) randNum_Factory.$(OBJEXT) \
 	gammaMatrices.$(OBJEXT) sunAlgUtils.$(OBJEXT) \
@@ -360,16 +367,6 @@ CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 AM_V_CXXLD = $(am__v_CXXLD_@AM_V@)
 am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD " $@;
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-AM_V_CC = $(am__v_CC_@AM_V@)
-am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
-am__v_CC_0 = @echo "  CC    " $@;
-CCLD = $(CC)
-LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-AM_V_CCLD = $(am__v_CCLD_@AM_V@)
-am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
-am__v_CCLD_0 = @echo "  CCLD  " $@;
 AM_V_GEN = $(am__v_GEN_@AM_V@)
 am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
 am__v_GEN_0 = @echo "  GEN   " $@;
@@ -387,6 +384,159 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
+	$(top_srcdir)/include/commonPrms.hpp \
+	$(top_srcdir)/include/commandline.hpp \
+	$(top_srcdir)/include/iroiro_code.hpp \
+	$(top_srcdir)/include/common_fields.hpp \
+	$(top_srcdir)/include/config.h \
+	$(top_srcdir)/include/geometry.hpp \
+	$(top_srcdir)/include/field.h \
+	$(top_srcdir)/include/factories.hpp \
+	$(top_srcdir)/include/fopr_Chebyshev.h \
+	$(top_srcdir)/include/fopr_DdagDLinear.h \
+	$(top_srcdir)/include/fopr_QuadLinear.h \
+	$(top_srcdir)/include/fopr_Linear.h \
+	$(top_srcdir)/include/fopr_Dhat.h \
+	$(top_srcdir)/include/fopr_eo.h \
+	$(top_srcdir)/include/fopr_eo_wilson.h \
+	$(top_srcdir)/include/fopr.h \
+	$(top_srcdir)/include/fopr_signH_Zolotarev.h \
+	$(top_srcdir)/include/foprHermFactory.hpp \
+	$(top_srcdir)/include/format_A.h \
+	$(top_srcdir)/include/format_F.h \
+	$(top_srcdir)/include/format_G.h \
+	$(top_srcdir)/include/format_Ga.h \
+	$(top_srcdir)/include/format_S.h \
+	$(top_srcdir)/include/numerical_const.hpp \
+	$(top_srcdir)/include/macros.hpp \
+	$(top_srcdir)/include/typeDefs.h \
+	$(top_srcdir)/include/pugi_interface.h \
+	$(top_srcdir)/include/singleton.h \
+	$(top_srcdir)/include/observer.hpp \
+	$(top_srcdir)/include/messages_macros.hpp \
+	$(top_srcdir)/include/timings.hpp \
+	$(top_srcdir)/include/errors.hpp \
+	$(top_srcdir)/include/inputConfig.hpp Tools/utils_BGQ.hpp \
+	Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.hpp \
+	PugiXML/pugixml.hpp PugiXML/pugiconfig.hpp \
+	Action/action_gauge_wilson.hpp \
+	Action/action_gauge_wilson_adjoint.hpp \
+	Action/action_gauge_rect.hpp Action/action.hpp \
+	Action/action_gaugetype_factory.hpp \
+	Action/action_gaugetype_factory_creator.hpp \
+	Action/action_gaugetype_factory_abs.hpp \
+	Action/action_fermiontype_factory_abs.hpp \
+	Action/action_fermiontype_factory.hpp \
+	Action/action_fermiontype_factory_creator.hpp \
+	Action/action_factory.hpp Action/action_Nf2.hpp \
+	Action/action_Nf2_ratio.hpp Action/action_Nf.hpp \
+	Action/action_Nf_ratio.hpp Action/action_staggered.hpp \
+	Action/action_staggered_ratio.hpp \
+	Action/action_Nf2_DomainWall.hpp Measurements/measGeneral.hpp \
+	Measurements/GaugeM/staples.hpp \
+	Measurements/GaugeM/gaugeFixing.hpp \
+	Measurements/GaugeM/gaugeFixingStep.hpp \
+	Measurements/GaugeM/gaugeFixing_Coulomb.hpp \
+	Measurements/GaugeM/gaugeFixing_Landau.hpp \
+	Measurements/GaugeM/gaugeFixing_Free.hpp \
+	Measurements/GaugeM/gfixFactory.hpp \
+	Measurements/GaugeM/wilsonFlow.hpp \
+	Measurements/GaugeM/polyakovLoop.hpp \
+	Measurements/GaugeM/topologyGeom.hpp \
+	Measurements/FermionicM/source.hpp \
+	Measurements/FermionicM/source_types.hpp \
+	Measurements/FermionicM/qprop_MultiShift.hpp \
+	Measurements/FermionicM/qprop.hpp \
+	Measurements/FermionicM/qprop_mom.hpp \
+	Measurements/FermionicM/qprop_EvenOdd.hpp \
+	Measurements/FermionicM/qprop_DomainWall.hpp \
+	Measurements/FermionicM/quark_propagators.hpp \
+	Measurements/FermionicM/sources_factory.hpp \
+	Measurements/FermionicM/meson_correlator.hpp \
+	Measurements/FermionicM/baryonCorrelator.hpp \
+	Measurements/FermionicM/quark_prop_meas_factory.hpp \
+	Measurements/FermionicM/utils_DWF4d.hpp \
+	Communicator/communicator.hpp Communicator/comm_io.hpp \
+	IO/fields_io.hpp IO/binary_reader.hpp IO/binary_writer.hpp \
+	IO/general_reader.hpp IO/general_writer.hpp \
+	IO/generic_header.hpp IO/ILDG_header.hpp IO/ILDG_reader.hpp \
+	IO/ILDG_writer.hpp IO/JLQCDLegacy_reader.hpp \
+	IO/NERSC_reader.hpp IO/readers.hpp IO/writers.hpp \
+	IO/text_header.hpp Geometry/siteIndex.hpp \
+	Geometry/siteIndex3d.hpp Geometry/siteIndex_EvenOdd.hpp \
+	Geometry/siteMap.hpp Geometry/myMap.hpp Geometry/autoMap.hpp \
+	Geometry/shiftField.hpp Main/gaugeConf.hpp \
+	Main/gaugeGlobal.hpp \
+	Dirac_ops/dirac_Operator_FactoryCreator.hpp \
+	Dirac_ops/dirac_Operator_Factory.hpp \
+	Dirac_ops/dirac_DWoverlap.hpp \
+	Dirac_ops/dirac_overlap_Zolotarev.hpp Dirac_ops/dirac.hpp \
+	Dirac_ops/dirac_WilsonLike.hpp \
+	Dirac_ops/dirac_staggeredLike.hpp Dirac_ops/dirac_wilson.hpp \
+	Dirac_ops/dirac_wilson_adjoint.hpp \
+	Dirac_ops/dirac_wilson_EvenOdd.hpp \
+	Dirac_ops/dirac_wilson_Brillouin.hpp \
+	Dirac_ops/dirac_staggered_EvenOdd.hpp \
+	Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp \
+	Dirac_ops/dirac_clover.hpp Dirac_ops/dirac_Mobius.hpp \
+	Dirac_ops/dirac_DomainWall.hpp \
+	Dirac_ops/dirac_DomainWall_adjoint.hpp \
+	Dirac_ops/dirac_DomainWall_EvenOdd.hpp \
+	Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.hpp \
+	Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
+	Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
+	Dirac_ops/dirac_LowModeDeflation.hpp \
+	Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
+	Dirac_ops/dirac_LowModeDeflation_Approx.hpp \
+	Dirac_ops/domainWallCore.hpp Dirac_ops/domainWallUtils.hpp \
+	Dirac_ops/wilsonLikeUtils.hpp Dirac_ops/eoUtils.hpp \
+	Dirac_ops/BoundaryConditions/boundaryCond.hpp \
+	Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp \
+	Dirac_ops/subSpaceProjector.hpp \
+	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp \
+	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp \
+	EigenModes/eigenCalcGeneral.hpp \
+	EigenModes/eigenModesSolver_Factory.hpp \
+	EigenModes/eigenModesSolver.hpp \
+	EigenModes/eigenModesSolver_IRL.hpp \
+	EigenModes/eigenSorter_Factory.hpp EigenModes/eigenSorter.hpp \
+	EigenModes/chebyshevAccelFunc.hpp \
+	EigenModes/eigenProc_Zolotarev.h EigenModes/eigenModes.hpp \
+	EigenModes/foprHermFunc.hpp EigenModes/findminmax.hpp \
+	Fields/field_expressions.hpp HMC/hmcGeneral.hpp \
+	HMC/TrajectoryInfo.hpp HMC/mdExec.hpp HMC/mdExec_leapfrog.hpp \
+	HMC/mdExec_2MN.hpp HMC/mdExec_leapfrog_eigen.hpp \
+	HMC/mdExec_factory.hpp HMC/mdExec_factory_abs.hpp \
+	Solver/solver_CG_params.hpp Solver/solver_Factory.hpp \
+	Solver/solver_BiCGStab.hpp Solver/solver.hpp \
+	Solver/solver_CG.hpp Solver/multiShiftSolver_CG.hpp \
+	Solver/multiShiftSolver.hpp Solver/rationalSolver.hpp \
+	Solver/rationalSolver_CG.hpp \
+	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp \
+	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.hpp \
+	Smearing/APEsmear.hpp Smearing/baseSmear.hpp \
+	Smearing/stoutSmear.hpp Smearing/smartConf.hpp \
+	Smearing/smearingFactories.hpp Tools/jobUtils.hpp \
+	Tools/sunMat.hpp Tools/sunMatUtils.hpp Tools/sunAdjMat.hpp \
+	Tools/sunAdjVec.hpp Tools/sunAdjMatUtils.hpp \
+	Tools/sunRepresentations.hpp Tools/sunVec.hpp \
+	Tools/sunAlgUtils.hpp Tools/colorEpsilon.hpp \
+	Tools/randNum_MP.h Tools/randNum.h Tools/randNum_Factory.h \
+	Tools/fieldUtils.hpp Tools/RAIIFactory.hpp \
+	Tools/EnumToString.hpp Tools/byteswap.hpp \
+	Tools/gammaMatrices.hpp Tools/complexMatrix.hpp \
+	Tools/Remez/alg_remez.hpp Tools/Remez/bigfloat.hpp \
+	Tools/RationalApprox/rationalapprox.hpp \
+	Tools/Bagel/bfm_storage.hpp \
+	Tools/RandomNumGen/dcmt_wrapper.hpp \
+	Tools/RandomNumGen/randNum_MT19937.h \
+	UpdatingAlg/HeatBath/heatbath.hpp \
+	UpdatingAlg/HeatBath/HBActions.hpp \
+	UpdatingAlg/HeatBath/HBActions_SUN.hpp Scalar_ops/scalarOp.hpp \
+	Scalar_ops/laplacian.hpp \
+	Scalar_ops/scalar_Operator_Factory.hpp \
+	Scalar_ops/scalar_Operator_FactoryCreator.hpp
 HEADERS = $(include_HEADERS)
 RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
@@ -537,7 +687,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-12-05 10:06:22 noaki>
+# Time-stamp: <2013-12-10 16:13:47 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -545,33 +695,35 @@ AM_CXXFLAGS = $(am__append_4)
 AM_LDFLAGS = $(am__append_5) $(BFM_LIBS)
 OPTLIB = $(am__append_1) $(am__append_2) $(am__append_3)
 DWF_BGQ_SRC = $(am__append_6)
-SMEAR_SRCS = $(am__append_7) $(am__append_9)
-UTILS_SRCS = $(am__append_8)
-@IBM_BGQ_FALSE@@USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
-@IBM_BGQ_TRUE@@USE_MPI_TRUE@COMMUNICATOR_SRCS = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
+DWF_BGQ_HDR = $(am__append_7)
+DWL_BGQ_SRC = $(am__append_8)
+SMEAR_SRC = $(am__append_9) $(am__append_11)
+UTILS_HDR = $(am__append_10)
+@IBM_BGQ_FALSE@@USE_MPI_TRUE@COMMUNICATOR_SRC = Communicator/communicator_mpi.cpp
+@IBM_BGQ_TRUE@@USE_MPI_TRUE@COMMUNICATOR_SRC = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
 
 # Fall-back to the single core case
-@USE_MPI_FALSE@COMMUNICATOR_SRCS = Communicator/communicator_single.cpp	
-@IBM_BGQKERNELS_FALSE@ACTION_SRCS = Action/action_gauge_rect.cpp \
+@USE_MPI_FALSE@COMMUNICATOR_SRC = Communicator/communicator_single.cpp	
+@IBM_BGQKERNELS_FALSE@ACTION_SRC = Action/action_gauge_rect.cpp \
 @IBM_BGQKERNELS_FALSE@	Action/action_gauge_wilson_force.cpp
-@IBM_BGQKERNELS_TRUE@ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
+@IBM_BGQKERNELS_TRUE@ACTION_SRC = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
 @IBM_BGQKERNELS_TRUE@	Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp
-@USE_EVENODD_FALSE@SITE_INDEXING_SRCS = Geometry/siteIndex.cpp
+@USE_EVENODD_FALSE@SITE_INDEXING_SRC = Geometry/siteIndex.cpp
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
-@USE_EVENODD_TRUE@SITE_INDEXING_SRCS = Geometry/siteIndexEO.cpp
-@USE_DCMT_FALSE@DCMT_SRCS = 
+@USE_EVENODD_TRUE@SITE_INDEXING_SRC = Geometry/siteIndexEO.cpp
+@USE_DCMT_FALSE@DCMT_SRC = 
 
 ###########################################
 # Optional DCMT Random number generators
-@USE_DCMT_TRUE@DCMT_SRCS = Tools/RandomNumGen/dcmt_wrapper.cpp
+@USE_DCMT_TRUE@DCMT_SRC = Tools/RandomNumGen/dcmt_wrapper.cpp
 ###########################################
 # Optional for Peter's Bagel/BFM libs
 @USE_BFM_TRUE@BFM_HACK = /bgsys/drivers/V1R1M2/ppc64/
 @USE_BFM_TRUE@BFM_INCLUDE = -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
 @USE_BFM_TRUE@BFM_LIBS = -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
-@USE_BFM_FALSE@BFM_SRCS = 
-@USE_BFM_TRUE@BFM_SRCS = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp \
+@USE_BFM_FALSE@BFM_SRC = 
+@USE_BFM_TRUE@BFM_SRC = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp \
 @USE_BFM_TRUE@	Tools/Bagel/bfm_storage.cpp \
 @USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 AM_CPPFLAGS = -I$(top_srcdir) $(BFM_INCLUDE)
@@ -584,16 +736,15 @@ EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
                 Dirac_ops/Architecture_Optimized/dirac_wilson_Brillouin_BGQ.code    	\
-                Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.code \
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
-		$(COMMUNICATOR_SRCS)     	        \
-		$(SITE_INDEXING_SRCS)			\
+		$(COMMUNICATOR_SRC)     	        \
+		$(SITE_INDEXING_SRC)			\
 		Action/action.cpp			\
 		Action/action_gauge_wilson.cpp		\
 	 	Action/action_gauge_wilson_adjoint.cpp	\
-		$(ACTION_SRCS)				\
+		$(ACTION_SRC)				\
 	 	Action/action_gaugetype_factory_creator.cpp\
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
@@ -630,6 +781,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/domainWallCore.cpp            	\
 		Dirac_ops/domainWallUtils.cpp            	\
 		$(DWF_BGQ_SRC)					\
+		$(DWL_BGQ_SRC)					\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
 		Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
@@ -642,7 +794,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
 		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
-		$(BFM_SRCS)					\
+		$(BFM_SRC)					\
 		EigenModes/eigenCalcGeneral.cpp			\
 		EigenModes/eigenModesSolver_Factory.cpp		\
 		EigenModes/eigenModesSolver_IRL.cpp		\
@@ -689,9 +841,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/solver.cpp			\
 		Smearing/stoutSmear_base.cpp		\
 		Smearing/smartConf_base.cpp		\
-		$(SMEAR_SRCS)				\
+		$(SMEAR_SRC)				\
 		Smearing/smearingFactories.cpp		\
-		$(UTILS_SRCS)		        	\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
@@ -710,7 +861,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/io_errors.cpp	\
 		Tools/ErrorsHandling/convergence_errors.cpp\
 		Tools/ErrorsHandling/parameter_errors.cpp\
-		$(DCMT_SRCS)				\
+		$(DCMT_SRC)				\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
@@ -754,7 +905,9 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/timings.hpp		\
 			$(top_srcdir)/include/errors.hpp		\
 			$(top_srcdir)/include/inputConfig.hpp		\
-			PugiXML/pugixml.hpp				\
+			$(UTILS_HDR)    		        	\
+			$(DWF_BGQ_HDR)                                  \
+                        PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
 	 		Action/action_gauge_wilson_adjoint.hpp		\
@@ -1107,10 +1260,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_staggered_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_staggered_EvenOdd_Adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_Brillouin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallCore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallCore_BGQ.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallExtra_BGQ.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallSolver_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenCalcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_Factory.Po@am__quote@
@@ -1903,19 +2059,61 @@ solver_CG_DWF_BGQ.obj: Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o solver_CG_DWF_BGQ.obj `if test -f 'Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp'; then $(CYGPATH_W) 'Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp'; fi`
 
-domainWallCore_BGQ.o: Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallCore_BGQ.o -MD -MP -MF $(DEPDIR)/domainWallCore_BGQ.Tpo -c -o domainWallCore_BGQ.o `test -f 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp' || echo '$(srcdir)/'`Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
+domainWallCore_BGQ.o: Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallCore_BGQ.o -MD -MP -MF $(DEPDIR)/domainWallCore_BGQ.Tpo -c -o domainWallCore_BGQ.o `test -f 'Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp' || echo '$(srcdir)/'`Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallCore_BGQ.Tpo $(DEPDIR)/domainWallCore_BGQ.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/Architecture_Optimized/domainWallCore_BGQ.cpp' object='domainWallCore_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp' object='domainWallCore_BGQ.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallCore_BGQ.o `test -f 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp' || echo '$(srcdir)/'`Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallCore_BGQ.o `test -f 'Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp' || echo '$(srcdir)/'`Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
 
-domainWallCore_BGQ.obj: Solver/Architecture_Optimized/domainWallCore_BGQ.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallCore_BGQ.obj -MD -MP -MF $(DEPDIR)/domainWallCore_BGQ.Tpo -c -o domainWallCore_BGQ.obj `if test -f 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; then $(CYGPATH_W) 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; fi`
+domainWallCore_BGQ.obj: Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallCore_BGQ.obj -MD -MP -MF $(DEPDIR)/domainWallCore_BGQ.Tpo -c -o domainWallCore_BGQ.obj `if test -f 'Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp'; then $(CYGPATH_W) 'Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp'; fi`
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallCore_BGQ.Tpo $(DEPDIR)/domainWallCore_BGQ.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Solver/Architecture_Optimized/domainWallCore_BGQ.cpp' object='domainWallCore_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp' object='domainWallCore_BGQ.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallCore_BGQ.obj `if test -f 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; then $(CYGPATH_W) 'Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Solver/Architecture_Optimized/domainWallCore_BGQ.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallCore_BGQ.obj `if test -f 'Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp'; then $(CYGPATH_W) 'Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp'; fi`
+
+domainWallSolver_BGQ.o: Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallSolver_BGQ.o -MD -MP -MF $(DEPDIR)/domainWallSolver_BGQ.Tpo -c -o domainWallSolver_BGQ.o `test -f 'Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp' || echo '$(srcdir)/'`Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallSolver_BGQ.Tpo $(DEPDIR)/domainWallSolver_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp' object='domainWallSolver_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallSolver_BGQ.o `test -f 'Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp' || echo '$(srcdir)/'`Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp
+
+domainWallSolver_BGQ.obj: Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallSolver_BGQ.obj -MD -MP -MF $(DEPDIR)/domainWallSolver_BGQ.Tpo -c -o domainWallSolver_BGQ.obj `if test -f 'Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp'; then $(CYGPATH_W) 'Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallSolver_BGQ.Tpo $(DEPDIR)/domainWallSolver_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp' object='domainWallSolver_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallSolver_BGQ.obj `if test -f 'Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp'; then $(CYGPATH_W) 'Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp'; fi`
+
+domainWallExtra_BGQ.o: Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallExtra_BGQ.o -MD -MP -MF $(DEPDIR)/domainWallExtra_BGQ.Tpo -c -o domainWallExtra_BGQ.o `test -f 'Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp' || echo '$(srcdir)/'`Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallExtra_BGQ.Tpo $(DEPDIR)/domainWallExtra_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp' object='domainWallExtra_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallExtra_BGQ.o `test -f 'Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp' || echo '$(srcdir)/'`Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp
+
+domainWallExtra_BGQ.obj: Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT domainWallExtra_BGQ.obj -MD -MP -MF $(DEPDIR)/domainWallExtra_BGQ.Tpo -c -o domainWallExtra_BGQ.obj `if test -f 'Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp'; then $(CYGPATH_W) 'Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/domainWallExtra_BGQ.Tpo $(DEPDIR)/domainWallExtra_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp' object='domainWallExtra_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o domainWallExtra_BGQ.obj `if test -f 'Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp'; then $(CYGPATH_W) 'Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp'; fi`
+
+dirac_wilson_BGQ.o: Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_BGQ.o -MD -MP -MF $(DEPDIR)/dirac_wilson_BGQ.Tpo -c -o dirac_wilson_BGQ.o `test -f 'Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp' || echo '$(srcdir)/'`Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_BGQ.Tpo $(DEPDIR)/dirac_wilson_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp' object='dirac_wilson_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_BGQ.o `test -f 'Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp' || echo '$(srcdir)/'`Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp
+
+dirac_wilson_BGQ.obj: Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_BGQ.obj -MD -MP -MF $(DEPDIR)/dirac_wilson_BGQ.Tpo -c -o dirac_wilson_BGQ.obj `if test -f 'Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp'; then $(CYGPATH_W) 'Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_BGQ.Tpo $(DEPDIR)/dirac_wilson_BGQ.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp' object='dirac_wilson_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_BGQ.obj `if test -f 'Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp'; then $(CYGPATH_W) 'Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp'; fi`
 
 dirac_DomainWall_EvenOdd.o: Dirac_ops/dirac_DomainWall_EvenOdd.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_DomainWall_EvenOdd.o -MD -MP -MF $(DEPDIR)/dirac_DomainWall_EvenOdd.Tpo -c -o dirac_DomainWall_EvenOdd.o `test -f 'Dirac_ops/dirac_DomainWall_EvenOdd.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_DomainWall_EvenOdd.cpp

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_DomainWall (5d operator)
- Time-stamp: <2013-12-05 11:21:38 noaki>
+ Time-stamp: <2013-12-10 16:11:40 noaki>
  */
 #ifndef DIRAC_DOMAINWALL_INCLUDED
 #define DIRAC_DOMAINWALL_INCLUDED
@@ -25,6 +25,7 @@ private:
 
 #ifdef IBM_BGQ_WILSON   
 private:
+  Op5Dfdm op5D_;
   DomainWallCore_BGQ DWcore_;
   void solve_ms_init(std::vector<Field>&,std::vector<Field>&,Field&,Field&,
 		     double& rr,
@@ -36,35 +37,41 @@ public:
   Dirac_DomainWall(XML::node dw_node,const DiracWilsonLike* Dw,
 		   DWFType Type= Regular)
     :prms_(dw_node,Type),Dw_(Dw),
+     op5D_(CommonPrms::instance()->Nvol(),prms_.N5_),
      DWcore_(prms_,Dw,CommonPrms::instance()->Nvol()){}
 
   Dirac_DomainWall(double b,double c,double M0,double mq,
 		   const std::vector<double>& omega,
 		   const DiracWilsonLike* Dw)
     :prms_(b,c,M0,mq,omega),Dw_(Dw),
+     op5D_(CommonPrms::instance()->Nvol(),prms_.N5_),
      DWcore_(prms_,Dw,CommonPrms::instance()->Nvol()){}
   
   /*! @brief copy constructor */
   Dirac_DomainWall(const Dirac_DomainWall& Dc,DWFType Type=Regular)
     :prms_(Dc.prms_,Type),Dw_(Dc.Dw_),
+     op5D_(CommonPrms::instance()->Nvol(),prms_.N5_),
      DWcore_(prms_,Dc.Dw_,CommonPrms::instance()->Nvol()){}
 
   ////////// [IBM_BGQ_WILSON] Constructors for e/o indexing /////////
   Dirac_DomainWall(XML::node dw_node,const DiracWilsonLike* Dw,
 			  DWF::EvenOdd_tag EO,DWFType Type= Regular)
     :prms_(dw_node,Type),Dw_(Dw),
+     op5D_(CommonPrms::instance()->Nvol(),prms_.N5_),
      DWcore_(prms_,Dw,CommonPrms::instance()->Nvol()/2,EO){}
 
   Dirac_DomainWall(double b,double c,double M0,double mq,
 		   const std::vector<double>& omega,
 		   const DiracWilsonLike* Dw,DWF::EvenOdd_tag EO)
     :prms_(b,c,M0,mq,omega),Dw_(Dw),
+     op5D_(CommonPrms::instance()->Nvol(),prms_.N5_),
      DWcore_(prms_,Dw,CommonPrms::instance()->Nvol()/2,EO){}
   
   /*! @brief copy constructor*/
   Dirac_DomainWall(const Dirac_DomainWall& Dc, 
 		   DWF::EvenOdd_tag EO,DWFType Type=Regular)
     :prms_(Dc.prms_,Type),Dw_(Dc.Dw_),
+     op5D_(CommonPrms::instance()->Nvol(),prms_.N5_),
      DWcore_(prms_,Dc.Dw_,CommonPrms::instance()->Nvol()/2,EO){}
   /////////////////////////////////////////////////////////////////
   void mult_hop_omp(Field& w,const void* f_ptr)const;
@@ -193,15 +200,5 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
 inline void Dirac_DomainWall::
 md_force_m(Field& fce,const Field& phi,const Field& psi)const{
   DWcore_.md_force_m(fce,phi,psi);}  
-
-
-#ifdef IBM_BGQ_WILSON
-inline void Dirac_DomainWall::
-mult_hop_omp(Field& w,const void* f_ptr)const{ DWcore_.mult_hop_omp(w,f_ptr);}
-
-inline void Dirac_DomainWall::
-mult_hop_dag_omp(Field& w,const void* f_ptr)const{
-  DWcore_.mult_hop_dag_omp(w,f_ptr);}
-#endif
 
 #endif

@@ -2,11 +2,12 @@
  * @file domainWallCore_BGQ.cpp
  *
  * @brief Definition of some BGQ optimized methods for domainWallCore (5d operator)
- * Time-stamp: <2013-12-04 13:41:07 noaki>
+ * Time-stamp: <2013-12-10 18:29:35 noaki>
 
  *-------------------------------------------------------------------------*/
 #include "domainWallCore_BGQ.hpp"
 #include "Tools/utils_BGQ.hpp"
+#include "Fields/field_expressions.hpp"
 
 const Field DomainWallCore_BGQ::mult(const Field& f5) const{
   Field w5(f5.size());
@@ -30,7 +31,7 @@ const Field DomainWallCore_BGQ::md_force(const Field& phi,const Field& psi)const
 }
 
 const Field DomainWallCore_BGQ::mult_hop5(const Field& f5) const{
-  Field w5(f5size_), v(f4size_);
+  Field w5(f5.size()), v(f4size_);
   double* v_ptr = v.getaddr(0);
 
   for(int s=0; s<N5_; ++s) {
@@ -60,7 +61,7 @@ const Field DomainWallCore_BGQ::mult_hop5(const Field& f5) const{
 }
 
 const Field DomainWallCore_BGQ::mult_hop5_dag(const Field& f5) const{
-  Field w5(f5size_), v(f4size_);
+  Field w5(f5.size()), v(f4size_);
   double* v_ptr = v.getaddr(0);
 
   for(int s=0; s<N5_; ++s){
@@ -217,7 +218,7 @@ void DomainWallCore_BGQ::mult_dag_full(Field& w5,const Field& f5) const{
 #pragma disjoint
   assert(w5.size()==f5.size());
 
-  Field v5(f5size_);
+  Field v5(f5.size());
   Field f4(f4size_), w(f4size_);
   Field lpf(f4size_), lmf(f4size_);
   
@@ -288,7 +289,7 @@ void DomainWallCore_BGQ::mult_offdiag(Field& w5,const Field& f5) const{
 }
 
 void DomainWallCore_BGQ::mult_dag_offdiag(Field& w5,const Field& f5) const{
-  Field v5(f5size_),lpf(f4size_), lmf(f4size_),w(f4size_);
+  Field v5(f5.size()),lpf(f4size_), lmf(f4size_),w(f4size_);
   double* w_ptr = w.getaddr(0);
 
   /* here, Nvol_ is half-size */
@@ -332,7 +333,7 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
   Field lpf(f4size_), lmf(f4size_);
-  Field w(f5size_);
+  Field w(phi.size());
   
   Spinor* lpf_ptr = (Spinor*)lpf.getaddr(0);
   Spinor* lmf_ptr = (Spinor*)lmf.getaddr(0);
@@ -342,7 +343,7 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
   Field xie(f4size_);
   double* xie_ptr = xie.getaddr(0);
   double* fce_ptr = fce.getaddr(0);
-  double* pU      = const_cast<Field*>(getGaugeField_ptr())->getaddr(0);
+  double* pU      = const_cast<Field*>(Dw_->getGaugeField_ptr())->getaddr(0);
   Spinor* psi_ptr = (Spinor*)const_cast<Field&>(psi).getaddr(0);
   double* zeta_ptr;
   std::vector<int> global_sites;
@@ -408,7 +409,7 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
   register int Nvol = CommonPrms::instance()->Nvol()/2;
 
   Field lpf(f4size_), lmf(f4size_);
-  Field w(f5size_);
+  Field w(phi.size());
   Spinor* lpf_ptr = (Spinor*)lpf.getaddr(0);
   Spinor* lmf_ptr = (Spinor*)lmf.getaddr(0);
   Spinor* w_ptr   = (Spinor*)w.getaddr(0);
@@ -417,7 +418,7 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
   Field xie(f4size_);
   double* xie_ptr = xie.getaddr(0);
   double* fce_ptr = fce.getaddr(0);
-  double* pU      = const_cast<Field*>(getGaugeField_ptr())->getaddr(0);
+  double* pU      = const_cast<Field*>(Dw_->getGaugeField_ptr())->getaddr(0);
   Spinor* psi_ptr = (Spinor*)const_cast<Field&>(psi).getaddr(0);
   double* zt5_ptr = lpf.getaddr(0);
   double* et5_ptr = lmf.getaddr(0);
@@ -475,36 +476,4 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
   }
 }  
 
-void DomainWallCore_BGQ::mult_hop_omp(Field& w5, const void* f5) const{
-  int nid = omp_get_num_threads();
-  int tid = omp_get_thread_num();
 
-  BGQThread_Barrier(0,nid);
-  if(tid == 0) BGWilson_DW_Init(N5_,prms_.mq_,prms_.M0_, 
-				(double*)&prms_.dp_[0],(double*)&prms_.dm_[0],
-				(double*)&prms_.bs_[0],(double*)&prms_.cs_[0],
-				(double*)&prms_.es_[0],(double*)&prms_.fs_[0]);
-  BGQThread_Barrier(0,nid);
-  double kappa = 0.5/(4.0+prms_.M0_);
-  double* u = const_cast<Field *>(Dw_->getGaugeField_ptr())->getaddr(0);
-  BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)u,(void*)f5,kappa,BGWILSON_DIRAC);
-}
-
-void DomainWallCore_BGQ::mult_hop_dag_omp(Field& w5, const void* f5) const{
-  int nid = omp_get_num_threads();
-  int tid = omp_get_thread_num();
-
-  BGQThread_Barrier(0,nid);
-
-  if(tid == 0) BGWilson_DW_Init(N5_,prms_.mq_,prms_.M0_,
-				(double*)&prms_.dp_[0],(double*)&prms_.dm_[0],
-				(double*)&prms_.bs_[0],(double*)&prms_.cs_[0],
-				(double*)&prms_.es_[0],(double*)&prms_.fs_[0]);
-  BGQThread_Barrier(0,nid);
-
-  double kappa = 0.5/(4.0+prms_.M0_);
-  double* u = const_cast<Field *>(Dw_->getGaugeField_ptr())->getaddr(0);
-
-  BGWilson_DW_Mult_hop_dag(w5.getaddr(0),(void*)u,(void*)f5,
-			   kappa,BGWILSON_DIRAC);
-}

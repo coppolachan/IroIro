@@ -1,6 +1,6 @@
 /* !@filename dirac_wilson_Brillouin.cpp
  * @brief implementation of Dirac_Wilson_Brillouin class
- *  Time-stamp: <2013-11-20 18:48:45 noaki>
+ *  Time-stamp: <2013-12-10 17:32:06 noaki>
  */
 #include "dirac_wilson_Brillouin.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -10,7 +10,7 @@
 
 #ifdef IBM_BGQ_WILSON
 #include "bgqwilson.h"
-#include "dirac_wilson_Brillouin_BGQ.code"
+#include "Architecture_Optimized/dirac_wilson_Brillouin_BGQ.code"
 #else
 #include "dirac_wilson_Brillouin_regular.code"
 #endif

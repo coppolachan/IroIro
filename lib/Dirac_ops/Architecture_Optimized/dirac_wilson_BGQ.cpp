@@ -1,6 +1,7 @@
 /* Improved version of Dirac Kernel 
-   Time-stamp: <2013-05-03 09:19:16 noaki>
+   Time-stamp: <2013-12-10 16:47:11 noaki>
 */
+#include "Dirac_ops/dirac_wilson.hpp"
 
 void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
   int Nih = ND_*NC_; /*!< @brief num of elements of a half spinor */

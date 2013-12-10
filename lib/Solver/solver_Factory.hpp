@@ -1,7 +1,7 @@
 /*!
  * @file solver_Factory.hpp 
  * @brief Declaration of Solver operators factories
- * Time-stamp: <2013-08-21 12:10:08 cossu>
+ * Time-stamp: <2013-12-10 14:30:05 noaki>
  */
 #ifndef SOLVER_FACT_
 #define SOLVER_FACT_
@@ -62,7 +62,7 @@ public:
 class SolverCG_DWF_opt_Factory {
   const XML::node Solver_node;
 public:
-  Solver_CG_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr){
+  Solver_CG_DWF_Optimized* getSolver(const Dirac_DomainWall_EvenOdd* DWFopr){
     return new Solver_CG_DWF_Optimized(Solver_node,DWFopr);
   }
 #ifdef HAVE_LIBBFM
@@ -128,7 +128,7 @@ class RationalSolverCGFactory_DWF_Optimized {
 public:
   RationalSolverCGFactory_DWF_Optimized(const XML::node node):Solver_node(node){}
 
-  RationalSolver_DWF_Optimized* getSolver(const Dirac_optimalDomainWall_EvenOdd* DWFopr) {
+  RationalSolver_DWF_Optimized* getSolver(const Dirac_DomainWall_EvenOdd* DWFopr) {
     return new RationalSolver_DWF_Optimized(DWFopr,Solver_node);
   }
 #ifdef HAVE_LIBBFM

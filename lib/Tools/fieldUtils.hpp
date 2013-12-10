@@ -27,8 +27,8 @@ namespace FieldUtils{
   // Field type-type transformations
   GaugeField1D DirSlice(const GaugeField& F, int dir);
 
-#if defined IBM_BGQ_WILSON || defined SR16K_WILSON
-  void DirSliceALINE(GaugeField1D &G,const GaugeField& F,int dir);
+#if defined(IBM_BGQ_WILSON) || defined(SR16K_WILSON)
+  void DirSlice_ALINE(GaugeField1D &G,const GaugeField& F,int dir);
 
   inline double ReTrALINE(double& result,const double *F,int site,int dir,int Nvol){
     //assumes some indexing and SU(3) matrix
