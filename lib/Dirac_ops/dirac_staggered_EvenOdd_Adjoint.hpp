@@ -17,7 +17,7 @@
 #include "BoundaryConditions/antiPeriodicBC.hpp"
 #include <memory>
 
-typedef Format::Format_Ga gafmt_t;   // link valiables (adjoint rep.)
+typedef Format::Format_Ga gafmt_t;   // link variables (adjoint rep.)
 typedef Format::Format_A  fafmt_t;   // fermions (adjoint rep.)
 
 class Dirac_staggered_EvenOdd_Adjoint :public DiracStaggeredEvenOddLike{

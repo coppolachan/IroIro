@@ -2,7 +2,7 @@
  * @file dirac_DomainWall_BGQ.code
  *
  * @brief Definition of some BGQ optimized methods for Dirac_optimalDomainWall (5d operator)
- * Time-stamp: <2013-10-29 17:30:32 cossu>
+ * Time-stamp: <2013-11-01 16:44:23 cossu>
 
  *-------------------------------------------------------------------------*/
 #include "Tools/utils_BGQ.hpp"
@@ -441,7 +441,7 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
 	  
 	}//mu
 	
-	
+	BGQThread_Barrier(0,nid);
       }
     }
 
