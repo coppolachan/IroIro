@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.hpp
  * @brief Dirac_Wilson class 
- Time-stamp: <2013-11-20 18:56:00 noaki>
+ Time-stamp: <2013-12-12 12:13:58 cossu>
  */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
@@ -70,8 +70,6 @@ private:
   int(Dirac_Wilson::*gm)(int)const;
 
   void(Dirac_Wilson::*mult_core)(Field&,const Field&)const;
-
-  int EO_BGWilson;
 
   Dirac_Wilson(const Dirac_Wilson&); /*!< @brief simple copy is prohibited.*/
 

@@ -1,5 +1,5 @@
 /*Brillouin code for the BG/Q (cho,2013/6/20) */
-// use BGWilson library as many as possible.
+
 
 //mult for the standard Brillouin
 void Dirac_Wilson_Brillouin::mult_std(Field& w,const Field& f)const{
@@ -116,7 +116,7 @@ inline const Field Dirac_Wilson_Brillouin::mult_del(const Field& f)const{
 
     //v += (this->*gamma[mu])(w);
     for(int site=0; site<Nvol_; ++site)
-      (this->*gamma[mu])(xi3.getaddr(ff_.index(0,site)),
+      (dm_.*(dm_.gamma[mu]))(xi3.getaddr(ff_.index(0,site)),
 		      const_cast<Field&>(w).getaddr(ff_.index(0,site)));
 
     BGWilsonLA_Add(pv,pxi3,Nvol_);     //v += xi3;

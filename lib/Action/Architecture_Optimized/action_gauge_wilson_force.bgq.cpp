@@ -4,11 +4,13 @@
 
   This is the BGQ optimized version
 
-  Time-stamp: <2013-10-29 12:51:25 noaki>
+  Time-stamp: <2013-12-12 12:56:41 cossu>
 */
 #include "Action/action_gauge_wilson.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
+
+
 
 GaugeField ActionGaugeWilson::md_force(){
   using namespace FieldUtils;
@@ -35,8 +37,8 @@ GaugeField ActionGaugeWilson::md_force(){
     for(int n=0; n< NDIM_; ++n){
       if(n != m){
 	//Explicit staple calculation avoiding temporaries
-	DirSlice_ALINE(v, *u_, m);
-	DirSlice_ALINE(w, *u_, n);
+	DirSliceALIGNED(v, *u_, m);
+	DirSliceALIGNED(w, *u_, n);
 	
 	shiftField(WupMu,w_ptr,m,Forward());
 	shiftField(VupNu,v_ptr,n,Forward());
