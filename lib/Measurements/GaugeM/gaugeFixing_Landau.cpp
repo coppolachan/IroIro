@@ -3,7 +3,6 @@
    Original varaion is written by H. Matsufuru
 */
 #include "gaugeFixing_Landau.hpp"
-#include "Geometry/mapping.hpp"
 #include "Main/gaugeConf.hpp"
 #include "Communicator/communicator.hpp"
 #include "include/macros.hpp"

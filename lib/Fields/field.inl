@@ -38,6 +38,18 @@ inline Field& Field::operator*=(const double rhs){
   return *this;
 }
 
+inline Field& Field::operator*=(const std::complex<double>& rhs){
+  std::slice re(0,field.size()/2,2);
+  std::slice im(1,field.size()/2,2);
+
+  std::valarray<double> fre = field[re];
+  std::valarray<double> fim = field[im];
+
+  field[re] = fre*rhs.real() -fim*rhs.imag();
+  field[im] = fim*rhs.real() +fre*rhs.imag();
+  return *this;
+}
+
 inline Field& Field::operator/=(const double rhs){
   field/= rhs;
   return *this;

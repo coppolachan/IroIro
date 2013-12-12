@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-10-04 16:00:54 cossu>
+# Time-stamp: <2013-11-21 11:06:58 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -145,9 +145,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\
-		Dirac_ops/dirac_WilsonLike.cpp		\
 		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
+		Dirac_ops/dirac_wilson_adjoint.cpp	\
 		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
@@ -163,6 +163,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
 		Dirac_ops/eoUtils.cpp           		\
+		Dirac_ops/wilsonLikeUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
@@ -173,6 +174,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/eigenModesSolver_Factory.cpp		\
 		EigenModes/eigenModesSolver_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp		\
+		EigenModes/chebyshevAccelFunc.cpp            \
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
 		Measurements/measGeneral.cpp			\
@@ -192,8 +194,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
-		Geometry/mapping.cpp			\
-		Geometry/mapping_improved.cpp		\
+		Geometry/autoMap_improved.cpp		\
 		Geometry/siteIndex_EvenOdd.cpp		\
 		Geometry/siteMap.cpp			\
 		Geometry/shiftField.cpp			\
@@ -241,7 +242,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	\
-		Laplacian/laplacian.cpp	
+		Scalar_ops/laplacian.cpp	        \
+		Scalar_ops/scalar_Operator_FactoryCreator.cpp	
 
 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
@@ -258,6 +260,8 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/factories.hpp		\
 			$(top_srcdir)/include/fopr_Chebyshev.h	        \
 			$(top_srcdir)/include/fopr_DdagDLinear.h        \
+			$(top_srcdir)/include/fopr_QuadLinear.h         \
+			$(top_srcdir)/include/fopr_Linear.h             \
 			$(top_srcdir)/include/fopr_Dhat.h		\
 			$(top_srcdir)/include/fopr_eo.h			\
 			$(top_srcdir)/include/fopr_eo_wilson.h		\
@@ -340,9 +344,11 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			IO/writers.hpp				\
 			IO/text_header.hpp			\
 			Geometry/siteIndex.hpp     		\
+			Geometry/siteIndex3d.hpp     		\
 			Geometry/siteIndex_EvenOdd.hpp		\
 			Geometry/siteMap.hpp			\
-			Geometry/mapping.hpp			\
+			Geometry/myMap.hpp			\
+			Geometry/autoMap.hpp			\
 			Geometry/shiftField.hpp			\
 			Main/gaugeConf.hpp			\
 			Main/gaugeGlobal.hpp			\
@@ -354,6 +360,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_WilsonLike.hpp		\
 			Dirac_ops/dirac_staggeredLike.hpp	\
 			Dirac_ops/dirac_wilson.hpp		\
+			Dirac_ops/dirac_wilson_adjoint.hpp	\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
@@ -367,6 +374,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_LowModeDeflation.hpp    \
 			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
 			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
+			Dirac_ops/wilsonLikeUtils.hpp            	\
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
@@ -379,9 +387,10 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenModesSolver_IRL.hpp	\
 			EigenModes/eigenSorter_Factory.hpp	\
 			EigenModes/eigenSorter.hpp		\
-			EigenModes/foprHermFactory_ChebyshevDdagDLin.hpp\
+			EigenModes/chebyshevAccelFunc.hpp       \
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/eigenModes.hpp		\
+			EigenModes/foprHermFunc.hpp		\
 			EigenModes/findminmax.hpp		\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
@@ -408,7 +417,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Smearing/stoutSmear.hpp			\
 			Smearing/smartConf.hpp			\
 			Smearing/smearingFactories.hpp		\
-			Tools/utils_BGQ.hpp	        	\
 			Tools/jobUtils.hpp			\
 			Tools/sunMat.hpp			\
 			Tools/sunMatUtils.hpp   		\
@@ -437,8 +445,10 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			UpdatingAlg/HeatBath/heatbath.hpp	\
 			UpdatingAlg/HeatBath/HBActions.hpp	\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	\
-			Laplacian/laplacian.hpp	
-
+			Scalar_ops/scalarOp.hpp  	        \
+			Scalar_ops/laplacian.hpp	        \
+			Scalar_ops/scalar_Operator_Factory.hpp  \
+			Scalar_ops/scalar_Operator_FactoryCreator.hpp
 
 
 

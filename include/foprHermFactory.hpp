@@ -5,56 +5,70 @@
 #define FOPRHERMFACTORY_INCLUDED
 
 #include "fopr.h"
-#include "fopr_Chebyshev.h"
-#include "fopr_DdagDLinear.h"
 #include "pugi_interface.h"
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
+#include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
+#include "Scalar_ops/scalar_Operator_Factory.hpp"
+#include "Scalar_ops/scalar_Operator_FactoryCreator.hpp"
+#include <memory>
 
 class FoprHermFactory{
 public:
-  virtual Fopr_Herm* getFoprHerm(const DiracWilsonLike*) = 0;
+  virtual Fopr_Herm* getFoprHerm(InputConfig&) = 0;
   virtual ~FoprHermFactory(){}
 };
 
 class FoprHermFactory_H: public FoprHermFactory{
+  std::auto_ptr<DiracWilsonLikeFactory> Dfact_;
+  std::auto_ptr<DiracWilsonLike> D_;
 public:
-  Fopr_H* getFoprHerm(const DiracWilsonLike* D){ return new Fopr_H(D); }
+  FoprHermFactory_H(const XML::node& node){
+    Dfact_.reset(Diracs::createDiracWilsonLikeFactory(node));
+  }
+  Fopr_H* getFoprHerm(InputConfig& input){ 
+    D_.reset(Dfact_->getDirac(input));
+    return new Fopr_H(D_.get()); 
+  }
 };
 
 class FoprHermFactory_DdagD: public FoprHermFactory{
+  std::auto_ptr<DiracWilsonLikeFactory> Dfact_;
+  std::auto_ptr<DiracWilsonLike> D_;
 public:
-  Fopr_DdagD* getFoprHerm(const DiracWilsonLike* D){ return new Fopr_DdagD(D);}
+  FoprHermFactory_DdagD(const XML::node& node){
+    Dfact_.reset(Diracs::createDiracWilsonLikeFactory(node));
+  }
+  Fopr_DdagD* getFoprHerm(InputConfig& input){ 
+    D_.reset(Dfact_->getDirac(input));
+    return new Fopr_DdagD(D_.get()); 
+  }
 };
 
 class FoprHermFactory_DDdag: public FoprHermFactory{
+  std::auto_ptr<DiracWilsonLikeFactory> Dfact_;
+  std::auto_ptr<DiracWilsonLike> D_;
 public:
-  Fopr_DDdag* getFoprHerm(const DiracWilsonLike* D){ return new Fopr_DDdag(D);}
-};
-
-class FoprHermFactory_DdagDLinear: public FoprHermFactory{
-  double slp_,icp_;
-public:
-  FoprHermFactory_DdagDLinear():slp_(1.0),icp_(0.0){}
-  FoprHermFactory_DdagDLinear(double slope,double intercept)
-    :slp_(slope),icp_(intercept){}
-  
-  Fopr_DdagDLinear* getFoprHerm(const DiracWilsonLike* D){ 
-    return new Fopr_DdagDLinear(D,slp_,icp_); 
+  FoprHermFactory_DDdag(const XML::node& node){
+    Dfact_.reset(Diracs::createDiracWilsonLikeFactory(node));
+  }
+  Fopr_DDdag* getFoprHerm(InputConfig& input){ 
+    D_.reset(Dfact_->getDirac(input));
+    return new Fopr_DDdag(D_.get()); 
   }
 };
 
-class FoprHermFactory_Chebyshev: public FoprHermFactory{
-  const Fopr_Herm* kernel_;
-  int N_;
-  FoprHermFactory_Chebyshev(FoprHermFactory_Chebyshev&);
-  FoprHermFactory_Chebyshev& operator=(FoprHermFactory_Chebyshev&);
+class FoprHermFactory_Scalar: public FoprHermFactory{
+  std::auto_ptr<ScalarOpFactory> Sfact_;
+  std::auto_ptr<ScalarOp> S_;
 public:
-  FoprHermFactory_Chebyshev(const Fopr_Herm* kernel,int Npoly)
-    :kernel_(kernel),N_(Npoly){}
-  
-  Fopr_Chebyshev* getFoprHerm(const DiracWilsonLike* D){ 
-    return new Fopr_Chebyshev(kernel_,N_);
+  FoprHermFactory_Scalar(const XML::node& node){
+    Sfact_.reset(ScOps::createScalarOpFactory(node));
+  }
+  Fopr_Scalar* getFoprHerm(InputConfig& input){ 
+    S_.reset(Sfact_->getSop(input));
+    return new Fopr_Scalar(S_.get()); 
   }
 };
+
 
 #endif

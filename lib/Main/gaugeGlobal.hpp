@@ -2,7 +2,7 @@
  * @file gaugeGlobal.hpp
  * @brief definition of the GaugeGlobal class
  *
- * Time-stamp: <2013-09-18 14:20:19 cossu>
+ * Time-stamp: <2013-10-15 17:23:23 noaki>
  */
 #ifndef GAUGEGLOBAL_INCLUDED
 #define GAUGEGLOBAL_INCLUDED
@@ -14,9 +14,11 @@
 class RandNum;
 
 class GaugeGlobal: public GaugeField{
+  bool do_check_;
   GaugeGlobal(const GaugeGlobal&);//hide copy constructor
 public:
-  GaugeGlobal(const Geometry& geom):GaugeField(geom.prms_->Nvol()){}
+  GaugeGlobal(const Geometry& geom,bool do_check=true)
+  :GaugeField(geom.prms_->Nvol()),do_check_(do_check){}
   
   /*! Intialization with "Unit" */
   void initializeUnit();

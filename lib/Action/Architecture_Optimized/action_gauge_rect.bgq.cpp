@@ -4,14 +4,14 @@
 
   Optimized version for BlueGeneQ architecture
 
-  Time-stamp: <2013-07-25 18:21:30 cossu>
+  Time-stamp: <2013-10-24 13:30:13 noaki>
 */
 
 #include "Action/action_gauge_rect.hpp"
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "Measurements/GaugeM/staples.hpp"
-#include "Geometry/mapping.hpp"
+#include "Geometry/autoMap.hpp"
 #include "include/messages_macros.hpp"
 
 #include <omp.h>

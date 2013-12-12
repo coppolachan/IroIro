@@ -48,7 +48,8 @@ void Source_local<FMT>::set_src(){
 					     sp_[ZDIR]/Nz,sp_[TDIR]/Nt);
   if(Communicator::instance()->nodeid() == nid){
     has_source_= true;
-    loc_= SiteIndex::instance()->site(sp_[0]%Nx,sp_[1]%Ny,sp_[2]%Nz,sp_[3]%Nt);
+    loc_= SiteIndex::instance()->site(sp_[XDIR]%Nx,sp_[YDIR]%Ny,
+				      sp_[ZDIR]%Nz,sp_[TDIR]%Nt);
   }
 }
 

@@ -5,6 +5,7 @@
 #include "lib/Communicator/comm_io.hpp"
 #include "lib/Communicator/communicator.hpp"
 #include <fstream>
+#include <string.h>
 
 namespace JobUtils{
   void echo_input(const char* file_name){
@@ -23,8 +24,14 @@ namespace JobUtils{
 	      << file_name << "====\n"
 	      << std::fflush;
     }
-
     Communicator::instance()->sync();
     return;
+  }
+
+  bool checking_config(XML::node node){
+    XML::descend(node,"Measurement");
+    const char* ckcfg = node.attribute("CheckConfig").value();
+    if(!strcmp(ckcfg,"true")) return true;
+    else return false;
   }
 }

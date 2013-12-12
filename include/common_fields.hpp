@@ -3,7 +3,7 @@
  *
  * @brief Code for general fields initializations
  *
- * Time-stamp: <2013-07-02 11:51:33 noaki>
+ * Time-stamp: <2013-11-28 22:05:47 noaki>
  */
 #ifndef COMMON_FIELDS_H_
 #define COMMON_FIELDS_H_
@@ -39,17 +39,22 @@ public:
   FORMAT format;
   DATA data;
 
-  GeneralField():format(CommonPrms::instance()->Nvol()),data(format.size()){}
+  //GeneralField():format(CommonPrms::instance()->Nvol()),data(format.size()){}
 
-  explicit GeneralField(int LocalVol):format(LocalVol),data(format.size()){}
   explicit GeneralField(const Field& Fin)
-    :format(CommonPrms::instance()->Nvol()),data(Fin){
+  :format(CommonPrms::instance()->Nvol(),
+	  Fin.size()/CommonPrms::instance()->Nvol()/format.Nin()),
+   data(Fin){
     assert(Fin.size()== format.size());}
+
+  GeneralField(int LocalVol= CommonPrms::instance()->Nvol())
+    :format(LocalVol),data(format.size()){}
 
   GeneralField(const Field& Fin,int LocalVol)
-    :format(LocalVol),data(Fin){
+    :format(LocalVol,Fin.size()/LocalVol/format.Nin()),
+     data(Fin){
     assert(Fin.size()== format.size());}
-
+  
   GeneralField(const GeneralField& Fin):format(Fin.format),data(Fin.data){}
 
   GeneralField& operator=(const GeneralField& rhs){
@@ -121,36 +126,64 @@ typedef GeneralField<Field,Format::Format_G>              GaugeField;
 typedef GeneralField<Field,Format::Format_Ga>             AdjGaugeField;
 typedef GeneralField<Field,Format::Format_G,OneDimTag>    GaugeField1D;
 typedef GeneralField<Field,Format::Format_F,OneDimTag>    FermionField;
+typedef GeneralField<Field,Format::Format_Fa,OneDimTag>   FermionFieldAdj;
 typedef GeneralField<Field,Format::Format_S,OneDimTag>    FermionField1sp;
 typedef GeneralField<Field,Format::Format_A,OneDimTag>    AdjFermionField1sp;
 typedef GeneralField<std::vector<Field>,Format::Format_F> PropagatorField;
 
+/*
 template <> 
 inline GaugeField1D::GeneralField()
   :format(CommonPrms::instance()->Nvol(),1),data(format.size()){}
+*/
 template <> 
 inline GaugeField1D::GeneralField(int LocalVol)
   :format(LocalVol,1),data(format.size()){}
+/*
 template <> 
 inline FermionField1sp::GeneralField()
   :format(CommonPrms::instance()->Nvol(),1),data(format.size()){}
+*/
 template <> 
 inline FermionField1sp::GeneralField(int LocalVol)
   :format(LocalVol,1),data(format.size()){}
 
 /*! Since Nex is fixed to be 1 in this case, Nvol can be determined 
   as Fin.size()/Format::Format_G::Nin(), then e/o-field is also possible */
+
 template <> 
 inline GaugeField1D::GeneralField(const Field& Fin)
-  :format(Fin.size()/Format::Format_G::Nin(),1),data(Fin){}
+  :format(Fin.size()/Format::Format_G::Nin(),1),data(Fin){
+  assert(Fin.size()== format.size());}
+
 template <> 
 inline FermionField::GeneralField(const Field& Fin)
-  :format(Fin.size()/Format::Format_F::Nin(),1),data(Fin){}
+  :format(Fin.size()/Format::Format_F::Nin(),1),data(Fin){
+  assert(Fin.size()== format.size());}
+
 template <> 
 inline FermionField1sp::GeneralField(const Field& Fin)
-  :format(Fin.size()/Format::Format_S::Nin(),1),data(Fin){}
+  :format(Fin.size()/Format::Format_S::Nin(),1),data(Fin){
+  assert(Fin.size()== format.size());}
+
 template <> 
-inline AdjFermionField1sp::GeneralField(const Field& Fin)
-  :format(Fin.size()/Format::Format_A::Nin(),1),data(Fin){}
+inline GaugeField1D::GeneralField(const Field& Fin,int LocalVol)
+  :format(LocalVol,1),data(Fin){
+  assert(Fin.size()== format.size());}
+
+template <> 
+inline FermionField::GeneralField(const Field& Fin,int LocalVol)
+  :format(LocalVol,1),data(Fin){
+  assert(Fin.size()== format.size());}
+
+template <> 
+inline FermionField1sp::GeneralField(const Field& Fin,int LocalVol)
+  :format(LocalVol,1),data(Fin){
+  assert(Fin.size()== format.size());}
+
+template <> 
+inline AdjFermionField1sp::GeneralField(const Field& Fin,int LocalVol)
+  :format(LocalVol,1),data(Fin){
+  assert(Fin.size()== format.size());}
 
 #endif //COMMON_FIELDS_H_

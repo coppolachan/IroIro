@@ -7,21 +7,21 @@
 
 namespace Mapping{
   void ShiftField::init_maps(){
-    if(maps_.size()==0){
+    if(maps_.empty()){
       for(int dir=0; dir<NDIM_; ++dir)	
 	maps_.push_back(AutoMap(dir));
     }
   }
 
   void ShiftField_eo::init_maps(){
-    if(maps_.size()==0){
+    if(maps_.empty()){
       for(int dir=0; dir<NDIM_; ++dir)	
 	maps_.push_back(AutoMap_EvenOdd(dir,EOtag()));
     }
   }
 
   void ShiftField_oe::init_maps(){
-    if(maps_.size()==0){
+    if(maps_.empty()){
       for(int dir=0; dir<NDIM_; ++dir)	
 	maps_.push_back(AutoMap_EvenOdd(dir,OEtag()));
     }

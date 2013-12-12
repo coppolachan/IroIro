@@ -68,8 +68,8 @@ private:
   MeasGeneral(const MeasGeneral&);   //prohibiting copy constructor
   MeasGeneral& operator=(const MeasGeneral&); //prohibiting substitution
 public:
-  MeasGeneral(XML::node node,Geometry geom)
-    :node_(node),input_(node),Uin_(geom),
+  MeasGeneral(XML::node node,Geometry geom,bool check_config=false)
+    :node_(node),input_(node),Uin_(geom,check_config),
      meas_num_(1),output_prefix_("output_"),
      file_list_(false),
      gauge_output_(false),

@@ -8,7 +8,7 @@
 #define TEST_LAPH_H_
 
 #include "include/iroiro_code.hpp"
-
+#include "lib/Geometry/shiftField.hpp"
 class Test_LapH{
   const char* test_name;
   XML::node LapH_node;

@@ -40,7 +40,7 @@ void MDexec_leapfrog::update_U(double ep){
   int Nvol = CommonPrms::instance()->Nvol();
 
 #ifdef IBM_BGQ_WILSON
-  Exponentiate_BGQ(*U_, P_, ep, Params.Nexp);
+  ExponentiateMult_BGQ(*U_, P_, ep, Params.Nexp);
   /*
   GaugeField eiP = Exponentiate(P_, ep, Params.Nexp);
   GaugeField aux;
@@ -73,7 +73,7 @@ void MDexec_leapfrog::update_P(int lv,double ep){
 void MDexec_leapfrog::
 init(vector<int>& clock,const GaugeField& U,const RandNum& rand){
   clock.resize(as_.size(),0.0);  
-
+  CCIO::cout<<"MDexec_leapfrog::init started\n";
   *U_= U;                       // initialize U_ (common to actions) to U
   notify_observers();
   md_mom(P_,rand); // initialize P_ 

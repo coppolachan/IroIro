@@ -7,6 +7,12 @@
 #include "macros.hpp"
 #include <vector>
 
+enum{Ndim_max_= NDIM_};
+
+enum TopBtm {Top,Btm};
+
+enum site_dir{XDIR,YDIR,ZDIR,TDIR};
+
 struct Lattice{
   bool stdinput;
   int Lx, Ly, Lz, Lt;

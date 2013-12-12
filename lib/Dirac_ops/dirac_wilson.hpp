@@ -1,10 +1,11 @@
 /*! @file dirac_wilson.hpp
  * @brief Dirac_Wilson class 
- Time-stamp: <2013-10-29 10:17:56 cossu>
+ Time-stamp: <2013-11-20 18:56:00 noaki>
  */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED
 
+#include "wilsonLikeUtils.hpp"
 #include "dirac_WilsonLike.hpp"
 #include "Geometry/siteIndex_EvenOdd.hpp"
 #include "Geometry/siteIndex.hpp"
@@ -20,15 +21,16 @@ private:
   int Nvol_;
   int Nx_,Ny_,Nz_,Nt_;
   double kpp_;
-
+  GammaMatrix dm_;
   //int boundary[Ndim]; // this is temporary setting.
   const Communicator* comm_;
   const Field* const u_;
   const ffmt_t ff_;
   const gfmt_t gf_;
 
+#ifdef IBM_BGQ_WILSON
   std::vector<int> global_sites;
-
+#endif
   void mult_xp(Field&,const Field&)const;
   void mult_yp(Field&,const Field&)const;
   void mult_zp(Field&,const Field&)const;
@@ -38,9 +40,6 @@ private:
   void mult_ym(Field&,const Field&)const;
   void mult_zm(Field&,const Field&)const;
   void mult_tm(Field&,const Field&)const;
-
-  static void(Dirac_Wilson::*mult_p[])(Field&,const Field&)const;
-  static void(Dirac_Wilson::*mult_m[])(Field&,const Field&)const;
 
   void mult_full(Field&,const Field&)const;   /*! @brief  (1-kpp*D)*f */
   void mult_offdiag(Field&,const Field&)const;/*! @brief  -kpp*D*f */
@@ -77,6 +76,7 @@ private:
   Dirac_Wilson(const Dirac_Wilson&); /*!< @brief simple copy is prohibited.*/
 
 #ifdef IBM_BGQ_WILSON
+  int EO_BGWilson;
   void BGQ_initialize_pointers();
 #endif
 
@@ -93,8 +93,12 @@ public:
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl_e),slice_osize(&Dirac_Wilson::slsize_e),
      slice_in(&Dirac_Wilson::xsl_o),slice_isize(&Dirac_Wilson::slsize_o),
-     mult_core(&Dirac_Wilson::mult_offdiag),
-     EO_BGWilson(1){BGQ_initialize_pointers();}
+     mult_core(&Dirac_Wilson::mult_offdiag)
+#ifdef IBM_BGQ_WILSON
+    ,EO_BGWilson(1){BGQ_initialize_pointers();}
+#else
+  {}
+#endif
 
   Dirac_Wilson(double mass,const Field* u,Dop::OEtag)
     :Nvol_(CommonPrms::instance()->Nvol()/2),
@@ -107,8 +111,12 @@ public:
      comm_(Communicator::instance()),
      slice_out(&Dirac_Wilson::xsl_o),slice_osize(&Dirac_Wilson::slsize_o),
      slice_in(&Dirac_Wilson::xsl_e),slice_isize(&Dirac_Wilson::slsize_e),
-     mult_core(&Dirac_Wilson::mult_offdiag),
-     EO_BGWilson(2){BGQ_initialize_pointers();}
+     mult_core(&Dirac_Wilson::mult_offdiag)
+#ifdef IBM_BGQ_WILSON
+    ,EO_BGWilson(2){BGQ_initialize_pointers();}
+#else
+  {}
+#endif
 
   /*! @brief constructor to create instance with normal site indexing */
   Dirac_Wilson(double mass,const Field* u)
@@ -138,7 +146,7 @@ public:
      mult_core(&Dirac_Wilson::mult_full){
     //
     double mass;
-    XML::read(node, "mass", mass);
+    XML::read(node, "mass", mass,MANDATORY);
     kpp_= 0.5/(4.0+mass);
   }
 
@@ -151,6 +159,9 @@ public:
   void mult_ptr_EO(double*,double* const )const;
   void mult_dag_ptr_EO(double*,double* const )const;  
 #endif
+
+  static void(Dirac_Wilson::*mult_p[])(Field&,const Field&)const;
+  static void(Dirac_Wilson::*mult_m[])(Field&,const Field&)const;
 
   const Field gamma5(const Field&) const;
   const Field md_force(const Field&,const Field&)const;

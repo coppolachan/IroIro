@@ -2,10 +2,11 @@
   @file commonPrms.cpp  
   @brief Defines CommonPrms class
 
-  Time-stamp: <2013-04-26 16:57:34 neo>
+  Time-stamp: <2013-10-23 16:58:30 noaki>
 */
 
 #include "include/commonPrms.hpp"
+#include "include/errors.hpp"
 #include<iostream>
 
 int CommonPrms::Lvol_;
@@ -25,7 +26,8 @@ CommonPrms* CommonPrms::instance(const Lattice& latt){
 
 CommonPrms* CommonPrms::instance(){
   if(instance_== NULL){
-    exit(EXIT_FAILURE);
+    std::cout<<"CommonPrms::instance_ does not exist.\n";
+    exit(EXIT_FAIL);
   }
   return instance_;
 }

@@ -2,7 +2,7 @@
  * @file gaugeGlobal.cpp
  * @brief Declaration of the GaugeGlobal class
  *
- * Time-stamp: <2013-09-25 13:33:28 cossu>
+ * Time-stamp: <2013-10-15 17:27:30 noaki>
  */
 
 #include "gaugeGlobal.hpp"
@@ -18,42 +18,42 @@
 
 void GaugeGlobal::initializeUnit(){
   GaugeConf_unit gconf(format);
-  gconf.init_conf(data);
+  gconf.init_conf(data,do_check_);
 }
 
 void GaugeGlobal::initializeRand(const RandNum& rand){
   GaugeConf_rand gconf(format,rand);
-  gconf.init_conf(data);
+  gconf.init_conf(data,do_check_);
 }
 
 void GaugeGlobal::initializeTxt(const std::string &Filename){
   GaugeConf_txt gconf(format,Filename);
-  gconf.init_conf(data);
+  gconf.init_conf(data,do_check_);
 }
 
 void GaugeGlobal::initializeBin(const std::string &Filename){
   GaugeConf_bin gconf(format,Filename);
-  gconf.init_conf(data);
+  gconf.init_conf(data,do_check_);
 }
 
 void GaugeGlobal::initializeCSDTbin(const std::string &Filename){
   GaugeConf_csdt gconf(format,Filename);
-  gconf.init_conf(data);
+  gconf.init_conf(data,do_check_);
 }
 
 void GaugeGlobal::initializeJLQCDlegacy(const std::string &Filename) {
   GaugeConf_JLQCDLegacy gconf(format,Filename);
-  gconf.init_conf(data);
+  gconf.init_conf(data,do_check_);
 }
 
 void GaugeGlobal::initializeNERSC(const std::string &Filename) {
   GaugeConf_NERSC gconf(format,Filename);
-  gconf.init_conf(data);
+  gconf.init_conf(data,do_check_);
 }
 
 void GaugeGlobal::initializeILDG(const std::string &Filename) {
   GaugeConf_ILDG gconf(format,Filename);
-  gconf.init_conf(data);
+  gconf.init_conf(data,do_check_);
 }
 
 
@@ -64,7 +64,6 @@ TrajInfo GaugeGlobal::initialize(XML::node node){
   XML::node top_node = node;
   XML::descend(node, "Configuration");
   string filename(node.child_value());
-  
   
   if(!XML::attribute_compare(node,"Class","Trajectory")){
     // Search for a file starting with the node content
@@ -122,7 +121,7 @@ TrajInfo GaugeGlobal::initialize(XML::node node){
     filename = directory.c_str() + latest_conf;
   } 
   
-  int status = initialize(top_node, filename);
+  int status = initialize(top_node,filename);
 
   return Info;
 }

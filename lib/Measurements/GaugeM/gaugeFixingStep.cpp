@@ -6,7 +6,6 @@
 #include "Tools/sunMatUtils.hpp"
 #include "include/macros.hpp"
 #include "Geometry/shiftField.hpp"
-#include "Geometry/mapping.hpp"
 #include  <complex.h>
 #ifdef IBM_BGQ_WILSON
 #include "Tools/sunAlgUtils.hpp" // this is not really a good option

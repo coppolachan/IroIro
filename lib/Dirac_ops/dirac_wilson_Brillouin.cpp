@@ -1,6 +1,6 @@
 /* !@filename dirac_wilson_Brillouin.cpp
  * @brief implementation of Dirac_Wilson_Brillouin class
- *  Time-stamp: <2013-09-27 05:40:10 noaki>
+ *  Time-stamp: <2013-11-20 18:48:45 noaki>
  */
 #include "dirac_wilson_Brillouin.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -17,12 +17,6 @@
 
 using namespace SUNvecUtils;
 using namespace std;
-
-void (Dirac_Wilson_Brillouin::*Dirac_Wilson_Brillouin::gm[])
-(double*,const double*) const = {&Dirac_Wilson_Brillouin::gammaXcore,
-				 &Dirac_Wilson_Brillouin::gammaYcore,
-				 &Dirac_Wilson_Brillouin::gammaZcore,
-				 &Dirac_Wilson_Brillouin::gammaTcore,};
 
 const Field Dirac_Wilson_Brillouin::mult(const Field& f)const{
   Field w(fsize_);
@@ -43,8 +37,8 @@ int Dirac_Wilson_Brillouin::sgm(int mu,int nu,int rho)const{
 const Field Dirac_Wilson_Brillouin::gamma5(const Field& f)const{ 
   Field w(fsize_);
   for(int site=0; site<Nvol_; ++site)
-    gamma5core(w.getaddr(ff_.index(0,site)),
-	       const_cast<Field&>(f).getaddr(ff_.index(0,site)));
+    dm_.gamma5core(w.getaddr(ff_.index(0,site)),
+		   const_cast<Field&>(f).getaddr(ff_.index(0,site)));
   return w;
 }
 

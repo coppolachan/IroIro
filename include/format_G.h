@@ -47,6 +47,14 @@ namespace Format{
     std::slice cslice(int in,int site,int dir=0) const { // "in" is dummy
       return std::slice(index(0,site,dir),Nin_,1);
     }
+    /*
+    std::slice cr_slice(int c1,int c2,int ex=0) const {
+      return std::slice(index_r(c1,c2,0,ex),Nin_,Nvol_);
+    }
+    std::slice ci_slice(int c1,int c2,int ex=0) const {
+      return std::slice(index_i(c1,c2,0,ex),Nin_,Nvol_);
+    }
+    */
     std::slice ex_slice(int ex) const {
       return std::slice(index(0,0,ex),Nin_*Nvol_,1);
     }

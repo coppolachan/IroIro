@@ -3,7 +3,7 @@
  *
  * @brief Definition of the ILDGReader class methods
  *
- * Time-stamp: <2013-06-06 12:00:43 neo>
+ * Time-stamp: <2013-10-15 15:47:54 noaki>
  */
 
 #include "ILDG_reader.hpp"
@@ -32,7 +32,6 @@ namespace CCIO {
     byte_swap(uin, size);
 #endif
 
-
 #ifdef DEBUG_VERB_LEVEL
     for (int i = 0; i < bytes_to_read; i++){
       std::cout << "buffer["<<i<<"] = "<< buffer[i] << "\n";
@@ -52,11 +51,11 @@ namespace CCIO {
     _Message(DEBUG_VERB_LEVEL, "ILDG Header: reading "<<nbytes<< " bytes record...\n");
   }
 
-  int ILDGReader::check(Field& U){};
+  int ILDGReader::check(Field& U){}
 
   ILDGReader::ILDGReader(int tot_vol,int tot_in,int tot_ex):
     total_volume(tot_vol),total_internal(tot_in),
-    total_external(tot_ex){};
+    total_external(tot_ex){}
 }
 
 

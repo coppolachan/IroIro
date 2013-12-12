@@ -26,16 +26,24 @@ namespace FieldUtils{
 
   // Field type-type transformations
   GaugeField1D DirSlice(const GaugeField& F, int dir);
-#ifdef IBM_BGQ_WILSON
-  void DirSliceBGQ(GaugeField1D &G,const GaugeField& F,int dir);
-  void Exponentiate_BGQ(GaugeField& F,const GaugeField&,double,int);
 
-  inline double ReTrBGQ(double& result,const double *F,int site,int dir,int Nvol){
+#if defined IBM_BGQ_WILSON || defined SR16K_WILSON
+  void DirSliceALINE(GaugeField1D &G,const GaugeField& F,int dir);
+
+  inline double ReTrALINE(double& result,const double *F,int site,int dir,int Nvol){
     //assumes some indexing and SU(3) matrix
     result += F[    18*(site+Nvol*dir)];
     result += F[ 8 +18*(site+Nvol*dir)];
     result += F[16 +18*(site+Nvol*dir)];
   }
+#endif
+
+#ifdef IBM_BGQ_WILSON
+  void ExponentiateMult_BGQ(GaugeField& F,const GaugeField&,double,int);
+#endif
+
+#ifdef SR16K_WILSON
+  void ExponentiateMult_SR16K(GaugeField& F,const GaugeField&,double,int);
 #endif
 
   void SetSlice(GaugeField&, const GaugeField1D&, int dir);
@@ -48,9 +56,9 @@ namespace FieldUtils{
   void AddMat(GaugeField1D& F, const SUNmat& mat, int site);
 
   void SetVec(FermionField&, const SUNvec&, int spin, int site); 
-  void AddVec(FermionField&, const SUNvec&, int spin, int site); 
-
   void SetVec(FermionField1sp&, const SUNvec&, int site); 
+
+  void AddVec(FermionField&, const SUNvec&, int spin, int site); 
   void AddVec(FermionField1sp&, const SUNvec&, int site); 
 
   // Inline functions
@@ -65,12 +73,13 @@ namespace FieldUtils{
 
   inline SUNmat mat_dag(const GaugeField1D& F,int site){
     return SUNmat(F.data[F.format.islice(site)]).dag();  }
+  
+  inline SUNvec vec(const FermionField& f,int spin,int site){
+    return SUNvec(f.data[f.format.cslice(spin,site)]);  }
 
-  inline SUNvec vec(const FermionField& F,int spin,int site){
-    return SUNvec(F.data[F.format.cslice(spin,site)]);  }
+  inline SUNvec vec(const FermionField1sp& f,int site){
+    return SUNvec(f.data[f.format.islice(site)]);  }
 
-  inline SUNvec vec(const FermionField1sp& F,int site){
-    return SUNvec(F.data[F.format.islice(site)]);  }
   //
   inline SUNadjMat mat(const AdjGaugeField& F,int site,int dir){
     return SUNadjMat(F.data[F.format.islice(site,dir)]);  }

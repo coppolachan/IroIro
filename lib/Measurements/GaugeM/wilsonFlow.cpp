@@ -5,10 +5,16 @@
 #include "Tools/sunMatUtils.hpp"
 #include "Tools/fieldUtils.hpp"
 #include "IO/fields_io.hpp"
+
 #ifdef IBM_BGQ_WILSON
 #include <omp.h>
 #include "bgqthread.h"
 #endif
+
+#ifdef SR16K_WILSON
+#include "srmwilson.h"
+#endif
+
 using namespace std;
 
 void WilsonFlow::update_U(const GaugeField& Z)const{
@@ -16,11 +22,16 @@ void WilsonFlow::update_U(const GaugeField& Z)const{
   using namespace FieldUtils;
 
   double eps = -2.0*estep_;
-  int Nvol = CommonPrms::instance()->Nvol();
 
 #ifdef IBM_BGQ_WILSON
-  Exponentiate_BGQ(U_,Z,eps,Nexp_);
+  ExponentiateMult_BGQ(U_,Z,eps,Nexp_);
+
+#elif defined SR16K_WILSON
+  ExponentiateMult_SR16K(U_,Z,eps,Nexp_);
+
 #else
+  int Nvol = CommonPrms::instance()->Nvol();
+
   for(int m=0; m<NDIM_; ++m){
     for(int site=0; site<Nvol; ++site){
       SUNmat au = exponential(mat(Z,site,m)*eps,Nexp_);
@@ -29,6 +40,7 @@ void WilsonFlow::update_U(const GaugeField& Z)const{
       U_.data.set(U_.format.islice(site,m),au.getva());
     }
   }
+
 #endif
 }
 
@@ -37,6 +49,7 @@ void WilsonFlow::evolve_step()const{
   GaugeField Z = Sg_->md_force();  // Z0
   Z *= 0.25;
   update_U(Z);                     // U_= W1 = exp(ep*Z0/4)*W0 
+  CCIO::cout<<"update_U done\n";
 
   Z *= -17.0/8.0;
   Z += Sg_->md_force();            // -17/32*Z0 +Z1 

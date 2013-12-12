@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-08-09 12:01:11 cossu>
+# Time-stamp: <2013-10-16 16:15:56 noaki>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.3], [cossu@post.kek.jp])
@@ -34,6 +34,9 @@ ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value 
 bluegeneq=false   # default value
+SR_INCLUDE=
+SR_LIBS=
+
 BLUEGENE_INCLUDE=/bghome/scbadm/ibm-doi/lib
 BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib
 #BLUEGENE_LIBS=/usr/local/bg/lib
@@ -90,6 +93,16 @@ AC_ARG_ENABLE(bgq-improved,
      	no)  bgq_kernels_nosmp=false ;;
      	*) AC_MSG_ERROR([bad value ${enableval} for --enable-bgq-improved . Compiling with standard kernels.]) ;;
    esac],[bgq_kernels_nosmp=false])
+
+###################################################################
+# Enabling Hitachi SR16K Wilson improved version routines single thread
+AC_ARG_ENABLE(sr16k-improved,
+	AC_HELP_STRING([--enable-sr16k-improved], [Enable compilation of Hitachi SR16K improved version of kernels.]),
+	[case "${enableval}" in
+     	yes) sr16k_kernels=true  ;;
+     	no)  sr16k_kernels=false ;;
+     	*) AC_MSG_ERROR([bad value ${enableval} for --enable-sr16k-improved . Compiling with standard kernels.]) ;;
+   esac],[sr16k_kernels=false])
 
 ###################################################################
 # Enabling BlueGene Wilson improved version routines multi thread
@@ -201,7 +214,7 @@ aix )
      hitachi=true
      AC_MSG_NOTICE([forcing cross compilation on AIX])
      use_cpp="mpCC";
-     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type  -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
+     use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${SR_INCLUDE} -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
      ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib"
      use_ar_flags="-X64 -c -ru"
      AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
@@ -234,6 +247,7 @@ AM_CONDITIONAL([HITACHI], [(test x$hitachi = xtrue)])
 AM_CONDITIONAL([IBM_BGQ], [(test x$bluegeneq = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_NOSMP], [(test x$bgq_kernels_nosmp = xtrue)])
 AM_CONDITIONAL([IBM_BGQWILSON_SMP], [(test x$bgq_kernels_smp = xtrue)])
+AM_CONDITIONAL([SR_WILSON], [(test x$sr16k_kernels = xtrue)])
 AM_CONDITIONAL([IBM_BGQKERNELS], [[ ($bgq_kernels_nosmp == true) || ($bgq_kernels_smp == true)]])
 AM_CONDITIONAL([USE_EVENODD], [(test x$even_odd_idx = xtrue)])	 
 AM_CONDITIONAL([USE_BFM], [(test x$bfm_link = xtrue)&&(test x$bluegeneq = xtrue)])	 
@@ -265,6 +279,7 @@ AM_COND_IF([USE_BFM], [LDFLAGS+=" -L$bfm_lib"],,)
 AM_COND_IF([USE_DCMT], [LDFLAGS+=" -L$dcmt_lib"],,)
 #AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/lib -L$DRIVER/comm/xl/lib -L$DRIVER/comm/sys/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"],,)
 AM_COND_IF([IBM_BGQ], [LDFLAGS+=" -L$DRIVER/comm/lib -L$DRIVER/spi/lib -L$DRIVER/bgpm/lib -L$BLUEGENE_LIBS"],,)
+AM_COND_IF([SR_WILSON], [LDFLAGS+=" -L$SR_LIBS"],,)
 echo configure: setting library flags... done
 
 if test "$ar_flags" = "" ; then ar_flags="$use_ar_flags" ; fi
@@ -324,6 +339,17 @@ AC_CHECK_LIB([dcmt], [global_mt19937],,
 	[AC_MSG_ERROR(Dynamic Creation Mersenne Twister library was not found in your system.
 Please install or provide the correct path to your installation
 Info at: http://www.math.sci.hiroshima-u.ac.jp/~m-mat/MT/DC/dc.html)]) 
+fi
+
+# Hitashi SR16K specific stuff
+if [ $sr16k_kernels ]
+then
+echo :::: Hitachi SR16K related stuff
+AC_CHECK_LIB([srmwilson],[SRWilsonLA_SetConst],,
+	[AC_MSG_ERROR(SRWilson library not found in your system or missing dependences.
+	Please install or provide the correct path to your installation
+	or switch off SRWilson support.)],[])
+echo enabled SRWilson support on Hitachi SR16K...
 fi
 
 # BGQ specific stuff
@@ -396,6 +422,16 @@ AC_TYPE_SIZE_T
 #AC_FUNC_MALLOC
 AC_CHECK_FUNCS([sqrt])
 
+
+# Checks for SRWilson specific headers 
+if [ $sr16k_kernels ]
+then
+AC_CHECK_HEADERS([srmwilson.h],,
+	[AC_MSG_ERROR(SRWilson header not found in your system.
+	Please install or provide the correct path to your installation
+	or switch to non optimized libraries.)])
+fi
+
 # Checks for BGQ specific headers 
 if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
 then
@@ -429,7 +465,13 @@ fi
 if [ $hitachi ]
 then
 AC_DEFINE([HITACHISR16K],[],[Specific tweaks for Hitachi SR16K])
+
+if [ $sr16k_kernels ]
+then
+AC_DEFINE([SR16K_WILSON],[],[Enable Hitachi SR16K optimized Wilson kernel])
 fi
+fi #hitachi
+
 
 if [ $bluegeneq ]
 then
@@ -500,6 +542,11 @@ echo -ne "- IBM kernels compilation       : "; if test "x$bgq_kernels_nosmp" = x
 else
 echo "- improved kernels compilation  : $improved_kernels"
 fi
+if [ $hitachi ]
+then 
+echo -ne "- SR kernels compilation        : "; if test "x$sr16k_kernels" = xtrue; then echo enabled; else echo not enabled; fi
+fi
+
 echo "- build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
 - graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
 - optional BFM library linking  : `if test "x$bfm_link" = xtrue; then echo yes; else echo no; fi`

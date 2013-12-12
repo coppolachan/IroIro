@@ -20,7 +20,6 @@ public:
   virtual ~EigenSorter(){}
 };
 
-
 class EigenSorter_high :public EigenSorter{
 private:
   double thrs_;

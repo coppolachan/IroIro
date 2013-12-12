@@ -2,7 +2,7 @@
  * @file dirac_DomainWall_4D_eoSolv.hpp
  * @brief Definition of Dirac_optimalDomainWall_4D_eoSolv class
  * which contains e/o-solver
- Time-stamp: <2013-07-08 10:15:53 noaki>
+ Time-stamp: <2013-11-20 21:43:37 noaki>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALL_4D_EOSOLV_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALL_4D_EOSOLV_INCLUDED
@@ -25,6 +25,8 @@ private:
   ffmt_t ff_;
   size_t fsize_;  
   double mq_;
+  GammaMatrix dm_;
+  DW5dMatrix d5_;
 public:
   Dirac_optimalDomainWall_4D_eoSolv(XML::node node,
 				    const EvenOddUtils::Inverter_WilsonLike* invD,
