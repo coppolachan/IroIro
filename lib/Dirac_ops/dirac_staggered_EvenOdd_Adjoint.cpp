@@ -101,8 +101,11 @@ const Field Dirac_staggered_EvenOdd_Adjoint::mult_oe(const Field& fe)const{
   return wo;
 }
 #endif //0
+///////////////////////////////////////////////////////////////////////////////
+
 
 const Field Dirac_staggered_EvenOdd_Adjoint::mult_eo_dag(const Field& fe) const{
+  //  return -Field(mult_oe(fe));
   return -Field(mult_oe(fe));
 }
 
@@ -151,6 +154,7 @@ void Dirac_staggered_EvenOdd_Adjoint::mult_Dfull_dag(Field& w,const Field& f) co
 const Field Dirac_staggered_EvenOdd_Adjoint::
 md_force(const Field& eta,const Field& zeta) const{
   Field fce(gsize_);
+
 
   for(int mu=0; mu<Ndim_; ++mu){
     Field etah(fsize_),zetah(fsize_);

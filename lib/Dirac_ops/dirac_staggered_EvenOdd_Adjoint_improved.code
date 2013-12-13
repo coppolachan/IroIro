@@ -1,5 +1,7 @@
 //Using bgq instrinsics
 // and the fact that NC*NC-1 = 8
+#include <omp.h>
+
 using namespace SiteMap;
 
 void Dirac_staggered_EvenOdd_Adjoint::multPeo(Field& we,const Field& fo,int mu) const{
@@ -14,7 +16,6 @@ void Dirac_staggered_EvenOdd_Adjoint::multPeo(Field& we,const Field& fo,int mu) 
   double vbd[boundary_size]; /*!< @brief data on the lower slice */   
   double vbc[boundary_size]; /*!< @brief data on the upper slice */  
   double temp[4];
-
 
   for(int k=0; k<Nbdry; ++k)
     memcpy(vbd+k*Nin_, v_base + (NC_*NC_-1)*shiftSite_oe.xslice(Xb,k,mu), Nin_*sizeof(double));
@@ -84,8 +85,19 @@ void Dirac_staggered_EvenOdd_Adjoint::multPoe(Field& wo,const Field& fe,int mu) 
   double temp[4];
 
 
-  for(int k=0; k<Nbdry; ++k)
-    memcpy(vbd+k*Nin_, v_base + (NC_*NC_-1)*shiftSite_eo.xslice(Xb,k,mu), Nin_*sizeof(double));
+#pragma omp parallel
+  {
+    const int nid = omp_get_num_threads();
+    const int tid = omp_get_thread_num();
+    const int is = tid*Nbdry/nid;
+    const int ie = (tid + 1)*Nbdry/nid;
+    const int ns = ie - is;
+    
+    
+    for(int k=is; k< (is+ns); ++k)
+      memcpy(vbd+k*Nin_, v_base + (NC_*NC_-1)*shiftSite_eo.xslice(Xb,k,mu), Nin_*sizeof(double));
+  }
+
 
   Communicator::instance()->transfer_fw(vbc,vbd,boundary_size,mu);
 
