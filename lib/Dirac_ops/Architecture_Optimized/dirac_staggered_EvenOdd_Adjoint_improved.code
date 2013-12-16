@@ -1,0 +1,315 @@
+//Using bgq instrinsics
+// and the fact that NC*NC-1 = 8
+#include <omp.h>
+#include "bgqthread.h"
+
+
+using namespace SiteMap;
+
+void Dirac_staggered_EvenOdd_Adjoint::multPeo(Field& we,const Field& fo,int mu) const{
+  /// boundary part ///
+  int Nbdry = shiftSite_oe.slice_size(0,mu);
+  register int boundary_size = Nin_*Nbdry;
+  double* res_base = we.getaddr(0);
+  double* res;
+  double* U_base = const_cast<Field&>(ue_.data).getaddr(0);
+  double* v_base = const_cast<Field&>(fo).getaddr(0);
+  double vbd[boundary_size]; /*!< @brief data on the lower slice */   
+  double vbc[boundary_size]; /*!< @brief data on the upper slice */  
+  double temp[4];
+
+  for(int k=0; k<Nbdry; ++k)
+    memcpy(vbd+k*Nin_, v_base + (NC_*NC_-1)*shiftSite_oe.xslice(0,k,mu), Nin_*sizeof(double));
+  
+  Communicator::instance()->transfer_fw(vbc,vbd,boundary_size,mu);
+
+  int Xb = SiteIndex::instance()->Bdir(mu);
+  //Nbdry = shiftSite_eo.slice_size(Xb,mu);
+
+  for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
+    int xc = shiftSite_eo.xslice(Xb,k,mu);
+    double* U = U_base + (NC_*NC_-1)*(NC_*NC_-1)*(xc + Nvh_*mu);
+    res = res_base + (NC_*NC_-1)*xc;
+
+    vector4double v4_1 = vec_ld(k*Nin_*sizeof(double), &vbc[0]);
+    vector4double v4_2 = vec_ld((k*Nin_+4)*sizeof(double), &vbc[0]);
+    for(int a=0; a<Nin_; ++a){
+      vector4double u4 = vec_ld(a*(NC_*NC_-1)*sizeof(double), U);
+      vector4double m4 = vec_mul(v4_1,u4);
+      u4 = vec_ld((a*(NC_*NC_-1)+4)*sizeof(double), U);
+      vector4double m4_2 = vec_madd(v4_2,u4,m4);
+      vec_st(m4_2, 0, &temp[0]);
+      res[a] += temp[0]+temp[1]+temp[2]+temp[3];
+    }
+  }
+
+
+  /// bulk part ///
+  for(int x=0; x<Xb; ++x){
+    int Nslice = shiftSite_eo.slice_size(x,mu);
+    for(int k = 0 ; k < Nslice; ++k){   
+      double* v = v_base + (NC_*NC_-1)*shiftSite_oe.xslice(x+1,k,mu);
+      int xc = shiftSite_eo.xslice(x,k,mu);
+      double* U = U_base + (NC_*NC_-1)*(NC_*NC_-1)*(xc + Nvh_*mu);
+      res = res_base + (NC_*NC_-1)*xc;
+
+      vector4double v4_1 = vec_ld(0, v);
+      vector4double v4_2 = vec_ld(4*sizeof(double), v);
+      for(int a=0; a<Nin_; ++a){
+	vector4double u4 = vec_ld((a*(NC_*NC_-1))*sizeof(double), U);
+	vector4double m4 = vec_mul(v4_1,u4);
+	u4 = vec_ld((a*(NC_*NC_-1)+4)*sizeof(double), U);
+	vector4double m4_2 = vec_madd(v4_2,u4,m4);
+	vec_st(m4_2, 0, &temp[0]);
+	res[a] += temp[0]+temp[1]+temp[2]+temp[3];
+	
+      }
+    }
+  }
+
+}
+
+void Dirac_staggered_EvenOdd_Adjoint::multPoe(Field& wo,const Field& fe,int mu) const{
+  /// boundary part ///
+
+  BGQThread_Init();
+
+
+#pragma omp parallel
+  {
+    int Nbdry = shiftSite_eo.slice_size(0,mu);
+    register int boundary_size = Nin_*Nbdry;
+    double* res_base = wo.getaddr(0);
+    double* U_base = const_cast<Field&>(uo_.data).getaddr(0);
+    double* v_base = const_cast<Field&>(fe).getaddr(0);
+    int Xb = SiteIndex::instance()->Bdir(mu);
+    
+    double* res;   
+    double* U;
+    double temp[4];
+    const int nid = omp_get_num_threads();
+    const int tid = omp_get_thread_num();
+    int is = tid*Nbdry/nid;
+    int ie = (tid + 1)*Nbdry/nid;
+    int ns = ie - is;
+
+    double* vbd_ptr = (double*)BGQThread_Malloc(boundary_size*sizeof(double), nid);
+    double* vbc_ptr = (double*)BGQThread_Malloc(boundary_size*sizeof(double), nid);
+    BGQThread_Barrier(0, nid);
+    
+    for(int k=is; k< (is+ns); ++k)
+      memcpy(vbd_ptr+k*Nin_, v_base + (NC_*NC_-1)*shiftSite_eo.xslice(0,k,mu), Nin_*sizeof(double));
+    
+    
+    BGQThread_Barrier(0, nid);
+    if (tid == 0)
+      Communicator::instance()->transfer_fw(vbc_ptr,vbd_ptr,boundary_size,mu);
+    BGQThread_Barrier(0, nid);
+    
+    for(int k= is; k<  (is+ns); ++k){  /*!< @brief calc on the upper boundary */   
+      int xc = shiftSite_oe.xslice(Xb,k,mu);
+      U   = U_base   + (NC_*NC_-1)*(NC_*NC_-1)*(xc + Nvh_*mu);
+      res = res_base + (NC_*NC_-1)*xc;
+      
+      vector4double v4_1 = vec_ld(k*Nin_*sizeof(double), vbc_ptr);
+      vector4double v4_2 = vec_ld((k*Nin_+4)*sizeof(double), vbc_ptr);
+      for(int a=0; a<Nin_; ++a){
+	vector4double u4 = vec_ld(a*(NC_*NC_-1)*sizeof(double), U);
+	vector4double m4 = vec_mul(v4_1,u4);
+	u4 = vec_ld((a*(NC_*NC_-1)+4)*sizeof(double), U);
+	vector4double m4_2 = vec_madd(v4_2,u4,m4);
+	vec_st(m4_2, 0, &temp[0]);
+	res[a] += temp[0]+temp[1]+temp[2]+temp[3];
+      }
+    }
+    
+    /// bulk part ///
+    for(int x=0; x<Xb; ++x){
+      int Nslice = shiftSite_oe.slice_size(x,mu);
+      
+      
+      for(int k= tid*Nslice/nid; k<(tid+1)*Nslice/nid; ++k){   
+	int xc = shiftSite_oe.xslice(x,k,mu);
+	double* v = v_base + (NC_*NC_-1)*shiftSite_eo.xslice(x+1,k,mu);
+	U   = U_base   + (NC_*NC_-1)*(NC_*NC_-1)*(xc + Nvh_*mu);
+	res = res_base + (NC_*NC_-1)*xc;
+	
+	vector4double v4_1 = vec_ld(0, v);
+	vector4double v4_2 = vec_ld(4*sizeof(double), v);
+	for(int a=0; a<Nin_; ++a){
+	  vector4double u4 = vec_ld((a*(NC_*NC_-1))*sizeof(double), U);
+	  vector4double m4 = vec_mul(v4_1,u4);
+	  u4 = vec_ld((a*(NC_*NC_-1)+4)*sizeof(double), U);
+	  vector4double m4_2 = vec_madd(v4_2,u4,m4);
+	  vec_st(m4_2, 0, &temp[0]);
+	  res[a] += temp[0]+temp[1]+temp[2]+temp[3];
+	}
+      }
+    }
+
+    BGQThread_Barrier(0, nid);
+    BGQThread_Free(vbd_ptr,tid);
+    BGQThread_Free(vbc_ptr,tid);
+
+  }
+}
+
+const Field Dirac_staggered_EvenOdd_Adjoint::mult_eo(const Field& fo) const{
+  double* v_base = const_cast<Field&>(fo).getaddr(0);
+  double* U_base = const_cast<Field&>(uo_.data).getaddr(0);
+
+  Field we(fsize_);
+  double* res_base = we.getaddr(0);
+
+
+  for(int mu=0;mu<Ndim_; ++mu){
+    multPeo(we,fo,mu);
+    
+    /// boundary part ///
+    int Xb = SiteIndex::instance()->Bdir(mu);
+    int Nbdry = shiftSite_oe.slice_size(Xb,mu);
+    double vbd[Nin_*Nbdry]; 
+    for(int k=0; k<Nbdry; ++k){
+      int xc = shiftSite_oe.xslice(Xb,k,mu);
+      double* v = v_base + (NC_*NC_-1)*xc;
+      double* U = U_base + (NC_*NC_-1)*(NC_*NC_-1)*(xc + Nvh_*mu);
+      
+      vector4double vup = (vector4double)(0.0);
+      vector4double vdn = (vector4double)(0.0);
+      for(int a=0; a<Nin_; ++a){
+	vector4double v4 = vec_lds(a*sizeof(double), v);
+        vector4double u4 = vec_ld((a*(NC_*NC_-1))*sizeof(double), U);
+        vup = vec_madd(v4,u4, vup);
+        u4 = vec_ld((a*(NC_*NC_-1)+4)*sizeof(double), U);
+        vdn = vec_madd(v4,u4, vdn);
+      }
+      vec_st(vup, 0, &vbd[k*Nin_]);
+      vec_st(vdn, 4*sizeof(double), &vbd[k*Nin_]);
+
+    }
+    double vbc[Nin_*Nbdry];  //Copy vbd from backward processor
+    Communicator::instance()->transfer_bk(vbc,vbd,Nin_*Nbdry,mu);
+    Xb = 0;
+    Nbdry = shiftSite_eo.slice_size(Xb,mu);
+  
+    for(int k=0; k<Nbdry; ++k){
+      double* res = res_base + (NC_*NC_-1)*shiftSite_eo.xslice(Xb,k,mu);
+      vector4double vup = vec_ld(0, &vbc[k*Nin_]);
+      vector4double vdn = vec_ld(4*sizeof(double), &vbc[k*Nin_]);
+      vector4double rup = vec_ld(0, res);
+      vector4double rdn = vec_ld(4*sizeof(double), res);
+      rup = vec_sub(rup,vup);
+      rdn = vec_sub(rdn,vdn);
+      vec_st(rup, 0, res);
+      vec_st(rdn, 4*sizeof(double), res);
+    }
+
+    /// bulk part ///
+    int Nmu = SiteIndex::instance()->Bdir(mu)+1;
+    for(int x=1; x<Nmu; ++x){
+      int Nslice = shiftSite_oe.slice_size(x,mu);
+      for(int k=0; k<Nslice; ++k){
+	int xm = shiftSite_oe.xslice(x-1,k,mu);
+	double* v = v_base + (NC_*NC_-1)*xm;
+	double* U = U_base + (NC_*NC_-1)*(NC_*NC_-1)*(xm + Nvh_*mu);
+
+	double* res = res_base + (NC_*NC_-1)*shiftSite_eo.xslice(x,k,mu);
+
+	vector4double vup = vec_ld(0, res);
+	vector4double vdn = vec_ld(4*sizeof(double), res);
+	for(int a=0; a<Nin_; ++a){
+	  vector4double v4 = vec_lds(a*sizeof(double), v);
+	  vector4double nv4 = vec_neg(v4);
+	  vector4double u4 = vec_ld((a*(NC_*NC_-1))*sizeof(double), U);
+	  vup = vec_madd(nv4,u4, vup);
+	  u4 = vec_ld((a*(NC_*NC_-1)+4)*sizeof(double), U);
+	  vdn = vec_madd(nv4,u4, vdn);
+	}
+	vec_st(vup, 0, res);
+	vec_st(vdn, 4*sizeof(double), res);
+
+      }
+    }
+  }
+  return we;
+}
+
+const Field Dirac_staggered_EvenOdd_Adjoint::mult_oe(const Field& fe) const{
+
+  Field wo(fsize_);
+  for(int mu=0;mu<Ndim_; ++mu){
+    multPoe(wo,fe,mu);
+    
+    /// boundary part ///
+    int Xb = SiteIndex::instance()->Bdir(mu);
+    int Nbdry = shiftSite_eo.slice_size(Xb,mu);
+    double vbd[Nin_*Nbdry]; 
+    for(int k=0; k<Nbdry; ++k){
+      int xc = shiftSite_eo.xslice(Xb,k,mu);
+      double* v = const_cast<Field&>(fe).getaddr(ff_.index(0,xc));
+      double* U = const_cast<Field&>(ue_.data).getaddr(gf_.index(0,xc,mu));
+
+      vector4double vup = (vector4double)(0.0);
+      vector4double vdn = (vector4double)(0.0);
+      for(int a=0; a<Nin_; ++a){
+        vector4double v4 = vec_lds(a*sizeof(double), v);
+        vector4double u4 = vec_ld((a*(NC_*NC_-1))*sizeof(double), U);
+        vup = vec_madd(v4,u4, vup);
+        u4 = vec_ld((a*(NC_*NC_-1)+4)*sizeof(double), U);
+        vdn = vec_madd(v4,u4, vdn);
+      }
+      vec_st(vup, 0, &vbd[k*Nin_]);
+      vec_st(vdn, 4*sizeof(double), &vbd[k*Nin_]);
+
+    }
+    double vbc[Nin_*Nbdry];  //Copy vbd from backward processor
+    Communicator::instance()->transfer_bk(vbc,vbd,Nin_*Nbdry,mu);
+    Xb = 0;
+    Nbdry = shiftSite_oe.slice_size(Xb,mu);
+  
+    for(int k=0; k<Nbdry; ++k){
+      double* res = wo.getaddr(ff_.index(0,shiftSite_oe.xslice(Xb,k,mu)));
+      vector4double vup = vec_ld(0, &vbc[k*Nin_]);
+      vector4double vdn = vec_ld(4*sizeof(double), &vbc[k*Nin_]);
+      vector4double rup = vec_ld(0, res);
+      vector4double rdn = vec_ld(4*sizeof(double), res);
+      rup = vec_sub(rup,vup);
+      rdn = vec_sub(rdn,vdn);
+      vec_st(rup, 0, res);
+      vec_st(rdn, 4*sizeof(double), res);
+
+
+
+      //for(int i=0; i<Nin_; ++i) res[i] -= vbc[k*Nin_+i];
+    }
+
+    /// bulk part ///
+    int Nmu = SiteIndex::instance()->Bdir(mu)+1;
+    for(int x=1; x<Nmu; ++x){
+      int Nslice = shiftSite_eo.slice_size(x,mu);
+      for(int k=0; k<Nslice; ++k){
+	int xm = shiftSite_eo.xslice(x-1,k,mu);
+	double* v = const_cast<Field&>(fe).getaddr(ff_.index(0,xm));
+	double* U = const_cast<Field&>(ue_.data).getaddr(gf_.index(0,xm,mu));
+	double* res = wo.getaddr(ff_.index(0,shiftSite_oe.xslice(x,k,mu)));
+
+        vector4double vup = vec_ld(0, res);
+        vector4double vdn = vec_ld(4*sizeof(double), res);
+        for(int a=0; a<Nin_; ++a){
+          vector4double v4 = vec_lds(a*sizeof(double), v);
+          vector4double nv4 = vec_neg(v4);
+          vector4double u4 = vec_ld((a*(NC_*NC_-1))*sizeof(double), U);
+          vup = vec_madd(nv4,u4, vup);
+          u4 = vec_ld((a*(NC_*NC_-1)+4)*sizeof(double), U);
+          vdn = vec_madd(nv4,u4, vdn);
+        }
+        vec_st(vup, 0, res);
+        vec_st(vdn, 4*sizeof(double), res);
+
+      }
+    }
+  }
+  return wo;
+}
+
+

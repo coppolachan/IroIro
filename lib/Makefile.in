@@ -41,7 +41,6 @@ target_triplet = @target@
 # Configure driven path selector
 
 # NB: Libraries ordering is essential
-#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_1 = -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_2 = -lbgqwilson3x4smp -lbgqthread
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_3 = -lbgqwilson3x4
@@ -501,7 +500,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-11-21 11:06:58 noaki>
+# Time-stamp: <2013-12-13 14:51:16 cossu>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
