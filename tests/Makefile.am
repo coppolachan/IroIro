@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-11-27 21:29:04 noaki>
+# Time-stamp: <2013-12-18 15:22:04 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -115,6 +115,7 @@ test_PROGRAMS = test_HMC 		\
 		test_HeatBath           \
                 test_DWF    		\
                 test_DiracWilson_Adjoint\
+		test_Laplacian		\
 		test_LapH
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
@@ -217,7 +218,10 @@ test_DWF_SOURCES 		=	test_DWF.cpp	\
 test_DiracWilson_Adjoint_SOURCES=	test_DiracWilson_Adjoint.cpp	\
 					testerDiracWilsonAdj.cpp
 
-test_LapH_SOURCES 		=	test_Laplacian.cpp	\
+test_Laplacian_SOURCES 		=	test_Laplacian.cpp	\
+					testerLaplacian.cpp
+
+test_LapH_SOURCES 		=	test_LapH.cpp	\
 					testerLapH.cpp
 
 ## Put all BFM related tests here

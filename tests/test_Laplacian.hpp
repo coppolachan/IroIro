@@ -4,8 +4,8 @@
  
  * <Time-stamp> 
  */
-#ifndef TEST_LAPH_H_
-#define TEST_LAPH_H_
+#ifndef TEST_LAPLACIAN_H_
+#define TEST_LAPLACIAN_H_
 
 #include "include/iroiro_code.hpp"
 #include "lib/Geometry/shiftField.hpp"

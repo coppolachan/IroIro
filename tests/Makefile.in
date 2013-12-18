@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-11-27 21:29:04 noaki>
+# Time-stamp: <2013-12-18 15:22:04 cossu>
 
 
 VPATH = @srcdir@
@@ -71,7 +71,8 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_IO$(EXEEXT) test_RationalApprox$(EXEEXT) \
 	test_RHMC_noFactories$(EXEEXT) test_SUNRepresentation$(EXEEXT) \
 	test_HeatBath$(EXEEXT) test_DWF$(EXEEXT) \
-	test_DiracWilson_Adjoint$(EXEEXT) test_LapH$(EXEEXT)
+	test_DiracWilson_Adjoint$(EXEEXT) test_Laplacian$(EXEEXT) \
+	test_LapH$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -206,10 +207,16 @@ am_test_IO_OBJECTS = test_IO.$(OBJEXT) testerIO.$(OBJEXT)
 test_IO_OBJECTS = $(am_test_IO_OBJECTS)
 test_IO_LDADD = $(LDADD)
 test_IO_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
-am_test_LapH_OBJECTS = test_Laplacian.$(OBJEXT) testerLapH.$(OBJEXT)
+am_test_LapH_OBJECTS = test_LapH.$(OBJEXT) testerLapH.$(OBJEXT)
 test_LapH_OBJECTS = $(am_test_LapH_OBJECTS)
 test_LapH_LDADD = $(LDADD)
 test_LapH_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+am_test_Laplacian_OBJECTS = test_Laplacian.$(OBJEXT) \
+	testerLaplacian.$(OBJEXT)
+test_Laplacian_OBJECTS = $(am_test_Laplacian_OBJECTS)
+test_Laplacian_LDADD = $(LDADD)
+test_Laplacian_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_MesonSpectrum_OBJECTS = test_MesonSpectrum.$(OBJEXT) \
 	testerMesonSpectrum.$(OBJEXT)
 test_MesonSpectrum_OBJECTS = $(am_test_MesonSpectrum_OBJECTS)
@@ -368,7 +375,7 @@ SOURCES = $(test_BFM_Inverter_SOURCES) \
 	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_HeatBath_SOURCES) \
 	$(test_IO_SOURCES) $(test_LapH_SOURCES) \
-	$(test_MesonSpectrum_SOURCES) \
+	$(test_Laplacian_SOURCES) $(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MesonSpectrum_SpMom_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_NoMeas_SOURCES) \
@@ -392,7 +399,7 @@ DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
 	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
 	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_HeatBath_SOURCES) \
 	$(test_IO_SOURCES) $(test_LapH_SOURCES) \
-	$(test_MesonSpectrum_SOURCES) \
+	$(test_Laplacian_SOURCES) $(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MesonSpectrum_SpMom_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_NoMeas_SOURCES) \
@@ -686,7 +693,10 @@ test_DWF_SOURCES = test_DWF.cpp	\
 test_DiracWilson_Adjoint_SOURCES = test_DiracWilson_Adjoint.cpp	\
 					testerDiracWilsonAdj.cpp
 
-test_LapH_SOURCES = test_Laplacian.cpp	\
+test_Laplacian_SOURCES = test_Laplacian.cpp	\
+					testerLaplacian.cpp
+
+test_LapH_SOURCES = test_LapH.cpp	\
 					testerLapH.cpp
 
 @USE_BFM_TRUE@test_Solver_BFM_SOURCES = test_Solver_BFM.cpp             \
@@ -863,6 +873,9 @@ test_IO$(EXEEXT): $(test_IO_OBJECTS) $(test_IO_DEPENDENCIES)
 test_LapH$(EXEEXT): $(test_LapH_OBJECTS) $(test_LapH_DEPENDENCIES) 
 	@rm -f test_LapH$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_LapH_OBJECTS) $(test_LapH_LDADD) $(LIBS)
+test_Laplacian$(EXEEXT): $(test_Laplacian_OBJECTS) $(test_Laplacian_DEPENDENCIES) 
+	@rm -f test_Laplacian$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Laplacian_OBJECTS) $(test_Laplacian_LDADD) $(LIBS)
 test_MesonSpectrum$(EXEEXT): $(test_MesonSpectrum_OBJECTS) $(test_MesonSpectrum_DEPENDENCIES) 
 	@rm -f test_MesonSpectrum$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_MesonSpectrum_OBJECTS) $(test_MesonSpectrum_LDADD) $(LIBS)
@@ -949,6 +962,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HadronSpectrum_Nf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HeatBath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_LapH.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Laplacian.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_MesonSpectrum_Nf2p1.Po@am__quote@
@@ -983,6 +997,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHeatBath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerLapH.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerLaplacian.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrumNf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerMesonSpectrumSpMom.Po@am__quote@

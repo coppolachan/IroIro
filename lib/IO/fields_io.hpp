@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2013-11-28 13:22:03 noaki>
+ * Time-stamp: <2013-12-16 15:57:05 cossu>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -20,6 +20,7 @@
 #include "generic_header.hpp"
 #include "readers.hpp"
 #include "writers.hpp"
+
 
 #define CCIO_FILE_APPEND_MODE true
 #define FORTRAN_CONTROL_WORDS 4  //number of fortran bytes for control
@@ -254,15 +255,15 @@ namespace CCIO {
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");
-
+    
     T fmt(cmprms->Nvol());
-
+    
     size_t local_idx, global_idx;
     int num_nodes, total_vol, local_vol;
     
     _Message(DEBUG_VERB_LEVEL, "Lattice constants initialization...\n");
- 
-   total_vol = cmprms->Lvol();
+    
+    total_vol = cmprms->Lvol();
     local_vol = cmprms->Nvol();
     num_nodes    = cmprms->NP();
        
