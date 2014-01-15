@@ -25,7 +25,25 @@ namespace FieldUtils{
   void RandomGauge(GaugeField& G,const RandNum& rand);
 
   // Field type-type transformations
-  GaugeField1D DirSlice(const GaugeField& F, int dir);
+  GaugeField1D DirSlice(const GaugeField& F,int dir);
+
+  void DirSlice(    GaugeField1D& G,const GaugeField& F,int dir);
+  void AntiDirSlice(GaugeField1D& G,const GaugeField& F,int dir);
+
+  void diagPPslice(GaugeField1D& G,const GaugeField& F,int mu,int nu);
+  void diagPMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu);
+  void diagMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu);
+
+  void diagPPPslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho);
+  void diagPPMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho);
+  void diagPMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho);
+  void diagMMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho);
+
+  void diagPPPPslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm);
+  void diagPPPMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm);
+  void diagPPMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm);
+  void diagPMMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm);
+  void diagMMMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm);
 
 #if defined(IBM_BGQ_WILSON) || defined(SR16K_WILSON)
   void DirSlice_ALINE(GaugeField1D &G,const GaugeField& F,int dir);

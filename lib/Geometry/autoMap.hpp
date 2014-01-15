@@ -33,6 +33,7 @@ namespace Mapping{
   class AutoMap{
     int is_initialized_;
     int dir_;
+    int Nvol_;
     std::vector<int> bdry_t_;
     std::vector<int> bulk_t_;
     std::vector<int> bdry_b_;
@@ -47,6 +48,7 @@ namespace Mapping{
 		     bdry_b_(SiteMap::shiftSite.bdry_map(dir,Btm)),
 		     bulk_b_(SiteMap::shiftSite.bulk_map(dir,Btm)),
 		     dir_(dir),
+		     Nvol_(CommonPrms::instance()->Nvol()),
 		     is_initialized_(true){
       if(bdry_t_.empty()||bulk_t_.empty()
 	 ||bdry_b_.empty()||bulk_b_.empty()) is_initialized_=false;
@@ -61,7 +63,7 @@ namespace Mapping{
       if(bdry_t_.empty()||bulk_t_.empty()
 	 ||bdry_b_.empty()||bulk_b_.empty()) is_initialized_=false;
     }
-
+    /*
     template<typename FIELD>
     FIELD operator()(const FIELD& Fin,Forward)const{
       if (!is_initialized_){
@@ -69,7 +71,6 @@ namespace Mapping{
 	msg << "The maps is not initialized correctly. dir=" <<dir_<<"\n";
 	Errors::BaseErr("Initialization missing", msg);
       }
-      
       FIELD Fout(Fin.Nvol());
       std::valarray<double> recv_bdry(bdry_t_.size()*Fin.Nin()*Fin.Nex());
       Communicator::instance()->transfer_fw(recv_bdry,
@@ -80,7 +81,29 @@ namespace Mapping{
       Fout.data.set(Fin.get_sub(bulk_t_),Fin.data[Fin.get_sub(bulk_b_)]);
       return Fout;
     }
+    */
+    template<typename FIELD>
+    FIELD operator()(const FIELD& Fin,Forward)const{
+      FIELD Fout(Fin.Nvol());
+      operator()(Fout,Fin,Forward());
+      return Fout;
+    }
 
+    template<typename FIELD>
+    void operator()(FIELD& Fout,const FIELD& Fin,Forward)const{
+      if(!is_initialized_){
+	ErrorString msg;
+	msg << "The maps is not initialized correctly. dir=" <<dir_<<"\n";
+	Errors::BaseErr("Initialization missing", msg);
+      }
+      std::valarray<double> recv_bdry(bdry_t_.size()*Fin.Nin()*Fin.Nex());
+      Communicator::instance()->transfer_fw(recv_bdry,
+					    Fin.data[Fin.get_sub(bdry_b_)],
+					    dir_);
+      Fout.data.set(Fin.get_sub(bdry_t_),recv_bdry);
+      Fout.data.set(Fin.get_sub(bulk_t_),Fin.data[Fin.get_sub(bulk_b_)]);
+    }
+    /*
     template<typename FIELD>
     FIELD operator()(const FIELD& Fin,Backward) const{
       if (!is_initialized_){
@@ -97,19 +120,37 @@ namespace Mapping{
 
       Fout.data.set(Fin.get_sub(bdry_b_),recv_bdry);
       Fout.data.set(Fin.get_sub(bulk_b_),Fin.data[Fin.get_sub(bulk_t_)]);
-     
+      return Fout;
+    }
+    */
+
+    template<typename FIELD>
+    FIELD operator()(const FIELD& Fin,Backward)const{
+      FIELD Fout(Fin.Nvol());
+      operator()(Fout,Fin,Backward());
       return Fout;
     }
 
+    template<typename FIELD>
+    void operator()(FIELD& Fout,const FIELD& Fin,Backward) const{
+      if (!is_initialized_){
+	ErrorString msg;
+	msg << "The maps is not initialized correctly. dir=" <<dir_<<"\n";
+	Errors::BaseErr("Initialization missing", msg);
+      }
+      std::valarray<double> recv_bdry(bdry_b_.size()*Fin.Nin()*Fin.Nex());
+      Communicator::instance()->transfer_bk(recv_bdry,
+					    Fin.data[Fin.get_sub(bdry_t_)],
+					    dir_);
+      Fout.data.set(Fin.get_sub(bdry_b_),recv_bdry);
+      Fout.data.set(Fin.get_sub(bulk_b_),Fin.data[Fin.get_sub(bulk_t_)]);
+    }
+
     /// for experimental use
-    void operator()(GaugeField1D& Fout,const GaugeField1D& Fin,
-		    int mu,Forward)const;
-    void operator()(GaugeField1D& Fout,const GaugeField& Fin,
-		    int mu,Forward)const;
-    void operator()(GaugeField1D& Fout,const GaugeField1D& Fin,
-		    int mu,Backward)const;
-    void operator()(GaugeField1D& Fout,const GaugeField& Fin,
-		    int mu,Backward)const;
+    void operator()(GaugeField1D& Fout,const GaugeField1D& Fin,Forward)const;
+    void operator()(GaugeField1D& Fout,const GaugeField1D& Fin,Backward)const;
+    void operator()(GaugeField1D& Fout,const GaugeField& Fin,int mu,Forward)const;
+    void operator()(GaugeField1D& Fout,const GaugeField& Fin,int mu,Backward)const;
 
     // for improvements assuming the memory alignment
     // using OpenMP and BGQ threading
@@ -157,7 +198,7 @@ namespace Mapping{
        recv_bulk_b_(SiteMap::shiftSite_oe.bulk_map(dir,Btm)),
        dir_(dir),
        is_initialized_(true){}
-    
+
     template<typename FIELD>
     FIELD operator()(const FIELD& Fin,Forward)const{
       if (!is_initialized_){

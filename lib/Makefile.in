@@ -64,23 +64,29 @@ target_triplet = @target@
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_3 = -lbgqwilson3x4
 @HITACHI_TRUE@@IBM_BGQ_FALSE@@USE_MPI_TRUE@am__append_4 = -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 @HITACHI_TRUE@@IBM_BGQ_FALSE@@USE_MPI_TRUE@am__append_5 = -q64
+@HITACHI_TRUE@@IBM_BGQ_FALSE@@SR_WILSON_TRUE@@USE_MPI_TRUE@am__append_6 = -lsrmwilson
 
 ############################################
 # Sources by architecture
-@IBM_BGQKERNELS_TRUE@am__append_6 = Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@am__append_7 = Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp
-@IBM_BGQKERNELS_TRUE@am__append_7 = Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.hpp
-@IBM_BGQKERNELS_TRUE@am__append_8 = Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp
-@IBM_BGQKERNELS_TRUE@am__append_9 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp \
+@IBM_BGQKERNELS_TRUE@am__append_8 = Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.hpp
+@IBM_BGQKERNELS_TRUE@am__append_9 = Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp
+@IBM_BGQKERNELS_TRUE@am__append_10 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
-@IBM_BGQKERNELS_TRUE@am__append_10 = Tools/utils_BGQ.hpp
-@IBM_BGQKERNELS_FALSE@am__append_11 = Smearing/stoutSmear_core.cpp \
-@IBM_BGQKERNELS_FALSE@	Smearing/smartConf_core.cpp \
-@IBM_BGQKERNELS_FALSE@	Smearing/APEsmear.cpp
+@IBM_BGQKERNELS_TRUE@am__append_11 = Tools/Architecture_Optimized/utils_BGQ.cpp
+@IBM_BGQKERNELS_TRUE@am__append_12 = Tools/Architecture_Optimized/utils_BGQ.hpp
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@am__append_13 = Smearing/stoutSmear_core.cpp \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@	Smearing/smartConf_core.cpp \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@	Smearing/APEsmear.cpp
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@am__append_14 = Tools/Architecture_Optimized/srmwilson_cmpl.hpp
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@am__append_15 = Smearing/stoutSmear_core.cpp \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	Smearing/smartConf_core.cpp \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	Smearing/APEsmear.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
@@ -142,6 +148,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Action/action_gauge_wilson_adjoint.cpp \
 	Action/action_gauge_rect.cpp \
 	Action/action_gauge_wilson_force.cpp \
+	Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp \
 	Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
 	Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp \
 	Action/action_gaugetype_factory_creator.cpp \
@@ -176,7 +183,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp \
 	Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
-	Dirac_ops/dirac_wilson_Brillouin.cpp Dirac_ops/eoUtils.cpp \
+	Dirac_ops/dirac_wilson_Brillouin.cpp \
+	Dirac_ops/dirac_wilson_Brillouin_OSS.cpp Dirac_ops/eoUtils.cpp \
 	Dirac_ops/wilsonLikeUtils.cpp \
 	Dirac_ops/BoundaryConditions/boundaryCond.cpp \
 	Dirac_ops/subSpaceProjector.cpp \
@@ -247,8 +255,10 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 @USE_MPI_FALSE@am__objects_1 = communicator_single.$(OBJEXT)
 @USE_EVENODD_FALSE@am__objects_2 = siteIndex.$(OBJEXT)
 @USE_EVENODD_TRUE@am__objects_2 = siteIndexEO.$(OBJEXT)
-@IBM_BGQKERNELS_FALSE@am__objects_3 = action_gauge_rect.$(OBJEXT) \
-@IBM_BGQKERNELS_FALSE@	action_gauge_wilson_force.$(OBJEXT)
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@am__objects_3 = action_gauge_rect.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	action_gauge_wilson_force.$(OBJEXT)
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@am__objects_3 = action_gauge_rect.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@	action_gauge_wilson_force.sr16k.$(OBJEXT)
 @IBM_BGQKERNELS_TRUE@am__objects_3 = action_gauge_rect.bgq.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	action_gauge_wilson_force.bgq.$(OBJEXT)
 @IBM_BGQKERNELS_TRUE@am__objects_4 = rationalSolver_DWF_BGQ.$(OBJEXT) \
@@ -265,11 +275,14 @@ am__objects_7 = $(am__objects_6)
 @IBM_BGQKERNELS_TRUE@am__objects_9 = stoutSmear_core_BGQ.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	smartConf_core_BGQ.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	APEsmear_BGQ.$(OBJEXT)
-@IBM_BGQKERNELS_FALSE@am__objects_10 = stoutSmear_core.$(OBJEXT) \
-@IBM_BGQKERNELS_FALSE@	smartConf_core.$(OBJEXT) \
-@IBM_BGQKERNELS_FALSE@	APEsmear.$(OBJEXT)
-am__objects_11 = $(am__objects_9) $(am__objects_10)
-@USE_DCMT_TRUE@am__objects_12 = dcmt_wrapper.$(OBJEXT)
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@am__objects_10 = stoutSmear_core.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@	smartConf_core.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@	APEsmear.$(OBJEXT)
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@am__objects_11 = stoutSmear_core.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	smartConf_core.$(OBJEXT) \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	APEsmear.$(OBJEXT)
+am__objects_12 = $(am__objects_9) $(am__objects_10) $(am__objects_11)
+@USE_DCMT_TRUE@am__objects_13 = dcmt_wrapper.$(OBJEXT)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) \
@@ -301,7 +314,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	dirac_DomainWall_adjoint_EvenOdd.$(OBJEXT) \
 	dirac_DomainWall_4D_fullSolv.$(OBJEXT) \
 	dirac_DomainWall_4D_eoSolv.$(OBJEXT) \
-	dirac_wilson_Brillouin.$(OBJEXT) eoUtils.$(OBJEXT) \
+	dirac_wilson_Brillouin.$(OBJEXT) \
+	dirac_wilson_Brillouin_OSS.$(OBJEXT) eoUtils.$(OBJEXT) \
 	wilsonLikeUtils.$(OBJEXT) dirac_Operator_Factory.$(OBJEXT) \
 	boundaryCond.$(OBJEXT) subSpaceProjector.$(OBJEXT) \
 	dirac_LowModeDeflation_ExactEigen.$(OBJEXT) \
@@ -327,7 +341,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	solver_CG.$(OBJEXT) solver_Factory.$(OBJEXT) \
 	multiShiftSolver_CG.$(OBJEXT) rationalSolver_CG.$(OBJEXT) \
 	solver.$(OBJEXT) stoutSmear_base.$(OBJEXT) \
-	smartConf_base.$(OBJEXT) $(am__objects_11) \
+	smartConf_base.$(OBJEXT) $(am__objects_12) \
 	smearingFactories.$(OBJEXT) fieldUtils.$(OBJEXT) \
 	jobUtils.$(OBJEXT) sunMatUtils.$(OBJEXT) \
 	sunAdjMatUtils.$(OBJEXT) randNum.$(OBJEXT) \
@@ -337,7 +351,7 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	rationalapprox.$(OBJEXT) xml_errors.$(OBJEXT) \
 	allocation_errors.$(OBJEXT) base_errors.$(OBJEXT) \
 	io_errors.$(OBJEXT) convergence_errors.$(OBJEXT) \
-	parameter_errors.$(OBJEXT) $(am__objects_12) \
+	parameter_errors.$(OBJEXT) $(am__objects_13) \
 	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
 	HBActions_SUN.$(OBJEXT) laplacian.$(OBJEXT) \
 	scalar_Operator_FactoryCreator.$(OBJEXT)
@@ -347,7 +361,7 @@ am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
 main_hmc_OBJECTS = $(am_main_hmc_OBJECTS)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1)
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 main_hmc_DEPENDENCIES = libcommcode.a $(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -417,7 +431,9 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	$(top_srcdir)/include/messages_macros.hpp \
 	$(top_srcdir)/include/timings.hpp \
 	$(top_srcdir)/include/errors.hpp \
-	$(top_srcdir)/include/inputConfig.hpp Tools/utils_BGQ.hpp \
+	$(top_srcdir)/include/inputConfig.hpp \
+	Tools/Architecture_Optimized/utils_BGQ.hpp \
+	Tools/Architecture_Optimized/srmwilson_cmpl.hpp \
 	Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.hpp \
 	PugiXML/pugixml.hpp PugiXML/pugiconfig.hpp \
 	Action/action_gauge_wilson.hpp \
@@ -477,6 +493,7 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Dirac_ops/dirac_wilson_adjoint.hpp \
 	Dirac_ops/dirac_wilson_EvenOdd.hpp \
 	Dirac_ops/dirac_wilson_Brillouin.hpp \
+	Dirac_ops/dirac_wilson_Brillouin_OSS.hpp \
 	Dirac_ops/dirac_staggered_EvenOdd.hpp \
 	Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp \
 	Dirac_ops/dirac_clover.hpp Dirac_ops/dirac_Mobius.hpp \
@@ -687,25 +704,29 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-12-10 16:13:47 noaki>
+# Time-stamp: <2013-12-24 21:16:03 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
 AM_CXXFLAGS = $(am__append_4)
 AM_LDFLAGS = $(am__append_5) $(BFM_LIBS)
-OPTLIB = $(am__append_1) $(am__append_2) $(am__append_3)
-DWF_BGQ_SRC = $(am__append_6)
-DWF_BGQ_HDR = $(am__append_7)
-DWL_BGQ_SRC = $(am__append_8)
-SMEAR_SRC = $(am__append_9) $(am__append_11)
-UTILS_HDR = $(am__append_10)
+OPTLIB = $(am__append_1) $(am__append_2) $(am__append_3) \
+	$(am__append_6)
+DWF_BGQ_SRC = $(am__append_7)
+DWF_BGQ_HDR = $(am__append_8)
+DWL_BGQ_SRC = $(am__append_9)
+SMEAR_SRC = $(am__append_10) $(am__append_13) $(am__append_15)
+UTILS_SRC = $(am__append_11)
+UTILS_HDR = $(am__append_12) $(am__append_14)
 @IBM_BGQ_FALSE@@USE_MPI_TRUE@COMMUNICATOR_SRC = Communicator/communicator_mpi.cpp
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@COMMUNICATOR_SRC = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
 
 # Fall-back to the single core case
 @USE_MPI_FALSE@COMMUNICATOR_SRC = Communicator/communicator_single.cpp	
-@IBM_BGQKERNELS_FALSE@ACTION_SRC = Action/action_gauge_rect.cpp \
-@IBM_BGQKERNELS_FALSE@	Action/action_gauge_wilson_force.cpp
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@ACTION_SRC = Action/action_gauge_rect.cpp \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	Action/action_gauge_wilson_force.cpp
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@ACTION_SRC = Action/action_gauge_rect.cpp \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@	Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp
 @IBM_BGQKERNELS_TRUE@ACTION_SRC = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp \
 @IBM_BGQKERNELS_TRUE@	Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp
 @USE_EVENODD_FALSE@SITE_INDEXING_SRC = Geometry/siteIndex.cpp
@@ -787,6 +808,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
+		Dirac_ops/dirac_wilson_Brillouin_OSS.cpp	\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/wilsonLikeUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
@@ -987,6 +1009,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_wilson_adjoint.hpp	\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
+			Dirac_ops/dirac_wilson_Brillouin_OSS.hpp\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
@@ -1218,6 +1241,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson_adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson_force.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson_force.bgq.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gauge_wilson_force.sr16k.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gaugetype_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_gaugetype_factory_creator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/action_staggered.Po@am__quote@
@@ -1262,6 +1286,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_Brillouin.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_Brillouin_OSS.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dirac_wilson_adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallCore.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallCore_BGQ.Po@am__quote@
@@ -1512,6 +1537,20 @@ action_gauge_wilson_force.obj: Action/action_gauge_wilson_force.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Action/action_gauge_wilson_force.cpp' object='action_gauge_wilson_force.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson_force.obj `if test -f 'Action/action_gauge_wilson_force.cpp'; then $(CYGPATH_W) 'Action/action_gauge_wilson_force.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/action_gauge_wilson_force.cpp'; fi`
+
+action_gauge_wilson_force.sr16k.o: Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_wilson_force.sr16k.o -MD -MP -MF $(DEPDIR)/action_gauge_wilson_force.sr16k.Tpo -c -o action_gauge_wilson_force.sr16k.o `test -f 'Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp' || echo '$(srcdir)/'`Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gauge_wilson_force.sr16k.Tpo $(DEPDIR)/action_gauge_wilson_force.sr16k.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp' object='action_gauge_wilson_force.sr16k.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson_force.sr16k.o `test -f 'Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp' || echo '$(srcdir)/'`Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp
+
+action_gauge_wilson_force.sr16k.obj: Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_wilson_force.sr16k.obj -MD -MP -MF $(DEPDIR)/action_gauge_wilson_force.sr16k.Tpo -c -o action_gauge_wilson_force.sr16k.obj `if test -f 'Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp'; then $(CYGPATH_W) 'Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/action_gauge_wilson_force.sr16k.Tpo $(DEPDIR)/action_gauge_wilson_force.sr16k.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp' object='action_gauge_wilson_force.sr16k.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o action_gauge_wilson_force.sr16k.obj `if test -f 'Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp'; then $(CYGPATH_W) 'Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp'; else $(CYGPATH_W) '$(srcdir)/Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp'; fi`
 
 action_gauge_rect.bgq.o: Action/Architecture_Optimized/action_gauge_rect.bgq.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT action_gauge_rect.bgq.o -MD -MP -MF $(DEPDIR)/action_gauge_rect.bgq.Tpo -c -o action_gauge_rect.bgq.o `test -f 'Action/Architecture_Optimized/action_gauge_rect.bgq.cpp' || echo '$(srcdir)/'`Action/Architecture_Optimized/action_gauge_rect.bgq.cpp
@@ -2184,6 +2223,20 @@ dirac_wilson_Brillouin.obj: Dirac_ops/dirac_wilson_Brillouin.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_Brillouin.cpp' object='dirac_wilson_Brillouin.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin.cpp'; fi`
+
+dirac_wilson_Brillouin_OSS.o: Dirac_ops/dirac_wilson_Brillouin_OSS.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_Brillouin_OSS.o -MD -MP -MF $(DEPDIR)/dirac_wilson_Brillouin_OSS.Tpo -c -o dirac_wilson_Brillouin_OSS.o `test -f 'Dirac_ops/dirac_wilson_Brillouin_OSS.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_Brillouin_OSS.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_Brillouin_OSS.Tpo $(DEPDIR)/dirac_wilson_Brillouin_OSS.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_Brillouin_OSS.cpp' object='dirac_wilson_Brillouin_OSS.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin_OSS.o `test -f 'Dirac_ops/dirac_wilson_Brillouin_OSS.cpp' || echo '$(srcdir)/'`Dirac_ops/dirac_wilson_Brillouin_OSS.cpp
+
+dirac_wilson_Brillouin_OSS.obj: Dirac_ops/dirac_wilson_Brillouin_OSS.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT dirac_wilson_Brillouin_OSS.obj -MD -MP -MF $(DEPDIR)/dirac_wilson_Brillouin_OSS.Tpo -c -o dirac_wilson_Brillouin_OSS.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin_OSS.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin_OSS.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin_OSS.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/dirac_wilson_Brillouin_OSS.Tpo $(DEPDIR)/dirac_wilson_Brillouin_OSS.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Dirac_ops/dirac_wilson_Brillouin_OSS.cpp' object='dirac_wilson_Brillouin_OSS.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o dirac_wilson_Brillouin_OSS.obj `if test -f 'Dirac_ops/dirac_wilson_Brillouin_OSS.cpp'; then $(CYGPATH_W) 'Dirac_ops/dirac_wilson_Brillouin_OSS.cpp'; else $(CYGPATH_W) '$(srcdir)/Dirac_ops/dirac_wilson_Brillouin_OSS.cpp'; fi`
 
 eoUtils.o: Dirac_ops/eoUtils.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eoUtils.o -MD -MP -MF $(DEPDIR)/eoUtils.Tpo -c -o eoUtils.o `test -f 'Dirac_ops/eoUtils.cpp' || echo '$(srcdir)/'`Dirac_ops/eoUtils.cpp

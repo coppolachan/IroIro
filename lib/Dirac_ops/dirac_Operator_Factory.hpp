@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-12-05 12:53:43 noaki>
+ Time-stamp: <2013-12-24 21:26:58 noaki>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -12,6 +12,7 @@
 #include "dirac_wilson_adjoint.hpp"
 #include "dirac_wilson_EvenOdd.hpp"
 #include "dirac_wilson_Brillouin.hpp"
+#include "dirac_wilson_Brillouin_OSS.hpp"
 #include "dirac_clover.hpp"
 #include "dirac_Mobius.hpp"
 #include "dirac_DomainWall_adjoint.hpp"
@@ -120,6 +121,16 @@ public:
     :Dirac_node_(node),type_(type){}
 };
 
+/////////////
+/*! @brief Concrete class for creating Dirac Wilson Brillouin OSS operators */
+class DiracWilsonBrillouinOSSFactory : public DiracWilsonLikeFactory {
+  XML::node Dirac_node_;
+  ImpType type_;
+  DiracWilsonLike* createDirac(InputConfig&);
+public:
+  DiracWilsonBrillouinOSSFactory(const XML::node& node,ImpType type=Standard)
+    :Dirac_node_(node),type_(type){}
+};
 /////////////
 /*! @brief Concrete class for creating Dirac Clover operators */
 class DiracCloverFactory : public DiracWilsonLikeFactory {

@@ -3071,8 +3071,8 @@ ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value
 bluegeneq=false   # default value
-SR_INCLUDE=
-SR_LIBS=
+SR_INCLUDE=/srhome/.tools/include
+SR_LIBS=/srhome/.tools/lib
 
 BLUEGENE_INCLUDE=/bghome/scbadm/ibm-doi/lib
 BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib
@@ -3290,7 +3290,7 @@ aix )
 $as_echo "$as_me: forcing cross compilation on AIX" >&6;}
      use_cpp="mpCC";
      use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${SR_INCLUDE} -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
-     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib"
+     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib -L${SR_LIBS}"
      use_ar_flags="-X64 -c -ru"
 
 $as_echo "#define BIG_ENDIAN_TYPE /**/" >>confdefs.h

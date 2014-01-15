@@ -13,7 +13,12 @@ namespace Mapping{
     std::vector<AutoMap> maps_;
   public:
     template<typename DATA,typename FB>
-    DATA operator()(const DATA& F,int dir,FB fb)const{return maps_[dir](F,fb);}
+    DATA operator()(const DATA& F,int dir,FB fb)const{
+      return maps_[dir](F,fb);}
+
+    template<typename DATA,typename FB>
+    void operator()(DATA& Fo,const DATA& Fi,int dir,FB fb)const{ 
+      maps_[dir](Fo,Fi,fb);}
 
     template <typename FB>
     void operator()(GaugeField1D& Fout,const double* Fin,int dir,FB fb)const{

@@ -15,16 +15,24 @@ namespace Mapping{
   static double *class_send_f, *class_recv_f;
   static double *class_send_b, *class_recv_b;
 
-
   /////////////// AutoMap ///////////////
   /// for experimental use
   void AutoMap::operator()(GaugeField1D& Fout,const GaugeField1D& Fin,
-			   int mu,Forward)const{
+			   Forward)const{
     std::valarray<double> recv_bdry(bdry_t_.size()*Fin.Nin());
     Communicator::instance()->transfer_fw(recv_bdry,
 					  Fin.data[Fin.get_sub(bdry_b_)],dir_);
     Fout.data.set(Fin.get_sub(bdry_t_),recv_bdry);
     Fout.data.set(Fin.get_sub(bulk_t_),Fin.data[Fin.get_sub(bulk_b_)]);
+  }
+
+  void AutoMap::operator()(GaugeField1D& Fout,const GaugeField1D& Fin,
+			   Backward)const{
+    std::valarray<double> recv_bdry(bdry_b_.size()*Fin.Nin());
+    Communicator::instance()->transfer_bk(recv_bdry,
+					  Fin.data[Fin.get_sub(bdry_t_)],dir_);
+    Fout.data.set(Fin.get_sub(bdry_b_),recv_bdry);
+    Fout.data.set(Fin.get_sub(bulk_b_),Fin.data[Fin.get_sub(bulk_t_)]);
   }
 
   void AutoMap::operator()(GaugeField1D& Fout,const GaugeField& Fin,
@@ -36,14 +44,6 @@ namespace Mapping{
     Fout.data.set(Fin.get_sub(bulk_t_),Fin.data[Fin.get_sub(bulk_b_,mu)]);
   }
 
-  void AutoMap::operator()(GaugeField1D& Fout,const GaugeField1D& Fin,
-			   int mu,Backward)const{
-    std::valarray<double> recv_bdry(bdry_b_.size()*Fin.Nin());
-    Communicator::instance()->transfer_bk(recv_bdry,
-					  Fin.data[Fin.get_sub(bdry_t_)],dir_);
-    Fout.data.set(Fin.get_sub(bdry_b_),recv_bdry);
-    Fout.data.set(Fin.get_sub(bulk_b_),Fin.data[Fin.get_sub(bulk_t_)]);
-  }
   void AutoMap::operator()(GaugeField1D& Fout,const GaugeField& Fin,
 			   int mu,Backward)const{
     std::valarray<double> recv_bdry(bdry_b_.size()*Fin.Nin());

@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-12-05 13:10:46 noaki>
+ * Time-stamp: <2013-12-24 21:18:36 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 
@@ -23,6 +23,10 @@ namespace Diracs {
       return new DiracWilsonBrillouinFactory(node);
     if(!strcmp(Dirac_name, "DiracWilson_Brillouin_Imp")) 
       return new DiracWilsonBrillouinFactory(node,Improved);
+    if(!strcmp(Dirac_name, "DiracWilson_Brillouin_OSS")) 
+      return new DiracWilsonBrillouinOSSFactory(node);
+    if(!strcmp(Dirac_name, "DiracWilson_Brillouin_Imp_OSS")) 
+      return new DiracWilsonBrillouinOSSFactory(node,Improved);
     if(!strcmp(Dirac_name, "DiracClover"))  
       return new DiracCloverFactory(node);
     if(!strcmp(Dirac_name, "DiracMobius"))  

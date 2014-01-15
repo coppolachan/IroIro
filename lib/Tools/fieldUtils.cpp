@@ -7,6 +7,7 @@
 #include "include/macros.hpp"
 #include "timings.hpp"
 #include "include/messages_macros.hpp"
+#include "Geometry/shiftField.hpp"
 #include <omp.h>
 
 #ifdef IBM_BGQ_WILSON
@@ -19,6 +20,7 @@
 #endif
 
 class RandNum;
+using namespace Mapping;
 
 namespace FieldUtils{
   const GaugeField1D field_oprod(const FermionField& f1,
@@ -296,39 +298,340 @@ namespace FieldUtils{
     return GaugeField1D(Field(F.data[F.format.ex_slice(dir)]));
   }
 
-  void SetSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
-    G.data.set(G.format.ex_slice(dir), Gslice.data.getva());
+  void DirSlice(GaugeField1D& G,const GaugeField& F,int mu){
+    G = Field(F.data[F.format.ex_slice(mu)]);
   }
 
-  void AddSlice(GaugeField& G, const GaugeField1D& Gslice, int dir){
-    G.data.add(G.format.ex_slice(dir), Gslice.data.getva());
+  void AntiDirSlice(GaugeField1D& G,const GaugeField& F,int mu){
+    DirSlice(G,F,mu);
+    GaugeField1D tmp = shiftField(G,mu,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.set(tmp.format.islice(site),mat_dag(tmp,site).getva());
   }
 
-  void SetMat(GaugeField& F, const SUNmat& mat, int site, int dir){
-    F.data.set(F.format.islice(site,dir), mat.getva());
-  }
-  void SetMat(GaugeField1D& F, const SUNmat& mat, int site){
-    F.data.set(F.format.islice(site), mat.getva());
+  void diagPPslice(GaugeField1D& G,const GaugeField& F,int mu,int nu){
+    using namespace SUNmatUtils;
+    GaugeField1D up = shiftField(DirSlice(F,nu),mu,Forward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.set(G.format.islice(site),(mat(F,site,mu)*mat(up,site)).getva());
+
+    up = shiftField(DirSlice(F,mu),nu,Forward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(F,site,nu)*mat(up,site)).getva());
+
+    G *=0.5;
   }
 
-  void AddMat(GaugeField& F, const SUNmat& mat, int site, int dir){
-    F.data.add(F.format.islice(site,dir), mat.getva());
-  }
-  void AddMat(GaugeField1D& F, const SUNmat& mat, int site){
-    F.data.add(F.format.islice(site), mat.getva());
+  void diagPMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu){
+    using namespace SUNmatUtils;    
+    GaugeField1D H;
+    for(int site=0; site<G.Nvol(); ++site)
+      H.data.set(G.format.islice(site),
+		 (mat_dag(F,site,nu)*mat(F,site,mu)).getva());
+
+    G = shiftField(H,nu,Backward());
+    H = shiftField(shiftField(DirSlice(F,nu),nu,Backward()),mu,Forward());
+    
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),
+		 (mat(F,site,mu)*mat_dag(H,site)).getva());
+    G*=0.5;
   }
 
-  void SetVec(FermionField& F, const SUNvec& vec, int spin, int site){
-    F.data.set(F.format.cslice(spin,site), vec.getva());
-  }
-  void SetVec(FermionField1sp& F, const SUNvec& vec, int site){
-    F.data.set(F.format.islice(site), vec.getva());
+  void diagMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu){
+    using namespace SUNmatUtils;
+    GaugeField1D um = shiftField(DirSlice(F,nu),nu,Backward());
+    GaugeField1D H;
+    for(int site=0; site<G.Nvol(); ++site)
+      H.data.set(G.format.islice(site),
+		 (mat_dag(F,site,mu)*mat_dag(um,site)).getva());
+
+    G = shiftField(H,mu,Backward());
+    um = shiftField(DirSlice(F,mu),mu,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      H.data.add(H.format.islice(site),
+		 (mat_dag(um,site)*mat_dag(F,site,nu)).getva());
+
+    G += shiftField(H,nu,Backward());
+    G*=0.5;
   }
 
-  void AddVec(FermionField& F, const SUNvec& vec, int spin, int site){
-    F.data.add(F.format.cslice(spin,site), vec.getva());
+  void diagPPPslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho){
+    using namespace SUNmatUtils;
+    GaugeField1D u,v;
+    
+    diagPPslice(v,F,mu,nu);
+    u = shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Forward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.set(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+    
+    diagPPslice(v,F,mu,rho);
+    u = shiftField(shiftField(DirSlice(F,nu),mu,Forward()),rho,Forward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    diagPPslice(v,F,nu,rho);
+    u = shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Forward());
+    for(int site=0;site<G.Nvol();++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    G /=3.0;
   }
-  void AddVec(FermionField1sp& F, const SUNvec& vec, int site){
-    F.data.add(F.format.islice(site), vec.getva());
+
+  void diagPPMslice(GaugeField1D & G,const GaugeField& F,int mu,int nu,int rho){
+    using namespace SUNmatUtils;
+    GaugeField1D u,v;
+
+    diagPPslice(v,F,mu,nu);
+    u = shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.set(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagPMslice(v,F,mu,rho);
+    u = shiftField(shiftField(DirSlice(F,nu),mu, Forward()),rho,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    diagPMslice(v,F,nu,rho);
+    u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Forward()),
+		   rho,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    G /=3.0;
   }
+
+  void diagPMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho){
+    using namespace SUNmatUtils;
+    GaugeField1D u,v;
+
+    diagPMslice(v,F,mu,nu);
+    u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Backward()),
+		   rho,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.set(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagPMslice(v,F,mu,rho);
+    u = shiftField(shiftField(shiftField(DirSlice(F,nu),mu,Forward()),rho,Backward()),
+		   nu,Backward());    
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+    
+    diagMMslice(v,F,nu,rho);
+    u = shiftField(shiftField(DirSlice(F,mu),nu,Backward()),rho,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    G /=3.0;
+  }
+
+  void diagMMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho){
+    using namespace SUNmatUtils;
+    GaugeField1D u,v;
+    
+    diagMMslice(v,F,mu,nu);
+    u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Backward()),nu,Backward()),
+		   rho,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.set(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagMMslice(v,F,mu,rho);
+    u = shiftField(shiftField(shiftField(DirSlice(F,nu),mu,Backward()),rho,Backward()),
+		   nu,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagMMslice(v,F,nu,rho);
+    u = shiftField(shiftField(shiftField(DirSlice(F,mu),nu,Backward()),rho,Backward()),
+		   mu,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    G /=3.0;
+  }
+
+  void diagPPPPslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm){
+    using namespace SUNmatUtils;
+    GaugeField1D u,v;
+
+    diagPPPslice(v,F,mu,nu,rho);
+    u = shiftField(shiftField(shiftField(DirSlice(F,sgm),mu,Forward()),nu,Forward()),
+		   rho,Forward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    diagPPPslice(v,F,mu,nu,sgm);
+    u = shiftField(shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Forward()),
+		   sgm,Forward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    diagPPPslice(v,F,mu,rho,sgm);
+    u = shiftField(shiftField(shiftField(DirSlice(F,nu),rho,Forward()),mu,Forward()),
+		   sgm,Forward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    diagPPPslice(v,F,nu,rho,sgm);
+    u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Forward()),
+		   sgm,Forward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    G *=0.25;
+  }
+
+  void diagPPPMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm){
+    using namespace SUNmatUtils;
+    GaugeField1D u,v;
+
+    diagPPPslice(v,F,mu,nu,rho);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,sgm),mu,Forward()),
+					 nu,Forward()),rho,Forward()),sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.set(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagPPMslice(v,F,mu,nu,sgm);    
+    u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Forward()),
+		   sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    diagPPMslice(v,F,mu,rho,sgm);    
+    u = shiftField(shiftField(shiftField(DirSlice(F,nu),mu,Forward()),rho,Forward()),
+		   sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    diagPPMslice(v,F,nu,rho,sgm);    
+    u = shiftField(shiftField(shiftField(DirSlice(F,mu),nu,Forward()),
+			      rho,Forward()),sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+    
+    G *=0.25;
+  }
+
+  void diagPPMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm){
+    using namespace SUNmatUtils;
+    GaugeField1D u,v;
+
+    diagPPMslice(v,F,mu,nu,rho);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,sgm),mu,Forward()),
+					 nu,Forward()),rho,Backward()),sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site) *mat_dag(u,site)).getva());
+
+    diagPPMslice(v,F,mu,nu,sgm);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),
+					 nu,Forward()),sgm,Backward()),rho,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site) *mat_dag(u,site)).getva());
+
+    diagPMMslice(v,F,mu,rho,sgm);
+    u = shiftField(shiftField(shiftField(DirSlice(F,nu),mu,Forward()),rho,Backward()),
+		   sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+    
+    diagPMMslice(v,F,nu,rho,sgm);
+    u = shiftField(shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Backward()),
+		   sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+    
+    G *=0.25;
+  }
+
+  void diagPMMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm){
+    using namespace SUNmatUtils;
+    GaugeField1D u,v;
+    
+    diagPMMslice(v,F,mu,nu,rho);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,sgm),mu,Forward()),
+					 nu,Backward()),rho,Backward()),sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.set(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagPMMslice(v,F,mu,nu,sgm);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),
+					 nu,Backward()),sgm,Backward()),rho,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+    
+    diagPMMslice(v,F,mu,rho,sgm);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,nu),mu,Forward()),
+					 rho,Backward()),sgm,Backward()),nu, Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagMMMslice(v,F,nu,rho,sgm);
+    u = shiftField(shiftField(shiftField(DirSlice(F,mu),nu,Backward()),rho,Backward()),
+		   sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+
+    G *=0.25;
+  }
+
+  void diagMMMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm){
+    using namespace SUNmatUtils;
+    GaugeField1D u,v;
+
+    diagMMMslice(v,F,mu,nu,rho);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,sgm),mu,Backward()),
+					 nu,Backward()),rho,Backward()),sgm,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagMMMslice(v,F,mu,nu,sgm);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Backward()),
+					 nu,Backward()),sgm,Backward()),rho,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagMMMslice(v,F,mu,rho,sgm);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,nu),mu,Backward()),
+					 rho,Backward()),sgm,Backward()),nu,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+
+    diagMMMslice(v,F,nu,rho,sgm);
+    u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,mu),nu,Backward()),
+					 rho,Backward()),sgm,Backward()),mu,Backward());
+    for(int site=0; site<G.Nvol(); ++site)
+      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+    
+    G *=0.25;
+  }
+
+  void SetSlice(GaugeField& G,const GaugeField1D& Gslice, int dir){
+    G.data.set(G.format.ex_slice(dir), Gslice.data.getva()); }
+
+  void AddSlice(GaugeField& G,const GaugeField1D& Gslice, int dir){
+    G.data.add(G.format.ex_slice(dir), Gslice.data.getva());  }
+
+  void SetMat(GaugeField& F,const SUNmat& mat, int site, int dir){
+    F.data.set(F.format.islice(site,dir), mat.getva());  }
+
+  void SetMat(GaugeField1D& F,const SUNmat& mat, int site){
+    F.data.set(F.format.islice(site), mat.getva());  }
+
+  void AddMat(GaugeField& F,const SUNmat& mat, int site, int dir){
+    F.data.add(F.format.islice(site,dir), mat.getva());  }
+
+  void AddMat(GaugeField1D& F,const SUNmat& mat, int site){
+    F.data.add(F.format.islice(site), mat.getva());  }
+
+  void SetVec(FermionField& F,const SUNvec& vec, int spin, int site){
+    F.data.set(F.format.cslice(spin,site), vec.getva());  }
+
+  void SetVec(FermionField1sp& F,const SUNvec& vec, int site){
+    F.data.set(F.format.islice(site), vec.getva());  }
+
+  void AddVec(FermionField& F,const SUNvec& vec, int spin, int site){
+    F.data.add(F.format.cslice(spin,site), vec.getva());  }
+
+  void AddVec(FermionField1sp& F,const SUNvec& vec, int site){
+    F.data.add(F.format.islice(site), vec.getva());  }
 }

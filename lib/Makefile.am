@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-12-10 16:13:47 noaki>
+# Time-stamp: <2013-12-24 21:16:03 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -17,6 +17,7 @@ DWF_BGQ_SRC =
 DWF_BGQ_HDR = 
 DWL_BGQ_SRC = 
 SMEAR_SRC =
+UTILS_SRC = 
 UTILS_HDR = 
 ###########################################
 # Configure driven path selector
@@ -40,6 +41,9 @@ else #not using BGQ routines but MPI
 if HITACHI	
 AM_CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 AM_LDFLAGS += -q64
+if SR_WILSON 
+OPTLIB += -lsrmwilson
+endif
 endif
 
 COMMUNICATOR_SRC = Communicator/communicator_mpi.cpp
@@ -65,7 +69,16 @@ ACTION_SRC += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp
 SMEAR_SRC += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
 SMEAR_SRC += Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
 SMEAR_SRC += Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
-UTILS_HDR += Tools/utils_BGQ.hpp
+UTILS_SRC += Tools/Architecture_Optimized/utils_BGQ.cpp
+UTILS_HDR += Tools/Architecture_Optimized/utils_BGQ.hpp
+else	
+if SR_WILSON
+ACTION_SRC = Action/action_gauge_rect.cpp
+ACTION_SRC += Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp
+SMEAR_SRC += Smearing/stoutSmear_core.cpp
+SMEAR_SRC += Smearing/smartConf_core.cpp
+SMEAR_SRC += Smearing/APEsmear.cpp	
+UTILS_HDR += Tools/Architecture_Optimized/srmwilson_cmpl.hpp
 else
 ACTION_SRC = Action/action_gauge_rect.cpp
 ACTION_SRC += Action/action_gauge_wilson_force.cpp
@@ -73,6 +86,7 @@ SMEAR_SRC += Smearing/stoutSmear_core.cpp
 SMEAR_SRC += Smearing/smartConf_core.cpp
 SMEAR_SRC += Smearing/APEsmear.cpp
 endif 
+endif
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
 if USE_EVENODD
@@ -169,6 +183,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
+		Dirac_ops/dirac_wilson_Brillouin_OSS.cpp	\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/wilsonLikeUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
@@ -371,6 +386,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_wilson_adjoint.hpp	\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
+			Dirac_ops/dirac_wilson_Brillouin_OSS.hpp\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
