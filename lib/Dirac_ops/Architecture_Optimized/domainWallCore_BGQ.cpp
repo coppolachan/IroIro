@@ -2,11 +2,11 @@
  * @file domainWallCore_BGQ.cpp
  *
  * @brief Definition of some BGQ optimized methods for domainWallCore (5d operator)
- * Time-stamp: <2013-12-10 18:29:35 noaki>
+ * Time-stamp: <2014-01-20 12:45:33 noaki>
 
  *-------------------------------------------------------------------------*/
 #include "domainWallCore_BGQ.hpp"
-#include "Tools/utils_BGQ.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 #include "Fields/field_expressions.hpp"
 
 const Field DomainWallCore_BGQ::mult(const Field& f5) const{

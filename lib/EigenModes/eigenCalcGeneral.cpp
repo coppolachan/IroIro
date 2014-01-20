@@ -41,11 +41,17 @@ FoprHermFunc* EigenCalcGeneral::createAccelOpFunc(const XML::node& node)const{
 
 FoprHermFactory* EigenCalcGeneral::createFoprHermFactory(const XML::node& node)const{
   const char* hf_name = node.attribute("name").value();
-  
-  if(!strcmp(hf_name,"g5D"))   return new FoprHermFactory_H(node);
-  if(!strcmp(hf_name,"DdagD")) return new FoprHermFactory_DdagD(node);
-  if(!strcmp(hf_name,"DDdag")) return new FoprHermFactory_DDdag(node);
+
   if(!strcmp(hf_name,"Laplacian")) return new FoprHermFactory_Scalar(node);
+
+  XML::node Dnode = node;
+  XML::descend(Dnode,"WilsonLikeDirac");
+  if(!strcmp(hf_name,"AsIs"))  return new FoprHermFactory_HD(Dnode);
+  if(!strcmp(hf_name,"g5D"))   return new FoprHermFactory_H(Dnode);
+  if(!strcmp(hf_name,"R5g5D")) return new FoprHermFactory_H5d(Dnode);
+  if(!strcmp(hf_name,"DdagD")) return new FoprHermFactory_DdagD(Dnode);
+  if(!strcmp(hf_name,"DDdag")) return new FoprHermFactory_DDdag(Dnode);
+
   CCIO::cout<<hf_name<<" is not compatible with current implementation.\n";
   abort();
 }

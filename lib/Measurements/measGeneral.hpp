@@ -11,6 +11,8 @@
 #include "Tools/randNum_Factory.h"
 #include "Main/gaugeGlobal.hpp"
 #include "EigenModes/eigenModes.hpp"
+#include "Dirac_ops/BoundaryConditions/boundaryCond.hpp"
+
 #include <string>
 #include <vector>
 #include <sstream>

@@ -2,9 +2,9 @@
  * @file domainWallSolver_BGQ.cpp
  *
  * @brief Definition of BGQ optimized solvers for Dirac_DomainWall (5d operator)
- *Time-stamp: <2013-12-10 18:30:57 noaki>
+ *Time-stamp: <2014-01-20 12:46:23 noaki>
  *-------------------------------------------------------------------------*/
-#include "Tools/utils_BGQ.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 #include "Solver/solver.hpp"
 #include "Fields/field_expressions.hpp"
 #include "Dirac_ops/dirac_DomainWall.hpp"

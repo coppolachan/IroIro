@@ -2,9 +2,9 @@
  * @file domainWallExtra_BGQ.cpp
  *
  * @brief Definition of extra functions on BGQ for Dirac_DomainWall (5d op.)
- *Time-stamp: <2013-12-10 16:52:05 noaki>
+ *Time-stamp: <2014-01-20 12:47:38 noaki>
  *-------------------------------------------------------------------------*/
-#include "Tools/utils_BGQ.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 #include "Dirac_ops/dirac_DomainWall.hpp"
 
 void Dirac_DomainWall::mult_hop_omp(Field& w5, const void* f5) const{

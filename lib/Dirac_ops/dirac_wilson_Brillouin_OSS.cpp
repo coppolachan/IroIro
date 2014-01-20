@@ -1,6 +1,6 @@
 /* !@filename dirac_wilson_Brillouin_OSS.cpp
  * @brief implementation of Dirac_Wilson_Brillouin_OSS class
- *  Time-stamp: <2014-01-15 19:05:40 noaki>
+ *  Time-stamp: <2014-01-20 12:51:11 noaki>
  */
 #include "dirac_wilson_Brillouin_OSS.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -597,14 +597,14 @@ gmXmYmZmT(GaugeField1D& g,const GaugeField& gu)const{diagMMMMslice(g,gu,XDIR,YDI
 
 #ifdef IBM_BGQ_WILSON
 void Dirac_Wilson_Brillouin_OSS::shift_fwd(FermionField& w,const FermionField& f,int dir) const{
-  double* pf = const_cast<Field&>(f).getaddr(0);
-  double* pw = const_cast<Field&>(w).getaddr(0);
+  double* pf = const_cast<Field&>(f.data).getaddr(0);
+  double* pw = const_cast<Field&>(w.data).getaddr(0);
   BGWilson_Mult_Shift_Dir(pw,gptr_,pf,dir,BGWILSON_FORWARD);
 }
 
 void Dirac_Wilson_Brillouin_OSS::shift_bwd(FermionField& w,const FermionField& f,int dir) const{
-  double* pf = const_cast<Field&>(f).getaddr(0);
-  double* pw = const_cast<Field&>(w).getaddr(0);
+  double* pf = const_cast<Field&>(f.data).getaddr(0);
+  double* pw = const_cast<Field&>(w.data).getaddr(0);
   BGWilson_Mult_Shift_Dir(pw,gptr_,pf,dir,BGWILSON_BACKWARD);
 }
 #else

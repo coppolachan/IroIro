@@ -3,7 +3,7 @@
  *
  *@brief Definition of class methods for Dirac_DomainWall_EvenOdd (5d op)
 
- Time-stamp: <2013-12-05 09:26:15 noaki>
+ Time-stamp: <2014-01-20 12:49:12 noaki>
  *-------------------------------------------------------------------------*/
 #include "dirac_DomainWall_EvenOdd.hpp"
 #include "Communicator/comm_io.hpp"
@@ -16,7 +16,7 @@
 #include "include/messages_macros.hpp"
 
 #ifdef IBM_BGQ_WILSON
-#include "Tools/utils_BGQ.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 #endif
 
 using namespace std;

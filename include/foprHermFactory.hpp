@@ -18,6 +18,19 @@ public:
   virtual ~FoprHermFactory(){}
 };
 
+class FoprHermFactory_HD: public FoprHermFactory{
+  std::auto_ptr<DiracWilsonLikeFactory> Dfact_;
+  std::auto_ptr<DiracWilsonLike> D_;
+public:
+  FoprHermFactory_HD(const XML::node& node){
+    Dfact_.reset(Diracs::createDiracWilsonLikeFactory(node));
+  }
+  Fopr_HD* getFoprHerm(InputConfig& input){ 
+    D_.reset(Dfact_->getDirac(input));
+    return new Fopr_HD(D_.get()); 
+  }
+};
+
 class FoprHermFactory_H: public FoprHermFactory{
   std::auto_ptr<DiracWilsonLikeFactory> Dfact_;
   std::auto_ptr<DiracWilsonLike> D_;
@@ -28,6 +41,19 @@ public:
   Fopr_H* getFoprHerm(InputConfig& input){ 
     D_.reset(Dfact_->getDirac(input));
     return new Fopr_H(D_.get()); 
+  }
+};
+
+class FoprHermFactory_H5d: public FoprHermFactory{
+  std::auto_ptr<DiracDomainWall5dFactory> Dfact_;
+  std::auto_ptr<Dirac_DomainWall> D_;
+public:
+  FoprHermFactory_H5d(const XML::node& node){
+    Dfact_.reset(new DiracDomainWall5dFactory(node));
+  }
+  Fopr_H5d* getFoprHerm(InputConfig& input){ 
+    D_.reset(Dfact_->getDirac(input));
+    return new Fopr_H5d(D_.get()); 
   }
 };
 

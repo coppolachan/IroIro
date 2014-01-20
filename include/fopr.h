@@ -2,7 +2,7 @@
  * @file fopr.h 
  * @brief Definition of Fopr classes 
  * @authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>, Jun-Ichi Noaki}
-Time-stamp: <2013-11-01 14:12:36 noaki>
+Time-stamp: <2014-01-16 10:04:42 noaki>
  */
 
 #ifndef FOPR_INCLUDED
@@ -10,6 +10,7 @@ Time-stamp: <2013-11-01 14:12:36 noaki>
 
 #include "field.h"
 #include "Dirac_ops/dirac_WilsonLike.hpp"
+#include "Dirac_ops/dirac_DomainWall.hpp"
 #include "Dirac_ops/dirac_staggeredLike.hpp"
 #include "Scalar_ops/scalarOp.hpp"
 
@@ -105,6 +106,17 @@ public:
   const Field mult(const Field& f)const{ return D_->gamma5(D_->mult(f));}
   const Field gamma5(const Field&f)const{ return D_->gamma5(f);}
 
+  size_t fsize()const{ return D_->fsize();}
+};
+
+class Fopr_H5d : public Fopr_Herm{
+private:
+  const Dirac_DomainWall* D_;
+public:
+  Fopr_H5d(const Dirac_DomainWall* D):D_(D){}
+  double func(double x)const{return x;}
+  const Field mult(const Field& f)const{}
+  const Field gamma5(const Field&f)const{}
   size_t fsize()const{ return D_->fsize();}
 };
 

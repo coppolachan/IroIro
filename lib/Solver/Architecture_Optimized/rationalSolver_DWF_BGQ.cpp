@@ -5,7 +5,7 @@
  */
 
 #include "Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp"
-#include "Tools/utils_BGQ.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 
 #ifdef HAVE_LIBBFM
 RationalSolver_DWF_Optimized::RationalSolver_DWF_Optimized(Dirac_BFM_Wrapper* BFMopr,
