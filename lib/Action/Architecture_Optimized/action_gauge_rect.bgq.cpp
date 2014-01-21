@@ -4,7 +4,7 @@
 
   Optimized version for BlueGeneQ architecture
 
-  Time-stamp: <2013-10-24 13:30:13 noaki>
+  Time-stamp: <2014-01-15 14:09:37 cossu>
 */
 
 #include "Action/action_gauge_rect.hpp"
@@ -13,6 +13,7 @@
 #include "Measurements/GaugeM/staples.hpp"
 #include "Geometry/autoMap.hpp"
 #include "include/messages_macros.hpp"
+#include "Measurements/GaugeM/polyakovLoop.hpp"
 
 #include <omp.h>
 #include "bgqthread.h"
@@ -122,6 +123,14 @@ double ActionGaugeRect::calc_H(){
   _Message(ACTION_VERB_LEVEL, "    [ActionGaugeRect] H = "<<Hgauge<<"\n");
   _Message(1,"    -- Plaquette = "
 	   << plaq/(Nvol_*NP*NDIM_*(NDIM_-1.0)/2.0) << "\n");
+
+  //Measure other observables                                                                                                                                                                                                                  
+
+  PolyakovLoop PLmeas(TDIR);
+  std::complex<double> pl = PLmeas.calc_SUN(*u_);
+  _Message(ACTION_VERB_LEVEL,"    [ActionGaugeRect] PL = "<<pl.real()<< "  "<< pl.imag() << "\n");
+
+
   return Hgauge;
 }
 

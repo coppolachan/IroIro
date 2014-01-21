@@ -96,11 +96,11 @@ RandNum_DCMT::~RandNum_DCMT(){
 }
 
 void RandNum_DCMT::saveSeed(const std::string& file) const{
-  saveSeed_Binary(file);
+  saveSeed_Txt(file);
 }
 
 void RandNum_DCMT::loadSeed(const std::string& file){
-  loadSeed_Binary(file);
+  loadSeed_Txt(file);
 }
 
 void RandNum_DCMT::saveSeed_Txt(const std::string& file) const{

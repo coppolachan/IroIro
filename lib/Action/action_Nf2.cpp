@@ -1,7 +1,7 @@
 /*! 
  * @file action_Nf2.cpp
  * @brief Definition of methods of Action_Nf2 class
- Time-stamp: <2013-11-21 13:47:11 noaki>
+ Time-stamp: <2014-01-08 13:03:30 cossu>
  */
 #include "action_Nf2.hpp"
 #include "Tools/randNum_MP.h"
@@ -9,7 +9,7 @@
 #include "include/messages_macros.hpp"
 
 // Temporary hack
-//#define ANTIPERIODIC_BC
+#define ANTIPERIODIC_BC
 
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2::observer_update() {
