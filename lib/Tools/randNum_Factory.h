@@ -33,6 +33,7 @@ class RandNum_MT19937_Creator : public RandomNumberCreator {
   bool fromfile_;
 
   RandNum_MT19937* createRNG(){
+    CCIO::cout<<"createRNG() called\n";
     if(fromfile_) return new RandNum_MT19937(filename_);
     else          return new RandNum_MT19937(init_,length_); 
   }
@@ -55,7 +56,9 @@ public:
       length_= inputs_.size();
     }
   }
-  RandNum* getRandomNumGenerator(){ return createRNG();}
+  RandNum* getRandomNumGenerator(){
+    CCIO::cout<<"getRandNumGenerator() called\n";
+    return createRNG();}
 };
 
 

@@ -297,6 +297,7 @@ public:
      idx_(IDX::instance()),
      ff_(new FMT(Nvol)),
      Type_(Type),src_(0.0,ff_->size()){
+    CCIO::cout<<"creating Source_Z2noise\n";
     setup_source();
   }
 
@@ -304,6 +305,7 @@ public:
   ~Source_Z2noise(){ delete ff_;}
 
   void setup_source(){
+    CCIO::cout<<"setting up Source_Z2noise\n";
     std::valarray<double> white_noise(0.0,ff_->size());
     double cosine;
     

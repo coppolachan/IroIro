@@ -31,7 +31,12 @@ int Test_HadronSpectrum_Nf2p1::run(){
   XML::next_sibling(node,"Source");
   auto_ptr<SourceFactory> 
     SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(node));
+
+  CCIO::cout<<"SrcFactory created\n";
+
   auto_ptr<Source> src(SrcFactory->getSource());
+
+  CCIO::cout<<"Source created\n";
 
   prop_t sq_ud, sq_s;  //Defines a vector of fields
   CCIO::cout << " ---- Calculating ud-propagator\n";

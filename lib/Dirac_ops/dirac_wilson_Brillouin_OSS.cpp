@@ -34,7 +34,7 @@ const Field Dirac_Wilson_Brillouin_OSS::mult(const Field& f)const{
 
 void Dirac_Wilson_Brillouin_OSS::mult_std(Field& w,const Field& f)const{
   using namespace FieldExpression;
-  CCIO::cout<<"mult(non-improved Brillouin_OSS) was called!"<<std::endl;
+  //CCIO::cout<<"mult(non-improved Brillouin_OSS) was called!"<<std::endl;
   Fsetup(FermionField(f));
   w = der_iso();
   w -= 0.5*lap_bri();
@@ -568,10 +568,13 @@ void Dirac_Wilson_Brillouin_OSS::
 gpXmYpZmT(GaugeField1D& g,const GaugeField& gu)const{diagPPMMslice(g,gu,XDIR,ZDIR,YDIR,TDIR);}
 /// (+,-,-,+)
 void Dirac_Wilson_Brillouin_OSS::
-gpXmYmZpT(GaugeField1D& g,const GaugeField& gu)const{diagPPMMslice(g,gu,XDIR,TDIR,YDIR,ZDIR);}
+gpXmYmZpT(GaugeField1D& g,const GaugeField& gu)const{diagPPMMslice(g,gu,XDIR,TDIR,ZDIR,YDIR);}
+//gpXmYmZpT(GaugeField1D& g,const GaugeField& gu)const{diagPPMMslice(g,gu,XDIR,TDIR,YDIR,ZDIR);}
+
 /// (-,+,+,-)
 void Dirac_Wilson_Brillouin_OSS::
-gmXpYpZmT(GaugeField1D& g,const GaugeField& gu)const{diagPPMMslice(g,gu,YDIR,ZDIR,XDIR,TDIR);}
+//gmXpYpZmT(GaugeField1D& g,const GaugeField& gu)const{diagPPMMslice(g,gu,YDIR,ZDIR,XDIR,TDIR);}
+gmXpYpZmT(GaugeField1D& g,const GaugeField& gu)const{diagPPMMslice(g,gu,ZDIR,YDIR,XDIR,TDIR);}
 /// (-,+,-,+)
 void Dirac_Wilson_Brillouin_OSS::
 gmXpYmZpT(GaugeField1D& g,const GaugeField& gu)const{diagPPMMslice(g,gu,YDIR,TDIR,XDIR,ZDIR);}
@@ -618,6 +621,14 @@ void Dirac_Wilson_Brillouin_OSS::shift_bwd(FermionField& w,const FermionField& f
 #endif
 
 void Dirac_Wilson_Brillouin_OSS::Fsetup(const FermionField& f)const{ 
+  
+  // initialize F_[]
+  for(int i=0;i<F_.size();++i){
+    for(int j=0;j<fsize_;++j){
+      F_[i].set(j,0.0);
+    }
+  }
+  
   {// (+,0,0,0)
     FermionField fpX(fsize_);
     shift_fwd(fpX,f,XDIR);  mult_col(fpX,0); 
@@ -669,7 +680,8 @@ void Dirac_Wilson_Brillouin_OSS::Fsetup(const FermionField& f)const{
 	}
 	{// (+,-,+,-)
 	  FermionField fpXmYpZmT(fsize_);
-	  shift_bwd(fpXmYpZmT,fpXmYpZ,TDIR);  mult_col(fpXmYpZmT,73);
+	  //shift_bwd(fpXmYpZmT,fpXmYpZ,TDIR);  mult_col(fpXmYpZmT,73);
+	  shift_bwd(fpXmYpZmT,fpXmYpZ,TDIR);  mult_col(fpXmYpZmT,74);
 	}
       }
       {// (+,-,0,+)
@@ -679,6 +691,14 @@ void Dirac_Wilson_Brillouin_OSS::Fsetup(const FermionField& f)const{
       {// (+,-,-,0)
 	FermionField fpXmYmZ(fsize_);
 	shift_bwd(fpXmYmZ,fpXmY,ZDIR); 	mult_col(fpXmYmZ,56); 
+	{
+	  FermionField fpXmYmZpT(fsize_);
+	  shift_fwd(fpXmYmZpT,fpXmYmZ,TDIR);  mult_col(fpXmYmZpT,76); 
+	}
+	{
+	  FermionField fpXmYmZmT(fsize_);
+	  shift_bwd(fpXmYmZmT,fpXmYmZ,TDIR);  mult_col(fpXmYmZmT,78); 
+	}
       }
       {// (+,-,0,-)
 	FermionField fpXmYmT(fsize_);
@@ -721,7 +741,7 @@ void Dirac_Wilson_Brillouin_OSS::Fsetup(const FermionField& f)const{
   {// (-,0,0,0) 
     FermionField fmX(fsize_);    
     shift_bwd(fmX,f,XDIR);  mult_col(fmX,1);
-
+    
     {// (-,+,0,0) 
       FermionField fmXpY(fsize_);
       shift_fwd(fmXpY,fmX,YDIR);  mult_col(fmXpY,9);

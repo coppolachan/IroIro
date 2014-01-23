@@ -349,13 +349,13 @@ namespace FieldUtils{
     G = shiftField(H,mu,Backward());
     um = shiftField(DirSlice(F,mu),mu,Backward());
     for(int site=0; site<G.Nvol(); ++site)
-      H.data.add(H.format.islice(site),
-		 (mat_dag(um,site)*mat_dag(F,site,nu)).getva());
-
+      H.data.set(H.format.islice(site),
+		 (mat_dag(F,site,nu)*mat_dag(um,site)).getva());
+    
     G += shiftField(H,nu,Backward());
     G*=0.5;
   }
-
+  
   void diagPPPslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho){
     using namespace SUNmatUtils;
     GaugeField1D u,v;
@@ -383,21 +383,23 @@ namespace FieldUtils{
     GaugeField1D u,v;
 
     diagPPslice(v,F,mu,nu);
-    u = shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Backward());
+    //u = shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Backward());
+    u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Forward()),rho,Backward());
     for(int site=0; site<G.Nvol(); ++site)
       G.data.set(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
-
+    
     diagPMslice(v,F,mu,rho);
     u = shiftField(shiftField(DirSlice(F,nu),mu, Forward()),rho,Backward());
     for(int site=0; site<G.Nvol(); ++site)
       G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
-
+    
     diagPMslice(v,F,nu,rho);
-    u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Forward()),
-		   rho,Backward());
+    //u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Forward()),
+    //rho,Backward());
+    u = shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Backward());
     for(int site=0; site<G.Nvol(); ++site)
       G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
-
+    
     G /=3.0;
   }
 
@@ -458,22 +460,24 @@ namespace FieldUtils{
     u = shiftField(shiftField(shiftField(DirSlice(F,sgm),mu,Forward()),nu,Forward()),
 		   rho,Forward());
     for(int site=0; site<G.Nvol(); ++site)
-      G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
+      G.data.set(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
 
     diagPPPslice(v,F,mu,nu,sgm);
-    u = shiftField(shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Forward()),
+    u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Forward()),
 		   sgm,Forward());
+    //u = shiftField(shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Forward()),
+    //sgm,Forward());
     for(int site=0; site<G.Nvol(); ++site)
       G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
 
     diagPPPslice(v,F,mu,rho,sgm);
-    u = shiftField(shiftField(shiftField(DirSlice(F,nu),rho,Forward()),mu,Forward()),
+    u = shiftField(shiftField(shiftField(DirSlice(F,nu),mu,Forward()),rho,Forward()),
 		   sgm,Forward());
     for(int site=0; site<G.Nvol(); ++site)
       G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
 
     diagPPPslice(v,F,nu,rho,sgm);
-    u = shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),nu,Forward()),
+    u = shiftField(shiftField(shiftField(DirSlice(F,mu),nu,Forward()),rho,Forward()),
 		   sgm,Forward());
     for(int site=0; site<G.Nvol(); ++site)
       G.data.add(G.format.islice(site),(mat(v,site)*mat(u,site)).getva());
@@ -520,7 +524,7 @@ namespace FieldUtils{
     u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,sgm),mu,Forward()),
 					 nu,Forward()),rho,Backward()),sgm,Backward());
     for(int site=0; site<G.Nvol(); ++site)
-      G.data.add(G.format.islice(site),(mat(v,site) *mat_dag(u,site)).getva());
+      G.data.set(G.format.islice(site),(mat(v,site) *mat_dag(u,site)).getva());
 
     diagPPMslice(v,F,mu,nu,sgm);
     u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Forward()),
@@ -582,7 +586,7 @@ namespace FieldUtils{
     u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,sgm),mu,Backward()),
 					 nu,Backward()),rho,Backward()),sgm,Backward());
     for(int site=0; site<G.Nvol(); ++site)
-      G.data.add(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
+      G.data.set(G.format.islice(site),(mat(v,site)*mat_dag(u,site)).getva());
 
     diagMMMslice(v,F,mu,nu,sgm);
     u = shiftField(shiftField(shiftField(shiftField(DirSlice(F,rho),mu,Backward()),

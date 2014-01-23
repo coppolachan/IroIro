@@ -101,12 +101,12 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 	the Lanczos factrization. However, we take a conservative way.*/
 
       Field Av = opr_->mult(Vp[i]);
-      double vAv = Vp[i]*Av;     
-      double vv = Vp[i]*Vp[i];   
-      tta[i] = vAv/vv;                
+      double norm = Av.norm();
+      double vAv = Vp[i]*Av;
+      double vv = Vp[i]*Vp[i];
+      tta[i] = vAv/vv;
       Av -= tta[i]*Vp[i];
-      double res = Av*Av;
-      res = sqrt(res);
+      double res = Av.norm()/norm;
 
       CCIO::cout<<" ["<<setw( 3)<<setiosflags(ios_base::right)<<i<<"] ";
       CCIO::cout<<      setw(25)<<setiosflags(ios_base::left) <<tta[i];
