@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2013-12-18 15:22:04 cossu>
+# Time-stamp: <2014-01-23 18:49:05 noaki>
 
 
 VPATH = @srcdir@
@@ -774,6 +774,7 @@ include_HEADERS = tests.hpp			\
 				test_HeatBath.hpp               \
 				test_Solver_BFM.hpp		\
                                 test_DWF.hpp			\
+                                test_LapH.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\
 				test_Laplacian.hpp	
 
