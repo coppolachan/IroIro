@@ -74,7 +74,7 @@ namespace FieldUtils{
   }
 
 #if defined IBM_BGQ_WILSON  || defined SR16K_WILSON
-  void reunit_ALINE(double* out, double* in) {
+  void reunit_ALIGNED(double* out, double* in) {
     double nrm_i;
     for(int a=0; a<NC_; ++a){
       nrm_i =0.0;
@@ -150,7 +150,7 @@ namespace FieldUtils{
       BGQThread_Barrier(0,nid);
       for(int mu=0; mu<G.Nex(); ++mu)
 	for(int site=is; site<is+ns; ++site)
-	  reunit_ALINE(temp_ptr+(site+Nvol*mu)*Ncc,
+	  reunit_ALIGNED(temp_ptr+(site+Nvol*mu)*Ncc,
 		       temp2_ptr+(site+Nvol*mu)*Ncc);
       //#pragma omp barrier  
       BGQThread_Barrier(0,nid);
@@ -160,7 +160,7 @@ namespace FieldUtils{
       BGQThread_Barrier(0,nid);
       for(int mu=0; mu<G.Nex(); ++mu)
 	for(int site=is; site<is+ns; ++site)
-	  reunit_ALINE(U_ptr+(site+Nvol*mu)*Ncc,
+	  reunit_ALIGNED(U_ptr+(site+Nvol*mu)*Ncc,
 		       temp2_ptr+(site+Nvol*mu)*Ncc);
     }
   } 
@@ -191,13 +191,13 @@ namespace FieldUtils{
     }
 
     for(int nx=0; nx<ns2; ++nx)
-      reunit_ALINE(temp_ptr+nx*Ncc,temp2_ptr+nx*Ncc);
+      reunit_ALIGNED(temp_ptr+nx*Ncc,temp2_ptr+nx*Ncc);
 
     //temp = ReUnit(temp2);
     SRWilsonSU3_MatMult_NN(temp2_ptr,temp_ptr,U_ptr,ns2);
 
     for(int nx=0; nx<ns2; ++nx)
-      reunit_ALINE(U_ptr+nx*Ncc,temp2_ptr+nx*Ncc);
+      reunit_ALIGNED(U_ptr+nx*Ncc,temp2_ptr+nx*Ncc);
 
     //U = ReUnit(temp2);
   } 
@@ -284,7 +284,7 @@ namespace FieldUtils{
 
 #if defined IBM_BGQ_WILSON || defined SR16K_WILSON
   //assumes some ordering of the matrices
-  void DirSlice_ALINE(GaugeField1D &G, const GaugeField& F, int dir){
+  void DirSliceALIGNED(GaugeField1D &G, const GaugeField& F, int dir){
     register int Nvol = F.Nvol();
     register int Ncc = F.Nin()/2;
 

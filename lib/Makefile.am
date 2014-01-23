@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-12-24 21:16:03 noaki>
+# Time-stamp: <2014-01-23 18:17:54 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -25,7 +25,6 @@ if USE_MPI
 
 if IBM_BGQ
 # NB: Libraries ordering is essential
-#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 OPTLIB += -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 
 COMMUNICATOR_SRC = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
@@ -132,6 +131,7 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
                 Dirac_ops/Architecture_Optimized/dirac_wilson_Brillouin_BGQ.code    	\
+                Dirac_ops/Architecture_Optimized/dirac_staggered_EvenOdd_Adjoint_BGQ.code \
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\

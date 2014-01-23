@@ -2,7 +2,7 @@
   @file action_gauge_rect.cpp
   @brief Definition of the ActionGaugeRect class
 
-  Time-stamp: <2013-10-23 14:21:51 noaki>
+  Time-stamp: <2014-01-15 14:09:29 cossu>
 */
 
 #include "action_gauge_rect.hpp"
@@ -10,9 +10,12 @@
 #include "Tools/fieldUtils.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 #include "include/messages_macros.hpp"
+#include "Measurements/GaugeM/polyakovLoop.hpp"
 
 using namespace SUNmatUtils;
 using namespace FieldUtils;
+
+
 
 double ActionGaugeRect::calc_H(){
   using namespace Mapping;
@@ -87,6 +90,13 @@ double ActionGaugeRect::calc_H(){
   _Message(ACTION_VERB_LEVEL, "    [ActionGaugeRect] H = "<<Hgauge<<"\n");
   _Message(BASE_VERB_LEVEL,   "    [ActionGaugeRect] Plaquette = "
 	   << plaq/(Nvol_*NP*NDIM_*(NDIM_-1.0)/2.0) << "\n");
+
+  //Measure other observables
+  
+  PolyakovLoop PLmeas(TDIR);
+  std::complex<double> pl = PLmeas.calc_SUN(*u_);
+  _Message(ACTION_VERB_LEVEL,"    [ActionGaugeRect] PL = "<<pl.real()<< "  "<< pl.imag() << "\n");
+
   return Hgauge;
 }
 

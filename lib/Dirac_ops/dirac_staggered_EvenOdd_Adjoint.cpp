@@ -35,11 +35,6 @@ void (Dirac_staggered_EvenOdd_Adjoint::*Dirac_staggered_EvenOdd_Adjoint::
    &Dirac_staggered_EvenOdd_Adjoint::mult_Dfull_dag,};
 
 void Dirac_staggered_EvenOdd_Adjoint::set_ustag(){
-  /*
-  Staples stpl;
-  double plaq = stpl.plaquette(GaugeField(*u_));
-  CCIO::cout<<"Dirac_staggered_EvenOdd_Adjoint::set_ustag   plaq="<<plaq<<"\n";
-  */
   for(int mu=0; mu<Ndim_; ++mu){
     for(int hs=0; hs<Nvh_; ++hs){
       ue_.data.set(gf_.islice(hs,mu),
@@ -55,57 +50,11 @@ void Dirac_staggered_EvenOdd_Adjoint::set_ustag(){
   if(bdry_) bdry_->apply_bc(ue_,uo_);
 }
 
-#if 1
+#ifdef IBM_BGQ_WILSON
+#include "Architecture_Optimized/dirac_staggered_EvenOdd_Adjoint_BGQ.code"
+#else
 #include "dirac_staggered_EvenOdd_Adjoint_improved.code"
 #endif 
-
-#if 0
-using namespace SUNadjVecUtils;
-
-void Dirac_staggered_EvenOdd_Adjoint::
-multPeo(Field& we,const Field& fo,int mu)const{
-  AdjFermionField1sp ft = shiftField_eo(AdjFermionField1sp(fo),mu,Forward());
-  for(int hs=0; hs<Nvh_; ++hs) 
-    we.add(ff_.islice(hs),(mat(ue_,hs,mu)*vec(ft,hs)).getva());
-}
-
-void Dirac_staggered_EvenOdd_Adjoint::
-multPoe(Field& wo,const Field& fe,int mu)const{
-  AdjFermionField1sp ft = shiftField_oe(AdjFermionField1sp(fe),mu,Forward());
-  for(int hs=0; hs<Nvh_; ++hs)
-    wo.add(ff_.islice(hs),(mat(uo_,hs,mu)*vec(ft,hs)).getva());
-}
-
-const Field Dirac_staggered_EvenOdd_Adjoint::mult_eo(const Field& fo)const{
-  Field we(fsize_);
-  for(int mu=0; mu<Ndim_; ++mu){
-    multPeo(we,fo,mu);           //forward differenciation
-    
-    AdjFermionField1sp ft(Nvh_);    
-    for(int hs=0; hs<Nvh_; ++hs) //backward differenciation
-      ft.data.set(ff_.islice(hs),
-		  (mat_dag(uo_,hs,mu)*SUNadjVec(fo[ff_.islice(hs)])).getva());
-
-    we -= shiftField_eo(ft,mu,Backward()).data;
-  }
-  return we;
-}
-
-const Field Dirac_staggered_EvenOdd_Adjoint::mult_oe(const Field& fe)const{
-  Field wo(fsize_);
-  for(int mu=0; mu<Ndim_; ++mu){
-    multPoe(wo,fe,mu);           //forward differenciation
-    
-    AdjFermionField1sp ft(Nvh_);    
-    for(int hs=0; hs<Nvh_; ++hs) //backward differenciation
-      ft.data.set(ff_.islice(hs),
-		  (mat_dag(ue_,hs,mu)*SUNadjVec(fe[ff_.islice(hs)])).getva());
-
-    wo -= shiftField_oe(ft,mu,Backward()).data;
-  }
-  return wo;
-}
-#endif //0
 
 const Field Dirac_staggered_EvenOdd_Adjoint::mult_eo_dag(const Field& fe) const{
   return -Field(mult_oe(fe));
@@ -156,6 +105,7 @@ void Dirac_staggered_EvenOdd_Adjoint::mult_Dfull_dag(Field& w,const Field& f) co
 const Field Dirac_staggered_EvenOdd_Adjoint::
 md_force(const Field& eta,const Field& zeta) const{
   Field fce(gsize_);
+
 
   for(int mu=0; mu<Ndim_; ++mu){
     Field etah(fsize_),zetah(fsize_);

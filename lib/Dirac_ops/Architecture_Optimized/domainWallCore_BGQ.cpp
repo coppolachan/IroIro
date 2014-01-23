@@ -2,8 +2,7 @@
  * @file domainWallCore_BGQ.cpp
  *
  * @brief Definition of some BGQ optimized methods for domainWallCore (5d operator)
- * Time-stamp: <2014-01-20 12:45:33 noaki>
-
+ * Time-stamp: <2014-01-23 17:08:07 noaki>
  *-------------------------------------------------------------------------*/
 #include "domainWallCore_BGQ.hpp"
 #include "Tools/Architecture_Optimized/utils_BGQ.hpp"
@@ -364,23 +363,24 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
       //  lpf *= -prms_.mq_;
       if(s == 0)      BGWilsonLA_MultScalar(lpf_ptr+is,lpf_ptr+is,-prms_.mq_,ns);
       BGWilsonLA_Proj_M(lmf_ptr+is,phi_ptr +((s+1)%N5_)*Nvol+is,ns); 
+<<<<<<< HEAD:lib/Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
 
       //lmf *= -prms_.mq_;
       if(s == N5_-1)  BGWilsonLA_MultScalar(lmf_ptr+is, lmf_ptr+is,-prms_.mq_,ns);
+=======
+      if(s == N5_-1)  BGWilsonLA_MultScalar(lmf_ptr+is, lmf_ptr+is,-mq_,ns);//  lmf *= -mq_;
+>>>>>>> origin/master:lib/Dirac_ops/dirac_DomainWall_BGQ.code
       
       BGWilsonLA_Add(lpf_ptr+is,lmf_ptr+is,ns);
       BGWilsonLA_MultScalar(w_ptr+is, phi_ptr+s*Nvol+is, prms_.bs_[s],ns);
       BGWilsonLA_MultAddScalar(w_ptr+is, lpf_ptr+is, prms_.cs_[s],ns);
 
-      //Dw_->md_force_p(fce,w,get4d(psi,s));
-      
       zeta_ptr = (double*)(psi_ptr+s*Nvol);
       for(int mu=0; mu<NDIM_; ++mu){
 	BGWilson_MultEO_Dir(xie_ptr,pU,w_ptr,1.0,EOtag_,BGWILSON_DIRAC,mu,BGWILSON_FORWARD);
 	
 	for(int site=is; site<is+ns; ++site){
 	  unsigned int index = 2*NC_*ND_*site;
-	  //unsigned int g_idx = gf_.index(0,global_sites[site],mu); 
 	  unsigned int g_idx = 2*NC_*NC_*(global_sites[site]+2*Nvol*mu); 
 	  for(int a=0; a<NC_; ++a){
 	    for(int b=0; b<NC_; ++b){
@@ -397,8 +397,14 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
 	} //site
       }//mu
       BGQThread_Barrier(0,nid);
+<<<<<<< HEAD:lib/Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
     }
   }
+=======
+    }//s
+  }//omp
+
+>>>>>>> origin/master:lib/Dirac_ops/dirac_DomainWall_BGQ.code
 } 
 
 /*! @brief contribution to the MD-force from backward difference */
@@ -435,6 +441,7 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
     int ns = Nvol/nid;
     int is = omp_get_thread_num()*ns; 
       
+<<<<<<< HEAD:lib/Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
     for(int s=0; s<N5_; ++s){
       BGWilsonLA_Proj_P(lpf_ptr+is,phi_ptr+((s+N5_-1)%N5_)*Nvol+is,ns); 
       // lpf *= -prms_.mq_;
@@ -448,10 +455,25 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
       BGWilsonLA_MultAddScalar(w_ptr+is, lpf_ptr+is, prms_.cs_[s],ns);
 	
       //Dw_->md_force_m(fce,w,get4d(psi,s));
+=======
+      for(int s=0; s<N5_; ++s){
+	BGWilsonLA_Proj_P(lpf_ptr+is,phi_ptr+((s+N5_-1)%N5_)*Nvol+is,ns); 
+	if(s == 0)     BGWilsonLA_MultScalar(lpf_ptr+is, lpf_ptr+is,-mq_,ns);// lpf *= -mq_;
+	BGWilsonLA_Proj_M(lmf_ptr+is,phi_ptr +((s+1)%N5_)*Nvol+is,ns); 
+	if(s == N5_-1) BGWilsonLA_MultScalar(lmf_ptr+is, lmf_ptr+is,-mq_,ns);//lmf *= -mq_;
+	
+	BGWilsonLA_Add(lpf_ptr+is,lmf_ptr+is,ns);
+	BGWilsonLA_MultScalar(w_ptr+is, phi_ptr+s*Nvol+is, Params_.bs_[s],ns);
+	BGWilsonLA_MultAddScalar(w_ptr+is, lpf_ptr+is, Params_.cs_[s],ns);
+	
+	BGWilsonLA_MultGamma5((Spinor*)(zt5_ptr)+is, psi_ptr+s*Nvol+is, ns);
+	BGWilsonLA_MultGamma5((Spinor*)(et5_ptr)+is, w_ptr+is, ns);
+>>>>>>> origin/master:lib/Dirac_ops/dirac_DomainWall_BGQ.code
 	
       BGWilsonLA_MultGamma5((Spinor*)(zt5_ptr)+is, psi_ptr+s*Nvol+is, ns);
       BGWilsonLA_MultGamma5((Spinor*)(et5_ptr)+is, w_ptr+is, ns);
 	
+<<<<<<< HEAD:lib/Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
       for(int mu=0; mu<NDIM_; ++mu){
 	BGWilson_MultEO_Dir(xie_ptr,pU,zt5_ptr,1.0,EOtag_,BGWILSON_DIRAC,mu,BGWILSON_FORWARD);
 	
@@ -473,6 +495,40 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
 	} //site
       }//mu
     }
+=======
+	BGQThread_Barrier(0,nid);
+      }//s
+    }//omp
+
+}  
+
+void Dirac_optimalDomainWall::mult_hop_omp(Field& w5, const void* f5) const{
+  int nid = omp_get_num_threads();
+  int tid = omp_get_thread_num();
+
+  BGQThread_Barrier(0,nid);
+  if(tid == 0) BGWilson_DW_Init(N5_,mq_,M0_, 
+				(double*)&Params_.dp_[0],(double*)&Params_.dm_[0],
+				(double*)&Params_.bs_[0],(double*)&Params_.cs_[0],
+				(double*)&Params_.es_[0],(double*)&Params_.fs_[0]);
+  BGQThread_Barrier(0,nid);
+  double kappa = 0.5/(4.0+M0_);
+  double* u = const_cast<Field *>(Dw_->getGaugeField_ptr())->getaddr(0);
+  BGWilson_DW_Mult_hop(w5.getaddr(0),(void*)u,(void*)f5,kappa,BGWILSON_DIRAC);
+}
+
+void Dirac_optimalDomainWall::mult_hop_dag_omp(Field& w5, const void* f5) const{
+  int nid = omp_get_num_threads();
+  int tid = omp_get_thread_num();
+
+  BGQThread_Barrier(0,nid);
+
+  if(tid == 0) {
+    BGWilson_DW_Init(N5_,mq_,M0_,
+		     (double*)&Params_.dp_[0],(double*)&Params_.dm_[0],
+		     (double*)&Params_.bs_[0],(double*)&Params_.cs_[0],
+		     (double*)&Params_.es_[0],(double*)&Params_.fs_[0]);
+>>>>>>> origin/master:lib/Dirac_ops/dirac_DomainWall_BGQ.code
   }
 }  
 

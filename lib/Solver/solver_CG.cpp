@@ -2,7 +2,7 @@
  * @file solver_CG.cpp
  * @brief Definition of Solver_CG class member functions
  *
- * Time-stamp: <2013-11-29 18:34:41 noaki>
+ * Time-stamp: <2014-01-23 17:05:39 noaki>
  */
 
 #include <iostream>
@@ -13,6 +13,11 @@
 #include "include/messages_macros.hpp"
 #include "include/errors.hpp"
 #include "solver_CG.hpp"
+#include <omp.h>
+
+#ifdef IBM_BGQ_WILSON
+#include "Tools/utils_BGQ.hpp"
+#endif
 
 
 /*!
@@ -31,21 +36,23 @@ SolverOutput Solver_CG::solve(Field& xq,const Field& b) const{
   double kernel_timing = 0.0;
 
   TIMING_START;
-  
+
   Field x = b;//initial condition
   Field r = b;//initial residual
   r -= opr_->mult(x);
+
+
   Field p = r;
   double rr = r*r;// (r,r)
   double snorm = b.norm();
   snorm = 1.0/(snorm*snorm);//need the square of the norm
-
+  
   _Message(SOLV_ITER_VERB_LEVEL, " Snorm = "<< snorm<<"\n" );
   _Message(SOLV_ITER_VERB_LEVEL, " Init  = "<< rr*snorm<<"\n" );
 
   for(int it = 0; it < Params.MaxIter; ++it){
     solve_step(r,p,x,rr, kernel_timing);
-    _Message(SOLV_ITER_VERB_LEVEL, "   "<< std::setw(5)<< "["<<it<<"] "
+ _Message(SOLV_ITER_VERB_LEVEL, "   "<< std::setw(5)<< "["<<it<<"] "
 	     << std::setw(20) << rr*snorm<< "\n");
     if(rr*snorm < Params.GoalPrecision){
       Out.Iterations = it;
@@ -84,13 +91,14 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr,
   gettimeofday(&start,NULL);
 
   Field s = opr_->mult(p);//Ap
-
   gettimeofday(&end,NULL);
 
   opr_timing += (end.tv_sec - start.tv_sec)*1000.0;
   opr_timing += (end.tv_usec - start.tv_usec) / 1000.0;   // us to ms
 
   double* s_ptr = s.getaddr(0);
+  /*
+    // Disabled because does not work with staggered fermions
 #ifdef IBM_BGQ_WILSON
   ///////////////////////////////////////////////////
   int v_size = x.size()/24; // << assumes 24 elements
@@ -113,24 +121,42 @@ inline void Solver_CG::solve_step(Field& r,Field& p,Field& x,double& rr,
   BGWilsonLA_MultScalar_Add(p_ptr,r_ptr,rr/rrp,v_size);
   /////////////////////////////////////////////////////
 #else
+  */
   double pap = p*s;// (p,Ap)
   double rrp = rr;
+  double omprr = rr;
   register double cr = rrp/pap;// (r,r)/(p,Ap)
-  rr = 0.0;
+  omprr = 0.0;
 
-  for (int i = 0; i < x.size(); ++i){
-    x_ptr[i] += cr * p_ptr[i];    // x = x + cr * p
-    r_ptr[i] -= cr * s_ptr[i];    // r_k = r_k - cr * Ap
-    rr += r_ptr[i]*r_ptr[i];      // rr = (r_k,r_k)
+#pragma omp parallel 
+  {
+    const int nid = omp_get_num_threads();
+    const int tid = omp_get_thread_num();
+    const int ns = x.size()/nid;
+    const int start = tid*ns;
+    const int end = (tid+1)*ns;
+    
+    for (int i = start; i < end; ++i){
+      x_ptr[i] += cr * p_ptr[i];    // x = x + cr * p
+      r_ptr[i] -= cr * s_ptr[i];    // r_k = r_k - cr * Ap
+    }
+#pragma omp for reduction(+:omprr)
+    for (int i = 0; i < x.size(); ++i){
+      omprr += r_ptr[i]*r_ptr[i];      // rr = (r_k,r_k)
+    }
   }
-  rr = Communicator::instance()->reduce_sum(rr);
+
+  rr = Communicator::instance()->reduce_sum(omprr);
   cr = rr/rrp;
+
   for(int i=0; i<p.size(); ++i)
     p_ptr[i] = p_ptr[i]*cr+r_ptr[i];
   
   //p *= rr/rrp; // p += p*(r_k,r_k)/(r,r)
   //p += r; // p = p + p*(r_k,r_k)/(r,r)
-#endif
+
+
+  //#endif
 }
 
 

@@ -58,7 +58,6 @@ target_triplet = @target@
 # Configure driven path selector
 
 # NB: Libraries ordering is essential
-#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_1 = -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 @IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_2 = -lbgqwilson3x4smp -lbgqthread
 @IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@@USE_MPI_TRUE@am__append_3 = -lbgqwilson3x4
@@ -704,7 +703,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-12-24 21:16:03 noaki>
+# Time-stamp: <2014-01-23 18:17:54 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -757,6 +756,7 @@ EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
                 Dirac_ops/Architecture_Optimized/dirac_wilson_Brillouin_BGQ.code    	\
+                Dirac_ops/Architecture_Optimized/dirac_staggered_EvenOdd_Adjoint_BGQ.code \
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\

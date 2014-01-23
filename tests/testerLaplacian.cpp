@@ -1,23 +1,19 @@
 //------------------------------------------------------------------------
 /*!
  * @file testerLapH.cpp 
- * @brief Main source code for testing the LapH classes
+ * @brief Main source code for testing the Laplacian class
  *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
- Time-stamp: <2013-12-18 15:34:20 cossu>
  */
 //------------------------------------------------------------------------
 #include "tests.hpp"
-#include "test_LapH.hpp"
+#include "test_Laplacian.hpp"
 
 int main(int argc, char* argv[]){
 
-  CREATE_TEST(Test_LapH_Solver);
+  CREATE_TEST(Test_LapH);
   RUN_TEST;
-  CLEAR_TEST; 
-
-  //CREATE_RUN_TEST(Test_LapH_Solver);
-  //CLEAR_TEST;
+  CLEAR_TEST;  
 
   return 0;
 }

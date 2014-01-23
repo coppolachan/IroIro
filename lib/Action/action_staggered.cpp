@@ -39,8 +39,11 @@ void Action_staggered::init(const RandNum& rand){
   MPrand::mp_get_gauss(ph,rand);
   phi_= ph;
 
+  CCIO::cout << "phi1 norm: "<< phi_.norm() << "\n";
   MPrand::mp_get_gauss(ph,rand);
   phi_-= D_->mult_eo(Field(ph));
+
+  CCIO::cout << "phi2 norm: "<< phi_.norm() << "\n";
 }
 
 double Action_staggered::calc_H(){ 

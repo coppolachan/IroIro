@@ -1,10 +1,11 @@
 /*!
   @file siteIndexEO.cpp
   @brief Declares the interface for site indexing EVEN-ODD
-  Time-stamp: <2013-04-24 10:37:13 noaki>
+  Time-stamp: <2013-12-12 12:12:56 cossu>
 */
 #include "siteIndex.hpp"
 #include "Communicator/communicator.hpp"
+#include "include/commonPrms.hpp"
 
 //std::vector<int> SiteIndex::global_site_;
 
