@@ -2,7 +2,7 @@
  * @file dirac_DomainWall_BGQ.code
  *
  * @brief Definition of some BGQ optimized methods for Dirac_optimalDomainWall (5d operator)
- * Time-stamp: <2014-01-23 10:07:05 cossu>
+ * Time-stamp: <2013-12-12 12:09:35 cossu>
  *-------------------------------------------------------------------------*/
 #include "Tools/utils_BGQ.hpp"
 
@@ -296,7 +296,8 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
 
   Field lpf(f4size_), lmf(f4size_);
   Field w(f5size_);
-
+ 
+  
   Spinor* lpf_ptr = (Spinor*)lpf.getaddr(0);
   Spinor* lmf_ptr = (Spinor*)lmf.getaddr(0);
   Spinor* w_ptr = (Spinor*)w.getaddr(0);
@@ -314,26 +315,28 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
   else if (EOtag_ == 2)
     global_sites = SiteIndex_EvenOdd::instance()->osec();
 
-  // hack to solve the problems running at Nt=12 
-  //#pragma omp parallel 
-    // {
+ #pragma omp parallel 
+  {
     int nid = omp_get_num_threads();
     int is = omp_get_thread_num()*Nvol/nid;
     int ns = Nvol/nid;
-    
+
     for(int s=0; s<N5_; ++s){
+      
+      
       BGWilsonLA_Proj_P(lpf_ptr+is,phi_ptr+((s+N5_-1)%N5_)*Nvol+is,ns); 
-      if(s == 0)      BGWilsonLA_MultScalar(lpf_ptr+is, lpf_ptr+is,-mq_,ns);//lpf *= -mq_;
+      if(s == 0)      BGWilsonLA_MultScalar(lpf_ptr+is, lpf_ptr+is,-mq_,ns);//  lpf *= -mq_;
       BGWilsonLA_Proj_M(lmf_ptr+is,phi_ptr +((s+1)%N5_)*Nvol+is,ns); 
       if(s == N5_-1)  BGWilsonLA_MultScalar(lmf_ptr+is, lmf_ptr+is,-mq_,ns);//lmf *= -mq_;
       
       BGWilsonLA_Add(lpf_ptr+is,lmf_ptr+is,ns);
       BGWilsonLA_MultScalar(w_ptr+is, phi_ptr+s*Nvol+is, Params_.bs_[s],ns);
       BGWilsonLA_MultAddScalar(w_ptr+is, lpf_ptr+is, Params_.cs_[s],ns);
+
+      //Dw_->md_force_p(fce,w,get4d(psi,s));
       
       zeta_ptr = (double*)(psi_ptr+s*Nvol);
       for(int mu=0; mu<NDIM_; ++mu){
-	
 	BGWilson_MultEO_Dir(xie_ptr, pU, w_ptr,  1.0, EOtag_, BGWILSON_DIRAC, mu, BGWILSON_FORWARD);
 	
 	for(int site=is; site<is+ns; ++site){
@@ -353,14 +356,15 @@ md_force_p(Field& fce,const Field& phi,const Field& psi)const{
 	    }//b
 	  }//a 
 	} //site
-	
       }//mu
       
-      //BGQThread_Barrier(0,nid);
+      BGQThread_Barrier(0,nid);
       
-    }//s
-    //}//omp parallel
-  
+
+           
+    }
+  }
+
 } 
 
 /*! @brief contribution to the MD-force from backward difference */
@@ -393,11 +397,11 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
 
 
 
-  //#pragma omp parallel 
-  //  {
-  int nid = 1;//omp_get_num_threads();
-  int ns = Nvol/nid;
-  int is = 0;//omp_get_thread_num()*ns; 
+#pragma omp parallel 
+    {
+      int nid = omp_get_num_threads();
+      int ns = Nvol/nid;
+      int is = omp_get_thread_num()*ns; 
       
       for(int s=0; s<N5_; ++s){
 	BGWilsonLA_Proj_P(lpf_ptr+is,phi_ptr+((s+N5_-1)%N5_)*Nvol+is,ns); 
@@ -436,9 +440,9 @@ md_force_m(Field& fce,const Field& phi,const Field& psi)const{
 	  
 	}//mu
 	
-	//BGQThread_Barrier(0,nid);
-      }//s
-      //}//omp
+	BGQThread_Barrier(0,nid);
+      }
+    }
 
 }  
 

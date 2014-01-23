@@ -10,7 +10,7 @@
 
 
 ////////////// Temporary hack
-#define ANTIPERIODIC_BC 
+//#define ANTIPERIODIC_BC 
 
 
 //::::::::::::::::::::::::::::::::Observer
