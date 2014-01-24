@@ -2,7 +2,7 @@
   @file action_gauge_wilson_force.sr16k.cpp
   @brief Specialization of the md_force method for the ActionGaugeWilson class
   This is the SR16K optimized version
-  Time-stamp: <2013-12-18 12:07:30 noaki>
+  Time-stamp: <2014-01-24 14:15:18 noaki>
 */
 #include "Action/action_gauge_wilson.hpp"
 #include "Tools/fieldUtils.hpp"
@@ -31,8 +31,8 @@ GaugeField ActionGaugeWilson::md_force(){
       if(n != m){
 	//Explicit staple calculation avoiding temporaries
 
-	DirSlice_ALINE(v, *u_, m);
-	DirSlice_ALINE(w, *u_, n);
+	DirSlice_ALINED(v, *u_, m);
+	DirSlice_ALINED(w, *u_, n);
 
 	shiftField(VupNu,v_ptr,n,Forward());
 	shiftField(WupMu,w_ptr,m,Forward());

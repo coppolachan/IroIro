@@ -16,7 +16,7 @@
 
 #ifdef SR16K_WILSON
 #include "srmwilson.h"
-#include "srmwilson_cmpl.hpp" 
+#include "Architecture_Optimized/srmwilson_cmpl.hpp" 
 #endif
 
 class RandNum;
@@ -284,7 +284,7 @@ namespace FieldUtils{
 
 #if defined IBM_BGQ_WILSON || defined SR16K_WILSON
   //assumes some ordering of the matrices
-  void DirSliceALIGNED(GaugeField1D &G, const GaugeField& F, int dir){
+  void DirSliceALINED(GaugeField1D &G, const GaugeField& F, int dir){
     register int Nvol = F.Nvol();
     register int Ncc = F.Nin()/2;
 
