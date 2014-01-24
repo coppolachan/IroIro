@@ -1,6 +1,6 @@
 /*! @file dirac_BFM_wrapper_factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2014-01-24 13:43:48 neo>
+ * Time-stamp: <2014-01-24 14:53:45 neo>
  */
 
 #include "dirac_BFM_wrapper_factory.hpp"
@@ -44,7 +44,7 @@ DiracDWF4dBFMeoFactory::DiracDWF4dBFMeoFactory(XML::node node):Dirac_node_(node)
   SolverFactory_.save(new SolverCG_DWF_opt_Factory(Solver_node_));
 }
 
-Dirac_optimalDomainWall_4D* DiracDWF4dBFMeoFactory::createDirac(InputConfig& input){
+Dirac_DomainWall_4D* DiracDWF4dBFMeoFactory::createDirac(InputConfig& input){
   BFM_Kernel_.save( DiracBFMFactory_.get()->getDirac(input));
   BFM_KernelPV_.save( DiracBFMFactory_.get()->getDiracPV(input));
 
@@ -66,6 +66,6 @@ Dirac_optimalDomainWall_4D* DiracDWF4dBFMeoFactory::createDirac(InputConfig& inp
 
   XML::node current_node = node_BFM_;  
   XML::descend(current_node, "Operator", MANDATORY);  
-  return new Dirac_optimalDomainWall_4D_eoSolv(current_node,Inv_.get(),InvPV_.get());
+  return new Dirac_DomainWall_4D_eoSolv(current_node,Inv_.get(),InvPV_.get());
 }
 

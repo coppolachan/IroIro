@@ -1,17 +1,15 @@
 /*! @filename dirac_wilson_Brillouin.hpp
  * @brief declaration of Dirac_Wilson_Brillouin class 
- * Time-stamp: <2013-11-20 21:46:56 noaki>
+ * Time-stamp: <2013-12-18 16:07:37 noaki>
  ----------------------------------------------------------------------*/
 #ifndef DIRAC_WILSON_BRILLOUIN_INCLUDED
 #define DIRAC_WILSON_BRILLOUIN_INCLUDED
 
-#include "wilsonLikeUtils.hpp"
 #include "dirac_WilsonLike.hpp"
+#include "wilsonLikeUtils.hpp"
 #include "include/pugi_interface.h"
 #include "Geometry/siteIndex.hpp"
 #include "Geometry/siteMap.hpp"
-
-enum ImpType{Standard,Improved};
 
 class Dirac_Wilson_Brillouin: public DiracWilsonLike{
 private:
@@ -25,13 +23,6 @@ private:
   const gfmt_t gf_;
   const size_t fsize_;
   GammaMatrix dm_;
-
-  ///
-  Format::Format_G Wfmt_;
-  Field W_;
-  Format::Format_G Ffmt_;
-  Field F_;
-  ///
 
   int sr(int s,int c)const{return 2*(s*NC_+c);}
   int si(int s,int c)const{return 2*(s*NC_+c)+1;}
@@ -50,9 +41,6 @@ private:
   void mult_imp(Field&,const Field&)const;
   
   int sgm(int,int,int)const;
-  void Wsetup(const Field* u);
-  void Fsetup(const Field* u);
-
 public:
  /*! @brief constructor to create instance with normal site indexing */
   Dirac_Wilson_Brillouin(double mass,const Field* u,ImpType imp=Standard)
@@ -62,12 +50,7 @@ public:
      kbr_(1.0/(mass+15.0/8.0)),u_(u),
      comm_(Communicator::instance()),
      ff_(Nvol_),fsize_(ff_.size()),gf_(Nvol_),
-     Nin_(ff_.Nin()),Wfmt_(Nvol_,81),Ffmt_(Nvol_,6),
-     W_(Wfmt_.size()),F_(Ffmt_.size()){
-
-
-    Wsetup(u);
-    Fsetup(u);
+     Nin_(ff_.Nin()){
     //
     if(imp==Improved){
       kbr_= 1.0/(mass+225.0/128.0);
@@ -81,13 +64,7 @@ public:
      mult_core(NULL),u_(u),
      comm_(Communicator::instance()),
      ff_(Nvol_),fsize_(ff_.size()),gf_(Nvol_),
-     Nin_(ff_.Nin()),Wfmt_(Nvol_,81),Ffmt_(Nvol_,6),
-     W_(Wfmt_.size()),F_(Ffmt_.size()){
-
-    Wsetup(u);
-    Fsetup(u);
-
-    //
+     Nin_(ff_.Nin()){
     double mass;
     XML::read(node,"mass",mass,MANDATORY);
 

@@ -11,7 +11,7 @@
 #include "Tools/randNum_MT19937.h"
 //#include "Solver/solver_CG.h"
 #include "Solver/solver_BiCGStab.h"
-#include "Measurements/FermionicM/qprop_optimalDomainWall.hpp"
+#include "Measurements/FermionicM/qprop_DomainWall.hpp"
 #include "Measurements/FermionicM/mesonCorrel.h"
 #include "Measurements/FermionicM/source.h"
 
@@ -23,7 +23,7 @@
 using namespace std;
 using namespace Format;
 
-const Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D& DWF, Field& phi){
+const Field Test_ResMass::delta(const Dirac_DomainWall_4D& DWF, Field& phi){
   //Delta function = 1/4 * (1- sign^2(Hw))
   Field sign = DWF.signKernel(phi);
   Field delta = DWF.signKernel(sign); //sign^2(Hw)
@@ -32,11 +32,7 @@ const Field Test_ResMass::delta(const Dirac_optimalDomainWall_4D& DWF, Field& ph
   delta *= -0.25; // 1/4*(1-sign^2(Hw))
   
   return delta;
-  
 }
-
-
-
 
 int Test_ResMass::run(XML::node node) {
   // operator
@@ -48,17 +44,17 @@ int Test_ResMass::run(XML::node node) {
 
   Dirac_Wilson* Kernel = new Dirac_Wilson(mzero, &(conf_.U));
  
-  Dirac_optimalDomainWall Ddwf_5d(c, mq, omega, Kernel);
+  Dirac_DomainWall Ddwf_5d(c, mq, omega, Kernel);
   
   // quark propagator
   double stop_cond = 1.0e-24;
   int    Niter= 1000;
 
   //It follows a standard construction (factories will use a similar one)
-  Dirac_optimalDomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
+  Dirac_DomainWall Ddwf_PV(Ddwf_5d, PauliVillars);
   Solver* SolvDWF = new Solver_BiCGStab(stop_cond,Niter,new Fopr_DdagD(&Ddwf_5d));
   Solver* SolvPV  = new Solver_BiCGStab(stop_cond,Niter,new Fopr_DdagD(&Ddwf_PV));
-  Dirac_optimalDomainWall_4D DiracDWF_4d(Ddwf_5d,SolvDWF,SolvPV);
+  Dirac_DomainWall_4D DiracDWF_4d(Ddwf_5d,SolvDWF,SolvPV);
   QpropDWF QuarkPropagator(DiracDWF_4d);
   //////////////////////////////////// 
 

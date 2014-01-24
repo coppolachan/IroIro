@@ -27,7 +27,6 @@
 
 using namespace std;
 using namespace Format;
-using namespace DomainWallFermions;
 using namespace EvenOddUtils;
 
 typedef FermionField1sp ScalarField;
@@ -82,17 +81,17 @@ int Test_LapH_Solver::run()
   int max_iter = 600;
   
   // Constructs the 5D objects for the operator and the Pauli-Villars
-  Dirac_optimalDomainWall_EvenOdd Ddwf_eo(b,c,M0, mq,omega,&Dw_eo,&Dw_oe);
-  Dirac_optimalDomainWall_EvenOdd Ddpv_eo(b,c,M0,1.0,omega,&Dw_eo,&Dw_oe);
+  Dirac_DomainWall_EvenOdd Ddwf_eo(b,c,M0, mq,omega,&Dw_eo,&Dw_oe);
+  Dirac_DomainWall_EvenOdd Ddpv_eo(b,c,M0,1.0,omega,&Dw_eo,&Dw_oe);
   Fopr_DdagD DdagDdwf_eo(&Ddwf_eo);
   Fopr_DdagD DdagDdpv_eo(&Ddpv_eo);
   Solver_CG slv_dwf_eo(prec,max_iter,&DdagDdwf_eo);
   Solver_CG slv_dpv_eo(prec,max_iter,&DdagDdpv_eo); 
   Inverter_WilsonLike invDdwf(&Ddwf_eo,&slv_dwf_eo);
   Inverter_WilsonLike invDdpv(&Ddpv_eo,&slv_dpv_eo);
-  Dirac_optimalDomainWall_4D_eoSolv D4eo(N5,mq,&invDdwf,&invDdpv);
+  Dirac_DomainWall_4D_eoSolv D4eo(N5,mq,&invDdwf,&invDdpv);
   
-  /************************************************************************************/
+  /*************************************************************************/
   //
   // Generating The Source Vector 
   //

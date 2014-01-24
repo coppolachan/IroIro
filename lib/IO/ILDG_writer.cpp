@@ -3,7 +3,7 @@
  *
  * @brief Definition of the ILDGWriter class methods
  *
- * Time-stamp: <2013-09-13 10:21:13 cossu>
+ * Time-stamp: <2013-12-26 20:25:56 noaki>
  */
 
 #include "ILDG_writer.hpp"
@@ -42,7 +42,7 @@ namespace CCIO {
 
     n_uint64_t bytes_to_write = size*sizeof(double);
     n_uint64_t bytes = bytes_to_write;
-    CCIO::cout << "bytes "<<bytes<<"\n";
+    //CCIO::cout << "bytes "<<bytes<<"\n";
     status = limeWriteRecordData((char*)buffer, &bytes, LimeW);
     if( status != LIME_SUCCESS ) { 
       CCIO::cout << "LIME write error "<<status<<"\n";

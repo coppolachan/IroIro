@@ -3,6 +3,8 @@
 
 #include "include/macros.hpp"
 
+enum ImpType{Standard,Improved};
+
 class GammaMatrix{
   int Ncol_;
   int r0(int c)const{return 2*c;}

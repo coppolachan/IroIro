@@ -28,7 +28,6 @@ void WilsonFlow::update_U(const GaugeField& Z)const{
 
 #elif defined SR16K_WILSON
   ExponentiateMult_SR16K(U_,Z,eps,Nexp_);
-
 #else
   int Nvol = CommonPrms::instance()->Nvol();
 

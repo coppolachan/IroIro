@@ -6,6 +6,7 @@
 #ifndef SITEINDEX_INCLUDED
 #define SITEINDEX_INCLUDED
 
+#include "commonPrms.hpp"
 #include<vector>
 
 class SiteIndex{

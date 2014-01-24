@@ -1,10 +1,10 @@
 /*!
  * @file dirac_DomainWall_EvenOdd.hpp
- * @brief Declaration of class Dirac_optimalDomainWall_EvenOdd (5d operator)
- Time-stamp: <2013-10-29 10:58:03 cossu>
+ * @brief Declaration of class Dirac_DomainWall_EvenOdd (5d operator)
+ Time-stamp: <2014-01-24 14:48:20 neo>
  */
-#ifndef DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
-#define DIRAC_OPTIMALDOMAINWALL_EVENODD_INCLUDED
+#ifndef DIRAC_DOMAINWALL_EVENODD_INCLUDED
+#define DIRAC_DOMAINWALL_EVENODD_INCLUDED
 
 #include "dirac_DomainWall.hpp"
 
@@ -18,42 +18,43 @@ static  double multdag_timer;
  * @brief Defines the 5d Domain Wall operator with even/odd site indexing
  */
 
-class Dirac_optimalDomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
+class Dirac_DomainWall_EvenOdd : public DiracWilsonLike_EvenOdd {
 
-  const Dirac_optimalDomainWall Deo_;
-  const Dirac_optimalDomainWall Doe_;
+  const Dirac_DomainWall Deo_;
+  const Dirac_DomainWall Doe_;
 
   void md_force_eo(Field&,const Field&,const Field&)const;
   void md_force_oe(Field&,const Field&,const Field&)const;
   
-  Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd&);
+  Dirac_DomainWall_EvenOdd(const Dirac_DomainWall_EvenOdd&);
   /*!< simple copy is prohibited */
 
 public:
-  Dirac_optimalDomainWall_EvenOdd(XML::node DWF_node,
-				  DiracWilsonLike_EvenOdd* Kernel,
-				  DWFType Type=Regular)
-    :Deo_(DWF_node,Kernel->getDeo(),DomainWallFermions::EvenOdd_tag(1),Type),
-     Doe_(DWF_node,Kernel->getDoe(),DomainWallFermions::EvenOdd_tag(2),Type){
+  Dirac_DomainWall_EvenOdd(XML::node dw_node,
+			   DiracWilsonLike_EvenOdd* Kernel,
+			   DWFType Type=Regular)
+    :Deo_(dw_node,Kernel->getDeo(),DWFutils::EvenOdd_tag(1),Type),
+     Doe_(dw_node,Kernel->getDoe(),DWFutils::EvenOdd_tag(2),Type){
     //
 #if VERBOSITY>DEBUG_VERB_LEVEL 
-    CCIO::cout<<"Dirac_optimalDomainWall_Evenodd created"<<std::endl;
+    CCIO::cout<<"Dirac_DomainWall_Evenodd created"<<std::endl;
 #endif
   }
 
   /*! @brief copy constractor to create Pauli-Villars operator */
-  Dirac_optimalDomainWall_EvenOdd(const Dirac_optimalDomainWall_EvenOdd& D, 
-				  DWFType Type=Regular)
-    :Deo_(D.Deo_,Type),Doe_(D.Doe_,Type){}
+  Dirac_DomainWall_EvenOdd(const Dirac_DomainWall_EvenOdd& D, 
+			   DWFType Type=Regular)
+    :Deo_(D.Deo_,DWFutils::EvenOdd_tag(),Type),
+     Doe_(D.Doe_,DWFutils::EvenOdd_tag(),Type){}
   
-  Dirac_optimalDomainWall_EvenOdd(double b,double c,double M0,double mq,
-				  const std::vector<double>& omega,
-				  const DiracWilsonLike* Keo,
-				  const DiracWilsonLike* Koe)
-    :Deo_(b,c,M0,mq,omega,Keo,DomainWallFermions::EvenOdd_tag(1)),
-     Doe_(b,c,M0,mq,omega,Koe,DomainWallFermions::EvenOdd_tag(2)){}
+  Dirac_DomainWall_EvenOdd(double b,double c,double M0,double mq,
+			   const std::vector<double>& omega,
+			   const DiracWilsonLike* Keo,
+			   const DiracWilsonLike* Koe)
+    :Deo_(b,c,M0,mq,omega,Keo,DWFutils::EvenOdd_tag(1)),
+     Doe_(b,c,M0,mq,omega,Koe,DWFutils::EvenOdd_tag(2)){}
   
-  ~Dirac_optimalDomainWall_EvenOdd(){
+  ~Dirac_DomainWall_EvenOdd(){
     CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";
     CCIO::cout << "DWF Timer multdag: "<< multdag_timer << "\n";
   }

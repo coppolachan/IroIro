@@ -2,7 +2,7 @@
  * @file utils_BGQ.hpp
  * @brief typedef & global functions to be used on BGQ
 
- * Time-stamp: <2013-08-23 11:42:05 cossu>
+ * Time-stamp: <2014-01-24 14:59:02 cossu>
  *-------------------------------------------------------------------------*/
 #ifndef UTILS_BGQ_INCLUDED
 #define UTILS_BGQ_INCLUDED
@@ -17,7 +17,7 @@
 typedef struct FermionSpinor{
   double _Complex v[12];
 }Spinor;
-typedef struct GaugeConf{
+typedef struct GaugeConfig{
   double _Complex v[9];
 }GaugePtr;
 

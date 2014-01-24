@@ -47,7 +47,7 @@ ChebyshevAccelFunc::ChebyshevAccelFunc(XML::node node){
   }
     
   //// chebyshev function ////
-  XML::descend(node,"Chebyshev");
+  XML::descend(node,"ChebyshevFunc");
   cbfunc_.reset(new FoprChebyshevFunc(node));
 }							  
   

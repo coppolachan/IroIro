@@ -1,6 +1,6 @@
 /*! @file dirac_DWoverlap.hpp
  *  @brief A wrapper of Dirac_DomainWall_4D which acts as the overlap Dirac op.
- * Time-stamp: <2013-07-03 09:49:41 noaki>
+ * Time-stamp: <2013-12-05 10:00:32 noaki>
  */
 #ifndef DIRAC_DWOVERLAP_INCLUDED
 #define DIRAC_DWOVERLAP_INCLUDED
@@ -10,12 +10,12 @@
 
 class Dirac_DWoverlap :public DiracWilsonLike{
 
-  const Dirac_optimalDomainWall_4D* Ddw4d_;
+  const Dirac_DomainWall_4D* Ddw4d_;
   const EigenModes* ems_;
   std::vector<double> sgnEv_;
   double mq_;
 public:  
-  Dirac_DWoverlap(const Dirac_optimalDomainWall_4D* Ddw4d,
+  Dirac_DWoverlap(const Dirac_DomainWall_4D* Ddw4d,
 		  EigenModes* const ems)
     :Ddw4d_(Ddw4d),ems_(ems),mq_(Ddw4d->getMass()){
 

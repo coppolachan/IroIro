@@ -1,10 +1,8 @@
 /*!
  * @file rationalSolver_DWF_BGQ.hpp
- *
  * @brief Wrapper around MultiShiftSolver_CG class
  *
  * Calculates rational functions approximations
- *
  */
 #ifndef RATIONALSOLVER_DWF_BGQ_INCLUDED
 #define RATIONALSOLVER_DWF_BGQ_INCLUDED
@@ -21,7 +19,7 @@ class RationalSolver_DWF_Optimized: public RationalSolver {
 #ifdef HAVE_LIBBFM
   Dirac_BFM_Wrapper* BFM_opr_;
 #endif
-  const Dirac_optimalDomainWall_EvenOdd* opr_;
+  const Dirac_DomainWall_EvenOdd* opr_;
   bool is_BFM;
 
   int Nsites;
@@ -44,15 +42,13 @@ public:
 			       const XML::node node);
 #endif
   // Standard Constructor
-  RationalSolver_DWF_Optimized(const Dirac_optimalDomainWall_EvenOdd* DWFopr,
+  RationalSolver_DWF_Optimized(const Dirac_DomainWall_EvenOdd* DWFopr,
 			       const XML::node node,
 			       RationalApprox& RA);
 
   // To be used in Action constructions
-  RationalSolver_DWF_Optimized(const Dirac_optimalDomainWall_EvenOdd* DWFopr,
+  RationalSolver_DWF_Optimized(const Dirac_DomainWall_EvenOdd* DWFopr,
 			       const XML::node node);
-
-
   // Destructor
   ~RationalSolver_DWF_Optimized(){};
 
@@ -72,10 +68,7 @@ public:
   SolverOutput solve_noReconstruct(vector_Field&, const Field&) const;
   SolverOutput solve_noReconstruct_inv(vector_Field&, const Field&) const;
 
-
   bool check_DdagD() const {return true;}
-
-
 };
 
 #endif

@@ -2,7 +2,7 @@
  * @file solver_CG.cpp
  * @brief Definition of Solver_CG class member functions
  *
- * Time-stamp: <2013-12-12 11:40:50 cossu>
+ * Time-stamp: <2014-01-23 18:43:35 noaki>
  */
 
 #include <iostream>
@@ -16,7 +16,7 @@
 #include <omp.h>
 
 #ifdef IBM_BGQ_WILSON
-#include "Tools/utils_BGQ.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 #endif
 
 

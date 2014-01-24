@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-12-13 14:51:16 cossu>
+# Time-stamp: <2014-01-23 18:17:54 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -14,8 +14,11 @@ AM_LDFLAGS =
 OPTLIB =
 
 DWF_BGQ_SRC = 
-SMEAR_SRCS =
-UTILS_SRCS = 
+DWF_BGQ_HDR = 
+DWL_BGQ_SRC = 
+SMEAR_SRC =
+UTILS_SRC = 
+UTILS_HDR = 
 ###########################################
 # Configure driven path selector
 if USE_MPI
@@ -24,7 +27,7 @@ if IBM_BGQ
 # NB: Libraries ordering is essential
 OPTLIB += -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 
-COMMUNICATOR_SRCS = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
+COMMUNICATOR_SRC = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
 
 if IBM_BGQWILSON_SMP
 OPTLIB += -lbgqwilson3x4smp -lbgqthread
@@ -37,14 +40,17 @@ else #not using BGQ routines but MPI
 if HITACHI	
 AM_CXXFLAGS += -q64 -qarch=pwr7 -qtune=pwr7 -qmaxmem=-1 
 AM_LDFLAGS += -q64
+if SR_WILSON 
+OPTLIB += -lsrmwilson
+endif
 endif
 
-COMMUNICATOR_SRCS = Communicator/communicator_mpi.cpp
+COMMUNICATOR_SRC = Communicator/communicator_mpi.cpp
 endif #IBM_BGQ
 
 else
 # Fall-back to the single core case
-COMMUNICATOR_SRCS = Communicator/communicator_single.cpp	
+COMMUNICATOR_SRC = Communicator/communicator_single.cpp	
 endif #USE_MPI
 
 ############################################
@@ -52,33 +58,48 @@ endif #USE_MPI
 if IBM_BGQKERNELS
 DWF_BGQ_SRC += Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.cpp
 DWF_BGQ_SRC += Solver/Architecture_Optimized/solver_CG_DWF_BGQ.cpp
-ACTION_SRCS = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
-ACTION_SRCS += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
-SMEAR_SRCS += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
-SMEAR_SRCS += Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
-SMEAR_SRCS += Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
-UTILS_SRCS += Tools/utils_BGQ.hpp
+DWF_BGQ_HDR += Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.hpp
+DWF_BGQ_SRC += Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
+DWF_BGQ_SRC += Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp
+DWF_BGQ_SRC += Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp
+DWL_BGQ_SRC += Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp
+ACTION_SRC = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
+ACTION_SRC += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
+SMEAR_SRC += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
+SMEAR_SRC += Smearing/Architecture_Optimized/smartConf_core_BGQ.cpp
+SMEAR_SRC += Smearing/Architecture_Optimized/APEsmear_BGQ.cpp
+UTILS_SRC += Tools/Architecture_Optimized/utils_BGQ.cpp
+UTILS_HDR += Tools/Architecture_Optimized/utils_BGQ.hpp
+else	
+if SR_WILSON
+ACTION_SRC = Action/action_gauge_rect.cpp
+ACTION_SRC += Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp
+SMEAR_SRC += Smearing/stoutSmear_core.cpp
+SMEAR_SRC += Smearing/smartConf_core.cpp
+SMEAR_SRC += Smearing/APEsmear.cpp	
+UTILS_HDR += Tools/Architecture_Optimized/srmwilson_cmpl.hpp
 else
-ACTION_SRCS = Action/action_gauge_rect.cpp
-ACTION_SRCS += Action/action_gauge_wilson_force.cpp
-SMEAR_SRCS += Smearing/stoutSmear_core.cpp
-SMEAR_SRCS += Smearing/smartConf_core.cpp
-SMEAR_SRCS += Smearing/APEsmear.cpp
+ACTION_SRC = Action/action_gauge_rect.cpp
+ACTION_SRC += Action/action_gauge_wilson_force.cpp
+SMEAR_SRC += Smearing/stoutSmear_core.cpp
+SMEAR_SRC += Smearing/smartConf_core.cpp
+SMEAR_SRC += Smearing/APEsmear.cpp
 endif 
+endif
 ###########################################
 # Site indexing (Lexicographic/Even-Odd)
 if USE_EVENODD
-SITE_INDEXING_SRCS = Geometry/siteIndexEO.cpp
+SITE_INDEXING_SRC = Geometry/siteIndexEO.cpp
 else
-SITE_INDEXING_SRCS = Geometry/siteIndex.cpp
+SITE_INDEXING_SRC = Geometry/siteIndex.cpp
 endif
 
 ###########################################
 # Optional DCMT Random number generators
 if USE_DCMT
-DCMT_SRCS = Tools/RandomNumGen/dcmt_wrapper.cpp
+DCMT_SRC = Tools/RandomNumGen/dcmt_wrapper.cpp
 else
-DCMT_SRCS = 
+DCMT_SRC = 
 endif
 ###########################################
 # Optional for Peter's Bagel/BFM libs
@@ -86,11 +107,11 @@ if USE_BFM
 BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
 BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
 BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
-BFM_SRCS = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 
-BFM_SRCS += Tools/Bagel/bfm_storage.cpp 
-BFM_SRCS += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
+BFM_SRC = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 
+BFM_SRC += Tools/Bagel/bfm_storage.cpp 
+BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 else
-BFM_SRCS = 
+BFM_SRC = 
 endif
 
 
@@ -109,18 +130,17 @@ EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
-                Dirac_ops/dirac_wilson_Brillouin_BGQ.code    	\
-                Dirac_ops/dirac_DomainWall_BGQ.code \
-                Dirac_ops/domainWallSolver_BGQ.code \
+                Dirac_ops/Architecture_Optimized/dirac_wilson_Brillouin_BGQ.code    	\
+                Dirac_ops/Architecture_Optimized/dirac_staggered_EvenOdd_Adjoint_BGQ.code \
 		Fields/field.inl
 
 libcommcode_a_SOURCES = Main/commonPrms.cpp		\
-		$(COMMUNICATOR_SRCS)     	        \
-		$(SITE_INDEXING_SRCS)			\
+		$(COMMUNICATOR_SRC)     	        \
+		$(SITE_INDEXING_SRC)			\
 		Action/action.cpp			\
 		Action/action_gauge_wilson.cpp		\
 	 	Action/action_gauge_wilson_adjoint.cpp	\
-		$(ACTION_SRCS)				\
+		$(ACTION_SRC)				\
 	 	Action/action_gaugetype_factory_creator.cpp\
 		Action/action_gaugetype_factory.cpp     \
 		Action/action_Nf2.cpp			\
@@ -147,7 +167,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggeredLike.cpp	\
 		Dirac_ops/dirac_wilson.cpp		\
 		Dirac_ops/dirac_wilson_adjoint.cpp	\
-		Dirac_ops/dirac_wilson_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
@@ -155,12 +174,16 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
 		Dirac_ops/dirac_overlap_Zolotarev.cpp		\
 		Dirac_ops/dirac_DWoverlap.cpp    		\
-		Dirac_ops/dirac_DomainWall.cpp   		\
+		Dirac_ops/domainWallCore.cpp            	\
+		Dirac_ops/domainWallUtils.cpp            	\
 		$(DWF_BGQ_SRC)					\
+		$(DWL_BGQ_SRC)					\
 		Dirac_ops/dirac_DomainWall_EvenOdd.cpp  	\
+		Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_fullSolv.cpp 	\
 		Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp 	\
 		Dirac_ops/dirac_wilson_Brillouin.cpp		\
+		Dirac_ops/dirac_wilson_Brillouin_OSS.cpp	\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/wilsonLikeUtils.cpp           	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
@@ -168,7 +191,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
 		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
-		$(BFM_SRCS)					\
+		$(BFM_SRC)					\
 		EigenModes/eigenCalcGeneral.cpp			\
 		EigenModes/eigenModesSolver_Factory.cpp		\
 		EigenModes/eigenModesSolver_IRL.cpp		\
@@ -215,9 +238,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Solver/solver.cpp			\
 		Smearing/stoutSmear_base.cpp		\
 		Smearing/smartConf_base.cpp		\
-		$(SMEAR_SRCS)				\
+		$(SMEAR_SRC)				\
 		Smearing/smearingFactories.cpp		\
-		$(UTILS_SRCS)		        	\
 		Tools/fieldUtils.cpp			\
 		Tools/jobUtils.cpp			\
 		Tools/sunMatUtils.cpp			\
@@ -236,7 +258,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/ErrorsHandling/io_errors.cpp	\
 		Tools/ErrorsHandling/convergence_errors.cpp\
 		Tools/ErrorsHandling/parameter_errors.cpp\
-		$(DCMT_SRCS)				\
+		$(DCMT_SRC)				\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
@@ -282,7 +304,9 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/timings.hpp		\
 			$(top_srcdir)/include/errors.hpp		\
 			$(top_srcdir)/include/inputConfig.hpp		\
-			PugiXML/pugixml.hpp				\
+			$(UTILS_HDR)    		        	\
+			$(DWF_BGQ_HDR)                                  \
+                        PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			Action/action_gauge_wilson.hpp			\
 	 		Action/action_gauge_wilson_adjoint.hpp		\
@@ -362,18 +386,23 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_wilson_adjoint.hpp	\
 			Dirac_ops/dirac_wilson_EvenOdd.hpp	\
 			Dirac_ops/dirac_wilson_Brillouin.hpp	\
+			Dirac_ops/dirac_wilson_Brillouin_OSS.hpp\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_Mobius.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
+			Dirac_ops/dirac_DomainWall_adjoint.hpp  \
 			Dirac_ops/dirac_DomainWall_EvenOdd.hpp	\
+			Dirac_ops/dirac_DomainWall_adjoint_EvenOdd.hpp	\
 			Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp \
-			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp \
+			Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp\
 			Dirac_ops/dirac_LowModeDeflation.hpp    \
 			Dirac_ops/dirac_LowModeDeflation_ExactEigen.hpp \
 			Dirac_ops/dirac_LowModeDeflation_Approx.hpp     \
-			Dirac_ops/wilsonLikeUtils.hpp            	\
+			Dirac_ops/domainWallCore.hpp            \
+			Dirac_ops/domainWallUtils.hpp           \
+			Dirac_ops/wilsonLikeUtils.hpp           \
 			Dirac_ops/eoUtils.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\

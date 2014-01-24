@@ -1,6 +1,6 @@
 /*! @file dirac_WilsonLike.cpp
  *  @brief implementation of member functions of Dirac_WilsonLike
- Time-stamp: <2013-11-20 18:15:25 noaki>
+ Time-stamp: <2013-12-05 09:31:56 noaki>
  */
 
 #include "dirac_WilsonLike.hpp"
@@ -78,7 +78,7 @@ void DiracWilsonLike::projMcore(double* w,const double* f)const{
   }
 }
 
-void Dirac_optimalDomainWall_4D::
+void Dirac_DomainWall_4D::
 BprojCore(double* f,const double* f1,const double* fN)const{ 
   for(int c=0; c<NC_; ++c){
     double fupNr = 0.5*(fN[r0(c)] +fN[r2(c)]);
@@ -98,7 +98,7 @@ BprojCore(double* f,const double* f1,const double* fN)const{
   }
 }
 
-void Dirac_optimalDomainWall_4D::
+void Dirac_DomainWall_4D::
 BprojCore_dag(double* f1,double* fN,const double* f) const{
 
   // f1 = f5(0), fN = f5(N5_-1)

@@ -1,6 +1,6 @@
 /*! @file dirac_BFM_wrapper_factory.hpp 
  *  @brief Declaration of BFM Dirac operators factories
- * Time-stamp: <2014-01-24 13:43:22 neo>
+ * Time-stamp: <2014-01-24 14:50:05 neo>
  */
 #ifndef DIRAC_BFM_FACT_
 #define DIRAC_BFM_FACT_
@@ -87,7 +87,7 @@ class DiracDWF4dBFMeoFactory : public DiracDWF4dFactory{
   RaiiFactoryObj<Solver> SolverEOpv_;
   RaiiFactoryObj<EvenOddUtils::Inverter_WilsonLike> InvPV_;
 
-  Dirac_optimalDomainWall_4D* createDirac(InputConfig&);
+  Dirac_DomainWall_4D* createDirac(InputConfig&);
 public:
   DiracDWF4dBFMeoFactory(XML::node node);
 };

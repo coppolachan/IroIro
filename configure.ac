@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2013-12-12 13:06:29 cossu>
+# Time-stamp: <2014-01-23 17:14:51 noaki>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.4], [cossu@post.kek.jp])
@@ -34,8 +34,8 @@ ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value 
 bluegeneq=false   # default value
-SR_INCLUDE=
-SR_LIBS=
+SR_INCLUDE=/srhome/.tools/include
+SR_LIBS=/srhome/.tools/lib
 
 BLUEGENE_INCLUDE=/bghome/scbadm/ibm-doi/lib
 BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib
@@ -215,7 +215,7 @@ aix )
      AC_MSG_NOTICE([forcing cross compilation on AIX])
      use_cpp="mpCC";
      use_cpp_flags="-O3 -q64 -qlanglvl=stdc99 -qrtti=type -I${SR_INCLUDE} -I${HOME}/gmp/include -I${HOME}/gsl/include -I${HOME}/mpfr/include -I${HOME}/lime/include -qflag=i:s"
-     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib"
+     ld_flags="${LDFLAGS} -L${HOME}/gsl/lib -L${HOME}/gmp/lib -L${HOME}/mpfr/lib -L${HOME}/lime/lib -L${SR_LIBS}"
      use_ar_flags="-X64 -c -ru"
      AC_DEFINE([BIG_ENDIAN_TYPE],[],[Using Big Endian machine type])
      ;;

@@ -103,7 +103,7 @@ public:
 template <typename Index,typename Format>
 class Z2noiseSourceFactory: public SourceFactory {
   const XML::node Source_node;
-
+  std::auto_ptr<RandNum> rng_;
 public:
   Z2noiseSourceFactory(XML::node node):Source_node(node){}
 
@@ -118,10 +118,16 @@ public:
     } else {
       CCIO::cout<<"Choosing Z2Type type: "<< Z2Type_name << std::endl;
     }
+    CCIO::cout<<"getting Source_Z2noise\n";
+    rng_.reset(RNG_Env::RNG->getRandomNumGenerator());
+    CCIO::cout<<"getting Source_Z2noise\n";
+    /*
     return new 
       Source_Z2noise<Index,Format>(*RNG_Env::RNG->getRandomNumGenerator(),
 				   Local_Dim,
 				   NoiseType);
+    */
+    return new Source_Z2noise<Index,Format>(*(rng_.get()),Local_Dim,NoiseType);
   }
 };
 

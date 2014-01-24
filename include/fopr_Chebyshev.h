@@ -20,7 +20,7 @@ public:
   
   Fopr_Chebyshev(const XML::node& cbnode,const Fopr_Herm* Op)
     :Op_(Op),p_(Op_->fsize()),q_(Op_->fsize()),r_(Op_->fsize()){
-    XML::read(cbnode, "Npoly",N_);
+    XML::read(cbnode, "Npoly",N_,MANDATORY);
   }
   
   const Field mult(const Field& f) const{

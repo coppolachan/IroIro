@@ -29,8 +29,7 @@ namespace Mapping{
 
   // global instance
   ShiftField shiftField;
-  void init_shiftField(){
-    shiftField.init_maps();}
+  void init_shiftField(){ shiftField.init_maps();}
 
   ShiftField_eo shiftField_eo;
   ShiftField_oe shiftField_oe;

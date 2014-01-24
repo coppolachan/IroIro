@@ -7,9 +7,15 @@
 #include "Tools/fieldUtils.hpp"
 #include "include/messages_macros.hpp"
 #include <algorithm>
+
 #ifdef IBM_BGQ_WILSON
 #include <omp.h>
 #include "bgqthread.h"
+#endif
+
+#ifdef SR16K_WILSON
+#include "srmwilson.h"
+#include "Tools/Architecture_Optimized/srmwilson_cmpl.hpp"
 #endif
 
 using namespace FieldUtils;
@@ -63,6 +69,37 @@ double Staples::plaq_s(const GaugeField& F)const {
 	  plaq += pl_ptr[CC2*site]+pl_ptr[8+CC2*site]+pl_ptr[16+CC2*site]; ///ReTr
     }
   }
+#else  
+#ifdef SR16K_WILSON
+  GaugeField1D U_mu, U_nu;
+  GaugeField1D UpNu, UpMu;
+  GaugeField1D pl;
+  //pointers
+  double* F_ptr = const_cast<GaugeField&>(F).data.getaddr(0);
+  double* stpl_ptr = stpl.data.getaddr(0);
+  double* U_mu_ptr = U_mu.data.getaddr(0);
+  double* U_nu_ptr = U_nu.data.getaddr(0);
+  double* UpMu_ptr = UpMu.data.getaddr(0);
+  double* UpNu_ptr = UpNu.data.getaddr(0);
+  double* pl_ptr = pl.data.getaddr(0);
+
+  const int CC2 = NC_*NC_*2;
+
+  for(int mu=0; mu<NDIM_-1; ++mu){
+    SRCMPL::SRWilsonSU3_MatEquate(U_mu_ptr,F_ptr+mu*Nvol_*CC2,Nvol_);//U_mu links
+    int nu = (mu+1)%(NDIM_-1);
+    SRCMPL::SRWilsonSU3_MatEquate(U_nu_ptr,F_ptr+nu*Nvol_*CC2,Nvol_);//U_nu links
+
+    shiftField(UpMu,U_nu_ptr,mu,Forward());
+    shiftField(UpNu,U_mu_ptr,nu,Forward());
+    // upper staple
+    SRWilsonSU3_MatMult_NND(stpl_ptr,U_nu_ptr,UpNu_ptr,UpMu_ptr,Nvol_);
+    // plaquette 
+    SRWilsonSU3_MatMult_ND(pl_ptr,U_mu_ptr,stpl_ptr,Nvol_);
+
+    for(int site=0; site<Nvol_; ++site)
+      plaq += pl_ptr[CC2*site]+pl_ptr[8+CC2*site]+pl_ptr[16+CC2*site]; ///ReTr
+  }
 #else
   for(int i=0;i<NDIM_-1;++i){
     int j = (i+1)%(NDIM_-1);
@@ -70,6 +107,7 @@ double Staples::plaq_s(const GaugeField& F)const {
     for(int site=0; site<Nvol_; ++site)
       plaq += ReTr(mat(F,site,i)*mat_dag(stpl,site));  // P_ij
   }
+#endif
 #endif
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*NC_*(NDIM_-1));
@@ -118,11 +156,43 @@ double Staples::plaq_t(const GaugeField& F)const {
     }
   }
 #else
+#ifdef SR16K_WILSON
+  GaugeField1D U_mu, U_nu;
+  GaugeField1D UpNu, UpMu;
+  GaugeField1D pl;
+  //pointers
+  double* F_ptr = const_cast<GaugeField&>(F).data.getaddr(0);
+  double* stpl_ptr = stpl.data.getaddr(0);
+  double* U_mu_ptr = U_mu.data.getaddr(0);
+  double* U_nu_ptr = U_nu.data.getaddr(0);
+  double* UpMu_ptr = UpMu.data.getaddr(0);
+  double* UpNu_ptr = UpNu.data.getaddr(0);
+  double* pl_ptr = pl.data.getaddr(0);
+
+  const int CC2 = NC_*NC_*2;
+
+  int mu=TDIR;
+  SRCMPL::SRWilsonSU3_MatEquate(U_mu_ptr,F_ptr+mu*Nvol_*CC2,Nvol_); //U_mu links
+  for(int nu=0; nu<NDIM_-1; ++nu){
+    SRCMPL::SRWilsonSU3_MatEquate(U_nu_ptr,F_ptr+nu*Nvol_*CC2,Nvol_); //U_nu links
+
+    shiftField(UpMu,U_nu_ptr,mu,Forward());
+    shiftField(UpNu,U_mu_ptr,nu,Forward());
+    // upper staple
+    SRWilsonSU3_MatMult_NND(stpl_ptr,U_nu_ptr,UpNu_ptr,UpMu_ptr,Nvol_);
+    // plaquette 
+    SRWilsonSU3_MatMult_ND(pl_ptr,U_mu_ptr,stpl_ptr,Nvol_);
+
+    for(int site=0; site<Nvol_; ++site)
+      plaq += pl_ptr[CC2*site]+pl_ptr[8+CC2*site]+pl_ptr[16+CC2*site]; ///ReTr
+  }
+#else
   for(int nu=0; nu < NDIM_-1; ++nu){
     stpl = lower(F,TDIR,nu);
     for(int site=0; site<Nvol_; ++site)
       plaq += ReTr(mat(F,site,TDIR)*mat_dag(stpl,site));  // P_zx
   }
+#endif
 #endif
   plaq = com_->reduce_sum(plaq);
   return plaq/(Lvol_*NC_*(NDIM_-1));
@@ -312,6 +382,21 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
     BGWilsonSU3_MatMult_DNN(c_ptr+str2,w_ptr+str2,v_ptr+str2,WupMu_ptr+str2,ns);
   }
 #else
+#ifdef SR16K_WILSON 
+  GaugeField1D v,w,c, WupMu;
+  double* G_ptr = const_cast<GaugeField&>(G).data.getaddr(0);
+  double* c_ptr = c.data.getaddr(0);
+  double* v_ptr = v.data.getaddr(0);
+  double* WupMu_ptr = WupMu.data.getaddr(0);
+  double* w_ptr = w.data.getaddr(0);
+
+  const int CC2 = NC_*NC_*2;
+  
+  SRCMPL::SRWilsonSU3_MatEquate(v_ptr,G_ptr+mu*Nvol_*CC2,Nvol_); //U_mu links
+  SRCMPL::SRWilsonSU3_MatEquate(w_ptr,G_ptr+nu*Nvol_*CC2,Nvol_); //U_nu links
+  shiftField(WupMu,w_ptr,mu,Forward());
+  SRWilsonSU3_MatMult_DNN(c_ptr,w_ptr,v_ptr,WupMu_ptr,Nvol_);
+#else
   GaugeField1D v = DirSlice(G,mu);
   GaugeField1D w = DirSlice(G,nu);
   GaugeField1D c(G.Nvol());
@@ -320,6 +405,7 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
   for(int site=0; site<Nvol_; ++site) 
     c.data[c.format.islice(site)] 
       = (mat_dag(w,site)*mat(v,site)*mat(WupMu,site)).getva();
+#endif
 #endif
   return shiftField(c,nu,Backward());
 }
@@ -357,6 +443,25 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
     BGWilsonSU3_MatMult_NND(c_ptr+str2,v_ptr+str2,VupNu_ptr+str2,WupMu_ptr+str2,ns);
   }
 #else
+#ifdef SR16K_WILSON 
+  GaugeField1D c,v,WupMu,VupNu;
+  double* G_ptr = const_cast<GaugeField&>(G).data.getaddr(0);
+  double* c_ptr = c.data.getaddr(0);
+  double* v_ptr = v.data.getaddr(0);
+  double* VupNu_ptr = VupNu.data.getaddr(0);
+  double* WupMu_ptr = WupMu.data.getaddr(0);
+
+  const int CC2 = NC_*NC_*2;
+  
+  SRCMPL::SRWilsonSU3_MatEquate(v_ptr,G_ptr+mu*Nvol_*CC2,Nvol_); //U_mu links
+  shiftField(VupNu,v_ptr,nu,Forward());
+
+  SRCMPL::SRWilsonSU3_MatEquate(v_ptr,G_ptr+nu*Nvol_*CC2,Nvol_); //U_nu links
+  shiftField(WupMu,v_ptr,mu,Forward());
+
+  SRWilsonSU3_MatMult_NND(c_ptr,v_ptr,VupNu_ptr,WupMu_ptr,Nvol_);
+  
+#else
   GaugeField1D v = DirSlice(G,mu);
   GaugeField1D w = DirSlice(G,nu);
   GaugeField1D c(G.Nvol());
@@ -367,7 +472,7 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
     c.data[c.format.islice(site)] 
       = (mat(w,site)*mat(VupNu,site)*mat_dag(WupMu,site)).getva();
 #endif
-
+#endif
   return c;
 }
 //------------------------------------------------------------
@@ -413,8 +518,8 @@ Staples::fieldStrength(const GaugeField& G,int mu,int nu) const{
     const int CC2 = NC_*NC_*2;
     const int str2 = CC2*ns*omp_get_thread_num();
     
-    BGWilsonSU3_MatEquate(U1_ptr+str2,G_ptr+mu*Nvol_*CC2+str2,ns); //U_mu links     
-    BGWilsonSU3_MatSub(Vup_ptr+str2,Vdn_ptr+str2,ns);              // Left leaves
+    BGWilsonSU3_MatEquate(U1_ptr+str2,G_ptr+mu*Nvol_*CC2+str2,ns);//U_mu links 
+    BGWilsonSU3_MatSub(Vup_ptr+str2,Vdn_ptr+str2,ns);             //Left leaves
 
     BGWilsonSU3_MatMult_ND(Fmn_ptr+str2,U1_ptr+str2,Vup_ptr+str2,ns);
     BGWilsonSU3_MatMult_DN(Ut_ptr+str2,Vup_ptr+str2,U1_ptr+str2,ns);
@@ -422,7 +527,27 @@ Staples::fieldStrength(const GaugeField& G,int mu,int nu) const{
 
     BGWilsonSU3_MatAdd(Fmn_ptr+str2,U1_ptr+str2,ns); // Fmn 
   }
-  Fmn = TracelessAntihermite(Fmn);  // traceless, anti-hermite
+#else
+#ifdef SR16K_WILSON
+  // temporal fields
+  GaugeField1D U1;
+  // pointers
+  double* G_ptr = const_cast<GaugeField&>(G).data.getaddr(0);
+  double* Vup_ptr = Vup.data.getaddr(0);
+  double* Vdn_ptr = Vdn.data.getaddr(0);
+  double* Fmn_ptr = Fmn.data.getaddr(0);
+  double* Ut_ptr = Ut.data.getaddr(0);
+  double* U1_ptr = U1.data.getaddr(0);
+  const int CC2 = NC_*NC_*2;
+
+  SRCMPL::SRWilsonSU3_MatEquate(U1_ptr,G_ptr+mu*Nvol_*CC2,Nvol_); // U_mu links 
+  SRCMPL::SRWilsonSU3_MatSub(Vup_ptr,Vdn_ptr,Nvol_); // Left leaves
+
+  SRWilsonSU3_MatMult_ND(Fmn_ptr,U1_ptr, Vup_ptr,Nvol_);
+  SRWilsonSU3_MatMult_DN(Ut_ptr, Vup_ptr,U1_ptr, Nvol_);
+  shiftField(U1,Ut_ptr,mu,Backward());
+  
+  SRCMPL::SRWilsonSU3_MatAdd(Fmn_ptr,U1_ptr, Nvol_); // Fmn 
 #else
   for(int site=0; site<Nvol_; ++site){
     SUNmat u = mat(G,site,mu);    
@@ -438,8 +563,10 @@ Staples::fieldStrength(const GaugeField& G,int mu,int nu) const{
   //    +--<--+     +--<--+  
 
   Fmn += shiftField(Ut,mu,Backward());
-#endif
 
+#endif
+#endif
+  Fmn = TracelessAntihermite(Fmn);  // traceless, anti-hermite
   Fmn *= 0.25;
   return Fmn;
 }

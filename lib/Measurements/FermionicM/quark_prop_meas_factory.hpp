@@ -54,7 +54,7 @@ public:
 /*! @brief Concrete class for creating Quark Propagator QpropDWF operator */
 class QPropDWFFactory : public QuarkPropagatorFactory {
   RaiiFactoryObj<DiracDWF4dFactory> Dfactory_;
-  RaiiFactoryObj<Dirac_optimalDomainWall_4D> DWF4D_;
+  RaiiFactoryObj<Dirac_DomainWall_4D> DWF4D_;
 
   QpropDWF* createQuarkProp(InputConfig&);
 public:

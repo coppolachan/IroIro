@@ -1,14 +1,11 @@
 /*!
  * @file rationalSolver_DWF_BGQ.cpp
- *
  * @brief Wrapper around MultiShiftSolver_CG class
- *
  * Calculates rational functions approximations
- *
  */
 
 #include "Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp"
-#include "Tools/utils_BGQ.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 
 #ifdef HAVE_LIBBFM
 RationalSolver_DWF_Optimized::RationalSolver_DWF_Optimized(Dirac_BFM_Wrapper* BFMopr,
@@ -27,7 +24,7 @@ RationalSolver_DWF_Optimized::RationalSolver_DWF_Optimized(Dirac_BFM_Wrapper* BF
 };
 #endif
 
-RationalSolver_DWF_Optimized::RationalSolver_DWF_Optimized(const Dirac_optimalDomainWall_EvenOdd* DWFopr,
+RationalSolver_DWF_Optimized::RationalSolver_DWF_Optimized(const Dirac_DomainWall_EvenOdd* DWFopr,
 							   const XML::node node,
 							   RationalApprox& RA)
   :opr_(DWFopr),
@@ -41,7 +38,7 @@ RationalSolver_DWF_Optimized::RationalSolver_DWF_Optimized(const Dirac_optimalDo
    Nsites(opr_->getN5()){};
 
 // To be used in Action constructions
-RationalSolver_DWF_Optimized::RationalSolver_DWF_Optimized(const Dirac_optimalDomainWall_EvenOdd* DWFopr,
+RationalSolver_DWF_Optimized::RationalSolver_DWF_Optimized(const Dirac_DomainWall_EvenOdd* DWFopr,
 							   const XML::node node)
   :opr_(DWFopr),
    Params(MultiShiftSolver_CG_Params(node)),

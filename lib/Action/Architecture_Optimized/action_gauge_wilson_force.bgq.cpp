@@ -4,7 +4,7 @@
 
   This is the BGQ optimized version with threading
 
-  Time-stamp: <2013-12-13 11:10:41 cossu>
+  Time-stamp: <2014-01-23 17:14:07 noaki>
 */
 #include "Action/action_gauge_wilson.hpp"
 #include "Tools/fieldUtils.hpp"
@@ -15,11 +15,9 @@
 GaugeField ActionGaugeWilson::md_force(){
   using namespace Mapping;
 
-  SUNmat pl;
   GaugeField force;
   GaugeField1D tmp; 
- 
-  GaugeField1D c;
+  GaugeField1D v, w, c;
   GaugeField1D WupMu, VupNu;
 
   double* VupNu_ptr = VupNu.data.getaddr(0);

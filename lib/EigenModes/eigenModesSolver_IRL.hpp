@@ -51,10 +51,7 @@ public:
     XML::read(node,"Np",Np,MANDATORY);
     Nm_= Nk_+Np;
 
-    double prec;
-    XML::read(node,"precision",prec,MANDATORY);
-    prec_= fopr->func(prec);
- 
+    XML::read(node,"precision",prec_,MANDATORY);
     XML::read(node,"max_iter",Niter_,MANDATORY);
    
     CCIO::cout<<"EigenModesSolver_IRL constructed: precision= "

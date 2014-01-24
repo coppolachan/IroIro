@@ -150,7 +150,7 @@ int Test_Solver_BFM::run(){
   FermionField BFMsolution; 
   BFM_interface.FermionImport_from_BFM(BFMsolution, chi_h, 0);
 
-  Dirac_Wilson_EvenOdd Deo(mq, &(conf_.data));
+  Dirac_Wilson_EvenOdd<Dirac_Wilson> Deo(mq, &(conf_.data));
   Dirac_Wilson Kernel(mq, &(conf_.data));
   Field IroIroSol_eo = Deo.mult_eo(fo);
   Field IroIroSol_oe = Deo.mult_oe(fe);

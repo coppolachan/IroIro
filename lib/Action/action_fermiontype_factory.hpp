@@ -1,7 +1,7 @@
 /*!
  * @file action_fermiontype_factory.hpp 
  * @brief Declaration of Fermion-type action factories
- * Time-stamp: <2013-08-21 13:08:51 cossu>
+ * Time-stamp: <2013-12-05 09:37:44 noaki>
  */
 #ifndef ACTION_FERMION_FACT_
 #define ACTION_FERMION_FACT_
@@ -150,8 +150,8 @@ class TwoFlavorDomainWall5dEO_BGQ_ActionFactory :public FermionActionFactory {
   RaiiFactoryObj<DiracEvenOdd_DWF5dFactory> DiracObj;
   RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverObj;
 
-  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_Kernel;
-  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_KernelPV;
+  RaiiFactoryObj<Dirac_DomainWall_EvenOdd> DWF5d_Kernel;
+  RaiiFactoryObj<Dirac_DomainWall_EvenOdd> DWF5d_KernelPV;
   RaiiFactoryObj<Solver> Solv;
   RaiiFactoryObj<Solver> SolvPV;
   
@@ -232,8 +232,8 @@ class TwoFlavorRatioDomainWall5dEO_BGQ_ActionFactory: public FermionActionFactor
   RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverNumObj;
   RaiiFactoryObj<SolverCG_DWF_opt_Factory> SolverDenomObj;
 
-  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DiracNumerator;
-  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DiracDenominator;
+  RaiiFactoryObj<Dirac_DomainWall_EvenOdd> DiracNumerator;
+  RaiiFactoryObj<Dirac_DomainWall_EvenOdd> DiracDenominator;
   RaiiFactoryObj<Solver> Solver1;
   RaiiFactoryObj<Solver> Solver2;
 
@@ -249,8 +249,8 @@ class NfFlavorDomainWall5d_EO_BGQ_ActionFactory : public FermionActionFactory {
   RaiiFactoryObj<DiracEvenOdd_DWF5dFactory> DiracObj;
   RaiiFactoryObj<RationalSolverCGFactory_DWF_Optimized> SolverObj;
 
-  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_Kernel;
-  RaiiFactoryObj<Dirac_optimalDomainWall_EvenOdd> DWF5d_KernelPV;
+  RaiiFactoryObj<Dirac_DomainWall_EvenOdd> DWF5d_Kernel;
+  RaiiFactoryObj<Dirac_DomainWall_EvenOdd> DWF5d_KernelPV;
   RaiiFactoryObj<RationalSolver_DWF_Optimized> Solv;
   RaiiFactoryObj<RationalSolver_DWF_Optimized> SolvPV;
   

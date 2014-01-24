@@ -28,21 +28,21 @@ void GaugeConf_bin::init_conf(Field& u,bool do_check){
 void GaugeConf_JLQCDLegacy::init_conf(Field& u,bool do_check){
   using namespace CCIO;
   CCIO::cout << "Init from binary file (JLQCD Legacy format)\n";
-  ReadFromDisk< Format::Format_G >(u,file_.c_str(),FORTRAN_CONTROL_WORDS, 
+  CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str(),FORTRAN_CONTROL_WORDS, 
 				   "JLQCDLegacy",do_check);
 }
 
 void GaugeConf_NERSC::init_conf(Field& u,bool do_check){
   using namespace CCIO;
   CCIO::cout << "Init from binary file (NERSC format)\n";
-  ReadFromDisk< Format::Format_G >(u,file_.c_str(),0,"NERSC",do_check);
+  CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str(),0,"NERSC",do_check);
   
 }
 
 void GaugeConf_ILDG::init_conf(Field& u,bool do_check){
   using namespace CCIO;
   CCIO::cout << "Init from ILDG file (ILDG format)\n";
-  ReadFromDisk< Format::Format_G >(u,file_.c_str(),0,"ILDG",do_check);
+  CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str(),0,"ILDG",do_check);
 }
 
 // this function exists already in byteswap.cpp

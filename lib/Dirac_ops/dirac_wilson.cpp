@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2013-11-27 17:20:38 noaki>
+ * Time-stamp: <2014-01-20 12:43:05 noaki>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -19,7 +19,7 @@ using namespace std;
 #ifdef IBM_BGQ_WILSON
 #include "bgqwilson.h"
 #include "bgqthread.h"
-#include "Tools/utils_BGQ.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 static Field xie;
 #endif
 
