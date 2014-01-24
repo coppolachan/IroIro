@@ -46,9 +46,9 @@ namespace FieldUtils{
   void diagMMMMslice(GaugeField1D& G,const GaugeField& F,int mu,int nu,int rho,int sgm);
 
 #if defined(IBM_BGQ_WILSON) || defined(SR16K_WILSON)
-  void DirSlice_ALINE(GaugeField1D &G,const GaugeField& F,int dir);
+  void DirSlice_ALINED(GaugeField1D &G,const GaugeField& F,int dir);
 
-  inline double ReTrALIGNED(double& result,const double *F,int site,int dir,int Nvol){
+  inline double ReTrALINED(double& result,const double *F,int site,int dir,int Nvol){
     //assumes some indexing and SU(3) matrix
     result += F[    18*(site+Nvol*dir)];
     result += F[ 8 +18*(site+Nvol*dir)];
