@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-08-23 11:09:54 cossu>
+ * Time-stamp: <2014-01-24 13:27:58 neo>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -41,7 +41,7 @@ const Field* Dirac_BFM_Wrapper::getGaugeField_ptr()const{
 
 Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node, 
 				     const Field* u, 
-				     DiracWilsonLike* Dirac,
+				     DiracWilsonLike_EvenOdd* Dirac,
 				     Type_5d_DWF Type)
   :u_(u),
    BFMparams(node),

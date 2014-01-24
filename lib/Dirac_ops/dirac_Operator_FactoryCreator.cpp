@@ -1,8 +1,12 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2013-11-21 09:49:43 noaki>
+ * Time-stamp: <2014-01-24 13:06:57 neo>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
+
+#ifdef HAVE_LIBBFM
+#include "./BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
+#endif
 
 namespace Diracs {
 
@@ -38,6 +42,10 @@ namespace Diracs {
 #ifdef IBM_BGQ_WILSON
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BGQeo"))  
       return new DiracDWF4dBGQeoFactory(node);
+#ifdef HAVE_LIBBFM
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BFMeo"))  
+      return new DiracDWF4dBFMeoFactory(node);
+#endif
 #endif
     if(!strcmp(Dirac_name, "DiracDWoverlap"))  
       return new DiracDWoverlapFactory(node);
@@ -71,6 +79,10 @@ namespace Diracs {
 #ifdef IBM_BGQ_WILSON
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BGQeo"))  
       return new DiracDWF4dBGQeoFactory(node);
+#ifdef HAVE_LIBBFM
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BFMeo"))  
+      return new DiracDWF4dBFMeoFactory(node);
+#endif
 #endif
     stopMsg(node);
   }
@@ -137,7 +149,7 @@ namespace Diracs {
     }else{
       const char* Dirac_name = node.attribute("name").value();
       if(!strcmp(Dirac_name,"")){
-	std::cerr<<"No name provided for Dirac Operator. Request by <"
+	CCIO::cerr<<"No name provided for Dirac Operator. Request by <"
 		 << node.name()<<">\n";
 	abort();
       }
@@ -146,7 +158,8 @@ namespace Diracs {
 
   void stopMsg(const XML::node& node){
     const char* Dirac_name = node.attribute("name").value();
-    std::cerr<<"No Dirac Operator available with name ["
+    
+    CCIO::cerr<<"No Dirac Operator available with name ["
              << Dirac_name << "]. Request by <"<< node.name()<<">\n";
     abort();
   }
