@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_adjoint_EvenOdd.hpp
  * @brief Declaration of class Dirac_DomainWall_Adjoint_EvenOdd (5d operator)
- Time-stamp: <2013-12-05 11:08:41 noaki>
+ Time-stamp: <2014-01-24 14:48:52 neo>
  */
 #ifndef DIRAC_DOMAINWALL_ADJOINT_EVENODD_INCLUDED
 #define DIRAC_DOMAINWALL_ADJOINT_EVENODD_INCLUDED
@@ -25,8 +25,8 @@ public:
   Dirac_DomainWall_Adjoint_EvenOdd(XML::node dw_node,
 				   DiracWilsonLike_EvenOdd* Kernel,
 				   DWFType Type=Regular)
-    :Deo_(dw_node,Kernel->getDeo(),DWF::EvenOdd_tag(),Type),
-     Doe_(dw_node,Kernel->getDoe(),DWF::EvenOdd_tag(),Type){
+    :Deo_(dw_node,Kernel->getDeo(),DWFutils::EvenOdd_tag(),Type),
+     Doe_(dw_node,Kernel->getDoe(),DWFutils::EvenOdd_tag(),Type){
     //
     assert(Kernel->fsize() == afmt_t::Nin()*CommonPrms::instance()->Nvol()/2);
 #if VERBOSITY>DEBUG_VERB_LEVEL 
@@ -37,15 +37,15 @@ public:
   /*! @brief copy constractor to create Pauli-Villars operator */
   Dirac_DomainWall_Adjoint_EvenOdd(const Dirac_DomainWall_Adjoint_EvenOdd& D, 
 				   DWFType Type=Regular)
-    :Deo_(D.Deo_,DWF::EvenOdd_tag(),Type),
-     Doe_(D.Doe_,DWF::EvenOdd_tag(),Type){}
+    :Deo_(D.Deo_,DWFutils::EvenOdd_tag(),Type),
+     Doe_(D.Doe_,DWFutils::EvenOdd_tag(),Type){}
   
   Dirac_DomainWall_Adjoint_EvenOdd(double b,double c,double M0,double mq,
 				   const std::vector<double>& omega,
 				   const DiracWilsonLike* Keo,
 				   const DiracWilsonLike* Koe)
-    :Deo_(b,c,M0,mq,omega,Keo,DWF::EvenOdd_tag()),
-     Doe_(b,c,M0,mq,omega,Koe,DWF::EvenOdd_tag()){}
+    :Deo_(b,c,M0,mq,omega,Keo,DWFutils::EvenOdd_tag()),
+     Doe_(b,c,M0,mq,omega,Koe,DWFutils::EvenOdd_tag()){}
   
   ~Dirac_DomainWall_Adjoint_EvenOdd(){}
   

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall.hpp
  * @brief Declaration of class Dirac_DomainWall (5d operator)
- Time-stamp: <2013-12-10 16:11:40 noaki>
+ Time-stamp: <2014-01-24 14:46:22 neo>
  */
 #ifndef DIRAC_DOMAINWALL_INCLUDED
 #define DIRAC_DOMAINWALL_INCLUDED
@@ -55,21 +55,21 @@ public:
 
   ////////// [IBM_BGQ_WILSON] Constructors for e/o indexing /////////
   Dirac_DomainWall(XML::node dw_node,const DiracWilsonLike* Dw,
-			  DWF::EvenOdd_tag EO,DWFType Type= Regular)
+			  DWFutils::EvenOdd_tag EO,DWFType Type= Regular)
     :prms_(dw_node,Type),Dw_(Dw),
      op5D_(CommonPrms::instance()->Nvol(),prms_.N5_),
      DWcore_(prms_,Dw,CommonPrms::instance()->Nvol()/2,EO){}
 
   Dirac_DomainWall(double b,double c,double M0,double mq,
 		   const std::vector<double>& omega,
-		   const DiracWilsonLike* Dw,DWF::EvenOdd_tag EO)
+		   const DiracWilsonLike* Dw,DWFutils::EvenOdd_tag EO)
     :prms_(b,c,M0,mq,omega),Dw_(Dw),
      op5D_(CommonPrms::instance()->Nvol(),prms_.N5_),
      DWcore_(prms_,Dw,CommonPrms::instance()->Nvol()/2,EO){}
   
   /*! @brief copy constructor*/
   Dirac_DomainWall(const Dirac_DomainWall& Dc, 
-		   DWF::EvenOdd_tag EO,DWFType Type=Regular)
+		   DWFutils::EvenOdd_tag EO,DWFType Type=Regular)
     :prms_(Dc.prms_,Type),Dw_(Dc.Dw_),
      op5D_(CommonPrms::instance()->Nvol(),prms_.N5_),
      DWcore_(prms_,Dc.Dw_,CommonPrms::instance()->Nvol()/2,EO){}
@@ -113,7 +113,7 @@ public:
 
   ////////// Constructors for e/o indexing /////////
   Dirac_DomainWall(XML::node dw_node,const DiracWilsonLike* Dw,
-		   DWF::EvenOdd_tag EO,DWFType Type= Regular)
+		   DWFutils::EvenOdd_tag EO,DWFType Type= Regular)
     :prms_(dw_node,Type),Dw_(Dw),
      projP_(CommonPrms::instance()->Nvol()/2,prms_.N5_),
      projM_(CommonPrms::instance()->Nvol()/2,prms_.N5_),
@@ -122,7 +122,7 @@ public:
 
   Dirac_DomainWall(double b,double c,double M0,double mq,
 		   const std::vector<double>& omega,
-		   const DiracWilsonLike* Dw,DWF::EvenOdd_tag EO)
+		   const DiracWilsonLike* Dw,DWFutils::EvenOdd_tag EO)
     :prms_(b,c,M0,mq,omega),Dw_(Dw),
      projP_(CommonPrms::instance()->Nvol()/2,prms_.N5_),
      projM_(CommonPrms::instance()->Nvol()/2,prms_.N5_),
@@ -131,7 +131,7 @@ public:
 
   /*! @brief copy constructor for EvenOdd */
   Dirac_DomainWall(const Dirac_DomainWall& Dc, 
-		   DWF::EvenOdd_tag EO,DWFType Type=Regular)
+		   DWFutils::EvenOdd_tag EO,DWFType Type=Regular)
     :prms_(Dc.prms_,Type),Dw_(Dc.Dw_),
      projP_(Dc.projP_),projM_(Dc.projM_),op5D_(Dc.op5D_),
      DWcore_(prms_,Dw_,projP_,projM_,EO){}

@@ -1,3 +1,9 @@
+/*
+  @file domainWallUtils.cpp
+  @brief Definition of the namespace DWFutils
+  Time-stamp: <2014-01-24 14:52:29 neo>
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <cassert>
@@ -30,7 +36,7 @@ DomainWallParams::DomainWallParams(XML::node dw_node,DWFType Type){
       double lambda_min, lambda_max;
       XML::read(ApproxNode, "lambda_min", lambda_min); 
       XML::read(ApproxNode, "lambda_max", lambda_max); 
-      omega_= DWF::getOmega(N5_,lambda_min,lambda_max);
+      omega_= DWFutils::getOmega(N5_,lambda_min,lambda_max);
     }
     if (!strcmp(Approx_name, "Tanh"))  
       for(int s=0; s<N5_; ++s) omega_.push_back(1.0);
@@ -69,8 +75,8 @@ void DomainWallParams::set_arrays(){
   }
 }
 
-/* @brief Namespace definining useful functions for DWF*/
-namespace DWF {
+/* @brief Namespace definining useful functions for Domain Wall Fermions */
+namespace DWFutils {
 
   inline double set_vs( int is, int ns, double kprime ){
     double ekprime = gsl_sf_ellint_Kcomp( kprime , 0 ); 

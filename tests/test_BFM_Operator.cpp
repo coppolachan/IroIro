@@ -167,7 +167,7 @@ int Test_Solver_BFM::run(){
   }
 
   //Testing the correctness of the operator
-  Dirac_Wilson_EvenOdd WilsonEO(mq, &(conf_.data));
+  Dirac_Wilson_EvenOdd<Dirac_Wilson> WilsonEO(mq, &(conf_.data));
   FermionField IroIroFull;
   Field IroIroSol_oe(fe.size());
   Field IroIroSol_eo(fe.size());

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_EvenOdd.hpp
  * @brief Declaration of class Dirac_DomainWall_EvenOdd (5d operator)
- Time-stamp: <2013-12-05 11:11:10 noaki>
+ Time-stamp: <2014-01-24 14:48:20 neo>
  */
 #ifndef DIRAC_DOMAINWALL_EVENODD_INCLUDED
 #define DIRAC_DOMAINWALL_EVENODD_INCLUDED
@@ -33,8 +33,8 @@ public:
   Dirac_DomainWall_EvenOdd(XML::node dw_node,
 			   DiracWilsonLike_EvenOdd* Kernel,
 			   DWFType Type=Regular)
-    :Deo_(dw_node,Kernel->getDeo(),DWF::EvenOdd_tag(1),Type),
-     Doe_(dw_node,Kernel->getDoe(),DWF::EvenOdd_tag(2),Type){
+    :Deo_(dw_node,Kernel->getDeo(),DWFutils::EvenOdd_tag(1),Type),
+     Doe_(dw_node,Kernel->getDoe(),DWFutils::EvenOdd_tag(2),Type){
     //
 #if VERBOSITY>DEBUG_VERB_LEVEL 
     CCIO::cout<<"Dirac_DomainWall_Evenodd created"<<std::endl;
@@ -44,15 +44,15 @@ public:
   /*! @brief copy constractor to create Pauli-Villars operator */
   Dirac_DomainWall_EvenOdd(const Dirac_DomainWall_EvenOdd& D, 
 			   DWFType Type=Regular)
-    :Deo_(D.Deo_,DWF::EvenOdd_tag(),Type),
-     Doe_(D.Doe_,DWF::EvenOdd_tag(),Type){}
+    :Deo_(D.Deo_,DWFutils::EvenOdd_tag(),Type),
+     Doe_(D.Doe_,DWFutils::EvenOdd_tag(),Type){}
   
   Dirac_DomainWall_EvenOdd(double b,double c,double M0,double mq,
 			   const std::vector<double>& omega,
 			   const DiracWilsonLike* Keo,
 			   const DiracWilsonLike* Koe)
-    :Deo_(b,c,M0,mq,omega,Keo,DWF::EvenOdd_tag(1)),
-     Doe_(b,c,M0,mq,omega,Koe,DWF::EvenOdd_tag(2)){}
+    :Deo_(b,c,M0,mq,omega,Keo,DWFutils::EvenOdd_tag(1)),
+     Doe_(b,c,M0,mq,omega,Koe,DWFutils::EvenOdd_tag(2)){}
   
   ~Dirac_DomainWall_EvenOdd(){
     CCIO::cout << "DWF Timer mult: "<< mult_timer << "\n";

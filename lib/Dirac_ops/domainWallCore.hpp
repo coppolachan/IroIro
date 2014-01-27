@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWallCore.hpp
  * @brief Declaration of class Dirac_DomainWallCore (5d operator)
- Time-stamp: <2013-12-05 11:22:59 noaki>
+ Time-stamp: <2014-01-24 14:41:33 neo>
  */
 #ifndef DIRAC_DOMAINWALLCORE_INCLUDED
 #define DIRAC_DOMAINWALLCORE_INCLUDED
@@ -47,7 +47,7 @@ public:
 
   DomainWallCore(const DomainWallParams& prms,const DiracWilsonLike* Dw,
 		 const Proj5D& projP,const Proj5D& projM,
-		 DWF::EvenOdd_tag)
+		 DWFutils::EvenOdd_tag)
     :prms_(prms),Dw_(Dw),projP_(projP),projM_(projM),
      N5_(prms.N5_),f4size_(Dw->fsize()),
      mult_core(&DomainWallCore::mult_offdiag),

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWallCore_BGQ.hpp
  * @brief Declaration of class Dirac_optimalDomainWallCore_BGQ (5d operator)
- Time-stamp: <2013-12-10 16:53:52 noaki>
+ Time-stamp: <2014-01-24 14:45:30 neo>
  */
 #ifndef DIRAC_OPTIMALDOMAINWALLCORE_BGQ_INCLUDED
 #define DIRAC_OPTIMALDOMAINWALLCORE_BGQ_INCLUDED
@@ -29,7 +29,7 @@ public:
      mult_dag_core(&DomainWallCore_BGQ::mult_dag_full){assert(Dw_);}
 
   DomainWallCore_BGQ(const DomainWallParams& prms,const DiracWilsonLike* Dw,
-		     int Nvol,DWF::EvenOdd_tag EO)
+		     int Nvol,DWFutils::EvenOdd_tag EO)
     :prms_(prms),Dw_(Dw),ff_(Nvol),Nvol_(Nvol),N5_(prms.N5_),
      EOtag_(EO.EOtag),f4size_(Dw->fsize()),
      mult_core(&DomainWallCore_BGQ::mult_offdiag),

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_adjoint.hpp
  * @brief Declaration of class Dirac_DomainWall_Adjoint (5d operator)
- Time-stamp: <2013-12-05 11:15:44 noaki>
+ Time-stamp: <2014-01-24 14:44:51 neo>
  */
 #ifndef DIRAC_DOMAINWALL_ADJOINT_INCLUDED
 #define DIRAC_DOMAINWALL_ADJOINT_INCLUDED
@@ -51,7 +51,7 @@ public:
   ////////////// Constructors for e/o indexing //////////////////
   /*! @brief xml constructor */
   Dirac_DomainWall_Adjoint(XML::node dw_node,const DiracWilsonLike* Dw,
-			   DWF::EvenOdd_tag EO,DWFType Type= Regular)
+			   DWFutils::EvenOdd_tag EO,DWFType Type= Regular)
     :prms_(dw_node,Type),Dw_(Dw),
      projP_(CommonPrms::instance()->Nvol()/2,prms_.N5_),
      projM_(CommonPrms::instance()->Nvol()/2,prms_.N5_),
@@ -64,7 +64,7 @@ public:
   Dirac_DomainWall_Adjoint(double b,double c,double M0,double mq,
 			   const std::vector<double>& omega,
 			   const DiracWilsonLike* Dw,
-			   DWF::EvenOdd_tag EO)
+			   DWFutils::EvenOdd_tag EO)
     :prms_(b,c,M0,mq,omega),Dw_(Dw),
      projP_(CommonPrms::instance()->Nvol()/2,prms_.N5_),
      projM_(CommonPrms::instance()->Nvol()/2,prms_.N5_),
@@ -75,7 +75,7 @@ public:
 
   /*! @brief copy constructor*/
   Dirac_DomainWall_Adjoint(const Dirac_DomainWall_Adjoint& Dc, 
-			   DWF::EvenOdd_tag EO,DWFType Type=Regular)
+			   DWFutils::EvenOdd_tag EO,DWFType Type=Regular)
     :prms_(Dc.prms_,Type),Dw_(Dc.Dw_),
      projP_(Dc.projP_),projM_(Dc.projM_),op5D_(Dc.op5D_),
      DWcore_(prms_,Dw_,projP_,projM_,EO){}

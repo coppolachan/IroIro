@@ -13,7 +13,7 @@
 #include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
 
 #include "Action/action_fermiontype_factory.hpp"
-#include "Tools/utils_BGQ.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 
 
 using namespace std;

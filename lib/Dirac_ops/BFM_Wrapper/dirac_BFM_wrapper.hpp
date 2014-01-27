@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2013-08-23 10:44:44 cossu>
+ * Time-stamp: <2014-01-24 12:05:41 neo>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -54,7 +54,7 @@ private:
 
   //temporary hack - don't want this in the final version!!!!
   // supports methods like md_force
-  DiracWilsonLike* Internal_EO;
+  DiracWilsonLike_EvenOdd* Internal_EO;
 
   bool is_initialized;
   bool has_operator;
@@ -79,13 +79,15 @@ private:
   Dirac_BFM_Wrapper(); //hides default constructor
   void AllocateFields();
 public:
-  Dirac_BFM_Wrapper(XML::node, const Field*, DiracWilsonLike*, const Type_5d_DWF= Regular5D);
+  Dirac_BFM_Wrapper(XML::node, const Field*, DiracWilsonLike_EvenOdd*, const Type_5d_DWF= Regular5D);
   ~Dirac_BFM_Wrapper();
   size_t fsize() const;
   size_t gsize() const;
 
   void initialize();
 
+  const DiracWilsonLike_EvenOdd* getInternalEO() {return Internal_EO;}// For the 4d Operators
+  
   // Slow implementation: don't use this, use the solver
   // here just for compatibility
   const Field mult    (const Field&)const;

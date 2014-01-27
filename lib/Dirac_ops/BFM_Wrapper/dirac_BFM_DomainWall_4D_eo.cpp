@@ -1,7 +1,9 @@
-/*! @file dirac_DomainWall_4D_eoSolv.cpp
- *  @brief Methods of Dirac_DomainWall_4D_eoSolv class
+/*! @file dirac_BFM_DomainWall_4D_eo.cpp
+ *  @brief Methods of Dirac_BFM_DomainWall_4D_eo class
+
+ * Time-stamp: <2014-01-27 13:10:16 neo>
  */
-#include "dirac_DomainWall_4D_eoSolv.hpp"
+#include "dirac_BFM_DomainWall_4D_eo.hpp"
 #include "Fields/field_expressions.hpp"
 
 using namespace std;
@@ -10,7 +12,7 @@ using namespace FieldExpression;
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
 
-const Field Dirac_DomainWall_4D_eoSolv::mult(const Field& f)const{
+const Field Dirac_BFM_DomainWall_4D_eo::mult(const Field& f)const{
   long double timing;
   FINE_TIMING_START(timing);
 
@@ -21,7 +23,7 @@ const Field Dirac_DomainWall_4D_eoSolv::mult(const Field& f)const{
   return Bproj(sol5);
 }
 
-const Field Dirac_DomainWall_4D_eoSolv::mult_inv(const Field& f)const{
+const Field Dirac_BFM_DomainWall_4D_eo::mult_inv(const Field& f)const{
   long double timing;
   FINE_TIMING_START(timing);
 
@@ -34,14 +36,14 @@ const Field Dirac_DomainWall_4D_eoSolv::mult_inv(const Field& f)const{
 
 }
 
-const Field Dirac_DomainWall_4D_eoSolv::mult_dag(const Field& f)const{ 
+const Field Dirac_BFM_DomainWall_4D_eo::mult_dag(const Field& f)const{ 
   return gamma5(mult(gamma5(f)));}
 
-const Field Dirac_DomainWall_4D_eoSolv::mult_dag_inv(const Field& f)const{ 
+const Field Dirac_BFM_DomainWall_4D_eo::mult_dag_inv(const Field& f)const{ 
   return gamma5(mult_inv(gamma5(f)));}
 
 
-const Field Dirac_DomainWall_4D_eoSolv::Bproj(const Field& f5) const{ 
+const Field Dirac_BFM_DomainWall_4D_eo::Bproj(const Field& f5) const{ 
   Field f4(fsize_);
   for(int site=0; site<Nvol_; ++site)
     d5_.BprojCore(f4.getaddr(ff_.index(0,site)),
@@ -50,7 +52,7 @@ const Field Dirac_DomainWall_4D_eoSolv::Bproj(const Field& f5) const{
   return f4;
 }
 
-const Field Dirac_DomainWall_4D_eoSolv::Bproj_dag(const Field& f4) const{
+const Field Dirac_BFM_DomainWall_4D_eo::Bproj_dag(const Field& f4) const{
   Field f5(fsize_*N5_);
   for(int site=0; site<Nvol_; ++site)
     d5_.BprojCore_dag(f5.getaddr(ff_.index(0,site,0)),
@@ -59,7 +61,7 @@ const Field Dirac_DomainWall_4D_eoSolv::Bproj_dag(const Field& f4) const{
   return f5;
 }
 
-const Field Dirac_DomainWall_4D_eoSolv::gamma5(const Field& f)const{ 
+const Field Dirac_BFM_DomainWall_4D_eo::gamma5(const Field& f)const{ 
   Field w(fsize_);
   for(int site=0; site<Nvol_; ++site)
     dm_.gamma5core(w.getaddr(ff_.index(0,site)),

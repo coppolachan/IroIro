@@ -9,7 +9,7 @@
 #include "include/format_F.h"
 #include "include/field.h"
 
-namespace DWF {
+namespace DWFutils {
 
   struct EvenOdd_tag{
     int EOtag;

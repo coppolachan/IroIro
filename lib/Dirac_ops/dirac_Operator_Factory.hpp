@@ -1,6 +1,7 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2013-12-24 21:26:58 noaki>
+
+ Time-stamp: <2014-01-24 14:30:11 cossu>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -334,6 +335,7 @@ public:
   DiracDWF4DeoFactory(XML::node node);
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////
 #ifdef IBM_BGQ_WILSON
 /*! @brief Concrete class for creating Dirac_DomainWall_4D_eoSolv with BGQ solv*/
 class DiracDWF4dBGQeoFactory : public DiracDWF4dFactory{
@@ -355,6 +357,9 @@ public:
   DiracDWF4dBGQeoFactory(XML::node node);
 };
 #endif
+////////////////////////////////////////////////////////////////////////////////////////////
+
+
 //////////////
 /*! @brief Concrete class for creating Dirac_staggered_EvenOdd */
 class DiracStaggeredEvenOddFactory: public DiracStaggeredEvenOddLikeFactory{

@@ -20,7 +20,7 @@
 
 using namespace std;
 using namespace Format;
-using namespace DWF;
+using namespace DWFutils;
 using namespace EvenOddUtils;
 
 int Test_DWF::run(){
