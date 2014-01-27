@@ -3,6 +3,10 @@
  */
 #include "eoUtils.hpp"
 #include<cassert>
+
+#include "include/timings.hpp"
+#include "include/messages_macros.hpp"
+
 namespace EvenOddUtils{
 
   //Returns the multiplication of D*(full vector) in 5d
@@ -15,18 +19,29 @@ namespace EvenOddUtils{
     bo += D_->mult_oo(D_->mult_oe(Field(f[esub_]))); 
 
     Field out(ff_.size());
-    for(int ex=0; ex<Nex_; ++ex){
-      for(int hs=0; hs<Nvh_; ++hs){
-	out.set(ff_.islice(idx_->esec(hs),ex), be[fh_.islice(hs,ex)]);
-	out.set(ff_.islice(idx_->osec(hs),ex), bo[fh_.islice(hs,ex)]);
-      }
-    } 
+
+#pragma omp parallel
+    {
+#pragma omp for
+      for(int ex=0; ex<Nex_; ++ex){
+	for(int hs=0; hs<Nvh_; ++hs){
+	  out.set(ff_.islice(idx_->esec(hs),ex), be[fh_.islice(hs,ex)]);
+	  out.set(ff_.islice(idx_->osec(hs),ex), bo[fh_.islice(hs,ex)]);
+	}
+      } 
+    }
+
     return out;
   }
 
   void Inverter_WilsonLike::invert(Field& sol,const Field& src)const{
+    // Inverting the 5d part of the 4d operator
+
     assert(sol.size()==ff_.size());
     assert(src.size()==ff_.size());
+    
+    long double timing;
+    FINE_TIMING_START(timing);
 
     Field be = D_->mult_ee_inv(Field(src[esub_]));
     Field bo = D_->mult_oo_inv(Field(src[osub_]));
@@ -34,16 +49,27 @@ namespace EvenOddUtils{
     be -= D_->mult_eo(bo);
     Field ye(ff_.size());
     SolverOutput monitor = slv_->solve(ye,D_->mult_dag(be));
+ 
 #if VERBOSITY > 0
     monitor.print();
 #endif
+
     bo -= D_->mult_oe(ye);
+
     for(int ex=0; ex<Nex_; ++ex){
-      for(int hs=0; hs<Nvh_; ++hs){
-	sol.set(ff_.islice(idx_->esec(hs),ex), ye[fh_.islice(hs,ex)]);
-	sol.set(ff_.islice(idx_->osec(hs),ex), bo[fh_.islice(hs,ex)]);
+#pragma omp parallel
+      {
+#pragma omp for
+	for(int hs=0; hs<Nvh_; ++hs){
+	  sol.set(ff_.islice(idx_->esec(hs),ex), ye[fh_.islice(hs,ex)]);
+	  sol.set(ff_.islice(idx_->osec(hs),ex), bo[fh_.islice(hs,ex)]);
+	}
       }
-    } 
+      
+    }
+
+   FINE_TIMING_END(timing);
+    _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF Inverter_WilsonLike solve :"<<timing<<"\n"); 
   }
 
   void Inverter_WilsonLike::test(Field& Df, const Field& f)const{

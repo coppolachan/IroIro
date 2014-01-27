@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-01-23 18:49:05 noaki>
+# Time-stamp: <2014-01-24 15:56:33 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -275,4 +275,5 @@ include_HEADERS 	=	tests.hpp			\
                                 test_DWF.hpp			\
                                 test_LapH.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\
-				test_Laplacian.hpp	
+				test_Laplacian.hpp		\
+				test_LapH.hpp

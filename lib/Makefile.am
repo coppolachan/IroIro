@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-01-23 18:17:54 noaki>
+# Time-stamp: <2014-01-27 13:08:41 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -110,6 +110,7 @@ BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib
 BFM_SRC = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 
 BFM_SRC += Tools/Bagel/bfm_storage.cpp 
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
+BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp
 else
 BFM_SRC = 
 endif
@@ -409,6 +410,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/subSpaceProjector.hpp		\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
+			Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.hpp\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\

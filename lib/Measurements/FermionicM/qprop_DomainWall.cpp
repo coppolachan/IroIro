@@ -5,8 +5,14 @@
 #include "qprop_DomainWall.hpp"
 #include "Communicator/comm_io.hpp"
 
+#include "include/timings.hpp"
+#include "include/messages_macros.hpp"
+
 void QpropDWF::calc(prop_t& xq,Source& src) const{
   xq.clear();
+
+  long double timing;
+  FINE_TIMING_START(timing);
 
   for(int s=0; s<Nd_;++s){
     for(int c=0; c<Nc_;++c){
@@ -14,6 +20,9 @@ void QpropDWF::calc(prop_t& xq,Source& src) const{
       xq.push_back(Dgw_.mult_inv(src.mksrc(s,c)));
     }
   }
+
+  FINE_TIMING_END(timing);
+  _Message(TIMING_VERB_LEVEL,"[Timing] QpropDWF calc :"<<timing<<"\n"); 
 }
 
 //for testing purposes
