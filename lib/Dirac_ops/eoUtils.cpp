@@ -19,7 +19,13 @@ namespace EvenOddUtils{
     bo += D_->mult_oo(D_->mult_oe(Field(f[esub_]))); 
 
     Field out(ff_.size());
-
+    // when SiteIndexEO is used this is equivalent to merging the even/odd slices of the 4d volumes in 
+    // sequence like this (s index in the 5d slice if Nex=/=1)
+    //
+    // EvenVec[s=0 | s=1 | s=2 | ...] OddVec[s=0 | s=1 | s=2 | ...]
+    // merged to
+    // FullVec[ s=0 Even | s=0 Odd | s=1 Even | s=1 Odd | s=2 Even | s=2 Odd | ... ]
+    // otherwise is using the full indexing (lexicographic) interleaving even and odd sites
 #pragma omp parallel
     {
 #pragma omp for
@@ -47,13 +53,15 @@ namespace EvenOddUtils{
     Field bo = D_->mult_oo_inv(Field(src[osub_]));
 
     be -= D_->mult_eo(bo);
+
+    
     Field ye(ff_.size());
-    SolverOutput monitor = slv_->solve(ye,D_->mult_dag(be));
+    SolverOutput monitor = slv_->solve(ye,D_->mult_dag(be));// to get y=M^-1 b
  
 #if VERBOSITY > 0
     monitor.print();
 #endif
-
+    
     bo -= D_->mult_oe(ye);
 
     for(int ex=0; ex<Nex_; ++ex){

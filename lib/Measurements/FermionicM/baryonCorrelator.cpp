@@ -127,12 +127,26 @@ BaryonCorrelator::octet(const prop_t& S1,const prop_t& S2,UpDn ud){
 
   vector<complex<double> > correl_local(Nt_,0.0);
 
-  for(int site=0; site<Nvol_; ++site){
+  int slice3d = SiteIndex::instance()->slsize(0,3);
+
+#pragma omp parallel for
+  for (int t = 0; t< Nt_; t++) {
+    for(int site=0; site<slice3d; ++site){
+      int site3d = SiteIndex::instance()->slice_t(t,site);
+      
+      correl_local[t] += spTrTr(S1,S1,S2,G,site3d,ud);
+      correl_local[t] +=   spTr(S1,S1,S2,G,site3d,ud);
+    }
+  }
+
+  /*
+    for(int site=0; site<Nvol_; ++site){
     int t = SiteIndex::instance()->c_t(site);
     
     correl_local[t] += spTrTr(S1,S1,S2,G,site,ud);
     correl_local[t] += spTr(S1,S1,S2,G,site,ud);
   }
+  */
   return global_correl(correl_local);
 }
 
@@ -146,6 +160,21 @@ const correl_t BaryonCorrelator::lambda(UpDn ud){
   complex<double> r4(4.0),r2(2.0);
   vector<complex<double> > correl_local(Nt_,0.0);
 
+   int slice3d = SiteIndex::instance()->slsize(0,3);
+
+#pragma omp parallel for
+   for (int t = 0; t< Nt_; t++) {
+     for(int site=0; site<slice3d; ++site){
+       int site3d = SiteIndex::instance()->slice_t(t,site);
+       correl_local[t] += r2*spTrTr(Sl_,Sl_,Sh_,G,site3d,ud);
+       correl_local[t] += r4*spTrTr(Sh_,Sl_,Sl_,G,site3d,ud);
+       correl_local[t] += r4*spTr(  Sl_,Sh_,Sl_,G,site3d,ud);
+       correl_local[t] += r4*spTr(  Sh_,Sl_,Sl_,G,site3d,ud);
+       correl_local[t] -= r2*spTr(  Sl_,Sl_,Sh_,G,site3d,ud);
+     }
+   }
+
+   /*
   for(int site=0; site<Nvol_; ++site){
     int t = SiteIndex::instance()->c_t(site);
     correl_local[t] += r2*spTrTr(Sl_,Sl_,Sh_,G,site,ud);
@@ -154,6 +183,7 @@ const correl_t BaryonCorrelator::lambda(UpDn ud){
     correl_local[t] += r4*spTr(  Sh_,Sl_,Sl_,G,site,ud);
     correl_local[t] -= r2*spTr(  Sl_,Sl_,Sh_,G,site,ud);
   }
+   */
   return global_correl(correl_local);
 }
 
@@ -168,12 +198,27 @@ BaryonCorrelator::decuplet_del(const prop_t& S,site_dir k,UpDn ud){
   vector<complex<double> > correl_local(Nt_,0.0);
   complex<double> r2(2.0);
 
+  int slice3d = SiteIndex::instance()->slsize(0,3);
+
+#pragma omp parallel for
+  for (int t = 0; t< Nt_; t++) {
+    for(int site=0; site<slice3d; ++site){
+      int site3d = SiteIndex::instance()->slice_t(t,site);
+      correl_local[t] +=  spTrTr(S,S,S,*Cg,site3d,ud);
+      correl_local[t] += r2*spTr(S,S,S,*Cg,site3d,ud);
+    }
+  }
+
+  /*
   for(int site=0; site<Nvol_; ++site){
     int t = SiteIndex::instance()->c_t(site);
-
+    
     correl_local[t] +=  spTrTr(S,S,S,*Cg,site,ud);
     correl_local[t] += r2*spTr(S,S,S,*Cg,site,ud);
   }
+  */
+  
+
   delete Cg;
   return global_correl(correl_local);
 }
@@ -188,6 +233,20 @@ const correl_t BaryonCorrelator::decuplet_sgm(const prop_t& S1,const prop_t& S2,
   vector<complex<double> > correl_local(Nt_,0.0);
   complex<double> r2(2.0);
 
+  int slice3d = SiteIndex::instance()->slsize(0,3);
+
+#pragma omp parallel for
+  for (int t = 0; t< Nt_; t++) {
+    for(int site=0; site<slice3d; ++site){
+      int site3d = SiteIndex::instance()->slice_t(t,site);
+      
+      correl_local[t] +=    spTrTr(S2,S1,S1,*Cg,site3d,ud);
+      correl_local[t] += r2*spTrTr(S1,S1,S2,*Cg,site3d,ud);
+      correl_local[t] += r2*spTr(  S1,S1,S2,*Cg,site3d,ud);
+      correl_local[t] -= r2*spTr(  S1,S2,S1,*Cg,site3d,ud);
+    }
+  }
+    /*
   for(int site=0; site<Nvol_; ++site){
     int t = SiteIndex::instance()->c_t(site);
 
@@ -196,6 +255,10 @@ const correl_t BaryonCorrelator::decuplet_sgm(const prop_t& S1,const prop_t& S2,
     correl_local[t] += r2*spTr(  S1,S1,S2,*Cg,site,ud);
     correl_local[t] -= r2*spTr(  S1,S2,S1,*Cg,site,ud);
   }
+    */
+
+
+
   delete Cg;
   return global_correl(correl_local);
 }

@@ -1,8 +1,9 @@
 /*! @file dirac_BFM_wrapper_factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2014-01-24 14:53:45 neo>
+ * Time-stamp: <2014-01-27 14:23:43 neo>
  */
 
+#include "dirac_BFM_DomainWall_4D_eo.hpp"
 #include "dirac_BFM_wrapper_factory.hpp"
 
 /// DiracBFMoperator
@@ -66,6 +67,10 @@ Dirac_DomainWall_4D* DiracDWF4dBFMeoFactory::createDirac(InputConfig& input){
 
   XML::node current_node = node_BFM_;  
   XML::descend(current_node, "Operator", MANDATORY);  
-  return new Dirac_DomainWall_4D_eoSolv(current_node,Inv_.get(),InvPV_.get());
+  return new Dirac_BFM_DomainWall_4D_eo(current_node,
+					Inv_.get(), 
+					InvPV_.get(),
+					BFM_Kernel_.get(),
+					BFM_KernelPV_.get());
 }
 

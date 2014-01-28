@@ -2,13 +2,14 @@
  * @file dirac_BFM_DomainWall_4D_eo.hpp
  * @brief Definition of Dirac_BFM_DomainWall_4D_eo class
  *
- * Time-stamp: <2014-01-27 13:10:28 neo>
+ * Time-stamp: <2014-01-27 14:13:02 neo>
  */
 #ifndef DIRAC_BFM_DWF_4D_EO_INCLUDED
 #define DIRAC_BFM_DWF_4D_EO_INCLUDED
 
 #include "Dirac_ops/dirac_DomainWall.hpp"
 #include "Dirac_ops/eoUtils.hpp"
+#include "dirac_BFM_wrapper.hpp"
 #include "Solver/solver.hpp"
 #include "Solver/solver_CG.hpp"
 #include "include/fopr.h"
@@ -21,6 +22,10 @@ private:
   const Field Bproj(const Field&)const;
   const Field Bproj_dag(const Field&)const;
 
+  Dirac_BFM_Wrapper* BFM_Op_;/*!< @brief 5D DWF operator with mass m */
+  Dirac_BFM_Wrapper* BFM_Op_PV_;/*!< @brief 5D DWF operator with mass 1, Pauli-Villars */
+
+
   int Nvol_,N5_;
   ffmt_t ff_;
   size_t fsize_;  
@@ -30,8 +35,11 @@ private:
 public:
   Dirac_BFM_DomainWall_4D_eo(XML::node node,
 			     const EvenOddUtils::Inverter_WilsonLike* invD,
-			     const EvenOddUtils::Inverter_WilsonLike* invDpv)
-    :invD_(invD),invDpv_(invDpv),
+			     const EvenOddUtils::Inverter_WilsonLike* invDpv,
+			     Dirac_BFM_Wrapper* BFM_DWF,
+			     Dirac_BFM_Wrapper* BFM_DWFpv)
+    :BFM_Op_(BFM_DWF),BFM_Op_PV_(BFM_DWFpv),
+     invD_(invD),invDpv_(invDpv),
      Nvol_(CommonPrms::instance()->Nvol()),
      ff_(Nvol_),fsize_(ff_.size()){
     XML::read(node,"N5d",N5_,MANDATORY);
