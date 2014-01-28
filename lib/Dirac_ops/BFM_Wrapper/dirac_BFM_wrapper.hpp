@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-01-24 12:05:41 neo>
+ * Time-stamp: <2014-01-28 16:41:44 neo>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -69,13 +69,14 @@ private:
   int Nvol_;
 
   void set_ScaledShamirCayleyTanh(double mq, double M5, int Ls, double scale);
-
   void LoadSource(FermionField&, int);
+
   void LoadGuess(FermionField&, int);
   void GetSolution(FermionField&, int);
   void GetMultishiftSolutions(std::vector< FermionField >&,
 			      Fermion_t *sol,
 			      int);
+
   Dirac_BFM_Wrapper(); //hides default constructor
   void AllocateFields();
 public:
@@ -92,6 +93,15 @@ public:
   // here just for compatibility
   const Field mult    (const Field&)const;
   const Field mult_dag(const Field&)const;
+
+ // For the 4d inverter
+  Field mult_unprec(const Field&);
+  Field mult_inv_4d(const Field&);
+  Fermion_t* mult_unprec_base(Fermion_t*);
+  Fermion_t* mult_inv_4d_base(Fermion_t*);
+  Fermion_t* LoadFullSource(FermionField&); 
+  void GetFullSolution(FermionField&);
+  void GaugeExportBFM();
 
   double getMass()const;
   int getN5()const;

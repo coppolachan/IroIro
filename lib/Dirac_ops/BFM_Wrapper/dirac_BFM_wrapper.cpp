@@ -1,10 +1,11 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-01-24 13:27:58 neo>
+ * Time-stamp: <2014-01-28 16:48:57 neo>
  */
 
 #include "dirac_BFM_wrapper.hpp"
+
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
 #include <stdlib.h>     /* atoi */
@@ -144,6 +145,138 @@ const Field Dirac_BFM_Wrapper::mult(const Field& Fin)const{
   }
   */
 }
+
+Field Dirac_BFM_Wrapper::mult_unprec(const Field& Fin){
+  if(is_initialized){
+    BFM_interface.GaugeExport_to_BFM(u_);
+    int donrm = 0;
+    int cb = Even;
+    FermionField FermF(Fin);
+    LoadSource(FermF,Even);
+    LoadSource(FermF,Odd);
+    linop.comm_init();
+#pragma omp parallel for
+    for (int t=0;t<threads;t++){
+      linop.Munprec(psi_h,chi_h,tmp,0);// dag=0 
+    }
+    linop.comm_end();
+    GetSolution(FermF,Even);
+    GetSolution(FermF,Odd);
+    return FermF.data;
+  } else {
+    CCIO::cout << "The operator was not initialized yet\n";
+  }
+  
+}
+
+Field Dirac_BFM_Wrapper::mult_inv_4d(const Field& Fin){
+  double fact = -1.0;
+
+  if(is_initialized){
+    BFM_interface.GaugeExport_to_BFM(u_);
+    int donrm = 0;
+    int cb = Even;
+    int dag = 0;
+    FermionField FermF(Fin);
+    LoadSource(FermF,Even);
+    LoadSource(FermF,Odd);
+    linop.comm_init();
+#pragma omp parallel for
+    for (int t=0;t<threads;t++){
+      linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);// chi[odd] = Moo^-1 psi[odd]   (odd->odd) needs later
+      linop.Meo(chi_h[1-cb],tmp,cb,dag);// tmp = Meo chi[odd]    (odd->even) 
+      linop.axpy_norm(tmp, tmp, psi_h[cb], fact);// tmp = -1*tmp + psi[even] 
+      // above -> chi[even] = psi[even] - Meo Moo^-1 psi[odd] 
+      linop.MooeeInv(tmp,chi_h[cb],dag);// chi[even] = Mee^-1 tmp 
+      // = Mee^-1 ( psi[even] - Meo Moo^-1 psi[odd] ) = Mee^-1 psi[even] - Mee^-1 Meo Moo^-1 psi[odd]
+      
+      linop.MprecTilde(chi_h[cb],psi_h[cb],tmp,1,donrm);// dag=1 
+      // psi[even] = Mtilde^dag chi[even]     to get the correct inversion of Mtilde 
+      linop.CGNE_prec(chi_h[cb],psi_h[cb]);// chi[even] = Mtilde^-1 psi[even]
+      
+      linop.Meo(chi_h[cb],tmp,1-cb,dag);// tmp = Meo chi[even]    (even->odd) 
+      linop.axpy_norm(psi_h[1-cb], tmp, psi_h[1-cb], fact);// psi[odd] = -1*tmp + psi[odd]
+      // = psi[odd] - Meo chi[even]
+      linop.MooeeInv(psi_h[1-cb], chi_h[1-cb],dag);//chi[odd] = Moo^-1 psi[odd]
+      
+    }
+    linop.comm_end();
+    GetSolution(FermF,Even);
+    GetSolution(FermF,Odd);
+    return FermF.data;
+  } else {
+    CCIO::cout << "The operator was not initialized yet\n";
+  }
+  
+}
+
+
+Fermion_t* Dirac_BFM_Wrapper::mult_unprec_base(Fermion_t psi_in[2]){
+  if(is_initialized){
+    int donrm = 0;
+    int cb = Even;
+    BFM_interface.GaugeExport_to_BFM(u_);
+    psi_h[1] = psi_in[1];
+    psi_h[0] = psi_in[0];
+    linop.comm_init();
+#pragma omp parallel for
+    for (int t=0;t<threads;t++){
+      linop.Munprec(psi_h,chi_h,tmp,0);// dag=0 
+    }
+    linop.comm_end();
+    return chi_h;
+  } else {
+    CCIO::cout << "The operator was not initialized yet\n";
+  }
+  
+}
+
+void Dirac_BFM_Wrapper::GaugeExportBFM(){
+  BFM_interface.GaugeExport_to_BFM(u_);
+}
+
+
+Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
+  double fact = -1.0;
+
+  if(is_initialized){
+    BFM_interface.GaugeExport_to_BFM(u_);
+    int donrm = 0;
+    int cb = Even;
+    int dag = 0;
+    psi_h[1] = psi_in[1];
+    psi_h[0] = psi_in[0];
+    linop.comm_init();
+#pragma omp parallel for
+    for (int t=0;t<threads;t++){
+      linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);// chi[odd] = Moo^-1 psi[odd]   (odd->odd) needs later
+      linop.Meo(chi_h[1-cb],tmp,cb,dag);// tmp = Meo chi[odd]    (odd->even) 
+      linop.axpy_norm(tmp, tmp, psi_h[cb], fact);// tmp = -1*tmp + psi[even] 
+      // above -> chi[even] = psi[even] - Meo Moo^-1 psi[odd] 
+      linop.MooeeInv(tmp,chi_h[cb],dag);// chi[even] = Mee^-1 tmp 
+      // = Mee^-1 ( psi[even] - Meo Moo^-1 psi[odd] ) = Mee^-1 psi[even] - Mee^-1 Meo Moo^-1 psi[odd]
+      
+      linop.MprecTilde(chi_h[cb],psi_h[cb],tmp,1,donrm);// dag=1 
+      // psi[even] = Mtilde^dag chi[even]     to get the correct inversion of Mtilde 
+      linop.CGNE_prec(chi_h[cb],psi_h[cb]);// chi[even] = Mtilde^-1 psi[even]
+      
+      linop.Meo(chi_h[cb],tmp,1-cb,dag);// tmp = Meo chi[even]    (even->odd) 
+      linop.axpy_norm(psi_h[1-cb], tmp, psi_h[1-cb], fact);// psi[odd] = -1*tmp + psi[odd]
+      // = psi[odd] - Meo chi[even]
+      linop.MooeeInv(psi_h[1-cb], chi_h[1-cb],dag);//chi[odd] = Moo^-1 psi[odd]
+      
+    }
+    linop.comm_end();
+    return chi_h;
+  } else {
+    CCIO::cout << "The operator was not initialized yet\n";
+  }
+  
+}
+
+
+
+
 
 const Field Dirac_BFM_Wrapper::mult_dag(const Field& Fin)const{
  // Now, july 2013, just a safe implementation
@@ -337,6 +470,14 @@ void Dirac_BFM_Wrapper::LoadSource(FermionField& In,int cb){
     BFM_interface.FermionExport_to_BFM_5D(In,psi_h[cb],cb,s);//valid for 4d & 5d
 }
 
+Fermion_t* Dirac_BFM_Wrapper::LoadFullSource(FermionField& In){
+  for (int s = 0; s< BFMparams.Ls_; s++){
+    BFM_interface.FermionExport_to_BFM_5D(In,psi_h[Even],Even,s);//valid for 4d & 5d
+    BFM_interface.FermionExport_to_BFM_5D(In,psi_h[Odd],Odd,s);//valid for 4d & 5d
+  }
+  return psi_h;
+}
+
 void Dirac_BFM_Wrapper::LoadGuess(FermionField& In,int cb){
   for (int s = 0; s< BFMparams.Ls_; s++)
     BFM_interface.FermionExport_to_BFM_5D(In,chi_h[cb],cb,s);//valid for 4d & 5d
@@ -347,6 +488,15 @@ void Dirac_BFM_Wrapper::GetSolution(FermionField& Out,int cb){
   for (int s = 0; s< Ls; s++)
     BFM_interface.FermionImport_from_BFM_5D(Out,chi_h[cb],cb,s, Ls);//valid for 4d & 5d
 }
+
+void Dirac_BFM_Wrapper::GetFullSolution(FermionField& Out){
+ int Ls = BFMparams.Ls_;
+ for (int s = 0; s< Ls; s++){
+    BFM_interface.FermionImport_from_BFM_5D(Out,chi_h[Even],Even,s, Ls);//valid for 4d & 5d
+    BFM_interface.FermionImport_from_BFM_5D(Out,chi_h[Odd] ,Odd ,s, Ls);//valid for 4d & 5d
+ }
+}
+
 
 void Dirac_BFM_Wrapper::GetMultishiftSolutions(std::vector < FermionField >& Out,
 					       Fermion_t *BFMsol,
