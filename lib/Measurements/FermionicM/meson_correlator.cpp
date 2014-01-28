@@ -1,7 +1,16 @@
+/*!
+ * @file meson_correlator.cpp
+ * @brief Methods of MesonCorrelator class
+ *
+ * Time-stamp: <2014-01-28 17:08:51 neo>
+ */
+
 #include "meson_correlator.hpp"
 #include "include/field.h"
 #include "Communicator/comm_io.hpp"
 #include "Geometry/siteIndex.hpp"
+
+
 const std::vector<double> 
 MesonCorrelator::calculate(const prop_t& q1,const prop_t& q2){
 
@@ -12,6 +21,7 @@ MesonCorrelator::calculate(const prop_t& q1,const prop_t& q2){
   int s1, s2, s3, s4; //spinor indexes
   double gamma_factor, temp_corr;
 
+#pragma omp parallel for
   for(int site=0; site<CommonPrms::instance()->Nvol(); ++site){
     int t = SiteIndex::instance()->c_t(site);//get t from site index
     //Cycle among spinor and color indexes

@@ -1,7 +1,7 @@
 /*! @file dirac_BFM_DomainWall_4D_eo.cpp
  *  @brief Methods of Dirac_BFM_DomainWall_4D_eo class
 
- * Time-stamp: <2014-01-28 16:50:55 neo>
+ * Time-stamp: <2014-01-28 17:01:42 neo>
  */
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
 #include "Fields/field_expressions.hpp"
@@ -13,6 +13,8 @@ using namespace FieldExpression;
 #include "include/messages_macros.hpp"
   
 const Field Dirac_BFM_DomainWall_4D_eo::mult(const Field& f)const{
+  // Original
+  /*
   long double timing;
   FINE_TIMING_START(timing);
 
@@ -23,9 +25,12 @@ const Field Dirac_BFM_DomainWall_4D_eo::mult(const Field& f)const{
   FINE_TIMING_END(timing);
   _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult :"<<timing<<"\n"); 
   return Bproj(sol5);
-}
+  */
 
-const Field Dirac_BFM_DomainWall_4D_eo::mult_inv(const Field& f)const{
+  ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // WARNING: UNTESTED but it is similar to the mult_inv routine, just PV<->Op change
+  ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
   long double timing, time_preparation, time_unprec;
   FINE_TIMING_START(timing);
   FINE_TIMING_START(time_preparation);
@@ -37,6 +42,35 @@ const Field Dirac_BFM_DomainWall_4D_eo::mult_inv(const Field& f)const{
   // so the vector is stored as
   // Vec[ s=0 Even | s=0 Odd | s=1 Even | s=1 Odd | s=2 Even | s=2 Odd | ... ]
   // where s is in the 5th dimension
+  FField.data = Bproj_dag(f);
+
+  Fermion_t* fm1 = BFM_Op_->LoadFullSource(FField);
+  FINE_TIMING_END(time_preparation);
+  FINE_TIMING_START(time_unprec);
+  Fermion_t* fm2 = BFM_Op_->mult_unprec_base(fm1);
+  FINE_TIMING_END(time_unprec);
+  fm1 = BFM_Op_PV_->mult_inv_4d_base(fm2);
+  BFM_Op_PV_->GetFullSolution(FField);
+  FINE_TIMING_END(timing);
+
+  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult_inv :"<<timing<<"\n"); 
+  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult_inv preparation :"<<time_preparation<<"\n"); 
+  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult_inv unprec :"<<time_unprec<<"\n"); 
+  return Bproj(FField.data);
+}
+
+const Field Dirac_BFM_DomainWall_4D_eo::mult_inv(const Field& f)const{
+  long double timing, time_preparation, time_unprec;
+  FINE_TIMING_START(timing);
+  FINE_TIMING_START(time_preparation);
+
+  FermionField FField(Nvol_*N5_);
+ 
+  // Using the fact the BFM assumes SiteIndexEO
+  // so the vector is stored as
+  // Vec[ s=0 Even | s=0 Odd | s=1 Even | s=1 Odd | s=2 Even | s=2 Odd | ... ]
+  // where s is in the 5th dimension
+  // which is the way of storing vectors in BFM
   FField.data = Bproj_dag(f);
 
   Fermion_t* fm1 = BFM_Op_PV_->LoadFullSource(FField);
