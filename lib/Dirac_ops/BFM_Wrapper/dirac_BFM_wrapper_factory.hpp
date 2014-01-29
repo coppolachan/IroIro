@@ -1,6 +1,6 @@
 /*! @file dirac_BFM_wrapper_factory.hpp 
  *  @brief Declaration of BFM Dirac operators factories
- * Time-stamp: <2014-01-24 14:50:05 neo>
+ * Time-stamp: <2014-01-29 02:34:31 noaki>
  */
 #ifndef DIRAC_BFM_FACT_
 #define DIRAC_BFM_FACT_
@@ -24,20 +24,9 @@ class DiracBFMoperatorFactory : public DiracDWF5dFactory {
   Dirac_BFM_Wrapper* createDirac(InputConfig&);
   Dirac_BFM_Wrapper* createDiracPV(InputConfig&);
 public:
-  DiracBFMoperatorFactory(const XML::node node):Dirac_node_(node){
-    XML::node current_node = Dirac_node_; 
-    XML::descend(current_node, "Operator", MANDATORY);
-    Dirac5D_EO_factory_.save(new DiracEvenOdd_DWF5dFactory(current_node));// forces EO
-  
-  }
-
-  Dirac_BFM_Wrapper* getDirac(InputConfig& input) {
-    return createDirac(input);
-  }
-  Dirac_BFM_Wrapper* getDiracPV(InputConfig& input) {
-    return createDiracPV(input);
-  }
-  
+  DiracBFMoperatorFactory(const XML::node node);
+  Dirac_BFM_Wrapper* getDirac(InputConfig& );
+  Dirac_BFM_Wrapper* getDiracPV(InputConfig& );
 };
 
 

@@ -1,12 +1,25 @@
 /*! @file dirac_BFM_wrapper_factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2014-01-27 14:23:43 neo>
+ * Time-stamp: <2014-01-29 02:35:59 noaki>
  */
 
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
 #include "dirac_BFM_wrapper_factory.hpp"
 
 /// DiracBFMoperator
+DiracBFMoperatorFactory::DiracBFMoperatorFactory(const XML::node node)
+ :Dirac_node_(node){
+  XML::node current_node = Dirac_node_; 
+  XML::descend(current_node, "Operator", MANDATORY);
+  /// forces EO
+  Dirac5D_EO_factory_.save(new DiracEvenOdd_DWF5dFactory(current_node));
+}
+
+Dirac_BFM_Wrapper* DiracBFMoperatorFactory::getDirac(InputConfig& input) {
+  return createDirac(input); }
+Dirac_BFM_Wrapper* DiracBFMoperatorFactory::getDiracPV(InputConfig& input) {
+  return createDiracPV(input); } 
+
 Dirac_BFM_Wrapper* DiracBFMoperatorFactory::
 createDirac(InputConfig& Gfield){
   DiracWilsonEO_.save(Dirac5D_EO_factory_.get()->getDirac(Gfield));
@@ -14,10 +27,8 @@ createDirac(InputConfig& Gfield){
   return new Dirac_BFM_Wrapper(Dirac_node_, 
 			       &Gfield.gconf->data, 
 			       DiracWilsonEO_.get(), Regular5D);
-
   //if (XML::descend(Dirac_node_, "Solver"))
   //  BFMop_.get()->set_SolverParams(Dirac_node_));
-  
 }
 
 Dirac_BFM_Wrapper* DiracBFMoperatorFactory::
@@ -27,15 +38,13 @@ createDiracPV(InputConfig& Gfield){
   return new Dirac_BFM_Wrapper(Dirac_node_, 
 			       &Gfield.gconf->data, 
 			       DiracWilsonEO_.get(), PauliVillars5D);
-
   //if (XML::descend(Dirac_node_, "Solver"))
   //  BFMop_.get()->set_SolverParams(Dirac_node_));
-  
 }
 
-
 ///////////////////// 4D Operator
-DiracDWF4dBFMeoFactory::DiracDWF4dBFMeoFactory(XML::node node):Dirac_node_(node){
+DiracDWF4dBFMeoFactory::DiracDWF4dBFMeoFactory(XML::node node)
+:Dirac_node_(node){
   node_BFM_ = Dirac_node_;
   XML::descend(node_BFM_,"Kernel5d",MANDATORY);
   DiracBFMFactory_.save(new DiracBFMoperatorFactory(node_BFM_));
@@ -58,13 +67,10 @@ Dirac_DomainWall_4D* DiracDWF4dBFMeoFactory::createDirac(InputConfig& input){
   BFM_Kernel_.get()->initialize();
   BFM_KernelPV_.get()->initialize();
 
-
-  Inv_.save(new EvenOddUtils::Inverter_WilsonLike(BFM_Kernel_.get()->getInternalEO(),SolverEO_.get()));
-  InvPV_.save(new EvenOddUtils::Inverter_WilsonLike(BFM_KernelPV_.get()->getInternalEO(),SolverEOpv_.get()));
-
-
-
-
+  Inv_.save(new EvenOddUtils::Inverter_WilsonLike(BFM_Kernel_.get()->getInternalEO(),
+						  SolverEO_.get()));
+  InvPV_.save(new EvenOddUtils::Inverter_WilsonLike(BFM_KernelPV_.get()->getInternalEO(),
+						    SolverEOpv_.get()));
   XML::node current_node = node_BFM_;  
   XML::descend(current_node, "Operator", MANDATORY);  
   return new Dirac_BFM_DomainWall_4D_eo(current_node,
