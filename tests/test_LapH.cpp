@@ -16,13 +16,14 @@
 #include <stdio.h>
 
 #include "test_LapH.hpp"
-#include "Dirac_ops/dirac_DomainWall.hpp"
-#include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
-#include "Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp"
-#include "Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp"
-#include "Solver/solver_CG.hpp"
-#include "Solver/solver_BiCGStab.hpp"
-#include "Tools/RandomNumGen/randNum_MT19937.h"
+#include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
+//#include "Dirac_ops/dirac_DomainWall.hpp"
+//#include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
+//#include "Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp"
+//#include "Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp"
+//#include "Solver/solver_CG.hpp"
+//#include "Solver/solver_BiCGStab.hpp"
+//#include "Tools/RandomNumGen/randNum_MT19937.h"
 #include "Measurements/GaugeM/staples.hpp"
 
 #include "include/timings.hpp"
@@ -38,43 +39,57 @@ int Test_LapH_Solver::run()
 {
   CCIO::cout<<"Test_LapH_Solver::run() called\n";
 
+  XML::node LapH_node = input_.node;
+  InputConfig config = input_.getConfig();
+
+  XML::descend(LapH_node,"LapH",MANDATORY);
+
+
   // Lattice size parameters
   int Nvol = CommonPrms::instance()->Nvol();
-
   int Nt = CommonPrms::instance()->Nt();
   int Nx = CommonPrms::instance()->Nx();
   int Ny = CommonPrms::instance()->Ny();
   int Nz = CommonPrms::instance()->Nz();
   int Nvol3D = Nx*Ny*Nz;
- 
+  Field solution;
+  Field* u = &((input_.gconf)->data);
+
   Staples stpl;
-  double plq = stpl.plaquette(Gfield_);
+  double plq = stpl.plaquette(*input_.gconf);
   CCIO::cout<<" Plaquette ="<< plq <<std::endl;
   
   /************************************************************************************/
   //
   // For 5-D Inversion (from test_DWF.cpp)
   //
-  Field solution;
-  Field* u = &(Gfield_.data);
+
+  XML::descend(LapH_node,"KernelDWF_4d");
+  auto_ptr<DiracDWF4dFactory> 
+    Wilson_Kernel_4d_factory(Diracs::createDiracDWF4dFactory(LapH_node));
+  auto_ptr<Dirac_DomainWall_4D> Wilson_Kernel_4d(Wilson_Kernel_4d_factory->getDirac(config));
+
+
+  /*
   double M0 = -1.0;
   // creation of Dirac_Wilson operators 
   Dirac_Wilson Dw_eo(M0,u,Dop::EOtag());
   Dirac_Wilson Dw_oe(M0,u,Dop::OEtag());
   // Definition of the 5D DWF object
-  int N5=12;
+  int N5=4;
   double b=2.0;
   double c=1.0;
   //###########################################################
   double mq =0.007; // one should read this from the xml as well 
   //###########################################################
+  */
 
   int Nev = 120; // should read these in from xml ############################################
   int Nevdil = 6; //interlace-6
   int Nspindil = ND_; // full spin dilution
   int Ndil = Nt * Nevdil * Nspindil; // 64 * 6   * 4 =  1536;// max dilution index + 1 (but we'll only use t=0)
 
-
+  /*
   ffmt_t fmt5d(CommonPrms::instance()->Nvol(),N5);
   // For the TanH approximation
   std::vector<double> omega(N5,1.0);
@@ -93,7 +108,7 @@ int Test_LapH_Solver::run()
   Inverter_WilsonLike invDdwf(&Ddwf_eo,&slv_dwf_eo);
   Inverter_WilsonLike invDdpv(&Ddpv_eo,&slv_dpv_eo);
   Dirac_DomainWall_4D_eoSolv D4eo(N5,mq,&invDdwf,&invDdpv);
-  
+  */
   /*************************************************************************/
   //
   // Generating The Source Vector 
@@ -116,13 +131,16 @@ int Test_LapH_Solver::run()
   //
 
   //int num_rand = Nt * Nev * Nspindil;// 64 * 120 * 4 = 30720;// number of random numbers to generate
+
   int num_rand =  Nev * Nspindil;// 64 * 120 * 4 = 7200;// number of random numbers to generate
 
 
   // 
   // Creating the RNG from the XML file
-  RNG_Env::RNG = RNG_Env::createRNGfactory(LapH_node);
-  RandNum* rand_ = RNG_Env::RNG->getRandomNumGenerator();
+
+  //RNG_Env::RNG = RNG_Env::createRNGfactory(LapH_node);
+  //RandNum* rand_ = RNG_Env::RNG->getRandomNumGenerator();
+
   //
   // Example:
   //  Connected diagrams  Tf, Gf, EVi6
@@ -134,7 +152,7 @@ int Test_LapH_Solver::run()
 
   std::valarray<double> white_noise(0.0, num_rand);
   std::valarray<double> rho(0.0, num_rand*2); 
-  rand_->get(white_noise);    
+  input_.rng->get(white_noise);    
   // Make Z4 noise from uniform noise
   for (int idx = 0; idx <white_noise.size(); idx++)
   {
@@ -238,7 +256,7 @@ int Test_LapH_Solver::run()
 	FINE_TIMING_END(timer_save);
 	CCIO::cout << "[Timing] Source(s) save: "<< timer_save << "\n";
 	FINE_TIMING_START(timer_solver);
-	Field solution = D4eo.mult_inv(srcfield[spin].data);  
+	Field solution = Wilson_Kernel_4d->mult_inv(srcfield[spin].data);  
   	FINE_TIMING_END(timer_solver);
       	CCIO::cout << "[Timing] Solver: "<< timer_solver << "\n";
 
