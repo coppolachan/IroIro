@@ -132,30 +132,36 @@ const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
   F fmt(CommonPrms::instance()->Nvol());
   int Nt = CommonPrms::instance()->Nt();
   std::vector<double> correl_local(Nt,0.0);
-
-  for(int site=0; site<CommonPrms::instance()->Nvol(); ++site){
-    int t = SiteIndex::instance()->c_t(site);//get t from site index
-    /// loop over spinor and color indexes
-    for(int s4=0; s4<Nd_; ++s4){
-      /// s4 -> s1
-      int s1 = (*G2_)(s4).spn;
-      for(int s2=0; s2<Nd_; ++s2){
-        /// s2 -> s3
-	int s3 = (*G1_)(s2).spn;
-        double gamma_factor
-	  = (*G2_)(s4).facr*(*G1_)(s2).facr -(*G2_)(s4).faci*(*G1_)(s2).faci;
-        /// is always a real number
-
-	for(int c1=0; c1<Nc_; ++c1){//Contracts colors                        
-	  // following contraction is Re[q1*(q2~)]
-	  //  (imaginary part should be exactly zero)
-          double temp_corr = (q1[c1+Nc_*s1][fmt.cslice(s2,site)]
-			      *q2[c1+Nc_*s4][fmt.cslice(s3,site)]).sum();
-	  correl_local[t] += gamma_factor*temp_corr;
+  
+  int slice3d = SiteIndex::instance()->slsize(0,TDIR);
+  
+#pragma omp parallel for
+  for (int t = 0; t< Nt; t++) {
+    for(int site=0; site<slice3d; ++site){
+      int site3d = SiteIndex::instance()->slice_t(t,site);
+      /// loop over spinor and color indexes
+      for(int s4=0; s4<Nd_; ++s4){
+	/// s4 -> s1
+	int s1 = (*G2_)(s4).spn;
+	for(int s2=0; s2<Nd_; ++s2){
+	  /// s2 -> s3
+	  int s3 = (*G1_)(s2).spn;
+	  double gamma_factor
+	    = (*G2_)(s4).facr*(*G1_)(s2).facr -(*G2_)(s4).faci*(*G1_)(s2).faci;
+	  /// is always a real number
+	  
+	  for(int c1=0; c1<Nc_; ++c1){//Contracts colors                        
+	    // following contraction is Re[q1*(q2~)]
+	    //  (imaginary part should be exactly zero)
+	    double temp_corr = (q1[c1+Nc_*s1][fmt.cslice(s2,site3d)]
+				*q2[c1+Nc_*s4][fmt.cslice(s3,site3d)]).sum();
+	    correl_local[t] += gamma_factor*temp_corr;
+	  }
 	}
       }
     }
   }
+
   int Lt = CommonPrms::instance()->Lt();
 
   std::vector<double> correl_tmp(Lt,0.0);
@@ -173,8 +179,6 @@ template <typename F>
 const std::vector<double> 
 MesonCorrelator::calculate_mom(const prop_t& q1,const prop_t& q2,
 			       double px,double py,double pz){
-
-  //CCIO::cout <<"Contraction to make up meson correlator\n";
 
   F fmt(CommonPrms::instance()->Nvol());
   int Nt = CommonPrms::instance()->Nt();
@@ -238,8 +242,6 @@ template <typename F>
 const std::vector<double> 
 MesonCorrelator::calculate_PSmom(const prop_t& q1,const prop_t& q2,
 			       double px,double py,double pz){
-
-  //CCIO::cout <<"Contraction to make up meson correlator\n";
 
   F fmt(CommonPrms::instance()->Nvol());
   int Nt = CommonPrms::instance()->Nt();

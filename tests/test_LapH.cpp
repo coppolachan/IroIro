@@ -25,6 +25,9 @@
 #include "Tools/RandomNumGen/randNum_MT19937.h"
 #include "Measurements/GaugeM/staples.hpp"
 
+#include "include/timings.hpp"
+#include "include/messages_macros.hpp"
+
 using namespace std;
 using namespace Format;
 using namespace EvenOddUtils;
@@ -59,7 +62,7 @@ int Test_LapH_Solver::run()
   Dirac_Wilson Dw_eo(M0,u,Dop::EOtag());
   Dirac_Wilson Dw_oe(M0,u,Dop::OEtag());
   // Definition of the 5D DWF object
-  int N5=4;
+  int N5=12;
   double b=2.0;
   double c=1.0;
   //###########################################################
@@ -78,7 +81,7 @@ int Test_LapH_Solver::run()
  
   // Solver parameters
   double prec = 1.0e-16;
-  int max_iter = 600;
+  int max_iter = 5000;
   
   // Constructs the 5D objects for the operator and the Pauli-Villars
   Dirac_DomainWall_EvenOdd Ddwf_eo(b,c,M0, mq,omega,&Dw_eo,&Dw_oe);
@@ -100,7 +103,7 @@ int Test_LapH_Solver::run()
   // Creating the 4d fermion field (color and spin dof)
   
   FermionField Ffield;
-  FermionField srcfield;
+  std::vector<FermionField> srcfield(ND_);
   
   //
   // Eigenvectors are stored as 3-D vectors for each timeslice
@@ -115,12 +118,7 @@ int Test_LapH_Solver::run()
   //int num_rand = Nt * Nev * Nspindil;// 64 * 120 * 4 = 30720;// number of random numbers to generate
   int num_rand =  Nev * Nspindil;// 64 * 120 * 4 = 7200;// number of random numbers to generate
 
-  // #######################################################################################
-  // this one needs some redesign to deal with 3d vectors
-  // now loading 8 (64/8 <- number of nodes in the T direction) 
-  //       The filename should come from the xml file 
 
-  // #######################################################################################
   // 
   // Creating the RNG from the XML file
   RNG_Env::RNG = RNG_Env::createRNGfactory(LapH_node);
@@ -170,13 +168,22 @@ int Test_LapH_Solver::run()
   // rho has ev, spin and t indices
   //    (here, t is essentially absent from the indices because timeslice t=0)
   //
-  int rho_idx;  
+  int rho_idx; 
+  
+  long double timer_source, timer_solver, timer_save;
+
   for(int ev_start=0; ev_start < Nevdil; ++ev_start)
     {
+      FINE_TIMING_START(timer_source);
+
+
+      for(int spin=0; spin < ND_; ++spin)
+	srcfield[spin] = 0;
+
       for(int eigvec_number=ev_start; eigvec_number < Nev; eigvec_number+=Nevdil)
 	{     
 	  CCIO::ReadFromDisk3D< Format::Format_S >(Sfield.data, "eigen_t0_5830", eigvec_number, 0, "Binary", false);
-	  srcfield = 0;
+
 	  for(int spin=0; spin < ND_; ++spin)
 	    {
 	    
@@ -205,9 +212,12 @@ int Test_LapH_Solver::run()
 		Ffield.data.set(i, imag);
 	      }
 	      // add to the source field
-	      srcfield += Ffield;    
+	      srcfield[spin] += Ffield;    
 	    }//spin
 	} // evigvec_number
+
+      FINE_TIMING_END(timer_source);
+      CCIO::cout << "[Timing] Source(s) creation: "<< timer_source << "\n";
 	  /*
       for (int i = 0; i  < srcfield.size(); i+=2) {
 	CCIO::cout << "["<<i<<"] F = "<< srcfield[i] << " , " << srcfield[i+1] << "\n";
@@ -219,25 +229,37 @@ int Test_LapH_Solver::run()
       
       
       // Invert to find the solution
-      sprintf(filename, "smeared_rho_0_NvI6_t0_i%d", ev_start);
-      CCIO::SaveOnDisk<FermionField>(srcfield.data, filename, true);
-      Field solution = D4eo.mult_inv(srcfield.data);  
+      for (int spin = 0; spin < ND_; spin++){
+	CCIO::cout << " Ev_start: "<< ev_start << "  Spin : "<<spin << "\n";
 	
-      
-      // Save the 4-D fermion solution: phi_{i}_t{t0}_noise_0(x,t) 
-      sprintf(filename, "phi_0_NvI6_t0_i%d", ev_start);
-      CCIO::SaveOnDisk<FermionField>(solution, filename, true);
-      // One can also project the solution onto the eigenvectors at this stage and
-      // save only the coefficients if we know we will be smearing at the sink.   
-      /*
-      for(int site=0; site<Nvol; ++site){
-	double Op = 0;
-	if (SiteIndex::g_t(site) == time_slice){
+	sprintf(filename, "smeared_rho_0_NvI6_t0_i%d", ev_start*ND_+spin);
+	FINE_TIMING_START(timer_save);
+	CCIO::SaveOnDisk<FermionField>(srcfield[spin].data, filename);
+	FINE_TIMING_END(timer_save);
+	CCIO::cout << "[Timing] Source(s) save: "<< timer_save << "\n";
+	FINE_TIMING_START(timer_solver);
+	Field solution = D4eo.mult_inv(srcfield[spin].data);  
+  	FINE_TIMING_END(timer_solver);
+      	CCIO::cout << "[Timing] Solver: "<< timer_solver << "\n";
+
+	// Save the 4-D fermion solution: phi_{i}_t{t0}_noise_0(x,t) 
+  	sprintf(filename, "phi_0_NvI6_t0_i%d", ev_start*ND_+spin);
+	FINE_TIMING_START(timer_save);
+	CCIO::SaveOnDisk<FermionField>(solution, filename);
+	FINE_TIMING_END(timer_save);
+	CCIO::cout << "[Timing] Solution(s) save: "<< timer_save << "\n";
+	// One can also project the solution onto the eigenvectors at this stage and
+	// save only the coefficients if we know we will be smearing at the sink.   
+	/*
+	  for(int site=0; site<Nvol; ++site){
+	  double Op = 0;
+	  if (SiteIndex::g_t(site) == time_slice){
 	  Op += srcfield.data[srcfield.format.slice_islice(site)]*(Dw_eo.gamma5(solution));
-	}
+	  }
+	  }
+	*/
       }
-      */
-      double Op = srcfield.data*(Dw_eo.gamma5(solution));
+      
 
     } // ev_start
 
