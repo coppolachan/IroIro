@@ -69,7 +69,7 @@ target_triplet = @target@
 @IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@am__append_15 = Smearing/stoutSmear_core.cpp \
 @IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	Smearing/smartConf_core.cpp \
 @IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	Smearing/APEsmear.cpp
-bin_PROGRAMS = main_hmc$(EXEEXT)
+bin_PROGRAMS = main_hmc$(EXEEXT) main_hadron_spectrum_Nf2p1$(EXEEXT)
 subdir = lib
 DIST_COMMON = $(am__include_HEADERS_DIST) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -335,11 +335,18 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	scalar_Operator_FactoryCreator.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
-am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
-main_hmc_OBJECTS = $(am_main_hmc_OBJECTS)
+am_main_hadron_spectrum_Nf2p1_OBJECTS =  \
+	HadronSpectrum_Nf2p1.$(OBJEXT) \
+	main_hadron_correlator_Nf2p1.$(OBJEXT)
+main_hadron_spectrum_Nf2p1_OBJECTS =  \
+	$(am_main_hadron_spectrum_Nf2p1_OBJECTS)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+main_hadron_spectrum_Nf2p1_DEPENDENCIES = libcommcode.a \
+	$(am__DEPENDENCIES_2)
+am_main_hmc_OBJECTS = main_hmc.$(OBJEXT)
+main_hmc_OBJECTS = $(am_main_hmc_OBJECTS)
 main_hmc_DEPENDENCIES = libcommcode.a $(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -362,8 +369,10 @@ am__v_CXXLD_0 = @echo "  CXXLD " $@;
 AM_V_GEN = $(am__v_GEN_$(V))
 am__v_GEN_ = $(am__v_GEN_$(AM_DEFAULT_VERBOSITY))
 am__v_GEN_0 = @echo "  GEN   " $@;
-SOURCES = $(libcommcode_a_SOURCES) $(main_hmc_SOURCES)
-DIST_SOURCES = $(am__libcommcode_a_SOURCES_DIST) $(main_hmc_SOURCES)
+SOURCES = $(libcommcode_a_SOURCES) \
+	$(main_hadron_spectrum_Nf2p1_SOURCES) $(main_hmc_SOURCES)
+DIST_SOURCES = $(am__libcommcode_a_SOURCES_DIST) \
+	$(main_hadron_spectrum_Nf2p1_SOURCES) $(main_hmc_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -457,6 +466,7 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Geometry/siteMap.hpp Geometry/myMap.hpp Geometry/autoMap.hpp \
 	Geometry/shiftField.hpp Main/gaugeConf.hpp \
 	Main/gaugeGlobal.hpp \
+	Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.hpp \
 	Dirac_ops/dirac_Operator_FactoryCreator.hpp \
 	Dirac_ops/dirac_Operator_Factory.hpp \
 	Dirac_ops/dirac_DWoverlap.hpp \
@@ -677,7 +687,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-01-27 13:08:41 neo>
+# Time-stamp: <2014-01-29 14:53:08 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -866,8 +876,16 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Scalar_ops/laplacian.cpp	        \
 		Scalar_ops/scalar_Operator_FactoryCreator.cpp	
 
+
+################ Main programs 
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD = libcommcode.a $(OPTLIB)
+main_hadron_spectrum_Nf2p1_SOURCES = Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp \
+			Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp
+
+main_hadron_spectrum_Nf2p1_LDADD = libcommcode.a $(OPTLIB)
+
+############### Headers
 include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/commonPrms.hpp		\
                         $(top_srcdir)/include/commandline.hpp           \
@@ -973,6 +991,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Geometry/shiftField.hpp			\
 			Main/gaugeConf.hpp			\
 			Main/gaugeGlobal.hpp			\
+			Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.hpp \
 		        Dirac_ops/dirac_Operator_FactoryCreator.hpp  \
 			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_DWoverlap.hpp 		\
@@ -1184,6 +1203,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+main_hadron_spectrum_Nf2p1$(EXEEXT): $(main_hadron_spectrum_Nf2p1_OBJECTS) $(main_hadron_spectrum_Nf2p1_DEPENDENCIES) 
+	@rm -f main_hadron_spectrum_Nf2p1$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(main_hadron_spectrum_Nf2p1_OBJECTS) $(main_hadron_spectrum_Nf2p1_LDADD) $(LIBS)
 main_hmc$(EXEEXT): $(main_hmc_OBJECTS) $(main_hmc_DEPENDENCIES) 
 	@rm -f main_hmc$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(main_hmc_OBJECTS) $(main_hmc_LDADD) $(LIBS)
@@ -1197,6 +1219,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APEsmear_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HBActions_SUN.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/HadronSpectrum_Nf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ILDG_reader.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ILDG_writer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/JLQCDLegacy_reader.Po@am__quote@
@@ -1290,6 +1313,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/io_errors.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jobUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/laplacian.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hadron_correlator_Nf2p1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main_hmc.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mdExec_2MN.Po@am__quote@
@@ -3744,6 +3768,38 @@ scalar_Operator_FactoryCreator.obj: Scalar_ops/scalar_Operator_FactoryCreator.cp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Scalar_ops/scalar_Operator_FactoryCreator.cpp' object='scalar_Operator_FactoryCreator.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o scalar_Operator_FactoryCreator.obj `if test -f 'Scalar_ops/scalar_Operator_FactoryCreator.cpp'; then $(CYGPATH_W) 'Scalar_ops/scalar_Operator_FactoryCreator.cpp'; else $(CYGPATH_W) '$(srcdir)/Scalar_ops/scalar_Operator_FactoryCreator.cpp'; fi`
+
+HadronSpectrum_Nf2p1.o: Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT HadronSpectrum_Nf2p1.o -MD -MP -MF $(DEPDIR)/HadronSpectrum_Nf2p1.Tpo -c -o HadronSpectrum_Nf2p1.o `test -f 'Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp' || echo '$(srcdir)/'`Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/HadronSpectrum_Nf2p1.Tpo $(DEPDIR)/HadronSpectrum_Nf2p1.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp' object='HadronSpectrum_Nf2p1.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o HadronSpectrum_Nf2p1.o `test -f 'Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp' || echo '$(srcdir)/'`Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp
+
+HadronSpectrum_Nf2p1.obj: Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT HadronSpectrum_Nf2p1.obj -MD -MP -MF $(DEPDIR)/HadronSpectrum_Nf2p1.Tpo -c -o HadronSpectrum_Nf2p1.obj `if test -f 'Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp'; then $(CYGPATH_W) 'Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/HadronSpectrum_Nf2p1.Tpo $(DEPDIR)/HadronSpectrum_Nf2p1.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp' object='HadronSpectrum_Nf2p1.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o HadronSpectrum_Nf2p1.obj `if test -f 'Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp'; then $(CYGPATH_W) 'Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp'; fi`
+
+main_hadron_correlator_Nf2p1.o: Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hadron_correlator_Nf2p1.o -MD -MP -MF $(DEPDIR)/main_hadron_correlator_Nf2p1.Tpo -c -o main_hadron_correlator_Nf2p1.o `test -f 'Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp' || echo '$(srcdir)/'`Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/main_hadron_correlator_Nf2p1.Tpo $(DEPDIR)/main_hadron_correlator_Nf2p1.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp' object='main_hadron_correlator_Nf2p1.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o main_hadron_correlator_Nf2p1.o `test -f 'Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp' || echo '$(srcdir)/'`Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp
+
+main_hadron_correlator_Nf2p1.obj: Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hadron_correlator_Nf2p1.obj -MD -MP -MF $(DEPDIR)/main_hadron_correlator_Nf2p1.Tpo -c -o main_hadron_correlator_Nf2p1.obj `if test -f 'Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp'; then $(CYGPATH_W) 'Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/main_hadron_correlator_Nf2p1.Tpo $(DEPDIR)/main_hadron_correlator_Nf2p1.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp' object='main_hadron_correlator_Nf2p1.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o main_hadron_correlator_Nf2p1.obj `if test -f 'Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp'; then $(CYGPATH_W) 'Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp'; else $(CYGPATH_W) '$(srcdir)/Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp'; fi`
 
 main_hmc.o: Main/main_hmc.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT main_hmc.o -MD -MP -MF $(DEPDIR)/main_hmc.Tpo -c -o main_hmc.o `test -f 'Main/main_hmc.cpp' || echo '$(srcdir)/'`Main/main_hmc.cpp

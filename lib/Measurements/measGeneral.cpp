@@ -1,5 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
+ *
+ * Time-stamp: <2014-01-29 15:29:14 cossu>
  */
 
 #include "measGeneral.hpp"
@@ -9,6 +11,7 @@
 #include "IO/fields_io.hpp"
 #include <iostream>
 #include <string.h>
+
 using namespace std;
 
 void MeasGeneral::setup(XML::node inode){
@@ -66,6 +69,7 @@ void MeasGeneral::input_RegularStep(XML::node inode){
   int starting=0;
   if(XML::read(inode,"starting_idx",starting))
     CCIO::cout<<"[default] starting_num= "<<starting<<"\n";
+
   int increment=1;
   if(XML::read(inode,"idx_increment",increment))
     CCIO::cout<<"[default] increment_num= "<<increment<<"\n";
@@ -131,9 +135,10 @@ void MeasGeneral::input_FileList(XML::node inode){
   int starting=0;
   if(XML::read(inode,"starting_idx",starting))
     CCIO::cout<<"[default] output: starting_num = "<<starting<<"\n";
+
   int increment=1;
   if(XML::read(inode,"idx_increment",increment))
-    CCIO::cout<<"[default] output: inclement_num= "<<increment<<"\n";
+    CCIO::cout<<"[default] output: increment_num= "<<increment<<"\n";
   
   for(int c=0; c<meas_num_; ++c) number_list_.push_back(starting+increment*c);
 
@@ -184,7 +189,7 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
     std::stringstream gout;
     gout << gauge_prefix_<< id;
     if(CCIO::SaveOnDisk<Format::Format_G> (U.data,gout.str().c_str()))
-      CCIO::cout << "Some error occurred in saving file\n";
+      CCIO::cout << "Some error occurred in saving file "<<gout.str() <<"\n";
   }
 
   //// smearing ////

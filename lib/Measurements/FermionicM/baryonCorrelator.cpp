@@ -127,7 +127,7 @@ BaryonCorrelator::octet(const prop_t& S1,const prop_t& S2,UpDn ud){
 
   vector<complex<double> > correl_local(Nt_,0.0);
 
-  int slice3d = SiteIndex::instance()->slsize(0,3);
+  int slice3d = SiteIndex::instance()->slsize(0,TDIR);
 
 #pragma omp parallel for
   for (int t = 0; t< Nt_; t++) {
@@ -160,7 +160,7 @@ const correl_t BaryonCorrelator::lambda(UpDn ud){
   complex<double> r4(4.0),r2(2.0);
   vector<complex<double> > correl_local(Nt_,0.0);
 
-   int slice3d = SiteIndex::instance()->slsize(0,3);
+   int slice3d = SiteIndex::instance()->slsize(0,TDIR);
 
 #pragma omp parallel for
    for (int t = 0; t< Nt_; t++) {
@@ -198,7 +198,7 @@ BaryonCorrelator::decuplet_del(const prop_t& S,site_dir k,UpDn ud){
   vector<complex<double> > correl_local(Nt_,0.0);
   complex<double> r2(2.0);
 
-  int slice3d = SiteIndex::instance()->slsize(0,3);
+  int slice3d = SiteIndex::instance()->slsize(0,TDIR);
 
 #pragma omp parallel for
   for (int t = 0; t< Nt_; t++) {
@@ -233,7 +233,7 @@ const correl_t BaryonCorrelator::decuplet_sgm(const prop_t& S1,const prop_t& S2,
   vector<complex<double> > correl_local(Nt_,0.0);
   complex<double> r2(2.0);
 
-  int slice3d = SiteIndex::instance()->slsize(0,3);
+  int slice3d = SiteIndex::instance()->slsize(0,TDIR);
 
 #pragma omp parallel for
   for (int t = 0; t< Nt_; t++) {

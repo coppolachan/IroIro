@@ -1,12 +1,13 @@
 /*!
- * @file test_HadronSpectrum_Nf2p1.cpp
- * @brief Implementation of test_HadronSpectrum_Nf2p1 class
+ * @file HadronSpectrum_Nf2p1.cpp
+ * @brief Implementation of HadronSpectrum_Nf2p1 class
  *
- * Time-stamp: <2014-01-29 11:15:06 neo>
+ * Time-stamp: <2014-01-29 11:44:23 neo>
  */
+
+#include "HadronSpectrum_Nf2p1.hpp"
 #include "include/factories.hpp"
 #include "include/messages_macros.hpp"
-#include "test_HadronSpectrum_Nf2p1.hpp"
 #include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
 #include "Measurements/FermionicM/qprop_mom.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
@@ -14,7 +15,7 @@
 
 using namespace std;
 
-int Test_HadronSpectrum_Nf2p1::run(){
+int HadronSpectrum_Nf2p1::run(){
   XML::node node = input_.node;
   InputConfig config = input_.getConfig();
 
@@ -114,7 +115,7 @@ int Test_HadronSpectrum_Nf2p1::run(){
   return 0;
 }
 
-void Test_HadronSpectrum_Nf2p1::
+void HadronSpectrum_Nf2p1::
 output_meson(ofstream& writer,const vector<double>& Correl,string msg){
   int Lt = CommonPrms::instance()->Lt();
   
@@ -132,7 +133,7 @@ output_meson(ofstream& writer,const vector<double>& Correl,string msg){
   }
 }
 
-void Test_HadronSpectrum_Nf2p1::
+void HadronSpectrum_Nf2p1::
 output_baryon(ofstream& writer,const correl_t& Upper,const correl_t& Lower,
 	      string msg){
   int Lt = CommonPrms::instance()->Lt();

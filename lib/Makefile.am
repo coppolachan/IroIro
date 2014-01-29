@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-01-27 13:08:41 neo>
+# Time-stamp: <2014-01-29 14:53:08 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -121,7 +121,7 @@ AM_CPPFLAGS += $(BFM_INCLUDE)
 AM_CFLAGS   =-I$(top_srcdir) 
 AM_LDFLAGS  += $(BFM_LIBS)
 
-bin_PROGRAMS = main_hmc
+bin_PROGRAMS = main_hmc main_hadron_spectrum_Nf2p1
 lib_LIBRARIES = libcommcode.a 
 
 
@@ -267,10 +267,21 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Scalar_ops/laplacian.cpp	        \
 		Scalar_ops/scalar_Operator_FactoryCreator.cpp	
 
+################ Main programs 
 
+## HMC
 main_hmc_SOURCES = Main/main_hmc.cpp 				
 main_hmc_LDADD   = libcommcode.a $(OPTLIB)
 
+
+## Hadron Spectrum 2+1 flavors
+main_hadron_spectrum_Nf2p1_SOURCES = Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.cpp \
+			Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp
+main_hadron_spectrum_Nf2p1_LDADD   = libcommcode.a $(OPTLIB)
+
+
+
+############### Headers
 include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/commonPrms.hpp		\
                         $(top_srcdir)/include/commandline.hpp           \
@@ -376,6 +387,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Geometry/shiftField.hpp			\
 			Main/gaugeConf.hpp			\
 			Main/gaugeGlobal.hpp			\
+			Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.hpp \
 		        Dirac_ops/dirac_Operator_FactoryCreator.hpp  \
 			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_DWoverlap.hpp 		\
