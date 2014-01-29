@@ -6,12 +6,12 @@
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  */
 
-#ifndef TEST_LAPH_H_
-#define TEST_LAPH_H_
+#ifndef TEST_LAPH_HPP_
+#define TEST_LAPH_HPP_
 
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
-
+/*
 class Test_LapH_Solver{
   const char* test_name;
   XML::node LapH_node;
@@ -27,6 +27,16 @@ public:
 
   int run();  
 };
+*/
+
+
+class Test_LapH_Solver{
+  const Measurements::Input input_;
+public:
+  Test_LapH_Solver(const Measurements::Input& input):input_(input){}
+  int run();  
+};
+
 
 
 #endif
