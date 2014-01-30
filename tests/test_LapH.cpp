@@ -17,13 +17,6 @@
 
 #include "test_LapH.hpp"
 #include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
-//#include "Dirac_ops/dirac_DomainWall.hpp"
-//#include "Dirac_ops/dirac_DomainWall_EvenOdd.hpp"
-//#include "Dirac_ops/dirac_DomainWall_4D_eoSolv.hpp"
-//#include "Dirac_ops/dirac_DomainWall_4D_fullSolv.hpp"
-//#include "Solver/solver_CG.hpp"
-//#include "Solver/solver_BiCGStab.hpp"
-//#include "Tools/RandomNumGen/randNum_MT19937.h"
 #include "Measurements/GaugeM/staples.hpp"
 
 #include "include/timings.hpp"

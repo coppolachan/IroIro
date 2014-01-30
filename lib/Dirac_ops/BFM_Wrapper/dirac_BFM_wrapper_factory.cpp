@@ -1,6 +1,6 @@
 /*! @file dirac_BFM_wrapper_factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2014-01-27 14:23:43 neo>
+ * Time-stamp: <2014-01-30 12:58:03 neo>
  */
 
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
@@ -58,12 +58,8 @@ Dirac_DomainWall_4D* DiracDWF4dBFMeoFactory::createDirac(InputConfig& input){
   BFM_Kernel_.get()->initialize();
   BFM_KernelPV_.get()->initialize();
 
-
   Inv_.save(new EvenOddUtils::Inverter_WilsonLike(BFM_Kernel_.get()->getInternalEO(),SolverEO_.get()));
   InvPV_.save(new EvenOddUtils::Inverter_WilsonLike(BFM_KernelPV_.get()->getInternalEO(),SolverEOpv_.get()));
-
-
-
 
   XML::node current_node = node_BFM_;  
   XML::descend(current_node, "Operator", MANDATORY);  

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-01-28 16:41:44 neo>
+ * Time-stamp: <2014-01-30 14:13:43 neo>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -18,6 +18,8 @@
 #include "Tools/Bagel/bfm_storage.hpp"
 #include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "include/pugi_interface.h"
+#include <memory>
+
 
 enum Type_5d_DWF {Regular5D, PauliVillars5D};
 
@@ -65,6 +67,7 @@ private:
   Fermion_t psi_h[2];//for sources e/o
   Fermion_t chi_h[2];//for results e/o
   Fermion_t tmp;
+  
 
   int Nvol_;
 
@@ -78,6 +81,7 @@ private:
 			      int);
 
   Dirac_BFM_Wrapper(); //hides default constructor
+  Dirac_BFM_Wrapper(const Dirac_BFM_Wrapper&); //hides default copy
   void AllocateFields();
 public:
   Dirac_BFM_Wrapper(XML::node, const Field*, DiracWilsonLike_EvenOdd*, const Type_5d_DWF= Regular5D);
