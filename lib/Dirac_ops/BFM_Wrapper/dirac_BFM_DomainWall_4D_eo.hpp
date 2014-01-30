@@ -2,7 +2,7 @@
  * @file dirac_BFM_DomainWall_4D_eo.hpp
  * @brief Definition of Dirac_BFM_DomainWall_4D_eo class
  *
- * Time-stamp: <2014-01-27 14:13:02 neo>
+ * Time-stamp: <2014-01-30 11:12:25 neo>
  */
 #ifndef DIRAC_BFM_DWF_4D_EO_INCLUDED
 #define DIRAC_BFM_DWF_4D_EO_INCLUDED
@@ -52,6 +52,8 @@ public:
     :invD_(invD),invDpv_(invDpv),
      Nvol_(CommonPrms::instance()->Nvol()),
      ff_(Nvol_),fsize_(ff_.size()),N5_(N5),mq_(mq){}
+
+  ~Dirac_BFM_DomainWall_4D_eo();
 
   size_t fsize() const {return fsize_;}
   size_t gsize()const{

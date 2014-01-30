@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-01-28 16:48:57 neo>
+ * Time-stamp: <2014-01-30 14:43:32 neo>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -49,9 +49,9 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
    BFM_interface(linop),
    has_operator(false),
    has_solver_params(false),
+   is_initialized(false),
    Internal_EO(Dirac){
 
-  
   // Lattice local volume
   parameters.node_latt[0]  = CommonPrms::instance()->Nx();
   parameters.node_latt[1]  = CommonPrms::instance()->Ny();
@@ -95,6 +95,7 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
   // Set the operator depending on parameters
   set_ScaledShamirCayleyTanh(BFMparams.mq_, BFMparams.M5_, 
 			      BFMparams.Ls_, BFMparams.scale_);
+
   // Use here a switch for assigning the
   // pointer to the solver function
   // depending on the string SolverName
@@ -107,6 +108,7 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
 }
 
 Dirac_BFM_Wrapper::~Dirac_BFM_Wrapper(){
+  CCIO::cout << "Destroying Dirac_BFM_Wrapper\n";
   if (is_initialized) {
     for(int cb=0;cb<2;cb++){
       linop.freeFermion(psi_h[cb]);
@@ -114,6 +116,7 @@ Dirac_BFM_Wrapper::~Dirac_BFM_Wrapper(){
     } 
     linop.freeFermion(tmp);
   }
+ 
 }
 
 const Field Dirac_BFM_Wrapper::mult(const Field& Fin)const{
@@ -216,11 +219,15 @@ Fermion_t* Dirac_BFM_Wrapper::mult_unprec_base(Fermion_t psi_in[2]){
     int donrm = 0;
     int cb = Even;
     BFM_interface.GaugeExport_to_BFM(u_);
-    psi_h[1] = psi_in[1];
-    psi_h[0] = psi_in[0];
     linop.comm_init();
 #pragma omp parallel for
     for (int t=0;t<threads;t++){
+      // Copy to the internal allocated fermion
+      // to avoid cross-talking between the pointers 
+      // of the PauliVillars and the DWF kernel
+      // when used for the 4d BWF operator
+      linop.copy(psi_h[0], psi_in[0]);
+      linop.copy(psi_h[1], psi_in[1]);
       linop.Munprec(psi_h,chi_h,tmp,0);// dag=0 
     }
     linop.comm_end();
@@ -244,11 +251,16 @@ Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
     int donrm = 0;
     int cb = Even;
     int dag = 0;
-    psi_h[1] = psi_in[1];
-    psi_h[0] = psi_in[0];
     linop.comm_init();
 #pragma omp parallel for
     for (int t=0;t<threads;t++){
+     // Copy to the internal allocated fermion
+      // to avoid cross-talking between the pointers 
+      // of the PauliVillars and the DWF kernel
+      // when used for the 4d BWF operator
+      linop.copy(psi_h[0], psi_in[0]);
+      linop.copy(psi_h[1], psi_in[1]);
+
       linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);// chi[odd] = Moo^-1 psi[odd]   (odd->odd) needs later
       linop.Meo(chi_h[1-cb],tmp,cb,dag);// tmp = Meo chi[odd]    (odd->even) 
       linop.axpy_norm(tmp, tmp, psi_h[cb], fact);// tmp = -1*tmp + psi[even] 
@@ -520,10 +532,11 @@ void  Dirac_BFM_Wrapper::AllocateFields(){
       chi_h[cb] = linop.allocFermion();
       CCIO::cout << "BFM chi_h["<<cb<<"] allocated \n";
     }
-    
     tmp = linop.allocFermion();// temporary
   }
 }
+
+
 
 //////////////////////////////// BFM Operators
 void Dirac_BFM_Wrapper::set_ScaledShamirCayleyTanh(double mq, 
@@ -537,9 +550,8 @@ void Dirac_BFM_Wrapper::set_ScaledShamirCayleyTanh(double mq,
 
 void Dirac_BFM_Wrapper::initialize(){
   // Initialize the linear operator 
-  if(has_operator && has_solver_params){
+  if(has_operator && has_solver_params && !is_initialized){
     linop.init(parameters);
-    //linop.comm_end();
     AllocateFields();
     is_initialized = true;
   }

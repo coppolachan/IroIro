@@ -1,6 +1,6 @@
 /*! @file dirac_BFM_wrapper_factory.hpp 
  *  @brief Declaration of BFM Dirac operators factories
- * Time-stamp: <2014-01-29 02:34:31 noaki>
+ * Time-stamp: <2014-01-30 19:50:14 noaki>
  */
 #ifndef DIRAC_BFM_FACT_
 #define DIRAC_BFM_FACT_
@@ -16,7 +16,7 @@
 /*! @brief Concrete class for creating Dirac Optimal DWF-5d operators */
 class DiracBFMoperatorFactory : public DiracDWF5dFactory {
   const XML::node Dirac_node_;
-  RaiiFactoryObj<Dirac_BFM_Wrapper> BFMop_;
+  // RaiiFactoryObj<Dirac_BFM_Wrapper> BFMop_;
 
   // Internal operator must be EvenOdd
   RaiiFactoryObj<DiracEvenOdd_DWF5dFactory> Dirac5D_EO_factory_;
@@ -79,6 +79,10 @@ class DiracDWF4dBFMeoFactory : public DiracDWF4dFactory{
   Dirac_DomainWall_4D* createDirac(InputConfig&);
 public:
   DiracDWF4dBFMeoFactory(XML::node node);
+  ~DiracDWF4dBFMeoFactory(){
+    CCIO::cout << "Destroying DiracDWF4dBFMeoFactory\n";
+  };
+
 };
 
 #endif
