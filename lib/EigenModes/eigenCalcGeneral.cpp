@@ -15,16 +15,16 @@ using namespace std;
 EigenCalcGeneral::EigenCalcGeneral(const XML::node& node){
 
   XML::node targetOpNode = node;
-  XML::descend(targetOpNode,"HermitianOperator");
+  XML::descend(targetOpNode,"HermitianOperator", MANDATORY);
   opOrigFptr_.reset(createFoprHermFactory(targetOpNode));
 
   XML::node setupNode = node;
-  XML::descend(setupNode,"Setup");
+  XML::descend(setupNode,"Setup", MANDATORY);
   esortFptr_.reset(createEigenSorterFactory(setupNode));
   opAccelFptr_.reset(createAccelOpFunc(setupNode));
 
   XML::node eslvNode = node;
-  XML::descend(eslvNode,"EigenModesSolver");
+  XML::descend(eslvNode,"EigenModesSolver", MANDATORY);
   eslvFptr_.reset(EigenSolver::createEigenSolverFactory(eslvNode));  
 }
 
@@ -35,7 +35,7 @@ FoprHermFunc* EigenCalcGeneral::createAccelOpFunc(const XML::node& node)const{
 
   if(!strcmp(ac_name,"None"))      return new FoprNULLfunc();
   if(!strcmp(ac_name,"Chebyshev")) return new ChebyshevAccelFunc(node);
-  CCIO::cout<<ac_name<<" is not compatible with current implementation.\n";
+  CCIO::cout << "Acceleration method ["<<ac_name<<"] is not compatible with current implementation.\n";
   abort();
 }
 
@@ -52,7 +52,7 @@ FoprHermFactory* EigenCalcGeneral::createFoprHermFactory(const XML::node& node)c
   if(!strcmp(hf_name,"DdagD")) return new FoprHermFactory_DdagD(Dnode);
   if(!strcmp(hf_name,"DDdag")) return new FoprHermFactory_DDdag(Dnode);
 
-  CCIO::cout<<hf_name<<" is not compatible with current implementation.\n";
+  CCIO::cout<< "Hermitian operator name ["<<hf_name<<"] is not compatible with current implementation.\n";
   abort();
 }
 
@@ -69,12 +69,12 @@ EigenSorterFactory* EigenCalcGeneral::createEigenSorterFactory(const XML::node& 
   if(!strcmp(ac_name,"None")){
     if(     !strcmp(st_name,"Lowest") ) return new EigenSorterFactory_low(thrs);
     else if(!strcmp(st_name,"Highest")) return new EigenSorterFactory_high(thrs);
-    else CCIO::cout<<st_name<<" is not compatible with current implementation.\n";
+    else CCIO::cout<<"Sorting method ["<<st_name<<"] is not compatible with current implementation.\n";
 
   }else if(!strcmp(ac_name,"Chebyshev")){
     return new EigenSorterFactory_high(thrs);
 
-  }else CCIO::cout<<ac_name<<" is not compatible with current implementation.\n";
+  }else CCIO::cout<<"Eigenvalue sorter method ["<<ac_name<<"] is not compatible with current implementation.\n";
   abort();
 }
 
@@ -101,14 +101,14 @@ void EigenCalcGeneral::do_calc(InputConfig& input){
     
   }else if(Neig_== 0){
     CCIO::cout<<"NO converged eigenmode.\n";
-    throw "Calculation did not successfully finished.";
+    throw "Calculation finished with error";
 
   }else if(Neig_< 0){/*!<@brief it means emslvPtr->calc() ended abnormally. */
     Neig_*= -1;           
     CCIO::cout<<Neig_<<" eigenvalues are obtained:\n";
 
     get_eval(opOrigPtr.get()); // eigenvalues of oopr 
-    throw "Calculation abnormally finished.\n";
+    throw "Calculation finished with error\n";
   }
 }
 

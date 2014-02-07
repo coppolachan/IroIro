@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-01-29 14:53:08 neo>
+# Time-stamp: <2014-02-07 14:13:12 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -217,6 +217,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
+		Measurements/FermionicM/chiral_condensate.cpp		\
 		Geometry/autoMap_improved.cpp		\
 		Geometry/siteIndex_EvenOdd.cpp		\
 		Geometry/siteMap.cpp			\
@@ -361,7 +362,9 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Measurements/FermionicM/meson_correlator.hpp	\
 			Measurements/FermionicM/baryonCorrelator.hpp	\
 			Measurements/FermionicM/quark_prop_meas_factory.hpp \
-                        Measurements/FermionicM/utils_DWF4d.hpp \
+                        Measurements/FermionicM/utils_DWF4d.hpp 	\
+			Measurements/FermionicM/chiral_condensate.hpp	\
+			Measurements/FermionicM/chiral_condensate_abs.hpp\
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\

@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2014-01-16 16:08:21 neo>
+ * Time-stamp: <2014-01-31 14:42:11 cossu>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -251,7 +251,7 @@ namespace CCIO {
 		   const char* filename,
 		   const int offset = 0, 
 		   const std::string readerID = "Binary",
-		   const bool do_check = true){
+		   const bool do_check = false){
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");

@@ -29,7 +29,7 @@
  * - <a href="http://gcc.gnu.org/">GNU compiler</a> (tested with g++ version 4.6.1)
  * - Multicore version tested with <a href="http://www.open-mpi.org/">openMPI</a> (version 1.4.4)  
  * - <a href="http://software.intel.com/en-us/articles/c-compilers/">INTEL compiler</a> (tested with icpc version 12.1.2)
- * - <a href="http://www-01.ibm.com/software/awdtools/xlcpp/">IBM XLC compiler</a> (tested with xlC version 11.1, cross platform compilation)
+ * - <a href="http://www-01.ibm.com/software/awdtools/xlcpp/">IBM XLC compiler</a> (tested with xlC version 12.1, cross platform compilation)
  *
  * \section Dev Development
  * 

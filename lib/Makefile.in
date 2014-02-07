@@ -192,6 +192,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Measurements/FermionicM/utils_DWF4d.cpp \
 	Measurements/FermionicM/quark_prop_meas_factory.cpp \
 	Measurements/FermionicM/baryonCorrelator.cpp \
+	Measurements/FermionicM/chiral_condensate.cpp \
 	Geometry/autoMap_improved.cpp Geometry/siteIndex_EvenOdd.cpp \
 	Geometry/siteMap.cpp Geometry/shiftField.cpp \
 	Main/gaugeConf.cpp Main/gaugeGlobal.cpp Main/commandline.cpp \
@@ -309,10 +310,10 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	qprop.$(OBJEXT) qprop_mom.$(OBJEXT) qprop_EvenOdd.$(OBJEXT) \
 	qprop_DomainWall.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
 	quark_prop_meas_factory.$(OBJEXT) baryonCorrelator.$(OBJEXT) \
-	autoMap_improved.$(OBJEXT) siteIndex_EvenOdd.$(OBJEXT) \
-	siteMap.$(OBJEXT) shiftField.$(OBJEXT) gaugeConf.$(OBJEXT) \
-	gaugeGlobal.$(OBJEXT) commandline.$(OBJEXT) \
-	hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
+	chiral_condensate.$(OBJEXT) autoMap_improved.$(OBJEXT) \
+	siteIndex_EvenOdd.$(OBJEXT) siteMap.$(OBJEXT) \
+	shiftField.$(OBJEXT) gaugeConf.$(OBJEXT) gaugeGlobal.$(OBJEXT) \
+	commandline.$(OBJEXT) hmcGeneral.$(OBJEXT) mdExec.$(OBJEXT) \
 	mdExec_leapfrog.$(OBJEXT) mdExec_2MN.$(OBJEXT) \
 	mdExec_factory.$(OBJEXT) pugixml.$(OBJEXT) \
 	pugi_interface.$(OBJEXT) solver_BiCGStab.$(OBJEXT) \
@@ -455,6 +456,8 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Measurements/FermionicM/baryonCorrelator.hpp \
 	Measurements/FermionicM/quark_prop_meas_factory.hpp \
 	Measurements/FermionicM/utils_DWF4d.hpp \
+	Measurements/FermionicM/chiral_condensate.hpp \
+	Measurements/FermionicM/chiral_condensate_abs.hpp \
 	Communicator/communicator.hpp Communicator/comm_io.hpp \
 	IO/fields_io.hpp IO/binary_reader.hpp IO/binary_writer.hpp \
 	IO/general_reader.hpp IO/general_writer.hpp \
@@ -687,7 +690,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-01-29 14:53:08 neo>
+# Time-stamp: <2014-02-07 14:13:12 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -826,6 +829,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
+		Measurements/FermionicM/chiral_condensate.cpp		\
 		Geometry/autoMap_improved.cpp		\
 		Geometry/siteIndex_EvenOdd.cpp		\
 		Geometry/siteMap.cpp			\
@@ -965,7 +969,9 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Measurements/FermionicM/meson_correlator.hpp	\
 			Measurements/FermionicM/baryonCorrelator.hpp	\
 			Measurements/FermionicM/quark_prop_meas_factory.hpp \
-                        Measurements/FermionicM/utils_DWF4d.hpp \
+                        Measurements/FermionicM/utils_DWF4d.hpp 	\
+			Measurements/FermionicM/chiral_condensate.hpp	\
+			Measurements/FermionicM/chiral_condensate_abs.hpp\
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\
@@ -1253,6 +1259,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/binary_writer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/boundaryCond.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chebyshevAccelFunc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chiral_condensate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/comm_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commandline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commonPrms.Po@am__quote@
@@ -2904,6 +2911,22 @@ baryonCorrelator.obj: Measurements/FermionicM/baryonCorrelator.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/baryonCorrelator.cpp' object='baryonCorrelator.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o baryonCorrelator.obj `if test -f 'Measurements/FermionicM/baryonCorrelator.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/baryonCorrelator.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/baryonCorrelator.cpp'; fi`
+
+chiral_condensate.o: Measurements/FermionicM/chiral_condensate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chiral_condensate.o -MD -MP -MF $(DEPDIR)/chiral_condensate.Tpo -c -o chiral_condensate.o `test -f 'Measurements/FermionicM/chiral_condensate.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/chiral_condensate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/chiral_condensate.Tpo $(DEPDIR)/chiral_condensate.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/chiral_condensate.cpp' object='chiral_condensate.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chiral_condensate.o `test -f 'Measurements/FermionicM/chiral_condensate.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/chiral_condensate.cpp
+
+chiral_condensate.obj: Measurements/FermionicM/chiral_condensate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chiral_condensate.obj -MD -MP -MF $(DEPDIR)/chiral_condensate.Tpo -c -o chiral_condensate.obj `if test -f 'Measurements/FermionicM/chiral_condensate.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/chiral_condensate.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/chiral_condensate.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/chiral_condensate.Tpo $(DEPDIR)/chiral_condensate.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Measurements/FermionicM/chiral_condensate.cpp' object='chiral_condensate.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chiral_condensate.obj `if test -f 'Measurements/FermionicM/chiral_condensate.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/chiral_condensate.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/chiral_condensate.cpp'; fi`
 
 autoMap_improved.o: Geometry/autoMap_improved.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT autoMap_improved.o -MD -MP -MF $(DEPDIR)/autoMap_improved.Tpo -c -o autoMap_improved.o `test -f 'Geometry/autoMap_improved.cpp' || echo '$(srcdir)/'`Geometry/autoMap_improved.cpp

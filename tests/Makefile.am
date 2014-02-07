@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-01-24 15:56:33 cossu>
+# Time-stamp: <2014-02-07 14:32:36 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -79,7 +79,8 @@ EXTRA_DIST = 	testResults.info	\
 		test_RationalApprox.xml	\
 		test_Solver_Perf.xml	\
 		test_sunRep.xml		\
-		test_noFact.xml		
+		test_noFact.xml		\
+		test_ChiralCondensate.xml
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
@@ -116,7 +117,8 @@ test_PROGRAMS = test_HMC 		\
                 test_DWF    		\
                 test_DiracWilson_Adjoint\
 		test_Laplacian		\
-		test_LapH
+		test_LapH		\
+		test_ChiralCondensate 
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -203,8 +205,12 @@ test_RationalApprox_SOURCES 	= 	test_RationalApprox.cpp	\
 
 test_WilsonFlow_SOURCES 	= 	test_WilsonFlow.cpp	\
 					testerWilsonFlow.cpp
+
 test_PolyakovLoop_SOURCES 	= 	test_PolyakovLoop.cpp	\
 	 				testerPolyakovLoop.cpp
+
+test_ChiralCondensate_SOURCES 	= 	test_ChiralCondensate.cpp	\
+	 				testerChiralCondensate.cpp
 
 test_SUNRepresentation_SOURCES  =	test_sunRepres.cpp	\
 					testerSunRep.cpp	

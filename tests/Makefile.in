@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-01-24 15:56:33 cossu>
+# Time-stamp: <2014-02-07 14:32:36 cossu>
 
 
 VPATH = @srcdir@
@@ -72,7 +72,7 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_RHMC_noFactories$(EXEEXT) test_SUNRepresentation$(EXEEXT) \
 	test_HeatBath$(EXEEXT) test_DWF$(EXEEXT) \
 	test_DiracWilson_Adjoint$(EXEEXT) test_Laplacian$(EXEEXT) \
-	test_LapH$(EXEEXT)
+	test_LapH$(EXEEXT) test_ChiralCondensate$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -140,6 +140,12 @@ test_BaryonSpectrum_Nf2p1_OBJECTS =  \
 	$(am_test_BaryonSpectrum_Nf2p1_OBJECTS)
 test_BaryonSpectrum_Nf2p1_LDADD = $(LDADD)
 test_BaryonSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+am_test_ChiralCondensate_OBJECTS = test_ChiralCondensate.$(OBJEXT) \
+	testerChiralCondensate.$(OBJEXT)
+test_ChiralCondensate_OBJECTS = $(am_test_ChiralCondensate_OBJECTS)
+test_ChiralCondensate_LDADD = $(LDADD)
+test_ChiralCondensate_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am_test_Clover_OBJECTS = test_clover.$(OBJEXT) testerClover.$(OBJEXT)
 test_Clover_OBJECTS = $(am_test_Clover_OBJECTS)
@@ -368,7 +374,8 @@ am__v_GEN_0 = @echo "  GEN   " $@;
 SOURCES = $(test_BFM_Inverter_SOURCES) \
 	$(test_BFM_Inverter_wrapper_SOURCES) \
 	$(test_BFM_Moebius_SOURCES) $(test_BFM_Operator_SOURCES) \
-	$(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
+	$(test_BaryonSpectrum_Nf2p1_SOURCES) \
+	$(test_ChiralCondensate_SOURCES) $(test_Clover_SOURCES) \
 	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
 	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
@@ -392,7 +399,8 @@ DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
 	$(am__test_BFM_Inverter_wrapper_SOURCES_DIST) \
 	$(am__test_BFM_Moebius_SOURCES_DIST) \
 	$(am__test_BFM_Operator_SOURCES_DIST) \
-	$(test_BaryonSpectrum_Nf2p1_SOURCES) $(test_Clover_SOURCES) \
+	$(test_BaryonSpectrum_Nf2p1_SOURCES) \
+	$(test_ChiralCondensate_SOURCES) $(test_Clover_SOURCES) \
 	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
 	$(test_EigenModesSolver_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
@@ -592,7 +600,8 @@ EXTRA_DIST = testResults.info	\
 		test_RationalApprox.xml	\
 		test_Solver_Perf.xml	\
 		test_sunRep.xml		\
-		test_noFact.xml		
+		test_noFact.xml		\
+		test_ChiralCondensate.xml
 
 test_HMC_SOURCES = test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -680,6 +689,9 @@ test_WilsonFlow_SOURCES = test_WilsonFlow.cpp	\
 
 test_PolyakovLoop_SOURCES = test_PolyakovLoop.cpp	\
 	 				testerPolyakovLoop.cpp
+
+test_ChiralCondensate_SOURCES = test_ChiralCondensate.cpp	\
+	 				testerChiralCondensate.cpp
 
 test_SUNRepresentation_SOURCES = test_sunRepres.cpp	\
 					testerSunRep.cpp	
@@ -836,6 +848,9 @@ test_BFM_Operator$(EXEEXT): $(test_BFM_Operator_OBJECTS) $(test_BFM_Operator_DEP
 test_BaryonSpectrum_Nf2p1$(EXEEXT): $(test_BaryonSpectrum_Nf2p1_OBJECTS) $(test_BaryonSpectrum_Nf2p1_DEPENDENCIES) 
 	@rm -f test_BaryonSpectrum_Nf2p1$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_BaryonSpectrum_Nf2p1_OBJECTS) $(test_BaryonSpectrum_Nf2p1_LDADD) $(LIBS)
+test_ChiralCondensate$(EXEEXT): $(test_ChiralCondensate_OBJECTS) $(test_ChiralCondensate_DEPENDENCIES) 
+	@rm -f test_ChiralCondensate$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_ChiralCondensate_OBJECTS) $(test_ChiralCondensate_LDADD) $(LIBS)
 test_Clover$(EXEEXT): $(test_Clover_OBJECTS) $(test_Clover_DEPENDENCIES) 
 	@rm -f test_Clover$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Clover_OBJECTS) $(test_Clover_LDADD) $(LIBS)
@@ -953,6 +968,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Moebius.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Operator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BaryonSpectrum_Nf2p1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_ChiralCondensate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DWF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DiracWilson_Adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolver.Po@am__quote@
@@ -988,6 +1004,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_Brillouin_Imp.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_EvenOdd.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerBaryonSpectrumNf2p1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerChiralCondensate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerClover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerDWF.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerDiracWilsonAdj.Po@am__quote@

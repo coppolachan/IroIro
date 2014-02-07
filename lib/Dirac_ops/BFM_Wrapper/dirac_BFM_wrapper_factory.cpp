@@ -1,6 +1,7 @@
 /*! @file dirac_BFM_wrapper_factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2014-01-30 12:58:03 neo>
+ *
+ * Time-stamp: <2014-01-31 16:20:27 neo>
  */
 
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
