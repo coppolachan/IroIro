@@ -50,13 +50,13 @@ public:
  */
 class ChiralCondDWF : public ChiralCondensate{
 private:
-  const Dirac_DomainWall_4D& Dgw_;/*!< @brief %Dirac operator */
+  const Dirac_DomainWall_4D& Ddw_;/*!< @brief %Dirac operator */
   int Nc_;
   int Nd_;
 
 public:
   ChiralCondDWF(const Dirac_DomainWall_4D& Ddw4D)
-    :Dgw_(Ddw4D),
+    :Ddw_(Ddw4D),
      Nc_(CommonPrms::instance()->Nc()),
      Nd_(CommonPrms::instance()->Nd()){}
 

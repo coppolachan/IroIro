@@ -8,6 +8,9 @@
 #include <string>
 #include "include/pugi_interface.h"
 #include "Measurements/FermionicM/source_types.hpp"
+#include "Tools/RAIIFactory.hpp"
+#include "Tools/randNum_Factory.h"
+
 /*!
  * @brief Abstract base class for creating Source
  */
@@ -103,7 +106,7 @@ public:
 template <typename Index,typename Format>
 class Z2noiseSourceFactory: public SourceFactory {
   const XML::node Source_node;
-  std::auto_ptr<RandNum> rng_;
+  RaiiFactoryObj<RandNum> rng_;
 public:
   Z2noiseSourceFactory(XML::node node):Source_node(node){}
 
@@ -119,14 +122,12 @@ public:
       CCIO::cout<<"Choosing Z2Type type: "<< Z2Type_name << std::endl;
     }
     CCIO::cout<<"getting Source_Z2noise\n";
-    rng_.reset(RNG_Env::RNG->getRandomNumGenerator());
+    if (RNG_Env::RNG == NULL) 
+      CCIO::cerr << "The RNG has not been initialized\n";
+    rng_.save(RNG_Env::RNG_Cont::instance().RNG.get()->getRandomNumGenerator());
+    //rng_.save(RNG_Env::RNG->getRandomNumGenerator());
     CCIO::cout<<"getting Source_Z2noise\n";
-    /*
-    return new 
-      Source_Z2noise<Index,Format>(*RNG_Env::RNG->getRandomNumGenerator(),
-				   Local_Dim,
-				   NoiseType);
-    */
+    
     return new Source_Z2noise<Index,Format>(*(rng_.get()),Local_Dim,NoiseType);
   }
 };

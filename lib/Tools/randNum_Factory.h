@@ -12,7 +12,8 @@
 
 #include "randNum.h"
 #include "RandomNumGen/randNum_MT19937.h"
-
+#include "include/singleton.h"
+#include "Tools/RAIIFactory.hpp"
 /*!
  *@class RandomNumberCreator
  *@brief Abstract Factory class for Random Number Generators
@@ -101,7 +102,17 @@ class RandNum_DCMT_Creator : public RandomNumberCreator{
 //////////////////////////////////////////////////////////////
 namespace RNG_Env {
   static RandomNumberCreator* RNG;
+
+
+  class RNG_Container {
+  public:
+    RaiiFactoryObj<RandomNumberCreator> RNG;
+    void createRNGfactory(XML::node);  
+  };
+
   RandomNumberCreator* createRNGfactory(XML::node);  
+
+  typedef Singleton<RNG_Container> RNG_Cont;
 }
 
 #endif

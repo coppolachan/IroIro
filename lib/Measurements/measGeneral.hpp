@@ -30,8 +30,11 @@ namespace Measurements{
     Input(XML::node inode):node(inode),gconf(NULL),eigen(NULL),rng(NULL){
       XML::descend(node,"Measurement");
       _Message(DEBUG_VERB_LEVEL, "initialising RNG\n");
-      RNG_Env::RNG = RNG_Env::createRNGfactory(inode);// RNG is static value.
-      if(RNG_Env::RNG) rng = RNG_Env::RNG->getRandomNumGenerator();
+      //RNG_Env::RNG = RNG_Env::createRNGfactory(inode);// RNG is static value.
+      RNG_Env::RNG_Cont::instance().createRNGfactory(inode);
+      //if(RNG_Env::RNG) rng = RNG_Env::RNG->getRandomNumGenerator();
+      //if(&RNG_Env::RNG_Singleton::instance()) rng = RNG_Env::RNG_Singleton::instance().getRandomNumGenerator();
+      rng = RNG_Env::RNG_Cont::instance().RNG.get()->getRandomNumGenerator();
     }
     ~Input(){if(eigen) delete eigen;}
     InputConfig getConfig()const{ return InputConfig(gconf,eigen); }
