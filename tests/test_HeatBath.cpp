@@ -24,12 +24,14 @@
 int Test_HB::run(){
   CCIO::cout << "Starting Heat Bath run" << std::endl;
   
-  RNG_Env::RNG = RNG_Env::createRNGfactory(HB_node);
+  //RNG_Env::RNG = RNG_Env::createRNGfactory(HB_node);
+  RNG_Env::initialize(HB_node);
+
 
   //Initialization
   //HeatBathGeneral hb_general(HB_node);
   HBAction_SUN SUNAction(1.5, 1.0, &Gfield_);
-  HeatBathGeneral hb_general(HB_node, SUNAction,*(RNG_Env::RNG->getRandomNumGenerator()));
+  HeatBathGeneral hb_general(HB_node, SUNAction,*(RNG_Env::RandNumG::instance().getRNG()));
 
   ////////////// HMC calculation /////////////////
   double elapsed_time;

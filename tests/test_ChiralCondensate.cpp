@@ -37,7 +37,7 @@ int Test_ChiralCondensate::run(){
   //
   // Constructs the Chiral condensate for DWF
   //
- 
+
   ChiralCondDWF ChiralCond(*Wilson_Kernel_4d);
 
 
@@ -56,7 +56,10 @@ int Test_ChiralCondensate::run(){
   // Compute the condensate
   //
 
-  double psibar_psi = ChiralCond.calc(*src);
+  int noise_samples = 1; //default
+  XML::read(ch_node, "noise_samples", noise_samples);
+
+  double psibar_psi = ChiralCond.calc(*src, noise_samples);
 
   CCIO::cout << "Chiral condensate: "<< psibar_psi << "\n";
  

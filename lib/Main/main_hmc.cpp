@@ -92,8 +92,9 @@ int run_hmc(GaugeField GaugeF_, TrajInfo* Info, node HMC_node) {
   
   CCIO::header("Starting HMC updater");
 
-  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
- 
+  RNG_Env::initialize(HMC_node);
+
+
   CCIO::cout << "Creating integrator factory\n";
 
   Integrators::Integr = 

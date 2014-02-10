@@ -14,6 +14,8 @@
 #include "RandomNumGen/randNum_MT19937.h"
 #include "include/singleton.h"
 #include "Tools/RAIIFactory.hpp"
+
+
 /*!
  *@class RandomNumberCreator
  *@brief Abstract Factory class for Random Number Generators
@@ -24,6 +26,11 @@ public:
   virtual RandNum* getRandomNumGenerator() = 0;
 };
 
+
+class NoRNG: public RandomNumberCreator {
+  RandNum* getRandomNumGenerator(){
+    return NULL;}
+  };
 //Specific factories 
 ////////////////////////////////////////////////////////////////////
 class RandNum_MT19937_Creator : public RandomNumberCreator {
@@ -58,7 +65,6 @@ public:
     }
   }
   RandNum* getRandomNumGenerator(){
-    CCIO::cout<<"getRandNumGenerator() called\n";
     return createRNG();}
 };
 
@@ -101,18 +107,17 @@ class RandNum_DCMT_Creator : public RandomNumberCreator{
 #endif
 //////////////////////////////////////////////////////////////
 namespace RNG_Env {
-  static RandomNumberCreator* RNG;
+  void initialize(XML::node);
 
-
-  class RNG_Container {
-  public:
+  class RNGfactory {
+    bool is_initialized;
     RaiiFactoryObj<RandomNumberCreator> RNG;
+  public:
+    RandNum* getRNG();
     void createRNGfactory(XML::node);  
   };
 
-  RandomNumberCreator* createRNGfactory(XML::node);  
-
-  typedef Singleton<RNG_Container> RNG_Cont;
+  typedef Singleton<RNGfactory> RandNumG;
 }
 
 #endif

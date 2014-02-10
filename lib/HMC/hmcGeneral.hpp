@@ -6,7 +6,7 @@
 #ifndef HMCEXEC_INCLUDED
 #define HMCEXEC_INCLUDED
 
-#include "Tools/randNum_Factory.h"
+#include "Tools/randNum_Factory.hpp"
 #include "include/pugi_interface.h"
 #include "HMC/mdExec_factory_abs.hpp"
 #include "TrajectoryInfo.hpp"
@@ -94,13 +94,13 @@ public:
 	     MDexec& md_exec,
 	     TrajInfo* Info = NULL)
     :md_(&md_exec),
-     rand_(RNG_Env::RNG->getRandomNumGenerator()),
+     rand_(RNG_Env::RandNumG::instance().getRNG()),
      Params(HMCGeneralParams(node,Info)){}
   
   HMCgeneral(pugi::xml_node node, 
 	     TrajInfo* Info = NULL)
     :md_(Integrators::Integr->getMDIntegrator()),
-     rand_(RNG_Env::RNG->getRandomNumGenerator()),
+     rand_(RNG_Env::RandNumG::instance().getRNG()),
      Params(HMCGeneralParams(node, Info)){}
   
   ~HMCgeneral(){}

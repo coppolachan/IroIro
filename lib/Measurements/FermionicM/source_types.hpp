@@ -33,6 +33,8 @@ public:
   ~Source_local(){ delete ff_;}
   const Field mksrc(int s, int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
+  
+  void refresh(){}; //nothing to be done
 };
 
 template<typename FMT> 
@@ -82,6 +84,8 @@ public:
   ~Source_exp(){ delete ff_;}
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
+
+  void refresh(){}; //nothing to be done
 };
 
 template<typename FMT> void Source_exp<FMT>::set_src(){
@@ -149,6 +153,8 @@ public:
   ~Source_Gauss(){ delete ff_;}
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
+
+  void refresh(){}; //nothing to be done
 };
 
 template<typename FMT> void Source_Gauss<FMT>::set_src(){
@@ -213,6 +219,8 @@ public:
   ~Source_wall(){ delete ff_;}
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
+
+  void refresh(){}; //nothing to be done
 };
 
 template<typename FMT> void Source_wall<FMT>::set_src(){
@@ -257,6 +265,11 @@ public:
   ~Source_wnoise(){ delete ff_;}
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
+
+  void refresh(){
+    std::vector<int> gsite = idx_->get_gsite();
+    MPrand::mp_get(src_,rand_,gsite,*ff_);   
+  };
 };
 
 template<typename IDX,typename FMT> 
@@ -297,7 +310,6 @@ public:
      idx_(IDX::instance()),
      ff_(new FMT(Nvol)),
      Type_(Type),src_(0.0,ff_->size()){
-    CCIO::cout<<"creating Source_Z2noise\n";
     setup_source();
   }
 
@@ -305,13 +317,13 @@ public:
   ~Source_Z2noise(){ delete ff_;}
 
   void setup_source(){
-    CCIO::cout<<"setting up Source_Z2noise\n";
     std::valarray<double> white_noise(0.0,ff_->size());
     double cosine;
     
     std::vector<int> gsite = idx_->get_gsite();
     MPrand::mp_get(white_noise,rand_generator_,gsite,*ff_);
-    
+
+
     for (int idx = 0; idx <white_noise.size()/2; ++idx){
       cosine = cos(2.0*PI*white_noise[idx]);
       src_[2*idx] = copysign(1.0,cosine);
@@ -325,6 +337,10 @@ public:
   /*! @brief Constructs the source vector for specific spin and colour*/
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
+
+  void refresh(){
+    setup_source();
+  }
 };
 
 template<typename IDX,typename FMT>

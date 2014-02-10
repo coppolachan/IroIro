@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-02-07 14:13:12 neo>
+# Time-stamp: <2014-02-10 14:41:44 cossu>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -474,7 +474,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/colorEpsilon.hpp	                \
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
-			Tools/randNum_Factory.h			\
+			Tools/randNum_Factory.hpp		\
 			Tools/fieldUtils.hpp			\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\

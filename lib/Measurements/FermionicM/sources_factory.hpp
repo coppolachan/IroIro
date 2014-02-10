@@ -7,9 +7,12 @@
 
 #include <string>
 #include "include/pugi_interface.h"
+#include "include/errors.hpp"
+
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Tools/RAIIFactory.hpp"
-#include "Tools/randNum_Factory.h"
+#include "Tools/randNum_Factory.hpp"
+
 
 /*!
  * @brief Abstract base class for creating Source
@@ -78,7 +81,7 @@ public:
 template <typename Format>
 class WallSourceFactory: public SourceFactory {
   const XML::node Source_node;
-
+ 
 public:
   WallSourceFactory(XML::node node):Source_node(node){}
 
@@ -93,12 +96,16 @@ public:
 template <typename Index,typename Format>
 class WhiteNoiseSourceFactory: public SourceFactory {
   const XML::node Source_node;
-
+  RaiiFactoryObj<RandNum> rng_;
 public:
   WhiteNoiseSourceFactory(XML::node node):Source_node(node){}
 
   Source* getSource(int Local_Dim = CommonPrms::instance()->Nvol()){
-    return new Source_wnoise<Index,Format>(*RNG_Env::RNG->getRandomNumGenerator(),
+    rng_.save(RNG_Env::RandNumG::instance().getRNG());
+    if (rng_.get() == NULL) {
+      Errors::XMLerr("Random number generator not defined\nPlease provide a correct definition in the XML\n");
+    }  
+    return new Source_wnoise<Index,Format>(*rng_.get(),
 					   Local_Dim);
   }
 };
@@ -121,14 +128,13 @@ public:
     } else {
       CCIO::cout<<"Choosing Z2Type type: "<< Z2Type_name << std::endl;
     }
-    CCIO::cout<<"getting Source_Z2noise\n";
-    if (RNG_Env::RNG == NULL) 
-      CCIO::cerr << "The RNG has not been initialized\n";
-    rng_.save(RNG_Env::RNG_Cont::instance().RNG.get()->getRandomNumGenerator());
-    //rng_.save(RNG_Env::RNG->getRandomNumGenerator());
-    CCIO::cout<<"getting Source_Z2noise\n";
-    
-    return new Source_Z2noise<Index,Format>(*(rng_.get()),Local_Dim,NoiseType);
+    rng_.save(RNG_Env::RandNumG::instance().getRNG());
+    if (rng_.get() == NULL) {
+      Errors::XMLerr("Random number generator not defined\nPlease provide a correct definition in the XML\n");
+    }
+    return new Source_Z2noise<Index,Format>(*rng_.get(),
+					    Local_Dim,
+					    NoiseType);
   }
 };
 
@@ -164,9 +170,11 @@ namespace Sources{
       if (!strcmp(Source_name, "Z2noise")) { 
         return new Z2noiseSourceFactory<Index,Format>(node);
       }
-      std::cerr << "No Source available with name ["
-		<< Source_name << "]" << std::endl;
-      abort();
+
+
+      ErrorString msg;
+      msg << "No Source available with name [" << Source_name << "]\n";
+      Errors::XMLerr(msg);
     } else {
       std::cout << "Requested node is missing in input file "
 		<< "(Source Object)\n" 
