@@ -1,11 +1,7 @@
 /*!
-
  * @file rationalapprox.cpp
-
  * @brief Calculates the rational approximation for a given function
-
  */
-
 #include <assert.h>
 #include <math.h>
 #include "rationalapprox.hpp"
@@ -14,17 +10,11 @@
 
 // Standard Constructor 
 RationalApprox::RationalApprox(RationalApprox_params Par):
-  Params(Par)
-{
-  fill();
-}
+  Params(Par){ fill();}
 
 // XML constructor
-RationalApprox::RationalApprox(const XML::node Approx_node):
-  Params(Approx_node)
-{
-  fill();
-}
+RationalApprox::RationalApprox(const XML::node& Approx_node):
+  Params(Approx_node){ fill();}
 
 void RationalApprox::fill() {
 
@@ -56,7 +46,7 @@ void RationalApprox::fill() {
   RA_res.resize(Params.numerator_deg);
   RA_pole.resize(Params.denominator_deg);
 
-  for (int i = 0; i < Params.numerator_deg;  i++) {
+  for (int i = 0; i < Params.numerator_deg; ++i){
     RA_res[i]  = res[i];
     RA_pole[i] = den[i];
   }
@@ -67,32 +57,27 @@ void RationalApprox::fill() {
   I_RA_res.resize(Params.numerator_deg);
   I_RA_pole.resize(Params.denominator_deg);
 
-  for (int i = 0; i < Params.numerator_deg;  i++) {
+  for (int i = 0; i < Params.numerator_deg; ++i){
     I_RA_res[i]  = res[i];
     I_RA_pole[i] = den[i];
   }
 
   CCIO::cout << "Partial fraction expansion coefficients\n";
-  for (int i = 0; i < Params.numerator_deg;  i++) {
+  for (int i = 0; i < Params.numerator_deg; ++i){
     CCIO::cout << "Res["<<i<<"] = "<< std::setw(25)<< RA_res[i] 
 	       << "   Pole["<<i<<"] = "<< std::setw(25)<< RA_pole[i] << "\n";
   }
 
   CCIO::cout << "Inverse Partial fraction expansion coefficients\n";
-  for (int i = 0; i < Params.numerator_deg;  i++) {
+  for (int i = 0; i < Params.numerator_deg; ++i){
     CCIO::cout << "Res["<<i<<"] = "<< std::setw(25)<< I_RA_res[i] 
 	       << "   Pole["<<i<<"] = "<< std::setw(25)<< I_RA_pole[i] << "\n";
   }
-
-
   delete[] res;
   delete[] den;
-
 }
 
-
-void RationalApprox::rescale(const double& minIn,
-			     const double& maxIn) {
+void RationalApprox::rescale(double minIn,double maxIn) {
 
   // Rescale coefficients assuming that the original ones where
   // calculated for the interval [a, 1.0]
@@ -115,41 +100,6 @@ void RationalApprox::rescale(const double& minIn,
     I_RA_pole[i] *= max;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /*
 

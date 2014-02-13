@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.hpp 
  *  @brief Declaration of the global functions to generate Dirac_op factories
- * Time-stamp: <2013-06-05 18:24:11 noaki>
+ * Time-stamp: <2014-02-04 13:53:39 noaki>
  */
 #ifndef DIRAC_OPERATOR_FACTORYCREATOR_INCLUDED
 #define DIRAC_OPERATOR_FACTORYCREATOR_INCLUDED
@@ -18,7 +18,7 @@ namespace Diracs {
   /// needed to abstract DWF5D and DWF5dEvenOdd for HMC
   DiracDWF5dFactory* createDiracDWF5dFactory(const XML::node&);
 
-  //DiracWilsonLikeFactory* createGeneralDiracWilsonLikeFactory(const XML::node&);
+  DiracWilsonLikeFactory* createGeneralDiracWilsonLikeFactory(const XML::node&);
   
   DiracStaggeredEvenOddLikeFactory* createDiracStaggeredEvenOddLikeFactory(const XML::node&);
 

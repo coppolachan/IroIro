@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2014-01-16 16:08:21 neo>
+ * Time-stamp: <2014-02-10 10:58:52 noaki>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -249,7 +249,7 @@ namespace CCIO {
   template <typename T>
   int ReadFromDisk(Field& f,
 		   const char* filename,
-		   const int offset = 0, 
+		   const long long int offset = 0, 
 		   const std::string readerID = "Binary",
 		   const bool do_check = true){
     Communicator* comm = Communicator::instance();
@@ -365,8 +365,8 @@ namespace CCIO {
     
     //informations about sizes should be provided by the file
     for (int field_num = 0; field_num < num_objects; ++field_num) {
-      ReadFromDisk<T>(step,filename,
-		      sizeof(double)*field_num*fmt.size()*CommonPrms::instance()->NP());
+      long long int offset= sizeof(double)*field_num*fmt.size()*CommonPrms::instance()->NP()
+      ReadFromDisk<T>(step,filename,offset,"Binary",false);
       f.push_back(step);
     }
   }
