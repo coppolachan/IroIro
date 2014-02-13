@@ -329,8 +329,8 @@ public:
       src_[2*idx] = copysign(1.0,cosine);
       src_[2*idx+1] = 0;	
       if (Type_ == ComplexZ2) {
-       	src_[2*idx]   = src_[2*idx]*INVSQRT2;
        	src_[2*idx+1] = src_[2*idx]*INVSQRT2;
+	src_[2*idx]   = src_[2*idx]*INVSQRT2;
       }		   
     }
   }	   	   

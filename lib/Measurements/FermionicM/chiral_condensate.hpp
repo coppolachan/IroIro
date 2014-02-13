@@ -54,9 +54,10 @@ private:
   const Dirac_DomainWall_4D& Ddw_;/*!< @brief %Dirac operator */
   Field invert(Field&)const; 
   int fsize()const;
+  double one_minus_m_inv; // (1-m)^-1
 public:
   ChiralCondDWF(const Dirac_DomainWall_4D& Ddw4D)
-    :Ddw_(Ddw4D){}
+    :Ddw_(Ddw4D),one_minus_m_inv(1.0/(1.0-Ddw_.getMass())){}
 
   /*! @brief Public destructor */
   ~ChiralCondDWF(){}

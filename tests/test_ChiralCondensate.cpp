@@ -19,9 +19,6 @@ int Test_ChiralCondensate::run(){
   XML::descend(ch_node,"ChiralCondensate",MANDATORY);
   InputConfig config = input_.getConfig();
 
-  Staples Staple;
-  CCIO::cout<< "Plaquette : "<< Staple.plaquette(*(input_.gconf))<< std::endl;
-
   /************************************************************************************/
   //
   // For 5-D Inversion

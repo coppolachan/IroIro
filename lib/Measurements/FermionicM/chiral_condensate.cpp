@@ -1,6 +1,8 @@
 /*! 
   @file chiral_condensate.cpp
   @brief Declaration of Chiral condensate measurement class ChiralCond
+
+  use with z2 noise (see hep-lat/9308105)
  */
 #include "chiral_condensate.hpp"
 
@@ -9,33 +11,40 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
   // stochastic estimation
   // abstract definition
 
-  double condensate = 0.0;
+  double condensate_re = 0.0;
+  double condensate_im = 0.0;
   for (int i = 0; i < stochastic_noise; i++){
     // creates the source vector by summing up 
     // sources in every component
     Field global_source(fsize());
     src.refresh(); // get a new source
     
-    // Fill the global_source vector
+    // Fill all components of the global_source vector
     for (int s = 0; s < ND_; s++) {
       for (int c = 0; c < NC_; c++) {
 	global_source += src.mksrc(s,c);
       }
     }
-    
-    double gs_norm = global_source.norm();
-    global_source /= gs_norm;
-
     // Invert the source
     Field propagated = invert(global_source);
-
-    condensate += propagated*global_source;
+    
+    // scalar product
+    for (int j = 0; j < fsize(); j+=2){
+      condensate_re += global_source[j]*propagated[j] + global_source[j+1]*propagated[j+1];
+      condensate_im += - global_source[j+1]*propagated[j] + global_source[j]*propagated[j+1];
+    }
+    
   }
-  condensate /= ((double)stochastic_noise*CommonPrms::instance()->Nvol());
+  condensate_re = Communicator::instance()->reduce_sum(condensate_re);
+  condensate_im = Communicator::instance()->reduce_sum(condensate_im);
+
 
   // Collect all results
-  condensate = Communicator::instance()->reduce_sum(condensate);
-  return condensate;
+  condensate_re /= ((double)stochastic_noise*CommonPrms::instance()->Lvol());
+  condensate_im /= ((double)stochastic_noise*CommonPrms::instance()->Lvol());
+  CCIO::cout << "c ("<< condensate_re << ","<< condensate_im << ")\n";
+
+  return condensate_re;
 }
 
 ///////////////////////////////////////////////////
@@ -55,7 +64,12 @@ int ChiralCondStd::fsize()const{
 int ChiralCondDWF::fsize()const{
   return Ddw_.fsize();
 }
+
+/* @brief Computes \f$ \frac{1}{1-m}(D^4_{GW}(m)^{-1}_{xy} - \delta_{xy}) */
 Field ChiralCondDWF::invert(Field& f)const{
-  return Ddw_.mult_inv(f);
+  Field inv = Ddw_.mult_inv(f);
+  inv  -= f;
+  inv *= one_minus_m_inv;
+  return inv;
 }
 
