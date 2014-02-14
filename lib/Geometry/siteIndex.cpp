@@ -28,6 +28,10 @@ int (SiteIndex::*SiteIndex::slice_dir[])(int, int)const = {&SiteIndex::slice_x,
 							   &SiteIndex::slice_z,
 							   &SiteIndex::slice_t};
 
+int (SiteIndex::*SiteIndex::global_idx[])(int)const = {&SiteIndex::global_x,
+						       &SiteIndex::global_y,
+						       &SiteIndex::global_z,
+						       &SiteIndex::global_t};
 
 SiteIndex* SiteIndex::instance(){
   static SiteIndex site_index;

@@ -7,15 +7,37 @@
 #include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
 #include "Measurements/FermionicM/qprop_mom.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
-//#include "Measurements/GaugeM/staples.hpp"
+#include "include/errors.hpp"
 #include <memory>
 
 using namespace std;
+
+int get_Direction(XML::node node) {
+  if (!XML::attribute_compare(node, "dir", "X"))
+    return XDIR;
+  if (!XML::attribute_compare(node, "dir", "Y"))
+    return YDIR;
+  if (!XML::attribute_compare(node, "dir", "Z"))
+    return ZDIR;
+  if (!XML::attribute_compare(node, "dir", "T"))
+    return TDIR;
+
+  ErrorString msg;
+  msg << "Direction not valid\n" << 
+    "Specify the attribute chosing in {X,Y,Z,T}";
+  Errors::XMLerr(msg);
+}
+
 
 int Test_MesonSpectrum::run(){
   XML::node node = input_.node;
   //// Quark Propagator ////
   XML::descend(node,"QuarkProp");
+  XML::node qprop_node = node;
+
+  // Select direction
+  int dir =  get_Direction(qprop_node);
+  CCIO::cout << "Selected dir="<<dir << "\n";
   
   auto_ptr<QuarkPropagatorFactory> qpfact(QuarkPropagators::createQuarkPropagatorFactory(node));
   InputConfig config = input_.getConfig();
@@ -31,12 +53,12 @@ int Test_MesonSpectrum::run(){
   qprop->calc(sq,*src);
 
   // meson correlators
-  CCIO::cout << " ---- Making up meson correlators\n";
+  CCIO::cout << " ---- Making up meson correlators in direction "<<dir<<"\n";
   MesonCorrelator pp(Pion), v1v1(Vector1), v2v2(Vector2), v3v3(Vector3);
-  vector<double> Cpp   = pp.calculate<Format::Format_F>(sq,sq);  
-  vector<double> Cv1v1 = v1v1.calculate<Format::Format_F>(sq,sq);  
-  vector<double> Cv2v2 = v2v2.calculate<Format::Format_F>(sq,sq);  
-  vector<double> Cv3v3 = v3v3.calculate<Format::Format_F>(sq,sq);  
+  vector<double> Cpp   = pp.calculate<Format::Format_F>(sq,sq,dir);  
+  vector<double> Cv1v1 = v1v1.calculate<Format::Format_F>(sq,sq,dir);  
+  vector<double> Cv2v2 = v2v2.calculate<Format::Format_F>(sq,sq,dir);  
+  vector<double> Cv3v3 = v3v3.calculate<Format::Format_F>(sq,sq,dir);  
 
   // output
   CCIO::cout << " ---- Output in "<< input_.output.c_str()<<"\n";

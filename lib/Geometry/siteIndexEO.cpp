@@ -1,7 +1,7 @@
 /*!
   @file siteIndexEO.cpp
   @brief Declares the interface for site indexing EVEN-ODD
-  Time-stamp: <2014-02-14 12:27:33 neo>
+  Time-stamp: <2014-02-14 16:29:44 neo>
 */
 #include "siteIndex.hpp"
 #include "Communicator/communicator.hpp"
@@ -32,6 +32,11 @@ int (SiteIndex::*SiteIndex::slice_dir[])(int, int)const = {&SiteIndex::slice_x,
 							   &SiteIndex::slice_y,
 							   &SiteIndex::slice_z,
 							   &SiteIndex::slice_t};
+
+int (SiteIndex::*SiteIndex::global_idx[])(int)const = {&SiteIndex::global_x,
+						       &SiteIndex::global_y,
+						       &SiteIndex::global_z,
+						       &SiteIndex::global_t};
 
 
 SiteIndex* SiteIndex::instance(){

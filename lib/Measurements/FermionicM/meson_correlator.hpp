@@ -172,7 +172,7 @@ const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
 
   std::vector<double> correl_tmp(Lt,0.0);
   for(int t=0; t<Nt; ++t)
-    correl_tmp[SiteIndex::instance()->global_t(t)] = correl_local[t];
+    correl_tmp[(SiteIndex::instance()->*SiteIndex::global_idx[direction])(t)] = correl_local[t];
 
   std::vector<double> correl(Lt);
   for(int t=0; t<Lt; ++t)

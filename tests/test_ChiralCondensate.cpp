@@ -48,6 +48,7 @@ int Test_ChiralCondensate::run(){
   auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(Source_node));
   auto_ptr<Source> src(SrcFactory->getSource());
 
+
   /************************************************************************************/
   //
   // Compute the condensate

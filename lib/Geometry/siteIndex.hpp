@@ -61,6 +61,8 @@ public:
   int global_z(int z) const;
   int global_t(int t) const;
 
+  static int (SiteIndex::*global_idx[])(int)const;
+
   // indices with a step forward/backward (for bulk sites)
   int p_x(int site) const;
   int p_y(int site) const;
