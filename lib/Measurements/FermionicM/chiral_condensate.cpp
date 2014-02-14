@@ -34,6 +34,12 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
       condensate_im += - global_source[j+1]*propagated[j] + global_source[j]*propagated[j+1];
     }
     
+    // For systematics check 
+    double temp_re = Communicator::instance()->reduce_sum(condensate_re);
+    double temp_im = Communicator::instance()->reduce_sum(condensate_im);
+
+    CCIO::cout << "["<<i<<"] "<< temp_re/(i+1.0) << "   "<< temp_im/(i+1.0) <<"\n";
+
   }
   condensate_re = Communicator::instance()->reduce_sum(condensate_re);
   condensate_im = Communicator::instance()->reduce_sum(condensate_im);

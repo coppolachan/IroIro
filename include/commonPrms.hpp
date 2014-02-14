@@ -55,7 +55,6 @@ public:
   static int Lz(){return Lsize_[2];}
   static int Lt(){return Lsize_[3];}
   static int Lvol(){return Lvol_;}
-  //static int Lsize(int dir){return Lsize_[dir];}
 
   static int NPEx(){return Nnodes_[0];}
   static int NPEy(){return Nnodes_[1];}
@@ -69,7 +68,6 @@ public:
   static int Nz(){return Nsize_[2];}
   static int Nt(){return Nsize_[3];}
   static int Nvol(){return Nvol_;}
-  //static int Nsize(int dir){return Nsize_[dir];}
 
   static int Nc(){return NC_;}
   static int Nd(){return ND_;}

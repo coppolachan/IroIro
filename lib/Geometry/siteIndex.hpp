@@ -77,6 +77,8 @@ public:
   int slice_z(int z,int n) const;
   int slice_t(int t,int n) const;
 
+  static int (SiteIndex::*slice_dir[])(int, int)const;
+
   int slsize(int x,int dir)const;
 
   int Bdir(int dir);

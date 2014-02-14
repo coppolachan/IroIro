@@ -23,6 +23,12 @@ SiteIndex::SiteIndex():Nx_(CommonPrms::instance()->Nx()),
   setup_all();
 }
 
+int (SiteIndex::*SiteIndex::slice_dir[])(int, int)const = {&SiteIndex::slice_x,
+							   &SiteIndex::slice_y,
+							   &SiteIndex::slice_z,
+							   &SiteIndex::slice_t};
+
+
 SiteIndex* SiteIndex::instance(){
   static SiteIndex site_index;
   return &site_index;
