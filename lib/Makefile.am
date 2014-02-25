@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-02-19 10:49:20 noaki>
+# Time-stamp: <2014-02-25 16:36:49 noaki>
 
 ###########################################
 # Initial definitions 
@@ -443,7 +443,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenModes.hpp		\
 			EigenModes/foprHermFunc.hpp		\
 			EigenModes/findminmax.hpp		\
-			EigenModes/eigModesNum.cpp	        \
+			EigenModes/eigModesNum.hpp	        \
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/TrajectoryInfo.hpp			\

@@ -50,8 +50,6 @@ double EigModesNum::count(double Msq)const{
   }
   */
 
-  double norm1=0.0, norm2 =0.0, norm3=0.0;
-
   double nu =0.0;
   valarray<double> xi(DdagD_->fsize());
 
@@ -60,25 +58,14 @@ double EigModesNum::count(double Msq)const{
     
     //// evaluation of (1 -X1*P(X2))*(1 -X1*P(X2))*xi
     Field h2e(xi);
-
-    norm1 += h2e.norm();
-
     Field xPx2 = X1.mult(PX2.mult(h2e)); /// X1*P(X2)*xi
-
-    norm2 += xPx2.norm();      
 
     h2e -= 2.0*xPx2;                     
     h2e += X1.mult(PX2.mult(xPx2));      /// (X1*P(X2))**2*xi
 
-    norm3 += h2e.norm();          
-
     nu += h2e*h2e;
   }
   nu /= 16.0*Nrand_;
-
-  CCIO::cout<<" norm1="<<norm1/Nrand_
-	    <<" norm2="<<norm2/Nrand_
-	    <<" norm3="<<norm3/Nrand_<<"\n";
   return nu;  
 }
 

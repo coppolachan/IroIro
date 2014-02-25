@@ -61,7 +61,8 @@ private:
 
   void pre_process(GaugeField&,const RandNum&,int)const;
   void post_process(GaugeField&,const RandNum&,int)const;
-  
+  void post_process_last(GaugeField&,const RandNum&)const;
+
   void setup(XML::node);
   void input_RegularStep(XML::node);
   void input_NumberList(XML::node);
@@ -128,7 +129,10 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     CCIO::cout<<"Starting measurement"<<std::endl;
     meas.run();
     //----------------------------------
+
     post_process(Uin_,*(input_.rng),number_list_[c]); // seed saving
+    if(c == meas_num_-1)
+      post_process_last(Uin_,*(input_.rng)); // seed saving for the last
     CCIO::cout<<"\n";
   }
 }

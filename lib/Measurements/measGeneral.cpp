@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-01-29 15:29:14 cossu>
+ * Time-stamp: <2014-02-26 06:22:26 noaki>
  */
 
 #include "measGeneral.hpp"
@@ -218,6 +218,14 @@ void MeasGeneral::post_process(GaugeField&,const RandNum& rng,int id)const{
   if(seed_output_){
     std::stringstream seed;
     seed << seed_prefix_<< id;
+    rng.saveSeed(seed.str());
+  }
+}
+
+void MeasGeneral::post_process_last(GaugeField&,const RandNum& rng)const{
+  if(seed_output_){
+    std::stringstream seed;
+    seed << seed_prefix_<<"last";
     rng.saveSeed(seed.str());
   }
 }

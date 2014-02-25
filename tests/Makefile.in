@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-02-13 16:15:03 noaki>
+# Time-stamp: <2014-02-25 16:55:26 noaki>
 
 
 VPATH = @srcdir@
@@ -640,7 +640,7 @@ EXTRA_DIST = testResults.info	\
 		test_Solver_Perf.xml	\
 		test_sunRep.xml		\
 		test_noFact.xml		\
-		test_ChiralCondensate.xml
+	        test_EigModesNum.xml    
 
 test_HMC_SOURCES = test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -803,7 +803,8 @@ include_HEADERS = tests.hpp			\
                                 test_LapH.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\
 				test_Laplacian.hpp		\
-				test_LapH.hpp
+				test_LapH.hpp                   \
+	       	                test_ChiralCondensate.hpp
 
 all: all-am
 
