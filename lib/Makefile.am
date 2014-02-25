@@ -4,7 +4,8 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-02-13 16:04:14 noaki>
+# Time-stamp: <2014-02-19 10:49:20 noaki>
+
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -218,6 +219,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
+		Measurements/FermionicM/chiral_condensate.cpp		\
 		Geometry/autoMap_improved.cpp		\
 		Geometry/siteIndex_EvenOdd.cpp		\
 		Geometry/siteMap.cpp			\
@@ -252,9 +254,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/gammaMatrices.cpp			\
 		Tools/sunAlgUtils.cpp			\
 		Tools/complexMatrix.cpp		        \
+		Tools/realMatrix.cpp		        \
 		Tools/Remez/alg_remez.cpp		\
 		Tools/chebyshevUtils.cpp		\
-		Tools/signApprox_Chebyshev.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
 		Tools/ErrorsHandling/allocation_errors.cpp\
@@ -366,7 +368,9 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Measurements/FermionicM/meson_correlator.hpp	\
 			Measurements/FermionicM/baryonCorrelator.hpp	\
 			Measurements/FermionicM/quark_prop_meas_factory.hpp \
-                        Measurements/FermionicM/utils_DWF4d.hpp \
+                        Measurements/FermionicM/utils_DWF4d.hpp 	\
+			Measurements/FermionicM/chiral_condensate.hpp	\
+			Measurements/FermionicM/chiral_condensate_abs.hpp\
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\
@@ -477,17 +481,17 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/colorEpsilon.hpp	                \
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
-			Tools/randNum_Factory.h			\
+			Tools/randNum_Factory.hpp		\
 			Tools/fieldUtils.hpp			\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
 			Tools/gammaMatrices.hpp			\
 			Tools/complexMatrix.hpp 		\
+			Tools/realMatrix.hpp 		        \
 			Tools/Remez/alg_remez.hpp		\
 			Tools/Remez/bigfloat.hpp		\
 			Tools/RationalApprox/rationalapprox.hpp	\
-			Tools/signApprox_Chebyshev.hpp		\
 			Tools/chebyshevUtils.hpp		\
 			Tools/Bagel/bfm_storage.hpp		\
 			Tools/RandomNumGen/dcmt_wrapper.hpp	\

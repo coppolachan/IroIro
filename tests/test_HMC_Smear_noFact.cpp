@@ -26,8 +26,10 @@ int Test_HMC::run(){
   
   //Using factories just for RNG
   
-  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
-  
+  //  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
+  RNG_Env::initialize(HMC_node);
+
+
   std::vector<int> multip(2);
   multip[0]= 1;
   multip[1]= 1;

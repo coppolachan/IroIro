@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2014-02-10 10:58:52 noaki>
+ * Time-stamp: <2014-02-13 16:16:54 noaki>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -249,9 +249,9 @@ namespace CCIO {
   template <typename T>
   int ReadFromDisk(Field& f,
 		   const char* filename,
-		   const long long int offset = 0, 
+		   const uint64_t offset = 0, 
 		   const std::string readerID = "Binary",
-		   const bool do_check = true){
+		   const bool do_check = false){
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     _Message(DEBUG_VERB_LEVEL, "Format initialization...\n");
@@ -365,8 +365,8 @@ namespace CCIO {
     
     //informations about sizes should be provided by the file
     for (int field_num = 0; field_num < num_objects; ++field_num) {
-      long long int offset= sizeof(double)*field_num*fmt.size()*CommonPrms::instance()->NP()
-      ReadFromDisk<T>(step,filename,offset,"Binary",false);
+      uint64_t offset = sizeof(double)*field_num*fmt.size()*CommonPrms::instance()->NP();
+      ReadFromDisk<T>(step,filename,offset);
       f.push_back(step);
     }
   }
@@ -383,7 +383,7 @@ namespace CCIO {
   int ReadFromDisk3D(Field& f,
 		     const char* filename,
 		     const int block3D = 0,
-		     const int offset = 0, 
+		     const uint64_t offset = 0, 
 		     const std::string readerID = "Binary",
 		     const bool do_check = true){
     Communicator* comm = Communicator::instance();
@@ -423,7 +423,7 @@ namespace CCIO {
 		<<" bytes from "<< filename << " with offset "<< offset <<"... " << std::flush;
       
       // Jump to the block3D-th record
-      int block_offset = offset + block3D*bytes_block3D;
+      uint64_t block_offset = offset + block3D*bytes_block3D;
 
       fseek(inFile, block_offset, SEEK_SET);
       

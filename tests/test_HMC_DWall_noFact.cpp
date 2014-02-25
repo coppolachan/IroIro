@@ -26,8 +26,10 @@ using namespace std;
 int Test_HMC_DomainWall::run(){
   CCIO::cout << "Starting HMCrun" << std::endl;
  
-  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_DW_node);
-  
+  //  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_DW_node);
+  RNG_Env::initialize(HMC_DW_node);  
+
+
   std::vector<int> multip(3);
   multip[0]= 1;
   multip[1]= 2;

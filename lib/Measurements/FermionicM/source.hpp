@@ -13,6 +13,9 @@ public:
   virtual ~Source(){}
   virtual const Field mksrc(int s,int c)const = 0;
   virtual const Field mksrc(const std::vector<int>& lv,int s,int c)const = 0;
+  
+  /* @brief to get a new source in the case of RNG generated sources */
+  virtual void refresh() = 0;
 };
 
 #endif

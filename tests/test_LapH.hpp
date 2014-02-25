@@ -4,6 +4,8 @@
  *
  * @author Guido Cossu
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
+ *
+ * Time-stamp: <2014-01-31 16:20:16 neo>
  */
 
 #ifndef TEST_LAPH_HPP_
@@ -11,24 +13,6 @@
 
 #include "include/iroiro_code.hpp"
 #include "tests/tests.hpp"
-/*
-class Test_LapH_Solver{
-  const char* test_name;
-  XML::node LapH_node;
-  GaugeField Gfield_;
-public:
-  Test_LapH_Solver(XML::node node,GaugeField& Gfield):LapH_node(node),
-                                              Gfield_(Gfield){
-    test_name = "LapH";
-    XML::descend(LapH_node, test_name);    
-  }
-
-
-
-  int run();  
-};
-*/
-
 
 class Test_LapH_Solver{
   const Measurements::Input input_;

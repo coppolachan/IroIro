@@ -19,7 +19,7 @@
 #include "Smearing/smearingFactories.hpp"
 
 #include "EigenModes/findminmax.hpp"
-#include "Tools/randNum_Factory.h"
+#include "Tools/randNum_Factory.hpp"
 #include <assert.h>
 #include <vector>
 
@@ -29,7 +29,8 @@ int Test_RationalApprox::run(){
   CCIO::cout << "Starting Rational Approximation test "
 	     <<"with smearing support (devel)\n";
   
-  RNG_Env::RNG = RNG_Env::createRNGfactory(RA_node);
+  //RNG_Env::RNG = RNG_Env::createRNGfactory(RA_node);
+  RNG_Env::initialize(RA_node);
 
 // Prints plaquette (thin) link
   Staples Staple;
@@ -114,7 +115,7 @@ int Test_RationalApprox::run(){
   // Find Max eigenvalue
   Fopr_DdagD* FoprKernel = new Fopr_DdagD(Kernel);
   findMinMax* MinMax = new findMinMax(FoprKernel,
-				      RNG_Env::RNG->getRandomNumGenerator(),
+				      RNG_Env::RandNumG::instance().getRNG(),
 				      Kernel->fsize());
 
   MinMaxOut MinMaxResult = MinMax->findExtrema();

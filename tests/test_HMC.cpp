@@ -20,7 +20,9 @@
 int Test_HMC::run(){
   CCIO::cout << "Starting HMCrun" << std::endl;
 
-  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
+  RNG_Env::initialize(HMC_node);
+    //  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
+
 
   Integrators::Integr = Integrators::createIntegratorFactory(HMC_node);
 

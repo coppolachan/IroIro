@@ -14,5 +14,5 @@ int Test_EigModesNum::run(){
   InputConfig iconf = input_.getConfig();
   std::auto_ptr<Dirac> dirac(dfact.get()->getDirac(iconf));
   EigModesNum nu(enode,dirac.get(),input_.rng);
-  nu.count();
+  nu.do_count();
 }

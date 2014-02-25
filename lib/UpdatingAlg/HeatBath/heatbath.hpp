@@ -2,15 +2,16 @@
 /*! @file heatbath.hpp
  * @brief Declaration of classes for HeatBath update
  *
- * Time-stamp: <2013-04-02 15:45:40 neo>
+ * Time-stamp: <2014-02-10 14:45:09 cossu>
  */
 //--------------------------------------------------------------------
 #ifndef HEATBATH_INCLUDED
 #define HEATBATH_INCLUDED
 
-#include "Tools/randNum_Factory.h"
+
 #include "include/pugi_interface.h"
 #include "include/common_fields.hpp"
+#include "Tools/randNum_Factory.hpp"
 #include "HBActions.hpp"
 #include <memory>
 
@@ -59,7 +60,7 @@ public:
      Params_(HeatBathParams(node)){}
 
   HeatBathGeneral(pugi::xml_node node)
-    :rand_(RNG_Env::RNG->getRandomNumGenerator()),
+    :rand_(RNG_Env::RandNumG::instance().getRNG()),
      Params_(HeatBathParams(node)){}
 
   ~HeatBathGeneral(){}

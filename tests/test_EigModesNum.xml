@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for testing eigenmode classes -->
+<Parameters>
+  <!-- Geometry parameters here -->
+
+  <Geometry>
+    <Lattice>4 4 4 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+  </Geometry>
+  <!-- Input configuration -->
+<!--  <Configuration Type="TextFile" Input="RegularStep">
+    <input_prefix>conf_</input_prefix>
+    <total_num>10</total_num>
+    <starting_idx>0</starting_idx>
+    <idx_increment>1</idx_increment>
+  </Configuration> -->
+
+  <Configuration Type="TextFile" Input="FileList">
+    <GaugeConfigs>
+      <filename>conf_04040408.txt</filename>
+    </GaugeConfigs>
+  </Configuration> 
+
+  <RandomNumberGen name="Mersenne Twister"> 
+    <seedFile>Output/rng_seed_0</seedFile>
+<!--    <init>0x123 0x234 0x345 0x456</init>-->
+  </RandomNumberGen>
+  <Smearing type="Stout">
+    <Nsmear>0</Nsmear>
+    <Base type="APE">
+      <rho>0.1</rho>
+    </Base>
+  </Smearing>
+  <GaugeFixing name="NoFixing"></GaugeFixing>
+  <Output>
+    <seed_prefix>Output/rng_seed_</seed_prefix>
+  </Output>
+  <Measurement>
+    <Dirac name="DiracWilson">      
+      <mass>-1.15</mass>
+    </Dirac>
+    <EigModesNum>
+      <precision>1e-8</precision>
+      <max_iteration>400</max_iteration>
+      <Nrand>2</Nrand>
+      <epsilon>0.01</epsilon>
+      <Npoly>32</Npoly>
+      <cutoffs>0.15 0.2 0.25 0.3 0.35 0.4</cutoffs>
+    </EigModesNum>
+  </Measurement>
+</Parameters>
+

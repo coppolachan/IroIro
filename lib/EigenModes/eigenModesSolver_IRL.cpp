@@ -288,6 +288,7 @@ void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
     }
   }
   CCIO::cout<<"[QR method] reached to maximum iterations: "<<Niter<<"\n";
+  CCIO::cout<<"failed at kmax="<<kmax<<"\n";
   abort();
 }
 

@@ -1,7 +1,7 @@
 /*! @file dirac_BFM_DomainWall_4D_eo.cpp
  *  @brief Methods of Dirac_BFM_DomainWall_4D_eo class
-
- * Time-stamp: <2014-01-30 14:13:20 neo>
+ *
+ * Time-stamp: <2014-02-13 16:21:26 noaki>
  */
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
 #include "Fields/field_expressions.hpp"
@@ -43,7 +43,7 @@ const Field Dirac_BFM_DomainWall_4D_eo::mult(const Field& f)const{
   // Vec[ s=0 Even | s=0 Odd | s=1 Even | s=1 Odd | s=2 Even | s=2 Odd | ... ]
   // where s is in the 5th dimension
   FField.data = Bproj_dag(f);
-  /*
+
   Fermion_t* fm1 = BFM_Op_->LoadFullSource(FField);
   FINE_TIMING_END(time_preparation);
   FINE_TIMING_START(time_unprec);
@@ -52,10 +52,11 @@ const Field Dirac_BFM_DomainWall_4D_eo::mult(const Field& f)const{
   fm1 = BFM_Op_PV_->mult_inv_4d_base(fm2);
   BFM_Op_PV_->GetFullSolution(FField);
   FINE_TIMING_END(timing);
-  */
-  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult_inv :"<<timing<<"\n"); 
-  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult_inv preparation :"<<time_preparation<<"\n"); 
-  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult_inv unprec :"<<time_unprec<<"\n"); 
+  
+  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult :"<<timing<<"\n"); 
+  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult preparation :"<<time_preparation<<"\n"); 
+  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult unprec :"<<time_unprec<<"\n"); 
+
   return Bproj(FField.data);
 }
 
