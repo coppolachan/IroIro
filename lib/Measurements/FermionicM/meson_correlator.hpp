@@ -105,8 +105,10 @@ public:
       break;
     }
   }
+  
+  // Calculates the propagator in a specified direction (T default)
   template <typename F> 
-  const std::vector<double> calculate(const prop_t&,const prop_t&);
+  const std::vector<double> calculate(const prop_t&,const prop_t&, int direction = TDIR);
 
   template <typename F> 
   const std::vector<double> calculate_mom(const prop_t&,const prop_t&,
@@ -126,19 +128,22 @@ public:
  */
 template <typename F>
 const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
-                                                     const prop_t& q2){
-  //CCIO::cout <<"Contraction to make up meson correlator\n";          
-
+                                                     const prop_t& q2,
+						     int direction){
+  
   F fmt(CommonPrms::instance()->Nvol());
-  int Nt = CommonPrms::instance()->Nt();
+  //int Nt = CommonPrms::instance()->Nt();
+  int Nt = CommonPrms::instance()->local_size(direction);
   std::vector<double> correl_local(Nt,0.0);
   
-  int slice3d = SiteIndex::instance()->slsize(0,TDIR);
+  //int slice3d = SiteIndex::instance()->slsize(0,TDIR);
+  int slice3d = SiteIndex::instance()->slsize(0,direction);
   
 #pragma omp parallel for
   for (int t = 0; t< Nt; t++) {
     for(int site=0; site<slice3d; ++site){
-      int site3d = SiteIndex::instance()->slice_t(t,site);
+      //int site3d = SiteIndex::instance()->slice_t(t,site);
+      int site3d = (SiteIndex::instance()->*SiteIndex::slice_dir[direction])(t,site);
       /// loop over spinor and color indexes
       for(int s4=0; s4<Nd_; ++s4){
 	/// s4 -> s1
@@ -162,11 +167,12 @@ const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
     }
   }
 
-  int Lt = CommonPrms::instance()->Lt();
+  //int Lt = CommonPrms::instance()->Lt();
+  int Lt = CommonPrms::instance()->global_size(direction);
 
   std::vector<double> correl_tmp(Lt,0.0);
   for(int t=0; t<Nt; ++t)
-    correl_tmp[SiteIndex::instance()->global_t(t)] = correl_local[t];
+    correl_tmp[(SiteIndex::instance()->*SiteIndex::global_idx[direction])(t)] = correl_local[t];
 
   std::vector<double> correl(Lt);
   for(int t=0; t<Lt; ++t)

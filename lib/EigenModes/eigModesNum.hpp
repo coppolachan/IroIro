@@ -25,7 +25,7 @@ class EigModesNum{
   static double func_rh4(double,void*);
   static double func_sqrtInv(double,void*);
   void init_ChebyshevApprox();
-  double count(double Msq)const;
+  void hproj(Field& f,double Msq)const;
 public:
   EigModesNum(double prec,int max_iter,int Nrand,int Npoly,double epsilon,
 	      const std::vector<double>& cutoff,

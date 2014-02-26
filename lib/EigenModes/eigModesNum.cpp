@@ -18,17 +18,26 @@ void EigModesNum::do_count()const{
   CCIO::cout<<"       cutoff_squared      modes number below cutoff \n";
   CCIO::cout<<"-----------------------------------------------------\n";
 
-  for(int i=0; i<cutoffs_.size(); ++i){
-    double Msq = cutoffs_[i]*cutoffs_[i]/Mratio_/Mratio_;
-    double nu = count(Msq);
+  vector<double> nu(cutoffs_.size(),0.0);
+  valarray<double> xi(DdagD_->fsize());
 
-    CCIO::cout<<" "<<setw( 3)<<setiosflags(ios_base::right)<<i;
-    CCIO::cout<<" "<<setw(10)<<setiosflags(ios_base::left) <<cutoffs_[i]*cutoffs_[i];
-    CCIO::cout<<" "<<setw(20)<<setiosflags(ios_base::right)<<nu<<endl;
+  for(int r=0; r<Nrand_; ++r){
+    MPrand::mp_get_gauss(xi,*rng_);
+    
+    for(int i=0; i<cutoffs_.size(); ++i){
+      Field f(xi);
+      hproj(f,cutoffs_[i]*cutoffs_[i]/Mratio_/Mratio_);
+      nu[i] += f*f;
+    }
+  }
+  for(int i=0; i<cutoffs_.size(); ++i){
+    CCIO::cout<<" "<<setw( 3)<<setiosflags(ios_base::right)<< i;
+    CCIO::cout<<" "<<setw(10)<<setiosflags(ios_base::left )<< cutoffs_[i]*cutoffs_[i];
+    CCIO::cout<<" "<<setw(20)<<setiosflags(ios_base::right)<< nu[i]/Nrand_ <<endl;
   }
 }
 
-double EigModesNum::count(double Msq)const{
+void EigModesNum::hproj(Field& f,double Msq)const{
   using namespace FieldExpression;
 
   Fopr_Linear     DdDcut(1.0,Msq,DdagD_);
@@ -39,6 +48,12 @@ double EigModesNum::count(double Msq)const{
 		     (-1.0-epsilon_)/(1.0-epsilon_),&X1);
   Fopr_Chebyshev  PX2(&X2,coeff_);
 
+  //// evaluation of (1 -X1*P(X2))*(1 -X1*P(X2))*f
+  Field xPx2 = X1.mult(PX2.mult(f)); /// X1*P(X2)*f
+  f -= 2.0*xPx2;                     
+  f += X1.mult(PX2.mult(xPx2));    /// (X1*P(X2))**2*f
+  f /= 4.0;
+  
   /* /// check of the functional form
   int N=1000;
   for(int i=-N; i<N; ++i){
@@ -49,24 +64,6 @@ double EigModesNum::count(double Msq)const{
     CCIO::cout<<y<<" "<<sgn<<"  "<<sgn_fopr<<"\n";
   }
   */
-
-  double nu =0.0;
-  valarray<double> xi(DdagD_->fsize());
-
-  for(int r=0; r<Nrand_; ++r){
-    MPrand::mp_get_gauss(xi,*rng_);
-    
-    //// evaluation of (1 -X1*P(X2))*(1 -X1*P(X2))*xi
-    Field h2e(xi);
-    Field xPx2 = X1.mult(PX2.mult(h2e)); /// X1*P(X2)*xi
-
-    h2e -= 2.0*xPx2;                     
-    h2e += X1.mult(PX2.mult(xPx2));      /// (X1*P(X2))**2*xi
-
-    nu += h2e*h2e;
-  }
-  nu /= 16.0*Nrand_;
-  return nu;  
 }
 
 double EigModesNum::func_sgn(double y,double eps,const vector<double>& c){

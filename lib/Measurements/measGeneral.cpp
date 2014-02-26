@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-02-26 06:22:26 noaki>
+ * Time-stamp: <2014-02-26 15:50:15 noaki>
  */
 
 #include "measGeneral.hpp"
@@ -139,8 +139,6 @@ void MeasGeneral::input_FileList(XML::node inode){
   int increment=1;
   if(XML::read(inode,"idx_increment",increment))
     CCIO::cout<<"[default] output: increment_num= "<<increment<<"\n";
-  
-  for(int c=0; c<meas_num_; ++c) number_list_.push_back(starting+increment*c);
 
   XML::node conf_node = inode;
   XML::descend(conf_node,"GaugeConfigs",MANDATORY);
@@ -148,6 +146,9 @@ void MeasGeneral::input_FileList(XML::node inode){
     config_list_.push_back(it->child_value());
   file_list_= true;
   meas_num_= config_list_.size();
+
+  for(int c=0; c<meas_num_; ++c) 
+    number_list_.push_back(starting+increment*c);
   
   XML::node eig_node= inode.child("EigenModes");
   if(eig_node!= NULL){

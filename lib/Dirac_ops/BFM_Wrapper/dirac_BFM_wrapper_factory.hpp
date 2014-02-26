@@ -1,7 +1,7 @@
 /*! @file dirac_BFM_wrapper_factory.hpp 
  *  @brief Declaration of BFM Dirac operators factories
  *
- * Time-stamp: <2014-02-13 16:17:46 noaki>
+ * Time-stamp: <2014-02-26 13:24:27 noaki>
  */
 #ifndef DIRAC_BFM_FACT_
 #define DIRAC_BFM_FACT_

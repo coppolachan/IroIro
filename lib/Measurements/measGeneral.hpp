@@ -33,7 +33,6 @@ namespace Measurements{
       RNG_Env::initialize(inode);
       rng = RNG_Env::RandNumG::instance().getRNG();
     }
-    ~Input(){if(eigen) delete eigen;}
     InputConfig getConfig()const{ return InputConfig(gconf,eigen); }
   };
 }
@@ -83,6 +82,8 @@ public:
     setup(node);
     _Message(DEBUG_VERB_LEVEL, "MeasGeneral object constructed\n");
   }
+  ~MeasGeneral(){if(input_.eigen) delete input_.eigen;}
+
   template <typename MeasObj> void do_meas();
 };
 

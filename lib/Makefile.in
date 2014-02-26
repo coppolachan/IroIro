@@ -15,14 +15,6 @@
 
 @SET_MAKE@
 
-#                         -*- Automake -*-
-# Process this file with automake to produce a makefile.
-#
-# Project IROIRO JLQCD package (KEK) 
-# Lattice QCD MonteCarlo simulations
-#
-# Time-stamp: <2014-02-25 16:36:49 noaki>
-
 
 
 VPATH = @srcdir@
@@ -727,6 +719,13 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
+#                         -*- Automake -*-
+# Process this file with automake to produce a makefile.
+#
+# Project IROIRO JLQCD package (KEK) 
+# Lattice QCD MonteCarlo simulations
+#
+# Time-stamp: <2014-02-26 13:22:20 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
