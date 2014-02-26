@@ -16,9 +16,9 @@ void EigModesNum::do_count()const{
 	    << Nrand_<<" sources and "<<cutoffs_.size()<<" lambda's\n";
 
   CCIO::cout << setiosflags(ios_base::scientific);
-  CCIO::cout<<"-----------------------------------------------------\n";
-  CCIO::cout<<"       cutoff_squared      modes number below cutoff \n";
-  CCIO::cout<<"-----------------------------------------------------\n";
+  CCIO::cout<<"----------------------------------------------------\n";
+  CCIO::cout<<"      cutoff (lambda)     modes number below cutoff \n";
+  CCIO::cout<<"----------------------------------------------------\n";
 
   vector<double> nu(cutoffs_.size(),0.0);
   valarray<double> xi(DdagD_->fsize());
@@ -34,14 +34,14 @@ void EigModesNum::do_count()const{
       nu[i] += nu_r;
 
       CCIO::cout<<" "<<setw( 3)<<setiosflags(ios_base::right)<< i;
-      CCIO::cout<<" "<<setw(10)<<setiosflags(ios_base::left )<< cutoffs_[i]*cutoffs_[i];
+      CCIO::cout<<" "<<setw(10)<<setiosflags(ios_base::left )<< cutoffs_[i];
       CCIO::cout<<" "<<setw(20)<<setiosflags(ios_base::right)<< nu_r <<endl;
     }
   }
   CCIO::cout<<"average over sources:\n";
   for(int i=0; i<cutoffs_.size(); ++i){
     CCIO::cout<<" "<<setw( 3)<<setiosflags(ios_base::right)<< i;
-    CCIO::cout<<" "<<setw(10)<<setiosflags(ios_base::left )<< cutoffs_[i]*cutoffs_[i];
+    CCIO::cout<<" "<<setw(10)<<setiosflags(ios_base::left )<< cutoffs_[i];
     CCIO::cout<<" "<<setw(20)<<setiosflags(ios_base::right)<< nu[i]/Nrand_ <<endl;
   }
 }
