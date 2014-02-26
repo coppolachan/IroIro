@@ -12,6 +12,8 @@ using namespace std;
 
 void EigModesNum::do_count()const{
   if(cutoffs_.empty()) abort();
+  CCIO::cout<<"stochastic eigenmode-counting with "
+	    << Nrand_<<" sources and "<<cutoffs_.size()<<" lambda's\n";
 
   CCIO::cout << setiosflags(ios_base::scientific);
   CCIO::cout<<"-----------------------------------------------------\n";
@@ -23,13 +25,20 @@ void EigModesNum::do_count()const{
 
   for(int r=0; r<Nrand_; ++r){
     MPrand::mp_get_gauss(xi,*rng_);
+    CCIO::cout<<"noise source "<<r<<"\n";
     
     for(int i=0; i<cutoffs_.size(); ++i){
       Field f(xi);
       hproj(f,cutoffs_[i]*cutoffs_[i]/Mratio_/Mratio_);
-      nu[i] += f*f;
+      double nu_r = f*f;
+      nu[i] += nu_r;
+
+      CCIO::cout<<" "<<setw( 3)<<setiosflags(ios_base::right)<< i;
+      CCIO::cout<<" "<<setw(10)<<setiosflags(ios_base::left )<< cutoffs_[i]*cutoffs_[i];
+      CCIO::cout<<" "<<setw(20)<<setiosflags(ios_base::right)<< nu_r <<endl;
     }
   }
+  CCIO::cout<<"average over sources:\n";
   for(int i=0; i<cutoffs_.size(); ++i){
     CCIO::cout<<" "<<setw( 3)<<setiosflags(ios_base::right)<< i;
     CCIO::cout<<" "<<setw(10)<<setiosflags(ios_base::left )<< cutoffs_[i]*cutoffs_[i];
