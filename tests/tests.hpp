@@ -39,6 +39,24 @@ namespace TestEnv{
     return TestClass(top_node, GaugeF);
   }
 
+  /* For carrying out analysis for given data (no configuration required)*/
+  template <class TestClass>
+  TestClass StartUp_NoConf(int argc, char* argv[]){
+    CommandOptions Options = ReadCmdLine(argc, argv);
+
+    //Reading input file
+    XML::node top_node = XML::getInputXML(Options.filename);  
+
+    //Initializing geometry using XML input
+    Geometry geom(top_node);
+    
+    // Echo of input xml
+    JobUtils::echo_input(Options.filename);
+
+    return TestClass(top_node);
+  }
+
+
   /* For carrying out general measurements*/
   template <class TestClass>
   int StartRun(int argc, char* argv[]){
@@ -57,11 +75,14 @@ namespace TestEnv{
     return 0;
   }
 }
-
 #define CREATE_RUN_TEST(Class){ int result = TestEnv::StartRun<Class>(argc,argv)
 #define CLEAR_TEST }
 
 #define CREATE_TEST(Class) { Class TestObject = TestEnv::StartUp<Class>(argc, argv)
+#define RUN_TEST TestObject.run()
+#define CLEAR_TEST }
+
+#define CREATE_TEST_NOCONF(Class) { Class TestObject = TestEnv::StartUp_NoConf<Class>(argc, argv)
 #define RUN_TEST TestObject.run()
 #define CLEAR_TEST }
 

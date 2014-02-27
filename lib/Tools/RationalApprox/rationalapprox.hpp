@@ -1,11 +1,7 @@
 /*!
-
  * @file rationalapprox.hpp
-
  * @brief Calculates the rational approximation for a given exponential function
-
  */
-
 #ifndef RATIONAL_APPROX_HPP_
 #define RATIONAL_APPROX_HPP_
 
@@ -13,7 +9,6 @@
 #include "include/pugi_interface.h"
 
 /*! @brief Remez approximation parameters
-  
   It is assumed that the function to approximate is of the form \$x^{a/b}\$
 */
 struct RationalApprox_params{
@@ -42,7 +37,6 @@ struct RationalApprox_params{
     lambda_low(l_low),
     lambda_high(l_high){}
 
-
   RationalApprox_params(const XML::node node) {
     XML::read(node, "Num_deg", numerator_deg, MANDATORY);
     XML::read(node, "Den_deg", denominator_deg, MANDATORY);
@@ -54,20 +48,13 @@ struct RationalApprox_params{
     XML::read(node, "Low", lambda_low, MANDATORY);
     XML::read(node, "High", lambda_high, MANDATORY);
   }
-
-
-
-
-
 };
-
-
 
 /*! Calculates rational approximation valid in \$[ \epsilon_{min}, 1]\$ of the form: 
                                                             
   \f[ f(x)= r_0 + \sum_{i=0}^{i<N_{max}} \frac{r_i}{x+ p_i} \f]
 
-  where \$r_i\$ and \$p_i\$ are the residuals and poles of the approximation.
+  where \$r_i\$ and \$p_i\$ are the residues and poles of the approximation.
 */                                                         
 class RationalApprox {
 private:
@@ -77,24 +64,23 @@ private:
   int approximation_order;
   double min_epsilon;
   double RA_a0;               /*!< @brief Rational Approximation Constant term */
-  std::vector<double> RA_res; /*!< @brief Rational Approximation Residuals */
+  std::vector<double> RA_res; /*!< @brief Rational Approximation Residues */
   std::vector<double> RA_pole;  /*!< @brief Rational Approximation Poles */
 
   double I_RA_a0;               /*!< @brief Inverse Rational Approximation Constant term */
-  std::vector<double> I_RA_res; /*!< @brief Inverse Rational Approximation Residuals */
+  std::vector<double> I_RA_res; /*!< @brief Inverse Rational Approximation Residues */
   std::vector<double> I_RA_pole;  /*!< @brief Inverse Rational Approximation Poles */ 
 
   RationalApprox(); // hide default constructor
-
   void fill();
 public:
   /*! XML Constructor */
-  RationalApprox(const XML::node Approx_node);
+  RationalApprox(const XML::node& Approx_node);
 
   /*! Standard Constructor */
   RationalApprox(RationalApprox_params Par);
 
-  void rescale(const double& min, const double& max);
+  void rescale(double min,double max);
 
   std::vector<double> Residuals() const { return RA_res; }
   std::vector<double> Poles() const { return RA_pole; }
@@ -105,7 +91,6 @@ public:
   double InvConst() const { return I_RA_a0; }
 
   double exponent() { return (double)Params.exponent_num/(double)Params.exponent_den; }
-
 };
 
 #endif

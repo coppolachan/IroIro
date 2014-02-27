@@ -100,7 +100,7 @@ void EigenCalcGeneral::do_calc(InputConfig& input){
     get_eval(opOrigPtr.get()); // eigenvalues of oopr 
     
   }else if(Neig_== 0){
-    CCIO::cout<<"NO converged eigenmode.\n";
+    CCIO::cout<<"NO desired eigenmode.\n";
     throw "Calculation finished with error";
 
   }else if(Neig_< 0){/*!<@brief it means emslvPtr->calc() ended abnormally. */

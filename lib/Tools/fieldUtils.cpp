@@ -284,7 +284,7 @@ namespace FieldUtils{
 
 #if defined IBM_BGQ_WILSON || defined SR16K_WILSON
   //assumes some ordering of the matrices
-  void DirSliceALINED(GaugeField1D &G, const GaugeField& F, int dir){
+  void DirSlice_ALIGNED(GaugeField1D &G, const GaugeField& F, int dir){
     register int Nvol = F.Nvol();
     register int Ncc = F.Nin()/2;
 

@@ -33,7 +33,6 @@ namespace Measurements{
       RNG_Env::initialize(inode);
       rng = RNG_Env::RandNumG::instance().getRNG();
     }
-    ~Input(){if(eigen) delete eigen;}
     InputConfig getConfig()const{ return InputConfig(gconf,eigen); }
   };
 }
@@ -61,7 +60,8 @@ private:
 
   void pre_process(GaugeField&,const RandNum&,int)const;
   void post_process(GaugeField&,const RandNum&,int)const;
-  
+  void post_process_last(GaugeField&,const RandNum&)const;
+
   void setup(XML::node);
   void input_RegularStep(XML::node);
   void input_NumberList(XML::node);
@@ -82,6 +82,8 @@ public:
     setup(node);
     _Message(DEBUG_VERB_LEVEL, "MeasGeneral object constructed\n");
   }
+  ~MeasGeneral(){if(input_.eigen) delete input_.eigen;}
+
   template <typename MeasObj> void do_meas();
 };
 
@@ -128,7 +130,10 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     CCIO::cout<<"Starting measurement"<<std::endl;
     meas.run();
     //----------------------------------
+
     post_process(Uin_,*(input_.rng),number_list_[c]); // seed saving
+    if(c == meas_num_-1)
+      post_process_last(Uin_,*(input_.rng)); // seed saving for the last
     CCIO::cout<<"\n";
   }
 }

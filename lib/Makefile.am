@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-02-10 14:41:44 cossu>
+# Time-stamp: <2014-02-26 13:22:20 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -200,6 +200,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/chebyshevAccelFunc.cpp            \
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
+		EigenModes/eigModesNum.cpp			\
 		Measurements/measGeneral.cpp			\
 		Measurements/GaugeM/staples.cpp			\
 		Measurements/GaugeM/wilsonFlow.cpp		\
@@ -252,7 +253,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/gammaMatrices.cpp			\
 		Tools/sunAlgUtils.cpp			\
 		Tools/complexMatrix.cpp		        \
+		Tools/realMatrix.cpp		        \
 		Tools/Remez/alg_remez.cpp		\
+		Tools/chebyshevUtils.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
 		Tools/ErrorsHandling/allocation_errors.cpp\
@@ -293,6 +296,8 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/field.h			\
 			$(top_srcdir)/include/factories.hpp		\
 			$(top_srcdir)/include/fopr_Chebyshev.h	        \
+			$(top_srcdir)/include/fopr_RationalApprox.hpp   \
+			$(top_srcdir)/include/fopr_InvLinear.hpp        \
 			$(top_srcdir)/include/fopr_DdagDLinear.h        \
 			$(top_srcdir)/include/fopr_QuadLinear.h         \
 			$(top_srcdir)/include/fopr_Linear.h             \
@@ -437,6 +442,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenModes.hpp		\
 			EigenModes/foprHermFunc.hpp		\
 			EigenModes/findminmax.hpp		\
+			EigenModes/eigModesNum.hpp	        \
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/TrajectoryInfo.hpp			\
@@ -481,9 +487,11 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Tools/byteswap.hpp			\
 			Tools/gammaMatrices.hpp			\
 			Tools/complexMatrix.hpp 		\
+			Tools/realMatrix.hpp 		        \
 			Tools/Remez/alg_remez.hpp		\
 			Tools/Remez/bigfloat.hpp		\
 			Tools/RationalApprox/rationalapprox.hpp	\
+			Tools/chebyshevUtils.hpp		\
 			Tools/Bagel/bfm_storage.hpp		\
 			Tools/RandomNumGen/dcmt_wrapper.hpp	\
                         Tools/RandomNumGen/randNum_MT19937.h    \

@@ -1,7 +1,7 @@
 /*! @file dirac_BFM_DomainWall_4D_eo.cpp
  *  @brief Methods of Dirac_BFM_DomainWall_4D_eo class
  *
- * Time-stamp: <2014-02-06 10:37:30 cossu>
+ * Time-stamp: <2014-02-26 13:25:25 noaki>
  */
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
 #include "Fields/field_expressions.hpp"

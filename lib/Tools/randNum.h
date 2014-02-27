@@ -16,10 +16,10 @@
 class RandNum{
 private:
   // Random number in [0,1)
-  virtual double do_rand() const{return 0;};
+  virtual double do_rand() const{return 0;}
   
   // Random number in [0,1]
-  virtual double do_rand_closed() const{return 0;};
+  virtual double do_rand_closed() const{return 0;}
 
 public:
   RandNum(){ srand(static_cast<unsigned>(time(NULL)));}

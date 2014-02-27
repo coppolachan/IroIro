@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2014-02-10 11:37:22 cossu>
+ * Time-stamp: <2014-02-26 13:22:54 noaki>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_

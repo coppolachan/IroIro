@@ -25,8 +25,12 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 
   CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Np<<" Nm = "<<Nm_<<"\n";
 
-  ta.resize(Nm_);  V.resize(Nm_);
+  ta.resize(Nm_); 
+  /*
+  V.resize(Nm_);
   for(int i=0; i<Nm_; ++i) V[i].resize(fsize,1.0);
+  */
+  V.assign(Nm_,Field(fsize,1.0));
 
   double nv = V[0].norm();
   V[0] /= nv;                       /*!< @brief initial vector (uniform)*/
@@ -288,6 +292,7 @@ void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
     }
   }
   CCIO::cout<<"[QR method] reached to maximum iterations: "<<Niter<<"\n";
+  CCIO::cout<<"failed at kmax="<<kmax<<"\n";
   abort();
 }
 
