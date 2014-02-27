@@ -9,15 +9,30 @@
 #include "Measurements/FermionicM/chiral_condensate.hpp"
 #include "Measurements/FermionicM/chiral_condensate_abs.hpp"
 #include "Measurements/FermionicM/sources_factory.hpp"
+#include "Dirac_ops/BoundaryConditions/boundaryCond.hpp"
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
 
 using namespace std;
 
 int Test_ChiralCondensate::run(){
+  BoundaryCond* BC;
   XML::node ch_node = input_.node;
   XML::descend(ch_node,"ChiralCondensate",MANDATORY);
   InputConfig config = input_.getConfig();
+
+
+  //Apply boundary condition
+  bool AntiPeriodicBC = false; // default
+  XML::read(ch_node, "AntiPeriodicBC", AntiPeriodicBC);
+  
+  if (AntiPeriodicBC){
+    BC = new BoundaryCond_antiPeriodic(TDIR);
+    BC->apply_bc(*input_.gconf);
+  }
+  
+
+
 
   /************************************************************************************/
   //

@@ -13,6 +13,8 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
 
   double condensate_re = 0.0;
   double condensate_im = 0.0;
+
+  double condensate_sq = 0.0;
   for (int i = 0; i < stochastic_noise; i++){
     // creates the source vector by summing up 
     // sources in every component
@@ -30,25 +32,32 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
     
     // scalar product
     for (int j = 0; j < fsize(); j+=2){
-      condensate_re += global_source[j]*propagated[j] + global_source[j+1]*propagated[j+1];
+      double temp = global_source[j]*propagated[j] + global_source[j+1]*propagated[j+1];
+
+      condensate_sq += temp*temp;
+
+      condensate_re += temp;
       condensate_im += - global_source[j+1]*propagated[j] + global_source[j]*propagated[j+1];
     }
     
     // For systematics check 
     double temp_re = Communicator::instance()->reduce_sum(condensate_re);
     double temp_im = Communicator::instance()->reduce_sum(condensate_im);
-
     CCIO::cout << "["<<i<<"] "<< temp_re/(i+1.0) << "   "<< temp_im/(i+1.0) <<"\n";
 
   }
   condensate_re = Communicator::instance()->reduce_sum(condensate_re);
   condensate_im = Communicator::instance()->reduce_sum(condensate_im);
 
+  condensate_sq = Communicator::instance()->reduce_sum(condensate_sq);
 
   // Collect all results
   condensate_re /= ((double)stochastic_noise*CommonPrms::instance()->Lvol());
   condensate_im /= ((double)stochastic_noise*CommonPrms::instance()->Lvol());
+  condensate_sq /= ((double)stochastic_noise*CommonPrms::instance()->Lvol());
   CCIO::cout << "c ("<< condensate_re << ","<< condensate_im << ")\n";
+  CCIO::cout << "squared cond  "<< condensate_sq << "\n";
+  CCIO::cout << "chi_disc: "<< condensate_sq - condensate_re*condensate_re  << "\n";
 
   return condensate_re;
 }
