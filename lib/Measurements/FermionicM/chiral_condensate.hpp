@@ -7,7 +7,7 @@
  
 #include "chiral_condensate_abs.hpp"
 #include "include/errors.hpp"
-#include "Dirac_ops/dirac.hpp"
+#include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "Solver/solver.hpp"
 #include "Measurements/FermionicM/source.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -21,14 +21,15 @@
  */
 class ChiralCondStd : public ChiralCondensate{
 private:
-  const Dirac* D_;/*!< @brief %Dirac operator */
+  const DiracWilsonLike* D_;/*!< @brief %Dirac operator */
   const Solver* slv_;/*!< @brief %Solver for the inversion */
 
   Field invert(Field&)const; 
+  Field gamma5 (Field&) const;
   int fsize()const;
 public:
   /*! @brief Public constructor */
-  ChiralCondStd(const Dirac* D,
+  ChiralCondStd(const DiracWilsonLike* D,
 		const Solver* Solver)
     :D_(D),
      slv_(Solver){
@@ -53,6 +54,7 @@ class ChiralCondDWF : public ChiralCondensate{
 private:
   const Dirac_DomainWall_4D& Ddw_;/*!< @brief %Dirac operator */
   Field invert(Field&)const; 
+  Field gamma5 (Field&) const;
   int fsize()const;
   double one_minus_m_inv; // (1-m)^-1
 public:

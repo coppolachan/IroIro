@@ -13,6 +13,7 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
 
   double condensate_re = 0.0;
   double condensate_im = 0.0;
+  double gamma5_cond = 0.0;
 
   double condensate_sq = 0.0;
   for (int i = 0; i < stochastic_noise; i++){
@@ -29,14 +30,17 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
     }
     // Invert the source
     Field propagated = invert(global_source);
-    
+    Field gamma5_prop = gamma5(propagated);
+
     // scalar product
     for (int j = 0; j < fsize(); j+=2){
-      double temp = global_source[j]*propagated[j] + global_source[j+1]*propagated[j+1];
+      double cond_re = global_source[j]*propagated[j] + global_source[j+1]*propagated[j+1];
+      double g5c     = global_source[j]*gamma5_prop[j] + global_source[j+1]*gamma5_prop[j+1];
+      
+      gamma5_cond += g5c*g5c;
+      condensate_sq += cond_re*cond_re;
 
-      condensate_sq += temp*temp;
-
-      condensate_re += temp;
+      condensate_re += cond_re;
       condensate_im += - global_source[j+1]*propagated[j] + global_source[j]*propagated[j+1];
     }
     // For systematics check 
@@ -49,14 +53,17 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
 
   condensate_sq = Communicator::instance()->reduce_sum(condensate_sq);
 
+  gamma5_cond = Communicator::instance()->reduce_sum(gamma5_cond);
+
   // Collect all results
   condensate_re /= ((double)stochastic_noise*CommonPrms::instance()->Lvol());
   condensate_im /= ((double)stochastic_noise*CommonPrms::instance()->Lvol());
   condensate_sq /= ((double)stochastic_noise*CommonPrms::instance()->Lvol());
+  gamma5_cond   /= ((double)stochastic_noise*CommonPrms::instance()->Lvol());
   CCIO::cout << "c ("<< condensate_re << ","<< condensate_im << ")\n";
   CCIO::cout << "squared cond  "<< condensate_sq << "\n";
   CCIO::cout << "chi_disc: "<< condensate_sq - condensate_re*condensate_re  << "\n";
-
+  CCIO::cout << "chi_5disc  "<< gamma5_cond << "\n";
   return condensate_re;
 }
 
@@ -66,6 +73,9 @@ Field ChiralCondStd::invert(Field& f)const{
   Field solution(D_->fsize());
   slv_->solve(solution, f);
   return solution;
+}
+Field ChiralCondStd::gamma5(Field& f)const{
+  return D_->gamma5(f);
 }
 int ChiralCondStd::fsize()const{
   return D_->fsize();
@@ -77,7 +87,9 @@ int ChiralCondStd::fsize()const{
 int ChiralCondDWF::fsize()const{
   return Ddw_.fsize();
 }
-
+Field ChiralCondDWF::gamma5(Field& f)const{
+  return Ddw_.gamma5(f);
+}
 /* @brief Computes \f$ \frac{1}{1-m}(D^4_{GW}(m)^{-1}_{xy} - \delta_{xy}) */
 Field ChiralCondDWF::invert(Field& f)const{
   Field inv = Ddw_.mult_inv(f);

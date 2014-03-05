@@ -13,6 +13,7 @@
 
 class ChiralCondensate {
   virtual Field invert (Field&) const = 0;
+  virtual Field gamma5 (Field&) const = 0;
   virtual int fsize()const = 0;
 public:
   /*! @brief Public destructor */

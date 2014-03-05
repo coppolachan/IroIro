@@ -1,7 +1,7 @@
 /*! 
  * @file action_Nf2.cpp
  * @brief Definition of methods of Action_Nf2 class
- Time-stamp: <2014-02-27 13:23:35 cossu>
+ Time-stamp: <2014-03-05 10:29:01 cossu>
  */
 #include "action_Nf2.hpp"
 #include "Tools/randNum_MP.h"

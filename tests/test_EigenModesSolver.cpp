@@ -16,8 +16,8 @@ int Test_EigenModesSolver::run(){
   try{
     InputConfig input = input_.getConfig();
     eigen.do_calc(input);
-    //eigen.output_bin<Format::Format_F>(input_.output);
-    eigen.output_bin3D<Format::Format_S>(input_.output);
+    eigen.output_bin<Format::Format_F>(input_.output);
+    //eigen.output_bin3D<Format::Format_S>(input_.output);
   }catch(const char* error){
     CCIO::cout<<error<<"\n";
   }
