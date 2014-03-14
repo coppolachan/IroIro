@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-01-30 14:43:32 neo>
+ * Time-stamp: <2014-03-10 17:02:31 neo>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -201,7 +201,6 @@ Field Dirac_BFM_Wrapper::mult_inv_4d(const Field& Fin){
       linop.axpy_norm(psi_h[1-cb], tmp, psi_h[1-cb], fact);// psi[odd] = -1*tmp + psi[odd]
       // = psi[odd] - Meo chi[even]
       linop.MooeeInv(psi_h[1-cb], chi_h[1-cb],dag);//chi[odd] = Moo^-1 psi[odd]
-      
     }
     linop.comm_end();
     GetSolution(FermF,Even);
@@ -248,13 +247,15 @@ Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
 
   if(is_initialized){
     BFM_interface.GaugeExport_to_BFM(u_);
+
+
     int donrm = 0;
     int cb = Even;
     int dag = 0;
     linop.comm_init();
 #pragma omp parallel for
     for (int t=0;t<threads;t++){
-     // Copy to the internal allocated fermion
+      // Copy to the internal allocated fermion
       // to avoid cross-talking between the pointers 
       // of the PauliVillars and the DWF kernel
       // when used for the 4d BWF operator

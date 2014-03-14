@@ -73,7 +73,7 @@ int Test_ChiralCondensate::run(){
 
   double psibar_psi = ChiralCond.calc(*src, noise_samples);
 
-  CCIO::cout << "Chiral condensate: "<< psibar_psi << "\n";
+  CCIO::cout << "Chiral condensate: "<< psibar_psi/CommonPrms::instance()->Lvol() << "\n";
  
   return 0;
 }

@@ -100,6 +100,7 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
 
     Uin_.initialize(node_,infile.str());
     input_.gconf = &Uin_;
+
     CCIO::cout<<"Gauge configuration loaded from "<<infile.str()<<std::endl;
 
     /* setting corresponding eigenmodes */

@@ -1,7 +1,7 @@
 /*! @file dirac_BFM_DomainWall_4D_eo.cpp
  *  @brief Methods of Dirac_BFM_DomainWall_4D_eo class
  *
- * Time-stamp: <2014-02-26 13:25:25 noaki>
+ * Time-stamp: <2014-03-10 15:54:50 neo>
  */
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
 #include "Fields/field_expressions.hpp"
@@ -13,29 +13,9 @@ using namespace FieldExpression;
 #include "include/messages_macros.hpp"
   
 const Field Dirac_BFM_DomainWall_4D_eo::mult(const Field& f)const{
-  // Original
-  /*
-  long double timing;
-  FINE_TIMING_START(timing);
-
-  Field sol5(fsize_*N5_);
-
-
-  invDpv_->invert(sol5,invD_->mult(Bproj_dag(f)));// Dpv_^-1 
-  FINE_TIMING_END(timing);
-  _Message(TIMING_VERB_LEVEL,"[Timing] 4d DWF_BFM mult :"<<timing<<"\n"); 
-  return Bproj(sol5);
-  */
-
-  ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  // WARNING: UNTESTED but it is similar to the mult_inv routine, just PV<->Op change
-  ///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
   long double timing, time_preparation, time_unprec;
   FINE_TIMING_START(timing);
   FINE_TIMING_START(time_preparation);
-  //const ffmt_t ff_nex_(Nvol_,N5_);
-  //Field sol5(fsize_*N5_);
   FermionField FField(Nvol_*N5_);
  
   // Using the fact the BFM assumes SiteIndexEO
@@ -44,6 +24,7 @@ const Field Dirac_BFM_DomainWall_4D_eo::mult(const Field& f)const{
   // where s is in the 5th dimension
   FField.data = Bproj_dag(f);
   
+
   Fermion_t* fm1 = BFM_Op_->LoadFullSource(FField);
   FINE_TIMING_END(time_preparation);
   FINE_TIMING_START(time_unprec);
