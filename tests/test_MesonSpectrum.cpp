@@ -103,7 +103,7 @@ int Test_MesonSpectrum::run(){
   double chi_pi, chi_delta;
   for (int t=0; t< space_size; t++){
     chi_pi += Cpp[t];
-    chi_delta += Css[t];
+    chi_delta -= Css[t];
   }
 
   CCIO::cout << "Susceptibilities:\n";

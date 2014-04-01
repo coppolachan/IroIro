@@ -17,7 +17,12 @@ void QpropDWF::calc(prop_t& xq,Source& src) const{
   for(int s=0; s<Nd_;++s){
     for(int c=0; c<Nc_;++c){
       CCIO::cout << "Dirac = " << s << " Color = " << c << std::endl;
-      xq.push_back(Dgw_.mult_inv(src.mksrc(s,c)));
+      Field source = src.mksrc(s,c);
+      Field Dinv = Dgw_.mult_inv(source);
+      double factor = 1.0/(1.0-Dgw_.getMass());
+      Dinv -= source;
+      Dinv *= factor;
+      xq.push_back(Dinv);
     }
   }
 
