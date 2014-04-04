@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-02-26 15:50:15 noaki>
+ * Time-stamp: <2014-04-04 11:22:41 neo>
  */
 
 #include "measGeneral.hpp"
@@ -172,7 +172,8 @@ void MeasGeneral::input_FileList(XML::node inode){
 
 void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
   Staples Staple;
-  CCIO::cout<< "Plaquette (thin): "<< Staple.plaquette(U) <<"\n";
+  BoundaryCond* BC;
+  CCIO::cout<< "Plaquette (thin)      : "<< Staple.plaquette(U) <<"\n";
 
   GaugeField Ubuf = U;
 
@@ -190,7 +191,7 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
     std::stringstream gout;
     gout << gauge_prefix_<< id;
     if(CCIO::SaveOnDisk<Format::Format_G> (U.data,gout.str().c_str()))
-      CCIO::cout << "Some error occurred in saving file "<<gout.str() <<"\n";
+      CCIO::cout << "Some error occurred in saving the file "<<gout.str() <<"\n";
   }
 
   //// smearing ////
@@ -213,6 +214,24 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
     }
     CCIO::cout<<"Plaquette (smeared): "<<Staple.plaquette(U)<<endl;
   }
+
+
+  /* Check if boundary conditions are requested */
+  
+  bool AntiPeriodicBC = false; // default
+  XML::read(input_.node, "AntiPeriodicBC", AntiPeriodicBC);
+
+  /* Apply boundary conditions AFTER THE PREPROCESS, if applicable */
+  if (AntiPeriodicBC){
+    CCIO::cout << "Applying antiperiodic Boundary conditions on direction T\n";
+    BC = new BoundaryCond_antiPeriodic(TDIR);
+    BC->apply_bc(*input_.gconf);
+    delete BC;
+  }
+  
+
+
+
 }
 
 void MeasGeneral::post_process(GaugeField&,const RandNum& rng,int id)const{

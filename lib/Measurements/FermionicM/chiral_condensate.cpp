@@ -51,6 +51,7 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
     double temp_c  = Communicator::instance()->reduce_sum(condensate);
     double temp_g5 = Communicator::instance()->reduce_sum(gamma5_c);
     double temp_5  = Communicator::instance()->reduce_sum(gamma5_top);
+    CCIO::cout << "-------- Intermediate results (not normalized by the volume)\n";
     CCIO::cout << "["<<i<<"]avg_condensate    : "<< temp_re/(i+1.0) << "   "<< temp_im/(i+1.0) <<"\n";
     CCIO::cout << "["<<i<<"]condensate        : "<< temp_c  <<"\n";
     CCIO::cout << "["<<i<<"]sq_condensate     : "<< temp_re/(i+1.0)*temp_re/(i+1.0) <<"\n";
@@ -58,6 +59,7 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
     CCIO::cout << "["<<i<<"]avg_g5            : "<< temp_5/(i+1.0) <<"\n";
     CCIO::cout << "["<<i<<"]g5                : "<< temp_g5 <<"\n";
     CCIO::cout << "["<<i<<"]sq_g5             : "<< temp_5/(i+1.0)*temp_5/(i+1.0) <<"\n";
+    CCIO::cout << "----------------------------------\n";
   }
 
   condensate_re /= ((double)stochastic_noise);
@@ -69,10 +71,81 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
   gamma5_top    = Communicator::instance()->reduce_sum(gamma5_top);
 
   // Collect all results
-  CCIO::cout << "V*chi ("<< condensate_re << ","<< condensate_im << ")\n";
+  CCIO::cout << "-------- Results (not normalized by the volume\n";
+  CCIO::cout << "V*chi     : "<< condensate_re << ","<< condensate_im << "\n";
   CCIO::cout << "q_top/m   : "<< gamma5_top << "\n";
   return condensate_re;
 }
+
+double ChiralCondensate::connected_susc(Source& src, const int stochastic_noise) const{
+  // Calculates the connected susceptibilities by 
+  // stochastic estimation (does not normalize the volume factor)
+  // abstract definition
+  // uses full dilution of spin and color to reduce variance
+
+  double connected_ps = 0.0;
+  double connected_im = 0.0;
+  double connected_s = 0.0;
+
+  for (int i = 0; i < stochastic_noise; i++){
+    double conn_ps = 0.0;
+    double conn_s  = 0.0;
+
+    //full color-spin dilution
+    for (int s = 0; s< ND_; s++) { 
+      for (int c = 0; c < NC_; c++) {  		  
+	Field global_source(fsize());
+	src.refresh(); // get a new random source
+	global_source = src.mksrc(s,c);
+
+	// Invert the source
+	Field propagated = invert(global_source);
+	Field gamma5_prop = gamma5(propagated);
+	Field propagated2 = invert(propagated);
+	Field propagated3 = invert(gamma5_prop);
+	Field gamma5_prop2 = gamma5(propagated3);
+	
+	// Calculate traces by contracting with the source
+	for (int j = 0; j < fsize(); j+=2){
+	  conn_s  += global_source[j]*propagated2[j]  + global_source[j+1]*propagated2[j+1];
+	  conn_ps += global_source[j]*gamma5_prop2[j] + global_source[j+1]*gamma5_prop2[j+1];
+	  connected_im  += - global_source[j+1]*gamma5_prop2[j] + global_source[j]*gamma5_prop2[j+1];
+	}
+
+      }// end of color dilution
+    }// end of spin dilution
+    
+    connected_ps += conn_ps; // (Tr gamma5 * M^-1 * gamma5 * M^-1)   chi_pi
+    connected_s  -= conn_s;  // -(Tr M^-1 * M^-1)                     chi_delta
+
+
+    // For systematics check 
+    double temp_ps = Communicator::instance()->reduce_sum(connected_ps);
+    double temp_im = Communicator::instance()->reduce_sum(connected_im);
+    double temp_s  = Communicator::instance()->reduce_sum(connected_s);
+    CCIO::cout << "-------- Intermediate results (not normalized by the volume)\n";
+    CCIO::cout << "["<<i<<"]conn_ps    : "<< temp_ps/(i+1.0) << "   "<< temp_im/(i+1.0) <<"\n";
+    CCIO::cout << "["<<i<<"]conn_s     : "<< temp_s/(i+1.0)  <<"\n";
+    CCIO::cout << "----------------------------\n";
+  }
+
+  connected_s  /= ((double)stochastic_noise);
+  connected_im /= ((double)stochastic_noise);
+  connected_ps /= ((double)stochastic_noise);
+
+  connected_ps = Communicator::instance()->reduce_sum(connected_ps);
+  connected_im = Communicator::instance()->reduce_sum(connected_im);
+  connected_s  = Communicator::instance()->reduce_sum(connected_s);
+
+  // Collect all results
+  CCIO::cout << "-------- Results (not normalized by the volume)\n";
+  CCIO::cout << "V*chi_pi               : "<< connected_ps << ","<< connected_im << "\n";
+  CCIO::cout << "V*chi_delta            : "<< connected_s << "\n";
+  CCIO::cout << "V*(chi_pi - chi_delta) : "<< (connected_ps - connected_s) << "\n";
+  return connected_ps;
+}
+
+
 
 ///////////////////////////////////////////////////
 // For the standard dirac operator

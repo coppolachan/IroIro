@@ -9,29 +9,15 @@
 #include "Measurements/FermionicM/chiral_condensate.hpp"
 #include "Measurements/FermionicM/chiral_condensate_abs.hpp"
 #include "Measurements/FermionicM/sources_factory.hpp"
-#include "Dirac_ops/BoundaryConditions/boundaryCond.hpp"
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
 
 using namespace std;
 
 int Test_ChiralCondensate::run(){
-  BoundaryCond* BC;
   XML::node ch_node = input_.node;
   XML::descend(ch_node,"ChiralCondensate",MANDATORY);
   InputConfig config = input_.getConfig();
-
-
-  //Apply boundary condition
-  bool AntiPeriodicBC = false; // default
-  XML::read(ch_node, "AntiPeriodicBC", AntiPeriodicBC);
-  
-  if (AntiPeriodicBC){
-    BC = new BoundaryCond_antiPeriodic(TDIR);
-    BC->apply_bc(*input_.gconf);
-  }
-  
-
 
 
   /************************************************************************************/
@@ -69,11 +55,19 @@ int Test_ChiralCondensate::run(){
   //
 
   int noise_samples = 1; //default
+  bool measure_connected = false; //default
   XML::read(ch_node, "noise_samples", noise_samples);
 
-  double psibar_psi = ChiralCond.calc(*src, noise_samples);
+  XML::read(ch_node, "connected_susc", measure_connected);
 
+  if (measure_connected){
+    CCIO::cout << "---------- Measuring connected susceptibilities\n";
+    double conn_pi = ChiralCond.connected_susc(*src, noise_samples);
+  } else {
+    CCIO::cout << "---------- Measuring disconnected susceptibilities\n";
+  double psibar_psi = ChiralCond.calc(*src, noise_samples);
   CCIO::cout << "Chiral condensate: "<< psibar_psi/CommonPrms::instance()->Lvol() << "\n";
+  }
  
   return 0;
 }

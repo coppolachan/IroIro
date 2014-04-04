@@ -21,6 +21,7 @@ public:
   
   /*! @brief Calculates the condensate */
   double calc(Source& src, const int) const;
+  double connected_susc(Source& src, const int) const;
 };
 #endif
 

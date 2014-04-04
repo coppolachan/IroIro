@@ -7,7 +7,6 @@
 #include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
 #include "Measurements/FermionicM/qprop_mom.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
-#include "Dirac_ops/BoundaryConditions/boundaryCond.hpp"
 #include "include/errors.hpp"
 
 #include <memory>
@@ -49,7 +48,6 @@ bool is_ScreeningMass(XML::node node) {
 
 
 int Test_MesonSpectrum::run(){
-  BoundaryCond* BC;
   XML::node node = input_.node;
   //// Quark Propagator ////
   XML::descend(node,"QuarkProp");
@@ -59,15 +57,6 @@ int Test_MesonSpectrum::run(){
   int dir =  get_Direction(qprop_node);
   CCIO::cout << "Selected dir="<<dir << "\n";
 
-  //Apply boundary condition
-  bool AntiPeriodicBC = false; // default
-  XML::read(qprop_node, "AntiPeriodicBC", AntiPeriodicBC);
-  
-  if (AntiPeriodicBC){
-    BC = new BoundaryCond_antiPeriodic(TDIR);
-    BC->apply_bc(*input_.gconf);
-  }
-  
   auto_ptr<QuarkPropagatorFactory> qpfact(QuarkPropagators::createQuarkPropagatorFactory(node));
   InputConfig config = input_.getConfig();
   auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(config));

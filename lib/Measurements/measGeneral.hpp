@@ -90,17 +90,20 @@ public:
 template<typename MeasObj> void MeasGeneral::do_meas(){
   _Message(DEBUG_VERB_LEVEL, "Starting MeasGeneral::do_meas()\n");
   
-  for(int c=0; c<meas_num_; ++c){
 
+  
+  for(int c=0; c<meas_num_; ++c){
+    
     /* setting  gauge configuration */
     std::stringstream infile;
     if(file_list_) infile<< config_list_[c];
     else           infile<< config_list_[0]<< number_list_[c]
 			 << config_list_[1];
-
+    
+      /* Initialize the gauge configuration from the given filename */
     Uin_.initialize(node_,infile.str());
-    input_.gconf = &Uin_;
-
+    input_.gconf = &Uin_;   
+  
     CCIO::cout<<"Gauge configuration loaded from "<<infile.str()<<std::endl;
 
     /* setting corresponding eigenmodes */
