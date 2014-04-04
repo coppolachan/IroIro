@@ -61,6 +61,8 @@ public:
   int global_z(int z) const;
   int global_t(int t) const;
 
+  static int (SiteIndex::*global_idx[])(int)const;
+
   // indices with a step forward/backward (for bulk sites)
   int p_x(int site) const;
   int p_y(int site) const;
@@ -76,6 +78,8 @@ public:
   int slice_y(int y,int n) const;
   int slice_z(int z,int n) const;
   int slice_t(int t,int n) const;
+
+  static int (SiteIndex::*slice_dir[])(int, int)const;
 
   int slsize(int x,int dir)const;
 

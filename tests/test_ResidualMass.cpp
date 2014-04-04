@@ -18,7 +18,9 @@ using namespace FieldExpression;
 
 int Test_ResMass::run() {
   //create the factory for Rand Numbers Gen
-  RNG_Env::RNG = RNG_Env::createRNGfactory(node_); 
+
+  //RNG_Env::RNG = RNG_Env::createRNGfactory(node_); 
+  RNG_Env::initialize(node_);
 
   // Prints plaquette (thin) link
   Staples Staple;

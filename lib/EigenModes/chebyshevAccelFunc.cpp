@@ -42,7 +42,7 @@ ChebyshevAccelFunc::ChebyshevAccelFunc(XML::node node){
     mapFact_.reset(new FoprQuadLinearFunc(slope,itcpt)); 
     
   }else{
-    CCIO::cout<<kn_name<<" is not compatible with current implementation.\n";
+    CCIO::cout<<"Chebyshev acceleration method ["<<kn_name<<"] is not compatible with current implementation.\n";
     abort();
   }
     

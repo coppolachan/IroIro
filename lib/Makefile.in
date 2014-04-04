@@ -222,8 +222,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	EigenModes/eigenModesSolver_IRL.cpp \
 	EigenModes/eigenProc_Zolotarev.cpp \
 	EigenModes/chebyshevAccelFunc.cpp EigenModes/eigenSorter.cpp \
-	EigenModes/findminmax.cpp Measurements/measGeneral.cpp \
-	Measurements/GaugeM/staples.cpp \
+	EigenModes/findminmax.cpp EigenModes/eigModesNum.cpp \
+	Measurements/measGeneral.cpp Measurements/GaugeM/staples.cpp \
 	Measurements/GaugeM/wilsonFlow.cpp \
 	Measurements/GaugeM/polyakovLoop.cpp \
 	Measurements/GaugeM/gaugeFixingStep.cpp \
@@ -239,6 +239,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Measurements/FermionicM/utils_DWF4d.cpp \
 	Measurements/FermionicM/quark_prop_meas_factory.cpp \
 	Measurements/FermionicM/baryonCorrelator.cpp \
+	Measurements/FermionicM/chiral_condensate.cpp \
 	Geometry/autoMap_improved.cpp Geometry/siteIndex_EvenOdd.cpp \
 	Geometry/siteMap.cpp Geometry/shiftField.cpp \
 	Main/gaugeConf.cpp Main/gaugeGlobal.cpp Main/commandline.cpp \
@@ -258,7 +259,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/sunAdjMatUtils.cpp Tools/randNum.cpp \
 	Tools/randNum_MP.cpp Tools/randNum_Factory.cpp \
 	Tools/gammaMatrices.cpp Tools/sunAlgUtils.cpp \
-	Tools/complexMatrix.cpp Tools/Remez/alg_remez.cpp \
+	Tools/complexMatrix.cpp Tools/realMatrix.cpp \
+	Tools/Remez/alg_remez.cpp Tools/chebyshevUtils.cpp \
 	Tools/RationalApprox/rationalapprox.cpp \
 	Tools/ErrorsHandling/xml_errors.cpp \
 	Tools/ErrorsHandling/allocation_errors.cpp \
@@ -348,14 +350,15 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	eigenCalcGeneral.$(OBJEXT) eigenModesSolver_Factory.$(OBJEXT) \
 	eigenModesSolver_IRL.$(OBJEXT) eigenProc_Zolotarev.$(OBJEXT) \
 	chebyshevAccelFunc.$(OBJEXT) eigenSorter.$(OBJEXT) \
-	findminmax.$(OBJEXT) measGeneral.$(OBJEXT) staples.$(OBJEXT) \
-	wilsonFlow.$(OBJEXT) polyakovLoop.$(OBJEXT) \
-	gaugeFixingStep.$(OBJEXT) gaugeFixing_Coulomb.$(OBJEXT) \
-	gaugeFixing_Landau.$(OBJEXT) gfixFactory.$(OBJEXT) \
-	topologyGeom.$(OBJEXT) qprop_MultiShift.$(OBJEXT) \
-	qprop.$(OBJEXT) qprop_mom.$(OBJEXT) qprop_EvenOdd.$(OBJEXT) \
-	qprop_DomainWall.$(OBJEXT) utils_DWF4d.$(OBJEXT) \
-	quark_prop_meas_factory.$(OBJEXT) baryonCorrelator.$(OBJEXT) \
+	findminmax.$(OBJEXT) eigModesNum.$(OBJEXT) \
+	measGeneral.$(OBJEXT) staples.$(OBJEXT) wilsonFlow.$(OBJEXT) \
+	polyakovLoop.$(OBJEXT) gaugeFixingStep.$(OBJEXT) \
+	gaugeFixing_Coulomb.$(OBJEXT) gaugeFixing_Landau.$(OBJEXT) \
+	gfixFactory.$(OBJEXT) topologyGeom.$(OBJEXT) \
+	qprop_MultiShift.$(OBJEXT) qprop.$(OBJEXT) qprop_mom.$(OBJEXT) \
+	qprop_EvenOdd.$(OBJEXT) qprop_DomainWall.$(OBJEXT) \
+	utils_DWF4d.$(OBJEXT) quark_prop_meas_factory.$(OBJEXT) \
+	baryonCorrelator.$(OBJEXT) chiral_condensate.$(OBJEXT) \
 	autoMap_improved.$(OBJEXT) siteIndex_EvenOdd.$(OBJEXT) \
 	siteMap.$(OBJEXT) shiftField.$(OBJEXT) gaugeConf.$(OBJEXT) \
 	gaugeGlobal.$(OBJEXT) commandline.$(OBJEXT) \
@@ -372,7 +375,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	sunAdjMatUtils.$(OBJEXT) randNum.$(OBJEXT) \
 	randNum_MP.$(OBJEXT) randNum_Factory.$(OBJEXT) \
 	gammaMatrices.$(OBJEXT) sunAlgUtils.$(OBJEXT) \
-	complexMatrix.$(OBJEXT) alg_remez.$(OBJEXT) \
+	complexMatrix.$(OBJEXT) realMatrix.$(OBJEXT) \
+	alg_remez.$(OBJEXT) chebyshevUtils.$(OBJEXT) \
 	rationalapprox.$(OBJEXT) xml_errors.$(OBJEXT) \
 	allocation_errors.$(OBJEXT) base_errors.$(OBJEXT) \
 	io_errors.$(OBJEXT) convergence_errors.$(OBJEXT) \
@@ -455,6 +459,8 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	$(top_srcdir)/include/field.h \
 	$(top_srcdir)/include/factories.hpp \
 	$(top_srcdir)/include/fopr_Chebyshev.h \
+	$(top_srcdir)/include/fopr_RationalApprox.hpp \
+	$(top_srcdir)/include/fopr_InvLinear.hpp \
 	$(top_srcdir)/include/fopr_DdagDLinear.h \
 	$(top_srcdir)/include/fopr_QuadLinear.h \
 	$(top_srcdir)/include/fopr_Linear.h \
@@ -520,6 +526,8 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Measurements/FermionicM/baryonCorrelator.hpp \
 	Measurements/FermionicM/quark_prop_meas_factory.hpp \
 	Measurements/FermionicM/utils_DWF4d.hpp \
+	Measurements/FermionicM/chiral_condensate.hpp \
+	Measurements/FermionicM/chiral_condensate_abs.hpp \
 	Communicator/communicator.hpp Communicator/comm_io.hpp \
 	IO/fields_io.hpp IO/binary_reader.hpp IO/binary_writer.hpp \
 	IO/general_reader.hpp IO/general_writer.hpp \
@@ -570,15 +578,15 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	EigenModes/chebyshevAccelFunc.hpp \
 	EigenModes/eigenProc_Zolotarev.h EigenModes/eigenModes.hpp \
 	EigenModes/foprHermFunc.hpp EigenModes/findminmax.hpp \
-	Fields/field_expressions.hpp HMC/hmcGeneral.hpp \
-	HMC/TrajectoryInfo.hpp HMC/mdExec.hpp HMC/mdExec_leapfrog.hpp \
-	HMC/mdExec_2MN.hpp HMC/mdExec_leapfrog_eigen.hpp \
-	HMC/mdExec_factory.hpp HMC/mdExec_factory_abs.hpp \
-	Solver/solver_CG_params.hpp Solver/solver_Factory.hpp \
-	Solver/solver_BiCGStab.hpp Solver/solver.hpp \
-	Solver/solver_CG.hpp Solver/multiShiftSolver_CG.hpp \
-	Solver/multiShiftSolver.hpp Solver/rationalSolver.hpp \
-	Solver/rationalSolver_CG.hpp \
+	EigenModes/eigModesNum.hpp Fields/field_expressions.hpp \
+	HMC/hmcGeneral.hpp HMC/TrajectoryInfo.hpp HMC/mdExec.hpp \
+	HMC/mdExec_leapfrog.hpp HMC/mdExec_2MN.hpp \
+	HMC/mdExec_leapfrog_eigen.hpp HMC/mdExec_factory.hpp \
+	HMC/mdExec_factory_abs.hpp Solver/solver_CG_params.hpp \
+	Solver/solver_Factory.hpp Solver/solver_BiCGStab.hpp \
+	Solver/solver.hpp Solver/solver_CG.hpp \
+	Solver/multiShiftSolver_CG.hpp Solver/multiShiftSolver.hpp \
+	Solver/rationalSolver.hpp Solver/rationalSolver_CG.hpp \
 	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp \
 	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.hpp \
 	Smearing/APEsmear.hpp Smearing/baseSmear.hpp \
@@ -588,13 +596,14 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Tools/sunAdjVec.hpp Tools/sunAdjMatUtils.hpp \
 	Tools/sunRepresentations.hpp Tools/sunVec.hpp \
 	Tools/sunAlgUtils.hpp Tools/colorEpsilon.hpp \
-	Tools/randNum_MP.h Tools/randNum.h Tools/randNum_Factory.h \
+	Tools/randNum_MP.h Tools/randNum.h Tools/randNum_Factory.hpp \
 	Tools/fieldUtils.hpp Tools/RAIIFactory.hpp \
 	Tools/EnumToString.hpp Tools/byteswap.hpp \
 	Tools/gammaMatrices.hpp Tools/complexMatrix.hpp \
-	Tools/Remez/alg_remez.hpp Tools/Remez/bigfloat.hpp \
+	Tools/realMatrix.hpp Tools/Remez/alg_remez.hpp \
+	Tools/Remez/bigfloat.hpp \
 	Tools/RationalApprox/rationalapprox.hpp \
-	Tools/Bagel/bfm_storage.hpp \
+	Tools/chebyshevUtils.hpp Tools/Bagel/bfm_storage.hpp \
 	Tools/RandomNumGen/dcmt_wrapper.hpp \
 	Tools/RandomNumGen/randNum_MT19937.h \
 	UpdatingAlg/HeatBath/heatbath.hpp \
@@ -779,7 +788,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-01-29 14:53:08 neo>
+# Time-stamp: <2014-02-26 13:22:20 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -901,6 +910,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/chebyshevAccelFunc.cpp            \
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
+		EigenModes/eigModesNum.cpp			\
 		Measurements/measGeneral.cpp			\
 		Measurements/GaugeM/staples.cpp			\
 		Measurements/GaugeM/wilsonFlow.cpp		\
@@ -918,6 +928,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/utils_DWF4d.cpp          	\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
+		Measurements/FermionicM/chiral_condensate.cpp		\
 		Geometry/autoMap_improved.cpp		\
 		Geometry/siteIndex_EvenOdd.cpp		\
 		Geometry/siteMap.cpp			\
@@ -952,7 +963,9 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Tools/gammaMatrices.cpp			\
 		Tools/sunAlgUtils.cpp			\
 		Tools/complexMatrix.cpp		        \
+		Tools/realMatrix.cpp		        \
 		Tools/Remez/alg_remez.cpp		\
+		Tools/chebyshevUtils.cpp		\
 		Tools/RationalApprox/rationalapprox.cpp	\
 		Tools/ErrorsHandling/xml_errors.cpp	\
 		Tools/ErrorsHandling/allocation_errors.cpp\
@@ -988,6 +1001,8 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/field.h			\
 			$(top_srcdir)/include/factories.hpp		\
 			$(top_srcdir)/include/fopr_Chebyshev.h	        \
+			$(top_srcdir)/include/fopr_RationalApprox.hpp   \
+			$(top_srcdir)/include/fopr_InvLinear.hpp        \
 			$(top_srcdir)/include/fopr_DdagDLinear.h        \
 			$(top_srcdir)/include/fopr_QuadLinear.h         \
 			$(top_srcdir)/include/fopr_Linear.h             \
@@ -1057,7 +1072,9 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Measurements/FermionicM/meson_correlator.hpp	\
 			Measurements/FermionicM/baryonCorrelator.hpp	\
 			Measurements/FermionicM/quark_prop_meas_factory.hpp \
-                        Measurements/FermionicM/utils_DWF4d.hpp \
+                        Measurements/FermionicM/utils_DWF4d.hpp 	\
+			Measurements/FermionicM/chiral_condensate.hpp	\
+			Measurements/FermionicM/chiral_condensate_abs.hpp\
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\
@@ -1130,6 +1147,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenModes.hpp		\
 			EigenModes/foprHermFunc.hpp		\
 			EigenModes/findminmax.hpp		\
+			EigenModes/eigModesNum.hpp	        \
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/TrajectoryInfo.hpp			\
@@ -1167,16 +1185,18 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Tools/colorEpsilon.hpp	                \
 			Tools/randNum_MP.h			\
 			Tools/randNum.h				\
-			Tools/randNum_Factory.h			\
+			Tools/randNum_Factory.hpp		\
 			Tools/fieldUtils.hpp			\
 			Tools/RAIIFactory.hpp			\
 			Tools/EnumToString.hpp			\
 			Tools/byteswap.hpp			\
 			Tools/gammaMatrices.hpp			\
 			Tools/complexMatrix.hpp 		\
+			Tools/realMatrix.hpp 		        \
 			Tools/Remez/alg_remez.hpp		\
 			Tools/Remez/bigfloat.hpp		\
 			Tools/RationalApprox/rationalapprox.hpp	\
+			Tools/chebyshevUtils.hpp		\
 			Tools/Bagel/bfm_storage.hpp		\
 			Tools/RandomNumGen/dcmt_wrapper.hpp	\
                         Tools/RandomNumGen/randNum_MT19937.h    \
@@ -1352,6 +1372,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/binary_writer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/boundaryCond.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chebyshevAccelFunc.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chebyshevUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/chiral_condensate.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/comm_io.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commandline.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/commonPrms.Po@am__quote@
@@ -1390,6 +1412,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallExtra_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallSolver_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/domainWallUtils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigModesNum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenCalcGeneral.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eigenModesSolver_IRL.Po@am__quote@
@@ -1437,6 +1460,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalSolver_CG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalSolver_DWF_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/rationalapprox.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/realMatrix.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/scalar_Operator_FactoryCreator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/shiftField.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/siteIndex.Po@am__quote@
@@ -2574,6 +2598,20 @@ findminmax.obj: EigenModes/findminmax.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o findminmax.obj `if test -f 'EigenModes/findminmax.cpp'; then $(CYGPATH_W) 'EigenModes/findminmax.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/findminmax.cpp'; fi`
 
+eigModesNum.o: EigenModes/eigModesNum.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigModesNum.o -MD -MP -MF $(DEPDIR)/eigModesNum.Tpo -c -o eigModesNum.o `test -f 'EigenModes/eigModesNum.cpp' || echo '$(srcdir)/'`EigenModes/eigModesNum.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigModesNum.Tpo $(DEPDIR)/eigModesNum.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='EigenModes/eigModesNum.cpp' object='eigModesNum.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigModesNum.o `test -f 'EigenModes/eigModesNum.cpp' || echo '$(srcdir)/'`EigenModes/eigModesNum.cpp
+
+eigModesNum.obj: EigenModes/eigModesNum.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT eigModesNum.obj -MD -MP -MF $(DEPDIR)/eigModesNum.Tpo -c -o eigModesNum.obj `if test -f 'EigenModes/eigModesNum.cpp'; then $(CYGPATH_W) 'EigenModes/eigModesNum.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigModesNum.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/eigModesNum.Tpo $(DEPDIR)/eigModesNum.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='EigenModes/eigModesNum.cpp' object='eigModesNum.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o eigModesNum.obj `if test -f 'EigenModes/eigModesNum.cpp'; then $(CYGPATH_W) 'EigenModes/eigModesNum.cpp'; else $(CYGPATH_W) '$(srcdir)/EigenModes/eigModesNum.cpp'; fi`
+
 measGeneral.o: Measurements/measGeneral.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT measGeneral.o -MD -MP -MF $(DEPDIR)/measGeneral.Tpo -c -o measGeneral.o `test -f 'Measurements/measGeneral.cpp' || echo '$(srcdir)/'`Measurements/measGeneral.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/measGeneral.Tpo $(DEPDIR)/measGeneral.Po
@@ -2811,6 +2849,20 @@ baryonCorrelator.obj: Measurements/FermionicM/baryonCorrelator.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Measurements/FermionicM/baryonCorrelator.cpp' object='baryonCorrelator.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o baryonCorrelator.obj `if test -f 'Measurements/FermionicM/baryonCorrelator.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/baryonCorrelator.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/baryonCorrelator.cpp'; fi`
+
+chiral_condensate.o: Measurements/FermionicM/chiral_condensate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chiral_condensate.o -MD -MP -MF $(DEPDIR)/chiral_condensate.Tpo -c -o chiral_condensate.o `test -f 'Measurements/FermionicM/chiral_condensate.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/chiral_condensate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/chiral_condensate.Tpo $(DEPDIR)/chiral_condensate.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Measurements/FermionicM/chiral_condensate.cpp' object='chiral_condensate.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chiral_condensate.o `test -f 'Measurements/FermionicM/chiral_condensate.cpp' || echo '$(srcdir)/'`Measurements/FermionicM/chiral_condensate.cpp
+
+chiral_condensate.obj: Measurements/FermionicM/chiral_condensate.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chiral_condensate.obj -MD -MP -MF $(DEPDIR)/chiral_condensate.Tpo -c -o chiral_condensate.obj `if test -f 'Measurements/FermionicM/chiral_condensate.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/chiral_condensate.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/chiral_condensate.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/chiral_condensate.Tpo $(DEPDIR)/chiral_condensate.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Measurements/FermionicM/chiral_condensate.cpp' object='chiral_condensate.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chiral_condensate.obj `if test -f 'Measurements/FermionicM/chiral_condensate.cpp'; then $(CYGPATH_W) 'Measurements/FermionicM/chiral_condensate.cpp'; else $(CYGPATH_W) '$(srcdir)/Measurements/FermionicM/chiral_condensate.cpp'; fi`
 
 autoMap_improved.o: Geometry/autoMap_improved.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT autoMap_improved.o -MD -MP -MF $(DEPDIR)/autoMap_improved.Tpo -c -o autoMap_improved.o `test -f 'Geometry/autoMap_improved.cpp' || echo '$(srcdir)/'`Geometry/autoMap_improved.cpp
@@ -3358,6 +3410,20 @@ complexMatrix.obj: Tools/complexMatrix.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o complexMatrix.obj `if test -f 'Tools/complexMatrix.cpp'; then $(CYGPATH_W) 'Tools/complexMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/complexMatrix.cpp'; fi`
 
+realMatrix.o: Tools/realMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT realMatrix.o -MD -MP -MF $(DEPDIR)/realMatrix.Tpo -c -o realMatrix.o `test -f 'Tools/realMatrix.cpp' || echo '$(srcdir)/'`Tools/realMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/realMatrix.Tpo $(DEPDIR)/realMatrix.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/realMatrix.cpp' object='realMatrix.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o realMatrix.o `test -f 'Tools/realMatrix.cpp' || echo '$(srcdir)/'`Tools/realMatrix.cpp
+
+realMatrix.obj: Tools/realMatrix.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT realMatrix.obj -MD -MP -MF $(DEPDIR)/realMatrix.Tpo -c -o realMatrix.obj `if test -f 'Tools/realMatrix.cpp'; then $(CYGPATH_W) 'Tools/realMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/realMatrix.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/realMatrix.Tpo $(DEPDIR)/realMatrix.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/realMatrix.cpp' object='realMatrix.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o realMatrix.obj `if test -f 'Tools/realMatrix.cpp'; then $(CYGPATH_W) 'Tools/realMatrix.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/realMatrix.cpp'; fi`
+
 alg_remez.o: Tools/Remez/alg_remez.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT alg_remez.o -MD -MP -MF $(DEPDIR)/alg_remez.Tpo -c -o alg_remez.o `test -f 'Tools/Remez/alg_remez.cpp' || echo '$(srcdir)/'`Tools/Remez/alg_remez.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/alg_remez.Tpo $(DEPDIR)/alg_remez.Po
@@ -3371,6 +3437,20 @@ alg_remez.obj: Tools/Remez/alg_remez.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/Remez/alg_remez.cpp' object='alg_remez.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o alg_remez.obj `if test -f 'Tools/Remez/alg_remez.cpp'; then $(CYGPATH_W) 'Tools/Remez/alg_remez.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Remez/alg_remez.cpp'; fi`
+
+chebyshevUtils.o: Tools/chebyshevUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chebyshevUtils.o -MD -MP -MF $(DEPDIR)/chebyshevUtils.Tpo -c -o chebyshevUtils.o `test -f 'Tools/chebyshevUtils.cpp' || echo '$(srcdir)/'`Tools/chebyshevUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/chebyshevUtils.Tpo $(DEPDIR)/chebyshevUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/chebyshevUtils.cpp' object='chebyshevUtils.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chebyshevUtils.o `test -f 'Tools/chebyshevUtils.cpp' || echo '$(srcdir)/'`Tools/chebyshevUtils.cpp
+
+chebyshevUtils.obj: Tools/chebyshevUtils.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT chebyshevUtils.obj -MD -MP -MF $(DEPDIR)/chebyshevUtils.Tpo -c -o chebyshevUtils.obj `if test -f 'Tools/chebyshevUtils.cpp'; then $(CYGPATH_W) 'Tools/chebyshevUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/chebyshevUtils.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/chebyshevUtils.Tpo $(DEPDIR)/chebyshevUtils.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='Tools/chebyshevUtils.cpp' object='chebyshevUtils.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o chebyshevUtils.obj `if test -f 'Tools/chebyshevUtils.cpp'; then $(CYGPATH_W) 'Tools/chebyshevUtils.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/chebyshevUtils.cpp'; fi`
 
 rationalapprox.o: Tools/RationalApprox/rationalapprox.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT rationalapprox.o -MD -MP -MF $(DEPDIR)/rationalapprox.Tpo -c -o rationalapprox.o `test -f 'Tools/RationalApprox/rationalapprox.cpp' || echo '$(srcdir)/'`Tools/RationalApprox/rationalapprox.cpp

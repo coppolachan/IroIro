@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2014-01-24 14:30:28 cossu>
+ * Time-stamp: <2014-02-27 16:17:12 cossu>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 
@@ -117,7 +117,6 @@ namespace Diracs {
     stopMsg(node);      
   }
 
-  /*
   // This is for the Dirac-op creation beyond the WilsonLike framework
   DiracFactory* createGeneralDiracFactory(const XML::node& node){
     // temporal hack
@@ -139,9 +138,17 @@ namespace Diracs {
       return new DiracDomainWall5dFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d"))  
       return new DiracDWF4DfullFactory(node);
+#ifdef IBM_BGQ_WILSON
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BGQeo"))  
+      return new DiracDWF4dBGQeoFactory(node);
+#ifdef HAVE_LIBBFM
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BFMeo"))  
+      return new DiracDWF4dBFMeoFactory(node);
+#endif
+#endif
     stopMsg(node);      
   }
-  */
+
 
   DiracStaggeredEvenOddLikeFactory* 
   createDiracStaggeredEvenOddLikeFactory(const XML::node& node){

@@ -8,7 +8,7 @@
 #include "common_fields.hpp"
 #include "inputConfig.hpp"
 #include "include/messages_macros.hpp"
-#include "Tools/randNum_Factory.h"
+#include "Tools/randNum_Factory.hpp"
 #include "Main/gaugeGlobal.hpp"
 #include "EigenModes/eigenModes.hpp"
 #include "Dirac_ops/BoundaryConditions/boundaryCond.hpp"
@@ -30,10 +30,9 @@ namespace Measurements{
     Input(XML::node inode):node(inode),gconf(NULL),eigen(NULL),rng(NULL){
       XML::descend(node,"Measurement");
       _Message(DEBUG_VERB_LEVEL, "initialising RNG\n");
-      RNG_Env::RNG = RNG_Env::createRNGfactory(inode);// RNG is static value.
-      if(RNG_Env::RNG) rng = RNG_Env::RNG->getRandomNumGenerator();
+      RNG_Env::initialize(inode);
+      rng = RNG_Env::RandNumG::instance().getRNG();
     }
-    ~Input(){if(eigen) delete eigen;}
     InputConfig getConfig()const{ return InputConfig(gconf,eigen); }
   };
 }
@@ -61,7 +60,8 @@ private:
 
   void pre_process(GaugeField&,const RandNum&,int)const;
   void post_process(GaugeField&,const RandNum&,int)const;
-  
+  void post_process_last(GaugeField&,const RandNum&)const;
+
   void setup(XML::node);
   void input_RegularStep(XML::node);
   void input_NumberList(XML::node);
@@ -82,6 +82,8 @@ public:
     setup(node);
     _Message(DEBUG_VERB_LEVEL, "MeasGeneral object constructed\n");
   }
+  ~MeasGeneral(){if(input_.eigen) delete input_.eigen;}
+
   template <typename MeasObj> void do_meas();
 };
 
@@ -98,6 +100,7 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
 
     Uin_.initialize(node_,infile.str());
     input_.gconf = &Uin_;
+
     CCIO::cout<<"Gauge configuration loaded from "<<infile.str()<<std::endl;
 
     /* setting corresponding eigenmodes */
@@ -128,7 +131,10 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     CCIO::cout<<"Starting measurement"<<std::endl;
     meas.run();
     //----------------------------------
+
     post_process(Uin_,*(input_.rng),number_list_[c]); // seed saving
+    if(c == meas_num_-1)
+      post_process_last(Uin_,*(input_.rng)); // seed saving for the last
     CCIO::cout<<"\n";
   }
 }

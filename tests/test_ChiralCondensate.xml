@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>16 16 16 8</Lattice>
+    <Nodes>4 4 4 2</Nodes>
+  </Geometry>
+
+  <!-- Input configuration -->
+  <Configuration Type="Binary" Input="FileList">
+    <starting_idx>0</starting_idx>
+    <idx_increment>1</idx_increment>
+    <GaugeConfigs>
+      <filename>Confs/FiniteT_16x8_b4.00_m0.01_8900</filename> 
+<!--     <filename>Confs/FiniteT_16x8_b4.18_m0.01_5000</filename>
+     <filename>Confs/FiniteT_16x8_b4.18_m0.01_4000</filename> -->
+<!--     <filename>Confs/FiniteT_16x8_b4.10_m0.01_Ls24_5000</filename>-->
+    </GaugeConfigs>
+  </Configuration>
+  <RandomNumberGen name="Mersenne Twister">
+    <!--   <seedFile>seed_file</seedFile>-->
+    <init>0x123 0x234 0x345 0x456</init> 
+  </RandomNumberGen>
+  <GaugeFixing name="NoFixing"/>  
+  <Smearing type="Stout">
+    <Nsmear>3</Nsmear>
+    <Base type="APE">
+      <rho>0.1</rho>
+    </Base>
+  </Smearing>
+  
+
+  <Measurement>  
+    
+    <ChiralCondensate>
+      <noise_samples>150</noise_samples>
+
+      <KernelDWF_4d name="DiracOptimalDomainWall4d_BGQeo">
+      <Kernel5d>
+	<N5d>12</N5d>
+	<b>2.0</b>
+	<c>1.0</c>
+	<mass>0.01</mass>
+	<BaseKernel name="DiracWilson">
+	    <mass>-1.0</mass>
+	    </BaseKernel>
+	<approximation name="Tanh"></approximation>
+      </Kernel5d>
+      <SolverDWF type="Solver_CG">
+	<MaxIter>15000</MaxIter>
+	<Precision>1e-20</Precision>
+      </SolverDWF>
+    </KernelDWF_4d>
+
+    <Source type="Z2noise">
+      <NoiseType>ComplexZ2</NoiseType>
+    </Source>
+
+    </ChiralCondensate>
+  </Measurement>
+  
+</Parameters>
+

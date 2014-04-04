@@ -4,7 +4,8 @@
  * @brief Main source code for testing the LapH classes
  *
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
- Time-stamp: <2013-12-18 15:34:20 cossu>
+ * 
+ * Time-stamp: <2014-01-31 16:19:56 neo>
  */
 //------------------------------------------------------------------------
 #include "tests.hpp"
@@ -12,12 +13,8 @@
 
 int main(int argc, char* argv[]){
 
-  CREATE_TEST(Test_LapH_Solver);
-  RUN_TEST;
-  CLEAR_TEST; 
-
-  //CREATE_RUN_TEST(Test_LapH_Solver);
-  //CLEAR_TEST;
+  CREATE_RUN_TEST(Test_LapH_Solver);
+  CLEAR_TEST;
 
   return 0;
 }

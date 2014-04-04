@@ -1,6 +1,7 @@
 /*! @file dirac_BFM_wrapper_factory.hpp 
  *  @brief Declaration of BFM Dirac operators factories
- * Time-stamp: <2014-01-24 14:50:05 neo>
+ *
+ * Time-stamp: <2014-02-26 13:24:27 noaki>
  */
 #ifndef DIRAC_BFM_FACT_
 #define DIRAC_BFM_FACT_
@@ -16,7 +17,7 @@
 /*! @brief Concrete class for creating Dirac Optimal DWF-5d operators */
 class DiracBFMoperatorFactory : public DiracDWF5dFactory {
   const XML::node Dirac_node_;
-  RaiiFactoryObj<Dirac_BFM_Wrapper> BFMop_;
+  // RaiiFactoryObj<Dirac_BFM_Wrapper> BFMop_;
 
   // Internal operator must be EvenOdd
   RaiiFactoryObj<DiracEvenOdd_DWF5dFactory> Dirac5D_EO_factory_;
@@ -24,20 +25,9 @@ class DiracBFMoperatorFactory : public DiracDWF5dFactory {
   Dirac_BFM_Wrapper* createDirac(InputConfig&);
   Dirac_BFM_Wrapper* createDiracPV(InputConfig&);
 public:
-  DiracBFMoperatorFactory(const XML::node node):Dirac_node_(node){
-    XML::node current_node = Dirac_node_; 
-    XML::descend(current_node, "Operator", MANDATORY);
-    Dirac5D_EO_factory_.save(new DiracEvenOdd_DWF5dFactory(current_node));// forces EO
-  
-  }
-
-  Dirac_BFM_Wrapper* getDirac(InputConfig& input) {
-    return createDirac(input);
-  }
-  Dirac_BFM_Wrapper* getDiracPV(InputConfig& input) {
-    return createDiracPV(input);
-  }
-  
+  DiracBFMoperatorFactory(const XML::node node);
+  Dirac_BFM_Wrapper* getDirac(InputConfig& );
+  Dirac_BFM_Wrapper* getDiracPV(InputConfig& );
 };
 
 
@@ -90,6 +80,10 @@ class DiracDWF4dBFMeoFactory : public DiracDWF4dFactory{
   Dirac_DomainWall_4D* createDirac(InputConfig&);
 public:
   DiracDWF4dBFMeoFactory(XML::node node);
+  ~DiracDWF4dBFMeoFactory(){
+    CCIO::cout << "Destroying DiracDWF4dBFMeoFactory\n";
+  };
+
 };
 
 #endif

@@ -12,7 +12,6 @@
 ////////////// Temporary hack
 //#define ANTIPERIODIC_BC 
 
-
 //::::::::::::::::::::::::::::::::Observer
 void Action_Nf2_ratio::observer_update() {
   D1_->update_internal_state();  

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-01-24 15:56:33 cossu>
+# Time-stamp: <2014-02-26 13:20:17 noaki>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -62,6 +62,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_EigenModesSolver.xml\
+		test_EigModesNum.xml    \
 		test_GeneralMeas.xml 	\
 		test_PolyakovLoop.xml	\
 		test_WilsonFlow.xml	\
@@ -79,7 +80,9 @@ EXTRA_DIST = 	testResults.info	\
 		test_RationalApprox.xml	\
 		test_Solver_Perf.xml	\
 		test_sunRep.xml		\
-		test_noFact.xml		
+		test_noFact.xml		\
+		test_ChiralCondensate.xml\
+	        test_EigModesNum.xml    
 
 test_PROGRAMS = test_HMC 		\
 		test_HMC_noFactories 	\
@@ -102,6 +105,7 @@ test_PROGRAMS = test_HMC 		\
 		test_BaryonSpectrum_Nf2p1\
 		test_HadronSpectrum_Nf2p1\
 		test_EigenModesSolver	\
+		test_EigModesNum	\
 		test_Smearing		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
@@ -116,7 +120,8 @@ test_PROGRAMS = test_HMC 		\
                 test_DWF    		\
                 test_DiracWilson_Adjoint\
 		test_Laplacian		\
-		test_LapH
+		test_LapH		\
+		test_ChiralCondensate 
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -180,6 +185,9 @@ test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 test_EigenModesSolver_SOURCES =	test_EigenModesSolver.cpp	\
 				testerEigenModesSolver.cpp
 
+test_EigModesNum_SOURCES =	test_EigModesNum.cpp	\
+				testerEigModesNum.cpp
+
 test_Overlap_SOURCES 	= 	test_Overlap.cpp		\
 				testerOverlap.cpp
 
@@ -203,8 +211,12 @@ test_RationalApprox_SOURCES 	= 	test_RationalApprox.cpp	\
 
 test_WilsonFlow_SOURCES 	= 	test_WilsonFlow.cpp	\
 					testerWilsonFlow.cpp
+
 test_PolyakovLoop_SOURCES 	= 	test_PolyakovLoop.cpp	\
 	 				testerPolyakovLoop.cpp
+
+test_ChiralCondensate_SOURCES 	= 	test_ChiralCondensate.cpp	\
+	 				testerChiralCondensate.cpp
 
 test_SUNRepresentation_SOURCES  =	test_sunRepres.cpp	\
 					testerSunRep.cpp	
@@ -258,6 +270,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_ResidualMass.hpp 		\
 				test_IO.hpp			\
 				test_EigenModesSolver.hpp	\
+				test_EigModesNum.hpp    	\
 				test_smear.hpp			\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
@@ -276,4 +289,5 @@ include_HEADERS 	=	tests.hpp			\
                                 test_LapH.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\
 				test_Laplacian.hpp		\
-				test_LapH.hpp
+				test_LapH.hpp                   \
+	       	                test_ChiralCondensate.hpp

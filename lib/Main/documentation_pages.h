@@ -8,7 +8,7 @@
   * - <a href="http://gcc.gnu.org/">GNU compiler</a> (tested with g++ version 4.6.1) (Linux and Apple), refer to section \ref simple
   * - <a href="http://www.open-mpi.org/">openMPI</a> (tested with version 1.4.4) for multicore version  (Linux), refer to section \ref openMPI
   * - <a href="http://software.intel.com/en-us/articles/c-compilers/">INTEL compiler</a> (tested with icpc version 12.1.2) (Linux), refer to section \ref INTEL_comp
-  * - <a href="http://www-01.ibm.com/software/awdtools/xlcpp/">IBM XLC compiler</a> (tested with xlC version 11.1, cross platform compilation) (AIX), refer to section \ref AIX-XLC
+  * - <a href="http://www-01.ibm.com/software/awdtools/xlcpp/">IBM XLC compiler</a> (tested with xlC version 12.1, cross platform compilation) (AIX), refer to section \ref AIX-XLC
   
   for bug reports and requests please send an email to \b cossu(AT)post(DOT)kek(DOT)jp 
 
@@ -32,9 +32,11 @@
   Anyway, in most cases, the configuration command line is very simple as explained in the following sections.
 
   The two most relevant ones are
-  * - \c --enable-improved  Turns on faster Wilson kernels
-  * - \c --enable-mpi       Turns on MPI support on multicore pc, via openmpi libraries
+  * - \c --enable-improved        Turns on faster Wilson kernels
+  * - \c --enable-mpi             Turns on MPI support on multicore pc, via openmpi libraries
+  * - \c --enable-improved-bgq    Turns on all possible improvements when compiling on BGQ
   
+
   Note: MPI support is automatic on Hitachi and IBM platforms.
 
   @section simple Simple compilation

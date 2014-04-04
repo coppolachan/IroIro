@@ -14,7 +14,7 @@
 
 #include "HMC/hmcGeneral.hpp"
 #include "test_HMC.hpp"
-#include "Tools/randNum_Factory.h"
+#include "Tools/randNum_Factory.hpp"
 #include "Action/action_gauge_wilson.hpp"
 #include "Action/action_gauge_rect.hpp"
 #include "Action/action_Nf2.hpp"
@@ -26,8 +26,9 @@ int Test_HMC::run(){
   CCIO::cout << "Starting HMCrun\n";
   
   //Using factories just for RNG
-  RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
-  
+  //RNG_Env::RNG = RNG_Env::createRNGfactory(HMC_node);
+  RNG_Env::initialize(HMC_node);
+
   std::vector<int> multip(2);
   multip[0]= 1;
   multip[1]= 2;

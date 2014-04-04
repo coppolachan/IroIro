@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2014-01-20 12:43:05 noaki>
+ * Time-stamp: <2014-03-11 13:42:11 cossu>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -123,15 +123,16 @@ void Dirac_Wilson::md_force_p(Field& fce,
   double* pU       = const_cast<Field *>(u_)->getaddr(0);
   double* xie_ptr  = const_cast<Field&>(xie).getaddr(0);
 
-  //#pragma omp parallel 
-  //{
+  #pragma omp parallel 
+  {
     int nid = omp_get_num_threads();
     int ns = Nvol_/nid;
     int is = omp_get_thread_num()*ns;
 
     for(int mu=0; mu<NDIM_; ++mu){
+      BGQThread_Barrier(0,nid);
       BGWilson_MultEO_Dir(xie_ptr, pU, eta_ptr, 1.0, EO_BGWilson, BGWILSON_DIRAC, mu, BGWILSON_FORWARD);
-      
+      BGQThread_Barrier(0,nid);
       for(int site=is; site<is+ns; ++site){
 	unsigned int index = ff_.Nin()*site;
 	unsigned int g_idx = gf_.index(0,global_sites[site],mu); 
@@ -150,8 +151,8 @@ void Dirac_Wilson::md_force_p(Field& fce,
       } //site
     }//mu
      
-    //BGQThread_Barrier(0,nid);
-    //}//omp
+    BGQThread_Barrier(0,nid);
+    }//omp
   
 #else
   for(int mu=0; mu<NDIM_; ++mu){
@@ -216,6 +217,7 @@ void Dirac_Wilson::md_force_m(Field& fce,const Field& eta,const Field& zeta)cons
 
 #pragma omp parallel 
   { 
+    int nid = omp_get_num_threads();
     int ns = Nvol_/omp_get_num_threads();
     int is = omp_get_thread_num()*ns;
     
@@ -223,8 +225,10 @@ void Dirac_Wilson::md_force_m(Field& fce,const Field& eta,const Field& zeta)cons
     BGWilsonLA_MultGamma5((Spinor*)(et5_ptr)+is, eta_ptr+is, ns);
 
     for(int mu=0; mu<NDIM_; ++mu){
+      BGQThread_Barrier(0,nid);
       BGWilson_MultEO_Dir(xz5_ptr, pU, zt5_ptr,  1.0, EO_BGWilson, BGWILSON_DIRAC, mu, BGWILSON_FORWARD);
-      
+      BGQThread_Barrier(0,nid);      
+
       for(int site=is; site<is+ns; ++site){
 	//f = 0.0;
 	unsigned int index = ff_.Nin()*site;

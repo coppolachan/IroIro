@@ -10,7 +10,7 @@
 #include "include/pugi_interface.h"
 #include "include/commonPrms.hpp"
 #include "Geometry/shiftField.hpp"
-#include "Tools/randNum_Factory.h"
+#include "Tools/randNum_Factory.hpp"
 #include <memory>
 /*
   This class fix the gauge of configuration to the Coulomb gauge.

@@ -1,9 +1,7 @@
 /*!
  * @file multiShiftSolver_CG.cpp
- *
  * @brief Declaration of MultiShiftSolver_CG functions
- *
- * Time-stamp: <2013-07-03 12:11:04 cossu>
+ * Time-stamp: <2014-02-07 09:43:21 noaki>
  */
 #include "multiShiftSolver_CG.hpp"
 #include "Fields/field_expressions.hpp"
@@ -19,7 +17,6 @@ void MultiShiftSolver_CG::solve_init(vector_Field& x,
 				     vector_double& csh2,
 				     double& alphap,
 				     double& betap) const{
-
   int Nshift = p.size();
   _Message(SOLV_ITER_VERB_LEVEL, "    MultiShiftSolver_CG Inizialitation\n");
 
@@ -48,11 +45,9 @@ void MultiShiftSolver_CG::solve_step(vector_Field& x,
 				     int& Nshift2, 
 				     double& snorm, 
 				     vector_double& pp) const{
-
   using namespace FieldExpression;
   s = opr_->mult(p[0]);
   s += sigma[0]*p[0];
-
 
   double rrp = rr;
   double pap = s*p[0];
@@ -105,7 +100,7 @@ SolverOutput MultiShiftSolver_CG::solve(vector_Field& xq,
 { 
   using namespace FieldExpression;
   
-  _Message(SOLV_ITER_VERB_LEVEL, "Multi-shift solver Conjugate Gradient start\n");
+  _Message(SOLV_ITER_VERB_LEVEL,"Multi-shift solver Conjugate Gradient start\n");
 
   SolverOutput Out;
   Out.Msg = "Multishift CG solver";
@@ -153,7 +148,7 @@ SolverOutput MultiShiftSolver_CG::solve(vector_Field& xq,
   solve_init(x,p,r,s,rr,zeta1,zeta2,csh2,alphap,betap);
   _Message(SOLV_ITER_VERB_LEVEL, "    | Init | = "<<rr*snorm<<"\n");
   
-  for(int it = 0; it < Params.MaxIter; it++){
+  for(int it = 0; it < Params.MaxIter; ++it){
     solve_step(x,p,r,s,rr,zeta1,zeta2,sigma,csh2,alphap,betap,
 	       Nshift2,snorm,pp);
     double residual = rr*snorm; 
@@ -178,8 +173,9 @@ SolverOutput MultiShiftSolver_CG::solve(vector_Field& xq,
     _Message(SOLV_ITER_VERB_LEVEL, "       ["<<i<<"]  "<<diff1<<"\n");
     if(diff1>diff) diff = diff1;
   }
+
   _Message(SOLV_ITER_VERB_LEVEL, " Maximum residual  = "<<diff<<"\n");
-  
+
   for(int i=0; i<Nshift; ++i) xq[i] = x[i];
 
   Out.diff = sqrt(diff);
