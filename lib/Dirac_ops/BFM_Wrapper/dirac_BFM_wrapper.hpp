@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-01-30 14:13:43 neo>
+ * Time-stamp: <2014-04-08 11:17:57 neo>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -15,6 +15,7 @@
 #undef PACKAGE_VERSION
 #undef VERSION
 #include "bfm.h"
+#include "bfm_cg_mixed_prec.IroIro.h"
 #include "Tools/Bagel/bfm_storage.hpp"
 #include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "include/pugi_interface.h"
@@ -49,9 +50,13 @@ class Dirac_BFM_Wrapper: public DiracWilsonLike {
 private:
   Dirac_BFM_Wrapper_params BFMparams;
   bfmarg parameters;
-  bfm_dp linop;
+
+  bfm_internal<double> linop;        //double precision operator
+  bfm_internal<float>  linop_single; //single precision operator
+
   unsigned int threads;
-  BFM_Storage BFM_interface;
+  BFM_Storage<double> BFM_interface;
+  BFM_Storage<float>  BFM_interface_single;
   std::string SolverName;
 
   //temporary hack - don't want this in the final version!!!!
@@ -117,6 +122,7 @@ public:
 
   // Solvers wrapper
   void solve_CGNE(FermionField& out, FermionField& in);
+  void solve_CGNE_mixed_prec(FermionField& out, FermionField& in);
   void set_SolverParams(XML::node);
   void solve_CGNE_multishift(std::vector < FermionField >& solution, 
 			     FermionField& source,

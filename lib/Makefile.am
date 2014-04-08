@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-02-26 13:22:20 noaki>
+# Time-stamp: <2014-04-08 11:07:28 cossu>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 

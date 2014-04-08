@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-03-10 17:02:31 neo>
+ * Time-stamp: <2014-04-08 10:46:51 neo>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -47,6 +47,7 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
   :u_(u),
    BFMparams(node),
    BFM_interface(linop),
+   BFM_interface_single(linop_single),
    has_operator(false),
    has_solver_params(false),
    is_initialized(false),
@@ -390,6 +391,74 @@ void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source)
     CCIO::cout << "The operator was not initialized yet\n";
   }
 }
+
+
+void Dirac_BFM_Wrapper::solve_CGNE_mixed_prec(FermionField& solution, FermionField& source){
+  if(is_initialized){
+    long double export_timing;
+    FINE_TIMING_START(export_timing); 
+    BFM_interface.GaugeExport_to_BFM(u_);
+    FINE_TIMING_END(export_timing);
+    _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_BFM_Wrapper::solve_CGNE"
+	     << " - Gauge Export to BFM timing = "
+	     << export_timing << std::endl); 
+    int cb = Even;// by default
+    // Load the fermion field to BFM
+    // temporary source vector for the BFM data 
+    FermionField BFMsource(Nvol_*BFMparams.Ls_);
+    FermionField BFMsol(Nvol_*BFMparams.Ls_);
+
+    int half_vec = source.size()/BFMparams.Ls_;
+    for (int s =0 ; s< BFMparams.Ls_; s++){
+      for (int i = 0; i < half_vec; i++){
+	BFMsource.data.set(i+    2*s*half_vec, source.data[i+half_vec*s]);//just even part is enough
+	BFMsource.data.set(i+(2*s+1)*half_vec, 0.0);//just even part is enough
+
+	BFMsol.data.set(i+    2*s*half_vec, solution.data[i+half_vec*s]);//just even part is enough
+	BFMsol.data.set(i+(2*s+1)*half_vec, 0.0);//just even part is enough
+      }
+    }
+    
+
+    LoadSource(BFMsource, cb);
+    LoadGuess(BFMsol, cb);
+
+    // need to initialize the comms because of the buffer 
+    // assignments by BGNET library
+    // the order of comm_init can broke previous initializations
+    // so we are doing right now.
+    linop.comm_init();
+
+    //////////////////////////// Execute the solver
+    #pragma omp parallel
+    {
+    #pragma omp for 
+      for (int t=0;t<threads;t++){
+	linop.CGNE_prec(chi_h[cb],psi_h[cb]);
+      }
+    }
+    ///////////////////////////////////////////////
+
+    // close communications to free the buffers
+    linop.comm_end();
+    
+    // Get the solution from BFM 
+    GetSolution(BFMsol,cb);
+    for (int s =0 ; s< BFMparams.Ls_; s++){
+      for (int i = 0; i < half_vec; i++){
+	solution.data.set(i+half_vec*s, BFMsol.data[i+2*s*half_vec]);//copy only the even part
+      }
+    }
+
+
+  } else {
+    CCIO::cout << "The operator was not initialized yet\n";
+  }
+}
+
+
+
+
 void Dirac_BFM_Wrapper::solve_CGNE_multishift(std::vector < FermionField > & solutions, 
                                               FermionField& source,
                                               vector_double shifts,

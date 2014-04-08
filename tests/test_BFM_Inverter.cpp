@@ -103,10 +103,10 @@ int Test_Solver_BFM::run(){
   dwfa.rb_precondition_cb=Even;
   dwfa.max_iter=50000;
   dwfa.residual=1.0e-12;
-  bfm_dp linop;
+  bfm_internal<double> linop;
   linop.init(dwfa);
 
-  BFM_Storage BFM_interface(linop);
+  BFM_Storage<double> BFM_interface(linop);
   BFM_interface.GaugeExport_to_BFM(conf_);
   
   //launch the test
