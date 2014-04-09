@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-04-09 13:49:50 neo>
+ * Time-stamp: <2014-04-09 16:18:55 neo>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -200,7 +200,8 @@ Field Dirac_BFM_Wrapper::mult_inv_4d(const Field& Fin){
       linop.MprecTilde(chi_h[cb],psi_h[cb],tmp,1,donrm);// dag=1 
       // psi[even] = Mtilde^dag chi[even]     to get the correct inversion of Mtilde 
       linop.CGNE_prec(chi_h[cb],psi_h[cb]);// chi[even] = Mtilde^-1 psi[even]
-      
+   
+
       linop.Meo(chi_h[cb],tmp,1-cb,dag);// tmp = Meo chi[even]    (even->odd) 
       linop.axpy_norm(psi_h[1-cb], tmp, psi_h[1-cb], fact);// psi[odd] = -1*tmp + psi[odd]
       // = psi[odd] - Meo chi[even]
@@ -251,7 +252,8 @@ Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
 
   if(is_initialized){
     BFM_interface.GaugeExport_to_BFM(u_);
-
+    if (BFMparams.is_mixed_precision)
+      BFM_interface_single.GaugeExport_to_BFM(u_);
 
     int donrm = 0;
     int cb = Even;
@@ -265,7 +267,7 @@ Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
       // when used for the 4d BWF operator
       linop.copy(psi_h[0], psi_in[0]);
       linop.copy(psi_h[1], psi_in[1]);
-
+      int me = linop.thread_barrier();
       linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);// chi[odd] = Moo^-1 psi[odd]   (odd->odd) needs later
       linop.Meo(chi_h[1-cb],tmp,cb,dag);// tmp = Meo chi[odd]    (odd->even) 
       linop.axpy_norm(tmp, tmp, psi_h[cb], fact);// tmp = -1*tmp + psi[even] 
@@ -275,8 +277,13 @@ Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
       
       linop.MprecTilde(chi_h[cb],psi_h[cb],tmp,1,donrm);// dag=1 
       // psi[even] = Mtilde^dag chi[even]     to get the correct inversion of Mtilde 
-      linop.CGNE_prec(chi_h[cb],psi_h[cb]);// chi[even] = Mtilde^-1 psi[even]
-      
+      if (BFMparams.is_mixed_precision){
+	CGNE_mixed_prec(chi_h[cb],psi_h[cb],linop.max_iter/100);
+	if ( !me ) linop.comm_init();//CGNE_mixed_prec closes all comms
+      } else {
+	linop.CGNE_prec(chi_h[cb],psi_h[cb]);// chi[even] = Mtilde^-1 psi[even]
+      }
+
       linop.Meo(chi_h[cb],tmp,1-cb,dag);// tmp = Meo chi[even]    (even->odd) 
       linop.axpy_norm(psi_h[1-cb], tmp, psi_h[1-cb], fact);// psi[odd] = -1*tmp + psi[odd]
       // = psi[odd] - Meo chi[even]
@@ -398,6 +405,123 @@ void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source)
   }
 }
 
+int Dirac_BFM_Wrapper::CGNE_mixed_prec(Fermion_t sol, Fermion_t src, int max_outer){
+  ////////////////////
+  int cb= Even;
+  int iters = 0;
+  int converged = 0;
+
+  Fermion_t mtmp = linop.threadedAllocFermion();
+  Fermion_t mmtmp = linop.threadedAllocFermion();
+  
+  Fermion_t tmp_d[2];
+  Fermion_t tmp_s[2];
+  Fermion_t sol_s[2];
+  
+  // Allocate internal fermions
+  for(int cb=0;cb<2;cb++){
+    tmp_d[cb]    = linop.threadedAllocFermion();
+    tmp_s[cb]    = linop_single.threadedAllocFermion();
+    sol_s[cb]    = linop_single.threadedAllocFermion();
+  }
+  
+  int me = linop.thread_barrier();
+  double defect_norm = 1.0;
+  double true_residual;
+  double src_norm = sqrt(linop.norm(src));
+  
+  for (int outer = 0; outer < max_outer; outer++){
+    int inner_iters;
+    if ( !me ) linop.comm_init();  // Start double comms
+    linop.thread_barrier();
+    
+    linop.Mprec(sol, mtmp, tmp_d[0], 0);
+    linop.Mprec(mtmp, mmtmp, tmp_d[0], 1);
+    linop.axpy(tmp_d[0], mmtmp, src, -1.0); // calculate defect (tmp_d)
+    
+    defect_norm = sqrt(linop.norm(tmp_d[0]));
+    
+    true_residual = defect_norm/src_norm;
+    
+    if ( linop.isBoss() && (!me) ) printf("solve_CGNE_mixed_prec[%d] - defect norm  : %le\n",outer,defect_norm);
+    if ( linop.isBoss() && (!me) ) printf("solve_CGNE_mixed_prec[%d] - true residual: %le\n",outer,true_residual);
+    
+    if ( !me ) linop.comm_end(); // End single comms
+    linop.thread_barrier();
+    
+    
+    // Check convergence
+    if ( true_residual < linop.residual ) {
+      if ( linop.isBoss() && !me ) 
+	printf("solve_CGNE_mixed_prec[%d] - Iterations = %d  Residual = %le\n",
+	       outer,iters,true_residual);
+
+      outer = max_outer;
+      converged=1;
+    }
+    
+    if ( !converged ) { 
+      
+      //scale defect
+      linop.scale(tmp_d[0], 1.0/defect_norm);
+      
+      ////////////////////////////////////////////////////
+      // Single precision inner CG
+      ////////////////////////////////////////////////////
+      for(int cb=0;cb<2;cb++){
+	//convert source from double to single
+	linop.precisionChange(tmp_d[cb],tmp_s[cb],DoubleToSingle,cb);
+	// Initial guess is set to zero.
+	linop_single.set_zero(sol_s[cb]);
+      }
+      linop.thread_barrier();
+      
+      
+      double target_residual = linop.residual/true_residual / 10;
+      if ( target_residual < 1.0e-6 ) target_residual = 1.0e-6;
+      if ( linop_single.isBoss() && (!me) )
+	printf("BfmMixedPrecision[%d]: setting target residual to %le\n",outer,target_residual);
+      linop_single.residual = target_residual;
+      
+      if ( !me ) linop_single.comm_init();  // Start double comms
+      linop_single.thread_barrier();
+      
+      // Iterate inner solver until ||b - Ax|| < linop_single.residual
+      inner_iters = linop_single.CGNE_prec(sol_s[cb],tmp_s[cb]);
+      if( me == 0 ) {
+	iters += inner_iters;
+      }	  
+      
+      if ( !me ) linop_single.comm_end(); // End single comms
+      linop_single.thread_barrier();
+      
+      ////////////////////////////////////////////////////
+      // Convert to double and update solution
+      ////////////////////////////////////////////////////
+      // chi_h_{k+1}    = chi_h_k + defect_norm * (sol_s->double)
+      for(int cb=0;cb<2;cb++){
+	linop.precisionChange(sol_s[cb],tmp_d[cb],SingleToDouble,cb);// approx solution
+	linop.axpy(sol,tmp_d[cb], sol,defect_norm);//new solution
+      }
+      
+    }
+    
+  }
+
+  
+  //free allocated resources
+  for(int cb=0;cb<2;cb++){
+    linop.threadedFreeFermion(tmp_d[cb]);
+    linop_single.threadedFreeFermion(tmp_s[cb]);
+    linop_single.threadedFreeFermion(sol_s[cb]);
+  }
+  linop.threadedFreeFermion(mtmp);
+  linop.threadedFreeFermion(mmtmp);
+  linop.thread_barrier();
+  ////////////////////////
+  return converged;
+}
+
 
 void Dirac_BFM_Wrapper::solve_CGNE_mixed_prec(FermionField& solution, FermionField& source){
   // Reference papers
@@ -411,7 +535,8 @@ void Dirac_BFM_Wrapper::solve_CGNE_mixed_prec(FermionField& solution, FermionFie
 
   if(is_initialized){
     long double export_timing;
-    
+    long double solver_timing;
+
     // Load configurations 
     FINE_TIMING_START(export_timing); 
     BFM_interface.GaugeExport_to_BFM(u_);
@@ -444,119 +569,30 @@ void Dirac_BFM_Wrapper::solve_CGNE_mixed_prec(FermionField& solution, FermionFie
     LoadSource(BFMsource, cb);
     LoadGuess(BFMsol, cb);
 
-    Fermion_t tmp_d[2];
-    Fermion_t mtmp;
-    Fermion_t mmtmp;
-    Fermion_t tmp_s[2];
-    Fermion_t sol_s[2];
- 
-    // Allocate internal fermions
-    for(int cb=0;cb<2;cb++){
-      tmp_d[cb]    = linop.allocFermion();
-      tmp_s[cb]    = linop_single.allocFermion();
-      sol_s[cb]    = linop_single.allocFermion();
-    }
-    mtmp = linop.allocFermion();
-    mmtmp = linop.allocFermion();
+
 
     //////////////////////////////////
     int max_outer = linop.max_iter/100;
-    int iters = 0;
     int converged = 0;
     //////////////////////////// Execute the solver
+    FINE_TIMING_START(solver_timing); 
     #pragma omp parallel
     {
     #pragma omp for 
       for (int t=0;t<threads;t++){
-	int me = linop.thread_barrier();
-	double defect_norm = 1.0;
-	double true_residual;
-	double src_norm = sqrt(linop.norm(psi_h));
-
-	for (int outer = 0; outer < max_outer; outer++){
-	  int inner_iters;
-	  if ( !me ) linop.comm_init();  // Start double comms
-	  linop.thread_barrier();
-	  
-	  linop.Mprec(chi_h[cb], mtmp, tmp_d[0], 0);
-	  linop.Mprec(mtmp, mmtmp, tmp_d[0], 1);
-	  linop.axpy(tmp_d[0], mmtmp, psi_h[cb], -1.0); // calculate defect (tmp_d)
-	  
-	  defect_norm = sqrt(linop.norm(tmp_d[0]));
-	  
-	  true_residual = defect_norm/src_norm;
-	  
-	  if ( linop.isBoss() && (!me) ) printf("solve_CGNE_mixed_prec[%d] - defect norm  : %le\n",outer,defect_norm);
-	  if ( linop.isBoss() && (!me) ) printf("solve_CGNE_mixed_prec[%d] - true residual: %le\n",outer,true_residual);
-	  
-	  if ( !me ) linop.comm_end(); // End single comms
-	  linop.thread_barrier();
-	  
-
-	  // Check convergence
-	  if ( true_residual < linop.residual ) {
-	    if ( linop.isBoss() && !me ) 
-	      printf("solve_CGNE_mixed_prec[%d] - Iterations = %d  Residual = %le\n",
-		     outer,iters,true_residual);
-	    outer = max_outer;
-	    converged=1;
-	  }
-	  
-	  if ( !converged ) { 
-	    
-	    //scale defect
-	    linop.scale(tmp_d[0], 1.0/defect_norm);
-	    
-	    ////////////////////////////////////////////////////
-	    // Single precision inner CG
-	    ////////////////////////////////////////////////////
-	    for(int cb=0;cb<2;cb++){
-	      //convert source from double to single
-	      linop.precisionChange(tmp_d[cb],tmp_s[cb],DoubleToSingle,cb);
-	      // Initial guess is set to zero.
-	      linop_single.set_zero(sol_s[cb]);
-	    }
-	    linop.thread_barrier();
-
-	    
-	    double target_residual = linop.residual/true_residual / 10;
-	    if ( target_residual < 1.0e-6 ) target_residual = 1.0e-6;
-	    if ( linop_single.isBoss() && (!me) )
-	    printf("BfmMixedPrecision[%d]: setting target residual to %le\n",outer,target_residual);
-	    linop_single.residual = target_residual;
-
-	    if ( !me ) linop_single.comm_init();  // Start double comms
-	    linop_single.thread_barrier();
-	    
-	    // Iterate inner solver until ||b - Ax|| < linop_single.residual
-	    inner_iters = linop_single.CGNE_prec(sol_s[cb],tmp_s[cb]);
-	    if( me == 0 ) {
-	      iters += inner_iters;
-	    }	  
-	    
-	    if ( !me ) linop_single.comm_end(); // End single comms
-	    linop_single.thread_barrier();
-	    
-	    ////////////////////////////////////////////////////
-	    // Convert to double and update solution
-	    ////////////////////////////////////////////////////
-	    // chi_h_{k+1}    = chi_h_k + defect_norm * (sol_s->double)
-	    for(int cb=0;cb<2;cb++){
-	      linop.precisionChange(sol_s[cb],tmp_d[cb],SingleToDouble,cb);// approx solution
-	      linop.axpy(chi_h[cb],tmp_d[cb], chi_h[cb],defect_norm);//new solution
-	    }
-	    
-	  }
-
-	}
-
+	converged = CGNE_mixed_prec(chi_h[cb], psi_h[cb], max_outer);
       }
     }
-
+    
     if (!converged) {
       ErrorString msg("BFM Mixed precision solver not converged");
       Errors::ConvergenceErr(msg);
     }
+    
+    FINE_TIMING_END(solver_timing);
+    _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_BFM_Wrapper::solve_CGNE_mixed prec"
+	     << " - Solver total timing = "
+	     << solver_timing << std::endl); 
 
     ///////////////////////////////////////////////
     // Get the solution from BFM 
@@ -567,14 +603,7 @@ void Dirac_BFM_Wrapper::solve_CGNE_mixed_prec(FermionField& solution, FermionFie
       }
     }
 
-    //free allocated resources
-    linop.freeFermion(mtmp);
-    linop.freeFermion(mmtmp);   
-    for(int cb=0;cb<2;cb++){
-      linop.freeFermion(tmp_d[cb]);
-      linop_single.freeFermion(tmp_s[cb]);
-      linop_single.freeFermion(sol_s[cb]);
-    }
+
 
   } else {
     CCIO::cout << "The operator was not initialized yet\n";
