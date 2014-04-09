@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-04-08 11:17:57 neo>
+ * Time-stamp: <2014-04-09 13:54:39 neo>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -15,7 +15,6 @@
 #undef PACKAGE_VERSION
 #undef VERSION
 #include "bfm.h"
-#include "bfm_cg_mixed_prec.IroIro.h"
 #include "Tools/Bagel/bfm_storage.hpp"
 #include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "include/pugi_interface.h"
@@ -32,6 +31,7 @@ struct Dirac_BFM_Wrapper_params {
   double scale_;
 
   //solver
+  bool is_mixed_precision;
   int max_iter_;
   double target_;
 
@@ -121,6 +121,7 @@ public:
   void update_internal_state(){};
 
   // Solvers wrapper
+  bool is_mixed_precision(){return BFMparams.is_mixed_precision;}
   void solve_CGNE(FermionField& out, FermionField& in);
   void solve_CGNE_mixed_prec(FermionField& out, FermionField& in);
   void set_SolverParams(XML::node);

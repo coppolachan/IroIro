@@ -1,16 +1,17 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-04-08 10:46:51 neo>
+ * Time-stamp: <2014-04-09 13:49:50 neo>
  */
 
 #include "dirac_BFM_wrapper.hpp"
 
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
+#include "include/errors.hpp"
 #include <stdlib.h>     /* atoi */
 #include <stdio.h>
-
+#include <omp.h>
 
 Dirac_BFM_Wrapper_params::Dirac_BFM_Wrapper_params(XML::node BFMnode){
   XML::node top_BFM_node = BFMnode;
@@ -25,6 +26,8 @@ Dirac_BFM_Wrapper_params::Dirac_BFM_Wrapper_params(XML::node BFMnode){
 }
 
 Dirac_BFM_Wrapper_params::set_SolverParams(XML::node BFMnode){
+  is_mixed_precision = false; //default value if not specified
+  XML::read(BFMnode, "MixedPrecision", is_mixed_precision); //not mandatory
   XML::read(BFMnode, "MaxIter", max_iter_, MANDATORY);
   XML::read(BFMnode, "Precision", target_, MANDATORY);
 }
@@ -77,8 +80,8 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
   }
 
   // Set Verbosity controls
-  parameters.verbose = 0;
-  parameters.time_report_iter=-100;
+  parameters.verbose = 0;// default 0
+  parameters.time_report_iter=-100;// default -100
 
   // Threading control parameters
   threads = atoi(getenv("OMP_NUM_THREADS"));
@@ -339,7 +342,7 @@ void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source)
 	     << " - Gauge Export to BFM timing = "
 	     << export_timing << std::endl); 
     int cb = Even;// by default
-    // Load the fermion field to BFM
+     // Load the fermion field to BFM
     // temporary source vector for the BFM data 
     FermionField BFMsource(Nvol_*BFMparams.Ls_);
     FermionField BFMsol(Nvol_*BFMparams.Ls_);
@@ -347,14 +350,17 @@ void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source)
     int half_vec = source.size()/BFMparams.Ls_;
     for (int s =0 ; s< BFMparams.Ls_; s++){
       for (int i = 0; i < half_vec; i++){
+	
 	BFMsource.data.set(i+    2*s*half_vec, source.data[i+half_vec*s]);//just even part is enough
 	BFMsource.data.set(i+(2*s+1)*half_vec, 0.0);//just even part is enough
 
 	BFMsol.data.set(i+    2*s*half_vec, solution.data[i+half_vec*s]);//just even part is enough
 	BFMsol.data.set(i+(2*s+1)*half_vec, 0.0);//just even part is enough
+	
+
       }
     }
-    
+  
 
     LoadSource(BFMsource, cb);
     LoadGuess(BFMsol, cb);
@@ -394,15 +400,29 @@ void Dirac_BFM_Wrapper::solve_CGNE(FermionField& solution, FermionField& source)
 
 
 void Dirac_BFM_Wrapper::solve_CGNE_mixed_prec(FermionField& solution, FermionField& source){
+  // Reference papers
+  // D. Göddeke,  Robert Strzodka, and Stefan Turek. 
+  // Accelerating double precision FEM simulations with GPUs. 
+  // In Proceedings of ASIM 2005 - 18th Symposium on Simulation Technique, Sep 2005
+  //
+  // Robert Strzodka and Dominik Göddeke. 
+  // Pipelined mixed precision algorithms on FPGAs for fast and accurate PDE solvers from low precision components. 
+  // In IEEE Symposium on Field-Programmable Custom Computing Machines (FCCM 2006), pages 259–268, April 2006.
+
   if(is_initialized){
     long double export_timing;
+    
+    // Load configurations 
     FINE_TIMING_START(export_timing); 
     BFM_interface.GaugeExport_to_BFM(u_);
+    BFM_interface_single.GaugeExport_to_BFM(u_);
     FINE_TIMING_END(export_timing);
-    _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_BFM_Wrapper::solve_CGNE"
+    _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_BFM_Wrapper::solve_CGNE_mixed prec"
 	     << " - Gauge Export to BFM timing = "
 	     << export_timing << std::endl); 
+
     int cb = Even;// by default
+    
     // Load the fermion field to BFM
     // temporary source vector for the BFM data 
     FermionField BFMsource(Nvol_*BFMparams.Ls_);
@@ -411,37 +431,134 @@ void Dirac_BFM_Wrapper::solve_CGNE_mixed_prec(FermionField& solution, FermionFie
     int half_vec = source.size()/BFMparams.Ls_;
     for (int s =0 ; s< BFMparams.Ls_; s++){
       for (int i = 0; i < half_vec; i++){
+	
 	BFMsource.data.set(i+    2*s*half_vec, source.data[i+half_vec*s]);//just even part is enough
 	BFMsource.data.set(i+(2*s+1)*half_vec, 0.0);//just even part is enough
 
 	BFMsol.data.set(i+    2*s*half_vec, solution.data[i+half_vec*s]);//just even part is enough
 	BFMsol.data.set(i+(2*s+1)*half_vec, 0.0);//just even part is enough
+	
+
       }
     }
-    
-
     LoadSource(BFMsource, cb);
     LoadGuess(BFMsol, cb);
 
-    // need to initialize the comms because of the buffer 
-    // assignments by BGNET library
-    // the order of comm_init can broke previous initializations
-    // so we are doing right now.
-    linop.comm_init();
+    Fermion_t tmp_d[2];
+    Fermion_t mtmp;
+    Fermion_t mmtmp;
+    Fermion_t tmp_s[2];
+    Fermion_t sol_s[2];
+ 
+    // Allocate internal fermions
+    for(int cb=0;cb<2;cb++){
+      tmp_d[cb]    = linop.allocFermion();
+      tmp_s[cb]    = linop_single.allocFermion();
+      sol_s[cb]    = linop_single.allocFermion();
+    }
+    mtmp = linop.allocFermion();
+    mmtmp = linop.allocFermion();
 
+    //////////////////////////////////
+    int max_outer = linop.max_iter/100;
+    int iters = 0;
+    int converged = 0;
     //////////////////////////// Execute the solver
     #pragma omp parallel
     {
     #pragma omp for 
       for (int t=0;t<threads;t++){
-	linop.CGNE_prec(chi_h[cb],psi_h[cb]);
+	int me = linop.thread_barrier();
+	double defect_norm = 1.0;
+	double true_residual;
+	double src_norm = sqrt(linop.norm(psi_h));
+
+	for (int outer = 0; outer < max_outer; outer++){
+	  int inner_iters;
+	  if ( !me ) linop.comm_init();  // Start double comms
+	  linop.thread_barrier();
+	  
+	  linop.Mprec(chi_h[cb], mtmp, tmp_d[0], 0);
+	  linop.Mprec(mtmp, mmtmp, tmp_d[0], 1);
+	  linop.axpy(tmp_d[0], mmtmp, psi_h[cb], -1.0); // calculate defect (tmp_d)
+	  
+	  defect_norm = sqrt(linop.norm(tmp_d[0]));
+	  
+	  true_residual = defect_norm/src_norm;
+	  
+	  if ( linop.isBoss() && (!me) ) printf("solve_CGNE_mixed_prec[%d] - defect norm  : %le\n",outer,defect_norm);
+	  if ( linop.isBoss() && (!me) ) printf("solve_CGNE_mixed_prec[%d] - true residual: %le\n",outer,true_residual);
+	  
+	  if ( !me ) linop.comm_end(); // End single comms
+	  linop.thread_barrier();
+	  
+
+	  // Check convergence
+	  if ( true_residual < linop.residual ) {
+	    if ( linop.isBoss() && !me ) 
+	      printf("solve_CGNE_mixed_prec[%d] - Iterations = %d  Residual = %le\n",
+		     outer,iters,true_residual);
+	    outer = max_outer;
+	    converged=1;
+	  }
+	  
+	  if ( !converged ) { 
+	    
+	    //scale defect
+	    linop.scale(tmp_d[0], 1.0/defect_norm);
+	    
+	    ////////////////////////////////////////////////////
+	    // Single precision inner CG
+	    ////////////////////////////////////////////////////
+	    for(int cb=0;cb<2;cb++){
+	      //convert source from double to single
+	      linop.precisionChange(tmp_d[cb],tmp_s[cb],DoubleToSingle,cb);
+	      // Initial guess is set to zero.
+	      linop_single.set_zero(sol_s[cb]);
+	    }
+	    linop.thread_barrier();
+
+	    
+	    double target_residual = linop.residual/true_residual / 10;
+	    if ( target_residual < 1.0e-6 ) target_residual = 1.0e-6;
+	    if ( linop_single.isBoss() && (!me) )
+	    printf("BfmMixedPrecision[%d]: setting target residual to %le\n",outer,target_residual);
+	    linop_single.residual = target_residual;
+
+	    if ( !me ) linop_single.comm_init();  // Start double comms
+	    linop_single.thread_barrier();
+	    
+	    // Iterate inner solver until ||b - Ax|| < linop_single.residual
+	    inner_iters = linop_single.CGNE_prec(sol_s[cb],tmp_s[cb]);
+	    if( me == 0 ) {
+	      iters += inner_iters;
+	    }	  
+	    
+	    if ( !me ) linop_single.comm_end(); // End single comms
+	    linop_single.thread_barrier();
+	    
+	    ////////////////////////////////////////////////////
+	    // Convert to double and update solution
+	    ////////////////////////////////////////////////////
+	    // chi_h_{k+1}    = chi_h_k + defect_norm * (sol_s->double)
+	    for(int cb=0;cb<2;cb++){
+	      linop.precisionChange(sol_s[cb],tmp_d[cb],SingleToDouble,cb);// approx solution
+	      linop.axpy(chi_h[cb],tmp_d[cb], chi_h[cb],defect_norm);//new solution
+	    }
+	    
+	  }
+
+	}
+
       }
     }
-    ///////////////////////////////////////////////
 
-    // close communications to free the buffers
-    linop.comm_end();
-    
+    if (!converged) {
+      ErrorString msg("BFM Mixed precision solver not converged");
+      Errors::ConvergenceErr(msg);
+    }
+
+    ///////////////////////////////////////////////
     // Get the solution from BFM 
     GetSolution(BFMsol,cb);
     for (int s =0 ; s< BFMparams.Ls_; s++){
@@ -450,10 +567,21 @@ void Dirac_BFM_Wrapper::solve_CGNE_mixed_prec(FermionField& solution, FermionFie
       }
     }
 
+    //free allocated resources
+    linop.freeFermion(mtmp);
+    linop.freeFermion(mmtmp);   
+    for(int cb=0;cb<2;cb++){
+      linop.freeFermion(tmp_d[cb]);
+      linop_single.freeFermion(tmp_s[cb]);
+      linop_single.freeFermion(sol_s[cb]);
+    }
 
   } else {
     CCIO::cout << "The operator was not initialized yet\n";
   }
+
+
+
 }
 
 
@@ -598,9 +726,7 @@ void  Dirac_BFM_Wrapper::AllocateFields(){
     // Allocate the fermions
     for(int cb=0;cb<2;cb++){
       psi_h[cb] = linop.allocFermion();//half vector
-      CCIO::cout << "BFM phi_h["<<cb<<"] allocated \n";
       chi_h[cb] = linop.allocFermion();
-      CCIO::cout << "BFM chi_h["<<cb<<"] allocated \n";
     }
     tmp = linop.allocFermion();// temporary
   }
@@ -622,7 +748,8 @@ void Dirac_BFM_Wrapper::initialize(){
   // Initialize the linear operator 
   if(has_operator && has_solver_params && !is_initialized){
     linop.init(parameters);
-    AllocateFields();
+    linop_single.init(parameters);
+    AllocateFields(); // just for the double 
     is_initialized = true;
   }
 }
