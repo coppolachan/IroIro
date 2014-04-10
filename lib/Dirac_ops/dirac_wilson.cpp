@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.cpp
  *  @brief Declaration of Dirac_Wilson class
- * Time-stamp: <2014-01-20 12:43:05 noaki>
+ * Time-stamp: <2014-04-04 10:56:08 noaki>
  */
 #include "dirac_wilson.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -123,8 +123,8 @@ void Dirac_Wilson::md_force_p(Field& fce,
   double* pU       = const_cast<Field *>(u_)->getaddr(0);
   double* xie_ptr  = const_cast<Field&>(xie).getaddr(0);
 
-  //#pragma omp parallel 
-  //{
+#pragma omp parallel 
+  {
     int nid = omp_get_num_threads();
     int ns = Nvol_/nid;
     int is = omp_get_thread_num()*ns;
@@ -150,8 +150,8 @@ void Dirac_Wilson::md_force_p(Field& fce,
       } //site
     }//mu
      
-    //BGQThread_Barrier(0,nid);
-    //}//omp
+    BGQThread_Barrier(0,nid);
+  }//omp
   
 #else
   for(int mu=0; mu<NDIM_; ++mu){
