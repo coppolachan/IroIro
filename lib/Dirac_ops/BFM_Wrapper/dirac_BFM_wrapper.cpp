@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-04-09 16:18:55 neo>
+ * Time-stamp: <2014-04-14 11:41:59 neo>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -120,7 +120,9 @@ Dirac_BFM_Wrapper::~Dirac_BFM_Wrapper(){
     } 
     linop.freeFermion(tmp);
   }
- 
+
+  bfm_free(linop.u);
+  bfm_free(linop_single.u);
 }
 
 const Field Dirac_BFM_Wrapper::mult(const Field& Fin)const{
@@ -437,11 +439,11 @@ int Dirac_BFM_Wrapper::CGNE_mixed_prec(Fermion_t sol, Fermion_t src, int max_out
     
     linop.Mprec(sol, mtmp, tmp_d[0], 0);
     linop.Mprec(mtmp, mmtmp, tmp_d[0], 1);
-    linop.axpy(tmp_d[0], mmtmp, src, -1.0); // calculate defect (tmp_d)
+    linop.axpy(tmp_d[0], mmtmp, src, -1.0); // calculate defect (tmp_d) double prec
     
     defect_norm = sqrt(linop.norm(tmp_d[0]));
     
-    true_residual = defect_norm/src_norm;
+    true_residual = defect_norm/src_norm;// since initial guess is zero
     
     if ( linop.isBoss() && (!me) ) printf("solve_CGNE_mixed_prec[%d] - defect norm  : %le\n",outer,defect_norm);
     if ( linop.isBoss() && (!me) ) printf("solve_CGNE_mixed_prec[%d] - true residual: %le\n",outer,true_residual);
@@ -462,7 +464,7 @@ int Dirac_BFM_Wrapper::CGNE_mixed_prec(Fermion_t sol, Fermion_t src, int max_out
     
     if ( !converged ) { 
       
-      //scale defect
+      //scale defect (to make efficient use of all lower precision digits)
       linop.scale(tmp_d[0], 1.0/defect_norm);
       
       ////////////////////////////////////////////////////
@@ -471,7 +473,7 @@ int Dirac_BFM_Wrapper::CGNE_mixed_prec(Fermion_t sol, Fermion_t src, int max_out
       for(int cb=0;cb<2;cb++){
 	//convert source from double to single
 	linop.precisionChange(tmp_d[cb],tmp_s[cb],DoubleToSingle,cb);
-	// Initial guess is set to zero.
+	// Initial guess is set to zero. Is this the best option?
 	linop_single.set_zero(sol_s[cb]);
       }
       linop.thread_barrier();
@@ -480,7 +482,7 @@ int Dirac_BFM_Wrapper::CGNE_mixed_prec(Fermion_t sol, Fermion_t src, int max_out
       double target_residual = linop.residual/true_residual / 10;
       if ( target_residual < 1.0e-6 ) target_residual = 1.0e-6;
       if ( linop_single.isBoss() && (!me) )
-	printf("BfmMixedPrecision[%d]: setting target residual to %le\n",outer,target_residual);
+	printf("solve_CGNE_mixed_prec[%d]: setting target residual to %le\n",outer,target_residual);
       linop_single.residual = target_residual;
       
       if ( !me ) linop_single.comm_init();  // Start double comms
