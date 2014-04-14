@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-04-04 11:22:41 neo>
+ * Time-stamp: <2014-04-10 15:55:33 cossu>
  */
 
 #include "measGeneral.hpp"
@@ -198,9 +198,7 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
   XML::node smr_node = node_; 
   XML::descend(smr_node,"Smearing"); 
   
-  if(!XML::attribute_compare(smr_node,"type","Off")){
-    return;
-  }else{
+  if(XML::attribute_compare(smr_node,"type","Off")){
     int Nsmear;                                    
     XML::read(smr_node,"Nsmear",Nsmear,MANDATORY);  
 
