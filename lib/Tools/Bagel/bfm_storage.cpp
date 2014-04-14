@@ -19,16 +19,16 @@
 
 #include "omp.h"
 
+template <class Float>
+BFM_Storage<Float>::BFM_Storage(bfm_internal<Float>& bfm):Nx_(CommonPrms::instance()->Nx()),
+							  Ny_(CommonPrms::instance()->Ny()),
+							  Nz_(CommonPrms::instance()->Nz()),
+							  Nt_(CommonPrms::instance()->Nt()),
+							  Nvol_(CommonPrms::instance()->Nvol()),
+							  bfm_obj_(bfm){};
 
-BFM_Storage::BFM_Storage(bfm_dp& bfm):Nx_(CommonPrms::instance()->Nx()),
-				      Ny_(CommonPrms::instance()->Ny()),
-				      Nz_(CommonPrms::instance()->Nz()),
-				      Nt_(CommonPrms::instance()->Nt()),
-				      Nvol_(CommonPrms::instance()->Nvol()),
-				      bfm_obj_(bfm){};
-
-
-void BFM_Storage::BasisConversion(FermionField& F_out, FermionField& F, int ConvType, int cb, int s = 0){
+template <class Float>
+void BFM_Storage<Float>::BasisConversion(FermionField& F_out, FermionField& F, int ConvType, int cb, int s){
   //sqrt(2)^-1 = 0.707106781 = a
   // Gamma matrices transformation (\Gamma)
   //  0   1   0  -1
@@ -94,7 +94,8 @@ void BFM_Storage::BasisConversion(FermionField& F_out, FermionField& F, int Conv
 
 }
 
-void BFM_Storage::GaugeExport_to_BFM(GaugeField& U){
+template <class Float>
+void BFM_Storage<Float>::GaugeExport_to_BFM(GaugeField& U){
   // BFM storage pattern N.B. : EVEN-ODD
   // double gauge [x%2][t][z][y][x/2] [row][column][realimag]  
   using namespace Mapping;
@@ -129,12 +130,14 @@ void BFM_Storage::GaugeExport_to_BFM(GaugeField& U){
   }
 };
 
-void BFM_Storage::GaugeExport_to_BFM(const Field* U){
+template <class Float>
+void BFM_Storage<Float>::GaugeExport_to_BFM(const Field* U){
   GaugeField GF = GaugeField(*U);
   GaugeExport_to_BFM(GF);
 }
 
-void BFM_Storage::GaugeImport_from_BFM(Field* U, Matrix_t handle, int dir, int cb){
+template <class Float>
+void BFM_Storage<Float>::GaugeImport_from_BFM(Field* U, Matrix_t handle, int dir, int cb){
   int Ndircoco=36; /*4 directions stored*/
   int Ncoco=9;
   Format::Format_G GaugeFormat(Nvol_);
@@ -172,8 +175,8 @@ void BFM_Storage::GaugeImport_from_BFM(Field* U, Matrix_t handle, int dir, int c
 }
 
 
-
-void BFM_Storage::FermionExport_to_BFM(FermionField& F, Fermion_t handle, int cb){
+template <class Float>
+void BFM_Storage<Float>::FermionExport_to_BFM(FermionField& F, Fermion_t handle, int cb){
   // BFM storage pattern
   // double psi   [x%2][t][z][y][x/2] [spin][color][realimag]
   double* F_ptr;
@@ -187,7 +190,8 @@ void BFM_Storage::FermionExport_to_BFM(FermionField& F, Fermion_t handle, int cb
   
 };
 
-void BFM_Storage::FermionExport_to_BFM_5D(FermionField& F, Fermion_t handle, int cb, int s){
+template <class Float>
+void BFM_Storage<Float>::FermionExport_to_BFM_5D(FermionField& F, Fermion_t handle, int cb, int s){
   // BFM storage pattern
   // double psi   [x%2][t][z][y][x/2] [spin][color][realimag]
   double* F_ptr;
@@ -203,7 +207,8 @@ void BFM_Storage::FermionExport_to_BFM_5D(FermionField& F, Fermion_t handle, int
   
 };
 
-void BFM_Storage::FermionImport_from_BFM(FermionField&F, Fermion_t handle, int cb){
+template <class Float>
+void BFM_Storage<Float>::FermionImport_from_BFM(FermionField&F, Fermion_t handle, int cb){
   // BFM storage pattern      
   // double psi   [x%2][t][z][y][x/2] [spin][color][realimag]    
   FermionField F_temp(F.Nvol());//to accomodate for 5d fermions
@@ -215,7 +220,8 @@ void BFM_Storage::FermionImport_from_BFM(FermionField&F, Fermion_t handle, int c
 
 };
 
-void BFM_Storage::FermionImport_from_BFM_5D(FermionField&F, Fermion_t handle, int cb, int s, int Ls){
+template <class Float>
+void BFM_Storage<Float>::FermionImport_from_BFM_5D(FermionField&F, Fermion_t handle, int cb, int s, int Ls){
   // BFM storage pattern      
   // double psi   [x%2][t][z][y][x/2] [spin][color][realimag]  
   FermionField F_temp(Nvol_*Ls);//to accomodate for 5d fermions
@@ -231,3 +237,5 @@ void BFM_Storage::FermionImport_from_BFM_5D(FermionField&F, Fermion_t handle, in
 };
 
 				
+template class BFM_Storage<double>;
+template class BFM_Storage<float>;

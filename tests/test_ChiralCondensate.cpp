@@ -19,6 +19,7 @@ int Test_ChiralCondensate::run(){
   XML::descend(ch_node,"ChiralCondensate",MANDATORY);
   InputConfig config = input_.getConfig();
 
+
   /************************************************************************************/
   //
   // For 5-D Inversion
@@ -54,11 +55,19 @@ int Test_ChiralCondensate::run(){
   //
 
   int noise_samples = 1; //default
+  bool measure_connected = false; //default
   XML::read(ch_node, "noise_samples", noise_samples);
 
-  double psibar_psi = ChiralCond.calc(*src, noise_samples);
+  XML::read(ch_node, "connected_susc", measure_connected);
 
-  CCIO::cout << "Chiral condensate: "<< psibar_psi << "\n";
+  if (measure_connected){
+    CCIO::cout << "---------- Measuring connected susceptibilities\n";
+    double conn_pi = ChiralCond.connected_susc(*src, noise_samples);
+  } else {
+    CCIO::cout << "---------- Measuring disconnected susceptibilities\n";
+  double psibar_psi = ChiralCond.calc(*src, noise_samples);
+  CCIO::cout << "Chiral condensate: "<< psibar_psi/CommonPrms::instance()->Lvol() << "\n";
+  }
  
   return 0;
 }

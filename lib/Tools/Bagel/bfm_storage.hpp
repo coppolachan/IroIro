@@ -26,16 +26,17 @@
 //redefine some macros
 #include "iroiro_config.h"
 
-class BFM_Storage {
+template <class Float>
+class BFM_Storage{
   int Nx_, Ny_, Nz_, Nt_;
   int Nvol_;
   GaugeField1D U_dag;
-  bfm_dp& bfm_obj_;
+  bfm_internal<Float>& bfm_obj_;
 
-  void BasisConversion(FermionField& F_out, FermionField& F,int Conversion,int cb, int s); 
+  void BasisConversion(FermionField& F_out, FermionField& F,int Conversion,int cb, int s = 0); 
   BFM_Storage(); //Hide default Constructor
 public:
-  BFM_Storage(bfm_dp&); //The allowed constructor
+  BFM_Storage(bfm_internal<Float>&); //The allowed constructor
   void GaugeExport_to_BFM(GaugeField& U); // higher level
   void GaugeExport_to_BFM(const Field* U); // higher level
   void GaugeImport_from_BFM(Field* U, Matrix_t handle, int dir, int cb);
@@ -52,5 +53,6 @@ public:
 
 };
 
+//#include "bfm_storage.cpp"
 
 #endif

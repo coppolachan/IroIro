@@ -114,7 +114,7 @@ int Test_Solver_BFM::run(){
     }
   }
   CCIO::cout << "EO_source filled\n";
-
+  FermionField fe_FF(fe); 
   ////////////////////////////////////////////////////////////////////////////////// 
   // Force term 
   Field force_BFM = BFMoperator.md_force(fe ,fe);
@@ -134,7 +134,16 @@ int Test_Solver_BFM::run(){
   Solver_CG_DWF_Optimized *SolverCGNE = SolveBFM.getSolver(BFMop_with_fact);
   FermionField BFMsolution3(Nvol5d/2);//half vector
   SolverCGNE->solve(BFMsolution3.data,fe);
+
+
+  // Using the factory object
+  FermionField BFMsolution2(Nvol5d);
+  BFMop_with_fact->solve_CGNE(BFMsolution2, fe_FF);
   
+  // Using the factory object (mixed precision)
+  FermionField BFMsolutionMixed(Nvol5d);
+  BFMop_with_fact->solve_CGNE_mixed_prec(BFMsolutionMixed, fe_FF);
+
   ///////////////////////////////////////////////////////////////////////////////////////
   // Action Nf2 using BFM
   SmartConf SConf;
@@ -173,7 +182,7 @@ int Test_Solver_BFM::run(){
   SO.print();
 
   std::vector < FermionField > BFM_ms_solution(shifts.size());
-  FermionField fe_FF(fe);
+ 
   BFMop_with_fact->solve_CGNE_multishift(BFM_ms_solution, fe_FF, shifts, mresiduals);
 
   for(int nsol = 0; nsol < 3; nsol++){
@@ -186,6 +195,8 @@ int Test_Solver_BFM::run(){
     CCIO::cout << "Operator Difference BFM-IroIro ["<<nsol<<"] = "<< F_Diff.norm() << "\n";
   }
   
+
+  /*
   Field sol(fe);
   Spinor *fe_ptr = (Spinor*)fe.getaddr(0);
   Spinor *sol_ptr = (Spinor*)sol.getaddr(0);
@@ -222,21 +233,21 @@ int Test_Solver_BFM::run(){
   	     << "  "<< mult_dag_IroIro.norm() << "\n";
 
   CCIO::cout << "Mult_dag check Difference BFM-IroIro = "<< mult_dag_Diff.norm() << "\n";
-  
+  /*
   
   ///////////////////////////////////////////////////////////////////////////////////////
   // Solver CG using BFM
-  /*
+  
   FermionField BFMsolution(Nvol5d);
   BFMoperator.solve_CGNE(BFMsolution, EO_source);
-
-  // Using the factory object
-  FermionField BFMsolution2(Nvol5d);
-  BFMop_with_fact->solve_CGNE(BFMsolution2, EO_source);
   */
+
+  
  
   Field F_Diff = output_f;
-  F_Diff -= BFMsolution3.data;
+  //F_Diff -= BFMsolution3.data;
+  //F_Diff -= BFMsolution2.data;
+  F_Diff -= BFMsolutionMixed.data;
   /*
   for (int i = 0; i < fe.size() ; i++){
     double diff = abs(BFMsolution3.data[i]-output_f[i]);

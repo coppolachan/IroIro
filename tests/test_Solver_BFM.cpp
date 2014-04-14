@@ -90,10 +90,10 @@ int Test_Solver_BFM::run(){
   //  dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
   dwfa.pWilson(mq);
 
-  bfm_dp linop;
+  bfm_internal<double> linop;
   linop.init(dwfa);
 
-  BFM_Storage BFM_interface(linop);
+  BFM_Storage<double> BFM_interface(linop);
   BFM_interface.GaugeExport_to_BFM(conf_);
   
   //launch the test

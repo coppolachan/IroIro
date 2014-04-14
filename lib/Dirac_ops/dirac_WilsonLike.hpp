@@ -1,6 +1,6 @@
 /*! @file dirac_WilsonLike.hpp
  *  @brief defines the abstract base classes for DiracWilsonLike 
- * Time-stamp: <2013-12-05 09:35:12 noaki>
+ * Time-stamp: <2014-04-01 12:10:44 cossu>
  */
 #ifndef DIRAC_WILSONLIKE_INCLUDED
 #define DIRAC_WILSONLIKE_INCLUDED
@@ -91,6 +91,10 @@ public:
 
   virtual const Field mult_inv(const Field&) const =0;
   virtual const Field mult_dag_inv(const Field&) const =0;
+
+  virtual double getMass() const =0; // necessary for the subtraction of the contact term
+                                     // in the 4d propagators
+
 };
 
 #endif

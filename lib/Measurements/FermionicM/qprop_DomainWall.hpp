@@ -1,7 +1,7 @@
 /*!
  * @file qprop_DomainWall.hpp
  * @brief Definition of Qprop domain wall fermions QpropDWF
- Time-stamp: <2013-12-05 09:39:59 noaki>
+ Time-stamp: <2014-04-11 14:11:57 noaki>
  */
 #ifndef QPROP_DOMAINWALL_INCLUDED
 #define QPROP_DOMAINWALL_INCLUDED
@@ -10,6 +10,8 @@
 #include "Dirac_ops/dirac_WilsonLike.hpp"
 #include "include/commonPrms.hpp"
 #include "source.hpp"
+
+#define PHYSICAL_QUARK_PROPAGATOR
 
 typedef std::vector<Field> prop_t;
 
@@ -22,7 +24,13 @@ public:
   QpropDWF(const Dirac_DomainWall_4D& Ddw4D)
     :Dgw_(Ddw4D),
      Nc_(CommonPrms::instance()->Nc()),
-     Nd_(CommonPrms::instance()->Nd()){}
+     Nd_(CommonPrms::instance()->Nd()){
+#ifdef PHYSICAL_QUARK_PROPAGATOR
+    CCIO::cout<<"QpropDWF: obtaining physical quark propagator\n";
+#else 
+    CCIO::cout<<"QpropDWF: obtaining 1/Ddwf(4)\n";
+#endif
+  }
 
   ~QpropDWF(){}
   

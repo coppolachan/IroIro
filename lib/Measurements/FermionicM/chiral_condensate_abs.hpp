@@ -13,6 +13,7 @@
 
 class ChiralCondensate {
   virtual Field invert (Field&) const = 0;
+  virtual Field gamma5 (Field&) const = 0;
   virtual int fsize()const = 0;
 public:
   /*! @brief Public destructor */
@@ -20,6 +21,7 @@ public:
   
   /*! @brief Calculates the condensate */
   double calc(Source& src, const int) const;
+  double connected_susc(Source& src, const int) const;
 };
 #endif
 

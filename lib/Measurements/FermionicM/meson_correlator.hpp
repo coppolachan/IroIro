@@ -130,20 +130,21 @@ template <typename F>
 const std::vector<double> MesonCorrelator::calculate(const prop_t& q1,
                                                      const prop_t& q2,
 						     int direction){
-  
   F fmt(CommonPrms::instance()->Nvol());
   //int Nt = CommonPrms::instance()->Nt();
   int Nt = CommonPrms::instance()->local_size(direction);
   std::vector<double> correl_local(Nt,0.0);
   
-  //int slice3d = SiteIndex::instance()->slsize(0,TDIR);
   int slice3d = SiteIndex::instance()->slsize(0,direction);
-  
+
 #pragma omp parallel for
   for (int t = 0; t< Nt; t++) {
     for(int site=0; site<slice3d; ++site){
+      
       //int site3d = SiteIndex::instance()->slice_t(t,site);
       int site3d = (SiteIndex::instance()->*SiteIndex::slice_dir[direction])(t,site);
+
+
       /// loop over spinor and color indexes
       for(int s4=0; s4<Nd_; ++s4){
 	/// s4 -> s1

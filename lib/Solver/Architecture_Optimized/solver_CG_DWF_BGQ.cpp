@@ -3,7 +3,7 @@
  *
  * @brief Definition of Solver_CG_DWF_Optimized class
  *
- * Time-stamp: <2013-08-14 10:10:51 cossu>
+ * Time-stamp: <2014-04-09 13:55:39 neo>
  */
 
 // Valid only for BGQ
@@ -17,7 +17,11 @@ SolverOutput Solver_CG_DWF_Optimized::solve(Field& xq,const Field& b) const{
   if (is_BFM) {
     FermionField xq_FF(xq);
     FermionField b_FF(b);
-    BFM_opr_->solve_CGNE(xq_FF, b_FF);
+    if (BFM_opr_->is_mixed_precision()){
+      BFM_opr_->solve_CGNE_mixed_prec(xq_FF, b_FF);
+    } else {
+      BFM_opr_->solve_CGNE(xq_FF, b_FF);
+    }
     xq = xq_FF.data;
   } else 
 #endif
