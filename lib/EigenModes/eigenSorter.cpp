@@ -54,6 +54,7 @@ bool EigenSorter_low::beyond_thrs(double lmd) const{
   return fabs(lmd) > fabs(thrs_);}
 
 void EigenSorter_low::push(vector<double>& lmd,int N) const{
+  CCIO::cout<<"EigenSorter_low::push called\n";
   std::partial_sort(lmd.begin(),lmd.begin()+N,lmd.end(),less_lmd);}
 
 void EigenSorter_low::push(vector<double>& lmd,vector<Field>& evec,int N) const{

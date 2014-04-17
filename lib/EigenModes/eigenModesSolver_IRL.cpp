@@ -65,13 +65,22 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
       CCIO::cout<<"ta["<<i<<"]="<<ta[i]<<"\n";
     */
     diagonalize(tta,ttb,Qt,Nm_); 
-
+    /*
+    CCIO::cout<<"no sort\n";
+    for(int l=0; l<tta.size();++l) CCIO::cout<<"tta["<<l<<"]="<<tta[l]<<"\n";
+    */
     esorter_->push(tta,Nm_);          /*!< @brief sort by the absolute values*/
-
+    /*
+    CCIO::cout<<"sorted\n";
+    for(int l=0; l<tta.size();++l) CCIO::cout<<"tta["<<l<<"]="<<tta[l]<<"\n";
+    */
     // QR transformations with implicit shifts tta[p]
     setUnit(Qt);
     for(int p=Nk_; p<Nm_; ++p) QRfact_Givens(ta,tb,Qt,Nm_,tta[p],0,Nm_-1);
-
+    /*
+    CCIO::cout<<"shifted QR\n";
+    for(int l=0; l<ta.size();++l) CCIO::cout<<"ta["<<l<<"]="<<ta[l]<<"\n";
+    */
     for(int i=0; i<Nk_+1; ++i){         // getting V+
       Vp[i] = 0.0;
       for(int j=0; j<Nm_; ++j) Vp[i] += Qt[i*Nm_+j]*V[j];
@@ -95,7 +104,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 
     for(int i=0; i<Nk_; ++i){
 
-      Vp[i] = 0.0;                    /*!< @brief eigenvectors */
+       Vp[i] = 0.0;                    /*!< @brief eigenvectors */
       for(int j=0; j<Nk_; ++j) Vp[i] += Qt[i*Nm_+j]*V[j];  
 
       //double res = fabs(Qt[i*Nm_+Nk_-1]*tb[Nk_-1]);
@@ -110,7 +119,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
       double vv = Vp[i]*Vp[i];
       tta[i] = vAv/vv;
       Av -= tta[i]*Vp[i];
-      double res = Av.norm()/norm;
+      double res = Av.norm()/sqrt(vv);
 
       CCIO::cout<<" ["<<setw( 3)<<setiosflags(ios_base::right)<<i<<"] ";
       CCIO::cout<<      setw(25)<<setiosflags(ios_base::left) <<tta[i];
