@@ -15,6 +15,7 @@
   Other topics in this page:
   * - \ref improved_kernels
   * - \ref verbosity
+  * - \ref BGQmemory_monitor
   * - \ref dep_lib
   * - \ref testing
   * - \ref Silent
@@ -186,6 +187,24 @@
   ./reconfigure_script  @endverbatim
   
   In the main directory of the source tree.
+
+
+  @section BGQmemory_monitor BGQ memory monitor
+  
+  A useful tool for checking memory during execution has been implemented for BGQ. 
+  To enable some runtime memory monitoring just add the flag 
+
+  @verbatim
+  CPPFLAGS+=-DBGQ_MEMORY_MONITOR
+  @endverbatim
+
+  to the make command for compilation. 
+
+  Example
+
+  @verbatim
+  make CPPFLAGS+=-DBGQ_MEMORY_MONITOR
+  @endverbatim
 
 
 */

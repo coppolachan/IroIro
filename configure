@@ -2888,9 +2888,6 @@ fi
 
 
 
-
-
-
 ######################################################################
 # many HPC systems are configured so that running parallel programs
 # interactively is disabled: on those systems, AC_PROG_F77 and AC_PROG_CC

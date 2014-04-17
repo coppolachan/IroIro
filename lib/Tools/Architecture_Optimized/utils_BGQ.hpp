@@ -2,7 +2,7 @@
  * @file utils_BGQ.hpp
  * @brief typedef & global functions to be used on BGQ
 
- * Time-stamp: <2014-01-24 14:59:02 cossu>
+ * Time-stamp: <2014-04-17 12:49:49 neo>
  *-------------------------------------------------------------------------*/
 #ifndef UTILS_BGQ_INCLUDED
 #define UTILS_BGQ_INCLUDED
@@ -24,5 +24,8 @@ typedef struct GaugeConfig{
 #define ENABLE_THREADING
 
 double omp_norm(Spinor* pointer,int is,int ns,int nid,int tid);
+
+void MonitorBGQMemory();
+
 
 #endif
