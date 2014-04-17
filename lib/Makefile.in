@@ -223,7 +223,9 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/ErrorsHandling/parameter_errors.cpp \
 	Tools/RandomNumGen/dcmt_wrapper.cpp \
 	Tools/RandomNumGen/randNum_MT19937.cpp \
-	Tools/Timings/timings.cpp UpdatingAlg/HeatBath/heatbath.cpp \
+	Tools/Timings/timings.cpp \
+	Tools/Architecture_Optimized/utils_BGQ.cpp \
+	UpdatingAlg/HeatBath/heatbath.cpp \
 	UpdatingAlg/HeatBath/HBActions_SUN.cpp \
 	Scalar_ops/laplacian.cpp \
 	Scalar_ops/scalar_Operator_FactoryCreator.cpp
@@ -263,6 +265,8 @@ am__objects_7 = $(am__objects_6)
 @IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	APEsmear.$(OBJEXT)
 am__objects_12 = $(am__objects_9) $(am__objects_10) $(am__objects_11)
 @USE_DCMT_TRUE@am__objects_13 = dcmt_wrapper.$(OBJEXT)
+@IBM_BGQKERNELS_TRUE@am__objects_14 = utils_BGQ.$(OBJEXT)
+am__objects_15 = $(am__objects_14)
 am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	$(am__objects_2) action.$(OBJEXT) \
 	action_gauge_wilson.$(OBJEXT) \
@@ -334,8 +338,8 @@ am_libcommcode_a_OBJECTS = commonPrms.$(OBJEXT) $(am__objects_1) \
 	allocation_errors.$(OBJEXT) base_errors.$(OBJEXT) \
 	io_errors.$(OBJEXT) convergence_errors.$(OBJEXT) \
 	parameter_errors.$(OBJEXT) $(am__objects_13) \
-	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) heatbath.$(OBJEXT) \
-	HBActions_SUN.$(OBJEXT) laplacian.$(OBJEXT) \
+	randNum_MT19937.$(OBJEXT) timings.$(OBJEXT) $(am__objects_15) \
+	heatbath.$(OBJEXT) HBActions_SUN.$(OBJEXT) laplacian.$(OBJEXT) \
 	scalar_Operator_FactoryCreator.$(OBJEXT)
 libcommcode_a_OBJECTS = $(am_libcommcode_a_OBJECTS)
 PROGRAMS = $(bin_PROGRAMS)
@@ -696,7 +700,7 @@ top_srcdir = @top_srcdir@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-04-08 11:07:28 cossu>
+# Time-stamp: <2014-04-17 13:09:10 cossu>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -884,6 +888,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		$(DCMT_SRC)				\
 		Tools/RandomNumGen/randNum_MT19937.cpp	\
 		Tools/Timings/timings.cpp		\
+		$(UTILS_SRC)				\
 		UpdatingAlg/HeatBath/heatbath.cpp	\
 		UpdatingAlg/HeatBath/HBActions_SUN.cpp	\
 		Scalar_ops/laplacian.cpp	        \
@@ -1388,6 +1393,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/text_header.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/timings.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/topologyGeom.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utils_DWF4d.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wilsonFlow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/wilsonLikeUtils.Po@am__quote@
@@ -3792,6 +3798,22 @@ timings.obj: Tools/Timings/timings.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/Timings/timings.cpp' object='timings.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o timings.obj `if test -f 'Tools/Timings/timings.cpp'; then $(CYGPATH_W) 'Tools/Timings/timings.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Timings/timings.cpp'; fi`
+
+utils_BGQ.o: Tools/Architecture_Optimized/utils_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_BGQ.o -MD -MP -MF $(DEPDIR)/utils_BGQ.Tpo -c -o utils_BGQ.o `test -f 'Tools/Architecture_Optimized/utils_BGQ.cpp' || echo '$(srcdir)/'`Tools/Architecture_Optimized/utils_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utils_BGQ.Tpo $(DEPDIR)/utils_BGQ.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/Architecture_Optimized/utils_BGQ.cpp' object='utils_BGQ.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o utils_BGQ.o `test -f 'Tools/Architecture_Optimized/utils_BGQ.cpp' || echo '$(srcdir)/'`Tools/Architecture_Optimized/utils_BGQ.cpp
+
+utils_BGQ.obj: Tools/Architecture_Optimized/utils_BGQ.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT utils_BGQ.obj -MD -MP -MF $(DEPDIR)/utils_BGQ.Tpo -c -o utils_BGQ.obj `if test -f 'Tools/Architecture_Optimized/utils_BGQ.cpp'; then $(CYGPATH_W) 'Tools/Architecture_Optimized/utils_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Architecture_Optimized/utils_BGQ.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/utils_BGQ.Tpo $(DEPDIR)/utils_BGQ.Po
+@am__fastdepCXX_FALSE@	$(AM_V_CXX) @AM_BACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='Tools/Architecture_Optimized/utils_BGQ.cpp' object='utils_BGQ.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o utils_BGQ.obj `if test -f 'Tools/Architecture_Optimized/utils_BGQ.cpp'; then $(CYGPATH_W) 'Tools/Architecture_Optimized/utils_BGQ.cpp'; else $(CYGPATH_W) '$(srcdir)/Tools/Architecture_Optimized/utils_BGQ.cpp'; fi`
 
 heatbath.o: UpdatingAlg/HeatBath/heatbath.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT heatbath.o -MD -MP -MF $(DEPDIR)/heatbath.Tpo -c -o heatbath.o `test -f 'UpdatingAlg/HeatBath/heatbath.cpp' || echo '$(srcdir)/'`UpdatingAlg/HeatBath/heatbath.cpp

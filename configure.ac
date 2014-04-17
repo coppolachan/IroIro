@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-04-04 11:30:49 neo>
+# Time-stamp: <2014-04-17 12:56:03 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.7], [cossu@post.kek.jp])
@@ -162,9 +162,6 @@ AC_ARG_WITH(bfm,
 	  bfm_include=${with_bfm}/include
 	  bfm_lib=${with_bfm}/lib	
 	],[bfm_link=false])
-
-
-
 
 
 ######################################################################

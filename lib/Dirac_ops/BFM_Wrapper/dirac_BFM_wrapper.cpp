@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-04-14 11:41:59 neo>
+ * Time-stamp: <2014-04-17 13:02:01 neo>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -9,9 +9,12 @@
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
 #include "include/errors.hpp"
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 #include <stdlib.h>     /* atoi */
 #include <stdio.h>
 #include <omp.h>
+
+
 
 Dirac_BFM_Wrapper_params::Dirac_BFM_Wrapper_params(XML::node BFMnode){
   XML::node top_BFM_node = BFMnode;
@@ -109,21 +112,12 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
 
   
 
+
+
+
 }
 
-Dirac_BFM_Wrapper::~Dirac_BFM_Wrapper(){
-  CCIO::cout << "Destroying Dirac_BFM_Wrapper\n";
-  if (is_initialized) {
-    for(int cb=0;cb<2;cb++){
-      linop.freeFermion(psi_h[cb]);
-      linop.freeFermion(chi_h[cb]);
-    } 
-    linop.freeFermion(tmp);
-  }
 
-  bfm_free(linop.u);
-  bfm_free(linop_single.u);
-}
 
 const Field Dirac_BFM_Wrapper::mult(const Field& Fin)const{
   // Now, july 2013, just a safe implementation
@@ -280,6 +274,7 @@ Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
       linop.MprecTilde(chi_h[cb],psi_h[cb],tmp,1,donrm);// dag=1 
       // psi[even] = Mtilde^dag chi[even]     to get the correct inversion of Mtilde 
       if (BFMparams.is_mixed_precision){
+	if ( !me ) linop.comm_end();//CGNE_mixed_prec takes care of the comms
 	CGNE_mixed_prec(chi_h[cb],psi_h[cb],linop.max_iter/100);
 	if ( !me ) linop.comm_init();//CGNE_mixed_prec closes all comms
       } else {
@@ -781,9 +776,45 @@ void Dirac_BFM_Wrapper::initialize(){
     linop.init(parameters);
     linop_single.init(parameters);
     AllocateFields(); // just for the double 
+    
+    // close communications opened by init (and free buffers)
+    // every function will reopen when necessary
+    // avoids clashes with IroIro comms
+    linop.comm_end();
+    
+#ifdef BGQ_MEMORY_MONITOR
+    MonitorBGQMemory();
+#endif
+
     is_initialized = true;
   }
+
 }
+
+Dirac_BFM_Wrapper::~Dirac_BFM_Wrapper(){
+  if (is_initialized) {
+    for(int cb=0;cb<2;cb++){
+      linop.freeFermion(psi_h[cb]);
+      linop.freeFermion(chi_h[cb]);
+    } 
+    
+    linop.freeFermion(tmp);
+    linop.pointers_end();
+    linop_single.pointers_end();
+    linop.GeneralisedFiveDimEnd();
+    linop_single.GeneralisedFiveDimEnd();
+  }
+
+  bfm_free(linop.u);
+  bfm_free(linop_single.u);
+  
+
+#ifdef BGQ_MEMORY_MONITOR  
+  MonitorBGQMemory();
+#endif
+}
+
+
 
 void Dirac_BFM_Wrapper::set_SolverParams(XML::node node){
   BFMparams.set_SolverParams(node);
