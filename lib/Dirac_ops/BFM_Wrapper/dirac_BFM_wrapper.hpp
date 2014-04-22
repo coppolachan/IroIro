@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-04-09 15:06:30 neo>
+ * Time-stamp: <2014-04-22 10:58:32 neo>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -124,14 +124,27 @@ public:
   bool is_mixed_precision(){return BFMparams.is_mixed_precision;}
   void solve_CGNE(FermionField& out, FermionField& in);
   void solve_CGNE_mixed_prec(FermionField& out, FermionField& in);
-  //internal mixed precision solver
+  //internal mixed precision solvers
   int CGNE_mixed_prec(Fermion_t sol, Fermion_t src, int max_outer);
+  int CGNE_prec_MdagM_multi_shift_mixed_prec(Fermion_t sol[], //solution
+					     Fermion_t src,   //source
+					     double    mass[],
+					     double    alpha[],
+					     int       nshift,
+					     double mresidual[],
+					     int single,
+					     int max_outer);
+
   void set_SolverParams(XML::node);
   void solve_CGNE_multishift(std::vector < FermionField >& solution, 
 			     FermionField& source,
 			     vector_double shifts,
 			     vector_double mresiduals);
-
+  void solve_CGNE_multishift_mixed_precision(std::vector < FermionField > & solutions, 
+					     FermionField& source,
+					     vector_double shifts,
+					     vector_double mresiduals);
+  
 };
 
 #endif
