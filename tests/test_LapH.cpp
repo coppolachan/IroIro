@@ -126,6 +126,9 @@ int Test_LapH_Solver::run()
   //      Need: 120*4 = 480  Z4 random numbers at each t0
   //
 
+
+  
+
   std::valarray<double> white_noise(0.0, num_rand);
   std::valarray<double> rho(0.0, num_rand*2); 
   input_.rng->get(white_noise);    
@@ -246,14 +249,9 @@ int Test_LapH_Solver::run()
 	CCIO::cout << "[Timing] Solution(s) save: "<< timer_save << "\n";
 	// One can also project the solution onto the eigenvectors at this stage and
 	// save only the coefficients if we know we will be smearing at the sink.   
-	/*
-	  for(int site=0; site<Nvol; ++site){
-	  double Op = 0;
-	  if (SiteIndex::g_t(site) == time_slice){
-	  Op += srcfield.data[srcfield.format.slice_islice(site)]*(Dw_eo.gamma5(solution));
-	  }
-	  }
-	*/
+
+
+
       }
       
 
