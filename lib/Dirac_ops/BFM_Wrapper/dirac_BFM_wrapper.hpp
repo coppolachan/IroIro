@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-04-22 10:58:32 neo>
+ * Time-stamp: <2014-04-22 16:40:09 neo>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -125,7 +125,7 @@ public:
   void solve_CGNE(FermionField& out, FermionField& in);
   void solve_CGNE_mixed_prec(FermionField& out, FermionField& in);
   //internal mixed precision solvers
-  int CGNE_mixed_prec(Fermion_t sol, Fermion_t src, int max_outer);
+  int CGNE_mixed_prec(Fermion_t sol, Fermion_t src, int max_outer, double shift = 0);
   int CGNE_prec_MdagM_multi_shift_mixed_prec(Fermion_t sol[], //solution
 					     Fermion_t src,   //source
 					     double    mass[],

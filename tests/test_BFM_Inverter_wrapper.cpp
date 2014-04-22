@@ -164,9 +164,9 @@ int Test_Solver_BFM::run(){
   ///////////////////////////////////////////////////////////////////////////////////////
   // Solver MultishiftCG using BFM
   vector_double shifts(3);
-  shifts[0] = 0.01;
-  shifts[1] = 0.02;
-  shifts[2] = 0.03;
+  shifts[0] = 0.001;
+  shifts[1] = 0.002;
+  shifts[2] = 0.003;
   vector_double mresiduals(3);
   mresiduals[0] = 1e-12;
   mresiduals[1] = 1e-12;
@@ -183,8 +183,24 @@ int Test_Solver_BFM::run(){
 
   std::vector < FermionField > BFM_ms_solution(shifts.size());
  
+  
   BFMop_with_fact->solve_CGNE_multishift(BFM_ms_solution, fe_FF, shifts, mresiduals);
+  /*
+  for(int nsol = 0; nsol < 3; nsol++){
+    Field F_Diff = shifted_sol[nsol];
+    //F_Diff -= fe;
+    F_Diff -= BFM_ms_solution[nsol].data;
+    CCIO::cout << "Operator IroIro ["<<nsol<<"] = "<< shifted_sol[nsol].norm() << "\n";
+    CCIO::cout << "Operator BFM ["<<nsol<<"] = "<< BFM_ms_solution[nsol].norm() << "\n";
+ 
+    CCIO::cout << "Operator Difference BFM-IroIro ["<<nsol<<"] = "<< F_Diff.norm() << "\n";
+  }
+  */
+  ///////////////////////////////////////////////////////////////////////////////////////
+  // Solver MultishiftCG using BFM in mixed precision
+  BFMop_with_fact->solve_CGNE_multishift_mixed_precision(BFM_ms_solution, fe_FF, shifts, mresiduals);
 
+ 
   for(int nsol = 0; nsol < 3; nsol++){
     Field F_Diff = shifted_sol[nsol];
     //F_Diff -= fe;
