@@ -119,17 +119,15 @@ void EigenCalcGeneral::get_eval(const Fopr_Herm* opr){
   CCIO::cout<< setiosflags(ios_base::scientific);
   for(int i=0; i<Neig_; ++i){
     Field Av = opr->mult(evecs_[i]);
-    double vv = evecs_[i]*evecs_[i];
-
     evals_[i] = evecs_[i]*Av;    
-    evals_[i] /= vv;    
     Av -= evals_[i]*evecs_[i]; 
-    double res = Av*Av; // residual 
-    
+    double res = Av.norm(); // residual 
+    double vndif = evecs_[i].norm() -1.0;
+
     CCIO::cout<<" ["<<setw( 3)<<setiosflags(ios_base::right)<< i<<"] ";
     CCIO::cout<<      setw(25)<<setiosflags(ios_base::left )<< evals_[i];
     CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<< res;
-    CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<< vv-1.0 <<endl;
+    CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<< vndif <<"\n";
   }
   CCIO::cout<< resetiosflags(ios_base::scientific);
 }

@@ -2,7 +2,7 @@
  * @file HadronSpectrum_Nf2p1.cpp
  * @brief Implementation of HadronSpectrum_Nf2p1 class
  *
- * Time-stamp: <2014-01-29 11:44:23 neo>
+ * Time-stamp: <2014-04-22 08:55:03 noaki>
  */
 
 #include "HadronSpectrum_Nf2p1.hpp"
@@ -111,6 +111,28 @@ int HadronSpectrum_Nf2p1::run(){
   output_baryon(writer,baryons.xi10(XDIR,UP),   baryons.xi10(XDIR,DN),   "------ Xi10_X ------");
   output_baryon(writer,baryons.xi10(YDIR,UP),   baryons.xi10(YDIR,DN),   "------ Xi10_Y ------");
   output_baryon(writer,baryons.xi10(ZDIR,UP),   baryons.xi10(ZDIR,DN),   "------ Xi10_Z ------");
+
+  /////////////////////////////// Extra Meson Channels /////////////////////////////////////
+  MesonCorrelator ss(Scalar),a4a4(AVector4),a4p(AV4_PS),pa4(PS_AV4); 
+
+  CCIO::cout << " ::::::::::::: Performing contractions for extra meson channels\n";
+  if(Communicator::instance()->primaryNode()) writer<<"====== extra meson channels ======\n";
+
+  output_meson(writer, ss.calculate<Format::Format_F>(sq_ud,sq_ud),"------ SS(ud,ud) ------");
+  output_meson(writer, ss.calculate<Format::Format_F>(sq_s, sq_ud),"------ SS(s,ud) ------");
+  output_meson(writer, ss.calculate<Format::Format_F>(sq_s, sq_s), "------ SS(s,s) ------");
+  
+  output_meson(writer,a4a4.calculate<Format::Format_F>(sq_ud,sq_ud),"------ A4A4(ud,ud) ------");
+  output_meson(writer,a4a4.calculate<Format::Format_F>(sq_s, sq_ud),"------ A4A4(s,ud) ------");
+  output_meson(writer,a4a4.calculate<Format::Format_F>(sq_s, sq_s), "------ A4A4(s,s) ------");
+  /// <A4(t)P(0)>
+  output_meson(writer,a4p.calculate<Format::Format_F>(sq_ud,sq_ud),"------ A4P(ud,ud) ------");
+  output_meson(writer,a4p.calculate<Format::Format_F>(sq_s, sq_ud),"------ A4P(s,ud) ------");
+  output_meson(writer,a4p.calculate<Format::Format_F>(sq_s, sq_s), "------ A4P(s,s) ------");
+  /// <P(t)A4(0)>
+  output_meson(writer,pa4.calculate<Format::Format_F>(sq_ud,sq_ud),"------ PA4(ud,ud) ------");
+  output_meson(writer,pa4.calculate<Format::Format_F>(sq_s, sq_ud),"------ PA4(s,ud) ------");
+  output_meson(writer,pa4.calculate<Format::Format_F>(sq_s, sq_s), "------ PA4(s,s) ------");
 
   return 0;
 }

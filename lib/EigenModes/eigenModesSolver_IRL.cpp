@@ -26,24 +26,14 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
   CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Np<<" Nm = "<<Nm_<<"\n";
 
   ta.resize(Nm_); 
-  /*
-  V.resize(Nm_);
-  for(int i=0; i<Nm_; ++i) V[i].resize(fsize,1.0);
-  */
   V.assign(Nm_,Field(fsize,1.0));
 
   double nv = V[0].norm();
   V[0] /= nv;                       /*!< @brief initial vector (uniform)*/
 
-  //for(int i=0; i<V[0].size();++i) 
-  // CCIO::cout<<"V[0]["<<i<<"]="<<(V[0])[i]<<"\n";
-
   vector<double> tb(Nm_);
   lanczos_init(ta,tb,V);            /*!< @brief initial Lanczos-decomp */
-  //
-  //for(int i=0; i<ta.size();++i) 
-  //CCIO::cout<<"ta["<<i<<"]="<<ta[i]<<"\n";
-  //
+
   vector<double> tta(Nm_),ttb(Nm_);
   vector<double> Qt(Nm_*Nm_);
 
@@ -60,27 +50,14 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
     /****** Restarting procedures ******/
     lanczos_ext(ta,tb,V,f);        /*!< @brief extended Lanczos-decomp*/
     tta = ta;  ttb = tb;           /*!< @brief getting shifts */
-    /*
-    for(int i=0; i<ta.size();++i) 
-      CCIO::cout<<"ta["<<i<<"]="<<ta[i]<<"\n";
-    */
+
     diagonalize(tta,ttb,Qt,Nm_); 
-    /*
-    CCIO::cout<<"no sort\n";
-    for(int l=0; l<tta.size();++l) CCIO::cout<<"tta["<<l<<"]="<<tta[l]<<"\n";
-    */
     esorter_->push(tta,Nm_);          /*!< @brief sort by the absolute values*/
-    /*
-    CCIO::cout<<"sorted\n";
-    for(int l=0; l<tta.size();++l) CCIO::cout<<"tta["<<l<<"]="<<tta[l]<<"\n";
-    */
-    // QR transformations with implicit shifts tta[p]
+
+    /// QR transformations with implicit shifts tta[p]
     setUnit(Qt);
     for(int p=Nk_; p<Nm_; ++p) QRfact_Givens(ta,tb,Qt,Nm_,tta[p],0,Nm_-1);
-    /*
-    CCIO::cout<<"shifted QR\n";
-    for(int l=0; l<ta.size();++l) CCIO::cout<<"ta["<<l<<"]="<<ta[l]<<"\n";
-    */
+
     for(int i=0; i<Nk_+1; ++i){         // getting V+
       Vp[i] = 0.0;
       for(int j=0; j<Nm_; ++j) Vp[i] += Qt[i*Nm_+j]*V[j];
@@ -96,7 +73,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
     /******  Convergence test  ******/
     tta = ta;  ttb = tb;
     diagonalize(tta,ttb,Qt,Nk_); /*!< @brief Qt contains Nk_ eigenvectors */
-
+    
     i_conv.clear();
     int Nover = 0; /*!< @brief Num of converged eigenvalues beyond thrs.*/
 
@@ -104,7 +81,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 
     for(int i=0; i<Nk_; ++i){
 
-       Vp[i] = 0.0;                    /*!< @brief eigenvectors */
+      Vp[i] = 0.0;                    /*!< @brief eigenvectors */
       for(int j=0; j<Nk_; ++j) Vp[i] += Qt[i*Nm_+j]*V[j];  
 
       //double res = fabs(Qt[i*Nm_+Nk_-1]*tb[Nk_-1]);
@@ -116,10 +93,9 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
       Field Av = opr_->mult(Vp[i]);
       double norm = Av.norm();
       double vAv = Vp[i]*Av;
-      double vv = Vp[i]*Vp[i];
-      tta[i] = vAv/vv;
+      tta[i] = vAv;
       Av -= tta[i]*Vp[i];
-      double res = Av.norm()/sqrt(vv);
+      double res = Av.norm();
 
       CCIO::cout<<" ["<<setw( 3)<<setiosflags(ios_base::right)<<i<<"] ";
       CCIO::cout<<      setw(25)<<setiosflags(ios_base::left) <<tta[i];
@@ -177,7 +153,6 @@ lanczos_init(vector<double>& ta,vector<double>& tb,vector<Field>& V)const{
   using namespace FieldExpression;
 
   Field f = opr_->mult(V[0]);
-  //  for(int i=0; i<f.size(); ++i) CCIO::cout<<"f["<<i<<"]="<<f[i]<<"\n";
 
   double ab = V[0]*f;
   f -= ab*V[0];
@@ -284,14 +259,28 @@ void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
   int kmin = 0, kmax = Nk-1;
 
   for(int iter=0; iter<Niter; ++iter){
-    double sft = ta[kmax];
 
-    QRfact_Givens(ta,tb,Qt,Nk,sft,kmin,kmax); // transformation
+    double sft = 0.5*(ta[kmax]+ta[kmax-1]);
+    double dif = 0.5*(ta[kmax]-ta[kmax-1]);
+    sft += dif/fabs(dif)*sqrt(dif*dif +tb[kmax-1]*tb[kmax-1]);
     
-    if(kmax == kmin+1){ /*!< Convergence criterion */
-      Niter = iter;
-      return;
+    QRfact_Givens(ta,tb,Qt,Nk,sft,kmin,kmax); // transformation
+
+    if(kmax==kmin+1){ /*!< Convergence criterion */
+      for(int ni=iter; ni<Niter; ++ni){
+	QRfact_Givens(ta,tb,Qt,Nk,ta[kmax],kmin,kmax); 
+
+	double dds = fabs(ta[kmin])+fabs(ta[kmax]);
+	if(fabs(tb[kmin])+dds == dds){
+	  Niter = iter;
+	  return;
+	}
+      }
+      CCIO::cout<<"[QR method] reached to maximum iterations: "<<Niter<<"\n";
+      CCIO::cout<<"failed at kmax="<<kmax<<"\n";
+      abort();
     }
+    
     for(int j=kmax; j>kmin; --j){   
       double dds = fabs(ta[j-1])+fabs(ta[j]);
       if(fabs(tb[j-1])+dds > dds){
@@ -312,7 +301,7 @@ void EigenModesSolver_IRL::QRfact_Givens(vector<double>& ta,vector<double>& tb,
   double dn = 1.0/sqrt((ta[k_min]-sft)*(ta[k_min]-sft)+tb[k_min]*tb[k_min]); 
   double c = (ta[k_min]-sft)*dn;   //  cos_x
   double s = tb[k_min]*dn;         //  sin_x
-
+  
   for(int i=0; i<Nk; ++i){           // accumulation of G(k+1,k)^T
     double Qt_k  = Qt[    k_min*Nm_+i];
     double Qt_kp = Qt[(k_min+1)*Nm_+i];
@@ -322,7 +311,7 @@ void EigenModesSolver_IRL::QRfact_Givens(vector<double>& ta,vector<double>& tb,
 
   double a_k = ta[k_min]; 
   double b_k = tb[k_min]; 
-  
+
   ta[k_min] = c*c*a_k +s*s*ta[k_min+1] +2.0*c*s*b_k;
   tb[k_min] = (c*c-s*s)*b_k +c*s*(ta[k_min+1] -a_k);
 
