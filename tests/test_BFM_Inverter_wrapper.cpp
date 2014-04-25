@@ -163,14 +163,18 @@ int Test_Solver_BFM::run(){
 
   ///////////////////////////////////////////////////////////////////////////////////////
   // Solver MultishiftCG using BFM
-  vector_double shifts(3);
+  vector_double shifts(5);
   shifts[0] = 0.001;
   shifts[1] = 0.002;
   shifts[2] = 0.003;
-  vector_double mresiduals(3);
+  shifts[3] = 0.004;
+  shifts[4] = 0.005;
+  vector_double mresiduals(5);
   mresiduals[0] = 1e-12;
   mresiduals[1] = 1e-12;
   mresiduals[2] = 1e-12;
+  mresiduals[3] = 1e-12;
+  mresiduals[4] = 1e-12;
   
   vector_Field shifted_sol;
   shifted_sol.resize(shifts.size());
@@ -186,7 +190,7 @@ int Test_Solver_BFM::run(){
   
   BFMop_with_fact->solve_CGNE_multishift(BFM_ms_solution, fe_FF, shifts, mresiduals);
   /*
-  for(int nsol = 0; nsol < 3; nsol++){
+  for(int nsol = 0; nsol < 5; nsol++){
     Field F_Diff = shifted_sol[nsol];
     //F_Diff -= fe;
     F_Diff -= BFM_ms_solution[nsol].data;
@@ -201,7 +205,7 @@ int Test_Solver_BFM::run(){
   BFMop_with_fact->solve_CGNE_multishift_mixed_precision(BFM_ms_solution, fe_FF, shifts, mresiduals);
 
  
-  for(int nsol = 0; nsol < 3; nsol++){
+  for(int nsol = 0; nsol < 5; nsol++){
     Field F_Diff = shifted_sol[nsol];
     //F_Diff -= fe;
     F_Diff -= BFM_ms_solution[nsol].data;
