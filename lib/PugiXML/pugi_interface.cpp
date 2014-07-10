@@ -56,17 +56,17 @@ namespace XML{
 
   void descend(pugi::xml_node &node, const char *name, bool type) {
     pugi::xml_node node_temp = node.child(name);
-    if((node_temp==NULL) && (type==MANDATORY)) MandatoryReadError(node, name);
+    if((node_temp==NULL) && (type==MANDATORY)) MandatoryReadError(node,name);
     node = node_temp;
   }
   
   void next_sibling(pugi::xml_node &node, const char *name, bool type){
     pugi::xml_node node_temp = node.next_sibling(name);
-    if ((node_temp==NULL) && (type==MANDATORY)) MandatoryReadError(node, name);
+    if ((node_temp==NULL) && (type==MANDATORY)) MandatoryReadError(node,name);
     node = node_temp;
   }
 
-  int read(pugi::xml_node node, const char *name, int& value, bool type) {
+  int read(pugi::xml_node node,const char *name,int& value,bool type){
     if (node.child(name)!=NULL){
     value = atoi(node.child_value(name));
     } else {
@@ -80,7 +80,7 @@ namespace XML{
     return 0;
   }
 
-  int read(pugi::xml_node node, const char *name, std::string& value, bool type) {
+  int read(pugi::xml_node node,const char *name,std::string& value,bool type){
     if (node.child(name)!=NULL){
       value.assign(node.child_value(name));
     }else{
@@ -94,7 +94,7 @@ namespace XML{
     return 0;
   }
 
-  int read(pugi::xml_node node, const char *name, unsigned long& value, bool type) {
+  int read(pugi::xml_node node,const char *name,unsigned long& value,bool type){
     char *end;
     if(node.child(name)!=NULL){
       value = strtol(node.child_value(name),&end, 0);
@@ -109,7 +109,7 @@ namespace XML{
     return 0;
   }
 
-  int read(pugi::xml_node node, const char *name, double& value, bool type) {
+  int read(pugi::xml_node node,const char *name,double& value,bool type) {
     if (node.child(name)!=NULL){
     value = atof(node.child_value(name));
     }else{
@@ -123,7 +123,7 @@ namespace XML{
     return 0;
   }
 
-  int read(pugi::xml_node node, const char *name, bool& value, bool type) {
+  int read(pugi::xml_node node,const char *name,bool& value,bool type) {
     char *string;
     if(node.child(name)!=NULL){
       if(!strcmp(node.child_value(name),"true")){
@@ -251,5 +251,5 @@ namespace XML{
     } 
     return 0;
   }
-};
+}
 

@@ -37,18 +37,6 @@ int Test_DWF::run(){
   //vector<int> spos(4,1); 
   Source_local<Format::Format_F> src(spos,CommonPrms::instance()->Nvol());
 
-  /*
-  // noise source
-  unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
-  int length=4;
-  RandNum_MT19937 rand(init, length);
-
-  Source_wnoise<SiteIndex_eo,Format::Format_F> src(rand,CommonPrms::instance()->Nvol());
-  */
-  /*
-  //wall source not working
-  Source_wall<Format_F> src(0,CommonPrms::instance()->Nvol());
-  */
   // source generation
   Field ff= src.mksrc(1,1);
 

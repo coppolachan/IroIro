@@ -1,5 +1,5 @@
 /* Improved version of Dirac Kernel 
-   Time-stamp: <2013-05-03 09:19:16 noaki>
+   Time-stamp: <2014-05-30 09:53:13 noaki>
 */
 
 void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
@@ -30,8 +30,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 
   for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
     int xc = (this->*slice_out)(Xb,k,XDIR);
-    const double* U 
-      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(xc),XDIR));
+    const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gp_[xc],XDIR));
     double* res = fp.getaddr(ff_.index(0,xc));    
 
     for(int c=0; c<NC_; ++c){
@@ -64,8 +63,7 @@ void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
 	w2r[c] = v[r1(c)] -v[i2(c)];  w2i[c] = v[i1(c)] +v[r2(c)];
       }
       int xc = (this->*slice_out)(x,k,XDIR);
-      const double* U 
-	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(xc),XDIR));
+      const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gp_[xc],XDIR));
       double* res = fp.getaddr(ff_.index(0,xc));
 
       for(int c=0; c<NC_; ++c){
@@ -114,8 +112,7 @@ void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
   for(int k=0; k<Nbdry; ++k){
 
     int yc = (this->*slice_out)(Yb,k,YDIR);
-    const double* U 
-      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(yc),YDIR));
+    const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gp_[yc],YDIR));
     double* res = fp.getaddr(ff_.index(0,yc));
     
     for(int c=0; c<NC_; ++c){
@@ -148,8 +145,7 @@ void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
 	w2r[c] = v[r1(c)] -v[r2(c)];  w2i[c] = v[i1(c)] -v[i2(c)];
       }
       int yc = (this->*slice_out)(y,k,YDIR);
-      const double* U 
-	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(yc),YDIR));
+      const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gp_[yc],YDIR));
       double* res = fp.getaddr(ff_.index(0,yc));
       
       for(int c=0; c<NC_; ++c){
@@ -198,8 +194,7 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
   for(int k=0; k<Nbdry; ++k){
 
     int zc = (this->*slice_out)(Zb,k,ZDIR);
-    const double* U 
-      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(zc),ZDIR));
+    const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gp_[zc],ZDIR));
     double* res = fp.getaddr(ff_.index(0,zc));
       
     for(int c=0; c<NC_; ++c){
@@ -232,8 +227,7 @@ void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
 	w2r[c] = v[r1(c)] +v[i3(c)];  w2i[c] = v[i1(c)] -v[r3(c)];
       }
       int zc = (this->*slice_out)(z,k,ZDIR);
-      const double* U 
-	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(zc),ZDIR));
+      const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gp_[zc],ZDIR));
       double* res = fp.getaddr(ff_.index(0,zc));
       
       for(int c=0; c<NC_; ++c){
@@ -282,8 +276,7 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
   for(int k=0; k<Nbdry; ++k){
 
     int tc = (this->*slice_out)(Tb,k,TDIR);
-    const double* U 
-      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(tc),TDIR));
+    const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gp_[tc],TDIR));
     double* res = fp.getaddr(ff_.index(0,tc));
     
     for(int c=0; c<NC_; ++c){
@@ -315,8 +308,7 @@ void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
       }
 
       int tc = (this->*slice_out)(t,k,TDIR);
-      const double* U 
-	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(tc),TDIR));
+      const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gp_[tc],TDIR));
       double* res = fp.getaddr(ff_.index(0,tc));
 
       for(int c=0; c<NC_; ++c){
@@ -352,8 +344,7 @@ void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
       w1r[c] = v[r0(c)] +v[i3(c)];  w1i[c] = v[i0(c)] -v[r3(c)];
       w2r[c] = v[r1(c)] +v[i2(c)];  w2i[c] = v[i1(c)] -v[r2(c)];
     }
-    const double* U 
-      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(xc),XDIR));
+    const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[xc],XDIR));
     for(int c=0; c<NC_; ++c){
       vbd[r0(c)+is] = 0.0;  vbd[i0(c)+is] = 0.0;
       vbd[r1(c)+is] = 0.0;  vbd[i1(c)+is] = 0.0;
@@ -396,8 +387,7 @@ void Dirac_Wilson::mult_xm(Field& fm, const Field& f) const{
 	w1r[c] = v[r0(c)] +v[i3(c)];  w1i[c] = v[i0(c)] -v[r3(c)];
 	w2r[c] = v[r1(c)] +v[i2(c)];  w2i[c] = v[i1(c)] -v[r2(c)];
       }
-      const double* U 
-	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(xm),XDIR));
+      const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[xm],XDIR));
       double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(x,k,XDIR)));
 
       for(int c=0; c<NC_; ++c){
@@ -435,8 +425,7 @@ void Dirac_Wilson::mult_ym(Field& fm, const Field& f) const{
       w1r[c] = v[r0(c)] -v[r3(c)];  w1i[c] = v[i0(c)] -v[i3(c)];
       w2r[c] = v[r1(c)] +v[r2(c)];  w2i[c] = v[i1(c)] +v[i2(c)];
     }
-    const double* U 
-      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(yc),YDIR));
+    const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[yc],YDIR));
     for(int c=0; c<NC_; ++c){
       vbd[r0(c)+is] = 0.0;  vbd[i0(c)+is] = 0.0;
       vbd[r1(c)+is] = 0.0;  vbd[i1(c)+is] = 0.0;
@@ -478,8 +467,7 @@ void Dirac_Wilson::mult_ym(Field& fm, const Field& f) const{
 	w1r[c] = v[r0(c)] -v[r3(c)];  w1i[c] = v[i0(c)] -v[i3(c)];
 	w2r[c] = v[r1(c)] +v[r2(c)];  w2i[c] = v[i1(c)] +v[i2(c)];
       }
-      const double* U 
-	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(ym),YDIR));
+      const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[ym],YDIR));
       double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(y,k,YDIR)));
 
       for(int c=0; c<NC_; ++c){
@@ -517,8 +505,7 @@ void Dirac_Wilson::mult_zm(Field& fm, const Field& f) const{
       w1r[c] = v[r0(c)] +v[i2(c)];  w1i[c] = v[i0(c)] -v[r2(c)];
       w2r[c] = v[r1(c)] -v[i3(c)];  w2i[c] = v[i1(c)] +v[r3(c)];
     }
-    const double* U 
-      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(zc),ZDIR));
+    const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[zc],ZDIR));
     for(int c=0; c<NC_; ++c){
       vbd[r0(c)+is] = 0.0;  vbd[i0(c)+is] = 0.0;
       vbd[r1(c)+is] = 0.0;  vbd[i1(c)+is] = 0.0;
@@ -561,8 +548,7 @@ void Dirac_Wilson::mult_zm(Field& fm, const Field& f) const{
 	w1r[c] = v[r0(c)] +v[i2(c)];  w1i[c] = v[i0(c)] -v[r2(c)];
 	w2r[c] = v[r1(c)] -v[i3(c)];  w2i[c] = v[i1(c)] +v[r3(c)];
       }
-      const double* U 
-	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(zm),ZDIR));
+      const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[zm],ZDIR));
       double* res = fm.getaddr(ff_.index(0,(this->*slice_out)(z,k,ZDIR)));
       
       for(int c=0; c<NC_; ++c){
@@ -601,8 +587,7 @@ void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
       w1r[c] = v[r0(c)]*2.0;   w1i[c] = v[i0(c)]*2.0;
       w2r[c] = v[r1(c)]*2.0;   w2i[c] = v[i1(c)]*2.0;
     }
-    const double* U 
-      = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(tc),TDIR));
+    const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[tc],TDIR));
     for(int c=0; c<NC_; ++c){
       vbd[r0(c)+is] = 0.0;  vbd[i0(c)+is] = 0.0;
       vbd[r1(c)+is] = 0.0;  vbd[i1(c)+is] = 0.0;
@@ -642,8 +627,7 @@ void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
 	w1r[c] = v[r0(c)]*2.0;   w1i[c] = v[i0(c)]*2.0;
 	w2r[c] = v[r1(c)]*2.0;   w2i[c] = v[i1(c)]*2.0;
       }
-      const double* U 
-	= const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(tm),TDIR));
+      const double* U= const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[tm],TDIR));
       double* res = fm.getaddr( ff_.index(0,(this->*slice_out)(t,k,TDIR)));
       
       for(int c=0; c<NC_; ++c){
@@ -662,4 +646,3 @@ void Dirac_Wilson::mult_tm(Field& fm, const Field& f) const{
     }
   }
 }
-

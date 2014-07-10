@@ -19,7 +19,6 @@ class QuarkPropagatorFactory {
 public:
   QuarkPropagator* getQuarkProp(InputConfig& input){
     return createQuarkProp(input); }
-
   virtual ~QuarkPropagatorFactory(){}
 };
 
@@ -32,10 +31,13 @@ class QPropFactory : public QuarkPropagatorFactory {
 
   RaiiFactoryObj<DiracWilsonLike> Kernel_;
   RaiiFactoryObj<Solver> Solv_;
-
+  RaiiFactoryObj<Fopr_DdagD> DdagD_;
+  
   QuarkPropagator* createQuarkProp(InputConfig&);
+  XML::node node_;
 public:
-  QPropFactory(XML::node);
+  QPropFactory(const XML::node&);
+  QPropFactory(const XML::node&,double mass);
 };
 
 /*! @brief Concrete class for creating Quark Propagator Qprop_EvenOdd operator*/
@@ -45,10 +47,13 @@ class QPropFactory_EvenOdd : public QuarkPropagatorFactory {
 
   RaiiFactoryObj<DiracWilsonLike_EvenOdd> Kernel_;
   RaiiFactoryObj<Solver> Solv_;
-  
+  RaiiFactoryObj<Fopr_DdagD> DdagD_;
+
   QuarkPropagator* createQuarkProp(InputConfig&);
+  XML::node node_;
 public:
-  QPropFactory_EvenOdd(XML::node);
+  QPropFactory_EvenOdd(const XML::node&);
+  QPropFactory_EvenOdd(const XML::node&,double mass);
 };
 
 /*! @brief Concrete class for creating Quark Propagator QpropDWF operator */
@@ -57,14 +62,18 @@ class QPropDWFFactory : public QuarkPropagatorFactory {
   RaiiFactoryObj<Dirac_DomainWall_4D> DWF4D_;
 
   QpropDWF* createQuarkProp(InputConfig&);
+  XML::node node_;
 public:
-  QPropDWFFactory(XML::node);
+  QPropDWFFactory(const XML::node&);
+  QPropDWFFactory(const XML::node&,double mass);
 
   QpropDWF* getQuarkPropDW(InputConfig& input){createQuarkProp(input);}
 };
 
 namespace QuarkPropagators{
-  QuarkPropagatorFactory* createQuarkPropagatorFactory(const XML::node);
+  QuarkPropagatorFactory* createQuarkPropagatorFactory(const XML::node&);
+  QuarkPropagatorFactory* createQuarkPropagatorFactory(const XML::node&,
+						       double mass);
 }
 
 #endif 

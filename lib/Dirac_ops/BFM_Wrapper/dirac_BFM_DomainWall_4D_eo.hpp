@@ -2,7 +2,7 @@
  * @file dirac_BFM_DomainWall_4D_eo.hpp
  * @brief Definition of Dirac_BFM_DomainWall_4D_eo class
  *
- * Time-stamp: <2014-01-30 11:12:25 neo>
+ * Time-stamp: <2014-07-10 18:41:22 noaki>
  */
 #ifndef DIRAC_BFM_DWF_4D_EO_INCLUDED
 #define DIRAC_BFM_DWF_4D_EO_INCLUDED
@@ -12,7 +12,7 @@
 #include "dirac_BFM_wrapper.hpp"
 #include "Solver/solver.hpp"
 #include "Solver/solver_CG.hpp"
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 
 class Dirac_BFM_DomainWall_4D_eo : public Dirac_DomainWall_4D{
 private:

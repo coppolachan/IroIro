@@ -1,7 +1,7 @@
 /*!
   @file siteIndexEO.cpp
   @brief Declares the interface for site indexing EVEN-ODD
-  Time-stamp: <2014-02-14 16:29:44 neo>
+  Time-stamp: <2014-05-30 09:54:49 noaki>
 */
 #include "siteIndex.hpp"
 #include "Communicator/communicator.hpp"
@@ -103,6 +103,7 @@ int SiteIndex::slsize(int x,int dir)const{ return slsize_[dir];}
 
 int SiteIndex::Bdir(int dir){return Bdir_[dir];}
 const std::vector<int>& SiteIndex::get_gsite() const{ return global_site_;}
+const std::vector<int>& SiteIndex::get_lsite() const{ return local_site_;}
 int SiteIndex::get_gsite(int site) const{ return global_site_[site];}
 
 void SiteIndex::setup_all() {
@@ -128,10 +129,11 @@ void SiteIndex::setup_global() {
   int Ly = CommonPrms::instance()->Ly();
   int Lz = CommonPrms::instance()->Lz();
   
-  for(int site=0; site<Nvol_; ++site)
+  for(int site=0; site<Nvol_; ++site){
+    local_site_.push_back(site);
     global_site_.push_back(c_x(site)+Nx_*nx 
 			   +Lx*((c_y(site)+Ny_*ny)
 				+Ly*((c_z(site)+Nz_*nz)
 				     +Lz*(c_t(site)+Nt_*nt))));
+  }
 }
-

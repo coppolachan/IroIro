@@ -6,7 +6,7 @@
 #include "test_MultiShiftSolver.hpp"
 #include "Solver/multiShiftSolver_CG.hpp"
 #include "include/format_F.h"
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 #include "Measurements/FermionicM/source_types.hpp"
 #include "Measurements/FermionicM/qprop_MultiShift.hpp"
 #include "Dirac_ops/dirac_wilson.hpp"

@@ -1,12 +1,10 @@
 /*!
  * @file dirac_overlap_Zolotarev.h
- *
  * @brief Definition of Dirac_overlap_Zolotarev class
  */
 #ifndef DIRAC_OVERLAP_Zolotarev_INCLUDED
 #define DIRAC_OVERLAP_Zolotarev_INCLUDED
-
-#include "include/fopr_signH_Zolotarev.h"
+#include "Fopr/fopr_signH_Zolotarev.h"
 
 struct Dirac_overlap_ZolotarevParams{
   double M0;

@@ -23,7 +23,7 @@ int Test_MesonSpectrum_SpMom::run(){
   
   //// source creation ////
   XML::next_sibling(node,"Source");
-  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(node));
+  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<Format::Format_F>(node));
   auto_ptr<Source> src(SrcFactory->getSource());
 
   prop_t sq;  //Defines a vector of fields

@@ -29,8 +29,8 @@ namespace FieldUtils{
 
     GaugeField1D f;
     SUNmat mat;
-    int Nd = CommonPrms::instance()->Nd();
-    int Nvol = CommonPrms::instance()->Nvol();
+    int Nd = CommonPrms::Nd();
+    int Nvol = CommonPrms::Nvol();
 
     for(int site=0; site<Nvol; ++site){
       mat.zero();

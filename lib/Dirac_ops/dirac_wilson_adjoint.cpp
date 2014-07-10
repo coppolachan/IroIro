@@ -1,6 +1,6 @@
 /*! @file dirac_wilson_adjoint.cpp
  * @brief implementation of the Dirac_Wilson_Adjoint class 
- Time-stamp: <2013-11-29 15:38:18 noaki>
+ Time-stamp: <2014-06-05 16:35:06 noaki>
  */
 #include "dirac_wilson_adjoint.hpp"
 #include "Tools/sunMatUtils.hpp"
@@ -14,26 +14,31 @@ using namespace std;
 
 /* first half of the mult */
 void Dirac_Wilson_Adjoint::mult_p(Field& af,const Field& f,int dir) const{
+  Field Dpf(ff_.size()),ft(ff_.size());    
   for(int c=0; c<NC_; ++c){
-    Field Dpf(ff_.size());    
-    (Dw_.*(Dw_.mult_p[dir]))(Dpf,lmd_ad2fd(f,c));
+    lmd_ad2fd(ft,f,c);
+    Dpf = 0.0;
+    (Dw_.*(Dw_.mult_p[dir]))(Dpf,ft);
     lmd_fd2Uad(af,Dpf,dir,c);
   }
 }
 
-/* last half of the mult */
-void Dirac_Wilson_Adjoint::mult_m(Field& af,const Field& f,int dir) const{
-  for(int c=0; c<NC_; ++c){
-    Field Dmf(ff_.size());
-    (Dw_.*(Dw_.mult_m[dir]))(Dmf,lmd_ad2Ufd(f,dir,c));
-    lmd_fd2ad(af,Dmf,c);
-  }
-}
-
 void Dirac_Wilson_Adjoint::mult_offdiag(Field& Df,const Field& f) const{
-  for(int mu=0; mu<NDIM_; ++mu){
-    mult_p(Df,f,mu);
-    mult_m(Df,f,mu);
+  Field tmp(ff_.size()),ft(ff_.size());
+
+  for(int c=0; c<NC_; ++c){
+    lmd_ad2fd(ft,f,c);
+    for(int mu=0; mu<NDIM_; ++mu){
+      tmp = 0.0;
+      (Dw_.*(Dw_.mult_p[mu]))(tmp,ft);
+      lmd_fd2Uad(Df,tmp,mu,c);
+    }
+    for(int mu=0; mu<NDIM_; ++mu){
+      lmd_ad2Ufd(ft,f,mu,c);
+      tmp = 0.0; 
+      (Dw_.*(Dw_.mult_m[mu]))(tmp,ft);
+      lmd_fd2ad(Df,tmp,c);
+    }
   }
   Df *= -0.5*kpp_;
 }
@@ -64,45 +69,79 @@ double (Dirac_Wilson_Adjoint::*Dirac_Wilson_Adjoint::laf[])(double* fp)const
    &Dirac_Wilson_Adjoint::laf33r, &Dirac_Wilson_Adjoint::laf33i,};
 
 /* (\lambda^a\psi^a)_{c,c0} : a fundamental field */
-const Field Dirac_Wilson_Adjoint::lmd_ad2fd(const Field& f,int c0)const{
+void Dirac_Wilson_Adjoint::lmd_ad2fd(Field& lf,const Field& f,int c0)const{
 
-  Field lf(ff_.size());
-  for(int site=0; site<Nvol_; ++site){
-    for(int s=0; s<ND_; ++s){
-      double* fp = const_cast<Field&>(f).getaddr(af_.index_r(0,s,site));      
-      for(int c=0; c<NC_; ++c){
-	lf.set(ff_.index_r(c,s,site),(this->*laf[re(c,c0)])(fp));
-	lf.set(ff_.index_i(c,s,site),(this->*laf[im(c,c0)])(fp));
-
+#pragma omp parallel
+  {
+    int ns = Nvol_/omp_get_num_threads();
+    int is = omp_get_thread_num()*ns;
+    /*
+    for(int site=is; site<is+ns; ++site){
+      for(int s=0; s<ND_; ++s){
+	double* fp = const_cast<Field&>(f).getaddr(af_.index_r(0,s,site));      
+	for(int c=0; c<NC_; ++c){
+	  lf.set(ff_.index_r(c,s,site),(this->*laf[re(c,c0)])(fp));
+	  lf.set(ff_.index_i(c,s,site),(this->*laf[im(c,c0)])(fp));
+	}
+      }
+    }
+    */
+    for(int site=is; site<is+ns; ++site){
+      for(int s=0; s<ND_; ++s){
+	double* fp = const_cast<Field&>(f).getaddr(af_.index_r(0,s,site));      
+	double* lfp = lf.getaddr(ff_.index_r(0,s,site));
+	for(int c=0; c<NC_; ++c){
+	  lfp[r(c)] = (this->*laf[re(c,c0)])(fp);
+	  lfp[i(c)] = (this->*laf[im(c,c0)])(fp);
+	}
       }
     }
   }
-  return lf;
 }
 
 /* (\lambda^a\psi^a U_mu)_{c,c0} : a fundamental field */
-const Field Dirac_Wilson_Adjoint::lmd_ad2Ufd(const Field& f,int mu,int c0)const{
-
-  Field lfu(ff_.size());
-  for(int site=0; site<Nvol_; ++site){
-    double* up = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gm)(site),mu));
-    for(int s=0; s<ND_; ++s){
-      double* fp = const_cast<Field&>(f).getaddr(af_.index_r(0,s,site));
-      for(int c=0; c<NC_; ++c){
-	
-	complex<double> x(0.0,0.0);
-	for(int c1=0; c1<NC_; ++c1){
-	  complex<double> fcc1((this->*laf[re(c,c1)])(fp),
-			       (this->*laf[im(c,c1)])(fp));
-	  complex<double> uc1c0(up[re(c1,c0)],up[im(c1,c0)]);
-	  x += fcc1*uc1c0;
+void Dirac_Wilson_Adjoint::lmd_ad2Ufd(Field& lfu,const Field& f,int mu,int c0)const{
+#pragma omp parallel
+  {
+    int ns = Nvol_/omp_get_num_threads();
+    int is = omp_get_thread_num()*ns;
+    /*
+    for(int site=is; site<is+ns; ++site){
+      double* up = const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[site],mu));
+      for(int s=0; s<ND_; ++s){
+	double* fp = const_cast<Field&>(f).getaddr(af_.index_r(0,s,site));
+	for(int c=0; c<NC_; ++c){
+	  
+	  complex<double> x(0.0,0.0);
+	  for(int c1=0; c1<NC_; ++c1){
+	    complex<double> fcc1((this->*laf[re(c,c1)])(fp),
+				 (this->*laf[im(c,c1)])(fp));
+	    complex<double> uc1c0(up[re(c1,c0)],up[im(c1,c0)]);
+	    x += fcc1*uc1c0;
+	  }
+	  lfu.set(ff_.index_r(c,s,site),x.real());
+	  lfu.set(ff_.index_i(c,s,site),x.imag());
 	}
-	lfu.set(ff_.index_r(c,s,site),x.real());
-	lfu.set(ff_.index_i(c,s,site),x.imag());
+      }
+    }
+    */
+    for(int site=is; site<is+ns; ++site){
+      double* up = const_cast<Field*>(u_)->getaddr(gf_.index(0,gm_[site],mu));
+      for(int s=0; s<ND_; ++s){
+	double* fp = const_cast<Field&>(f).getaddr(af_.index_r(0,s,site));
+	double* lfp = lfu.getaddr(ff_.index_r(0,s,site)) ;
+
+	for(int c=0; c<NC_; ++c){
+	  lfp[r(c)] = 0.0;
+	  lfp[i(c)] = 0.0;
+	  for(int c1=0; c1<NC_; ++c1){
+	    lfp[r(c)] += (this->*laf[re(c,c1)])(fp)*up[re(c1,c0)] -(this->*laf[im(c,c1)])(fp)*up[im(c1,c0)];
+	    lfp[i(c)] += (this->*laf[im(c,c1)])(fp)*up[re(c1,c0)] +(this->*laf[re(c,c1)])(fp)*up[im(c1,c0)];
+	  }
+	}
       }
     }
   }
-  return lfu;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -177,12 +216,18 @@ void Dirac_Wilson_Adjoint::lfUa(valarray<double>& h,double* fp,
 /* (\lambda^a\Psi)_{c0c0}*/
 void Dirac_Wilson_Adjoint::lmd_fd2ad(Field& af,const Field& f,int c0)const{
 
-  valarray<double> h(af_.Nin());
-  for(int site=0; site<Nvol_; ++site){
-    for(int s=0; s<ND_; ++s){
-      double* fp = const_cast<Field&>(f).getaddr(ff_.index_r(0,s,site));
-      lfa(h,fp,c0);
-      af.add(af_.cslice(s,site),h);
+#pragma omp parallel 
+  {
+    int ns = Nvol_/omp_get_num_threads();
+    int is = omp_get_thread_num()*ns;
+
+    valarray<double> h(af_.Nin());    
+    for(int site=is; site<is+ns; ++site){
+      for(int s=0; s<ND_; ++s){
+	double* fp = const_cast<Field&>(f).getaddr(ff_.index_r(0,s,site));
+	lfa(h,fp,c0);
+	af.add(af_.cslice(s,site),h);
+      }
     }
   }
 }
@@ -190,22 +235,35 @@ void Dirac_Wilson_Adjoint::lmd_fd2ad(Field& af,const Field& f,int c0)const{
 /* (Udmu\lambda^a\Psi)_{c0c0}*/
 void Dirac_Wilson_Adjoint::lmd_fd2Uad(Field& af,const Field& f,int mu,int c0)const{
 
-  valarray<double> h(af_.Nin());
-  for(int site=0; site<Nvol_; ++site){
-    double* up = const_cast<Field*>(u_)->getaddr(gf_.index(0,(this->*gp)(site),mu));
-    for(int s=0; s<ND_; ++s){
-      double* fp = const_cast<Field&>(f).getaddr(ff_.index_r(0,s,site));
-      lfUa(h,fp,up,c0);
-      af.add(af_.cslice(s,site),h);
+#pragma omp parallel 
+  {
+    int ns = Nvol_/omp_get_num_threads();
+    int is = omp_get_thread_num()*ns;
+
+    valarray<double> h(af_.Nin());
+    for(int site=is; site<is+ns; ++site){
+      double* up = const_cast<Field*>(u_)->getaddr(gf_.index(0,gp_[site],mu));
+      for(int s=0; s<ND_; ++s){
+	double* fp = const_cast<Field&>(f).getaddr(ff_.index_r(0,s,site));
+	lfUa(h,fp,up,c0);
+	af.add(af_.cslice(s,site),h);
+      }
     }
   }
 }
 
 const Field Dirac_Wilson_Adjoint::gamma5(const Field& f)const{ 
+
   Field w(af_.size());
-  for(int site=0; site<Nvol_; ++site){
-    dm_.gamma5core(w.getaddr(af_.index(0,site)),
-		   const_cast<Field&>(f).getaddr(af_.index(0,site)));
+#pragma omp parallel 
+  {
+    int ns = Nvol_/omp_get_num_threads();
+    int is = omp_get_thread_num()*ns;
+
+    for(int site=is; site<is+ns; ++site){
+      dm_.gamma5core(w.getaddr(af_.index(0,site)),
+		     const_cast<Field&>(f).getaddr(af_.index(0,site)));
+    }
   }
   return w;
 }
@@ -214,82 +272,53 @@ const Field Dirac_Wilson_Adjoint::mult_dag(const Field& f)const{
   return gamma5(mult(gamma5(f)));
 }
 
-void Dirac_Wilson_Adjoint::md_force_p(Field& fce,
-				      const Field& eta,
-				      const Field& zeta)const{
+void Dirac_Wilson_Adjoint::mkfrc(Field& fce,const Field& eta,
+				 const Field& zeta,int mu)const{
   using namespace SUNmatUtils;
-  
-  for(int mu=0; mu<NDIM_; ++mu){
-    Field xie(af_.size());
-    mult_p(xie,eta,mu);
+
+  Field xie(af_.size());
+  mult_p(xie,eta,mu);
 
 #pragma omp parallel 
-    {
-      int ns = Nvol_/omp_get_num_threads();
-      int is = omp_get_thread_num()*ns;
-      SUNmat f;
-      
-      for(int site=is; site<is+ns; ++site){
-	f = 0.0;
-	for(int a=0; a<NADJ_; ++a){
-	  for(int b=0; b<NADJ_; ++b){
+  {
+    int ns = Nvol_/omp_get_num_threads();
+    int is = omp_get_thread_num()*ns;
+    //SUNmat f;
+    valarray<double> f(gf_.Nin());
+    for(int site=is; site<is+ns; ++site){
+      f = 0.0;
+      double* ztp = const_cast<Field&>(zeta).getaddr(af_.index(0,site));
+      double* xep = xie.getaddr(af_.index(0,site));
 
-	    if(su3str[a*NADJ_+b] != 0){
-	      double prod =0.0;
-	      for(int s=0; s<ND_; ++s)
-		prod += zeta[af_.index_r(b,s,site)]*xie[af_.index_r(a,s,site)]
-		       +zeta[af_.index_i(b,s,site)]*xie[af_.index_i(a,s,site)];
+      for(int a=0; a<NADJ_; ++a){
+	for(int b=0; b<NADJ_; ++b){
 
-	      f += lmd_commutator(a,b)*prod;
-	    }
+	  if(su3str[a*NADJ_+b] != 0){
+	    double prod =0.0;
+	    for(int s=0; s<ND_; ++s)
+	      prod += ztp[ar(b,s)]*xep[ar(a,s)] +ztp[ai(b,s)]*xep[ai(a,s)];
+	    f += lmd_commutator_va(a,b)*prod;
 	  }
 	}
-	f *= 0.25;
-	fce.add(gf_.islice((this->*gp)(site),mu),f.getva());
-      } 
-    }
+      }
+      f *= 0.25;
+      //fce.add(gf_.islice(gp_[site],mu),f.getva());
+      fce.add(gf_.islice(gp_[site],mu),f);
+    } 
   }
 }
 
-void Dirac_Wilson_Adjoint::md_force_m(Field& fce,
-				      const Field& eta,
-				      const Field& zeta)const{
-  using namespace SUNmatUtils;
+void Dirac_Wilson_Adjoint::
+md_force_p(Field& fce,const Field& eta,const Field& zeta)const{
+  for(int mu=0; mu<NDIM_; ++mu) mkfrc(fce,eta,zeta,mu);
+}  
 
+void Dirac_Wilson_Adjoint::
+md_force_m(Field& fce,const Field& eta,const Field& zeta)const{
   Field zt5 = gamma5(zeta);
   Field et5 = gamma5(eta);
-
-  for(int mu=0; mu<NDIM_; ++mu){
-    Field xz5(af_.size());
-    mult_p(xz5,zt5,mu);
-
-#pragma omp parallel 
-    {
-      int ns = Nvol_/omp_get_num_threads();
-      int is = omp_get_thread_num()*ns;
-      SUNmat f;
-
-      for(int site=is; site<is+ns; ++site){
-	f=0.0;
-	for(int a=0; a<NADJ_; ++a){
-	  for(int b=0; b<NADJ_; ++b){
-
-	    if(su3str[a*NADJ_+b] != 0){
-	      double prod = 0.0;
-	      for(int s=0; s<ND_; ++s)
-		prod += xz5[af_.index_r(b,s,site)]*et5[af_.index_r(a,s,site)]
-		      + xz5[af_.index_i(b,s,site)]*et5[af_.index_i(a,s,site)];
-
-	      f += lmd_commutator(a,b)*prod;
-	    }
-	  }
-	}
-	f *= -0.25;
-	fce.add(gf_.islice((this->*gp)(site),mu),f.getva());
-      }
-    }
-  }
-}
+  for(int mu=0; mu<NDIM_; ++mu) mkfrc(fce,zt5,et5,mu);
+}  
 
 const Field Dirac_Wilson_Adjoint::md_force(const Field& eta,
 					   const Field& zeta)const{

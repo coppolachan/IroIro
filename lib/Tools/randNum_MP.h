@@ -44,9 +44,15 @@ namespace MPrand{
       rand.get_gauss(rn);
       Communicator::instance()->sync();	
     } else {
-      
       int NP = CommonPrms::instance()->NP();
       
+      /*
+      std::valarray<double> Rn(NP*rn.size());// too big.
+      rand.get_gauss(Rn);	
+      FMT Fmt(NP*fmt.Nvol(),fmt.Nex());
+      rn = Rn[Fmt.get_sub(gsite)];
+      */
+
       std::valarray<double> Rn_source(rn.size());
       for(int node=0; node<NP; ++node) {
 	if(Communicator::instance()->primaryNode()) 
@@ -57,12 +63,8 @@ namespace MPrand{
       }
     }
   }
-  
-  
   void mp_get(std::valarray<double>&,const RandNum&);
   void mp_get_gauss(std::valarray<double>&,const RandNum&);
-  
-  
 }
 
 #endif 

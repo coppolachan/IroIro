@@ -24,10 +24,10 @@ private:
 
   int Lvolh_, Lxh_;
 
-  
   std::vector<int> Bdir_;
   std::vector<int> slsize_;
   std::vector<int> global_site_;
+  std::vector<int> local_site_;
 
   // constructor
   SiteIndex();
@@ -85,6 +85,7 @@ public:
 
   int Bdir(int dir);
   const std::vector<int>& get_gsite() const;
+  const std::vector<int>& get_lsite() const;
   int get_gsite(int site) const;
 };
 

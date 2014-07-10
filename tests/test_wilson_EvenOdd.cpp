@@ -34,8 +34,7 @@ int Test_Wilson_EvenOdd::run(){
   unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
   int length=4;
   RandNum_MT19937 rand(init, length);
-  Source_wnoise<SiteIndex,Format::Format_F> 
-    src(rand,CommonPrms::instance()->Nvol());    
+  Source_wnoise<Format::Format_F> src(rand,CommonPrms::instance()->Nvol());    
 
   //Dirac Kernel definition ---------------------------------------------
   Dirac_Wilson_EvenOdd<Dirac_Wilson> Deo(1.0/6.0, &(conf_.data));

@@ -3,7 +3,7 @@
  */
 #include "eigenModesSolver_IRL.hpp"
 #include "eigenSorter.hpp"
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 #include "Fields/field_expressions.hpp"
 #include <cassert>
 #include <iostream>
@@ -266,26 +266,15 @@ void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
     
     QRfact_Givens(ta,tb,Qt,Nk,sft,kmin,kmax); // transformation
 
-    if(kmax==kmin+1){ /*!< Convergence criterion */
-      for(int ni=iter; ni<Niter; ++ni){
-	QRfact_Givens(ta,tb,Qt,Nk,ta[kmax],kmin,kmax); 
-
-	double dds = fabs(ta[kmin])+fabs(ta[kmax]);
-	if(fabs(tb[kmin])+dds == dds){
-	  Niter = iter;
-	  return;
-	}
-      }
-      CCIO::cout<<"[QR method] reached to maximum iterations: "<<Niter<<"\n";
-      CCIO::cout<<"failed at kmax="<<kmax<<"\n";
-      abort();
-    }
-    
     for(int j=kmax; j>kmin; --j){   
       double dds = fabs(ta[j-1])+fabs(ta[j]);
       if(fabs(tb[j-1])+dds > dds){
         kmax = j;
 	break;
+      }
+      if(j==kmin+1){/*!< Convergence criterion */
+	Niter = iter;
+	return; 
       }
     }
   }

@@ -1,13 +1,11 @@
 #ifndef FOPR_EIGMODESNUM_INCLUDED
 #define FOPR_EIGMODESNUM_INCLUDED
-
-#include "fopr.h"
+#include "Fopr/fopr.h"
 #include <vector>
 
 class RandNum;
 
 class EigModesNum{
-
   double prec_;
   double epsilon_;
   double Mratio_;

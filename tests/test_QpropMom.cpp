@@ -43,7 +43,7 @@ int Test_QpropMom::run(){
   //// source creation ////
   XML::next_sibling(node_,"Source");
   SourceFactory* SrcFactory 
-    = Sources::createSourceFactory<SiteIndex,Format::Format_F>(node_);
+    = Sources::createSourceFactory<Format::Format_F>(node_);
   Source* src = SrcFactory->getSource();
 
   prop_t sq;  //Defines a vector of fields

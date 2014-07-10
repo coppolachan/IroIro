@@ -29,10 +29,8 @@ private:
   int fsize_;/*!< @brief Fermion field size */ 
 public:
   /*! @brief Public constructor */
-  Qprop(const Dirac* D,
-	const Solver* Solver)
-    :D_(D),
-     slv_(Solver), 
+  Qprop(const Dirac* D,const Solver* Solver)
+    :D_(D),slv_(Solver), 
      Nc_(CommonPrms::instance()->Nc()),
      Nd_(CommonPrms::instance()->Nd()),
      fsize_(D_->fsize()){
@@ -41,9 +39,6 @@ public:
       abort();
     }
   }
-  /*! @brief Public destructor */
-  ~Qprop(){}
-  
   /*! @brief Calculates the propagator 
    * N.B. A typedef std::vector<Field> prop_t;
    * is defined in quark_propagators.hpp

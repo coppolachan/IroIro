@@ -1,7 +1,7 @@
 /*!
  * @file dirac_DomainWall_4D_fullSolv.hpp
  * @brief Definition of Dirac_DomainWall_4D class with full Solver
- Time-stamp: <2013-12-05 10:03:07 noaki>
+ Time-stamp: <2014-07-02 21:31:57 noaki>
  */
 #ifndef DIRAC_DOMAINWALL_4D_FULLSOLV_INCLUDED
 #define DIRAC_DOMAINWALL_4D_FULLSOLV_INCLUDED
@@ -9,7 +9,7 @@
 #include "dirac_DomainWall.hpp"
 #include "Solver/solver.hpp"
 #include "Solver/solver_CG.hpp"
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 
 enum DW5dPrecond{NoPrecond,LUprecond};
 

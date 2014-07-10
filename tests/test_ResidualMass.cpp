@@ -109,8 +109,7 @@ int Test_ResMass::run() {
     = static_cast<QpropDWF*>(QP_DomainWallFact.getQuarkProp(input));
 
   XML::next_sibling(node_, "Source");
-  SourceFactory* Source_Factory 
-    = Sources::createSourceFactory<SiteIndex,Format::Format_F>(node_);
+  SourceFactory* Source_Factory = Sources::createSourceFactory<Format::Format_F>(node_);
   Source* SourceObj =  Source_Factory->getSource();
 
   prop_t sq;  //Defines a vector of fields

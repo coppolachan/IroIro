@@ -5,7 +5,7 @@
 #ifndef EIGENMODESSOLVER_IRL_INCLUDED
 #define EIGENMODESSOLVER_IRL_INCLUDED
 
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 #include "include/pugi_interface.h"
 #include "Communicator/comm_io.hpp"
 #include "eigenModesSolver.hpp"
@@ -56,7 +56,9 @@ public:
     XML::read(node,"precision",prec_,MANDATORY);
     XML::read(node,"max_iter",Niter_,MANDATORY);
     
-    double scale = fopr->func(esorter->thrs());
+    double scale = 0.5/prec_*fabs(fopr->func(esorter->thrs() +prec_)
+				  -fopr->func(esorter->thrs() -prec_));
+
     CCIO::cout<<"scaling factor = "<<scale<<"\n";
     prec_*= scale;
     CCIO::cout<<"net precision = "<<prec_<<"\n";

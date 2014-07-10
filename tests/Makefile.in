@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-02-26 13:20:17 noaki>
+# Time-stamp: <2014-07-07 18:29:16 noaki>
 
 
 VPATH = @srcdir@
@@ -75,13 +75,13 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_Gauge$(EXEEXT) test_NoMeas$(EXEEXT) \
 	test_PolyakovLoop$(EXEEXT) test_WilsonFlow$(EXEEXT) \
 	test_Wilson$(EXEEXT) test_Clover$(EXEEXT) \
+	test_Wilson_FiniteDensity$(EXEEXT) \
 	test_Wilson_EvenOdd$(EXEEXT) test_Wilson_Brillouin$(EXEEXT) \
 	test_Wilson_Brillouin_Imp$(EXEEXT) test_QpropMom$(EXEEXT) \
 	test_ResMass$(EXEEXT) test_MesonSpectrum$(EXEEXT) \
 	test_MesonSpectrum_SpMom$(EXEEXT) \
 	test_MesonSpectrum_Nf2p1$(EXEEXT) \
 	test_BaryonSpectrum_Nf2p1$(EXEEXT) \
-	test_HadronSpectrum_Nf2p1$(EXEEXT) \
 	test_EigenModesSolver$(EXEEXT) test_EigModesNum$(EXEEXT) \
 	test_Smearing$(EXEEXT) test_Overlap$(EXEEXT) \
 	test_MultiShiftSolver$(EXEEXT) test_Solver_Perf$(EXEEXT) \
@@ -90,6 +90,7 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_SUNRepresentation$(EXEEXT) test_HeatBath$(EXEEXT) \
 	test_DWF$(EXEEXT) test_DiracWilson_Adjoint$(EXEEXT) \
 	test_Laplacian$(EXEEXT) test_LapH$(EXEEXT) \
+	test_HadronSpectrum_MultiQprop$(EXEEXT) \
 	test_ChiralCondensate$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
@@ -219,13 +220,13 @@ test_HMC_smear_noF_OBJECTS = $(am_test_HMC_smear_noF_OBJECTS)
 test_HMC_smear_noF_LDADD = $(LDADD)
 test_HMC_smear_noF_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
-am_test_HadronSpectrum_Nf2p1_OBJECTS =  \
-	test_HadronSpectrum_Nf2p1.$(OBJEXT) \
-	testerHadronSpectrumNf2p1.$(OBJEXT)
-test_HadronSpectrum_Nf2p1_OBJECTS =  \
-	$(am_test_HadronSpectrum_Nf2p1_OBJECTS)
-test_HadronSpectrum_Nf2p1_LDADD = $(LDADD)
-test_HadronSpectrum_Nf2p1_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+am_test_HadronSpectrum_MultiQprop_OBJECTS =  \
+	test_HadronSpectrum_MultiQprop.$(OBJEXT) \
+	testerHadronSpectrumMultiQprop.$(OBJEXT)
+test_HadronSpectrum_MultiQprop_OBJECTS =  \
+	$(am_test_HadronSpectrum_MultiQprop_OBJECTS)
+test_HadronSpectrum_MultiQprop_LDADD = $(LDADD)
+test_HadronSpectrum_MultiQprop_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am_test_HeatBath_OBJECTS = test_HeatBath.$(OBJEXT) \
 	testerHeatBath.$(OBJEXT)
@@ -374,6 +375,14 @@ test_Wilson_EvenOdd_OBJECTS = $(am_test_Wilson_EvenOdd_OBJECTS)
 test_Wilson_EvenOdd_LDADD = $(LDADD)
 test_Wilson_EvenOdd_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
+am_test_Wilson_FiniteDensity_OBJECTS =  \
+	test_Wilson_FiniteDensity.$(OBJEXT) \
+	testerWilsonFiniteDensity.$(OBJEXT)
+test_Wilson_FiniteDensity_OBJECTS =  \
+	$(am_test_Wilson_FiniteDensity_OBJECTS)
+test_Wilson_FiniteDensity_LDADD = $(LDADD)
+test_Wilson_FiniteDensity_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -405,9 +414,10 @@ SOURCES = $(test_BFM_Inverter_SOURCES) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
 	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) \
-	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_HeatBath_SOURCES) \
-	$(test_IO_SOURCES) $(test_LapH_SOURCES) \
-	$(test_Laplacian_SOURCES) $(test_MesonSpectrum_SOURCES) \
+	$(test_HadronSpectrum_MultiQprop_SOURCES) \
+	$(test_HeatBath_SOURCES) $(test_IO_SOURCES) \
+	$(test_LapH_SOURCES) $(test_Laplacian_SOURCES) \
+	$(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MesonSpectrum_SpMom_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_NoMeas_SOURCES) \
@@ -419,7 +429,8 @@ SOURCES = $(test_BFM_Inverter_SOURCES) \
 	$(test_Solver_Perf_SOURCES) $(test_Wilson_SOURCES) \
 	$(test_WilsonFlow_SOURCES) $(test_Wilson_Brillouin_SOURCES) \
 	$(test_Wilson_Brillouin_Imp_SOURCES) \
-	$(test_Wilson_EvenOdd_SOURCES)
+	$(test_Wilson_EvenOdd_SOURCES) \
+	$(test_Wilson_FiniteDensity_SOURCES)
 DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
 	$(am__test_BFM_Inverter_wrapper_SOURCES_DIST) \
 	$(am__test_BFM_Moebius_SOURCES_DIST) \
@@ -431,9 +442,10 @@ DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
 	$(test_Gauge_SOURCES) $(test_HMC_SOURCES) \
 	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_noFactories_SOURCES) \
 	$(test_HMC_smear_noF_SOURCES) \
-	$(test_HadronSpectrum_Nf2p1_SOURCES) $(test_HeatBath_SOURCES) \
-	$(test_IO_SOURCES) $(test_LapH_SOURCES) \
-	$(test_Laplacian_SOURCES) $(test_MesonSpectrum_SOURCES) \
+	$(test_HadronSpectrum_MultiQprop_SOURCES) \
+	$(test_HeatBath_SOURCES) $(test_IO_SOURCES) \
+	$(test_LapH_SOURCES) $(test_Laplacian_SOURCES) \
+	$(test_MesonSpectrum_SOURCES) \
 	$(test_MesonSpectrum_Nf2p1_SOURCES) \
 	$(test_MesonSpectrum_SpMom_SOURCES) \
 	$(test_MultiShiftSolver_SOURCES) $(test_NoMeas_SOURCES) \
@@ -445,7 +457,8 @@ DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
 	$(test_Solver_Perf_SOURCES) $(test_Wilson_SOURCES) \
 	$(test_WilsonFlow_SOURCES) $(test_Wilson_Brillouin_SOURCES) \
 	$(test_Wilson_Brillouin_Imp_SOURCES) \
-	$(test_Wilson_EvenOdd_SOURCES)
+	$(test_Wilson_EvenOdd_SOURCES) \
+	$(test_Wilson_FiniteDensity_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -614,10 +627,12 @@ EXTRA_DIST = testResults.info	\
 		test_HMC.wilson.ratio.smeared.xml \
 		test_HMC.wilson.rational.smeared.xml \
 		test_HMC.DWF.rational.xml	\
+		test_HMC_CloverFiniteDensity.xml\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\
 		test_Wilson_Brillouin.xml	\
+		test_Wilson_FiniteDensity.xml	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_EigenModesSolver.xml\
@@ -627,7 +642,7 @@ EXTRA_DIST = testResults.info	\
 		test_WilsonFlow.xml	\
 		test_MesonSpectrum_Nf2p1.xml 	\
 		test_BaryonSpectrum_Nf2p1.xml 	\
-		test_HadronSpectrum_Nf2p1.xml 	\
+		test_HadronSpectrum_MultiQprop.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
@@ -665,6 +680,9 @@ test_Gauge_SOURCES = test_Gauge.cpp			\
 test_Wilson_SOURCES = test_wilson.cpp 		\
 				testerWilson.cpp
 
+test_Wilson_FiniteDensity_SOURCES = test_Wilson_FiniteDensity.cpp\
+	                             testerWilsonFiniteDensity.cpp
+
 test_Clover_SOURCES = test_clover.cpp 		\
 				testerClover.cpp
 
@@ -691,9 +709,6 @@ test_MesonSpectrum_Nf2p1_SOURCES = test_MesonSpectrum_Nf2p1.cpp 	\
 
 test_BaryonSpectrum_Nf2p1_SOURCES = test_BaryonSpectrum_Nf2p1.cpp 	\
 				testerBaryonSpectrumNf2p1.cpp
-
-test_HadronSpectrum_Nf2p1_SOURCES = test_HadronSpectrum_Nf2p1.cpp 	\
-				testerHadronSpectrumNf2p1.cpp
 
 test_Solver_Perf_SOURCES = test_Solver_Perf.cpp		\
 				testerSolver_Perf.cpp
@@ -754,6 +769,9 @@ test_Laplacian_SOURCES = test_Laplacian.cpp	\
 test_LapH_SOURCES = test_LapH.cpp	\
 					testerLapH.cpp
 
+test_HadronSpectrum_MultiQprop_SOURCES = test_HadronSpectrum_MultiQprop.cpp\
+					testerHadronSpectrumMultiQprop.cpp
+
 @USE_BFM_TRUE@test_Solver_BFM_SOURCES = test_Solver_BFM.cpp             \
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
@@ -792,7 +810,7 @@ include_HEADERS = tests.hpp			\
 				test_MesonSpectrum_Nf2p1.hpp	\
 	                        test_MesonSpectrum_SpMom.hpp    \
 				test_BaryonSpectrum_Nf2p1.hpp	\
-				test_HadronSpectrum_Nf2p1.hpp	\
+				test_HadronSpectrum_MultiQprop.hpp	\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\
@@ -800,6 +818,7 @@ include_HEADERS = tests.hpp			\
 				test_sunRepres.hpp		\
 				test_HeatBath.hpp               \
 				test_Solver_BFM.hpp		\
+				test_Wilson_FiniteDensity.hpp   \
                                 test_DWF.hpp			\
                                 test_LapH.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\
@@ -929,9 +948,9 @@ test_HMC_noFactories$(EXEEXT): $(test_HMC_noFactories_OBJECTS) $(test_HMC_noFact
 test_HMC_smear_noF$(EXEEXT): $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_DEPENDENCIES) $(EXTRA_test_HMC_smear_noF_DEPENDENCIES) 
 	@rm -f test_HMC_smear_noF$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_smear_noF_OBJECTS) $(test_HMC_smear_noF_LDADD) $(LIBS)
-test_HadronSpectrum_Nf2p1$(EXEEXT): $(test_HadronSpectrum_Nf2p1_OBJECTS) $(test_HadronSpectrum_Nf2p1_DEPENDENCIES) $(EXTRA_test_HadronSpectrum_Nf2p1_DEPENDENCIES) 
-	@rm -f test_HadronSpectrum_Nf2p1$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_HadronSpectrum_Nf2p1_OBJECTS) $(test_HadronSpectrum_Nf2p1_LDADD) $(LIBS)
+test_HadronSpectrum_MultiQprop$(EXEEXT): $(test_HadronSpectrum_MultiQprop_OBJECTS) $(test_HadronSpectrum_MultiQprop_DEPENDENCIES) $(EXTRA_test_HadronSpectrum_MultiQprop_DEPENDENCIES) 
+	@rm -f test_HadronSpectrum_MultiQprop$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HadronSpectrum_MultiQprop_OBJECTS) $(test_HadronSpectrum_MultiQprop_LDADD) $(LIBS)
 test_HeatBath$(EXEEXT): $(test_HeatBath_OBJECTS) $(test_HeatBath_DEPENDENCIES) $(EXTRA_test_HeatBath_DEPENDENCIES) 
 	@rm -f test_HeatBath$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HeatBath_OBJECTS) $(test_HeatBath_LDADD) $(LIBS)
@@ -1007,6 +1026,9 @@ test_Wilson_Brillouin_Imp$(EXEEXT): $(test_Wilson_Brillouin_Imp_OBJECTS) $(test_
 test_Wilson_EvenOdd$(EXEEXT): $(test_Wilson_EvenOdd_OBJECTS) $(test_Wilson_EvenOdd_DEPENDENCIES) $(EXTRA_test_Wilson_EvenOdd_DEPENDENCIES) 
 	@rm -f test_Wilson_EvenOdd$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Wilson_EvenOdd_OBJECTS) $(test_Wilson_EvenOdd_LDADD) $(LIBS)
+test_Wilson_FiniteDensity$(EXEEXT): $(test_Wilson_FiniteDensity_OBJECTS) $(test_Wilson_FiniteDensity_DEPENDENCIES) $(EXTRA_test_Wilson_FiniteDensity_DEPENDENCIES) 
+	@rm -f test_Wilson_FiniteDensity$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_Wilson_FiniteDensity_OBJECTS) $(test_Wilson_FiniteDensity_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -1029,7 +1051,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_DWall_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_Smear_noFact.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HMC_noFactories.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HadronSpectrum_Nf2p1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HadronSpectrum_MultiQprop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_HeatBath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_IO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_LapH.Po@am__quote@
@@ -1048,6 +1070,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Solver_BFM.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Solver_Perf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_WilsonFlow.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Wilson_FiniteDensity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_clover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_sunRepres.Po@am__quote@
@@ -1065,7 +1088,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerGauge.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHMC_DWall_noFact.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHadronSpectrumNf2p1.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHadronSpectrumMultiQprop.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerHeatBath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerIO.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerLapH.Po@am__quote@
@@ -1087,6 +1110,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilsonBrillouin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilsonBrillouin_Imp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilsonFiniteDensity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilsonFlow.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson_EvenOdd.Po@am__quote@
 

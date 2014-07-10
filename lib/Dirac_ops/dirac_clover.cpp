@@ -43,7 +43,7 @@ void Dirac_Clover::mult_sw(FermionField& v_out, const FermionField& w) const {
   //Temporary variable declarations
   SUNvec v1;
   FermionField wt;
-
+  /*
   //Actual calculation - START
   isigma_23(wt,w);
   for(int site=0; site<Nvol_; ++site)
@@ -77,7 +77,62 @@ void Dirac_Clover::mult_sw(FermionField& v_out, const FermionField& w) const {
       AddVec(v_out,v1,s,site);
     }
   }
-  v_out *= Dw_->getKappa() * csw_;
+  */
+  isigma_23(wt,w);
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      SetVec(v_out,(mat(Bx_,site)*vec(wt,s,site)),s,site);
+  
+  double v23norm = v_out.data.norm();
+
+  isigma_31(wt,w);
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      AddVec(v_out,(mat(By_,site)*vec(wt,s,site)),s,site);
+
+  double v31norm = v_out.data.norm();  
+
+  isigma_12(wt,w);
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      AddVec(v_out,(mat(Bz_,site)*vec(wt,s,site)),s,site);
+
+  double v12norm = v_out.data.norm();  
+
+  isigma_41(wt,w);
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      AddVec(v_out,(mat(Ex_,site)*vec(wt,s,site)),s,site);
+
+  double v41norm = v_out.data.norm();  
+
+  isigma_42(wt,w);
+  for(int site=0; site<Nvol_; ++site)
+    for(int s=0; s<NDIM_; ++s)
+      AddVec(v_out,(mat(Ey_,site)*vec(wt,s,site)),s,site);
+
+  double v42norm = v_out.data.norm();  
+
+  isigma_43(wt,w);
+  for(int site=0; site<Nvol_; ++site){
+    for(int s=0; s<NDIM_; ++s){
+      v1 = mat(Ez_,site)*vec(wt,s,site);
+      AddVec(v_out,v1,s,site);
+    }
+  }
+  double v43norm = v_out.data.norm();  
+  
+  CCIO::cout<<" v23norm = "<<v23norm
+	    <<" v31norm = "<<v31norm
+	    <<" v12norm = "<<v12norm
+	    <<" v41norm = "<<v41norm
+	    <<" v42norm = "<<v42norm
+	    <<" v43norm = "<<v43norm<<"\n";
+
+
+
+
+  v_out *= kpp_*csw_;
 }
 
 //====================================================================
@@ -90,28 +145,44 @@ void Dirac_Clover::set_csw() {
   set_fieldstrength(Ex_, 3, 0);
   set_fieldstrength(Ey_, 3, 1);
   set_fieldstrength(Ez_, 3, 2);
+
+  double nBx = Bx_.data.norm();
+  double nBy = By_.data.norm();
+  double nBz = Bz_.data.norm();
+  double nEx = Ex_.data.norm();
+  double nEy = Ey_.data.norm();
+  double nEz = Ez_.data.norm();
+
+  CCIO::cout<<" nBx= "<<nBx
+	    <<" nBy= "<<nBy
+	    <<" nBz= "<<nBz
+	    <<" nEx= "<<nEx
+	    <<" nEy= "<<nEy
+	    <<" nEz= "<<nEz<<"\n";
 }
 //====================================================================
 /*! @brief Calculates the term \f$F_{\mu.\nu}\f$  */
-void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
-				     const int mu, const int nu){
+void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,int mu,int nu){
+  Staples  stpl;
+  field_strength = stpl.fieldStrength(GaugeField(*u_),mu,nu);
+  /*
   using namespace SUNmatUtils;
   using namespace FieldUtils;
   using namespace Mapping;
 
   //.................. Temporary variables declaration
   GaugeField1D Cup, Cdn;
-  GaugeField1D U_mu;  /*< @brief \f$U_\mu(x)\f$ */
+  GaugeField1D U_mu;  /// \f$U_\mu(x)\f$ 
   GaugeField1D w1, w2, v1, v2;
   Staples stpl;
 
   //really temporary - to be eliminated in future
-  GaugeField temp_u_(*u_);
+  GaugeField temp_u(*u_);
   //.......................................
-  U_mu = DirSlice(temp_u_, mu);
+  U_mu = DirSlice(temp_u, mu);
 
-  Cup = stpl.upper(temp_u_,mu,nu); // Upper staple V_+mu
-  Cdn = stpl.lower(temp_u_,mu,nu); // Lower staple V_-mu
+  Cup = stpl.upper(temp_u,mu,nu); // Upper staple V_+mu
+  Cdn = stpl.lower(temp_u,mu,nu); // Lower staple V_-mu
 
   for(int site = 0; site < Nvol_; ++site){
     SetMat(w1,mat(U_mu,site)   *mat_dag(Cup,site),site);// U_mu(x)*(V_+mu)^dag
@@ -140,6 +211,8 @@ void Dirac_Clover::set_fieldstrength(GaugeField1D& field_strength,
     SetMat(field_strength, anti_hermite(mat(w1,site)), site);
 
   field_strength *= 0.25;
+  */
+
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -262,7 +335,15 @@ const Field Dirac_Clover::mult(const Field& f) const{
   FermionField w, w2;
 
   w.data  = Dw_->mult(f);
+
+  double wnorm = w.norm();
+
   mult_sw(w2,FermionField(f));
+
+  double w2norm = w2.norm();
+
+  CCIO::cout<<"wnorm="<<wnorm<<" w2norm="<<w2norm<<"\n";
+
   w -= w2;
   return w.data;
 }
@@ -305,7 +386,7 @@ const Field Dirac_Clover::md_force_block(const FermionField& eta,
   SUNvec temp_v;
   //...................................................
   //really temporary
-  GaugeField temp_u_(*u_);  
+  GaugeField temp_u(*u_);  
   
   //Clover term: 8 terms, see Matsufuru-san's note
 
@@ -315,12 +396,12 @@ const Field Dirac_Clover::md_force_block(const FermionField& eta,
 
       (this->*isigma[NDIM_*mu+nu])(eta2,eta); //sigma_{mu,nu} mult
 
-      U_nu = DirSlice(temp_u_,nu);
-      U_mu = DirSlice(temp_u_,mu);
+      U_nu = DirSlice(temp_u,nu);
+      U_mu = DirSlice(temp_u,mu);
 
       //term 1 and 5 --------------------------------------
-      Cmu_up  = stpl_.upper(temp_u_,mu,nu); //V_mu
-      Cmu_up -= stpl_.lower(temp_u_,mu,nu); //V_+mu - V_-mu 
+      Cmu_up  = stpl_.upper(temp_u,mu,nu); //V_mu
+      Cmu_up -= stpl_.lower(temp_u,mu,nu); //V_+mu - V_-mu 
       for(int site = 0; site<Nvol_; ++site){
 	for(int s=0; s<Nd; ++s){
 	  temp_v = mat_dag(Cmu_up,site)*vec(eta2,s,site);
@@ -331,7 +412,7 @@ const Field Dirac_Clover::md_force_block(const FermionField& eta,
       fce_tmp2 = field_oprod(zeta,vright); 
 
       //term 2 --------------------------------------
-      Cnu_up = stpl_.upper(temp_u_, nu, mu);
+      Cnu_up = stpl_.upper(temp_u, nu, mu);
       shifted = shiftField(eta2, nu, Forward());
       for(int site = 0; site<Nvol_; ++site){
 	for(int s = 0; s < Nd; ++s) {
@@ -441,7 +522,7 @@ const Field Dirac_Clover::md_force_block(const FermionField& eta,
       }       
       //shift = Udag_nu(x-nu)*U_mu(x-nu)*zeta(x+mu-nu)
       fce_tmp2 -= field_oprod(shiftField(vleft, nu, Backward()), vright);
-      fce_tmp2 *= -Dw_->getKappa()*csw_/8.0; 
+      fce_tmp2 *= -kpp_*csw_/8.0; 
 
       for(int site=0; site<Nvol_; ++site)
 	AddMat(force,mat(fce_tmp2,site),site,mu); 
