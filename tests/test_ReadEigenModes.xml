@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>32 32 32 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+  </Geometry>
+
+  <!-- Input configuration -->
+  <Configuration Type="Binary" Input="FileList">
+    <starting_idx>0</starting_idx>
+    <idx_increment>1</idx_increment>
+    <GaugeConfigs>
+      <filename>conf_32x64.binary</filename>
+    </GaugeConfigs>
+  </Configuration>
+
+  <RandomNumberGen name="Mersenne Twister">
+    <!--   <seedFile>seed_file</seedFile>-->
+    <init>0x123 0x234 0x345 0x456</init> 
+  </RandomNumberGen>
+  
+  <GaugeFixing name="NoFixing"/>  
+  <Smearing type="Off"></Smearing>  
+
+
+  <Measurement>  
+    <ReadEigenMode>
+      <ModesFilename></ModesFilename>
+      <EvalFilename></EvalFilename>
+      <NumEigenval>10</NumEigenval>
+      <threshold>0.2</threshold>
+    </ReadEigenMode>
+  </Measurement>
+  
+</Parameters>
+

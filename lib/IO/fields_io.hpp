@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2014-02-26 13:22:54 noaki>
+ * Time-stamp: <2014-07-14 17:21:13 neo>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -36,7 +36,7 @@ namespace CCIO {
    * @brief Factory for Readers
    * @param ID string containing the ID of the input mode
    */
-  GeneralWriter* getWriter(const std::string ID, int, int, int);
+  GeneralWriter* getWriter(const std::string ID, int, int, int, const Field&);
 
   /*!
    * @brief Saves a Field on the disk 
@@ -63,7 +63,7 @@ namespace CCIO {
     varray_double copy(fmt.Nin()*block_x.size()*fmt.Nex());
     varray_double local(fmt.Nin()*block_x.size()*fmt.Nex());
 
-    writer = getWriter(writerID, total_vol, fmt.Nin(), fmt.Nex()); 
+    writer = getWriter(writerID, total_vol, fmt.Nin(), fmt.Nex(), f); 
 
     // Open the output file, uses C style
     FILE * outFile;

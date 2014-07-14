@@ -3,7 +3,7 @@
  *
  * @brief Include necessary headers to support input
  *
- * Time-stamp: <2013-09-12 16:39:29 cossu>
+ * Time-stamp: <2014-07-14 17:16:49 neo>
  */
 
 #ifndef WRITERS_HPP
@@ -14,5 +14,6 @@
 //#include "NERSC_reader.hpp"
 //#include "JLQCDLegacy_reader.hpp"
 #include "ILDG_writer.hpp"
+#include "NERSC_writer.hpp"
 
 #endif
