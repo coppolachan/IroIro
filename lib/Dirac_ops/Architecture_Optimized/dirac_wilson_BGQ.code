@@ -1,0 +1,184 @@
+/*! @file dirac_wilson_BGQ.code
+ *  @brief Extension of Dirac_Wilson class on the BG/Q environment
+ * this file does not coexist with dirac_wilson_improved.code
+ * Time-stamp: <2014-05-29 17:49:55 noaki>
+ */
+#include "Tools/Architecture_Optimized/utils_BGQ.hpp"
+#include "bgqwilson.h"
+#include "bgqthread.h"
+
+using namespace std;
+
+//////// forward/backward differenciations //////////
+void Dirac_Wilson::init_mult_pm(){
+  if(eotype_== Void){
+    mult_p[XDIR] = &Dirac_Wilson::mult_xp;
+    mult_p[YDIR] = &Dirac_Wilson::mult_yp;
+    mult_p[ZDIR] = &Dirac_Wilson::mult_zp;
+    mult_p[TDIR] = &Dirac_Wilson::mult_tp;
+		 
+    mult_m[XDIR] = &Dirac_Wilson::mult_xm;
+    mult_m[YDIR] = &Dirac_Wilson::mult_ym;
+    mult_m[ZDIR] = &Dirac_Wilson::mult_zm;
+    mult_m[TDIR] = &Dirac_Wilson::mult_tm;
+  }else if(eotype_){
+    mult_p[XDIR] = &Dirac_Wilson::multEO_xp;  
+    mult_p[YDIR] = &Dirac_Wilson::multEO_yp;  
+    mult_p[ZDIR] = &Dirac_Wilson::multEO_zp;  
+    mult_p[TDIR] = &Dirac_Wilson::multEO_tp;  
+		 
+    mult_m[XDIR] = &Dirac_Wilson::multEO_xm;
+    mult_m[YDIR] = &Dirac_Wilson::multEO_ym;
+    mult_m[ZDIR] = &Dirac_Wilson::multEO_zm;
+    mult_m[TDIR] = &Dirac_Wilson::multEO_tm;    
+  }else{
+    abort();
+  }
+}
+
+///////// regular site-indexing ///////////
+void Dirac_Wilson::mult_xp(Field& fp, const Field& f) const{
+  BGWilson_MultAdd_Dir(fp.getaddr(0),fp.getaddr(0),
+		       const_cast<Field*>(u_)->getaddr(0),
+		       const_cast<Field&>(f).getaddr(0),1.0,
+		       BGWILSON_DIRAC,BGWILSON_X,BGWILSON_FORWARD);
+}
+void Dirac_Wilson::mult_yp(Field& fp, const Field& f) const{
+  BGWilson_MultAdd_Dir(fp.getaddr(0),fp.getaddr(0),
+		       const_cast<Field*>(u_)->getaddr(0),
+		       const_cast<Field&>(f).getaddr(0),1.0,
+		       BGWILSON_DIRAC,BGWILSON_Y,BGWILSON_FORWARD);
+}
+void Dirac_Wilson::mult_zp(Field& fp, const Field& f) const{
+  BGWilson_MultAdd_Dir(fp.getaddr(0),fp.getaddr(0),
+		       const_cast<Field*>(u_)->getaddr(0),
+		       const_cast<Field&>(f).getaddr(0),1.0,
+		       BGWILSON_DIRAC,BGWILSON_Z,BGWILSON_FORWARD);
+}
+void Dirac_Wilson::mult_tp(Field& fp, const Field& f) const{
+  BGWilson_MultAdd_Dir(fp.getaddr(0),fp.getaddr(0),
+		       const_cast<Field*>(u_)->getaddr(0),
+		       const_cast<Field&>(f).getaddr(0),1.0,
+		       BGWILSON_DIRAC,BGWILSON_T,BGWILSON_FORWARD);
+}
+
+void Dirac_Wilson::mult_xm(Field& fp, const Field& f) const{
+  BGWilson_MultAdd_Dir(fp.getaddr(0),fp.getaddr(0),
+		       const_cast<Field*>(u_)->getaddr(0),
+		       const_cast<Field&>(f).getaddr(0),1.0,
+		       BGWILSON_DIRAC,BGWILSON_X,BGWILSON_BACKWARD);
+}
+void Dirac_Wilson::mult_ym(Field& fp, const Field& f) const{
+  BGWilson_MultAdd_Dir(fp.getaddr(0),fp.getaddr(0),
+		       const_cast<Field*>(u_)->getaddr(0),
+		       const_cast<Field&>(f).getaddr(0),1.0,
+		       BGWILSON_DIRAC,BGWILSON_Y,BGWILSON_BACKWARD);
+}
+void Dirac_Wilson::mult_zm(Field& fp, const Field& f) const{
+  BGWilson_MultAdd_Dir(fp.getaddr(0),fp.getaddr(0),
+		       const_cast<Field*>(u_)->getaddr(0),
+		       const_cast<Field&>(f).getaddr(0),1.0,
+		       BGWILSON_DIRAC,BGWILSON_Z,BGWILSON_BACKWARD);
+}
+void Dirac_Wilson::mult_tm(Field& fp, const Field& f) const{
+  BGWilson_MultAdd_Dir(fp.getaddr(0),fp.getaddr(0),
+		       const_cast<Field*>(u_)->getaddr(0),
+		       const_cast<Field&>(f).getaddr(0),1.0,
+		       BGWILSON_DIRAC,BGWILSON_T,BGWILSON_BACKWARD);
+}
+
+////// even/odd site-indexing (additional to the BG/Q environment) //////
+void Dirac_Wilson::multEO_xp(Field& fp, const Field& f) const{
+  BGWilson_MultAddEO_Dir(fp.getaddr(0),fp.getaddr(0),
+			 const_cast<Field*>(u_)->getaddr(0),
+			 const_cast<Field&>(f).getaddr(0),1.0,
+			 eotype_,BGWILSON_DIRAC,BGWILSON_X,BGWILSON_FORWARD);
+}
+void Dirac_Wilson::multEO_yp(Field& fp, const Field& f) const{
+  BGWilson_MultAddEO_Dir(fp.getaddr(0),fp.getaddr(0),
+			 const_cast<Field*>(u_)->getaddr(0),
+			 const_cast<Field&>(f).getaddr(0),1.0,
+			 eotype_,BGWILSON_DIRAC,BGWILSON_Y,BGWILSON_FORWARD);
+}
+void Dirac_Wilson::multEO_zp(Field& fp, const Field& f) const{
+  BGWilson_MultAddEO_Dir(fp.getaddr(0),fp.getaddr(0),
+			 const_cast<Field*>(u_)->getaddr(0),
+			 const_cast<Field&>(f).getaddr(0),1.0,
+			 eotype_,BGWILSON_DIRAC,BGWILSON_Z,BGWILSON_FORWARD);
+}
+void Dirac_Wilson::multEO_tp(Field& fp, const Field& f) const{
+  BGWilson_MultAddEO_Dir(fp.getaddr(0),fp.getaddr(0),
+			 const_cast<Field*>(u_)->getaddr(0),
+			 const_cast<Field&>(f).getaddr(0),1.0,
+			 eotype_,BGWILSON_DIRAC,BGWILSON_T,BGWILSON_FORWARD);
+}
+
+void Dirac_Wilson::multEO_xm(Field& fp, const Field& f) const{
+  BGWilson_MultAddEO_Dir(fp.getaddr(0),fp.getaddr(0),
+			 const_cast<Field*>(u_)->getaddr(0),
+			 const_cast<Field&>(f).getaddr(0),1.0,
+			 eotype_,BGWILSON_DIRAC,BGWILSON_X,BGWILSON_BACKWARD);
+}
+void Dirac_Wilson::multEO_ym(Field& fp, const Field& f) const{
+  BGWilson_MultAddEO_Dir(fp.getaddr(0),fp.getaddr(0),
+			 const_cast<Field*>(u_)->getaddr(0),
+			 const_cast<Field&>(f).getaddr(0),1.0,
+			 eotype_,BGWILSON_DIRAC,BGWILSON_Y,BGWILSON_BACKWARD);
+}
+void Dirac_Wilson::multEO_zm(Field& fp, const Field& f) const{
+  BGWilson_MultAddEO_Dir(fp.getaddr(0),fp.getaddr(0),
+			 const_cast<Field*>(u_)->getaddr(0),
+			 const_cast<Field&>(f).getaddr(0),1.0,
+			 eotype_,BGWILSON_DIRAC,BGWILSON_Z,BGWILSON_BACKWARD);
+}
+void Dirac_Wilson::multEO_tm(Field& fp, const Field& f) const{
+  BGWilson_MultAddEO_Dir(fp.getaddr(0),fp.getaddr(0),
+			 const_cast<Field*>(u_)->getaddr(0),
+			 const_cast<Field&>(f).getaddr(0),1.0,
+			 eotype_,BGWILSON_DIRAC,BGWILSON_T,BGWILSON_BACKWARD);
+}
+
+////// mult to substitute the regular definitions //////
+void Dirac_Wilson::mult_offdiag(Field& w, const Field& f) const{
+  BGWilson_MultEO(w.getaddr(0),const_cast<Field *>(u_)->getaddr(0),
+		  const_cast<Field&>(f).getaddr(0),-kpp_,
+		  eotype_,BGWILSON_DIRAC);
+}
+
+void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
+  BGWilson_Mult(w.getaddr(0),const_cast<Field *>(u_)->getaddr(0),
+		const_cast<Field&>(f).getaddr(0),-kpp_,BGWILSON_DIRAC);
+}
+
+const Field Dirac_Wilson::gamma5(const Field& f)const{ 
+  Field w(ff_.size());
+
+  double* f_ptr = const_cast<Field&>(f).getaddr(0);
+  double* w_ptr = w.getaddr(0);
+#pragma omp parallel 
+  { 
+    int ns = Nvol_/omp_get_num_threads();
+    int is = omp_get_thread_num()*ns;
+    BGWilsonLA_MultGamma5((Spinor*)(w_ptr)+is,(Spinor*)(f_ptr)+is,ns);
+  }
+  return w;
+}
+
+////// additional funcsions to the BG/Q environment ///////
+void Dirac_Wilson::mult_ptr(double* w, double* const f) const{
+  BGWilson_Mult(w,const_cast<Field *>(u_)->getaddr(0),f,-kpp_,
+		BGWILSON_DIRAC);
+}
+void Dirac_Wilson::mult_dag_ptr(double* w, double* const f) const{
+  BGWilson_Mult_Dag(w,const_cast<Field *>(u_)->getaddr(0),f,-kpp_,
+		    BGWILSON_DIRAC);
+}
+void Dirac_Wilson::mult_ptr_EO(double* w, double* const f) const{
+  BGWilson_MultEO(w,const_cast<Field *>(u_)->getaddr(0),f,-kpp_,
+		  eotype_,BGWILSON_DIRAC);
+}
+void Dirac_Wilson::mult_dag_ptr_EO(double* w, double* const f) const{
+  BGWilson_MultEO_Dag(w,const_cast<Field *>(u_)->getaddr(0),f,-kpp_,
+		      eotype_,BGWILSON_DIRAC);
+}
+
