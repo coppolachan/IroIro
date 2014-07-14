@@ -99,17 +99,25 @@ double ChiralCondensate::connected_susc(Source& src, const int stochastic_noise)
 	global_source = src.mksrc(s,c);
 
 	// Invert the source
+	/*
 	Field propagated = invert(global_source);
 	Field gamma5_prop = gamma5(propagated);
 	Field propagated2 = invert(propagated);
 	Field propagated3 = invert(gamma5_prop);
 	Field gamma5_prop2 = gamma5(propagated3);
-	
+	*/	
+
+	Field propagated = invert(global_source);
+	Field propagated2 = invert(propagated);
+	Field gamma5_prop = gamma5(propagated);
+
+
 	// Calculate traces by contracting with the source
 	for (int j = 0; j < fsize(); j+=2){
 	  conn_s  += global_source[j]*propagated2[j]  + global_source[j+1]*propagated2[j+1];
-	  conn_ps += global_source[j]*gamma5_prop2[j] + global_source[j+1]*gamma5_prop2[j+1];
-	  connected_im  += - global_source[j+1]*gamma5_prop2[j] + global_source[j]*gamma5_prop2[j+1];
+	  conn_ps += gamma5_prop[j]*gamma5_prop[j] + gamma5_prop[j+1]*gamma5_prop[j+1];
+	  connected_im  += - gamma5_prop[j+1]*gamma5_prop[j] + gamma5_prop[j]*gamma5_prop[j+1];
+
 	}
 
       }// end of color dilution
