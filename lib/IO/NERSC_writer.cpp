@@ -3,7 +3,7 @@
  *
  * @brief Definition of the NERSCWriter class methods
  *
- * Time-stamp: <2014-07-14 17:21:24 neo>
+ * Time-stamp: <2014-07-14 17:27:44 neo>
  */
 
 #include "NERSC_writer.hpp"
@@ -33,7 +33,7 @@ namespace CCIO {
     fprintf(outputFile, "DIMENSION_2 = %d\n", CommonPrms::instance()->Ly());
     fprintf(outputFile, "DIMENSION_3 = %d\n", CommonPrms::instance()->Lz());
     fprintf(outputFile, "DIMENSION_4 = %d\n", CommonPrms::instance()->Lt());
-    fprintf(outputFile, "LINK_TRACE = %f\n",0.0 );
+    fprintf(outputFile, "LINK_TRACE = %f\n",link_trace);
     fprintf(outputFile, "PLAQUETTE = %f\n",plaquette );
     fprintf(outputFile, "CHECKSUM = %x\n", 0 );
     fprintf(outputFile, "ENSEMBLE_ID = %s\n", "JLQCD_null");
@@ -69,7 +69,8 @@ namespace CCIO {
     writer_first_call(1),
     num_blocks(tot_vol/CommonPrms::instance()->Nx()){
     Staples stpl;
-    double plaquette = stpl.plaquette(GaugeField(U));
+    plaquette = stpl.plaquette(GaugeField(U));
+    link_trace = stpl.link_trace(GaugeField(U));
   };
 
 

@@ -3,7 +3,7 @@
  *
  * @brief Declaration of the NERSCWriter 
  *
- * Time-stamp: <2014-07-14 17:21:29 neo>
+ * Time-stamp: <2014-07-14 17:27:13 neo>
  */
 #ifndef NERSC_WRITER_HPP_
 #define NERSC_WRITER_HPP_
@@ -20,6 +20,7 @@ namespace CCIO {
     unsigned int total_external;
     unsigned int writer_first_call;
     double plaquette;
+    double link_trace;
   public:
     void set_output(FILE *);
     int format(int gsite, int in, int ex) const;

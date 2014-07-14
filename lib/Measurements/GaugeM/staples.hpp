@@ -20,6 +20,8 @@ public:
     Mapping::init_shiftField();
   }
 
+  double link_trace(const GaugeField&) const;
+  
   double plaquette(const GaugeField&) const;
   double plaq_s   (const GaugeField&) const;
   double plaq_t   (const GaugeField&) const;
