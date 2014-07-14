@@ -9,27 +9,31 @@
 #include "eigenSorter_Factory.hpp"
 #include "Communicator/comm_io.hpp"
 #include "IO/fields_io.hpp"
-#include "foprHermFunc.hpp"
-#include "include/foprHermFactory.hpp"
+#include "Fopr/foprHermFuncFactory.hpp"
+#include "Fopr/foprHermFactory.hpp"
 #include <memory>
 #include <vector>
 
 class Field;
 class Fopr_Herm;
 
+class OpFunc{
+public:
+  virtual Fopr_Herm* getOp(const Fopr_Herm*)const = 0;
+  virtual ~OpFunc(){}
+};
+
 class EigenCalcGeneral{
+  std::auto_ptr<OpFunc>          opAccelFptr_; 
   std::auto_ptr<FoprHermFactory> opOrigFptr_; 
-  std::auto_ptr<FoprHermFunc> opAccelFptr_; 
   std::auto_ptr<EigenSorterFactory> esortFptr_; 
   std::auto_ptr<EigenSolverFactory> eslvFptr_;
-    
+
   std::vector<double> evals_;
   std::vector<Field> evecs_;
   int Neig_;
 
-  FoprHermFactory* createFoprHermFactory(const XML::node&)const;
-  FoprHermFunc* createAccelOpFunc(const XML::node&)const;
-  EigenSorterFactory* createEigenSorterFactory(const XML::node&)const;
+  EigenSorterFactory* createEigenSorterFactory(const XML::node&);
   void get_eval(const Fopr_Herm*);
 
 public:

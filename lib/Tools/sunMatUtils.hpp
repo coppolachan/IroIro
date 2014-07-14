@@ -37,35 +37,34 @@ namespace SUNmatUtils{
   SUNmat exponential(const SUNmat& X,int N,int n=1);
 
   // multiplication of the Gell-Mann matrices
-  const SU3mat lambda1(const SU3mat&);
-  const SU3mat lambda2(const SU3mat&);
-  const SU3mat lambda3(const SU3mat&);
-  const SU3mat lambda4(const SU3mat&);
-  const SU3mat lambda5(const SU3mat&);
-  const SU3mat lambda6(const SU3mat&);
-  const SU3mat lambda7(const SU3mat&);
-  const SU3mat lambda8(const SU3mat&);
+  SU3mat lambda1(const SU3mat&);
+  SU3mat lambda2(const SU3mat&);
+  SU3mat lambda3(const SU3mat&);
+  SU3mat lambda4(const SU3mat&);
+  SU3mat lambda5(const SU3mat&);
+  SU3mat lambda6(const SU3mat&);
+  SU3mat lambda7(const SU3mat&);
+  SU3mat lambda8(const SU3mat&);
 
-  const SU3mat lambda1();
-  const SU3mat lambda2();
-  const SU3mat lambda3();
-  const SU3mat lambda4();
-  const SU3mat lambda5();
-  const SU3mat lambda6();
-  const SU3mat lambda7();
-  const SU3mat lambda8();
-  const SU3mat lambdaA();
-  const SU3mat lambdaB();
+  SU3mat lambda1();
+  SU3mat lambda2();
+  SU3mat lambda3();
+  SU3mat lambda4();
+  SU3mat lambda5();
+  SU3mat lambda6();
+  SU3mat lambda7();
+  SU3mat lambda8();
+  SU3mat lambdaA();
+  SU3mat lambdaB();
 
-  const SU3mat (*const lambda_mul[])(const SU3mat&) = {
+  SU3mat (*const lambda_mul[])(const SU3mat&) = {
     lambda1,lambda2,lambda3,lambda4,
     lambda5,lambda6,lambda7,lambda8,};
 
-  const SU3mat (*const lambda[])() = {
+  SU3mat (*const lambda[])() = {
     lambda1,lambda2,lambda3,lambda4,
     lambda5,lambda6,lambda7,lambda8,
     lambdaA,lambdaB,};
-
 
  // obtain the adjoint representation
   template<size_t COLORS>
@@ -98,7 +97,8 @@ namespace SUNmatUtils{
 			  3, 4, 5, 0, 1, 9, 0, 5,
 			  0, 0, 0, 4, 3, 6, 5, 0 };
 
-  const SU3mat lmd_commutator(int a,int b);
+  const std::valarray<double> lmd_commutator_va(int a,int b);
+  const SUNmat lmd_commutator(int a,int b);
 
   //BLAS style multiplications for optimization purposes
   // Matrix-matrix

@@ -1,7 +1,7 @@
 /*!
  * @file qprop_DomainWall.hpp
  * @brief Definition of Qprop domain wall fermions QpropDWF
- Time-stamp: <2014-04-11 14:11:57 noaki>
+ Time-stamp: <2014-07-10 16:41:09 noaki>
  */
 #ifndef QPROP_DOMAINWALL_INCLUDED
 #define QPROP_DOMAINWALL_INCLUDED

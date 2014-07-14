@@ -4,40 +4,92 @@
 #include "quark_prop_meas_factory.hpp"
 #include "include/common_fields.hpp"
 #include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
+#include "PugiXML/xmlUtilities.hpp"
 #include <string.h>
+#include <sstream>
+
+using namespace std;
 
 /// QPropFactory,   some leaking expected - check!
-QPropFactory::QPropFactory(XML::node node){ 
-  XML::descend(node,"Kernel");
-  Dfactory_.save(Diracs::createDiracWilsonLikeFactory(node));
-  XML::next_sibling(node,"Solver");
-  slvFactory_.save(Solvers::createSolverFactory(node));
+QPropFactory::QPropFactory(const XML::node& node):node_(node){ 
+  XML::descend(node_,"Kernel");
+  Dfactory_.save(Diracs::createDiracWilsonLikeFactory(node_));
+  XML::next_sibling(node_,"Solver");
+  slvFactory_.save(Solvers::createSolverFactory(node_));
+}
+
+QPropFactory::QPropFactory(const XML::node& node,double mass):node_(node){ 
+  XML::descend(node_,"Kernel");
+
+  stringstream mass_val;
+  mass_val << mass;
+  if(! (node_.child("mass").first_child().set_value(mass_val.str().c_str()))){ 
+    CCIO::cout<<"QPropFactory: set_value failed\n";
+    abort();
+  }
+  Dfactory_.save(Diracs::createDiracWilsonLikeFactory(node_));
+  XML::next_sibling(node_,"Solver");
+  slvFactory_.save(Solvers::createSolverFactory(node_));
 }
 
 QuarkPropagator* QPropFactory::createQuarkProp(InputConfig& input){
   Kernel_.save(Dfactory_.get()->getDirac(input));
-  Solv_.save(slvFactory_.get()->getSolver(new Fopr_DdagD(Kernel_.get())));
+  DdagD_.save(new Fopr_DdagD(Kernel_.get()));
+  Solv_.save(slvFactory_.get()->getSolver(DdagD_.get()));
   return new Qprop(Kernel_.get(),Solv_.get());
 }
 
 /// QProp_Factory_EvenOdd 
-QPropFactory_EvenOdd::QPropFactory_EvenOdd(XML::node node){
-  XML::descend(node,"Kernel");
-  Dfactory_.save(new DiracWilsonEvenOddFactory(node));
-  XML::next_sibling(node,"Solver");
-  slvFactory_.save(Solvers::createSolverFactory(node));
+QPropFactory_EvenOdd::QPropFactory_EvenOdd(const XML::node& node):node_(node){
+  XML::descend(node_,"Kernel");
+  Dfactory_.save(new DiracWilsonEvenOddFactory(node_));
+  XML::next_sibling(node_,"Solver");
+  slvFactory_.save(Solvers::createSolverFactory(node_));
+}
+
+QPropFactory_EvenOdd::QPropFactory_EvenOdd(const XML::node& node,double mass)
+  :node_(node){
+  XML::descend(node_,"Kernel");
+
+  stringstream mass_val;
+  mass_val << mass;
+  if(! (node_.child("mass").first_child().set_value(mass_val.str().c_str()))){ 
+    CCIO::cout<<"QPropFactory_EvenOdd: set_value failed\n";
+    abort();
+  }
+  Dfactory_.save(new DiracWilsonEvenOddFactory(node_));
+  XML::next_sibling(node_,"Solver");
+  slvFactory_.save(Solvers::createSolverFactory(node_));
 }
 
 QuarkPropagator* QPropFactory_EvenOdd::createQuarkProp(InputConfig& input){
   Kernel_.save(Dfactory_.get()->getDirac(input));
-  Solv_.save(slvFactory_.get()->getSolver(new Fopr_DdagD(Kernel_.get())));
+  DdagD_.save(new Fopr_DdagD(Kernel_.get()));
+  Solv_.save(slvFactory_.get()->getSolver(DdagD_.get()));
   return new Qprop_EvenOdd(Kernel_.get(),Solv_.get());
 }
 
 /// QPropDWFFactory
-QPropDWFFactory::QPropDWFFactory(XML::node node){
-  XML::descend(node,"Kernel4d");
-  Dfactory_.save(Diracs::createDiracDWF4dFactory(node));
+QPropDWFFactory::QPropDWFFactory(const XML::node& node):node_(node){
+  XML::descend(node_,"Kernel4d");
+  Dfactory_.save(Diracs::createDiracDWF4dFactory(node_));
+}
+
+QPropDWFFactory::QPropDWFFactory(const XML::node& node,double mass):node_(node){
+  XML::descend(node_,"Kernel4d");
+
+  stringstream mass_val;
+  mass_val << mass;
+  if(! (node_.child("Kernel5d").child("mass").first_child().set_value(mass_val.str().c_str()))){ 
+    CCIO::cout<<"QPropDWFFactory: set_value failed\n";
+    abort();
+  }
+  Dfactory_.save(Diracs::createDiracDWF4dFactory(node_));
+
+  double mq;
+  XML::descend(node_,"Kernel5d");
+  XML::read(node_,"mass",mq,MANDATORY);
+  CCIO::cout<<"QPropDWFFactory: mass= "<<mq<<"\n";
 }
 
 QpropDWF* QPropDWFFactory::createQuarkProp(InputConfig& input){
@@ -48,26 +100,27 @@ QpropDWF* QPropDWFFactory::createQuarkProp(InputConfig& input){
 /////////////////// factory creator  ///////////////////////
 
 namespace QuarkPropagators {
-  QuarkPropagatorFactory* createQuarkPropagatorFactory(XML::node node) {
+  QuarkPropagatorFactory* createQuarkPropagatorFactory(const XML::node& node){
     
-    if(node !=NULL){
-      const char* qprop_name = node.attribute("name").value();
-        
-      if(!strcmp(qprop_name, "Qprop"))  
-        return new QPropFactory(node);
-      if(!strcmp(qprop_name, "Qprop_EvenOdd")) 
-        return new QPropFactory_EvenOdd(node);
-      if(!strcmp(qprop_name, "QpropDWF")) 
-        return new QPropDWFFactory(node);
+    XML::nullCheck(node,"QuarkPropagator");
+    const char* qpname = node.attribute("name").value();
+    
+    if(!strcmp(qpname,"Qprop"))        return new QPropFactory(node);
+    if(!strcmp(qpname,"Qprop_EvenOdd"))return new QPropFactory_EvenOdd(node);
+    if(!strcmp(qpname,"QpropDWF"))     return new QPropDWFFactory(node);
+    
+    XML::stopMsg(node,"QuarkPropagator");
+  }  
+  
+  QuarkPropagatorFactory* createQuarkPropagatorFactory(const XML::node& node,
+						       double mass){
+    XML::nullCheck(node,"QuarkPropagator");
+    const char* qpname = node.attribute("name").value();
+    
+    if(!strcmp(qpname,"Qprop"))        return new QPropFactory(node,mass);
+    if(!strcmp(qpname,"Qprop_EvenOdd"))return new QPropFactory_EvenOdd(node,mass);
+    if(!strcmp(qpname,"QpropDWF"))     return new QPropDWFFactory(node,mass);
 
-      CCIO::cerr << "No Quark Propagator available with name ["
-		 << qprop_name << "]" << std::endl;
-      abort();
-    }else{
-      CCIO::cout << "Requested node is missing in input file "
-		 << "(QuarkPropagator Object)\n" 
-		 << "Request by " << node.parent().name() << std::endl;
-      abort();
-    }
+    XML::stopMsg(node,"QuarkPropagator");
   }  
 }

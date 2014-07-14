@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-04-21 16:22:50 neo>
+# Time-stamp: <2014-07-03 14:27:02 noaki>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -62,7 +62,6 @@ DWF_BGQ_HDR += Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.hpp
 DWF_BGQ_SRC += Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.cpp
 DWF_BGQ_SRC += Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.cpp
 DWF_BGQ_SRC += Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.cpp
-DWL_BGQ_SRC += Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.cpp
 ACTION_SRC = Action/Architecture_Optimized/action_gauge_rect.bgq.cpp 
 ACTION_SRC += Action/Architecture_Optimized/action_gauge_wilson_force.bgq.cpp 	
 SMEAR_SRC += Smearing/Architecture_Optimized/stoutSmear_core_BGQ.cpp
@@ -116,7 +115,6 @@ else
 BFM_SRC = 
 endif
 
-
 AM_CPPFLAGS =-I$(top_srcdir)
 AM_CPPFLAGS += $(BFM_INCLUDE)
 AM_CFLAGS   =-I$(top_srcdir) 
@@ -125,13 +123,13 @@ AM_LDFLAGS  += $(BFM_LIBS)
 bin_PROGRAMS = main_hmc main_hadron_spectrum_Nf2p1
 lib_LIBRARIES = libcommcode.a 
 
-
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		Main/documentation_pages.h	\
                 Dirac_ops/dirac_wilson_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
+                Dirac_ops/Architecture_Optimized/dirac_wilson_BGQ.code  \
                 Dirac_ops/Architecture_Optimized/dirac_wilson_Brillouin_BGQ.code    	\
                 Dirac_ops/Architecture_Optimized/dirac_staggered_EvenOdd_Adjoint_BGQ.code \
 		Fields/field.inl
@@ -163,6 +161,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		IO/ILDG_reader.cpp			\
 		IO/ILDG_writer.cpp			\
 		IO/JLQCDLegacy_reader.cpp		\
+		Fopr/foprHermFactoryCreator.cpp     \
+		Fopr/foprHermFuncFactoryCreator.cpp     \
 		Dirac_ops/dirac_Operator_FactoryCreator.cpp \
 		Dirac_ops/dirac_Operator_Factory.cpp	\
 		Dirac_ops/dirac.cpp     		\
@@ -171,6 +171,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson_adjoint.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
+		Dirac_ops/dirac_wilson_FiniteDensity.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
 		Dirac_ops/dirac_Mobius.cpp			\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
@@ -198,7 +199,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/eigenModesSolver_Factory.cpp		\
 		EigenModes/eigenModesSolver_IRL.cpp		\
 		EigenModes/eigenProc_Zolotarev.cpp		\
-		EigenModes/chebyshevAccelFunc.cpp            \
+		EigenModes/chebyshevAccelFuncFactory.cpp        \
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
 		EigenModes/eigModesNum.cpp			\
@@ -220,6 +221,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Measurements/FermionicM/quark_prop_meas_factory.cpp 	\
 		Measurements/FermionicM/baryonCorrelator.cpp	        \
 		Measurements/FermionicM/chiral_condensate.cpp		\
+		Measurements/FermionicM/outputUtils.cpp		\
 		Geometry/autoMap_improved.cpp		\
 		Geometry/siteIndex_EvenOdd.cpp		\
 		Geometry/siteMap.cpp			\
@@ -234,6 +236,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		HMC/mdExec_factory.cpp                  \
 		PugiXML/pugixml.cpp			\
 		PugiXML/pugi_interface.cpp		\
+		PugiXML/xmlUtilities.cpp		\
 		Solver/solver_BiCGStab.cpp		\
 		Solver/solver_CG.cpp			\
 		Solver/solver_Factory.cpp		\
@@ -285,8 +288,6 @@ main_hadron_spectrum_Nf2p1_SOURCES = Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf
 			Main/HadronSpectrum_Nf2p1/main_hadron_correlator_Nf2p1.cpp
 main_hadron_spectrum_Nf2p1_LDADD   = libcommcode.a $(OPTLIB)
 
-
-
 ############### Headers
 include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/commonPrms.hpp		\
@@ -297,18 +298,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/geometry.hpp		\
 			$(top_srcdir)/include/field.h			\
 			$(top_srcdir)/include/factories.hpp		\
-			$(top_srcdir)/include/fopr_Chebyshev.h	        \
-			$(top_srcdir)/include/fopr_RationalApprox.hpp   \
-			$(top_srcdir)/include/fopr_InvLinear.hpp        \
-			$(top_srcdir)/include/fopr_DdagDLinear.h        \
-			$(top_srcdir)/include/fopr_QuadLinear.h         \
-			$(top_srcdir)/include/fopr_Linear.h             \
-			$(top_srcdir)/include/fopr_Dhat.h		\
-			$(top_srcdir)/include/fopr_eo.h			\
-			$(top_srcdir)/include/fopr_eo_wilson.h		\
-			$(top_srcdir)/include/fopr.h			\
-			$(top_srcdir)/include/fopr_signH_Zolotarev.h	\
-			$(top_srcdir)/include/foprHermFactory.hpp	\
 			$(top_srcdir)/include/format_A.h		\
 			$(top_srcdir)/include/format_F.h		\
 			$(top_srcdir)/include/format_G.h		\
@@ -328,6 +317,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(DWF_BGQ_HDR)                                  \
                         PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
+			PugiXML/xmlUtilities.hpp			\
 			Action/action_gauge_wilson.hpp			\
 	 		Action/action_gauge_wilson_adjoint.hpp		\
 			Action/action_gauge_rect.hpp                    \
@@ -372,6 +362,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
                         Measurements/FermionicM/utils_DWF4d.hpp 	\
 			Measurements/FermionicM/chiral_condensate.hpp	\
 			Measurements/FermionicM/chiral_condensate_abs.hpp\
+			Measurements/FermionicM/outputUtils.hpp		\
 			Communicator/communicator.hpp		\
 			Communicator/comm_io.hpp		\
 			IO/fields_io.hpp			\
@@ -398,6 +389,22 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Main/gaugeConf.hpp			\
 			Main/gaugeGlobal.hpp			\
 			Main/HadronSpectrum_Nf2p1/HadronSpectrum_Nf2p1.hpp \
+			Fopr/fopr_Exp.h	        \
+			Fopr/fopr_Chebyshev.h	        \
+			Fopr/fopr_RationalApprox.hpp   \
+			Fopr/fopr_InvLinear.hpp        \
+			Fopr/fopr_DdagDLinear.h        \
+			Fopr/fopr_QuadLinear.h         \
+			Fopr/fopr_Linear.h             \
+			Fopr/fopr_Dhat.h		\
+			Fopr/fopr_eo.h			\
+			Fopr/fopr_eo_wilson.h		\
+			Fopr/fopr.h			\
+			Fopr/fopr_signH_Zolotarev.h	\
+			Fopr/foprHermFactoryCreator.hpp     \
+			Fopr/foprHermFactory.hpp	\
+			Fopr/foprHermFuncFactory.hpp   \
+			Fopr/foprHermFuncFactoryCreator.hpp   \
 		        Dirac_ops/dirac_Operator_FactoryCreator.hpp  \
 			Dirac_ops/dirac_Operator_Factory.hpp	\
 			Dirac_ops/dirac_DWoverlap.hpp 		\
@@ -412,6 +419,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_wilson_Brillouin_OSS.hpp\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
+			Dirac_ops/dirac_wilson_FiniteDensity.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_Mobius.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
@@ -439,10 +447,9 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenModesSolver_IRL.hpp	\
 			EigenModes/eigenSorter_Factory.hpp	\
 			EigenModes/eigenSorter.hpp		\
-			EigenModes/chebyshevAccelFunc.hpp       \
+			EigenModes/chebyshevAccelFuncFactory.hpp       \
 			EigenModes/eigenProc_Zolotarev.h	\
 			EigenModes/eigenModes.hpp		\
-			EigenModes/foprHermFunc.hpp		\
 			EigenModes/findminmax.hpp		\
 			EigenModes/eigModesNum.hpp	        \
 			Fields/field_expressions.hpp		\
@@ -502,6 +509,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			UpdatingAlg/HeatBath/HBActions_SUN.hpp	\
 			Scalar_ops/scalarOp.hpp  	        \
 			Scalar_ops/laplacian.hpp	        \
+			Scalar_ops/laplacian4Ds.hpp	        \
 			Scalar_ops/scalar_Operator_Factory.hpp  \
 			Scalar_ops/scalar_Operator_FactoryCreator.hpp
 

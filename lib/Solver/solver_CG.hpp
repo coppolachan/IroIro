@@ -1,17 +1,15 @@
 /*!
  * @file solver_CG.hpp
  * @brief Declaration of Solver_CG class
-
- * Time-stamp: <2013-07-12 17:58:54 cossu>
+ * Time-stamp: <2014-07-02 21:31:27 noaki>
  */
 #ifndef SOLVER_CG_INCLUDED
 #define SOLVER_CG_INCLUDED
 
 #include <typeinfo>
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 #include "solver.hpp"
 #include "solver_CG_params.hpp"
-
 
 /*!
  * @brief Solves \f$Dx = b\f$ using 

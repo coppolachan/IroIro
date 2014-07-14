@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-02-26 13:20:17 noaki>
+# Time-stamp: <2014-07-07 18:29:16 noaki>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -55,10 +55,12 @@ EXTRA_DIST = 	testResults.info	\
 		test_HMC.wilson.ratio.smeared.xml \
 		test_HMC.wilson.rational.smeared.xml \
 		test_HMC.DWF.rational.xml	\
+		test_HMC_CloverFiniteDensity.xml\
 		test_RNG.xml	 	\
 		test_Wilson.xml	 	\
 		test_Wilson_EvenOdd.xml	\
 		test_Wilson_Brillouin.xml	\
+		test_Wilson_FiniteDensity.xml	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_EigenModesSolver.xml\
@@ -68,7 +70,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_WilsonFlow.xml	\
 		test_MesonSpectrum_Nf2p1.xml 	\
 		test_BaryonSpectrum_Nf2p1.xml 	\
-		test_HadronSpectrum_Nf2p1.xml 	\
+		test_HadronSpectrum_MultiQprop.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
@@ -94,6 +96,7 @@ test_PROGRAMS = test_HMC 		\
 		test_WilsonFlow		\
 		test_Wilson 		\
 		test_Clover 		\
+		test_Wilson_FiniteDensity\
 		test_Wilson_EvenOdd 	\
 		test_Wilson_Brillouin 	\
 		test_Wilson_Brillouin_Imp\
@@ -103,7 +106,6 @@ test_PROGRAMS = test_HMC 		\
 		test_MesonSpectrum_SpMom\
 		test_MesonSpectrum_Nf2p1\
 		test_BaryonSpectrum_Nf2p1\
-		test_HadronSpectrum_Nf2p1\
 		test_EigenModesSolver	\
 		test_EigModesNum	\
 		test_Smearing		\
@@ -121,6 +123,7 @@ test_PROGRAMS = test_HMC 		\
                 test_DiracWilson_Adjoint\
 		test_Laplacian		\
 		test_LapH		\
+		test_HadronSpectrum_MultiQprop\
 		test_ChiralCondensate 
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
@@ -145,6 +148,9 @@ test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
 
 test_Wilson_SOURCES 	=	test_wilson.cpp 		\
 				testerWilson.cpp
+
+test_Wilson_FiniteDensity_SOURCES =  test_Wilson_FiniteDensity.cpp\
+	                             testerWilsonFiniteDensity.cpp
 
 test_Clover_SOURCES 	=	test_clover.cpp 		\
 				testerClover.cpp
@@ -172,9 +178,6 @@ test_MesonSpectrum_Nf2p1_SOURCES= test_MesonSpectrum_Nf2p1.cpp 	\
 
 test_BaryonSpectrum_Nf2p1_SOURCES= test_BaryonSpectrum_Nf2p1.cpp 	\
 				testerBaryonSpectrumNf2p1.cpp
-
-test_HadronSpectrum_Nf2p1_SOURCES= test_HadronSpectrum_Nf2p1.cpp 	\
-				testerHadronSpectrumNf2p1.cpp
 
 test_Solver_Perf_SOURCES = 	test_Solver_Perf.cpp		\
 				testerSolver_Perf.cpp
@@ -236,6 +239,9 @@ test_Laplacian_SOURCES 		=	test_Laplacian.cpp	\
 test_LapH_SOURCES 		=	test_LapH.cpp	\
 					testerLapH.cpp
 
+test_HadronSpectrum_MultiQprop_SOURCES = test_HadronSpectrum_MultiQprop.cpp\
+					testerHadronSpectrumMultiQprop.cpp
+
 ## Put all BFM related tests here
 if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
@@ -277,7 +283,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_MesonSpectrum_Nf2p1.hpp	\
 	                        test_MesonSpectrum_SpMom.hpp    \
 				test_BaryonSpectrum_Nf2p1.hpp	\
-				test_HadronSpectrum_Nf2p1.hpp	\
+				test_HadronSpectrum_MultiQprop.hpp	\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\
@@ -285,6 +291,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_sunRepres.hpp		\
 				test_HeatBath.hpp               \
 				test_Solver_BFM.hpp		\
+				test_Wilson_FiniteDensity.hpp   \
                                 test_DWF.hpp			\
                                 test_LapH.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\

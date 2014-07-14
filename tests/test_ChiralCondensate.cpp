@@ -46,7 +46,7 @@ int Test_ChiralCondensate::run(){
 
   XML::node Source_node = ch_node;
   XML::descend(Source_node,"Source");
-  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(Source_node));
+  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<Format::Format_F>(Source_node));
   auto_ptr<Source> src(SrcFactory->getSource());
 
   /************************************************************************************/

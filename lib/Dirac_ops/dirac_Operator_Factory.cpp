@@ -1,7 +1,7 @@
 /*! @file dirac_Operator_Factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
 
- * Time-stamp: <2014-01-24 14:30:00 cossu>
+ * Time-stamp: <2014-07-04 17:48:58 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "Solver/solver_Factory.hpp"
@@ -21,15 +21,24 @@ DiracWilsonLike* DiracWilsonAdjointFactory::createDirac(InputConfig& input){
 DiracWilsonLike* DiracWilsonBrillouinFactory::createDirac(InputConfig& input){
   return new Dirac_Wilson_Brillouin(Dirac_node_,input.getGconf(),type_);
 }
-
 /// Dirac_Wilson_Brillouin_OSS
 DiracWilsonLike* DiracWilsonBrillouinOSSFactory::createDirac(InputConfig& input){
   return new Dirac_Wilson_Brillouin_OSS(Dirac_node_,input.getGconf(),type_);
 }
 
+/// Dirac_Wilson_FiniteDensity
+DiracWilsonLike* DiracWilsonFiniteDensityFactory::createDirac(InputConfig& input){
+  return new Dirac_Wilson_FiniteDensity(Dirac_node_,input.getGconf());
+}
+
 /// Dirac_Clover
+DiracCloverFactory::DiracCloverFactory(XML::node node):Dirac_node_(node){
+  XML::descend(node,"BaseWilson",MANDATORY);
+  DiracFactory_.save(Diracs::createDiracWilsonLikeFactory(node));
+}
 DiracWilsonLike* DiracCloverFactory::createDirac(InputConfig& input){
-  return new Dirac_Clover(Dirac_node_,input.getGconf());}
+  D_.save(DiracFactory_.get()->getDirac(input));
+  return new Dirac_Clover(Dirac_node_,D_.get(),input.getGconf());}
 
 /// Dirac_Mobius
 DiracMobiusFactory::DiracMobiusFactory(XML::node node):Dirac_node_(node){
@@ -112,7 +121,7 @@ createDiracPV(InputConfig& input){
   if(!Kernel_.is_saved())
     Kernel_.save(KernelFactory_.get()->getDirac(input));
   return new Dirac_DomainWall_EvenOdd(Dirac_node_,Kernel_.get(),
-					     PauliVillars); 
+				      PauliVillars); 
 }
 
 /// Dirac_DomainWall_Adjoint_EvenOdd

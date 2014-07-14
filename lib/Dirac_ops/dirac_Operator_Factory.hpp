@@ -1,7 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
-
- Time-stamp: <2014-01-24 14:30:11 cossu>
+ Time-stamp: <2014-07-04 17:49:11 noaki>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -14,6 +13,7 @@
 #include "dirac_wilson_EvenOdd.hpp"
 #include "dirac_wilson_Brillouin.hpp"
 #include "dirac_wilson_Brillouin_OSS.hpp"
+#include "dirac_wilson_FiniteDensity.hpp"
 #include "dirac_clover.hpp"
 #include "dirac_Mobius.hpp"
 #include "dirac_DomainWall_adjoint.hpp"
@@ -132,13 +132,25 @@ public:
   DiracWilsonBrillouinOSSFactory(const XML::node& node,ImpType type=Standard)
     :Dirac_node_(node),type_(type){}
 };
+////////////
+/*! @brief Concrete class for creating Dirac Wilson FiniteDensity operators */
+class DiracWilsonFiniteDensityFactory : public DiracWilsonLikeFactory {
+  const XML::node Dirac_node_;
+  DiracWilsonLike* createDirac(InputConfig&);
+public:
+  DiracWilsonFiniteDensityFactory(const XML::node& node):Dirac_node_(node){}
+};
+
 /////////////
 /*! @brief Concrete class for creating Dirac Clover operators */
 class DiracCloverFactory : public DiracWilsonLikeFactory {
+
+  RaiiFactoryObj<DiracWilsonLikeFactory> DiracFactory_;
+  RaiiFactoryObj<DiracWilsonLike> D_;
   XML::node Dirac_node_;
   DiracWilsonLike* createDirac(InputConfig&);
 public:
-  DiracCloverFactory(const XML::node& node):Dirac_node_(node){}
+  DiracCloverFactory(XML::node node);
 };
 
 ////////////
@@ -357,7 +369,7 @@ public:
   DiracDWF4dBGQeoFactory(XML::node node);
 };
 #endif
-////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
 
 //////////////

@@ -1,18 +1,14 @@
 /*!
  * @file solver_BiCGStab.hpp
- *
  * @brief Definition of BiCGstab solver
- *
  */
 #ifndef SOLVER_BICGSTAB_INCLUDED
 #define SOLVER_BICGSTAB_INCLUDED
 
 #include <typeinfo>
 #include "include/pugi_interface.h"
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 #include "Solver/solver.hpp"
-
-
 
 struct Solver_BiCGStabParams{
   int MaxIter;
@@ -28,8 +24,6 @@ struct Solver_BiCGStabParams{
     GoalPrecision = prec_;
   }
 };
-
-
 
 class Solver_BiCGStab: public Solver {
 private:

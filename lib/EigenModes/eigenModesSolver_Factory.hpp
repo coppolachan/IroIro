@@ -7,7 +7,7 @@
 #include "include/common_fields.hpp"
 #include "eigenModesSolver_IRL.hpp"
 #include "eigenSorter.hpp"
-#include "include/foprHermFactory.hpp"
+#include "Fopr/foprHermFactory.hpp"
 #include "include/pugi_interface.h"
 #include <memory>
 

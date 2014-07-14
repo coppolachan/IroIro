@@ -2,7 +2,7 @@
 #include "Dirac_ops/dirac_wilson_adjoint.hpp"
 #include "Tools/RandomNumGen/randNum_MT19937.h"
 #include "Tools/randNum_MP.h"
-#include "fopr.h"
+#include "Fopr/fopr.h"
 #include "Tools/sunMatUtils.hpp"
 
 using namespace std;

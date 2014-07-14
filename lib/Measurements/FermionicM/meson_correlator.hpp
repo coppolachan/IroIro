@@ -20,7 +20,8 @@ typedef std::vector<Field> prop_t;
 enum MesonType {Pion, Scalar,
 		Vector1, Vector2, Vector3, Vector4,
 		AVector1, AVector2, AVector3, AVector4,
-		Tensor12, Tensor13, Tensor14, Tensor23, Tensor24, Tensor34};
+		Tensor12, Tensor13, Tensor14, Tensor23, Tensor24, Tensor34,
+                AV4_PS, PS_AV4,};
 
 class MesonCorrelator {
   const int Nc_;
@@ -102,6 +103,14 @@ public:
     case Tensor34:
       G1_.reset(new GammaMatrices::Sigma34_5);
       G2_.reset(new GammaMatrices::Sigma34_5);
+      break;
+    case AV4_PS:  /// PS(0) -> AV4(t)
+      G1_.reset(new GammaMatrices::Gamma4);
+      G2_.reset(new GammaMatrices::Unit);
+      break;
+    case PS_AV4: /// AV4(0) -> PS(t)
+      G1_.reset(new GammaMatrices::Unit);
+      G2_.reset(new GammaMatrices::Gamma4);
       break;
     }
   }

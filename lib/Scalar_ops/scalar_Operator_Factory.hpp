@@ -3,6 +3,7 @@
 
 #include "scalarOp.hpp"
 #include "laplacian.hpp"
+#include "laplacian4Ds.hpp"
 #include "pugi_interface.h"
 #include "include/inputConfig.hpp"
 #include <string.h>
@@ -19,6 +20,23 @@ public:
   LaplacianFactory(const XML::node& node):lnode_(node){}
   Laplacian* getSop(InputConfig& input)const{
     return new Laplacian(lnode_,input.getGconf());
+  }
+};
+
+class Laplacian4DFfactory: public ScalarOpFactory{
+public:
+  Laplacian4DFfactory(){}
+  Laplacian4DF* getSop(InputConfig& input)const{
+    CCIO::cout<<"Laplacian4DFfactory called\n";
+    return new Laplacian4DF(input.getGconf());
+  }
+};
+
+class Laplacian4DSfactory: public ScalarOpFactory{
+public:
+  Laplacian4DSfactory(){}
+  Laplacian4DS* getSop(InputConfig& input)const{
+    return new Laplacian4DS(input.getGconf());
   }
 };
 

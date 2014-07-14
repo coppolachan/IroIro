@@ -14,6 +14,7 @@
 #include "Tools/EnumToString.hpp"
 
 #include <cmath>
+#include <cassert>
 #include <iostream>
 
 ////// Source_local -------------------------------------------------------
@@ -34,7 +35,7 @@ public:
   const Field mksrc(int s, int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
   
-  void refresh(){}; //nothing to be done
+  void refresh(){} //nothing to be done
 };
 
 template<typename FMT> 
@@ -85,7 +86,7 @@ public:
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 
-  void refresh(){}; //nothing to be done
+  void refresh(){} //nothing to be done
 };
 
 template<typename FMT> void Source_exp<FMT>::set_src(){
@@ -154,7 +155,7 @@ public:
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 
-  void refresh(){}; //nothing to be done
+  void refresh(){} //nothing to be done
 };
 
 template<typename FMT> void Source_Gauss<FMT>::set_src(){
@@ -220,7 +221,7 @@ public:
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 
-  void refresh(){}; //nothing to be done
+  void refresh(){} //nothing to be done
 };
 
 template<typename FMT> void Source_wall<FMT>::set_src(){
@@ -247,18 +248,17 @@ mksrc(const std::vector<int>& lv,int s,int c)const{
 }
 
 ////// Source_wnoise----------------------------------------------------
-template<typename IDX,typename FMT> class Source_wnoise :public Source{
+template<typename FMT> class Source_wnoise :public Source{
 private:
   const RandNum& rand_;
   FMT* ff_;
-  IDX* idx_;
   std::valarray<double> src_;
 public:
   Source_wnoise(const RandNum& rand, int Nvol)
-    :rand_(rand),idx_(IDX::instance()),ff_(new FMT(Nvol)),
+    :rand_(rand),ff_(new FMT(Nvol)),
      src_(0.0,ff_->size()){
     //
-    std::vector<int> gsite = idx_->get_gsite();
+    std::vector<int> gsite = SiteIndex::instance()->get_gsite();
     MPrand::mp_get(src_,rand_,gsite,*ff_);
   }
 
@@ -267,20 +267,20 @@ public:
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 
   void refresh(){
-    std::vector<int> gsite = idx_->get_gsite();
+    std::vector<int> gsite = SiteIndex::instance()->get_gsite();
     MPrand::mp_get(src_,rand_,gsite,*ff_);   
-  };
+  }
 };
 
-template<typename IDX,typename FMT> 
-const Field Source_wnoise<IDX,FMT>::mksrc(int s,int c)const{
+template<typename FMT> 
+const Field Source_wnoise<FMT>::mksrc(int s,int c)const{
   Field wns(ff_->size());
   wns.set(ff_->cs_slice(c,s),src_[ff_->cs_slice(c,s)]);
   return wns;
 }
 
-template<typename IDX,typename FMT> 
-const Field Source_wnoise<IDX,FMT>::
+template<typename FMT> 
+const Field Source_wnoise<FMT>::
 mksrc(const std::vector<int>& lv,int s,int c)const{
   return Field(mksrc(s,c)[ff_->get_sub(lv)]);
 }
@@ -296,22 +296,18 @@ Begin_Enum_String( Z2Type ) {
 } 
 End_Enum_String;
 
-template<typename IDX,typename FMT> class Source_Z2noise :public Source{
+template<typename FMT> class Source_Z2noise :public Source{
 private:
   const RandNum& rand_generator_;/*!< @brief Random number generator (to be provided)*/
   Z2Type Type_;
-  IDX* idx_;
   FMT* ff_;/*!< @brief %Field %Format specifier */
   std::valarray<double> src_;/*!< @brief %Source field result */
 public:
   /*!  @brief Constructor */
   Source_Z2noise(const RandNum& rand,int Nvol,Z2Type Type)
     :rand_generator_(rand),
-     idx_(IDX::instance()),
      ff_(new FMT(Nvol)),
-     Type_(Type),src_(0.0,ff_->size()){
-    setup_source();
-  }
+     Type_(Type),src_(0.0,ff_->size()){ setup_source();}
 
   /*! @brief Destructor */
   ~Source_Z2noise(){ delete ff_;}
@@ -320,7 +316,7 @@ public:
     std::valarray<double> white_noise(0.0,ff_->size());
     double cosine;
     
-    std::vector<int> gsite = idx_->get_gsite();
+    std::vector<int> gsite = SiteIndex::instance()->get_gsite();
     MPrand::mp_get(white_noise,rand_generator_,gsite,*ff_);
 
 
@@ -338,24 +334,47 @@ public:
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 
-  void refresh(){
-    setup_source();
-  }
+  void refresh(){ setup_source(); }
 };
 
-template<typename IDX,typename FMT>
-const Field Source_Z2noise<IDX,FMT>::mksrc(int s,int c)const{
+template<typename FMT>
+const Field Source_Z2noise<FMT>::mksrc(int s,int c)const{
   Field wns(ff_->size());
   wns.set(ff_->cs_slice(c,s), src_[ff_->cs_slice(c,s)]);
   return wns;
 }
 
-template<typename IDX,typename FMT> 
-const Field Source_Z2noise<IDX,FMT>::
+template<typename FMT> 
+const Field Source_Z2noise<FMT>::
 mksrc(const std::vector<int>& lv,int s,int c)const{
   return Field(mksrc(s,c)[ff_->get_sub(lv)]);
 }
 
+////// Source_wrapper----------------------------------------------------
+/*! 
+ * @brief Source type: wrapper 
+ */
 
+template<typename FMT> class Source_wrapper: public Source{
+  Source* orgSrc_;
+  FMT* ff_;
+  std::valarray<double> src_;
+  Fopr_Herm* op_;
+public:
+  Source_wrapper(Source* Src,Fopr_Herm* op,
+		 int Nvol = CommonPrms::Nvol())
+    :orgSrc_(Src),op_(op),ff_(new FMT(Nvol)){
+    assert(orgSrc_);
+    assert(op_->fsize() == ff_->size());
+  }
+
+  const Field mksrc(int s, int c)const{
+    return op_->mult(orgSrc_->mksrc(s,c));}
+
+  const Field mksrc(const std::vector<int>& lv,int s,int c)const{
+    return op_->mult(orgSrc_->mksrc(lv,s,c));}    
+
+  void refresh(){orgSrc_->refresh();}
+};
 
 #endif

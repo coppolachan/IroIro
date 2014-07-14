@@ -5,7 +5,7 @@
 #ifndef EIGENMODESSOLVER_IRL_INCLUDED
 #define EIGENMODESSOLVER_IRL_INCLUDED
 
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 #include "include/pugi_interface.h"
 #include "Communicator/comm_io.hpp"
 #include "eigenModesSolver.hpp"
@@ -21,6 +21,7 @@ private:
   int Nk_;
   int Nm_;
   double prec_;
+  double scale_;
   int Niter_;
   
   void setUnit(std::vector<double>& Qt)const;
@@ -41,9 +42,10 @@ private:
   void orthogonalize(Field& w,const std::vector<Field>& evec,int k)const;
   
 public:
-  EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,XML::node node)
+  EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
+		       XML::node node)
     :opr_(fopr),esorter_(esorter){
-    //CCIO::cout<<"EigenModesSolver_IRL being constructed"<<std::endl;
+    CCIO::cout<<"EigenModesSolver_IRL being constructed\n";
 
     XML::read(node,"Nthreshold",Nthrs_,MANDATORY);
     XML::read(node,"Nk",Nk_,MANDATORY);
@@ -53,13 +55,19 @@ public:
 
     XML::read(node,"precision",prec_,MANDATORY);
     XML::read(node,"max_iter",Niter_,MANDATORY);
-   
-    CCIO::cout<<"EigenModesSolver_IRL constructed: precision= "
-	      <<prec_<<std::endl;
+    
+    double scale = 0.5/prec_*fabs(fopr->func(esorter->thrs() +prec_)
+				  -fopr->func(esorter->thrs() -prec_));
+
+    CCIO::cout<<"scaling factor = "<<scale<<"\n";
+    prec_*= scale;
+    CCIO::cout<<"net precision = "<<prec_<<"\n";
   }
   EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
 		       int Nk,int Np,double prec,int Niter,int Nthrs=10000)
-    :opr_(fopr),esorter_(esorter),Nthrs_(Nthrs),Nk_(Nk),Nm_(Nk+Np),prec_(prec),Niter_(Niter){}
+    :opr_(fopr),esorter_(esorter),
+     Nthrs_(Nthrs),Nk_(Nk),Nm_(Nk+Np),Niter_(Niter),
+     prec_(prec*fopr->func(esorter->thrs())){}
   
   void calc(std::vector<double>& lmd,std::vector<Field>& evec,int& Nsbt)const;
 };

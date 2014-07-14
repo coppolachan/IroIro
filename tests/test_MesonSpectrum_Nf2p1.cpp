@@ -28,7 +28,7 @@ int Test_MesonSpectrum_Nf2p1::run(){
   
   //// source creation ////
   XML::next_sibling(node,"Source");
-  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<SiteIndex,Format::Format_F>(node));
+  auto_ptr<SourceFactory> SrcFactory(Sources::createSourceFactory<Format::Format_F>(node));
   auto_ptr<Source> src(SrcFactory->getSource());
 
   prop_t sq_ud, sq_s;  //Defines a vector of fields

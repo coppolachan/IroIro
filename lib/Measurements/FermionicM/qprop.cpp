@@ -6,19 +6,14 @@
 #include "Communicator/comm_io.hpp"
 
 void Qprop::calc(prop_t& xq,Source& src) const{
-
+  CCIO::cout<<"Qprop::calc called\n";
   xq.clear();
   SolverOutput monitor;
   Field sol(fsize_);
   
   for(int s=0; s<Nd_;++s){
     for(int c=0; c<Nc_;++c){
-
       Field f = D_->mult_dag(src.mksrc(s,c));
-
-      double fnorm = f.norm();
-      CCIO::cout<<"fnorm="<<fnorm<<"\n";
-
       CCIO::cout<<" Dirac index ="<<s<<" Color ="<<c<<std::endl;
       monitor = slv_->solve(sol,D_->mult_dag(src.mksrc(s,c)));
 #if VERBOSITY > 0

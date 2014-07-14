@@ -2,7 +2,7 @@
  * @file dirac_DomainWall_4D_eoSolv.hpp
  * @brief Definition of Dirac_DomainWall_4D_eoSolv class
  * which contains e/o-solver
- Time-stamp: <2013-12-05 10:02:04 noaki>
+ Time-stamp: <2014-07-02 21:32:52 noaki>
  */
 #ifndef DIRAC_DOMAINWALL_4D_EOSOLV_INCLUDED
 #define DIRAC_DOMAINWALL_4D_EOSOLV_INCLUDED
@@ -11,7 +11,7 @@
 #include "eoUtils.hpp"
 #include "Solver/solver.hpp"
 #include "Solver/solver_CG.hpp"
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 
 class Dirac_DomainWall_4D_eoSolv : public Dirac_DomainWall_4D{
 private:

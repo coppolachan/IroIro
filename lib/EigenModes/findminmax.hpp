@@ -2,10 +2,8 @@
   @file findminmax.hpp
   @brief Find the minimum and maximum eigenmode of a real matrix
 */
-
 #include <memory>
-
-#include "include/fopr.h"
+#include "Fopr/fopr.h"
 #include "Tools/randNum.h"
 
 struct MinMaxOut {

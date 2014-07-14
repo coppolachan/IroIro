@@ -12,8 +12,8 @@
 #include "Solver/multiShiftSolver_CG.hpp"
 #include "Solver/rationalSolver_CG.hpp"
 #include "include/format_F.h"
-#include "include/fopr.h"
 #include "include/factories.hpp"
+#include "Fopr/fopr.h"
 #include "Measurements/FermionicM/qprop_MultiShift.hpp"
 #include "Measurements/GaugeM/staples.hpp"
 #include "Smearing/smearingFactories.hpp"
@@ -136,7 +136,7 @@ int Test_RationalApprox::run(){
 
   XML::next_sibling(kernel_node,"Source");
   SourceFactory* SrcFactory 
-    = Sources::createSourceFactory<SiteIndex,Format::Format_F>(kernel_node);
+    = Sources::createSourceFactory<Format::Format_F>(kernel_node);
   Source* src = SrcFactory->getSource(Kernel->fsize()/Format::Format_F::Nin());
   
   Field solution;

@@ -46,7 +46,8 @@ int Test_Clover::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.data));
+  Dirac_Wilson Dw_(1.0/6.0,&(conf_.data));
+  Dirac* Kernel = new Dirac_Clover(&Dw_, 1.0, &(conf_.data));
   //Kernel->update_internal_state();
 
   // Solver definition
