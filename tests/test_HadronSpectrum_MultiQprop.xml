@@ -27,9 +27,9 @@
     </Source>
 
     <!--//// quark propagator to make up smearing matrix ////-->    
-    <SourceSinkSmearedPropagator>
-<!--
-      <QuarkPropagator name="Qprop">
+    <SmearedPropagator>
+
+      <UpDownPropagator name="Qprop">
 	<Kernel name="DiracWilson">
 	  <mass>0.16666666666666666</mass>
 	</Kernel>
@@ -37,9 +37,9 @@
 	  <MaxIter>100</MaxIter>
 	  <Precision>1e-4</Precision>
 	</Solver>
-      </QuarkPropagator>	
--->
-      <QuarkPropagator name="QpropDWF" >
+      </UpDownPropagator>	
+<!--
+      <UpDownPropagator name="QpropDWF" >
 	<Kernel4d name="DiracOptimalDomainWall4d_eo">
 	  <Kernel5d>
 	    <N5d>4</N5d>
@@ -56,10 +56,39 @@
 	    <Precision>1e-16</Precision>
 	  </SolverDWF>
 	</Kernel4d>
-      </QuarkPropagator> 
-
+      </UpDownPropagator> 
+-->
+      <StrangePropagator name="Qprop">
+	<Kernel name="DiracWilson">
+	  <mass>0.16666666666666666</mass>
+	</Kernel>
+	<Solver type="Solver_CG">
+	  <MaxIter>100</MaxIter>
+	  <Precision>1e-4</Precision>
+	</Solver>
+      </StrangePropagator>	
+<!--
+      <StrangePropagator name="QpropDWF" >
+	<Kernel4d name="DiracOptimalDomainWall4d_eo">
+	  <Kernel5d>
+	    <N5d>4</N5d>
+	    <b>2.0</b>
+	    <c>1.0</c>
+	    <mass>0.05</mass>
+	    <BaseKernel name="DiracWilson">
+	      <mass>-1.6</mass>
+	    </BaseKernel>
+	    <approximation name="Tanh"></approximation>
+	  </Kernel5d>
+	  <SolverDWF type="Solver_CG">
+	    <MaxIter>10000</MaxIter>
+	    <Precision>1e-16</Precision>
+	  </SolverDWF>
+	</Kernel4d>
+      </StrangePropagator> 
+-->
       <Smearing name="Exponential"> 
-	<exp_approx>3</exp_approx>	
+	<exp_approx>1</exp_approx>	
 	<coefficient>0.2</coefficient>	
 	<HermitianOperator name="Scalar">
 	  <ScalarOp name="LaplacianXtXd"/>
@@ -67,20 +96,20 @@
       </Smearing>
 
       <Smearing name="Exponential"> 
-	<exp_approx>4</exp_approx>	
+	<exp_approx>2</exp_approx>	
 	<coefficient>0.2</coefficient>	
 	<HermitianOperator name="Scalar">
 	  <ScalarOp name="LaplacianXtXd"/>
 	</HermitianOperator>
       </Smearing>
 
-    </SourceSinkSmearedPropagator>
+    </SmearedPropagator>
 
     <!--///// (umsmeared) multi-mass quark propagator ///// -->    
     <MultiMassPropagator>
-      <masses>0.2 0.3 0.4</masses>
-<!--
-      <QuarkPropagator name="Qprop">
+      <masses>0.2 0.4 0.6</masses>
+
+      <HeavyQuarkPropagator name="Qprop">
 	<Kernel name="DiracWilson">
 	  <mass>VOID</mass> 
 	</Kernel>
@@ -88,27 +117,27 @@
 	  <MaxIter>100</MaxIter>
 	  <Precision>1e-4</Precision>
 	</Solver>
-      </QuarkPropagator>
+      </HeavyQuarkPropagator>
+<!--
+      <HeavyQuarkPropagator name="QpropDWF">
+        <Kernel4d name="DiracOptimalDomainWall4d_eo">
+	  <Kernel5d>
+	    <N5d>4</N5d>
+	    <b>2.0</b>
+	    <c>1.0</c>
+	    <mass>VOID</mass>
+	    <BaseKernel name="DiracWilson">
+	      <mass>-1.6</mass>
+	    </BaseKernel>
+	    <approximation name="Tanh"></approximation>
+	  </Kernel5d>
+	  <SolverDWF type="Solver_CG">
+	    <MaxIter>10000</MaxIter>
+	    <Precision>1e-16</Precision>
+	  </SolverDWF>
+        </Kernel4d>
+      </HeavyQuarkPropagator>
 -->
-    <QuarkPropagator name="QpropDWF">
-      <Kernel4d name="DiracOptimalDomainWall4d_eo">
-	<Kernel5d>
-	  <N5d>4</N5d>
-	  <b>2.0</b>
-	  <c>1.0</c>
-	  <mass>VOID</mass>
-	  <BaseKernel name="DiracWilson">
-	    <mass>-1.6</mass>
-	  </BaseKernel>
-	  <approximation name="Tanh"></approximation>
-	</Kernel5d>
-	<SolverDWF type="Solver_CG">
-	  <MaxIter>10000</MaxIter>
-	  <Precision>1e-16</Precision>
-	</SolverDWF>
-      </Kernel4d>
-    </QuarkPropagator>
-
     </MultiMassPropagator>
   </Measurement>
 </Parameters>

@@ -45,7 +45,7 @@ namespace Hadrons{
   void mesonProp(const prop_t& sq_ud,const prop_t& sq_s,ofstream& writer){
     MesonCorrelator pp(Pion), v1v1(Vector1), v2v2(Vector2), v3v3(Vector3);
 
-    CCIO::cout << " ::::::::::: Performing contractions for meson correlators\n";
+    CCIO::cout << " ::::::::::: light-light meson correlators\n";
     if(Communicator::instance()->primaryNode()) writer<<"====== meson correlators ======\n";
 
     output_meson(writer,  pp.calculate<Format::Format_F>(sq_ud,sq_ud),"------ Pion ------");
@@ -63,6 +63,27 @@ namespace Hadrons{
     output_meson(writer,v1v1.calculate<Format::Format_F>(sq_s,sq_s),"------ Phi_X ------");
     output_meson(writer,v2v2.calculate<Format::Format_F>(sq_s,sq_s),"------ Phi_Y ------");
     output_meson(writer,v3v3.calculate<Format::Format_F>(sq_s,sq_s),"------ Phi_Z ------");
+  }
+
+  /// General Mesons ///
+  void mesonPropGeneral(const prop_t& sq1,const prop_t& sq2,ofstream& writer){
+    CCIO::cout << " ::::::::::: meson correlators\n";
+    if(Communicator::instance()->primaryNode()) writer<<"====== meson correlators ======\n";
+
+    { /// basic channels
+      MesonCorrelator pp(Pion), v1v1(Vector1), v2v2(Vector2), v3v3(Vector3);    
+      output_meson(writer,  pp.calculate<Format::Format_F>(sq1,sq2),"------PP------"  );
+      output_meson(writer,v1v1.calculate<Format::Format_F>(sq1,sq2),"------V1V1------");
+      output_meson(writer,v2v2.calculate<Format::Format_F>(sq1,sq2),"------V2V2------");
+      output_meson(writer,v3v3.calculate<Format::Format_F>(sq1,sq2),"------V3V3------");
+    }
+    { /// extra channels
+      MesonCorrelator ss(Scalar),a4a4(AVector4),a4p(AV4_PS),pa4(PS_AV4); 
+      output_meson(writer,  ss.calculate<Format::Format_F>(sq1,sq2),"------SS------"  );
+      output_meson(writer,a4a4.calculate<Format::Format_F>(sq1,sq2),"------A4A4------");
+      output_meson(writer, a4p.calculate<Format::Format_F>(sq1,sq2),"------A4P------" );
+      output_meson(writer, pa4.calculate<Format::Format_F>(sq1,sq2),"------PA4------" );
+    }
   }
 
   /// Extra Meson Channels ///
@@ -93,7 +114,7 @@ namespace Hadrons{
   void baryonProp(const prop_t& sq_ud,const prop_t& sq_s,ofstream& writer){
     BaryonCorrelator baryons(sq_ud,sq_s);
 
-    CCIO::cout << " ::::::::::: Performing contractions for baryon correlators\n";
+    CCIO::cout << " ::::::::::: Baryon correlators\n";
     if(Communicator::instance()->primaryNode()) writer<<"====== baryon correlators ======\n";
 
     output_baryon(writer,baryons.nucleon(UP),     baryons.nucleon(DN),     "------ Nucleon ------");
@@ -117,5 +138,4 @@ namespace Hadrons{
     output_baryon(writer,baryons.xi10(YDIR,UP),   baryons.xi10(YDIR,DN),   "------ Xi10_Y ------");
     output_baryon(writer,baryons.xi10(ZDIR,UP),   baryons.xi10(ZDIR,DN),   "------ Xi10_Z ------");
   }
-
 }
