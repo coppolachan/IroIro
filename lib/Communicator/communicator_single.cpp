@@ -3,7 +3,7 @@
  *
  * @brief Definition of single node environment Communicator classes
  *
- * Time-stamp: <2013-04-25 14:39:17 neo>
+ * Time-stamp: <2014-07-15 11:57:59 neo>
  *
  */
 
@@ -105,3 +105,6 @@ int Communicator::reduce_max(double& val,int& idx,int size)const{return 0;}
 int Communicator::reduce_min(double& val,int& idx,int size)const{return 0;}
 
 double Communicator::reduce_sum(double a)const{ return a;}
+
+uint32_t Communicator::reduce_sum(uint32_t a)const{ return a;}
+uint64_t Communicator::reduce_sum(uint64_t a)const{ return a;}
