@@ -45,7 +45,7 @@ namespace Hadrons{
   void mesonProp(const prop_t& sq_ud,const prop_t& sq_s,ofstream& writer){
     MesonCorrelator pp(Pion), v1v1(Vector1), v2v2(Vector2), v3v3(Vector3);
 
-    CCIO::cout << " ::::::::::::: Performing contractions for meson correlators\n";
+    CCIO::cout << " ::::::::::: Performing contractions for meson correlators\n";
     if(Communicator::instance()->primaryNode()) writer<<"====== meson correlators ======\n";
 
     output_meson(writer,  pp.calculate<Format::Format_F>(sq_ud,sq_ud),"------ Pion ------");
@@ -69,7 +69,7 @@ namespace Hadrons{
   void mesonExtraProp(const prop_t& sq_ud,const prop_t& sq_s,ofstream& writer){
     MesonCorrelator ss(Scalar),a4a4(AVector4),a4p(AV4_PS),pa4(PS_AV4); 
 
-    CCIO::cout << " ::::::::::::: Performing contractions for extra meson channels\n";
+    CCIO::cout << " ::::::::::: Performing contractions for extra meson channels\n";
     if(Communicator::instance()->primaryNode()) writer<<"====== extra meson channels ======\n";
 
     output_meson(writer, ss.calculate<Format::Format_F>(sq_ud,sq_ud),"------ SS(ud,ud) ------");
@@ -93,7 +93,7 @@ namespace Hadrons{
   void baryonProp(const prop_t& sq_ud,const prop_t& sq_s,ofstream& writer){
     BaryonCorrelator baryons(sq_ud,sq_s);
 
-    CCIO::cout << " ::::::::::::: Performing contractions for baryon correlators\n";
+    CCIO::cout << " ::::::::::: Performing contractions for baryon correlators\n";
     if(Communicator::instance()->primaryNode()) writer<<"====== baryon correlators ======\n";
 
     output_baryon(writer,baryons.nucleon(UP),     baryons.nucleon(DN),     "------ Nucleon ------");
