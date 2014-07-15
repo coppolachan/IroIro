@@ -22,6 +22,17 @@ using namespace FieldUtils;
 using namespace SUNmatUtils;
 using namespace Mapping;
 //------------------------------------------------------------
+double Staples::link_trace(const GaugeField& F) const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::link_trace called\n");
+  double link = 0.0;
+  for(int i=0;i<NDIM_;++i){
+    for(int site=0; site<Nvol_; ++site)
+      link += ReTr(mat(F,site,i));  // P_ij
+  }
+  link = com_->reduce_sum(link);
+  return link;
+}
+
 double Staples::plaquette(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaquette called\n");
   return (plaq_s(F) + plaq_t(F))*0.5;

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-07-03 14:27:02 noaki>
+# Time-stamp: <2014-07-14 16:44:10 neo>
 ###########################################
 # Initial definitions 
 SUBDIRS = . 
@@ -158,6 +158,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		IO/binary_reader.cpp			\
 		IO/binary_writer.cpp			\
 		IO/NERSC_reader.cpp			\
+		IO/NERSC_writer.cpp			\
 		IO/ILDG_reader.cpp			\
 		IO/ILDG_writer.cpp			\
 		IO/JLQCDLegacy_reader.cpp		\
@@ -376,6 +377,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			IO/ILDG_writer.hpp			\
 			IO/JLQCDLegacy_reader.hpp		\
 			IO/NERSC_reader.hpp			\
+			IO/NERSC_writer.hpp			\
 			IO/readers.hpp				\
 			IO/writers.hpp				\
 			IO/text_header.hpp			\
