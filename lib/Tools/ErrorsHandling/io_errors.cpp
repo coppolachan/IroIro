@@ -3,7 +3,7 @@
  *
  * @brief Collection of simple I/O error handling functions
  *
- * Time-stamp: <2013-04-23 17:26:08 neo>
+ * Time-stamp: <2014-07-15 12:10:50 neo>
  */
 
 #include <sstream> 
@@ -21,7 +21,7 @@ namespace Errors{
       msg << "File not found: " << MoreInfo;
       break;
     default: 
-      msg << "Generic I/O error.";
+      msg << "Generic I/O error.  " << MoreInfo;
       break;
     }
     IOErr(msg);

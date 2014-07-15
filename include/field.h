@@ -2,7 +2,7 @@
   @file field.h
   @brief Definition of a general class storing a field
 
-  Time-stamp: <2013-11-20 15:56:24 noaki>
+  Time-stamp: <2014-07-15 10:36:31 neo>
 */
 #ifndef FIELD_INCLUDED
 #define FIELD_INCLUDED
@@ -78,7 +78,7 @@ public:
       a += sqrt(field[2*i]*field[2*i] +field[2*i+1]*field[2*i+1]);
     
     double b = Communicator::instance()->reduce_sum(a);
-    double c = Communicator::instance()->reduce_sum(field.size()/2);
+    double c = Communicator::instance()->reduce_sum(field.size()/2.0);
     return b/c;
   }
 
@@ -86,7 +86,7 @@ public:
     double a = 0.0;
     for(int i=0; i<field.size()/2; ++i) a += field[2*i];
     double b = Communicator::instance()->reduce_sum(a);
-    double c = Communicator::instance()->reduce_sum(field.size()/2);
+    double c = Communicator::instance()->reduce_sum(field.size()/2.0);
     return b/c;
   }
 
@@ -94,7 +94,7 @@ public:
     double a = 0.0;
     for(int i=0; i<field.size()/2; ++i) a += field[2*i+1];
     double b = Communicator::instance()->reduce_sum(a);
-    double c = Communicator::instance()->reduce_sum(field.size()/2);
+    double c = Communicator::instance()->reduce_sum(field.size()/2.0);
     return b/c;
   }
 
@@ -110,7 +110,7 @@ public:
 	idx = i;
       }
     }	
-    int mn = Communicator::instance()->reduce_max(max,idx,field.size()/2);
+    int mn = Communicator::instance()->reduce_max(max,idx,field.size()/2.0);
     return sqrt(max);
   }
 
@@ -126,7 +126,7 @@ public:
 	idx = i;
       }
     }	
-    int mn = Communicator::instance()->reduce_min(min,idx,field.size()/2);
+    int mn = Communicator::instance()->reduce_min(min,idx,field.size()/2.0);
     return sqrt(min);
   }
   

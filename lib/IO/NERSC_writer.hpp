@@ -3,13 +3,13 @@
  *
  * @brief Declaration of the NERSCWriter 
  *
- * Time-stamp: <2014-07-14 17:27:13 neo>
+ * Time-stamp: <2014-07-15 11:53:15 neo>
  */
 #ifndef NERSC_WRITER_HPP_
 #define NERSC_WRITER_HPP_
 
 #include "general_writer.hpp"
-#include "include/field.h"
+#include "include/common_fields.hpp"
 
 namespace CCIO {
   class NERSCWriter: public GeneralWriter {
@@ -21,7 +21,9 @@ namespace CCIO {
     unsigned int writer_first_call;
     double plaquette;
     double link_trace;
+    unsigned int chksum;
   public:
+    unsigned int checksum(const GaugeField& U, int type);
     void set_output(FILE *);
     int format(int gsite, int in, int ex) const;
     int write(double *buffer, unsigned int size);

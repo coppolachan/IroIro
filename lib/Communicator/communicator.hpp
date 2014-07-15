@@ -3,7 +3,7 @@
  *
  * @brief Declares the Communicator class for multiprocessing
  *
- * Time-stamp: <2013-06-13 15:21:25 cossu>
+ * Time-stamp: <2014-07-15 11:58:36 neo>
  *
  */
 
@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <valarray>
+#include <stdint.h>
 
 class Communicator{
 private:
@@ -51,6 +52,8 @@ public:
 
 
   double reduce_sum(double)const;
+  uint32_t reduce_sum(uint32_t)const;
+  uint64_t reduce_sum(uint64_t)const;
   void sync()const;
 
   void broadcast(int size, int &data, int sender)const;

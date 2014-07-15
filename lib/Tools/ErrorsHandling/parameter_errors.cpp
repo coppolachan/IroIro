@@ -3,7 +3,7 @@
  *
  * @brief Collection of parameter errors handling functions
  *
- * Time-stamp: <2013-06-03 15:38:25 neo>
+ * Time-stamp: <2014-07-15 12:09:51 neo>
  */
 
 #include <sstream> 
@@ -18,7 +18,7 @@ namespace Errors{
   void ParameterErr(const char* message) {
     std::ostringstream pass_msg;
     pass_msg << message;
-      BaseErr("Parameter", pass_msg);
+    BaseErr("Parameter", pass_msg);
   }
 
   void ParameterWarning(std::ostringstream& output) {

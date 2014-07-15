@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes, BGQ version
  *
- * Time-stamp: <2013-06-13 16:01:05 cossu>
+ * Time-stamp: <2014-07-15 14:50:31 cossu>
  *
  */
 
@@ -283,6 +283,20 @@ double Communicator::reduce_sum(double a) const{
   BGNET_GlobalSum(&a_sum,&a);
   return a_sum;
 }
+
+uint32_t Communicator::reduce_sum(uint32_t a) const{
+  uint32_t a_sum = 0;
+  BGNET_AllReduce(&a,&a_sum,1,BGNET_COLLECTIVE_UINT32,BGNET_COLLECTIVE_ADD,BGNET_COMM_WORLD);
+  return a_sum;
+}
+
+uint64_t Communicator::reduce_sum(uint64_t a) const{
+  uint64_t a_sum = 0;
+  BGNET_AllReduce(&a,&a_sum,1,BGNET_COLLECTIVE_UINT64,BGNET_COLLECTIVE_ADD,BGNET_COMM_WORLD);
+  return a_sum;
+}
+
+
 
 void Communicator::sync() const{ BGNET_GlobalBarrier();}
 

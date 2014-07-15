@@ -3,7 +3,7 @@
  *
  * @brief Declaration of the NERSCReader 
  *
- * Time-stamp: <2013-06-04 17:55:46 neo>
+ * Time-stamp: <2014-07-15 11:29:20 neo>
  */
 #ifndef NERSC_READER_HPP_
 #define NERSC_READER_HPP_
@@ -22,6 +22,7 @@ namespace CCIO {
     unsigned int bits;
     bool is3x2;
     double stored_plaquette;
+    double stored_link;
     double tolerance;
 
     void NERSCtoIROIRO_f(double* out, int block);

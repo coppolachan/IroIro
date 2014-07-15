@@ -3,7 +3,7 @@
  *
  * @brief Definition of the Text_header class
  *
- * Time-stamp: <2013-06-04 17:09:54 neo>
+ * Time-stamp: <2014-07-15 13:49:39 neo>
  */
 
 #include "text_header.hpp"
@@ -20,6 +20,14 @@ namespace CCIO {
 
   void Text_header::get_value(std::string key, int& value){
     value = atoi(tokens[key].c_str());
+  }
+
+  void Text_header::get_value(std::string key, uint32_t& value){
+    value = (uint32_t)(strtoul(tokens[key].c_str(),NULL,16));
+  }
+
+  void Text_header::get_value(std::string key, uint64_t& value){
+    value = (uint64_t)(strtoul(tokens[key].c_str(),NULL,16));
   }
 
   void Text_header::get_value(std::string key, double& value) {

@@ -3,7 +3,7 @@
  *
  * @brief Definition of the NERSCReader class methods
  *
- * Time-stamp: <2013-06-04 17:58:33 neo>
+ * Time-stamp: <2014-07-15 14:28:42 neo>
  */
 #include "NERSC_reader.hpp"
 #include <string.h>
@@ -11,6 +11,9 @@
 #include "include/errors.hpp"
 #include "Tools/byteswap.hpp"
 #include "Measurements/GaugeM/staples.hpp"
+
+#include <iostream>     // std::cout, std::hex, std::endl
+#include <iomanip>      // std::setiosflags, std::resetiosflags
 
 #define MAX_LINE_LENGTH 1024
 
@@ -70,6 +73,10 @@ namespace CCIO {
     TH.get_value("DATATYPE", datatype);
     TH.get_value("FLOATING_POINT", floating_point);
     TH.get_value("PLAQUETTE", stored_plaquette);
+    TH.get_value("LINK_TRACE", stored_link);
+
+    
+
 
     if (datatype.compare("4D_SU3_GAUGE")==0)
       is3x2 = true;
@@ -87,17 +94,93 @@ namespace CCIO {
 	tolerance = 1e-15;
       }
     
+    CCIO::cout << "\n";
+    CCIO::cout << "3x2 format : " << is3x2 << "\n";
+    CCIO::cout << "Floating point format : " << bits << "-bit\n";
+    
+    // check lattice size here!!!!!!!
+    int nersc_dim[4];
+    TH.get_value("DIMENSION_1", nersc_dim[0]);
+    TH.get_value("DIMENSION_2", nersc_dim[1]);
+    TH.get_value("DIMENSION_3", nersc_dim[2]);
+    TH.get_value("DIMENSION_4", nersc_dim[3]);
+
+    if (nersc_dim[0] != CommonPrms::instance()->Lx()) 
+      Errors::IOErr(Errors::GenericError, "NERSC file dimension X do not match the value in the XML file."); 
+
+    if (nersc_dim[1] != CommonPrms::instance()->Ly()) 
+      Errors::IOErr(Errors::GenericError, "NERSC file dimension Y do not match the value in the XML file."); 
+
+    if (nersc_dim[2] != CommonPrms::instance()->Lz()) 
+      Errors::IOErr(Errors::GenericError, "NERSC file dimension Z do not match the value in the XML file."); 
+
+    if (nersc_dim[3] != CommonPrms::instance()->Lt()) 
+      Errors::IOErr(Errors::GenericError, "NERSC file dimension T do not match the value in the XML file."); 
+
+    CCIO::cout << "Dimensions check: OK\n";
+
+    // checksum
+    //save location in the file
+    long unsigned int data_base_position = ftell(inputFile);
+
+    int matrix_size;
+    if(is3x2)
+      matrix_size = 12;
+    else
+      matrix_size = 18;
+
+
+    if (bits == 32){
+      uint32_t stored_chksum = 0, chksum = 0;
+      TH.get_value("CHECKSUM", stored_chksum); 
+      
+      //expected data size
+      long unsigned int total_size = total_volume*total_external*matrix_size;
+      long unsigned int chunk_size = total_size/nersc_dim[0];
+
+      float *chk_buf = new float[chunk_size]; 
+      for (int chunk = 0; chunk< nersc_dim[0]; chunk++){
+	size_t res = fread(chk_buf, sizeof(float), chunk_size, inputFile);
+	uint32_t* chk_ptr = (uint32_t*)chk_buf;
+	for(unsigned int i=0; i < chunk_size*sizeof(float)/sizeof(uint32_t); i++)
+	  chksum += chk_ptr[i];
+
+      } 
+      printf("Checksum: %x  Stored value: %x\n", chksum, stored_chksum );
+      delete[] chk_buf;
+    }
+    if (bits == 64){
+      uint32_t stored_chksum = 0, chksum = 0;
+      TH.get_value("CHECKSUM", stored_chksum); 
+      
+      //expected data size
+      long unsigned int total_size = total_volume*total_external*matrix_size;
+      long unsigned int chunk_size = total_size/nersc_dim[0];
+
+      double *chk_buf = new double[chunk_size]; 
+      for (int chunk = 0; chunk< nersc_dim[0]; chunk++){
+	size_t res = fread(chk_buf, sizeof(double), chunk_size, inputFile);
+	uint32_t* chk_ptr = (uint32_t*)chk_buf;
+	for(unsigned int i=0; i < chunk_size*sizeof(double)/sizeof(uint32_t); i++)
+	  chksum += chk_ptr[i];
+
+      }  
+      printf("Checksum: %x  Stored value: %x\n", chksum, stored_chksum );
+      delete[] chk_buf;
+    }
     
 
-   // check lattice size here
+    //reset location
+    fseek(inputFile, data_base_position, SEEK_SET);
   }
 
   int NERSCReader::check(Field& U){
     CCIO::cout << "Checks against NERSC header\n";
     Staples stpl;
     double plaq = stpl.plaquette(GaugeField(U));
-    CCIO::cout << "Plaquette: "<< plaq << " Stored value: "<< stored_plaquette;
-    if (abs(plaq - stored_plaquette)< tolerance)
+    CCIO::cout << "Plaquette: "<< plaq << " Stored value: "<< stored_plaquette << " Difference: "<< fabs(plaq - stored_plaquette) << " Tolerance: "<< tolerance << "\n";
+    
+    if (fabs(plaq - stored_plaquette)< tolerance)
       CCIO::cout << " (OK)\n";
     else
      Errors::IOErr(Errors::GenericError, "Something was wrong in the reading process."); 
@@ -117,10 +200,8 @@ namespace CCIO {
 #endif
     if (is3x2)
       reconstruct3x3<float>(out, uin, block);
-    else{
-      for (int i =0; i < block; i++)
-	out[i] = (double) uin[i];
-    }
+    else
+      memcpy(out, uin, block*sizeof(float));
     free(uin);
   }
   
@@ -129,13 +210,18 @@ namespace CCIO {
     //Allocate enough space
     double *uin = (double*) malloc(block*sizeof(double));
     size_t res = fread(uin,sizeof(double),block,inputFile);
+    
 #ifndef BIG_ENDIAN_TYPE
     byte_swap(uin, block);
 #endif
+    
     if (is3x2)
       reconstruct3x3<double>(out, uin, block);
-    else
-      memcpy(out, uin, sizeof(uin));
+    else{
+      //for (int i =0; i < block; i++)
+      //	out[i] = (double) uin[i];
+      memcpy(out, uin, block*sizeof(double));
+    }
     free(uin);
   }
 

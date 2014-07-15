@@ -3,7 +3,7 @@
  *
  * @brief Definition of parallel environment Communicator classes
  *
- * Time-stamp: <2013-05-30 13:00:42 noaki>
+ * Time-stamp: <2014-07-15 11:57:35 neo>
  *
  */
 
@@ -216,6 +216,19 @@ double Communicator::reduce_sum(double a)const{
  MPI_Allreduce(&a, &a_sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
  return a_sum;
 }
+
+uint32_t Communicator::reduce_sum(uint32_t a)const{
+ uint32_t a_sum = 0;
+ MPI_Allreduce(&a, &a_sum, 1, MPI_UINT32_T, MPI_SUM, MPI_COMM_WORLD);
+ return a_sum;
+}
+
+uint64_t Communicator::reduce_sum(uint64_t a)const{
+ uint64_t a_sum = 0;
+ MPI_Allreduce(&a, &a_sum, 1, MPI_UINT64_T, MPI_SUM, MPI_COMM_WORLD);
+ return a_sum;
+}
+
 
 void Communicator::sync()const{ MPI_Barrier(MPI_COMM_WORLD);}
 

@@ -30,7 +30,7 @@ double Staples::link_trace(const GaugeField& F) const {
       link += ReTr(mat(F,site,i));  // P_ij
   }
   link = com_->reduce_sum(link);
-  return link;
+  return link/(Lvol_*NC_*NDIM_);
 }
 
 double Staples::plaquette(const GaugeField& F)const {
