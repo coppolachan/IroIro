@@ -11,7 +11,8 @@
 #include "Fopr/fopr_Chebyshev.h"
 
 class ChebyshevAccelFuncFactory: public OpFunc{
-  //// internal classes
+
+  /// internal classes [
   class LinearFuncFactory: public OpFunc{
     double slp_,icpt_;
   public:
@@ -29,8 +30,8 @@ class ChebyshevAccelFuncFactory: public OpFunc{
       return new Fopr_QuadLinear(slp_,icpt_,op); 
     }
   };
+  /// ]
 
-  ////
   std::auto_ptr<OpFunc> mapFact_;  
   mutable std::auto_ptr<Fopr_Herm> mapOp_;  
   XML::node cbNode_;  /// node to chebyshev parameters

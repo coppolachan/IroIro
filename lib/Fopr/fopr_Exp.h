@@ -13,7 +13,7 @@ private:
   int N_;
   double a_;
   double expnt(double x,int n=1)const{
-    return N_== n ? 1.0 : 1.0 +a_/n*Op_->func(x)*expnt(x,n+1);
+    return N_== n ? 1.0 : 1.0 +a_/n*x*expnt(x,n+1);
   }
   const Field expnt(const Field& f,int n=1)const{
     using namespace FieldExpression;
@@ -31,7 +31,7 @@ public:
     assert(Op_!=NULL);
   }
   const Field mult(const Field& f)const{ return expnt(f);}    
-  double func(double x)const{return expnt(x);}
+  double func(double x)const{return expnt(Op_->func(x));}
   size_t fsize()const {return Op_->fsize();}
 };
 

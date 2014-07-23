@@ -21,8 +21,6 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
   Field f(fsize);
 
   int Np = Nm_-Nk_;  
-  assert(Np>0);
-
   CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Np<<" Nm = "<<Nm_<<"\n";
 
   ta.resize(Nm_); 
@@ -40,11 +38,11 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
   vector<Field>  Vp(Nk_+1);
   for(int k=0; k<Nk_+1; ++k) Vp[k].resize(fsize);
 
-  vector<int> i_conv;  
-  int Nconv = -1;
+  vector<int> idx(Nk_);  
+  int Iconv = -1; /*!<@brief Num of iterations until convergence */
+  int Ncert = 0;  /*!<@brief Num of the certified eigenmodes */
 
   for(int iter=0; iter<Niter_; ++iter){
-
     CCIO::cout<<"\n iteration "<< iter << endl;
 
     /****** Restarting procedures ******/
@@ -74,59 +72,59 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
     tta = ta;  ttb = tb;
     diagonalize(tta,ttb,Qt,Nk_); /*!< @brief Qt contains Nk_ eigenvectors */
     
-    i_conv.clear();
+    vector<double> res(Nm_);  
     int Nover = 0; /*!< @brief Num of converged eigenvalues beyond thrs.*/
 
     CCIO::cout << setiosflags(ios_base::scientific);
 
     for(int i=0; i<Nk_; ++i){
+      idx[i] = i;                     /*!< @brief eigen-indices */
 
       Vp[i] = 0.0;                    /*!< @brief eigenvectors */
       for(int j=0; j<Nk_; ++j) Vp[i] += Qt[i*Nm_+j]*V[j];  
 
-      //double res = fabs(Qt[i*Nm_+Nk_-1]*tb[Nk_-1]);
-      /*!@brief instead of above Ritz estimates, direct residual values 
-        are used to avoid fake eigenmodes. This should be unnecessary given 
-	the classical orthogonalization and the DGKS correction are used in 
-	the Lanczos factrization. However, we take a conservative way.*/
-
       Field Av = opr_->mult(Vp[i]);
-      double norm = Av.norm();
-      double vAv = Vp[i]*Av;
-      tta[i] = vAv;
+      tta[i] = Vp[i]*Av;
       Av -= tta[i]*Vp[i];
-      double res = Av.norm();
+      res[i] = Av.norm();
 
       CCIO::cout<<" ["<<setw( 3)<<setiosflags(ios_base::right)<<i<<"] ";
       CCIO::cout<<      setw(25)<<setiosflags(ios_base::left) <<tta[i];
-      CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<<res<<endl;
-      
-      if(res<prec_){  /*!<@brief counting converged eigenmodes */
-        i_conv.push_back(i);
-        if(esorter_->beyond_thrs(tta[i])) ++Nover; 
+      CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<<res[i]<<endl;
+    }
+
+    Ncert =0;
+    esorter_->push(tta,idx,Nk_);
+
+    for(int i=0; i<Nk_; ++i){
+      if(res[i]<prec_){  /*!<@brief counting converged eigenmodes */
+	Ncert++;
+        if(esorter_->beyond_thrs(tta[i],opr_)) ++Nover; 
+      }else{
+	break;
       }
     }  
     CCIO::cout << resetiosflags(ios_base::scientific);
-    CCIO::cout<<" #converged modes= "<<i_conv.size()<<endl;
+    CCIO::cout<<" #converged modes= "<<Ncert <<endl;
      
     /*!@brief  condition of termination: the eigenvalue exceeds the threshold*/
     if(Nover > 0){         
       CCIO::cout<<"All eigenmodes upper/under the threshold are obtained.\n";
-      Nconv = iter; 
-      Neigen = i_conv.size()-Nover; 
+      Iconv = iter; 
+      Neigen = Ncert -Nover; 
       break;
     }
     /*!@brief condition of termiation: #eigenmods exceeds the threshold number*/
-    if(i_conv.size() >= Nthrs_){ 
+    if(Ncert >= Nthrs_){ 
       CCIO::cout<<"Desired number of eigenmodes are obtained.\n";
-      Nconv = iter;
+      Iconv = iter;
       Neigen = Nthrs_; 
       break;
     }
-
+    
     if(iter==Niter_-1){
       CCIO::cout<<"Reached to the max iteration count.\n";
-      Neigen = -i_conv.size();
+      Neigen = -Ncert;
       break;
     } 
   }// end of iter loop
@@ -134,17 +132,16 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
   /*** post process after the conversion ***/
   ta.clear(); V.clear();
   
-  for(int i=0; i<i_conv.size(); ++i){
-    ta.push_back(tta[i_conv[i]]);
-    V.push_back(Vp[i_conv[i]]);
+  for(int i=0; i<Neigen; ++i){
+    ta.push_back(tta[i]);
+    V.push_back(Vp[idx[i]]);
   }
   if(Neigen > 0){
-    esorter_->push(ta,V,i_conv.size());
     CCIO::cout << "\n Converged\n Summary :\n";
-    CCIO::cout << " -- Iterations  = "<< Nconv        <<"\n";
-    CCIO::cout << " -- beta+_k     = "<< tb[Nk_-1]    <<"\n";
-    CCIO::cout << " -- #converged  = "<< i_conv.size()<<"\n";
-    CCIO::cout << " -- #eigenmodes = "<< Neigen       <<"\n";
+    CCIO::cout << " -- Iterations  = "<< Iconv     <<"\n";
+    CCIO::cout << " -- beta+_k     = "<< tb[Nk_-1] <<"\n";
+    CCIO::cout << " -- #converged  = "<< Ncert     <<"\n";
+    CCIO::cout << " -- #eigenmodes = "<< Neigen    <<"\n";
   }
 }
 
@@ -287,9 +284,9 @@ void EigenModesSolver_IRL::QRfact_Givens(vector<double>& ta,vector<double>& tb,
 					 vector<double>& Qt,int Nk,
 					 double sft,int k_min,int k_max)const{
   // k = k_min
-  double dn = 1.0/sqrt((ta[k_min]-sft)*(ta[k_min]-sft)+tb[k_min]*tb[k_min]); 
-  double c = (ta[k_min]-sft)*dn;   //  cos_x
-  double s = tb[k_min]*dn;         //  sin_x
+  double r = tb[k_min]/(ta[k_min]-sft);
+  double c = 1.0/sqrt(1.0+r*r);   //  cos_x
+  double s =   r/sqrt(1.0+r*r);   //  sin_x
   
   for(int i=0; i<Nk; ++i){           // accumulation of G(k+1,k)^T
     double Qt_k  = Qt[    k_min*Nm_+i];
@@ -311,9 +308,9 @@ void EigenModesSolver_IRL::QRfact_Givens(vector<double>& ta,vector<double>& tb,
 
   // k >k_min
   for(int k=k_min+1; k<k_max; ++k){
-    dn = 1.0/sqrt(tb[k-1]*tb[k-1] +x*x); /*!< Givens rotation */
-    c = tb[k-1]*dn;                      //  cos_x
-    s = x*dn;                            //  sin_x
+    r = x/tb[k-1];           /*!< Givens rotation */
+    c = 1.0/sqrt(1.0+r*r);   //  cos_x
+    s =   r/sqrt(1.0+r*r);   //  sin_x
 
     for(int i=0; i<Nk; ++i){           /*!< accumulation of G(k+1,k)^T */
       double Qt_k  = Qt[    k*Nm_+i];

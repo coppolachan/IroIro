@@ -17,7 +17,7 @@ public:
     XML::read(lnode,"intercept",b_,MANDATORY);
   }
   
-  double func(double x) const{return a_*(Op_->func(x)) +b_;}
+  double func(double x) const{return a_*Op_->func(x) +b_;}
   
   const Field mult(const Field& f) const{
     using namespace FieldExpression;

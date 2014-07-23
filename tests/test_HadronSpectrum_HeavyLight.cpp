@@ -1,13 +1,13 @@
 /*!
- * @file test_HadronSpectrum_MultiQprop.cpp
- * @brief Implementation of test_HadronSpectrum_MultiQprop class
+ * @file test_HadronSpectrum_HeavyLight.cpp
+ * @brief Implementation of test_HadronSpectrum_HeavyLight class
  * This class obtains hadron correlators from combinations of 
  * Source-smeared propagators and multi-mass propagators
- * Time-stamp: <2014-07-15 18:18:55 noaki>
+ * Time-stamp: <2014-07-16 11:45:48 noaki>
  */
 #include "include/factories.hpp"
 #include "include/messages_macros.hpp"
-#include "test_HadronSpectrum_MultiQprop.hpp"
+#include "test_HadronSpectrum_HeavyLight.hpp"
 #include "Fopr/foprHermFuncFactoryCreator.hpp"
 #include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
 #include "Measurements/FermionicM/meson_correlator.hpp"
@@ -16,7 +16,7 @@
 #include <typeinfo>
 
 using namespace std;
-int Test_HadronSpectrum_MultiQprop::run(){
+int Test_HadronSpectrum_HeavyLight::run(){
 
   InputConfig config = input_.getConfig();
 
