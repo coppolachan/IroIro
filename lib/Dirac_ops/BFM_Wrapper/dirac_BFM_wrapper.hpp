@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper class for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-08-06 16:15:37 neo>
+ * Time-stamp: <2014-08-06 17:16:57 neo>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -147,13 +147,7 @@ public:
 					     vector_double mresiduals);
 
 
-  // Peter Boyle's Hierarchically deflated CG (HDCG)
-  // Concerted from BFM (Chroma++ style)
-  // Paper: arXiv 1402.2585
-
-  void solve_HDCG
-
-  
+ 
 };
 
 #endif
