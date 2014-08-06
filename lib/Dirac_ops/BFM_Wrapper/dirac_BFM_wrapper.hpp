@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
- * @brief Declares the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-04-23 16:57:18 neo>
+ * @brief Declares the wrapper class for P. Boyle Bagel/BFM libs
+ * Time-stamp: <2014-08-06 16:15:37 neo>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -47,7 +47,7 @@ struct Dirac_BFM_Wrapper_params {
  * @brief Declaration of abstract base class for Dirac operators
  */
 class Dirac_BFM_Wrapper: public DiracWilsonLike {
-private:
+protected:
   Dirac_BFM_Wrapper_params BFMparams;
   bfmarg parameters;
 
@@ -145,6 +145,14 @@ public:
 					     FermionField& source,
 					     vector_double shifts,
 					     vector_double mresiduals);
+
+
+  // Peter Boyle's Hierarchically deflated CG (HDCG)
+  // Concerted from BFM (Chroma++ style)
+  // Paper: arXiv 1402.2585
+
+  void solve_HDCG
+
   
 };
 
