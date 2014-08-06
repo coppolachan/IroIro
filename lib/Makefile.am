@@ -4,8 +4,10 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-07-14 16:44:10 neo>
+# Time-stamp: <2014-07-18 10:17:59 noaki>
 ###########################################
+AUTOMAKE_OPTIONS = subdir-objects
+
 # Initial definitions 
 SUBDIRS = . 
 

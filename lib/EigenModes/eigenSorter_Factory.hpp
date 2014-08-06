@@ -19,10 +19,11 @@ class EigenSorterFactory_low: public EigenSorterFactory{
   double thrs_;
 public:
   EigenSorterFactory_low(double thrs):thrs_(thrs){}
-
+  /*
   EigenSorter* getEigenSorter(const Fopr_Herm* opr)const{
     return new EigenSorter_low(opr->func(thrs_));
   }
+  */
   EigenSorter* getEigenSorter()const{
     return new EigenSorter_low(thrs_);
   }
@@ -32,10 +33,11 @@ class EigenSorterFactory_high: public EigenSorterFactory{
   double thrs_;
 public:
   EigenSorterFactory_high(double thrs):thrs_(thrs){}
-
+  /*
   EigenSorter* getEigenSorter(const Fopr_Herm* opr)const{
     return new EigenSorter_high(opr->func(thrs_));
   }
+  */
   EigenSorter* getEigenSorter()const{
     return new EigenSorter_high(thrs_);
   }

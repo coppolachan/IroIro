@@ -45,29 +45,28 @@ public:
   EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
 		       XML::node node)
     :opr_(fopr),esorter_(esorter){
-    CCIO::cout<<"EigenModesSolver_IRL being constructed\n";
 
     XML::read(node,"Nthreshold",Nthrs_,MANDATORY);
     XML::read(node,"Nk",Nk_,MANDATORY);
     int Np;
     XML::read(node,"Np",Np,MANDATORY);
     Nm_= Nk_+Np;
-
     XML::read(node,"precision",prec_,MANDATORY);
     XML::read(node,"max_iter",Niter_,MANDATORY);
-    
-    double scale = 0.5/prec_*fabs(fopr->func(esorter->thrs() +prec_)
-				  -fopr->func(esorter->thrs() -prec_));
 
-    CCIO::cout<<"scaling factor = "<<scale<<"\n";
-    prec_*= scale;
-    CCIO::cout<<"net precision = "<<prec_<<"\n";
+    assert(Nk_>Nthrs_);
+    CCIO::cout<<"EigenModesSolver_IRL constructed\n";
   }
+
   EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
 		       int Nk,int Np,double prec,int Niter,int Nthrs=10000)
     :opr_(fopr),esorter_(esorter),
-     Nthrs_(Nthrs),Nk_(Nk),Nm_(Nk+Np),Niter_(Niter),
-     prec_(prec*fopr->func(esorter->thrs())){}
+     Nthrs_(Nthrs),Nk_(Nk),Nm_(Nk+Np),Niter_(Niter),prec_(prec){
+    ///
+    assert(Nm_>Nk_);
+    assert(Nk_>Nthrs_);
+    CCIO::cout<<"EigenModesSolver_IRL constructed\n";
+  }
   
   void calc(std::vector<double>& lmd,std::vector<Field>& evec,int& Nsbt)const;
 };

@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2014-07-14 17:21:33 neo>
+ * Time-stamp: <2014-07-17 18:59:14 noaki>
  */
 
 #include "fields_io.hpp"
@@ -38,4 +38,13 @@ namespace CCIO {
       return new NERSCWriter(total_vol, Nin, Nex, U); 
   }
 
+  GeneralWriter* getWriter(const std::string writerID,
+			   int total_vol,
+			   int Nin,
+			   int Nex){
+    if (writerID.compare("Binary")==0)
+      return new BinaryWriter(total_vol, Nin, Nex); 
+    if (writerID.compare("ILDG")==0)
+      return new ILDGWriter(total_vol, Nin, Nex); 
+  }
 }

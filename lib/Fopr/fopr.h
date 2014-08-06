@@ -2,7 +2,7 @@
  * @file fopr.h 
  * @brief Definition of Fopr classes 
  * @authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>, Jun-Ichi Noaki}
-Time-stamp: <2014-07-10 16:22:09 noaki>
+Time-stamp: <2014-07-21 18:15:19 noaki>
  */
 
 #ifndef FOPR_INCLUDED
@@ -121,7 +121,7 @@ class Fopr_DdagD : public Fopr_Herm{
   const Dirac* D_;
 public:
   Fopr_DdagD(const Dirac* D):D_(D){assert(D_);}
-  double func(double x) const{return x*x;}
+  double func(double x) const{return x;}
   const Field mult(const Field& f) const{return D_->mult_dag(D_->mult(f));}
   size_t fsize()const {return D_->fsize();}
 };

@@ -15,6 +15,7 @@ namespace Hadrons{
 		     std::string msg);
   
   void mesonProp(const prop_t& sq_ud,const prop_t& sq_s,std::ofstream& writer);
+  void mesonPropGeneral(const prop_t& sq_ud,const prop_t& sq_s,std::ofstream& writer);
   void mesonExtraProp(const prop_t& sq_ud,const prop_t& sq_s,std::ofstream& writer);
   void baryonProp(const prop_t& sq_ud,const prop_t& sq_s,std::ofstream& writer);
 }

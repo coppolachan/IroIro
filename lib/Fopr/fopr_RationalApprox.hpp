@@ -43,8 +43,8 @@ public:
 
   double func(double x)const{ 
     double w = r0_;
-    for(int i=0; i<res_.size(); ++i)
-      w += res_[i]/(Op_->func(x) +pole_[i]);
+    double fx = Op_->func(x);
+    for(int i=0; i<res_.size(); ++i) w += res_[i]/(fx +pole_[i]);
     return w;
   }
 
