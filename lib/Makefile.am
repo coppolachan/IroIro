@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-08-06 17:54:14 neo>
+# Time-stamp: <2014-08-07 12:04:35 neo>
 ###########################################
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -113,8 +113,8 @@ BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.cpp
 BFM_SRC += Tools/Bagel/bfm_storage.cpp 
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp
-BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
-BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
 else
 BFM_SRC = 
 endif

@@ -1,11 +1,11 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2014-08-06 17:09:54 neo>
+ * Time-stamp: <2014-08-06 17:58:52 neo>
  */
 
 
-#include "dirac_BFM_HDCG_wrapper.hpp"
+#include "dirac_BFM_HDCG.hpp"
 
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_rotate(double *phases_by_pi,double *phases_dir, int sgn){
@@ -198,7 +198,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
   }
 }
 
-void Dirac_BFM_HDCG_Wrapper::HDCG_invert(Fermion_t solution[2], Fermion_t source[2], double residual, int maxit){
+void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[2], double residual, int maxit){
   
   linop.residual = residual;
   linop.max_iter = maxit;

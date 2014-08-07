@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-07-18 09:58:18 noaki>
+# Time-stamp: <2014-08-07 10:38:14 neo>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -190,7 +190,7 @@ test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 test_EigenModesSolver_SOURCES =	test_EigenModesSolver.cpp	\
 				testerEigenModesSolver.cpp
 
-test_EigenModesSolver_Lap_SOURCES =test_EigenModesSolver_Lap.cpp\
+test_EigenModesSolver_Lap_SOURCES = test_EigenModesSolver_Lap.cpp\
 				testerEigenModesSolver_Lap.cpp
 
 test_EigModesNum_SOURCES =	test_EigModesNum.cpp	\
