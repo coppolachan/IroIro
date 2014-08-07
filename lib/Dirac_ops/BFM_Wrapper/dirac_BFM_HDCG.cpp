@@ -1,12 +1,10 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2014-08-06 17:58:52 neo>
+ * Time-stamp: <2014-08-07 16:44:13 neo>
  */
-
-
+#include <math.h>
 #include "dirac_BFM_HDCG.hpp"
-
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_rotate(double *phases_by_pi,double *phases_dir, int sgn){
   
@@ -30,30 +28,57 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_rotate(double *phases_by_pi,double *p
      */
   linop.BossLog("HDCG Rotating subspace for twisted BCs\n");
   
-  double theta = zero;
+
   double onepi = M_PI;
-  for(int i=0; i < Nd-1; i++) {
+  int LocalVol = CommonPrms::instance()->Nvol();
+  int Ls=linop.Ls;  
+
+  vector_double theta, eitheta_re, eitheta_im;// scalar fields
+  theta.resize(LocalVol); 
+  eitheta_re.resize(LocalVol); 
+  eitheta_im.resize(LocalVol); 
+  for(int i=0; i < ND_-1; i++) { 
     int mu = phases_dir[i];
-    theta = theta + SiteIndex::global_idx[mu]() * phases_by_pi[i]* onepi / CommonPrms::global_size(mu) ;
-  }
+    
+    for(int site = 0; site < LocalVol; site++) {
+	int coord[4];
+	coord[0] = SiteIndex::instance()->c_x(site);
+	coord[1] = SiteIndex::instance()->c_y(site);
+	coord[2] = SiteIndex::instance()->c_z(site);
+	coord[3] = SiteIndex::instance()->c_t(site);
+	
+	theta[site] = theta[site] + (SiteIndex::instance()->*SiteIndex::global_idx[mu])(coord[mu]) * phases_by_pi[i]* onepi / CommonPrms::instance()->global_size(mu) ;
+
+	eitheta_re[site] = cos(theta[site]);
+	eitheta_im[site] = -sgn*sin(theta[site]);
+	
+	
+      }
+	  }
+    
+    FermionField copy(LocalVol*Ls); // 5d object
   
-  double eitheta_re = cos(theta);
-  double eitheta_im = -sgn*sin(theta);
-  
-  int Ls=dop_d.Ls;
-  FermionField copy;
-  /*
     for(int v=0;v<ldop_d->Nvec;v++){
-    linop.exportFermion(copy,ldop_d->subspace_d[v],1);
-    for(int s=0;s<Ls;s++){
-    copy[s]=eitheta*copy[s];
-    }
-    linop.importFermion(copy,ldop_d->subspace_d[v],1);
-    }
-  */
+      BFM_interface.FermionExport_to_BFM(copy, ldop_d->subspace_d[v], 1); //last parameter Even/Odd
+      //linop.exportFermion(copy,ldop_d->subspace_d[v],1);
+      for(int s=0;s<Ls;s++){
+	for(int site = 0; site < LocalVol; site++) {
+	    for (int n_in = 0; n_in < copy.Nin()/2; n_in ++){
+	      int idx = copy.format.index(n_in, site+LocalVol*s);
+	      int idxp = copy.format.index(n_in+1, site+LocalVol*s);
+	      copy.data.set(idx, eitheta_re[site]*copy[idx]);
+	      copy.data.set(idxp, eitheta_im[site]*copy[idxp]);
+	    }
+	  }
+	      }
+	      BFM_interface.FermionImport_from_BFM(copy, ldop_d->subspace_d[v], 1); //last parameter Even/Odd     
+	    //linop.importFermion(copy,ldop_d->subspace_d[v],1);
+	    
+	
+      }
   
-  
-}
+    
+  }
 
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_set_mass(double mass){
@@ -82,9 +107,9 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_init(){
   srand48(seed);
   
   if ( sloppy_relax ) { 
-    ldop_d->RelaxSubspace<rFloat>(&dop_r);
+    ldop_d->RelaxSubspace<float>(&linop_r);
   } else {
-    ldop_d->RelaxSubspace<double>(&dop_d);
+    ldop_d->RelaxSubspace<double>(&linop);
   }
   ldop_d->SinglePrecSubspace();
 }
@@ -97,7 +122,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_refine(){
   Fermion_t sol = linop.allocFermion();
   Fermion_t tmp = linop.allocFermion();
   
-  int threads = dop_d.threads;
+  int threads = linop.threads;
   BfmHDCG<float>  *ldop_f;
   ldop_f = new BfmHDCG<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,&linop,&linop_single);
   ldop_f->CloneSubspace<double>(*ldop_d);
@@ -212,7 +237,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
 
   BfmHDCG<float>  *ldop_f;
-  ldop_f = new BfmHDCG<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,&linop,&dop_f);
+  ldop_f = new BfmHDCG<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,&linop,&linop_single);
   ldop_f->CloneSubspace<double>(*ldop_d);
   ldop_f->SetParams(HDCGParms);
   ldop_f->PcgType=PcgAdef2f;
@@ -233,13 +258,13 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
       ldop_f->AnalyseSpectrum=0;
       if ( HDCGParms.Flexible == 1 ) { 
-	dop_f.ThreadBossLog("Solving with single precision Ldop, fPcg\n");
+	linop_single.ThreadBossLog("Solving with single precision Ldop, fPcg\n");
 	ldop_f->fPcg(ldop_d,solution[Odd],src,tmp);
       } else if ( HDCGParms.Flexible == 2 ) {  
 	linop.ThreadBossLog("Solving with double precision Ldop, fPcg\n");
 	ldop_d->fPcg(ldop_d,solution[Odd],src,tmp);
       } else { 
-	dop_f.ThreadBossLog("Solving with single precision Ldop, Pcg\n");
+	linop_single.ThreadBossLog("Solving with single precision Ldop, Pcg\n");
 	ldop_f->Pcg(ldop_d,solution[Odd],src,tmp);
       }
 

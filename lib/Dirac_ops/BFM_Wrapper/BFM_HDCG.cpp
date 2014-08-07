@@ -1,7 +1,7 @@
 /*!
  * @file BFM_HDCG.cpp
  * @brief Declares classes for P. Boyle HDCG inverter
- * Time-stamp: <2014-08-06 17:52:00 neo>
+ * Time-stamp: <2014-08-07 16:50:02 neo>
  */
 
 #include "BFM_HDCG.hpp"
@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <unistd.h>
 #include <malloc.h>
-
+#include <builtins.h> // builtin functions 
 int MGreport;
 
 #undef DEBUG_HDCG
@@ -989,6 +989,8 @@ int BfmHDCG<cFloat>::NeighbourBlockId(int myblock,int _mu, int &me,
 template<class cFloat> 
 void BfmHDCG<cFloat>::HaloEnd(void)
 {
+
+  /*Original QMP
   int Nmsg = tproc.size();
   for(int m=0;m<Nmsg;m++) {
     QMP_free_msghandle(xmit_msghandle[m]);
@@ -1000,6 +1002,15 @@ void BfmHDCG<cFloat>::HaloEnd(void)
     bfm_free(recvbufs[m]);
 #endif
   }
+*/
+  int Nmsg = tproc.size();
+  for(int m=0;m<Nmsg;m++) {
+#ifndef BFM_BGQ_SPI_DSLASH
+    bfm_free(sendbufs[m]);
+    bfm_free(recvbufs[m]);
+#endif
+  }
+
 }
 template<class cFloat> 
 void BfmHDCG<cFloat>::HaloInit(void)
@@ -1311,6 +1322,7 @@ template<class cFloat> void HaloInitBuffers(BfmHDCG<cFloat> * BMG)
     BMG->recvbufs[m] = (std::complex<cFloat> *)bfm_alloc(BMG->recvbuf_bytes[m]);
   }
 
+  /* QMP 
   // QMP init
   BMG->xmit_msgmem.resize(Nmsg);
   BMG->recv_msgmem.resize(Nmsg);
@@ -1324,6 +1336,16 @@ template<class cFloat> void HaloInitBuffers(BfmHDCG<cFloat> * BMG)
     BMG->xmit_msghandle[m] = QMP_declare_send_to(BMG->xmit_msgmem[m],BMG->tproc[m],0);
     BMG->recv_msghandle[m] = QMP_declare_receive_from(BMG->recv_msgmem[m],BMG->fproc[m],0);
   }
+  */
+
+
+  for(int m=0;m<Nmsg;m++){
+    BGNET_SetSendBuffer((void *) &BMG->sendbufs[m][0], m+1 ,BMG->sendbuf_bytes[m]);
+    BGNET_SetRecvBuffer((void *) &BMG->recvbufs[m][0], m+1, BMG->recvbuf_bytes[m]);
+  }
+
+
+
   BMG->linop_d->BossLog("Initialised haloes\n ");
 }
 #endif

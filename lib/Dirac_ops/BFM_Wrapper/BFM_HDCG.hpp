@@ -1,7 +1,7 @@
 /*!
  * @file BFM_HDCG.hpp
  * @brief Declares classes for P. Boyle HDCG inverter
- * Time-stamp: <2014-08-06 17:34:35 neo>
+ * Time-stamp: <2014-08-07 15:25:22 neo>
  */
 #ifndef _BFM_MULTIGRID_H_
 #define _BFM_MULTIGRID_H_
@@ -282,7 +282,7 @@ public:
   void HaloEnd(void);
   std::complex<cFloat> *HaloGetStencilData(int _idx,int _ballidx,std::vector<std::complex<cFloat> > &my_data);
 
-  std::vector< int > tproc; // Processor we must send to and from
+  std::vector< int > tproc; // Processors we must send to and from
   std::vector< int > fproc;
 
   ///////////////////////////////////////////////////////////////
@@ -304,12 +304,14 @@ public:
 
 
 
-
+  /* QMP
   std::vector<QMP_msgmem_t> xmit_msgmem;  // QMP data structures for the sending
   std::vector<QMP_msgmem_t> recv_msgmem;
   std::vector<QMP_msghandle_t> xmit_msghandle;
   std::vector<QMP_msghandle_t> recv_msghandle;
-
+  */
+  //  std::vector< Float* > xmit_msgmem;  // data structures for the sending
+  //std::vector< Float* > recv_msgmem;
 
 
 
@@ -375,11 +377,11 @@ public:
 
   // Polynomials of the ldop
   void PolyMdagMprec(std::vector<std::complex<cFloat> > &in,std::vector<std::complex<cFloat> > &out,Chebyshev &Approx);
-  void PolyMdagMprec(std::vector<std::complex<cFloat> > &in,std::vector<std::complex<cFloat> > &out,vector<double> &coeffs);
+  void PolyMdagMprec(std::vector<std::complex<cFloat> > &in,std::vector<std::complex<cFloat> > &out,std::vector<double> &coeffs);
 
   // Polynomials of the fine dop
   template<class Float>   void PolyMdagMprec(bfm_internal<Float> *lop,Fermion_t in,Fermion_t out,Chebyshev &Approx);
-  template<class Float>   void PolyMdagMprec(bfm_internal<Float> *lop,Fermion_t in,Fermion_t out,vector<double> & coeffs);
+  template<class Float>   void PolyMdagMprec(bfm_internal<Float> *lop,Fermion_t in,Fermion_t out,std::vector<double> & coeffs);
   template<class Float>   void SpectralDecomposition(Fermion_t psi,bfm_internal<Float> *lop,const char *tag);
 
   void   PcgM(Fermion_t in,Fermion_t out,Fermion_t tmp); 
