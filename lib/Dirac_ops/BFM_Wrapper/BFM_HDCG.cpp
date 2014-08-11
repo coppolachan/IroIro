@@ -1,10 +1,11 @@
 /*!
  * @file BFM_HDCG.cpp
  * @brief Declares classes for P. Boyle HDCG inverter
- * Time-stamp: <2014-08-07 16:50:02 neo>
+ * Time-stamp: <2014-08-07 16:57:08 neo>
  */
 
 #include "BFM_HDCG.hpp"
+#include "include/common_fields.hpp"
 #include <iostream>
 #include <iomanip>
 #include <unistd.h>
@@ -412,9 +413,14 @@ void BfmHDCG<cFloat>::RelaxSubspace(bfm_internal<Float> *rop)
 {
   int Ls=N5;
   int rLs=rop->Ls;
+  int Nvol = CommonPrms::instance()->Nvol();
 
-  multi1d<LatticeFermion> gauss(rLs);
-  multi1d<LatticeFermion> solution(rLs);
+  //  multi1d<LatticeFermion> gauss(rLs);
+  //multi1d<LatticeFermion> solution(rLs);
+
+  FermionField gauss(Nvol*Ls);
+  FermionField solution(Nvol*Ls);
+
 
   if ( rop->SPIcomms() ) rop->comm_init();
   Fermion_t sol = rop->allocFermion();

@@ -158,8 +158,10 @@ int Test_ResMass::run() {
 
       //Denominator
       Field Denom = sq[c+Nc*s];
+#ifndef PHYSICAL_QUARK_PROPAGATOR
       Denom -= SourceObj->mksrc(s,c); // (D^-1 - 1)*src
       Denom /= (1.0 - (QuarkPropDW->getKernel()->getMass()) );
+#endif
       mres_denominator += Denom*Denom;
 
 
@@ -188,6 +190,7 @@ int Test_ResMass::run() {
   
   vector_double tmp(Lt,0.0);
   vector_double glob_t(Lt,0.0);
+  vector_double glob_d_t(Lt,0.0);
 
   for(int t=0; t<Nt; ++t){
     tmp[(SiteIndex::instance()->*SiteIndex::global_idx[TDIR])(t)] = mres_t_numerator[t];
@@ -206,18 +209,24 @@ int Test_ResMass::run() {
       printf("Numerator    [%d] = %g \n ", t, glob_t[t]);
     }
   }
+  
+  Communicator::instance()->sync();
+  /////////////////////////////
+
 
   for(int t=0; t<Nt; ++t){
     tmp[(SiteIndex::instance()->*SiteIndex::global_idx[TDIR])(t)] = mres_t_denominator[t];
   }
 
   for(int t=0; t<Lt; ++t){
-    glob_t[t] = Communicator::instance()->reduce_sum(tmp[t]);
+    glob_d_t[t] = Communicator::instance()->reduce_sum(tmp[t]);
    }
+
+  Communicator::instance()->sync();
 
   if (Communicator::instance()->primaryNode()){
     for(int t=0; t<Lt; ++t){
-      printf("Denominator  [%d] = %g \n ", t, glob_t[t]);
+      printf("Denominator  [%d] = %g \n ", t, glob_d_t[t]);
     }
   }
   
