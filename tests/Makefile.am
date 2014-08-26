@@ -4,11 +4,11 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-08-26 16:40:38 cossu>
+# Time-stamp: <2014-08-26 16:46:03 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
-BMF_TESTPROGS = 
+BFM_TESTPROGS = 
 AM_CXXFLAGS =
 AM_LDFLAGS = 
 
@@ -17,11 +17,11 @@ BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
 BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
 BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
 BFM_LINKAGE= -lbfm -lbagel
-BMF_TESTPROGS += test_Solver_BFM
-BMF_TESTPROGS += test_BFM_Operator
-BMF_TESTPROGS += test_BFM_Moebius
-BMF_TESTPROGS += test_BFM_Inverter
-BMF_TESTPROGS += test_BFM_Inverter_wrapper
+BFM_TESTPROGS += test_Solver_BFM
+BFM_TESTPROGS += test_BFM_Operator
+BFM_TESTPROGS += test_BFM_Moebius
+BFM_TESTPROGS += test_BFM_Inverter
+BFM_TESTPROGS += test_BFM_Inverter_wrapper
 #BFM_TESTPROGS += test_HDCG
 endif
 
@@ -115,7 +115,7 @@ test_PROGRAMS = test_HMC 		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
 		test_Solver_Perf	\
-		$(BMF_TESTPROGS)        \
+		$(BFM_TESTPROGS)        \
 		test_RNG 		\
 		test_IO			\
 		test_RationalApprox	\

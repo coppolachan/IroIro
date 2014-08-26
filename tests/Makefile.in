@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-08-26 16:40:38 cossu>
+# Time-stamp: <2014-08-26 16:45:45 cossu>
 
 
 VPATH = @srcdir@
@@ -46,8 +46,7 @@ host_triplet = @host@
 target_triplet = @target@
 @USE_BFM_TRUE@am__append_1 = test_Solver_BFM test_BFM_Operator \
 @USE_BFM_TRUE@	test_BFM_Moebius test_BFM_Inverter \
-@USE_BFM_TRUE@	test_BFM_Inverter_wrapper
-#BFM_TESTPROGS += test_HDCG
+@USE_BFM_TRUE@	test_BFM_Inverter_wrapper test_HDCG
 
 #OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 @IBM_BGQ_TRUE@am__append_2 = -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
@@ -93,7 +92,8 @@ CONFIG_CLEAN_VPATH_FILES =
 @USE_BFM_TRUE@	test_BFM_Operator$(EXEEXT) \
 @USE_BFM_TRUE@	test_BFM_Moebius$(EXEEXT) \
 @USE_BFM_TRUE@	test_BFM_Inverter$(EXEEXT) \
-@USE_BFM_TRUE@	test_BFM_Inverter_wrapper$(EXEEXT)
+@USE_BFM_TRUE@	test_BFM_Inverter_wrapper$(EXEEXT) \
+@USE_BFM_TRUE@	test_HDCG$(EXEEXT)
 am__EXEEXT_2 = $(am__EXEEXT_1)
 am__installdirs = "$(DESTDIR)$(testdir)" "$(DESTDIR)$(includedir)"
 PROGRAMS = $(test_PROGRAMS)
@@ -191,6 +191,13 @@ am_test_Gauge_OBJECTS = test_Gauge.$(OBJEXT) testerGauge.$(OBJEXT)
 test_Gauge_OBJECTS = $(am_test_Gauge_OBJECTS)
 test_Gauge_LDADD = $(LDADD)
 test_Gauge_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+am__test_HDCG_SOURCES_DIST = test_BFM_HDCG_Inverter.cpp \
+	testerSolver_HDCG.cpp
+@USE_BFM_TRUE@am_test_HDCG_OBJECTS = test_BFM_HDCG_Inverter.$(OBJEXT) \
+@USE_BFM_TRUE@	testerSolver_HDCG.$(OBJEXT)
+test_HDCG_OBJECTS = $(am_test_HDCG_OBJECTS)
+test_HDCG_LDADD = $(LDADD)
+test_HDCG_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
@@ -405,8 +412,9 @@ SOURCES = $(test_BFM_Inverter_SOURCES) \
 	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
 	$(test_EigModesNum_SOURCES) $(test_EigenModesSolver_SOURCES) \
 	$(test_EigenModesSolver_Lap_SOURCES) $(test_Gauge_SOURCES) \
-	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
-	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
+	$(test_HDCG_SOURCES) $(test_HMC_SOURCES) \
+	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_noFactories_SOURCES) \
+	$(test_HMC_smear_noF_SOURCES) \
 	$(test_HadronSpectrum_HeavyLight_SOURCES) \
 	$(test_HeatBath_SOURCES) $(test_IO_SOURCES) \
 	$(test_LapH_SOURCES) $(test_Laplacian_SOURCES) \
@@ -433,8 +441,9 @@ DIST_SOURCES = $(am__test_BFM_Inverter_SOURCES_DIST) \
 	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
 	$(test_EigModesNum_SOURCES) $(test_EigenModesSolver_SOURCES) \
 	$(test_EigenModesSolver_Lap_SOURCES) $(test_Gauge_SOURCES) \
-	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
-	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
+	$(am__test_HDCG_SOURCES_DIST) $(test_HMC_SOURCES) \
+	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_noFactories_SOURCES) \
+	$(test_HMC_smear_noF_SOURCES) \
 	$(test_HadronSpectrum_HeavyLight_SOURCES) \
 	$(test_HeatBath_SOURCES) $(test_IO_SOURCES) \
 	$(test_LapH_SOURCES) $(test_Laplacian_SOURCES) \
@@ -586,7 +595,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 testdir = $(bindir)/Test
 OPTLIB = $(am__append_2) $(am__append_4) $(am__append_5)
-BMF_TESTPROGS = $(am__append_1)
+BFM_TESTPROGS = $(am__append_1)
 AM_CXXFLAGS = $(am__append_3) $(BFM_INCLUDE)
 AM_LDFLAGS = $(BFM_LIBS)
 @USE_BFM_TRUE@BFM_HACK = /bgsys/drivers/V1R1M2/ppc64/
@@ -925,6 +934,9 @@ test_EigenModesSolver_Lap$(EXEEXT): $(test_EigenModesSolver_Lap_OBJECTS) $(test_
 test_Gauge$(EXEEXT): $(test_Gauge_OBJECTS) $(test_Gauge_DEPENDENCIES) 
 	@rm -f test_Gauge$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Gauge_OBJECTS) $(test_Gauge_LDADD) $(LIBS)
+test_HDCG$(EXEEXT): $(test_HDCG_OBJECTS) $(test_HDCG_DEPENDENCIES) 
+	@rm -f test_HDCG$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HDCG_OBJECTS) $(test_HDCG_LDADD) $(LIBS)
 test_HMC$(EXEEXT): $(test_HMC_OBJECTS) $(test_HMC_DEPENDENCIES) 
 	@rm -f test_HMC$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_HMC_OBJECTS) $(test_HMC_LDADD) $(LIBS)
@@ -1025,6 +1037,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_HDCG_Inverter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Moebius.Po@am__quote@
@@ -1096,6 +1109,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerResMass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSolver_BFM.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSolver_HDCG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSolver_Perf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSunRep.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson.Po@am__quote@
