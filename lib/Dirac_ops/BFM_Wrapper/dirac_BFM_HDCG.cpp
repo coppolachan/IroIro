@@ -1,10 +1,79 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2014-08-07 16:44:13 neo>
+ * Time-stamp: <2014-08-25 16:53:20 neo>
  */
+#include <omp.h>
 #include <math.h>
 #include "dirac_BFM_HDCG.hpp"
+#include "include/commonPrms.hpp"
+#include "Communicator/communicator.hpp"
+#include "include/timings.hpp"
+#include "include/messages_macros.hpp"
+#include "include/errors.hpp"
+
+void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
+				       bfmActionParams &BAP) {
+
+  HDCGParms = Parms_;
+
+  // Complicated init sequence
+  bfmarg bfma;
+  bfmActionParams *bfmap = (bfmActionParams *) &bfma;
+
+  // Physica params
+  *bfmap = BAP;
+
+  // Algorithm & code control
+  bfma.Threads(omp_get_max_threads());
+  bfma.Verbose(0);
+  bfma.time_report_iter=-100;
+  bfma.max_iter     = 10000;
+  bfma.residual     = 1.0e-8;
+
+  //Geometry
+  bfma.node_latt[0] =  CommonPrms::instance()->Nx();
+  bfma.node_latt[1] =  CommonPrms::instance()->Ny();
+  bfma.node_latt[2] =  CommonPrms::instance()->Nz();
+  bfma.node_latt[3] =  CommonPrms::instance()->Nt();
+
+  //  multi1d<int> procs = QDP::Layout::logicalSize();//? number of nodes per dir?
+  int procs[4];
+  for(int mu=0;mu<4;mu++){
+    procs[mu] = CommonPrms::instance()->NPE(mu);
+    if (procs[mu]>1) bfma.local_comm[mu] = 0;
+    else             bfma.local_comm[mu] = 1;
+  }
+
+
+  linop_single.init(bfma);
+  linop_single.BossLog("HDCG inititialised single prec linop\n");
+  linop.init(bfma);
+  linop.BossLog("HDCG inititialised double prec linop\n");
+  bfma.Ls   = HDCGParms.SubspaceRationalLs;
+  bfma.mass = HDCGParms.SubspaceRationalMass;
+  linop_r.BossLog("HDCG inititialising subspace generation Ls=%d mass %le\n",bfma.Ls,bfma.mass);
+  linop_r.init(bfma);
+  linop_r.BossLog("HDCG inititialised subspace generation\n");
+
+  // Merge the Parms into constructor.
+  int GlobalSize[4];
+  int SubGridSize[4];
+  int NodeCoord[4];
+  
+  for (int mu =0; mu< 4; mu++){
+    GlobalSize[mu] = CommonPrms::instance()->global_size(mu);
+    SubGridSize[mu] = CommonPrms::instance()->local_size(mu);
+    NodeCoord[mu] = Communicator::instance()->ipe(mu);
+  }
+
+  linop.BossLog("HDCG class initialization\n");
+  ldop_d = new BFM_HDCG_Extend<double>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
+  ldop_d->SetParams(HDCGParms);
+
+}
+
+
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_rotate(double *phases_by_pi,double *phases_dir, int sgn){
   
@@ -123,8 +192,17 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_refine(){
   Fermion_t tmp = linop.allocFermion();
   
   int threads = linop.threads;
-  BfmHDCG<float>  *ldop_f;
-  ldop_f = new BfmHDCG<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,&linop,&linop_single);
+  BFM_HDCG_Extend<float>  *ldop_f;
+  int GlobalSize[4];
+  int SubGridSize[4];
+  int NodeCoord[4];
+  
+  for (int mu =0; mu< 4; mu++){
+    GlobalSize[mu] = CommonPrms::instance()->global_size(mu);
+    SubGridSize[mu] = CommonPrms::instance()->local_size(mu);
+    NodeCoord[mu] = Communicator::instance()->ipe(mu);
+  }
+  ldop_f = new BFM_HDCG_Extend<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
   ldop_f->CloneSubspace<double>(*ldop_d);
   ldop_f->SetParams(HDCGParms);
 
@@ -235,9 +313,19 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
   // Even/Odd eventually must be changed... Peter has a different convention
 
+  int GlobalSize[4];
+  int SubGridSize[4];
+  int NodeCoord[4];
+  
+  for (int mu =0; mu< 4; mu++){
+    GlobalSize[mu] = CommonPrms::instance()->global_size(mu);
+    SubGridSize[mu] = CommonPrms::instance()->local_size(mu);
+    NodeCoord[mu] = Communicator::instance()->ipe(mu);
+  }
 
-  BfmHDCG<float>  *ldop_f;
-  ldop_f = new BfmHDCG<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,&linop,&linop_single);
+
+  BFM_HDCG_Extend<float>  *ldop_f;
+  ldop_f = new BFM_HDCG_Extend<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
   ldop_f->CloneSubspace<double>(*ldop_d);
   ldop_f->SetParams(HDCGParms);
   ldop_f->PcgType=PcgAdef2f;
@@ -306,6 +394,78 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 }    
 
 
-void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &sol, FermionField &src,double residual, int maxit){
-  // Wrapper of the previous basic method for the inverter
+void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &source, double residual, int maxit){
+  if (is_initialized) {
+    // Wrapper of the previous basic method for the inverter
+    int Nvol5d = Nvol_*BFMparams.Ls_;
+    
+    long double export_timing;
+    FINE_TIMING_START(export_timing);
+    BFM_interface.GaugeExport_to_BFM(u_);
+    FINE_TIMING_END(export_timing);
+    _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_BFM_Wrapper::solve_CGNE"
+	     << " - Gauge Export to BFM timing = "
+	     << export_timing << std::endl);
+    int cb = Even;// by default
+    
+    // Load the fermion field to BFM
+    // temporary source vector for the BFM data
+    FermionField BFMsource(Nvol5d);
+    FermionField BFMsol(Nvol5d);
+    
+    CCIO::cout<< "DEBUG: Filling source and solution vectors in BFM format Ls="<<BFMparams.Ls_<< "\n";
+    int half_vec = source.size()/(2*BFMparams.Ls_);
+    for (int s =0 ; s< BFMparams.Ls_; s++){
+      for (int i = 0; i < half_vec; i++){
+	
+	BFMsource.data.set(i+    2*s*half_vec, source.data[i+half_vec*s]);//just even part is enough
+	BFMsource.data.set(i+(2*s+1)*half_vec, source.data[i+half_vec*(s+BFMparams.Ls_)]);//just even part is enough
+	
+	BFMsol.data.set(i+    2*s*half_vec, solution.data[i+half_vec*s]);//just even part is enough
+	BFMsol.data.set(i+(2*s+1)*half_vec, solution.data[i+half_vec*(s+BFMparams.Ls_)]);//just even part is enough
+      }
+    }
+    
+    CCIO::cout<< "DEBUG: Load sources\n";
+    LoadFullSource(BFMsource);
+    
+    
+    CCIO::cout<< "DEBUG: Load guess\n";
+    LoadGuess(BFMsol, cb);
+    LoadGuess(BFMsol, 1-cb);
+    
+    CCIO::cout<< "DEBUG: bfm comm_init\n";
+    // need to initialize the comms because of the buffer
+    // assignments by BGNET library
+    // the order of comm_init can broke previous initializations
+    // so we are doing right now.
+    linop.comm_init();
+    
+    //////////////////////////// Execute the solver
+    CCIO::cout<< "DEBUG: bfm solve_HDCG\n";
+    solve_HDCG(chi_h,psi_h, residual, maxit);
+    ///////////////////////////////////////////////
+    
+    // close communications to free the buffers
+    CCIO::cout<< "DEBUG: bfm comm_end\n";
+    linop.comm_end();
+    
+    // Get the solution from BFM
+    CCIO::cout<< "DEBUG: Get solutions\n";
+    GetSolution(BFMsol,cb);
+    GetSolution(BFMsol,1-cb);
+    for (int s =0 ; s< BFMparams.Ls_; s++){
+      for (int i = 0; i < half_vec; i++){
+	solution.data.set(i+half_vec*s, BFMsol.data[i+2*s*half_vec]);//copy the even part
+	solution.data.set(i+half_vec*(s+BFMparams.Ls_), BFMsol.data[i+(2*s+1)*half_vec]);//copy the odd part
+      }
+    }
+  } else {
+    std::ostringstream err_msg;
+    err_msg << "Dirac_BFM_HDCG_Wrapper is not initialized";
+    Errors::BaseErr("DEBUG", err_msg);
+  }
+
+
+
 }

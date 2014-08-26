@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-08-07 10:38:14 neo>
+# Time-stamp: <2014-08-26 16:40:38 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -22,6 +22,7 @@ BMF_TESTPROGS += test_BFM_Operator
 BMF_TESTPROGS += test_BFM_Moebius
 BMF_TESTPROGS += test_BFM_Inverter
 BMF_TESTPROGS += test_BFM_Inverter_wrapper
+#BFM_TESTPROGS += test_HDCG
 endif
 
 if IBM_BGQ
@@ -126,7 +127,8 @@ test_PROGRAMS = test_HMC 		\
 		test_Laplacian		\
 		test_LapH		\
 		test_HadronSpectrum_HeavyLight\
-		test_ChiralCondensate 
+		test_ChiralCondensate 	
+
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -252,15 +254,20 @@ if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
                                 testerSolver_BFM.cpp            
 
-test_BFM_Operator_SOURCES =     test_BFM_Operator.cpp             \
+test_BFM_Operator_SOURCES =     test_BFM_Operator.cpp           \
                                 testerSolver_BFM.cpp            
-test_BFM_Moebius_SOURCES =     test_BFM_Moebius.cpp             \
+
+test_BFM_Moebius_SOURCES =     	test_BFM_Moebius.cpp            \
                                 testerSolver_BFM.cpp            
+
 test_BFM_Inverter_SOURCES =     test_BFM_Inverter.cpp 		\
                                 testerSolver_BFM.cpp            
 
 test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
-                                testerSolver_BFM.cpp            
+                                testerSolver_BFM.cpp       
+
+test_HDCG_SOURCES = 		test_BFM_HDCG_Inverter.cpp	\
+				testerSolver_HDCG.cpp           
 
 endif
 

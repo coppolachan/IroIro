@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-08-07 10:38:14 neo>
+# Time-stamp: <2014-08-26 16:40:38 cossu>
 
 
 VPATH = @srcdir@
@@ -47,6 +47,7 @@ target_triplet = @target@
 @USE_BFM_TRUE@am__append_1 = test_Solver_BFM test_BFM_Operator \
 @USE_BFM_TRUE@	test_BFM_Moebius test_BFM_Inverter \
 @USE_BFM_TRUE@	test_BFM_Inverter_wrapper
+#BFM_TESTPROGS += test_HDCG
 
 #OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 @IBM_BGQ_TRUE@am__append_2 = -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
@@ -759,17 +760,20 @@ test_HadronSpectrum_HeavyLight_SOURCES = test_HadronSpectrum_HeavyLight.cpp\
 @USE_BFM_TRUE@test_Solver_BFM_SOURCES = test_Solver_BFM.cpp             \
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
-@USE_BFM_TRUE@test_BFM_Operator_SOURCES = test_BFM_Operator.cpp             \
+@USE_BFM_TRUE@test_BFM_Operator_SOURCES = test_BFM_Operator.cpp           \
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
-@USE_BFM_TRUE@test_BFM_Moebius_SOURCES = test_BFM_Moebius.cpp             \
+@USE_BFM_TRUE@test_BFM_Moebius_SOURCES = test_BFM_Moebius.cpp            \
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
 @USE_BFM_TRUE@test_BFM_Inverter_SOURCES = test_BFM_Inverter.cpp 		\
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp            
 
 @USE_BFM_TRUE@test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
-@USE_BFM_TRUE@                                testerSolver_BFM.cpp            
+@USE_BFM_TRUE@                                testerSolver_BFM.cpp       
+
+@USE_BFM_TRUE@test_HDCG_SOURCES = test_BFM_HDCG_Inverter.cpp	\
+@USE_BFM_TRUE@				testerSolver_HDCG.cpp           
 
 include_HEADERS = tests.hpp			\
 				tests_all.hpp			\

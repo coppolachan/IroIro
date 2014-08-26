@@ -8,6 +8,7 @@
 
 #include "dirac_BFM_wrapper.hpp"
 #include "BFM_HDCG.hpp"
+
 /* 
  *! @class Dirac_BFM_HDCG_Wrapper
  * @brief Peter Boyle's Hierarchically deflated CG (HDCG)
@@ -17,12 +18,26 @@
  */
 class Dirac_BFM_HDCG_Wrapper: public Dirac_BFM_Wrapper {
 private:
-  bfm_internal<float> linop_r;        //double precision operator
-  BfmHDCG<double> *ldop_d;
+  typedef float rFloat;
+
+  BFM_HDCG_Extend<double> *ldop_d;
   BfmHDCGParams HDCGParms;
+  bfm_internal<rFloat> linop_r;
+
+  //Hide default constructor
+  Dirac_BFM_HDCG_Wrapper();
+  Dirac_BFM_HDCG_Wrapper(Dirac_BFM_HDCG_Wrapper&);
+
+  
 public:
-  // Create constructor!!!!!!!
-  // Here constructor
+  Dirac_BFM_HDCG_Wrapper(XML::node node,
+			 const Field* F, 
+			 DiracWilsonLike_EvenOdd* DWEO,
+			 const Type_5d_DWF = Regular5D)
+    : Dirac_BFM_Wrapper(node, F, DWEO) {}
+    
+
+  void HDCG_init(BfmHDCGParams & Parms_, bfmActionParams &BAP);
   
   void HDCG_subspace_rotate(double *phases_by_pi,double *phases_dir, int sgn);
   void HDCG_set_mass(double mass);
