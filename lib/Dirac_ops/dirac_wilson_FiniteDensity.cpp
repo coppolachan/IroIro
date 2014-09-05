@@ -1,6 +1,6 @@
 /*! @file dirac_wilson_FiniteDensity.cpp
  * @brief memberfuncs of Dirac_Wilson_FiniteDensity class
- Time-stamp: <2014-05-29 12:50:10 noaki>
+ Time-stamp: <2014-08-29 20:52:48 noaki>
 */
 
 #include "dirac_wilson_FiniteDensity.hpp"
@@ -47,7 +47,61 @@ const Field Dirac_Wilson_FiniteDensity::mult(const Field& f)const{
   fb.set(sTmax_,f[sTmax_]);        
   fb *= (1.0-1.0/fgcty_)*Dw_.getKappa();
   (Dw_.*(Dw_.mult_m[TDIR]))(Df,fb); /// t = 0 -> Lt-1
+  
+  return Df;
+}
 
+const Field Dirac_Wilson_FiniteDensity::mult_Ds(const Field& f)const{
+  /*
+  Field Df = Dw_.mult(f);
+  Df -= f;
+  Df /= -Dw_.getKappa();
+  (Dw_.*(Dw_.mult_p[TDIR]))(Df,f); 
+  (Dw_.*(Dw_.mult_m[TDIR]))(Df,f);
+  */
+  Field Df(fsize());
+  for(int d=0; d<CommonPrms::Ndim()-1;++d){
+    (Dw_.*(Dw_.mult_p[d]))(Df,f); 
+    (Dw_.*(Dw_.mult_m[d]))(Df,f);
+  }
+  
+  Df *= -Dw_.getKappa();
+  return Df;
+}
+
+const Field Dirac_Wilson_FiniteDensity::mult_Dtp(const Field& f)const{
+  Field Df(fsize());
+  Field fb(fsize());
+  fb.set(sTmin_,f[sTmin_]);         
+  fb *= (-1.0+fgcty_);
+  fb += f; 
+  (Dw_.*(Dw_.mult_p[TDIR]))(Df,fb); 
+
+  fb = 0.0;
+  fb.set(sTmax_,f[sTmax_]);        
+  fb *= (-1.0+1.0/fgcty_);
+  fb += f;
+  (Dw_.*(Dw_.mult_m[TDIR]))(Df,fb);
+
+  Df *= -Dw_.getKappa();
+  return Df;
+}
+
+const Field Dirac_Wilson_FiniteDensity::mult_Dtm(const Field& f)const{
+  Field Df(fsize());
+  Field fb(fsize());
+  fb.set(sTmin_,f[sTmin_]);         
+  fb *= (-1.0+fgcty_);
+  fb += f; 
+  (Dw_.*(Dw_.mult_p[TDIR]))(Df,fb); 
+
+  fb = 0.0;
+  fb.set(sTmax_,f[sTmax_]);        
+  fb *= (1.0-1.0/fgcty_);
+  fb -= f;
+  (Dw_.*(Dw_.mult_m[TDIR]))(Df,fb);
+  
+  Df *= -Dw_.getKappa();
   return Df;
 }
 

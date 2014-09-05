@@ -28,13 +28,12 @@ void EigenSorter_high::push(vector<double>& lmd,int N) const{
 
 void EigenSorter_high::push(vector<double>& lmd,vector<int>& evec,int N)const{
   vector<pair<double,int> > emod;
-  vector<pair<double,int> >::iterator it;
-
   for(int i=0;i<lmd.size();++i)
     emod.push_back(pair<double,int>(lmd[i],evec[i]));
 		   
   partial_sort(emod.begin(),emod.begin()+N,emod.end(),greater_pair);
-  it=emod.begin();
+
+  vector<pair<double,int> >::iterator it=emod.begin();
   for(int i=0;i<N;++i){
     lmd[i]=it->first;
     evec[i]=it->second;
@@ -61,13 +60,12 @@ void EigenSorter_low::push(vector<double>& lmd,int N) const{
 
 void EigenSorter_low::push(vector<double>& lmd,vector<int>& evec,int N) const{
   vector<pair<double,int> > emod;
-  vector<pair<double,int> >::iterator it;
-
   for(int i=0;i<lmd.size();++i)
     emod.push_back(pair<double,int>(lmd[i],evec[i]));
 
   partial_sort(emod.begin(),emod.begin()+N,emod.end(),less_pair);
-  it=emod.begin();
+
+  vector<pair<double,int> >::iterator it=emod.begin();
   for(int i=0;i<N;++i){
     lmd[i]=it->first;
     evec[i]=it->second;

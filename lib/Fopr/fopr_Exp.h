@@ -39,9 +39,6 @@ public:
 class Fopr_Lexp: public Fopr_Herm{
   const Fopr_Linear* Op_;
   int N_;
-  const Field prod(const Field& f,int n=0)const{
-    return N_== n ? f : Op_->mult(prod(f,n+1));
-  }
 public:
   Fopr_Lexp(int N,double a,const Fopr_Herm* Op)
     :N_(N),Op_(new Fopr_Linear(a/N,1.0,Op)){}
@@ -54,7 +51,12 @@ public:
   }
   ~Fopr_Lexp(){if(Op_) delete Op_;}
   
-  const Field mult(const Field& f)const{ return prod(f);}    
+  const Field mult(const Field& f)const{
+    Field tmp =f;
+    for(int i=0;i<N_;++i) tmp = Op_->mult(tmp);
+    return tmp;
+  }
+
   double func(double x)const{return pow(Op_->func(x),N_);}
   size_t fsize()const {return Op_->fsize();}
 };

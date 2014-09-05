@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-07-18 09:58:18 noaki>
+# Time-stamp: <2014-08-31 08:43:19 noaki>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -77,6 +77,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_IO.xml		\
 		test_Gauge.xml		\
 		test_NoMeas.xml	        \
+		test_GWrelEigen.xml     \
 		test_Overlap.xml	\
 		test_HMC_DWF.xml	\
 		test_MultiShiftSolver.xml	\
@@ -85,6 +86,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_sunRep.xml		\
 		test_noFact.xml		\
 		test_ChiralCondensate.xml\
+		test_QnumSuscept.xml    \
 	        test_EigModesNum.xml    
 
 test_PROGRAMS = test_HMC 		\
@@ -93,6 +95,7 @@ test_PROGRAMS = test_HMC 		\
 		test_HMC_DWall_noF	\
 		test_Gauge		\
 		test_NoMeas		\
+		test_GWrelEigen         \
 		test_PolyakovLoop	\
 		test_WilsonFlow		\
 		test_Wilson 		\
@@ -111,6 +114,7 @@ test_PROGRAMS = test_HMC 		\
 		test_EigenModesSolver_Lap\
 		test_EigModesNum	\
 		test_Smearing		\
+		test_LapSource		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
 		test_Solver_Perf	\
@@ -126,7 +130,8 @@ test_PROGRAMS = test_HMC 		\
 		test_Laplacian		\
 		test_LapH		\
 		test_HadronSpectrum_HeavyLight\
-		test_ChiralCondensate 
+		test_ChiralCondensate \
+		test_QnumSuscept
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -140,6 +145,9 @@ test_RHMC_noFactories_SOURCES = test_RHMC_noFactories.cpp 	\
 test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
 			  	testerHMC.cpp
 
+test_LapSource_SOURCES = 	test_LapSource.cpp 	\
+			  	testerLapSource.cpp
+
 test_HMC_DWall_noF_SOURCES =	test_HMC_DWall_noFact.cpp	\
 				testerHMC_DWall_noFact.cpp
 
@@ -147,6 +155,9 @@ test_NoMeas_SOURCES 	= 	testerNoMeas.cpp
 
 test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
 				testerGauge.cpp
+
+test_GWrelEigen_SOURCES	= 	test_GWrelEigen.cpp		\
+				testerGWrelEigen.cpp
 
 test_Wilson_SOURCES 	=	test_wilson.cpp 		\
 				testerWilson.cpp
@@ -190,7 +201,7 @@ test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 test_EigenModesSolver_SOURCES =	test_EigenModesSolver.cpp	\
 				testerEigenModesSolver.cpp
 
-test_EigenModesSolver_Lap_SOURCES =test_EigenModesSolver_Lap.cpp\
+test_EigenModesSolver_Lap_SOURCES = test_EigenModesSolver_Lap.cpp\
 				testerEigenModesSolver_Lap.cpp
 
 test_EigModesNum_SOURCES =	test_EigModesNum.cpp	\
@@ -225,6 +236,9 @@ test_PolyakovLoop_SOURCES 	= 	test_PolyakovLoop.cpp	\
 
 test_ChiralCondensate_SOURCES 	= 	test_ChiralCondensate.cpp	\
 	 				testerChiralCondensate.cpp
+
+test_QnumSuscept_SOURCES 	= 	test_QnumSuscept.cpp	\
+	 				testerQnumSuscept.cpp
 
 test_SUNRepresentation_SOURCES  =	test_sunRepres.cpp	\
 					testerSunRep.cpp	
@@ -277,6 +291,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_WilsonFlow.hpp     	\
 				test_PolyakovLoop.hpp     	\
 				test_NoMeas.hpp     	        \
+				test_GWrelEigen.hpp    	        \
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
 				test_IO.hpp			\
@@ -284,6 +299,7 @@ include_HEADERS 	=	tests.hpp			\
 				test_EigenModesSolver_Lap.hpp	\
 				test_EigModesNum.hpp    	\
 				test_smear.hpp			\
+				test_LapSource.hpp		\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
 				test_MesonSpectrum_Nf2p1.hpp	\
@@ -303,4 +319,5 @@ include_HEADERS 	=	tests.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\
 				test_Laplacian.hpp		\
 				test_LapH.hpp                   \
-	       	                test_ChiralCondensate.hpp
+	       	                test_ChiralCondensate.hpp       \
+	                        test_QnumSuscept.hpp	

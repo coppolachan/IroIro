@@ -3173,8 +3173,8 @@ ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value
 bluegeneq=false   # default value
-SR_INCLUDE=/srhome/.tools/include
-SR_LIBS=/srhome/.tools/lib
+SR_INCLUDE=/srhome/.tools/include  # /srhome/.tools/usr/local/libsrwilson_140730/  is for the test
+SR_LIBS=/srhome/.tools/lib         # /srhome/.tools/usr/local/libsrwilson_140730/  is for the test
 
 BLUEGENE_INCLUDE=/bghome/scbadm/ibm-doi/lib
 BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib

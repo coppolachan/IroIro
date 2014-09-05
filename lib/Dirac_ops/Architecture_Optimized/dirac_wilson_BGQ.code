@@ -1,7 +1,7 @@
 /*! @file dirac_wilson_BGQ.code
  *  @brief Extension of Dirac_Wilson class on the BG/Q environment
  * this file does not coexist with dirac_wilson_improved.code
- * Time-stamp: <2014-05-29 17:49:55 noaki>
+ * Time-stamp: <2014-08-23 09:18:00 noaki>
  */
 #include "Tools/Architecture_Optimized/utils_BGQ.hpp"
 #include "bgqwilson.h"
@@ -146,6 +146,9 @@ void Dirac_Wilson::mult_offdiag(Field& w, const Field& f) const{
 }
 
 void Dirac_Wilson::mult_full(Field& w, const Field& f) const{
+#ifdef USING_EVENODD_IDX 
+  CCIO::cout<<"BGWilson_Mult was called under evenodd-idx environment\n";
+#endif
   BGWilson_Mult(w.getaddr(0),const_cast<Field *>(u_)->getaddr(0),
 		const_cast<Field&>(f).getaddr(0),-kpp_,BGWILSON_DIRAC);
 }
@@ -166,10 +169,16 @@ const Field Dirac_Wilson::gamma5(const Field& f)const{
 
 ////// additional funcsions to the BG/Q environment ///////
 void Dirac_Wilson::mult_ptr(double* w, double* const f) const{
+#ifdef USING_EVENODD_IDX 
+  CCIO::cout<<"BGWilson_Mult was called under evenodd-idx environment\n";
+#endif
   BGWilson_Mult(w,const_cast<Field *>(u_)->getaddr(0),f,-kpp_,
 		BGWILSON_DIRAC);
 }
 void Dirac_Wilson::mult_dag_ptr(double* w, double* const f) const{
+#ifdef USING_EVENODD_IDX 
+  CCIO::cout<<"BGWilson_Mult_Dag was called under evenodd-idx environment\n";
+#endif
   BGWilson_Mult_Dag(w,const_cast<Field *>(u_)->getaddr(0),f,-kpp_,
 		    BGWILSON_DIRAC);
 }

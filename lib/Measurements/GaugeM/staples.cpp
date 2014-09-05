@@ -15,7 +15,6 @@
 
 #ifdef SR16K_WILSON
 #include "srmwilson.h"
-#include "Tools/Architecture_Optimized/srmwilson_cmpl.hpp"
 #endif
 
 using namespace FieldUtils;
@@ -97,9 +96,9 @@ double Staples::plaq_s(const GaugeField& F)const {
   const int CC2 = NC_*NC_*2;
 
   for(int mu=0; mu<NDIM_-1; ++mu){
-    SRCMPL::SRWilsonSU3_MatEquate(U_mu_ptr,F_ptr+mu*Nvol_*CC2,Nvol_);//U_mu links
+    SRWilsonSU3_MatEquate(U_mu_ptr,F_ptr+mu*Nvol_*CC2,Nvol_);//U_mu links
     int nu = (mu+1)%(NDIM_-1);
-    SRCMPL::SRWilsonSU3_MatEquate(U_nu_ptr,F_ptr+nu*Nvol_*CC2,Nvol_);//U_nu links
+    SRWilsonSU3_MatEquate(U_nu_ptr,F_ptr+nu*Nvol_*CC2,Nvol_);//U_nu links
 
     shiftField(UpMu,U_nu_ptr,mu,Forward());
     shiftField(UpNu,U_mu_ptr,nu,Forward());
@@ -183,10 +182,10 @@ double Staples::plaq_t(const GaugeField& F)const {
   const int CC2 = NC_*NC_*2;
 
   int mu=TDIR;
-  SRCMPL::SRWilsonSU3_MatEquate(U_mu_ptr,F_ptr+mu*Nvol_*CC2,Nvol_); //U_mu links
-  for(int nu=0; nu<NDIM_-1; ++nu){
-    SRCMPL::SRWilsonSU3_MatEquate(U_nu_ptr,F_ptr+nu*Nvol_*CC2,Nvol_); //U_nu links
+  SRWilsonSU3_MatEquate(U_mu_ptr,F_ptr+mu*Nvol_*CC2,Nvol_); //U_mu links
 
+  for(int nu=0; nu<NDIM_-1; ++nu){
+    SRWilsonSU3_MatEquate(U_nu_ptr,F_ptr+nu*Nvol_*CC2,Nvol_); //U_nu links
     shiftField(UpMu,U_nu_ptr,mu,Forward());
     shiftField(UpNu,U_mu_ptr,nu,Forward());
     // upper staple
@@ -403,8 +402,8 @@ GaugeField1D Staples::lower(const GaugeField& G, int mu, int nu) const{
 
   const int CC2 = NC_*NC_*2;
   
-  SRCMPL::SRWilsonSU3_MatEquate(v_ptr,G_ptr+mu*Nvol_*CC2,Nvol_); //U_mu links
-  SRCMPL::SRWilsonSU3_MatEquate(w_ptr,G_ptr+nu*Nvol_*CC2,Nvol_); //U_nu links
+  SRWilsonSU3_MatEquate(v_ptr,G_ptr+mu*Nvol_*CC2,Nvol_); //U_mu links
+  SRWilsonSU3_MatEquate(w_ptr,G_ptr+nu*Nvol_*CC2,Nvol_); //U_nu links
   shiftField(WupMu,w_ptr,mu,Forward());
   SRWilsonSU3_MatMult_DNN(c_ptr,w_ptr,v_ptr,WupMu_ptr,Nvol_);
 #else
@@ -464,10 +463,10 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
 
   const int CC2 = NC_*NC_*2;
   
-  SRCMPL::SRWilsonSU3_MatEquate(v_ptr,G_ptr+mu*Nvol_*CC2,Nvol_); //U_mu links
+  SRWilsonSU3_MatEquate(v_ptr,G_ptr+mu*Nvol_*CC2,Nvol_); //U_mu links
   shiftField(VupNu,v_ptr,nu,Forward());
 
-  SRCMPL::SRWilsonSU3_MatEquate(v_ptr,G_ptr+nu*Nvol_*CC2,Nvol_); //U_nu links
+  SRWilsonSU3_MatEquate(v_ptr,G_ptr+nu*Nvol_*CC2,Nvol_); //U_nu links
   shiftField(WupMu,v_ptr,mu,Forward());
 
   SRWilsonSU3_MatMult_NND(c_ptr,v_ptr,VupNu_ptr,WupMu_ptr,Nvol_);
@@ -551,14 +550,14 @@ Staples::fieldStrength(const GaugeField& G,int mu,int nu) const{
   double* U1_ptr = U1.data.getaddr(0);
   const int CC2 = NC_*NC_*2;
 
-  SRCMPL::SRWilsonSU3_MatEquate(U1_ptr,G_ptr+mu*Nvol_*CC2,Nvol_); // U_mu links 
-  SRCMPL::SRWilsonSU3_MatSub(Vup_ptr,Vdn_ptr,Nvol_); // Left leaves
+  SRWilsonSU3_MatEquate(U1_ptr,G_ptr+mu*Nvol_*CC2,Nvol_); // U_mu links 
+  SRWilsonSU3_MatSub(Vup_ptr,Vdn_ptr,Nvol_); // Left leaves
 
   SRWilsonSU3_MatMult_ND(Fmn_ptr,U1_ptr, Vup_ptr,Nvol_);
   SRWilsonSU3_MatMult_DN(Ut_ptr, Vup_ptr,U1_ptr, Nvol_);
   shiftField(U1,Ut_ptr,mu,Backward());
   
-  SRCMPL::SRWilsonSU3_MatAdd(Fmn_ptr,U1_ptr, Nvol_); // Fmn 
+  SRWilsonSU3_MatAdd(Fmn_ptr,U1_ptr, Nvol_); // Fmn 
 #else
   for(int site=0; site<Nvol_; ++site){
     SUNmat u = mat(G,site,mu);    

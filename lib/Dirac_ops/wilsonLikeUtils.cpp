@@ -74,6 +74,87 @@ void GammaMatrix::projMcore(double* w,const double* f)const{
   }
 }
 
+void GammaMatrix::isigma12core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
+    w[r0(c)] =-f[i0(c)];  w[i0(c)] = f[r0(c)];
+    w[r1(c)] = f[i1(c)];  w[i1(c)] =-f[r1(c)];
+    w[r2(c)] =-f[i2(c)];  w[i2(c)] = f[r2(c)];
+    w[r3(c)] = f[i3(c)];  w[i3(c)] =-f[r3(c)];
+  }
+}
+
+void GammaMatrix::isigma23core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
+    w[r0(c)] =-f[i1(c)];  w[i0(c)] = f[r1(c)];
+    w[r1(c)] =-f[i0(c)];  w[i1(c)] = f[r0(c)];
+    w[r2(c)] =-f[i3(c)];  w[i2(c)] = f[r3(c)];
+    w[r3(c)] =-f[i2(c)];  w[i3(c)] = f[r2(c)];
+  }
+}
+
+void GammaMatrix::isigma24core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
+    w[r0(c)] = f[r3(c)];  w[i0(c)] = f[i3(c)];
+    w[r1(c)] =-f[r2(c)];  w[i1(c)] =-f[i2(c)];
+    w[r2(c)] = f[r1(c)];  w[i2(c)] = f[i1(c)];
+    w[r3(c)] =-f[r0(c)];  w[i3(c)] =-f[i0(c)];
+  }
+}
+
+void GammaMatrix::isigma31core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
+    w[r0(c)] = f[r1(c)];  w[i0(c)] = f[i1(c)];
+    w[r1(c)] =-f[r0(c)];  w[i1(c)] =-f[i0(c)];
+    w[r2(c)] = f[r3(c)];  w[i2(c)] = f[i3(c)];
+    w[r3(c)] =-f[r2(c)];  w[i3(c)] =-f[i2(c)];
+  }
+}
+
+void GammaMatrix::isigma32core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
+    w[r0(c)] = f[i1(c)];  w[i0(c)] =-f[r1(c)];
+    w[r1(c)] = f[i0(c)];  w[i1(c)] =-f[r0(c)];
+    w[r2(c)] = f[i3(c)];  w[i2(c)] =-f[r3(c)];
+    w[r3(c)] = f[i2(c)];  w[i3(c)] =-f[r2(c)];
+  }
+}
+
+void GammaMatrix::isigma34core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
+    w[r0(c)] =-f[i2(c)];  w[i0(c)] = f[r2(c)];
+    w[r1(c)] = f[i3(c)];  w[i1(c)] =-f[r3(c)];
+    w[r2(c)] =-f[i0(c)];  w[i2(c)] = f[r0(c)];
+    w[r3(c)] = f[i1(c)];  w[i3(c)] =-f[r1(c)];
+  }
+}
+
+void GammaMatrix::isigma41core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
+    w[r0(c)] = f[i3(c)];  w[i0(c)] =-f[r3(c)];
+    w[r1(c)] = f[i2(c)];  w[i1(c)] =-f[r2(c)];
+    w[r2(c)] = f[i1(c)];  w[i2(c)] =-f[r1(c)];
+    w[r3(c)] = f[i0(c)];  w[i3(c)] =-f[r0(c)];
+  }
+}
+
+void GammaMatrix::isigma42core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
+    w[r0(c)] =-f[r3(c)];  w[i0(c)] =-f[i3(c)];
+    w[r1(c)] = f[r2(c)];  w[i1(c)] = f[i2(c)];
+    w[r2(c)] =-f[r1(c)];  w[i2(c)] =-f[i1(c)];
+    w[r3(c)] = f[r0(c)];  w[i3(c)] = f[i0(c)];
+  }
+}
+
+void GammaMatrix::isigma43core(double* w,const double* f)const{
+  for(int c=0; c<Ncol_; ++c){
+    w[r0(c)] = f[i2(c)];  w[i0(c)] =-f[r2(c)];
+    w[r1(c)] =-f[i3(c)];  w[i1(c)] = f[r3(c)];
+    w[r2(c)] = f[i0(c)];  w[i2(c)] =-f[r0(c)];
+    w[r3(c)] =-f[i1(c)];  w[i3(c)] = f[r1(c)];
+  }
+}
+
 void DW5dMatrix::BprojCore(double* f,const double* f1,const double* fN)const{
   for(int c=0; c<Ncol_; ++c){
     double fupNr = 0.5*(fN[r0(c)] +fN[r2(c)]);

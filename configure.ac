@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-04-17 12:56:03 cossu>
+# Time-stamp: <2014-08-12 13:42:27 noaki>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.7], [cossu@post.kek.jp])
@@ -34,8 +34,8 @@ ld_flags=$LDFLAGS
 ar_flags=$ARFLAGS
 hitachi=false  # default value 
 bluegeneq=false   # default value
-SR_INCLUDE=/srhome/.tools/include
-SR_LIBS=/srhome/.tools/lib
+SR_INCLUDE=/srhome/.tools/include  # /srhome/.tools/usr/local/libsrwilson_140730/  is for the test 
+SR_LIBS=/srhome/.tools/lib         # /srhome/.tools/usr/local/libsrwilson_140730/  is for the test
 
 BLUEGENE_INCLUDE=/bghome/scbadm/ibm-doi/lib
 BLUEGENE_LIBS=/bghome/scbadm/ibm-doi/lib

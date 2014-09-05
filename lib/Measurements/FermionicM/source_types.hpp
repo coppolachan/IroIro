@@ -12,10 +12,11 @@
 #include "Tools/randNum_MP.h"
 #include "source.hpp"
 #include "Tools/EnumToString.hpp"
-
+#include "Fopr/fopr.h"
 #include <cmath>
 #include <cassert>
 #include <iostream>
+
 
 ////// Source_local -------------------------------------------------------
 
@@ -358,7 +359,6 @@ mksrc(const std::vector<int>& lv,int s,int c)const{
 template<typename FMT> class Source_wrapper: public Source{
   Source* orgSrc_;
   FMT* ff_;
-  std::valarray<double> src_;
   Fopr_Herm* op_;
 public:
   Source_wrapper(Source* Src,Fopr_Herm* op,
@@ -369,10 +369,12 @@ public:
   }
 
   const Field mksrc(int s, int c)const{
-    return op_->mult(orgSrc_->mksrc(s,c));}
+    return op_->mult(orgSrc_->mksrc(s,c));
+  }
 
   const Field mksrc(const std::vector<int>& lv,int s,int c)const{
-    return op_->mult(orgSrc_->mksrc(lv,s,c));}    
+    return Field(mksrc(s,c)[ff_->get_sub(lv)]);
+  }
 
   void refresh(){orgSrc_->refresh();}
 };

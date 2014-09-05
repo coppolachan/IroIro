@@ -19,7 +19,6 @@
 #include <complex>
 #include "Tools/sunAlgUtils.hpp" 
 #include "srmwilson.h"
-#include "Tools/Architecture_Optimized/srmwilson_cmpl.hpp"
 #endif
 
 using namespace SUNmatUtils;
@@ -122,10 +121,10 @@ void GaugeFixingStep::gauge_tr_even(GaugeField& Ue,GaugeField& Uo,
     shiftField_oe(Gp,Ge_ptr,mu,Forward());
     
     SRWilsonSU3_MatMult_NN(U1d_ptr,Ge_ptr,Ue_ptr+mu*NCC,Nvh_);
-    SRCMPL::SRWilsonSU3_MatEquate(Ue_ptr+mu*NCC,U1d_ptr,Nvh_);
+    SRWilsonSU3_MatEquate(Ue_ptr+mu*NCC,U1d_ptr,Nvh_);
     
     SRWilsonSU3_MatMult_ND(U1d_ptr,Uo_ptr+mu*NCC,Gp_ptr,Nvh_);
-    SRCMPL::SRWilsonSU3_MatEquate(Uo_ptr+mu*NCC,U1d_ptr,Nvh_);
+    SRWilsonSU3_MatEquate(Uo_ptr+mu*NCC,U1d_ptr,Nvh_);
   }
 
 #else  
@@ -186,10 +185,10 @@ void GaugeFixingStep::gauge_tr_odd(GaugeField& Ue,GaugeField& Uo,
     shiftField_eo(Gp,Go_ptr,mu,Forward());
 
     SRWilsonSU3_MatMult_ND(U1d_ptr,Ue_ptr+mu*NCC,Gp_ptr,Nvh_);
-    SRCMPL::SRWilsonSU3_MatEquate(Ue_ptr+mu*NCC,U1d_ptr,Nvh_);
+    SRWilsonSU3_MatEquate(Ue_ptr+mu*NCC,U1d_ptr,Nvh_);
 
     SRWilsonSU3_MatMult_NN(U1d_ptr,Go_ptr,Uo_ptr+mu*NCC,Nvh_);
-    SRCMPL::SRWilsonSU3_MatEquate(Uo_ptr+mu*NCC,U1d_ptr,Nvh_);
+    SRWilsonSU3_MatEquate(Uo_ptr+mu*NCC,U1d_ptr,Nvh_);
   }
 
 #else
@@ -273,9 +272,9 @@ const GaugeField1D GaugeFixingStep::upu_even(const GaugeField& Ue,
   const int NCC = 2*NC_*NC_*Nvh_;
   
   for(int mu=0; mu<Ndim_; ++mu){
-    SRCMPL::SRWilsonSU3_MatAdd(UpU_ptr,Ue_ptr+mu*NCC,Nvh_);
+    SRWilsonSU3_MatAdd(UpU_ptr,Ue_ptr+mu*NCC,Nvh_);
     shiftField_eo(Ute,Uo_ptr+mu*NCC,mu,Backward());
-    SRCMPL::SRWilsonSU3_MatAdd(UpU_ptr,Ute_ptr,Nvh_);
+    SRWilsonSU3_MatAdd(UpU_ptr,Ute_ptr,Nvh_);
   }
 
 #else
@@ -324,9 +323,9 @@ const GaugeField1D GaugeFixingStep::umu_even(const GaugeField& Ue,
   const int NCC = 2*NC_*NC_*Nvh_;
   
   for(int mu=0; mu<Ndim_; ++mu){
-    SRCMPL::SRWilsonSU3_MatSub(UmU_ptr,Ue_ptr+mu*NCC,Nvh_);
+    SRWilsonSU3_MatSub(UmU_ptr,Ue_ptr+mu*NCC,Nvh_);
     shiftField_eo(Ute,Uo_ptr+mu*NCC,mu,Backward());
-    SRCMPL::SRWilsonSU3_MatAdd(UmU_ptr,Ute_ptr,Nvh_);
+    SRWilsonSU3_MatAdd(UmU_ptr,Ute_ptr,Nvh_);
   }
 
 #else
@@ -375,9 +374,9 @@ const GaugeField1D GaugeFixingStep::upu_odd(const GaugeField& Ue,
   const int NCC = 2*NC_*NC_*Nvh_;
 
   for(int mu=0; mu<Ndim_; ++mu){
-    SRCMPL::SRWilsonSU3_MatAdd(UpU_ptr,Uo_ptr+mu*NCC,Nvh_);
+    SRWilsonSU3_MatAdd(UpU_ptr,Uo_ptr+mu*NCC,Nvh_);
     shiftField_oe(Uto,Ue_ptr+mu*NCC,mu,Backward());
-    SRCMPL::SRWilsonSU3_MatAdd(UpU_ptr,Uto_ptr,Nvh_);
+    SRWilsonSU3_MatAdd(UpU_ptr,Uto_ptr,Nvh_);
   }
 
 #else
@@ -426,9 +425,9 @@ const GaugeField1D GaugeFixingStep::umu_odd(const GaugeField& Ue,
   const int NCC = 2*NC_*NC_*Nvh_;
 
   for(int mu=0; mu<Ndim_; ++mu){
-    SRCMPL::SRWilsonSU3_MatSub(UmU_ptr,Uo_ptr+mu*NCC,Nvh_);
+    SRWilsonSU3_MatSub(UmU_ptr,Uo_ptr+mu*NCC,Nvh_);
     shiftField_oe(Uto,Ue_ptr+mu*NCC,mu,Backward());
-    SRCMPL::SRWilsonSU3_MatAdd(UmU_ptr,Uto_ptr,Nvh_);
+    SRWilsonSU3_MatAdd(UmU_ptr,Uto_ptr,Nvh_);
   }
 
 #else
@@ -473,12 +472,12 @@ void GaugeFixingStep::W_even(GaugeField1D& W,
   double* Uo_ptr = const_cast<GaugeField&>(Uo).data.getaddr(0);
 
   const int NCC = 2*NC_*NC_*Nvh_;
-  SRCMPL::SRWilsonSU3_MatZero(W_ptr,Nvh_);
+  SRWilsonSU3_MatZero(W_ptr,Nvh_);
 
   for(int mu=0; mu<Ndim_; ++mu){
-    SRCMPL::SRWilsonSU3_MatAdd(W_ptr,Ue_ptr+mu*NCC,Nvh_);
+    SRWilsonSU3_MatAdd(W_ptr,Ue_ptr+mu*NCC,Nvh_);
     shiftField_eo(Wt,Uo_ptr+mu*NCC,mu,Backward());
-    SRCMPL::SRWilsonSU3_MatAdd_ND(W_ptr,Wt_ptr,Nvh_);
+    SRWilsonSU3_MatAdd_ND(W_ptr,Wt_ptr,Nvh_);
   }
 
 #else
@@ -525,12 +524,12 @@ void GaugeFixingStep::W_odd(GaugeField1D& W,
   double* Uo_ptr = const_cast<GaugeField&>(Uo).data.getaddr(0);
   const int NCC = 2*NC_*NC_*Nvh_;
 
-  SRCMPL::SRWilsonSU3_MatZero(W_ptr,Nvh_);
+  SRWilsonSU3_MatZero(W_ptr,Nvh_);
 
   for(int mu=0; mu<Ndim_; ++mu){
-    SRCMPL::SRWilsonSU3_MatAdd(W_ptr,Uo_ptr+mu*NCC,Nvh_);
+    SRWilsonSU3_MatAdd(W_ptr,Uo_ptr+mu*NCC,Nvh_);
     shiftField_oe(Wt,Ue_ptr+mu*NCC,mu,Backward());
-    SRCMPL::SRWilsonSU3_MatAdd_ND(W_ptr,Wt_ptr,Nvh_);
+    SRWilsonSU3_MatAdd_ND(W_ptr,Wt_ptr,Nvh_);
   } 
 
 #else

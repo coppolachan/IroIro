@@ -2,7 +2,7 @@
  * @file gaugeGlobal.hpp
  * @brief definition of the GaugeGlobal class
  *
- * Time-stamp: <2013-10-15 17:23:23 noaki>
+ * Time-stamp: <2014-08-11 16:54:12 noaki>
  */
 #ifndef GAUGEGLOBAL_INCLUDED
 #define GAUGEGLOBAL_INCLUDED
@@ -34,8 +34,10 @@ public:
   void initializeJLQCDlegacy(const std::string &Filename);
   /*! Intialization with "NERSC" */
   void initializeNERSC(const std::string &Filename);
- /*! Intialization with "NERSC" */
+ /*! Intialization with "ILDG" */
   void initializeILDG(const std::string &Filename);
+ /*! Intialization with "ILDG_FORTRAN" */
+  void initializeILDG_FORTRAN(const std::string &Filename);
   
   TrajInfo initialize(XML::node node);
   int initialize(XML::node node,std::string filename);

@@ -155,9 +155,6 @@ namespace Sources{
       if (!strcmp(Source_name, "WhiteNoise")) { 
         return new WhiteNoiseSourceFactory<Format>(node);
       }
-      if (!strcmp(Source_name, "Z2noise")) { 
-        return new Z2noiseSourceFactory<Format>(node);
-      }
       ErrorString msg;
       msg << "No Source available with name [" << Source_name << "]\n";
       Errors::XMLerr(msg);

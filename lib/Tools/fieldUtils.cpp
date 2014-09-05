@@ -16,7 +16,6 @@
 
 #ifdef SR16K_WILSON
 #include "srmwilson.h"
-#include "Architecture_Optimized/srmwilson_cmpl.hpp" 
 #endif
 
 class RandNum;
@@ -181,13 +180,13 @@ namespace FieldUtils{
     int ns2 = Nvol*G.Nex();
     int Ncc = G.Nin();
 
-    SRCMPL::SRWilsonSU3_MatUnity(unit_ptr,ns2);
-    SRCMPL::SRWilsonSU3_MatUnity(temp_ptr,ns2);
+    SRWilsonSU3_MatUnity(unit_ptr,ns2);
+    SRWilsonSU3_MatUnity(temp_ptr,ns2);
 
     for(int i=N; i>=1;--i){
-      SRCMPL::SRWilsonSU3_MatMultScalar(temp_ptr,d/i,ns2);
+      SRWilsonSU3_MatMultScalar(temp_ptr,d/i,ns2);
       SRWilsonSU3_MatMultAdd_NN(temp2_ptr,unit_ptr,temp_ptr,G_ptr,ns2);
-      SRCMPL::SRWilsonSU3_MatEquate(temp_ptr,temp2_ptr,ns2);
+      SRWilsonSU3_MatEquate(temp_ptr,temp2_ptr,ns2);
     }
 
     for(int nx=0; nx<ns2; ++nx)
@@ -246,9 +245,9 @@ namespace FieldUtils{
 
     int ns = Nvol*G.Nex();
     for(int i=N; i>=1;--i){
-      SRCMPL::SRWilsonSU3_MatMultScalar(temp_ptr,d/i,ns);
+      SRWilsonSU3_MatMultScalar(temp_ptr,d/i,ns);
       SRWilsonSU3_MatMultAdd_NN(temp2_ptr,unit_ptr,temp_ptr,G_ptr,ns);
-      SRCMPL::SRWilsonSU3_MatEquate(temp_ptr,temp2_ptr,ns);
+      SRWilsonSU3_MatEquate(temp_ptr,temp2_ptr,ns);
     }
     return ReUnit(temp2);
 

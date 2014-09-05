@@ -10,6 +10,7 @@
 #include "scalarOp.hpp"
 #include "commonPrms.hpp"
 #include "format_G.h"
+#include "Geometry/shiftField.hpp"
 #include <cassert>
 
 template <typename FMT>
@@ -46,11 +47,12 @@ const Field Laplacian4Ds<FMT>::mult(const Field& f)const{
   using namespace Mapping;
 
   GeneralField<Field,FMT,OneDimTag> F(f); 
-  GeneralField<Field,FMT,OneDimTag> tmp,chi1,chi2;
-  
+  GeneralField<Field,FMT,OneDimTag> chi1,chi2;
+ 
   for(int i=0; i<NDIM_-1; ++i){ 
     GeneralField<Field,FMT,OneDimTag> psi(shiftField(F,i,Forward()));
-    
+    GeneralField<Field,FMT,OneDimTag> tmp;
+
     for(int t=0; t<CommonPrms::Nt(); ++t){
       for(int n=0; n<tsl_size_[t]; ++n){
 	int site = SiteIndex::instance()->slice_t(t,n);
@@ -67,11 +69,11 @@ const Field Laplacian4Ds<FMT>::mult(const Field& f)const{
 	for(int s=0; s<Nd; ++s){
 	  for(int c=0; c<NC_; ++c){
 	    for(int c1=0; c1<NC_; ++c1){
-	      c1p[sr(s,c1)] += up[re(c,c1)]*pp[sr(s,c1)] -up[im(c,c1)]*pp[si(s,c1)];
-	      c1p[si(s,c1)] += up[re(c,c1)]*pp[si(s,c1)] +up[im(c,c1)]*pp[sr(s,c1)];
+	      c1p[sr(s,c)] += up[re(c,c1)]*pp[sr(s,c1)] -up[im(c,c1)]*pp[si(s,c1)];
+	      c1p[si(s,c)] += up[re(c,c1)]*pp[si(s,c1)] +up[im(c,c1)]*pp[sr(s,c1)];
 
-	      ttp[sr(s,c1)] = up[re(c1,c)]*fp[sr(s,c1)] +up[im(c1,c)]*fp[si(s,c1)];
-	      ttp[si(s,c1)] = up[re(c1,c)]*fp[si(s,c1)] -up[im(c1,c)]*fp[sr(s,c1)];
+	      ttp[sr(s,c)] += up[re(c1,c)]*fp[sr(s,c1)] +up[im(c1,c)]*fp[si(s,c1)];
+	      ttp[si(s,c)] += up[re(c1,c)]*fp[si(s,c1)] -up[im(c1,c)]*fp[sr(s,c1)];
 	    }
 	  }
 	}   
