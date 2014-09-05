@@ -4,7 +4,8 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-08-29 18:26:42 noaki>
+# Time-stamp: <2014-09-06 08:25:52 noaki>
+
 ###########################################
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -112,6 +113,9 @@ BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.cpp
 BFM_SRC += Tools/Bagel/bfm_storage.cpp 
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp
+# Only with BFM 3.30
+#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
 else
 BFM_SRC = 
 endif
@@ -450,6 +454,8 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.hpp\
+			Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp\
+			Dirac_ops/BFM_Wrapper/BFM_HDCG.hpp	\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\

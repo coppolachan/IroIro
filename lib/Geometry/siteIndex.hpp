@@ -61,6 +61,11 @@ public:
   int global_z(int z) const;
   int global_t(int t) const;
 
+  int process_id_x(int gsite) const;
+  int process_id_y(int gsite) const;
+  int process_id_z(int gsite) const;
+  int process_id_t(int gsite) const;
+
   static int (SiteIndex::*global_idx[])(int)const;
 
   // indices with a step forward/backward (for bulk sites)
@@ -87,6 +92,7 @@ public:
   const std::vector<int>& get_gsite() const;
   const std::vector<int>& get_lsite() const;
   int get_gsite(int site) const;
+
 };
 
 #endif

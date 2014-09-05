@@ -4,11 +4,11 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-08-31 08:43:19 noaki>
+# Time-stamp: <2014-09-06 08:25:37 noaki>
 
 testdir = $(bindir)/Test
 OPTLIB =
-BMF_TESTPROGS = 
+BFM_TESTPROGS = 
 AM_CXXFLAGS =
 AM_LDFLAGS = 
 
@@ -17,11 +17,12 @@ BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
 BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
 BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
 BFM_LINKAGE= -lbfm -lbagel
-BMF_TESTPROGS += test_Solver_BFM
-BMF_TESTPROGS += test_BFM_Operator
-BMF_TESTPROGS += test_BFM_Moebius
-BMF_TESTPROGS += test_BFM_Inverter
-BMF_TESTPROGS += test_BFM_Inverter_wrapper
+BFM_TESTPROGS += test_Solver_BFM
+BFM_TESTPROGS += test_BFM_Operator
+BFM_TESTPROGS += test_BFM_Moebius
+BFM_TESTPROGS += test_BFM_Inverter
+BFM_TESTPROGS += test_BFM_Inverter_wrapper
+#BFM_TESTPROGS += test_HDCG
 endif
 
 if IBM_BGQ
@@ -118,7 +119,7 @@ test_PROGRAMS = test_HMC 		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
 		test_Solver_Perf	\
-		$(BMF_TESTPROGS)        \
+		$(BFM_TESTPROGS)        \
 		test_RNG 		\
 		test_IO			\
 		test_RationalApprox	\
@@ -130,8 +131,13 @@ test_PROGRAMS = test_HMC 		\
 		test_Laplacian		\
 		test_LapH		\
 		test_HadronSpectrum_HeavyLight\
+<<<<<<< HEAD
 		test_ChiralCondensate \
 		test_QnumSuscept
+=======
+		test_ChiralCondensate 	
+
+>>>>>>> origin
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -266,15 +272,20 @@ if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
                                 testerSolver_BFM.cpp            
 
-test_BFM_Operator_SOURCES =     test_BFM_Operator.cpp             \
+test_BFM_Operator_SOURCES =     test_BFM_Operator.cpp           \
                                 testerSolver_BFM.cpp            
-test_BFM_Moebius_SOURCES =     test_BFM_Moebius.cpp             \
+
+test_BFM_Moebius_SOURCES =     	test_BFM_Moebius.cpp            \
                                 testerSolver_BFM.cpp            
+
 test_BFM_Inverter_SOURCES =     test_BFM_Inverter.cpp 		\
                                 testerSolver_BFM.cpp            
 
 test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
-                                testerSolver_BFM.cpp            
+                                testerSolver_BFM.cpp       
+
+test_HDCG_SOURCES = 		test_BFM_HDCG_Inverter.cpp	\
+				testerSolver_HDCG.cpp           
 
 endif
 

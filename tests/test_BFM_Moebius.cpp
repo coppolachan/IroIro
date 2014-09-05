@@ -9,6 +9,7 @@
 #include "Measurements/FermionicM/qprop_DomainWall.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
 
+
 //wrap
 #undef PACKAGE
 #undef PACKAGE_BUGREPORT
@@ -18,6 +19,7 @@
 #undef PACKAGE_VERSION
 #undef VERSION
 #include "bfm.h"
+#include <omp.h>
 #include "Tools/Bagel/bfm_storage.hpp"
 
 
@@ -77,6 +79,13 @@ int Test_Solver_BFM::run(){
   dwfa.node_latt[3]  = CommonPrms::instance()->Nt();
   dwfa.verbose = 1;
 
+
+  for(int mu=0;mu<4;mu++){
+    dwfa.neighbour_plus[mu]  = Communicator::instance()->node_up(mu);
+    dwfa.neighbour_minus[mu] = Communicator::instance()->node_dn(mu);
+  }
+
+
   for(int mu=0;mu<4;mu++){
     if ( (CommonPrms::instance()->NPE(mu))>1 ) {
       dwfa.local_comm[mu] = 0;
@@ -84,6 +93,21 @@ int Test_Solver_BFM::run(){
       dwfa.local_comm[mu] = 1;
     }
   }
+
+  // Set Verbosity controls
+  dwfa.verbose = 0;// default 0
+  dwfa.time_report_iter=-100;// default -100
+
+  // Threading control parameters
+  int threads = atoi(getenv("OMP_NUM_THREADS"));
+  bfmarg::Threads(threads);
+
+  // Set up the diagonal part
+  bfmarg::UseCGdiagonalMee(1);
+
+  // Choose checkerboard
+  dwfa.rb_precondition_cb=Even;
+
 
   dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
   //dwfa.pWilson(mq);
@@ -135,16 +159,21 @@ int Test_Solver_BFM::run(){
   ///////////////////////////////////////
   Fermion_t psi_h[2];
   Fermion_t chi_h[2];
+  CCIO::cout << "First allocFermion\n";
   Fermion_t tmp = linop.allocFermion();
+  CCIO::cout << "After allocFermion\n";
   FermionField Exported(Nvol5d);
   for(int cb=0;cb<2;cb++){
+    CCIO::cout << "phi  allocFermion cb = "<< cb <<"\n";
     psi_h[cb] = linop.allocFermion();//half vector
+    CCIO::cout << "chi  allocFermion cb = "<< cb <<"\n";
     chi_h[cb] = linop.allocFermion();
     // Export fermion field to BFM
     for (int s = 0; s< Ls; s++)
       BFM_interface.FermionExport_to_BFM_5D(EO_source,psi_h[cb],cb,s);//third argument is the CB 0=even, 1=odd
-    double nrm=linop.norm(psi_h[cb]);
-    CCIO::cout << "cb "<<cb<<" bfm norm "<<nrm<<"\n";
+    CCIO::cout << "phi  norm = "<< cb <<"\n";
+    //double nrm=linop.norm(psi_h[cb]);
+    //CCIO::cout << "cb "<<cb<<" bfm norm "<<nrm<<"\n";
     // Import back to IroIro
     for (int s = 0; s< Ls; s++)
       BFM_interface.FermionImport_from_BFM_5D(Exported, psi_h[cb], cb,s,Ls);
@@ -159,38 +188,48 @@ int Test_Solver_BFM::run(){
   CCIO::cout << "Norm Src = "<< EO_source.norm() << "\n";
 
   // Running the dslash
+  
+
   int dag=0;
   int donrm=0;
   int cb=0;//even heckerboard to match conventions IroIro<->BFM
   //  linop.MprecTilde(psi_h[cb],chi_h[cb],tmp,dag,donrm,cb) ;
 
-  //  linop.Meo(psi_h[1-cb],chi_h[cb],cb,dag);
-  //  linop.Meo(psi_h[cb],chi_h[1-cb],1-cb,dag);
 
-  linop.Mooee(psi_h[cb],chi_h[cb],dag);
-  linop.Mooee(psi_h[1-cb],chi_h[1-cb],dag);
+#pragma omp parallel
+  {
+#pragma omp for
+    for (int t=0;t<threads;t++){
+  linop.Meo(psi_h[1-cb],chi_h[cb],cb,dag);
+  linop.Meo(psi_h[cb],chi_h[1-cb],1-cb,dag);
+    }
+  }
+
+  //linop.Mooee(psi_h[cb],chi_h[cb],dag);
+  //linop.Mooee(psi_h[1-cb],chi_h[1-cb],dag);
 
   //linop.MooeeInv(psi_h[cb],chi_h[cb],dag);
   //linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);
 
-
+  linop.comm_end();
+  
   FermionField BFMsolution(Nvol5d); 
   for(int cb=0;cb<2;cb++){
     for (int s = 0; s< Ls; s++)
       BFM_interface.FermionImport_from_BFM_5D(BFMsolution, chi_h[cb], cb,s,Ls);
   }
-
+  
   FermionField IroIroFull(Nvol5d);
   // Working off diagonal part
-  // Field IroIroSol_odd  = DWF_EO.mult_ee(DWF_EO.mult_oe(fe));
-  // Field IroIroSol_even = DWF_EO.mult_oo(DWF_EO.mult_eo(fo));
-
+  Field IroIroSol_odd  = DWF_EO.mult_ee(DWF_EO.mult_oe(fe));
+  Field IroIroSol_even = DWF_EO.mult_oo(DWF_EO.mult_eo(fo));
+  
   //Field IroIroSol_even = DWF_EO.mult_ee_inv(fe);
   //Field IroIroSol_odd  = DWF_EO.mult_oo_inv(fo);
-
-  Field IroIroSol_even = DWF_EO.mult_ee(fe);
-  Field IroIroSol_odd  = DWF_EO.mult_oo(fo);
-
+  
+  //Field IroIroSol_even = DWF_EO.mult_ee(fe);
+  //Field IroIroSol_odd  = DWF_EO.mult_oo(fo);
+  
   CCIO::cout << "IroIroSol_even.size()/Ls : "<< IroIroSol_even.size()/Ls << "\n";
   int vect4d_hsize = IroIroSol_even.size()/Ls;
   for (int s =0 ; s< Ls; s++){
@@ -200,17 +239,20 @@ int Test_Solver_BFM::run(){
     }
   }
   
-
+  /* 
   for (int i = 0; i < IroIroFull.size() ; i++){
     double diff = abs(IroIroFull.data[i]-BFMsolution.data[i]);
     if (diff>1e-8) CCIO::cout << "*";
     CCIO::cout << "["<<i<<"] "<<IroIroFull.data[i] << "  "<<BFMsolution.data[i]
-               << "  "<< diff << "\n";
+	       << "  "<< diff << "\n";
   }
+  */
   
-  Difference = BFMsolution;
-  Difference -= IroIroFull;
-  CCIO::cout << "Operator Difference BFM-IroIro = "<< Difference.norm() << "\n";
+  FermionField BFMDiff = BFMsolution;
+  BFMDiff -= IroIroFull;
+  CCIO::cout << "Operator BFM = "<< BFMsolution.norm() << "\n";
+  CCIO::cout << "Operator IroIro = "<< IroIroFull.norm() << "\n";
+  CCIO::cout << "Operator Difference BFM-IroIro = "<< BFMDiff.norm() << "\n";
   
   return 0;
 }

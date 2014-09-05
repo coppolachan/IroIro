@@ -22,6 +22,9 @@ int Test_ResMass::run() {
   //RNG_Env::RNG = RNG_Env::createRNGfactory(node_); 
   RNG_Env::initialize(node_);
 
+  // Fermion format
+  Format::Format_F ff(CommonPrms::instance()->Nvol());
+
   // Prints plaquette (thin) link
   Staples Staple;
   CCIO::cout << "Plaquette (thin): " << Staple.plaquette(conf_) << std::endl;
@@ -69,7 +72,7 @@ int Test_ResMass::run() {
     XML::read(eigen_node,"Np",Np,MANDATORY);
     XML::read(eigen_node,"Niter",Niter,MANDATORY);
 
-    Format::Format_F ff(CommonPrms::instance()->Nvol());
+
     Fopr_H Hw(new Dirac_Wilson(mq, &(smeared_u_.data)));
 
     CCIO::cout << "Calculating eigenvalues of H_W" << std::endl;
@@ -136,6 +139,14 @@ int Test_ResMass::run() {
   int Nc = CommonPrms::instance()->Nc();
   int Nd = CommonPrms::instance()->Nd();
 
+  int Nt = CommonPrms::instance()->Nt();
+  int Lt = CommonPrms::instance()->Lt();
+
+  double mres_t_numerator[Nt];
+  double mres_t_denominator[Nt];
+  int slice3d = SiteIndex::instance()->slsize(0,TDIR);
+
+
   for (int s=0; s<Nd; ++s){
     for (int c=0; c<Nc; ++c){
       CCIO::cout << "s= " << s << ",  c= " << c << std::endl;
@@ -144,20 +155,87 @@ int Test_ResMass::run() {
       //Contracting 
       mres_numerator += sq[c+Nc*s]*Delta;   // Re(sq[],Delta) sq[]=D^-1*source
       im_check       += sq[c+Nc*s].im_prod(Delta);//should be always zero (test)
+
       //Denominator
       Field Denom = sq[c+Nc*s];
+#ifndef PHYSICAL_QUARK_PROPAGATOR
       Denom -= SourceObj->mksrc(s,c); // (D^-1 - 1)*src
       Denom /= (1.0 - (QuarkPropDW->getKernel()->getMass()) );
+#endif
       mres_denominator += Denom*Denom;
+
+
+      // separated by time slices
+      Field Numer = sq[c+Nc*s];
+      //Contraction
+      for (int t = 0; t< Nt; t++) {
+	for(int site=0; site<slice3d; ++site){
+	  int site3d = (SiteIndex::instance()->*SiteIndex::slice_dir[TDIR])(t,site);
+	  
+	  for (int in = 0; in < 2*Nc*Nd; in++){
+	    //real part numerator
+	    mres_t_numerator[t] += Numer[ff.index(in, site3d)]*Delta[ff.index(in, site3d)];
+	    mres_t_denominator[t] += Denom[ff.index(in, site3d)]*Denom[ff.index(in, site3d)];
+	  }	  
+	}
+      }
+
     }
   }
-  CCIO::cout<<"---------------------------------------------------------"
-	    <<std::endl;
-  CCIO::cout<<"Numerator = ("   <<mres_numerator<<","<<im_check<<")"<<std::endl;
+  CCIO::cout<<"---------------------------------------------------------\n";
+  CCIO::cout<<"Numerator = ("   <<mres_numerator<<","<<im_check<<")\n";
   CCIO::cout<<"Denominator = "  <<mres_denominator           	    <<std::endl;
   CCIO::cout<<"Residual mass = "<<mres_numerator/mres_denominator   <<std::endl;
-  CCIO::cout<<"---------------------------------------------------------"
-	    <<std::endl;
+  CCIO::cout<<"---------------------------------------------------------\n";
+  
+  vector_double tmp(Lt,0.0);
+  vector_double glob_t(Lt,0.0);
+  vector_double glob_d_t(Lt,0.0);
+
+  for(int t=0; t<Nt; ++t){
+    tmp[(SiteIndex::instance()->*SiteIndex::global_idx[TDIR])(t)] = mres_t_numerator[t];
+  }
+
+  CCIO::cout << "### Numerator & denominator separated by times slices\n";
+
+  for(int t=0; t<Lt; ++t){
+    glob_t[t] = Communicator::instance()->reduce_sum(tmp[t]);
+   }
+
+
+
+  if (Communicator::instance()->primaryNode()){
+    for(int t=0; t<Lt; ++t){
+      printf("Numerator    [%d] = %g \n ", t, glob_t[t]);
+    }
+  }
+  
+  Communicator::instance()->sync();
+  /////////////////////////////
+
+
+  for(int t=0; t<Nt; ++t){
+    tmp[(SiteIndex::instance()->*SiteIndex::global_idx[TDIR])(t)] = mres_t_denominator[t];
+  }
+
+  for(int t=0; t<Lt; ++t){
+    glob_d_t[t] = Communicator::instance()->reduce_sum(tmp[t]);
+   }
+
+  Communicator::instance()->sync();
+
+  if (Communicator::instance()->primaryNode()){
+    for(int t=0; t<Lt; ++t){
+      printf("Denominator  [%d] = %g \n ", t, glob_d_t[t]);
+    }
+  }
+  
+ 
+ 
+
+ 
+
+  
   ////////////////////////////////////////////////////////////////////////////////
   return 0;
 }

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-04-21 16:21:51 neo>
+ * Time-stamp: <2014-08-26 16:18:11 cossu>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -83,7 +83,7 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
   }
 
   // Set Verbosity controls
-  parameters.verbose = 0;// default 0
+  parameters.verbose = 0;// default 0, debug = BfmDebug
   parameters.time_report_iter=-100;// default -100
 
   // Threading control parameters
@@ -565,6 +565,10 @@ void Dirac_BFM_Wrapper::initialize(){
 #endif
 
     is_initialized = true;
+  } else if (!is_initialized) {
+    std::ostringstream err_msg;
+    err_msg << "Dirac_BFM_Wrapper initialize() failed. Missing either operator or solver parameters";
+    Errors::BaseErr("DEBUG", err_msg);
   }
 
 }

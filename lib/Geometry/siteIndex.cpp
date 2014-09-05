@@ -65,6 +65,24 @@ int SiteIndex::global_z(int z) const{
 int SiteIndex::global_t(int t) const { 
   return Communicator::instance()->ipe(TDIR)*Nt_+t;}
 
+//process id from global index
+int SiteIndex::process_id_x(int gsite) const {
+  return floor(g_x(gsite)/Communicator::instance()->ipe(XDIR));
+}
+
+int SiteIndex::process_id_y(int gsite) const {
+  return floor(g_y(gsite)/Communicator::instance()->ipe(YDIR));
+}
+
+int SiteIndex::process_id_z(int gsite) const {
+  return floor(g_z(gsite)/Communicator::instance()->ipe(ZDIR));
+}
+
+int SiteIndex::process_id_t(int gsite) const {
+  return floor(g_t(gsite)/Communicator::instance()->ipe(TDIR));
+}
+
+
 // indices with a step forward/backward (for bulk sites)
 int SiteIndex::p_x(int site) const{ return site+1;}
 int SiteIndex::p_y(int site) const{ return site+Nx_;}
