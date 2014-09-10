@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-08-26 16:46:03 cossu>
+# Time-stamp: <2014-09-03 12:06:08 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -22,7 +22,7 @@ BFM_TESTPROGS += test_BFM_Operator
 BFM_TESTPROGS += test_BFM_Moebius
 BFM_TESTPROGS += test_BFM_Inverter
 BFM_TESTPROGS += test_BFM_Inverter_wrapper
-#BFM_TESTPROGS += test_HDCG
+BFM_TESTPROGS += test_HDCG
 endif
 
 if IBM_BGQ
@@ -310,4 +310,5 @@ include_HEADERS 	=	tests.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\
 				test_Laplacian.hpp		\
 				test_LapH.hpp                   \
-	       	                test_ChiralCondensate.hpp
+	       	                test_ChiralCondensate.hpp	\
+				testerSolver_HDCG.cpp           

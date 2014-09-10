@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-08-26 16:46:17 cossu>
+# Time-stamp: <2014-09-03 12:02:08 cossu>
 ###########################################
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -106,16 +106,16 @@ endif
 # Optional for Peter's Bagel/BFM libs
 if USE_BFM
 BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
-BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
-BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
+BFM_INCLUDE= -I$(BFM_HACK) -I$(BFM_HACK)/spi/include/kernel/cnk/
+BFM_LIBS= 
 BFM_SRC = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.cpp 
 BFM_SRC += Tools/Bagel/bfm_storage.cpp 
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp
 # Only with BFM 3.30
-#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
-#BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
+BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
 else
 BFM_SRC = 
 endif

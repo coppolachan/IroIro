@@ -5,6 +5,7 @@
 #include "eigenSorter.hpp"
 #include "Fopr/fopr.h"
 #include "Fields/field_expressions.hpp"
+#include "include/messages_macros.hpp"
 #include <cassert>
 #include <iostream>
 #include <iomanip>
@@ -15,6 +16,7 @@ using namespace std;
 void EigenModesSolver_IRL::
 calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{ 
 
+  _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::calc\n");
   using namespace FieldExpression;
   const size_t fsize = opr_->fsize();
 
@@ -114,7 +116,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
       Neigen = Ncert -Nover; 
       break;
     }
-    /*!@brief condition of termiation: #eigenmods exceeds the threshold number*/
+    /*!@brief condition of termination: #eigenmods exceeds the threshold number*/
     if(Ncert >= Nthrs_){ 
       CCIO::cout<<"Desired number of eigenmodes are obtained.\n";
       Iconv = iter;
@@ -123,19 +125,23 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
     }
     
     if(iter==Niter_-1){
-      CCIO::cout<<"Reached to the max iteration count.\n";
+      CCIO::cout<<"Reached the max iteration count.\n";
       Neigen = -Ncert;
       break;
     } 
   }// end of iter loop
 
-  /*** post process after the conversion ***/
-  ta.clear(); V.clear();
   
-  for(int i=0; i<Neigen; ++i){
+  /*** post process after the conversion ***/
+  ta.clear();
+  V.clear();
+
+  
+  for(int i=0; i < Neigen; i++){
     ta.push_back(tta[i]);
     V.push_back(Vp[idx[i]]);
   }
+
   if(Neigen > 0){
     CCIO::cout << "\n Converged\n Summary :\n";
     CCIO::cout << " -- Iterations  = "<< Iconv     <<"\n";
@@ -147,6 +153,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 
 void EigenModesSolver_IRL::
 lanczos_init(vector<double>& ta,vector<double>& tb,vector<Field>& V)const{
+  _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::lanczos_init\n");
   using namespace FieldExpression;
 
   Field f = opr_->mult(V[0]);
@@ -158,8 +165,12 @@ lanczos_init(vector<double>& ta,vector<double>& tb,vector<Field>& V)const{
   tb[0] = sqrt(ab);
   V[1] = 1.0/tb[0]*f;
 
+
+  _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::lanczos_init Starting loop\n");
   for(int k=1; k<Nk_;++k){
+    _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::lanczos_init loop k="<<k << " mult\n" );
     f = opr_->mult(V[k]);
+    _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::lanczos_init loop k="<<k << " after mult\n" );
     f -= tb[k-1]*V[k-1];
 
     ab = V[k]*f;
@@ -171,7 +182,7 @@ lanczos_init(vector<double>& ta,vector<double>& tb,vector<Field>& V)const{
     f *= 1.0/tb[k]; 
 
     orthogonalize(f,V,k); /*!< classical Gram-Schmidt orthogonalization */
-    ta[k] += V[k]*f;      /*!<@brief DGKS correlction*/
+    ta[k] += V[k]*f;      /*!<@brief DGKS correction*/
     tb[k-1] += V[k-1]*f;
 
     V[k+1] = f;
@@ -181,7 +192,8 @@ lanczos_init(vector<double>& ta,vector<double>& tb,vector<Field>& V)const{
 void EigenModesSolver_IRL::lanczos_ext(vector<double>& ta,vector<double>& tb,
 				       vector<Field>& V,Field& f)const{
   using namespace FieldExpression;
-  
+  _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::lanczos_ext\n");  
+
   for(int k=Nk_; k<Nm_; ++k){
     f = opr_->mult(V[k]);
     f -= tb[k-1]*V[k-1];
@@ -206,6 +218,8 @@ void EigenModesSolver_IRL::lanczos_ext(vector<double>& ta,vector<double>& tb,
 // classical Gram-Schmidt orthogonalization
 void EigenModesSolver_IRL::
 orthogonalize(Field& f,const vector<Field>& V,int k)const{
+  _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::orthogonalize\n");  
+
   size_t size = f.size();
   assert(size%2 ==0);
 
@@ -225,25 +239,6 @@ orthogonalize(Field& f,const vector<Field>& V,int k)const{
   }
 }
 
-/* // modified Gram-Schmidt orthogonalization
-void EigenModesSolver_IRL::
-orthogonalize(Field& f,const vector<Field>& V,int k)const{
-  size_t size = f.size();
-  assert(size%2 ==0);
-
-  std::slice re(0,size/2,2);
-  std::slice im(1,size/2,2);
-
-  for(int j=0; j<k; ++j){
-    double sr = V[j]*f;
-    double si = V[j].im_prod(f);
-
-    f.add(re, -sr*V[j][re] +si*V[j][im]);
-    f.add(im, -sr*V[j][im] -si*V[j][re]);
-  }
-}
-*/
-
 void EigenModesSolver_IRL::setUnit(vector<double>& Qt)const{
   for(int i=0; i<Nm_*Nm_; ++i) Qt[i] = 0.0;
   for(int k=0; k<Nm_; ++k) Qt[k*Nm_+k] = 1.0;
@@ -251,6 +246,8 @@ void EigenModesSolver_IRL::setUnit(vector<double>& Qt)const{
 
 void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
 				       vector<double>& Qt,int Nk)const{
+
+  _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::diagonalize\n");  
   setUnit(Qt);
   int Niter = 100*Nm_;
   int kmin = 0, kmax = Nk-1;
@@ -283,6 +280,7 @@ void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
 void EigenModesSolver_IRL::QRfact_Givens(vector<double>& ta,vector<double>& tb,
 					 vector<double>& Qt,int Nk,
 					 double sft,int k_min,int k_max)const{
+  _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::QRfact_Givens\n");  
   // k = k_min
   double r = tb[k_min]/(ta[k_min]-sft);
   double c = 1.0/sqrt(1.0+r*r);   //  cos_x

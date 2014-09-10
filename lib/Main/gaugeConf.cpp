@@ -168,6 +168,9 @@ void GaugeConf_txt::init_conf(Field& u,bool do_check){
     }
     
     CCIO::cout<< "Reading gauge configuration from " << file_.c_str() << endl;
+
+
+
     for(int t = 0; t < Lt; ++t){
       for(int z = 0; z < Lz; ++z){
 	for(int y = 0; y < Ly; ++y){

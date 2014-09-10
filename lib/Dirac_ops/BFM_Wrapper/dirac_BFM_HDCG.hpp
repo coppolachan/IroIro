@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.hpp
  * @brief Declares the wrapper class for P. Boyle HDCG inverter
- * Time-stamp: <2014-08-07 15:31:29 neo>
+ * Time-stamp: <2014-08-28 13:12:56 neo>
  */
 #ifndef DIRAC_BFM_HDCG_WRAPPER_
 #define DIRAC_BFM_HDCG_WRAPPER_
@@ -36,6 +36,9 @@ public:
 			 const Type_5d_DWF = Regular5D)
     : Dirac_BFM_Wrapper(node, F, DWEO) {}
     
+  void open_comms();
+  void close_comms();
+
 
   void HDCG_init(BfmHDCGParams & Parms_, bfmActionParams &BAP);
   

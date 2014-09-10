@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2014-08-25 16:53:20 neo>
+ * Time-stamp: <2014-09-03 12:19:21 neo>
  */
 #include <omp.h>
 #include <math.h>
@@ -11,6 +11,20 @@
 #include "include/timings.hpp"
 #include "include/messages_macros.hpp"
 #include "include/errors.hpp"
+
+void Dirac_BFM_HDCG_Wrapper::open_comms(){
+  linop.comm_init();
+  linop_single.comm_init();
+  linop_r.comm_init();
+}
+
+
+void Dirac_BFM_HDCG_Wrapper::close_comms(){
+  linop.comm_end();
+  linop_single.comm_end();
+  linop_r.comm_end();
+}
+
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
 				       bfmActionParams &BAP) {
@@ -45,6 +59,13 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
     else             bfma.local_comm[mu] = 1;
   }
 
+  // Node topology
+  for(int mu=0;mu<4;mu++){
+    bfma.neighbour_plus[mu]  = Communicator::instance()->node_up(mu);
+    bfma.neighbour_minus[mu] = Communicator::instance()->node_dn(mu);
+  }
+
+
 
   linop_single.init(bfma);
   linop_single.BossLog("HDCG inititialised single prec linop\n");
@@ -70,6 +91,10 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
   linop.BossLog("HDCG class initialization\n");
   ldop_d = new BFM_HDCG_Extend<double>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
   ldop_d->SetParams(HDCGParms);
+
+  // Close all communications (open when necessary) avoids conflicts with BGNET comms
+  //linop and linop_single are closed in the construction of the Dirac_BFM_wrapper class
+  linop_r.comm_end();
 
 }
 
@@ -170,17 +195,24 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_set_mass(double mass){
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_init(){
   //    int sloppy_relax=Parms.SubspaceRationalRefine;
   int sloppy_relax=1;
-  
+ 
+
   uint32_t seed = ldop_d->ncoor[0]*17 + ldop_d->ncoor[1]*251;
   + ldop_d->ncoor[2]*1023  + ldop_d->ncoor[3]*8191;
   srand48(seed);
   
+  open_comms();
+
   if ( sloppy_relax ) { 
     ldop_d->RelaxSubspace<float>(&linop_r);
   } else {
     ldop_d->RelaxSubspace<double>(&linop);
   }
   ldop_d->SinglePrecSubspace();
+
+  //Close all communications
+  close_comms();
+
 }
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_refine(){
@@ -256,6 +288,8 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
   int threads = linop.threads;
   int Nvec = HDCGParms.NumberSubspace;
   
+  open_comms();
+
   if ( sloppy ) { 
     ldop_d->ComputeLittleMatrixColored<float>(&linop_single,ldop_d->subspace_f);
     ldop_d->LdopDeflationBasisSize=0;
@@ -299,6 +333,9 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
       ldop_d->LdopDeflationBasisDiagonalise(LdopDeflVecs);
       
   }
+
+  close_comms();
+
 }
 
 void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[2], double residual, int maxit){
