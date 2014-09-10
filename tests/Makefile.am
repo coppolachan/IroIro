@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-07-07 18:29:16 noaki>
+# Time-stamp: <2014-09-10 10:49:01 neo>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -124,7 +124,9 @@ test_PROGRAMS = test_HMC 		\
 		test_Laplacian		\
 		test_LapH		\
 		test_HadronSpectrum_MultiQprop\
-		test_ChiralCondensate 
+		test_ChiralCondensate 	\
+		test_ReadEigenmodes	\
+		test_Add_Flux
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -242,6 +244,12 @@ test_LapH_SOURCES 		=	test_LapH.cpp	\
 test_HadronSpectrum_MultiQprop_SOURCES = test_HadronSpectrum_MultiQprop.cpp\
 					testerHadronSpectrumMultiQprop.cpp
 
+test_ReadEigenmodes_SOURCES	= 	test_ReadEigenModes.cpp \
+					testerReadEigenModes.cpp
+
+test_Add_Flux_SOURCES		=	test_Add_Flux.cpp	\
+					testerAdd_Flux.cpp
+
 ## Put all BFM related tests here
 if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
@@ -297,4 +305,5 @@ include_HEADERS 	=	tests.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\
 				test_Laplacian.hpp		\
 				test_LapH.hpp                   \
-	       	                test_ChiralCondensate.hpp
+	       	                test_ChiralCondensate.hpp	\
+				test_Add_Flux.hpp

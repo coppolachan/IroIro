@@ -29,6 +29,8 @@ int Test_IO::run(){
   ////////////////////////////////
   CCIO::cout << "Testing "<< conf_type << " writer/reader \n";
 
+
+  
   Staples Staple;
   CCIO::cout << "Plaquette : " << Staple.plaquette(Gfield_) << std::endl;
 
