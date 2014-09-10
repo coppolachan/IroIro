@@ -58,10 +58,7 @@ public:
     return *q;
   }
 
-  double func(double x) const{
-    return Chebyshev::series(Op_->func(x),c_);
-  }
-
+  double func(double x) const{ return Chebyshev::series(Op_->func(x),c_); }
   size_t fsize()const {return Op_->fsize();}
 };
 #endif

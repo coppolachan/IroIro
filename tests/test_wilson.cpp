@@ -57,23 +57,30 @@ int Test_Wilson::run(){
 
   // Without factories -----------------------------------------------------
   // Dirac Kernel definition
-  Dirac_Wilson* Kernel = new Dirac_Wilson(1.0/6.0, &(conf_.data));
+  Dirac_Wilson* Kernel = new Dirac_Wilson(-1.15, &(conf_.data));
   //Dirac* Kernel = new Dirac_Clover(1.0/6.0, 1.0, &(conf_.U));
 
 
 
   // Test for mult and mult_new
-  /*
+
   int calls = 100;
   timespec ts1, ts2;
+
+  Field const_src(Kernel->fsize(),1.0);
+  const_src/= const_src.norm();
+
   Field v2(Kernel->fsize());
   clock_gettime(CLOCK_REALTIME, &ts1);
   for (int i = 0; i < calls; ++i) {
-    v2 = Kernel->mult(src.mksrc(0,0));
+    //    v2 = Kernel->mult(src.mksrc(0,0));
+    v2 = Kernel->mult(const_src);
+    double v2nrm = v2.norm();
+    CCIO::cout<<"v2norm="<<v2nrm<<"\n";
   }
   clock_gettime(CLOCK_REALTIME, &ts2);
   cout<<diff(ts1,ts2).tv_sec<<"."<<diff(ts1,ts2).tv_nsec<<endl;
-
+  /*
   clock_gettime(CLOCK_REALTIME, &ts1);
   for (int i = 0; i < calls; ++i) {
     Kernel->mult_new(v2,src.mksrc(0,0));
@@ -84,7 +91,7 @@ int Test_Wilson::run(){
 
 
 
-  
+  /*  
   // Solver definition
   int    Niter= 1000;
   double stop_cond = 1.0e-24;
@@ -113,7 +120,7 @@ int Test_Wilson::run(){
   //  QP->calc(sq,src);
   
   CCIO::cout<<"quark propagator obtained"<<std::endl;
-  
+  */
   return 0;
 }
 

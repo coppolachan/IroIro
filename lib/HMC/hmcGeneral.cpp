@@ -43,7 +43,7 @@ void HMCgeneral::evolve(GaugeField& Uin)const{
     TIMING_END(timer);
     CCIO::cout<< "[Timing] Trajectory time (s) : "<< timer/1000.0 << "\n";
 
-    if(metropolis_test(Hdiff)) Uin = md_->get_U();
+    if(metropolis_test(Hdiff))  Uin = md_->get_U();
      Communicator::instance()->sync();
 
     if (Params.SaveInterval!=0 && iter%Params.SaveInterval == 0) {

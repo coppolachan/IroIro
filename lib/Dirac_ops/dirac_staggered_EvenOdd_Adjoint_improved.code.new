@@ -1,0 +1,191 @@
+using namespace SiteMap;
+#include <omp.h>
+
+void Dirac_staggered_EvenOdd_Adjoint::multPeo(Field& we,const Field& fo,int mu) const{
+  /// boundary part ///
+  int Xb = 0;
+  int Nbdry = shiftSite_oe.slice_size(Xb,mu);
+  double vbd[Nin_*Nbdry]; /*!< @brief data on the lower slice */   
+  for(int k=0; k<Nbdry; ++k){
+    const double* v 
+      = const_cast<Field&>(fo).getaddr(ff_.index(0,shiftSite_oe.xslice(Xb,k,mu)));
+    for(int i=0; i<Nin_; ++i) vbd[k*Nin_+i] = v[i];
+  }
+  double vbc[Nin_*Nbdry]; /*!< @brief data on the upper slice */   
+  Communicator::instance()->transfer_fw(vbc,vbd,Nin_*Nbdry,mu);
+
+  Xb = SiteIndex::instance()->Bdir(mu);
+  Nbdry = shiftSite_eo.slice_size(Xb,mu);  
+
+
+  for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
+    int xc = shiftSite_eo.xslice(Xb,k,mu);
+    const double* U = const_cast<Field&>(ue_.data).getaddr(gf_.index(0,xc,mu));
+    double* res = we.getaddr(ff_.index(0,xc));    
+    
+    for(int a=0; a<Nin_; ++a)
+      for(int b=0; b<Nin_; ++b)	res[a] += U[e(a,b)]*vbc[k*Nin_+b];
+  }
+  
+  
+
+  /// bulk part ///
+  for(int x=0; x<Xb; ++x){
+    int Nslice = shiftSite_eo.slice_size(x,mu);
+    for(int k=0; k<Nslice; ++k){   
+      const double* v 
+	= const_cast<Field&>(fo).getaddr(ff_.index(0,shiftSite_oe.xslice(x+1,k,mu)));
+      int xc = shiftSite_eo.xslice(x,k,mu);
+      const double* U = const_cast<Field&>(ue_.data).getaddr(gf_.index(0,xc,mu));
+      double* res = we.getaddr(ff_.index(0,xc));
+      
+      for(int a=0; a<Nin_; ++a)
+	for(int b=0; b<Nin_; ++b) res[a] += U[e(a,b)]*v[b];
+    }
+  }
+  
+
+  //Communicator::instance()->wait_async(0, mu+1, Nin_*Nbdry);
+  
+  
+
+  
+
+}
+
+void Dirac_staggered_EvenOdd_Adjoint::multPoe(Field& wo,const Field& fe,int mu) const{
+  /// boundary part ///
+  int Xb = 0;
+  int Nbdry = shiftSite_eo.slice_size(Xb,mu);
+  double vbd[Nin_*Nbdry]; /*!< @brief data on the lower slice */   
+  for(int k=0; k<Nbdry; ++k){
+    const double* v 
+      = const_cast<Field&>(fe).getaddr(ff_.index(0,shiftSite_eo.xslice(Xb,k,mu)));
+    for(int i=0; i<Nin_; ++i) vbd[k*Nin_+i] = v[i];
+  }
+  double vbc[Nin_*Nbdry]; /*!< @brief data on the upper slice */   
+  Communicator::instance()->transfer_fw(vbc,vbd,Nin_*Nbdry,mu);
+
+  Xb = SiteIndex::instance()->Bdir(mu);
+  Nbdry = shiftSite_oe.slice_size(Xb,mu);
+
+  for(int k=0; k<Nbdry; ++k){  /*!< @brief calc on the upper boundary */   
+    int xc = shiftSite_oe.xslice(Xb,k,mu);
+    const double* U = const_cast<Field&>(uo_.data).getaddr(gf_.index(0,xc,mu));
+    double* res = wo.getaddr(ff_.index(0,xc));    
+
+    for(int a=0; a<Nin_; ++a)
+      for(int b=0; b<Nin_; ++b)	res[a] += U[e(a,b)]*vbc[k*Nin_+b];
+  }
+  /// bulk part ///
+    for(int x=0; x<Xb; ++x){
+      int Nslice = shiftSite_oe.slice_size(x,mu);
+      for(int k=0; k<Nslice; ++k){   
+	const double* v 
+	  = const_cast<Field&>(fe).getaddr(ff_.index(0,shiftSite_eo.xslice(x+1,k,mu)));
+	int xc = shiftSite_oe.xslice(x,k,mu);
+	const double* U = const_cast<Field&>(uo_.data).getaddr(gf_.index(0,xc,mu));
+	double* res = wo.getaddr(ff_.index(0,xc));
+	
+	for(int a=0; a<Nin_; ++a)
+	  for(int b=0; b<Nin_; ++b) res[a] += U[e(a,b)]*v[b];
+      }
+    }
+  
+}
+
+const Field Dirac_staggered_EvenOdd_Adjoint::mult_eo(const Field& fo) const{
+
+  Field we(fsize_);
+  for(int mu=0;mu<Ndim_; ++mu){
+    multPeo(we,fo,mu);
+    
+    /// boundary part ///
+    int Xb = SiteIndex::instance()->Bdir(mu);
+    int Nbdry = shiftSite_oe.slice_size(Xb,mu);
+    double vbd[Nin_*Nbdry]; 
+    for(int k=0; k<Nbdry; ++k){
+      int xc = shiftSite_oe.xslice(Xb,k,mu);
+      const double* v = const_cast<Field&>(fo).getaddr(ff_.index(0,xc));
+      const double* U = const_cast<Field&>(uo_.data).getaddr(gf_.index(0,xc,mu));
+      for(int a=0; a<Nin_; ++a){
+	vbd[k*Nin_+a] = 0.0;  
+	for(int b=0; b<Nin_; ++b) vbd[k*Nin_+a] += U[e(b,a)]*v[b];
+      }
+    }
+    double vbc[Nin_*Nbdry];  //Copy vbd from backward processor
+    Communicator::instance()->transfer_bk(vbc,vbd,Nin_*Nbdry,mu);
+    Xb = 0;
+    Nbdry = shiftSite_eo.slice_size(Xb,mu);
+  
+    for(int k=0; k<Nbdry; ++k){
+      double* res = we.getaddr(ff_.index(0,shiftSite_eo.xslice(Xb,k,mu)));
+      for(int i=0; i<Nin_; ++i) res[i] -= vbc[k*Nin_+i];
+    }
+
+    /// bulk part ///
+    int Nmu = SiteIndex::instance()->Bdir(mu)+1;
+    for(int x=1; x<Nmu; ++x){
+      int Nslice = shiftSite_oe.slice_size(x,mu);
+      for(int k=0; k<Nslice; ++k){
+	int xm = shiftSite_oe.xslice(x-1,k,mu);
+	const double* v = const_cast<Field&>(fo).getaddr(ff_.index(0,xm));
+	const double* U = const_cast<Field&>(uo_.data).getaddr(gf_.index(0,xm,mu));
+	double* res = we.getaddr(ff_.index(0,shiftSite_eo.xslice(x,k,mu)));
+
+	for(int a=0; a<Nin_; ++a)
+	  for(int b=0; b<Nin_; ++b) res[a] -= U[e(b,a)]*v[b];
+      }
+    }
+  }
+  return we;
+}
+
+const Field Dirac_staggered_EvenOdd_Adjoint::mult_oe(const Field& fe) const{
+
+  Field wo(fsize_);
+  for(int mu=0;mu<Ndim_; ++mu){
+    multPoe(wo,fe,mu);
+    
+    /// boundary part ///
+    int Xb = SiteIndex::instance()->Bdir(mu);
+    int Nbdry = shiftSite_eo.slice_size(Xb,mu);
+    double vbd[Nin_*Nbdry]; 
+    for(int k=0; k<Nbdry; ++k){
+      int xc = shiftSite_eo.xslice(Xb,k,mu);
+      const double* v = const_cast<Field&>(fe).getaddr(ff_.index(0,xc));
+      const double* U = const_cast<Field&>(ue_.data).getaddr(gf_.index(0,xc,mu));
+      for(int a=0; a<Nin_; ++a){
+	vbd[k*Nin_+a  ] = 0.0;  
+	for(int b=0; b<Nin_; ++b) vbd[k*Nin_+a] += U[e(b,a)]*v[b];
+      }
+    }
+    double vbc[Nin_*Nbdry];  //Copy vbd from backward processor
+    Communicator::instance()->transfer_bk(vbc,vbd,Nin_*Nbdry,mu);
+    Xb = 0;
+    Nbdry = shiftSite_oe.slice_size(Xb,mu);
+  
+    for(int k=0; k<Nbdry; ++k){
+      double* res = wo.getaddr(ff_.index(0,shiftSite_oe.xslice(Xb,k,mu)));
+      for(int i=0; i<Nin_; ++i) res[i] -= vbc[k*Nin_+i];
+    }
+
+    /// bulk part ///
+    int Nmu = SiteIndex::instance()->Bdir(mu)+1;
+    for(int x=1; x<Nmu; ++x){
+      int Nslice = shiftSite_eo.slice_size(x,mu);
+      for(int k=0; k<Nslice; ++k){
+	int xm = shiftSite_eo.xslice(x-1,k,mu);
+	const double* v = const_cast<Field&>(fe).getaddr(ff_.index(0,xm));
+	const double* U = const_cast<Field&>(ue_.data).getaddr(gf_.index(0,xm,mu));
+	double* res = wo.getaddr(ff_.index(0,shiftSite_oe.xslice(x,k,mu)));
+
+	for(int a=0; a<Nin_; ++a)
+	  for(int b=0; b<Nin_; ++b) res[a] -= U[e(b,a)]*v[b];
+      }
+    }
+  }
+  return wo;
+}
+
+

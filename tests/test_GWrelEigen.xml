@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for testing eigenmode classes -->
+<Parameters>
+  <!-- Geometry parameters here -->
+
+  <Geometry>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+  </Geometry>
+  <Configuration Type="TextFile" Input="FileList">
+  <GaugeConfigs>
+    <filename>conf_08080808.txt</filename>
+  </GaugeConfigs>
+  </Configuration> 
+  <RandomNumberGen name="None"/> 
+  <Smearing type="Stout">
+    <Nsmear>0</Nsmear>
+    <Base type="APE">
+      <rho>0.1</rho>
+    </Base>
+  </Smearing>
+  <GaugeFixing name="NoFixing"/>
+  <Output>
+    <starting_idx>0</starting_idx>
+    <idx_increment>1</idx_increment>
+    <output_prefix>Output/output_</output_prefix>
+  </Output>
+  <Measurement>
+    <GWrelEigen>
+      <mass>0.01</mass>
+    </GWrelEigen>
+  </Measurement>
+</Parameters>
+

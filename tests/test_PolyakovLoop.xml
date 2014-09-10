@@ -16,15 +16,18 @@
   </Geometry>
 -->
   <!-- Input configuration -->
-<!--  <Configuration Type="TextFile" Input="RegularStep">
+<!--
+  <Configuration Type="TextFile" Input="RegularStep">
     <input_prefix>conf_</input_prefix>
-    <total_num>10</total_num>
+    <total_num>1</total_num>
     <starting_idx>0</starting_idx>
     <idx_increment>1</idx_increment>
-  </Configuration> -->
-
+  </Configuration>
+-->
   <Configuration Type="TextFile" Input="FileList">
+  <GaugeConfigs>
     <filename>conf_08080808.txt</filename>
+  </GaugeConfigs>
   </Configuration> 
 <!--
   <Configuration Type="CSDTbinary" Input="FileList">

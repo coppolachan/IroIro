@@ -30,7 +30,7 @@ public:
     return w;
   }
   
-  double func(double x)const{ return a_/Op_->func(x) +b_; }
+  double func(double x)const{ return a_/x +b_; }
   size_t fsize()const{return Op_->fsize();}
 };
 

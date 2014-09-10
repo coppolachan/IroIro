@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2014-07-04 17:49:11 noaki>
+ Time-stamp: <2014-08-28 08:39:04 noaki>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -14,6 +14,7 @@
 #include "dirac_wilson_Brillouin.hpp"
 #include "dirac_wilson_Brillouin_OSS.hpp"
 #include "dirac_wilson_FiniteDensity.hpp"
+#include "dirac_clover_FiniteDensity.hpp"
 #include "dirac_clover.hpp"
 #include "dirac_Mobius.hpp"
 #include "dirac_DomainWall_adjoint.hpp"
@@ -44,6 +45,13 @@ class DiracWilsonLikeFactory :public DiracFactory{
 public:
   DiracWilsonLike* getDirac(InputConfig& input){return createDirac(input);}
   virtual ~DiracWilsonLikeFactory(){}
+};
+
+class DiracWilsonLikeFiniteDensityFactory :public DiracWilsonLikeFactory{
+  virtual DiracWilsonLikeFiniteDensity* createDirac(InputConfig&) = 0;
+public:
+  DiracWilsonLikeFiniteDensity* getDirac(InputConfig& input){return createDirac(input);}
+  virtual ~DiracWilsonLikeFiniteDensityFactory(){}
 };
 
 class DiracWilsonLikeEvenOddFactory: virtual public DiracWilsonLikeFactory{
@@ -134,11 +142,20 @@ public:
 };
 ////////////
 /*! @brief Concrete class for creating Dirac Wilson FiniteDensity operators */
-class DiracWilsonFiniteDensityFactory : public DiracWilsonLikeFactory {
+class DiracWilsonFiniteDensityFactory : public DiracWilsonLikeFiniteDensityFactory {
   const XML::node Dirac_node_;
-  DiracWilsonLike* createDirac(InputConfig&);
+  DiracWilsonLikeFiniteDensity* createDirac(InputConfig&);
 public:
   DiracWilsonFiniteDensityFactory(const XML::node& node):Dirac_node_(node){}
+};
+
+////////////
+/*! @brief Concrete class for creating Dirac Clover FiniteDensity operators */
+class DiracCloverFiniteDensityFactory : public DiracWilsonLikeFiniteDensityFactory {
+  const XML::node Dirac_node_;
+  DiracWilsonLikeFiniteDensity* createDirac(InputConfig&);
+public:
+  DiracCloverFiniteDensityFactory(const XML::node& node):Dirac_node_(node){}
 };
 
 /////////////

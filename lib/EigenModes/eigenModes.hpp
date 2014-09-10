@@ -36,11 +36,46 @@ public:
     }
 
     evecs_.clear();
-    CCIO::cout<<"Reading eigenvectors from "<<evecfile<<"\n";
+    CCIO::cout<<"Reading "<< i << " eigenvectors from "<<evecfile<<"\n";
     int Neig=i;
     CCIO::ReadFromDisk<FMT>(evecs_,evecfile.c_str(),Neig);
     CCIO::cout<< Neig << "eigenmodes are loaded."<<"\n";
   }
+
+  template<typename FMT>  
+  int singlemode(int n, Field& evec, double& eigenvalue,
+		  const std::string& evalfile,
+		  const std::string& evecfile)
+  {
+    FMT fmt(CommonPrms::instance()->Nvol());
+    CCIO::cout<<"Reading eigenvalue n. "<< n << " from "<< evalfile<<".\n";
+    std::ifstream reader(evalfile.c_str()); 
+    int idummy, i;
+    double eval=0.0;
+
+    while(reader>>idummy && reader>>eval && fabs(eval) < thold_){
+      if (idummy == n)
+	eigenvalue = eval;
+      i++;
+    }
+
+    CCIO::cout<<"Eigenvalue: "<< eigenvalue << "\n";
+
+    if (fabs(eigenvalue) < thold_){
+    CCIO::cout<<"Reading eigenvector n. "<< n << " from "<<evecfile<<"\n";
+    
+    uint64_t offset = sizeof(double)*n*fmt.size()*CommonPrms::instance()->NP();
+    CCIO::ReadFromDisk<FMT>(evec,evecfile.c_str(),offset);
+    CCIO::cout<< "Eigenmode loaded \n";
+    return 0;
+    } else {
+      CCIO::cout<< "Eigenvalue above threshold, skipping\n";
+      return 1;
+    }
+
+  }
+		  
+
 };
 
 #endif

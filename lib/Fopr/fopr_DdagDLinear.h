@@ -24,7 +24,7 @@ public:
     w += b_*f;
     return w;
   }
-  double func(double x)const{return a_*x*x+b_;}
+  double func(double x)const{return x;}
   size_t fsize()const {return D_->fsize();}
 };
 

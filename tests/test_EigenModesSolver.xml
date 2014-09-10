@@ -3,14 +3,14 @@
 <Parameters>
   <!-- Geometry parameters here -->
   <Geometry>
-    <Lattice>4 4 4 8</Lattice>
+    <Lattice>8 8 8 8</Lattice>
     <Nodes>1 1 1 1</Nodes>
     <Boundary_cond>1 1 1 1</Boundary_cond>
   </Geometry>
   <!-- Input configuration -->
   <Configuration Type="TextFile" Input="FileList">
     <GaugeConfigs>
-      <filename>conf_04040408.txt</filename>
+      <filename>conf_08080808.txt</filename>
     </GaugeConfigs>
   </Configuration> 
   <RandomNumberGen name="None"></RandomNumberGen>
@@ -25,16 +25,17 @@
     <EigenModesCalc>
       
       <HermitianOperator name="g5D">
-	<!--<HermitianOperator name="DdagD">-->
+<!--      <HermitianOperator name="DdagD">-->
 	<WilsonLikeDirac name="DiracWilson">
 	  <mass>-1.15</mass>
 	</WilsonLikeDirac>
       </HermitianOperator>
+
       <Setup sorting="Lowest">
-	<threshold>0.285</threshold>
-<!--	<Acceleration name="None"></Acceleration>-->
+	<threshold>0.25</threshold>
+<!--	<Acceleration name="None"/>-->
 	<Acceleration name="Chebyshev">
-          <Mapping function="Linear">
+          <Mapping function="QuadLinear">
 	    <ex_lower>0.3</ex_lower>
 	    <ex_upper>10.0</ex_upper>
 	  </Mapping>
@@ -44,11 +45,11 @@
         </Acceleration>
       </Setup>
       <EigenModesSolver name="ImplicitRestartedLanczos">
-	<Nthreshold>30</Nthreshold>
+	<Nthreshold>40</Nthreshold>
 	<Nk>50</Nk>
 	<Np>20</Np>
-	<precision>1e-9</precision>
-	<max_iter>100</max_iter>	
+	<precision>1e-7</precision>
+	<max_iter>200</max_iter>	
       </EigenModesSolver>
     </EigenModesCalc>
   </Measurement>

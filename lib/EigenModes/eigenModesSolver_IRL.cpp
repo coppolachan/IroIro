@@ -5,6 +5,7 @@
 #include "eigenSorter.hpp"
 #include "Fopr/fopr.h"
 #include "Fields/field_expressions.hpp"
+#include "include/messages_macros.hpp"
 #include <cassert>
 #include <iostream>
 #include <iomanip>
@@ -14,257 +15,209 @@ using namespace std;
 
 void EigenModesSolver_IRL::
 calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{ 
+  _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::calc\n");
 
   using namespace FieldExpression;
   const size_t fsize = opr_->fsize();
 
-  Field f(fsize);
+  CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Nm_-Nk_<<" Nm = "<<Nm_<<"\n";
+  CCIO::cout<<"Ritz pair with res >1000x"<<prec_<<" is ignored\n";
 
-  int Np = Nm_-Nk_;  
-  assert(Np>0);
-
-  CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Np<<" Nm = "<<Nm_<<"\n";
-
-  ta.resize(Nm_); 
   V.assign(Nm_,Field(fsize,1.0));
 
   double nv = V[0].norm();
   V[0] /= nv;                       /*!< @brief initial vector (uniform)*/
+  Field f = opr_->mult(V[0]);
 
-  vector<double> tb(Nm_);
-  lanczos_init(ta,tb,V);            /*!< @brief initial Lanczos-decomp */
+  ta.resize(Nm_); 
+  vector<double> tb(Nm_); 
 
-  vector<double> tta(Nm_),ttb(Nm_);
+  ta[0] = V[0]*f;
+  f -= ta[0]*V[0];
+  lanczos_ext(ta,tb,V,f,1,Nk_);    /*!< @brief initial Lanczos-decomp */
+
   vector<double> Qt(Nm_*Nm_);
+  vector<double> eval(Nk_);  
+  vector<Field> Vp(Nk_,Field(fsize));
 
-  vector<Field>  Vp(Nk_+1);
-  for(int k=0; k<Nk_+1; ++k) Vp[k].resize(fsize);
+  int Iconv = -1;               /*!<@brief Num of iterations until convergence */
+  vector<pair<int,int> > Icert; /*!<@brief index of the certified eigenmodes */
 
-  vector<int> i_conv;  
-  int Nconv = -1;
+  ///////////////* iteration */////////////////////
 
   for(int iter=0; iter<Niter_; ++iter){
-
     CCIO::cout<<"\n iteration "<< iter << endl;
 
-    /****** Restarting procedures ******/
-    lanczos_ext(ta,tb,V,f);        /*!< @brief extended Lanczos-decomp*/
-    tta = ta;  ttb = tb;           /*!< @brief getting shifts */
+    //// iteration step ////
+    lanczos_ext(ta,tb,V,f,Nk_,Nm_);     /*!<@brief Nm-step Lanczos-decomp */
 
-    diagonalize(tta,ttb,Qt,Nm_); 
-    esorter_->push(tta,Nm_);          /*!< @brief sort by the absolute values*/
+    vector<double> tta = ta;            /*!<@brief tta: eigenvals of H(m) */
+    vector<double> ttb = tb;
+    int Ndiag = diagonalize(tta,ttb,Qt,Nm_);
 
-    /// QR transformations with implicit shifts tta[p]
-    setUnit(Qt);
+    esorter_->push(tta,Nm_);            /*!<@brief sort of absolute values */
+
+    setUnit(Qt);                         /*!<@brief QR-shifts tta[p] */
     for(int p=Nk_; p<Nm_; ++p) QRfact_Givens(ta,tb,Qt,Nm_,tta[p],0,Nm_-1);
 
-    for(int i=0; i<Nk_+1; ++i){         // getting V+
+    for(int i=0; i<Nk_; ++i){               /*!<@brief getting V+(Nk) */
       Vp[i] = 0.0;
-      for(int j=0; j<Nm_; ++j) Vp[i] += Qt[i*Nm_+j]*V[j];
+      int np = Nm_-Nk_+i+1;
+      for(int j=0; j<np; ++j) Vp[i] += Qt[i*Nm_+j]*V[j];
     }
-    for(int i=0; i<Nk_+1; ++i) V[i] = Vp[i];
 
-    f *= Qt[Nm_*(Nk_-1)+Nm_-1];        // getting f+
-    f += tb[Nk_-1]*V[Nk_];
+    f *= Qt[Nm_*(Nk_-1)+Nm_-1];             /*!<@brief getting f+(Nk) */
+    for(int j=0; j<Nm_; ++j) f += tb[Nk_-1]*Qt[Nk_*Nm_+j]*V[j];
+    for(int i=0; i<Nk_; ++i) V[i] = Vp[i];
 
-    tb[Nk_-1] = sqrt(f*f);
-    V[Nk_] = 1.0/tb[Nk_-1]*f;
+    ///  Convergence test ///
+    tta = ta;  ttb = tb;          
+    Ndiag = diagonalize(tta,ttb,Qt,Nk_);   /*!<@brief Qt*H*Q = tta */
 
-    /******  Convergence test  ******/
-    tta = ta;  ttb = tb;
-    diagonalize(tta,ttb,Qt,Nk_); /*!< @brief Qt contains Nk_ eigenvectors */
-    
-    i_conv.clear();
-    int Nover = 0; /*!< @brief Num of converged eigenvalues beyond thrs.*/
-
-    CCIO::cout << setiosflags(ios_base::scientific);
+    vector<double> res(Nk_);               /*!<@brief residual     */
+    vector<int> idx(Nk_);                  /*!<@brief sorted index */
 
     for(int i=0; i<Nk_; ++i){
-
-      Vp[i] = 0.0;                    /*!< @brief eigenvectors */
+      idx[i] = i;                          /*!<@brief eigen-index  */
+      eval[i] = tta[i];                    /*!<@brief Ritz value   */
+      Vp[i] = 0.0;                         /*!<@brief Ritz vector  */
       for(int j=0; j<Nk_; ++j) Vp[i] += Qt[i*Nm_+j]*V[j];  
+      res[i] = fabs(Qt[i*Nm_+Nk_-1]);
+      res[i] *= f.norm();
+      //CCIO::cout<<"eval["<<i<<"]="<<eval[i]<<" res="<<res[i]<<"\n";
+    }
+    esorter_->push(eval,idx,Nk_);
 
-      //double res = fabs(Qt[i*Nm_+Nk_-1]*tb[Nk_-1]);
-      /*!@brief instead of above Ritz estimates, direct residual values 
-        are used to avoid fake eigenmodes. This should be unnecessary given 
-	the classical orthogonalization and the DGKS correction are used in 
-	the Lanczos factrization. However, we take a conservative way.*/
+    CCIO::cout << setiosflags(ios_base::scientific);
+    for(int i=0; i<Nk_; ++i)
+      CCIO::cout<<" ["<<setw( 3)<<setiosflags(ios_base::right)<<i<<"] "
+		<<      setw(25)<<setiosflags(ios_base::left) <<eval[i]
+		<<"  "<<setw(25)<<setiosflags(ios_base::right)<<res[idx[i]]<<"\n";
 
-      Field Av = opr_->mult(Vp[i]);
-      double norm = Av.norm();
-      double vAv = Vp[i]*Av;
-      tta[i] = vAv;
-      Av -= tta[i]*Vp[i];
-      double res = Av.norm();
+    int Nover = 0;              /*!<@brief Num of converged modes beyond thrs.*/
+    Icert.clear();
 
-      CCIO::cout<<" ["<<setw( 3)<<setiosflags(ios_base::right)<<i<<"] ";
-      CCIO::cout<<      setw(25)<<setiosflags(ios_base::left) <<tta[i];
-      CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::right)<<res<<endl;
-      
-      if(res<prec_){  /*!<@brief counting converged eigenmodes */
-        i_conv.push_back(i);
-        if(esorter_->beyond_thrs(tta[i])) ++Nover; 
+    for(int i=0; i<Nk_; ++i){
+      if(res[idx[i]]<prec_){    /*!<@brief counting converged modes */
+	Icert.push_back(pair<int,int>(i,idx[i]));
+        if(esorter_->beyond_thrs(eval[i],opr_)) ++Nover; 
+      }else{
+	if(res[idx[i]] >1000*prec_) continue;
+	else                        break;
       }
     }  
+    /*
+    for(int i=0;i<Icert.size();++i) 
+      CCIO::cout<<"i="<<i
+		<<" Icert.first="<<Icert[i].first
+		<<" Icert.second="<<Icert[i].second<<"\n";
+    */
     CCIO::cout << resetiosflags(ios_base::scientific);
-    CCIO::cout<<" #converged modes= "<<i_conv.size()<<endl;
+    CCIO::cout<<" #converged modes= "<<Icert.size() <<"\n";
      
-    /*!@brief  condition of termination: the eigenvalue exceeds the threshold*/
-    if(Nover > 0){         
+    if(Nover > 0){           /*!<@brief case1: having eigenvalue beyond thrs. */
+      Iconv = iter; 
+      Neigen = Icert.size() -Nover; 
       CCIO::cout<<"All eigenmodes upper/under the threshold are obtained.\n";
-      Nconv = iter; 
-      Neigen = i_conv.size()-Nover; 
-      break;
-    }
-    /*!@brief condition of termiation: #eigenmods exceeds the threshold number*/
-    if(i_conv.size() >= Nthrs_){ 
-      CCIO::cout<<"Desired number of eigenmodes are obtained.\n";
-      Nconv = iter;
-      Neigen = Nthrs_; 
       break;
     }
 
-    if(iter==Niter_-1){
-      CCIO::cout<<"Reached to the max iteration count.\n";
-      Neigen = -i_conv.size();
+    if(Icert.size()>=Nthrs_){/*!<@brief case2: having more modes than Nthrs */
+      Iconv = iter;
+      Neigen = Nthrs_; 
+      CCIO::cout<<"Desired number of eigenmodes are obtained.\n";
+      break;
+    }
+
+    if(iter==Niter_-1){      /*!<@brief case3: reached to max-iteration */
+      Neigen = -Icert.size();
+      CCIO::cout<<"Reached the max iteration count.\n";
       break;
     } 
   }// end of iter loop
 
-  /*** post process after the conversion ***/
+  /////////* post process after convergence *///////////////
   ta.clear(); V.clear();
   
-  for(int i=0; i<i_conv.size(); ++i){
-    ta.push_back(tta[i_conv[i]]);
-    V.push_back(Vp[i_conv[i]]);
+  for(int i=0; i<Neigen; ++i){
+    ta.push_back(eval[Icert[i].first]);
+    V.push_back(Vp[Icert[i].second]);
   }
+
   if(Neigen > 0){
-    esorter_->push(ta,V,i_conv.size());
     CCIO::cout << "\n Converged\n Summary :\n";
-    CCIO::cout << " -- Iterations  = "<< Nconv        <<"\n";
-    CCIO::cout << " -- beta+_k     = "<< tb[Nk_-1]    <<"\n";
-    CCIO::cout << " -- #converged  = "<< i_conv.size()<<"\n";
-    CCIO::cout << " -- #eigenmodes = "<< Neigen       <<"\n";
+    CCIO::cout << " -- Iterations  = "<< Iconv       <<"\n";
+    CCIO::cout << " -- #converged  = "<< Icert.size()<<"\n";
+    CCIO::cout << " -- #eigenmodes = "<< Neigen      <<"\n";
   }
 }
 
 void EigenModesSolver_IRL::
-lanczos_init(vector<double>& ta,vector<double>& tb,vector<Field>& V)const{
+lanczos_ext(vector<double>& ta,vector<double>& tb,
+	    vector<Field>& V,Field& f,int ini,int fin)const{
   using namespace FieldExpression;
 
-  Field f = opr_->mult(V[0]);
+  tb[ini-1] = f.norm();
+  V[ini] = 1.0/tb[ini-1]*f;
 
-  double ab = V[0]*f;
-  f -= ab*V[0];
-  ta[0] = ab;
-  ab = f*f;
-  tb[0] = sqrt(ab);
-  V[1] = 1.0/tb[0]*f;
-
-  for(int k=1; k<Nk_;++k){
-    f = opr_->mult(V[k]);
-    f -= tb[k-1]*V[k-1];
-
-    ab = V[k]*f;
-    f -= ab*V[k];
-    ta[k] = ab;
-
-    ab = f*f;
-    tb[k] = sqrt(ab);
-    f *= 1.0/tb[k]; 
-
-    orthogonalize(f,V,k); /*!< classical Gram-Schmidt orthogonalization */
-    ta[k] += V[k]*f;      /*!<@brief DGKS correlction*/
-    tb[k-1] += V[k-1]*f;
-
-    V[k+1] = f;
-  }
-}
-
-void EigenModesSolver_IRL::lanczos_ext(vector<double>& ta,vector<double>& tb,
-				       vector<Field>& V,Field& f)const{
-  using namespace FieldExpression;
-  
-  for(int k=Nk_; k<Nm_; ++k){
+  for(int k=ini; k<fin; ++k){
     f = opr_->mult(V[k]);
     f -= tb[k-1]*V[k-1];
   
-    double ab = V[k]*f;
-    f -= ab*V[k];
-    ta[k] = ab;
-
-    ab = f*f;
-    tb[k] = sqrt(ab);
-    f *= 1.0/tb[k];
+    ta[k] = V[k]*f;
+    f -= ta[k]*V[k];
+    tb[k] = f.norm();
+    f /= tb[k];
 
     orthogonalize(f,V,k); /*!<@brief classical Gram-Schmidt orthogonalization*/
     ta[k] += V[k]*f;      /*!<@brief DGKS correlction*/
     tb[k-1] += V[k-1]*f;
 
-    if(k!= Nm_-1) V[k+1] = f;
+    if(k==fin-1) break;
+    V[k+1] = f;
   }
-  f *= tb[Nm_-1];
+  f *= tb[fin-1];
 }
 
 // classical Gram-Schmidt orthogonalization
 void EigenModesSolver_IRL::
-orthogonalize(Field& f,const vector<Field>& V,int k)const{
+orthogonalize(Field& f,const vector<Field>& V,int N)const{
   size_t size = f.size();
   assert(size%2 ==0);
 
   std::slice re(0,size/2,2);
   std::slice im(1,size/2,2);
 
-  vector<double> sr(k);
-  vector<double> si(k);
+  vector<double> sr(N);
+  vector<double> si(N);
 
-  for(int j=0; j<k; ++j){
+  for(int j=0; j<N; ++j){
     sr[j] = V[j]*f;
     si[j] = V[j].im_prod(f);
   }
-  for(int j=0; j<k; ++j){
+  for(int j=0; j<N; ++j){
     f.add(re, -sr[j]*V[j][re] +si[j]*V[j][im]);
     f.add(im, -sr[j]*V[j][im] -si[j]*V[j][re]);
   }
 }
-
-/* // modified Gram-Schmidt orthogonalization
-void EigenModesSolver_IRL::
-orthogonalize(Field& f,const vector<Field>& V,int k)const{
-  size_t size = f.size();
-  assert(size%2 ==0);
-
-  std::slice re(0,size/2,2);
-  std::slice im(1,size/2,2);
-
-  for(int j=0; j<k; ++j){
-    double sr = V[j]*f;
-    double si = V[j].im_prod(f);
-
-    f.add(re, -sr*V[j][re] +si*V[j][im]);
-    f.add(im, -sr*V[j][im] -si*V[j][re]);
-  }
-}
-*/
 
 void EigenModesSolver_IRL::setUnit(vector<double>& Qt)const{
   for(int i=0; i<Nm_*Nm_; ++i) Qt[i] = 0.0;
   for(int k=0; k<Nm_; ++k) Qt[k*Nm_+k] = 1.0;
 }
 
-void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
-				       vector<double>& Qt,int Nk)const{
+int EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
+				       vector<double>& Qt,int Nrange)const{
   setUnit(Qt);
   int Niter = 100*Nm_;
-  int kmin = 0, kmax = Nk-1;
+  int kmin = 0, kmax = Nrange-1;
 
   for(int iter=0; iter<Niter; ++iter){
-
     double sft = 0.5*(ta[kmax]+ta[kmax-1]);
     double dif = 0.5*(ta[kmax]-ta[kmax-1]);
     sft += dif/fabs(dif)*sqrt(dif*dif +tb[kmax-1]*tb[kmax-1]);
-    
-    QRfact_Givens(ta,tb,Qt,Nk,sft,kmin,kmax); // transformation
+
+    QRfact_Givens(ta,tb,Qt,Nrange,sft,kmin,kmax); // transformation
 
     for(int j=kmax; j>kmin; --j){   
       double dds = fabs(ta[j-1])+fabs(ta[j]);
@@ -272,10 +225,7 @@ void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
         kmax = j;
 	break;
       }
-      if(j==kmin+1){/*!< Convergence criterion */
-	Niter = iter;
-	return; 
-      }
+      if(j==kmin+1) return iter;  /*!< Convergence criterion */
     }
   }
   CCIO::cout<<"[QR method] reached to maximum iterations: "<<Niter<<"\n";
@@ -284,54 +234,32 @@ void EigenModesSolver_IRL::diagonalize(vector<double>& ta,vector<double>& tb,
 }
 
 void EigenModesSolver_IRL::QRfact_Givens(vector<double>& ta,vector<double>& tb,
-					 vector<double>& Qt,int Nk,
+					 vector<double>& Qt,int Nrange,
 					 double sft,int k_min,int k_max)const{
-  // k = k_min
-  double dn = 1.0/sqrt((ta[k_min]-sft)*(ta[k_min]-sft)+tb[k_min]*tb[k_min]); 
-  double c = (ta[k_min]-sft)*dn;   //  cos_x
-  double s = tb[k_min]*dn;         //  sin_x
-  
-  for(int i=0; i<Nk; ++i){           // accumulation of G(k+1,k)^T
-    double Qt_k  = Qt[    k_min*Nm_+i];
-    double Qt_kp = Qt[(k_min+1)*Nm_+i];
-    Qt[    k_min*Nm_+i] =  c*Qt_k +s*Qt_kp;
-    Qt[(k_min+1)*Nm_+i] = -s*Qt_k +c*Qt_kp;
-  }
-
-  double a_k = ta[k_min]; 
-  double b_k = tb[k_min]; 
-
-  ta[k_min] = c*c*a_k +s*s*ta[k_min+1] +2.0*c*s*b_k;
-  tb[k_min] = (c*c-s*s)*b_k +c*s*(ta[k_min+1] -a_k);
-
-  double x = s*tb[k_min+1];
+  double x;
+  for(int k=k_min; k<k_max; ++k){ // k_max is the maximum idx
     
-  ta[k_min+1] = s*s*a_k +c*c*ta[k_min+1] -2.0*c*s*b_k;
-  tb[k_min+1] *= c;
+    double r = ((k==k_min)? (ta[k]-sft)/tb[k] : tb[k-1]/x);        
+    double c = r/sqrt(1.0+r*r);   //  cos_x
+    double s = 1.0/sqrt(1.0+r*r); //  sin_x
 
-  // k >k_min
-  for(int k=k_min+1; k<k_max; ++k){
-    dn = 1.0/sqrt(tb[k-1]*tb[k-1] +x*x); /*!< Givens rotation */
-    c = tb[k-1]*dn;                      //  cos_x
-    s = x*dn;                            //  sin_x
-
-    for(int i=0; i<Nk; ++i){           /*!< accumulation of G(k+1,k)^T */
+    for(int i=0; i<Nrange; ++i){        
       double Qt_k  = Qt[    k*Nm_+i];
       double Qt_kp = Qt[(k+1)*Nm_+i];
       Qt[    k*Nm_+i] =  c*Qt_k +s*Qt_kp;
       Qt[(k+1)*Nm_+i] = -s*Qt_k +c*Qt_kp;
     }
-    a_k = ta[k]; 
-    b_k = tb[k]; 
+    double a_k = ta[k]; 
+    double b_k = tb[k]; 
 
     // unitary transformation G(k+1,k)^T A G(k+1,k)
-    tb[k-1]= c*tb[k-1] +s*x;                    // k-1,k
     ta[k  ]= c*c*a_k +s*s*ta[k+1] +2.0*c*s*b_k; // k,k
     tb[k  ]= (c*c-s*s)*b_k +c*s*(ta[k+1] -a_k); // k,k+1
-
-    x = s*tb[k+1];
-    
     ta[k+1]= s*s*a_k +c*c*ta[k+1] -2.0*c*s*b_k; // k+1,k+1
+    
+    if(k != k_min) tb[k-1]= c*tb[k-1] +s*x;     // k-1,k   
+    if(k == k_max-1) break;
+    x = s*tb[k+1];
     tb[k+1]*= c;                                // k+1,k+2
   }
 }

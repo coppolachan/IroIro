@@ -45,6 +45,13 @@ void GaugeConf_ILDG::init_conf(Field& u,bool do_check){
   CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str(),0,"ILDG",do_check);
 }
 
+void GaugeConf_ILDG_FORTRAN::init_conf(Field& u,bool do_check){
+  using namespace CCIO;
+  CCIO::cout << "Init from ILDG file (ILDG format)\n";
+  CCIO::ReadFromDisk< Format::Format_G >(u,file_.c_str(),FORTRAN_CONTROL_WORDS,
+					 "ILDG_FORTRAN",do_check);
+}
+
 // this function exists already in byteswap.cpp
 double GaugeConf_csdt::conv_endian(double vald){
   unsigned char val[8];
@@ -168,6 +175,9 @@ void GaugeConf_txt::init_conf(Field& u,bool do_check){
     }
     
     CCIO::cout<< "Reading gauge configuration from " << file_.c_str() << endl;
+
+
+
     for(int t = 0; t < Lt; ++t){
       for(int z = 0; z < Lz; ++z){
 	for(int y = 0; y < Ly; ++y){

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for testing eigenmode classes -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+    <Boundary_cond>1 1 1 1</Boundary_cond>
+  </Geometry>
+  <!-- Input configuration -->
+
+  <Configuration Type="TextFile" Input="FileList">
+    <GaugeConfigs>
+      <filename>conf_08080808.txt</filename>
+    </GaugeConfigs>
+  </Configuration> 
+  <RandomNumberGen name="None"></RandomNumberGen>
+  <Smearing type="Off"></Smearing>
+  <GaugeFixing name="NoFixing"></GaugeFixing>
+  <Output>
+    <starting_idx>0</starting_idx>
+    <idx_increment>1</idx_increment>
+    <output_prefix>Output/eigen_</output_prefix>
+  </Output>
+  <Measurement>
+    <EigenModesCalc>
+<!--
+      <HermitianOperator name="g5D">
+	<WilsonLikeDirac name="DiracWilson">
+	  <mass>-1.0</mass>
+	</WilsonLikeDirac>
+      </HermitianOperator>
+-->
+      <HermitianOperator name="Scalar">    
+	<ScalarOp name ="Laplacian">
+	  <time_slice>0</time_slice>
+	</ScalarOp>
+      </HermitianOperator>
+
+      <Setup sorting="Lowest">
+	<threshold>20</threshold>
+	<Acceleration name="None">
+<!--	<Acceleration name="Chebyshev">
+          <Mapping function="QuadLinear">
+	    <ex_lower>-2.0</ex_lower>
+	    <ex_upper>-0.001</ex_upper>
+	  </Mapping>
+	  <Chebyshev>
+	    <Npoly>40</Npoly>
+	  </Chebyshev>-->
+	</Acceleration>
+      </Setup>
+
+      <EigenModesSolver name="ImplicitRestartedLanczos">
+	<Nthreshold>200</Nthreshold>
+	<Nk>250</Nk>
+	<Np>750</Np>
+	<precision>1e-13</precision>
+	<max_iter>20</max_iter>	
+      </EigenModesSolver>
+      
+    </EigenModesCalc>
+  </Measurement>
+</Parameters>
+

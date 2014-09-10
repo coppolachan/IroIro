@@ -13,7 +13,7 @@ private:
   int N_;
   double a_;
   double expnt(double x,int n=1)const{
-    return N_== n ? 1.0 : 1.0 +a_/n*Op_->func(x)*expnt(x,n+1);
+    return N_== n ? 1.0 : 1.0 +a_/n*x*expnt(x,n+1);
   }
   const Field expnt(const Field& f,int n=1)const{
     using namespace FieldExpression;
@@ -31,7 +31,7 @@ public:
     assert(Op_!=NULL);
   }
   const Field mult(const Field& f)const{ return expnt(f);}    
-  double func(double x)const{return expnt(x);}
+  double func(double x)const{return expnt(Op_->func(x));}
   size_t fsize()const {return Op_->fsize();}
 };
 
@@ -39,9 +39,6 @@ public:
 class Fopr_Lexp: public Fopr_Herm{
   const Fopr_Linear* Op_;
   int N_;
-  const Field prod(const Field& f,int n=0)const{
-    return N_== n ? f : Op_->mult(prod(f,n+1));
-  }
 public:
   Fopr_Lexp(int N,double a,const Fopr_Herm* Op)
     :N_(N),Op_(new Fopr_Linear(a/N,1.0,Op)){}
@@ -54,7 +51,12 @@ public:
   }
   ~Fopr_Lexp(){if(Op_) delete Op_;}
   
-  const Field mult(const Field& f)const{ return prod(f);}    
+  const Field mult(const Field& f)const{
+    Field tmp =f;
+    for(int i=0;i<N_;++i) tmp = Op_->mult(tmp);
+    return tmp;
+  }
+
   double func(double x)const{return pow(Op_->func(x),N_);}
   size_t fsize()const {return Op_->fsize();}
 };

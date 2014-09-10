@@ -1,7 +1,7 @@
 /*!
  * @file solver_Factory.hpp 
  * @brief Declaration of Solver operators factories
- * Time-stamp: <2013-12-10 14:30:05 noaki>
+ * Time-stamp: <2014-08-27 13:59:44 noaki>
  */
 #ifndef SOLVER_FACT_
 #define SOLVER_FACT_
@@ -47,10 +47,10 @@ public:
   Solver_CG* getSolver(const Fopr_Herm* HermitianOp){
     return new Solver_CG(Solver_node, HermitianOp);
   }
-   Solver_CG* getSolver(const Fopr* LinearOp){
-     std::cerr<< "getSolver Error: Solver_CG requires Hermitian Operator\n";
-     abort();
-   }
+  Solver_CG* getSolver(const Fopr* LinearOp){
+    std::cerr<< "getSolver Error: Solver_CG requires Hermitian Operator\n";
+    abort();
+  }
 };
 
 #ifdef IBM_BGQ_WILSON

@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2014-07-14 17:21:13 neo>
+ * Time-stamp: <2014-08-27 10:12:27 cossu>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -37,6 +37,7 @@ namespace CCIO {
    * @param ID string containing the ID of the input mode
    */
   GeneralWriter* getWriter(const std::string ID, int, int, int, const Field&);
+  GeneralWriter* getWriter(const std::string ID, int, int, int);
 
   /*!
    * @brief Saves a Field on the disk 
@@ -151,7 +152,6 @@ namespace CCIO {
   int SaveOnDisk3D(const Field& f, const char* filename,
 		   bool append_mode = false,
 		   const std::string writerID = "Binary"){
-
     Communicator* comm = Communicator::instance();
     CommonPrms* cmprms = CommonPrms::instance();
     assert(cmprms->NPEt()==1); // only works with NPEt=1
@@ -343,12 +343,14 @@ namespace CCIO {
     }// end of node_t
     comm->sync();  
 
+    /*
     if(do_check){
       if(reader->check(f) != CHECK_PASS) 
 	Errors::IOErr(Errors::GenericError, 
 		      "Failed some basic tests on the gauge configuration");
       CCIO::cout << "Tests passed!\n";
     }
+    */
 
     if(comm->primaryNode()){
       fclose(inFile);

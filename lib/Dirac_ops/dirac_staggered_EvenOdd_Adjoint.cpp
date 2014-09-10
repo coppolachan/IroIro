@@ -50,8 +50,14 @@ void Dirac_staggered_EvenOdd_Adjoint::set_ustag(){
   if(bdry_) bdry_->apply_bc(ue_,uo_);
 }
 
-#ifdef IBM_BGQ_WILSON
-#include "Architecture_Optimized/dirac_staggered_EvenOdd_Adjoint_BGQ.code"
+#ifdef IBM_BGQ_WILSON 
+#if __VECTOR4DOUBLE__
+//#include "Architecture_Optimized/dirac_staggered_EvenOdd_Adjoint_BGQ.code"
+//DEBUGGING
+#include "dirac_staggered_EvenOdd_Adjoint_improved.code" 
+#else
+#include "dirac_staggered_EvenOdd_Adjoint_improved.code"
+#endif 
 #else
 #include "dirac_staggered_EvenOdd_Adjoint_improved.code"
 #endif 

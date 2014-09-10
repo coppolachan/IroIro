@@ -6,7 +6,7 @@
 
 #include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "eigenModesSolver_Factory.hpp"
-#include "eigenSorter_Factory.hpp"
+#include "eigenSorter.hpp"
 #include "Communicator/comm_io.hpp"
 #include "IO/fields_io.hpp"
 #include "Fopr/foprHermFuncFactory.hpp"
@@ -24,21 +24,22 @@ public:
 };
 
 class EigenCalcGeneral{
+  std::auto_ptr<EigenSorter>     esortPtr_;
   std::auto_ptr<OpFunc>          opAccelFptr_; 
   std::auto_ptr<FoprHermFactory> opOrigFptr_; 
-  std::auto_ptr<EigenSorterFactory> esortFptr_; 
   std::auto_ptr<EigenSolverFactory> eslvFptr_;
-
+  
   std::vector<double> evals_;
   std::vector<Field> evecs_;
   int Neig_;
 
-  EigenSorterFactory* createEigenSorterFactory(const XML::node&);
+  EigenSorter* eigenSorterFactory(const XML::node&)const;
+  EigenModesSolver* eigSlvFactory(const Fopr_Herm*,const EigenSorter*);
   void get_eval(const Fopr_Herm*);
-
+  
+  XML::node eslvNode_;
 public:
-  EigenCalcGeneral(const XML::node& node);
-  ~EigenCalcGeneral(){}
+  EigenCalcGeneral(XML::node node);
 
   void do_calc(InputConfig& input);
   void output_txt(const std::string&)const;

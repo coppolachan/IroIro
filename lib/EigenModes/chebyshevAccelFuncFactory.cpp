@@ -3,9 +3,7 @@
 #include "PugiXML/xmlUtilities.hpp"
 #include <string.h>
 
-ChebyshevAccelFuncFactory::
-ChebyshevAccelFuncFactory(XML::node node){
-
+ChebyshevAccelFuncFactory::ChebyshevAccelFuncFactory(XML::node node){
   double sgn = 1.0;
   const char* st_name = node.attribute("sorting").value();
   if(!strcmp(st_name,"Lowest" )) sgn = -1.0;
@@ -13,7 +11,8 @@ ChebyshevAccelFuncFactory(XML::node node){
   double thrs;
   XML::read(node,"threshold",thrs);
   XML::descend(node,"Acceleration");
-  
+  thrs = fabs(thrs);
+
   //// mapping function ////
   XML::node mp_node = node;
   XML::descend(mp_node,"Mapping");
@@ -21,11 +20,13 @@ ChebyshevAccelFuncFactory(XML::node node){
 
   double exl,exu;
   XML::read(mp_node,"ex_lower",exl,MANDATORY);
+  exl = fabs(exl);
   if( sgn < 0.0 && exl < thrs){
     CCIO::cout<<"it must be threshold < ex_lower for the lowest sorting.\n";
     abort();
   }
   XML::read(mp_node,"ex_upper",exu,MANDATORY);
+  exu = fabs(exu);
   if( sgn > 0.0 && exu > thrs){
     CCIO::cout<<"it must be threshold > ex_upper for the highest sorting.\n";
     abort();
@@ -43,7 +44,7 @@ ChebyshevAccelFuncFactory(XML::node node){
     mapFact_.reset(new QuadLinearFuncFactory(slope,itcpt)); 
     
   }else{ XML::stopMsg(node,kn_name);}
-    
+
   XML::descend(node,"ChebyshevFunc");
   cbNode_= node;
 }							  

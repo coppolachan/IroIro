@@ -4,24 +4,26 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-09-10 10:49:01 neo>
+# Time-stamp: <2014-09-10 12:01:16 neo>
+
 
 testdir = $(bindir)/Test
 OPTLIB =
-BMF_TESTPROGS = 
+BFM_TESTPROGS = 
 AM_CXXFLAGS =
 AM_LDFLAGS = 
 
 if USE_BFM
 BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
-BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
-BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
+BFM_INCLUDE= -I$(BFM_HACK) -I$(BFM_HACK)/spi/include/kernel/cnk/
+BFM_LIBS= 
 BFM_LINKAGE= -lbfm -lbagel
-BMF_TESTPROGS += test_Solver_BFM
-BMF_TESTPROGS += test_BFM_Operator
-BMF_TESTPROGS += test_BFM_Moebius
-BMF_TESTPROGS += test_BFM_Inverter
-BMF_TESTPROGS += test_BFM_Inverter_wrapper
+BFM_TESTPROGS += test_Solver_BFM
+BFM_TESTPROGS += test_BFM_Operator
+BFM_TESTPROGS += test_BFM_Moebius
+BFM_TESTPROGS += test_BFM_Inverter
+BFM_TESTPROGS += test_BFM_Inverter_wrapper
+#BFM_TESTPROGS += test_HDCG
 endif
 
 if IBM_BGQ
@@ -64,18 +66,20 @@ EXTRA_DIST = 	testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_EigenModesSolver.xml\
+		test_EigenModesSolver_lap.xml\
 		test_EigModesNum.xml    \
 		test_GeneralMeas.xml 	\
 		test_PolyakovLoop.xml	\
 		test_WilsonFlow.xml	\
 		test_MesonSpectrum_Nf2p1.xml 	\
 		test_BaryonSpectrum_Nf2p1.xml 	\
-		test_HadronSpectrum_MultiQprop.xml 	\
+		test_HadronSpectrum_HeavyLight.xml 	\
 		test_ResMass_full.xml 	\
 		test_ResMass_eo.xml 	\
 		test_IO.xml		\
 		test_Gauge.xml		\
 		test_NoMeas.xml	        \
+		test_GWrelEigen.xml     \
 		test_Overlap.xml	\
 		test_HMC_DWF.xml	\
 		test_MultiShiftSolver.xml	\
@@ -84,6 +88,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_sunRep.xml		\
 		test_noFact.xml		\
 		test_ChiralCondensate.xml\
+		test_QnumSuscept.xml    \
 	        test_EigModesNum.xml    
 
 test_PROGRAMS = test_HMC 		\
@@ -92,6 +97,7 @@ test_PROGRAMS = test_HMC 		\
 		test_HMC_DWall_noF	\
 		test_Gauge		\
 		test_NoMeas		\
+		test_GWrelEigen         \
 		test_PolyakovLoop	\
 		test_WilsonFlow		\
 		test_Wilson 		\
@@ -107,12 +113,14 @@ test_PROGRAMS = test_HMC 		\
 		test_MesonSpectrum_Nf2p1\
 		test_BaryonSpectrum_Nf2p1\
 		test_EigenModesSolver	\
+		test_EigenModesSolver_Lap\
 		test_EigModesNum	\
 		test_Smearing		\
+		test_LapSource		\
 		test_Overlap		\
 		test_MultiShiftSolver	\
 		test_Solver_Perf	\
-		$(BMF_TESTPROGS)        \
+		$(BFM_TESTPROGS)        \
 		test_RNG 		\
 		test_IO			\
 		test_RationalApprox	\
@@ -123,7 +131,9 @@ test_PROGRAMS = test_HMC 		\
                 test_DiracWilson_Adjoint\
 		test_Laplacian		\
 		test_LapH		\
-		test_HadronSpectrum_MultiQprop\
+		test_HadronSpectrum_HeavyLight\
+		test_ChiralCondensate \
+		test_QnumSuscept	\
 		test_ChiralCondensate 	\
 		test_ReadEigenmodes	\
 		test_Add_Flux
@@ -140,6 +150,9 @@ test_RHMC_noFactories_SOURCES = test_RHMC_noFactories.cpp 	\
 test_HMC_smear_noF_SOURCES = 	test_HMC_Smear_noFact.cpp 	\
 			  	testerHMC.cpp
 
+test_LapSource_SOURCES = 	test_LapSource.cpp 	\
+			  	testerLapSource.cpp
+
 test_HMC_DWall_noF_SOURCES =	test_HMC_DWall_noFact.cpp	\
 				testerHMC_DWall_noFact.cpp
 
@@ -147,6 +160,9 @@ test_NoMeas_SOURCES 	= 	testerNoMeas.cpp
 
 test_Gauge_SOURCES 	= 	test_Gauge.cpp			\
 				testerGauge.cpp
+
+test_GWrelEigen_SOURCES	= 	test_GWrelEigen.cpp		\
+				testerGWrelEigen.cpp
 
 test_Wilson_SOURCES 	=	test_wilson.cpp 		\
 				testerWilson.cpp
@@ -190,6 +206,9 @@ test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 test_EigenModesSolver_SOURCES =	test_EigenModesSolver.cpp	\
 				testerEigenModesSolver.cpp
 
+test_EigenModesSolver_Lap_SOURCES = test_EigenModesSolver_Lap.cpp\
+				testerEigenModesSolver_Lap.cpp
+
 test_EigModesNum_SOURCES =	test_EigModesNum.cpp	\
 				testerEigModesNum.cpp
 
@@ -223,6 +242,9 @@ test_PolyakovLoop_SOURCES 	= 	test_PolyakovLoop.cpp	\
 test_ChiralCondensate_SOURCES 	= 	test_ChiralCondensate.cpp	\
 	 				testerChiralCondensate.cpp
 
+test_QnumSuscept_SOURCES 	= 	test_QnumSuscept.cpp	\
+	 				testerQnumSuscept.cpp
+
 test_SUNRepresentation_SOURCES  =	test_sunRepres.cpp	\
 					testerSunRep.cpp	
 
@@ -241,8 +263,8 @@ test_Laplacian_SOURCES 		=	test_Laplacian.cpp	\
 test_LapH_SOURCES 		=	test_LapH.cpp	\
 					testerLapH.cpp
 
-test_HadronSpectrum_MultiQprop_SOURCES = test_HadronSpectrum_MultiQprop.cpp\
-					testerHadronSpectrumMultiQprop.cpp
+test_HadronSpectrum_HeavyLight_SOURCES = test_HadronSpectrum_HeavyLight.cpp\
+					testerHadronSpectrumHeavyLight.cpp
 
 test_ReadEigenmodes_SOURCES	= 	test_ReadEigenModes.cpp \
 					testerReadEigenModes.cpp
@@ -255,16 +277,20 @@ if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
                                 testerSolver_BFM.cpp            
 
-test_BFM_Operator_SOURCES =     test_BFM_Operator.cpp             \
+test_BFM_Operator_SOURCES =     test_BFM_Operator.cpp           \
                                 testerSolver_BFM.cpp            
-test_BFM_Moebius_SOURCES =     test_BFM_Moebius.cpp             \
+
+test_BFM_Moebius_SOURCES =     	test_BFM_Moebius.cpp            \
                                 testerSolver_BFM.cpp            
+
 test_BFM_Inverter_SOURCES =     test_BFM_Inverter.cpp 		\
                                 testerSolver_BFM.cpp            
 
 test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
-                                testerSolver_BFM.cpp            
+                                testerSolver_BFM.cpp       
 
+#test_HDCG_SOURCES = 		test_BFM_HDCG_Inverter.cpp	\
+#				testerSolver_HDCG.cpp           
 endif
 
 
@@ -280,18 +306,21 @@ include_HEADERS 	=	tests.hpp			\
 				test_WilsonFlow.hpp     	\
 				test_PolyakovLoop.hpp     	\
 				test_NoMeas.hpp     	        \
+				test_GWrelEigen.hpp    	        \
 				test_QpropMom.hpp 		\
 				test_ResidualMass.hpp 		\
 				test_IO.hpp			\
 				test_EigenModesSolver.hpp	\
+				test_EigenModesSolver_Lap.hpp	\
 				test_EigModesNum.hpp    	\
 				test_smear.hpp			\
+				test_LapSource.hpp		\
 				test_Gauge.hpp			\
 				test_MesonSpectrum.hpp		\
 				test_MesonSpectrum_Nf2p1.hpp	\
 	                        test_MesonSpectrum_SpMom.hpp    \
 				test_BaryonSpectrum_Nf2p1.hpp	\
-				test_HadronSpectrum_MultiQprop.hpp	\
+				test_HadronSpectrum_HeavyLight.hpp	\
 				test_Overlap.hpp		\
 				test_MultiShiftSolver.hpp	\
 				test_RationalApprox.hpp		\
@@ -306,4 +335,8 @@ include_HEADERS 	=	tests.hpp			\
 				test_Laplacian.hpp		\
 				test_LapH.hpp                   \
 	       	                test_ChiralCondensate.hpp	\
+	       	                test_ChiralCondensate.hpp       \
+	                        test_QnumSuscept.hpp	        \
+	   	                test_Solver_HDCG.hpp		\
 				test_Add_Flux.hpp
+
