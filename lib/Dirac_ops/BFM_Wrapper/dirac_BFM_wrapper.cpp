@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-08-26 16:18:11 cossu>
+ * Time-stamp: <2014-09-10 11:49:34 cossu>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -83,7 +83,7 @@ Dirac_BFM_Wrapper::Dirac_BFM_Wrapper(XML::node node,
   }
 
   // Set Verbosity controls
-  parameters.verbose = 0;// default 0, debug = BfmDebug
+  parameters.verbose = 0;// default 0, debug = BfmDebug = 8 
   parameters.time_report_iter=-100;// default -100
 
   // Threading control parameters

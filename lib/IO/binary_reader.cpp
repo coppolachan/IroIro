@@ -3,7 +3,7 @@
  *
  * @brief Definition of the BinaryReader class methods
  *
- * Time-stamp: <2013-10-15 15:51:48 noaki>
+ * Time-stamp: <2014-07-15 17:42:34 neo>
  */
 
 
@@ -11,6 +11,7 @@
 #include "Tools/sunMat.hpp"
 #include "include/errors.hpp"
 #include "include/commonPrms.hpp"
+#include "Tools/byteswap.hpp"
 
 namespace CCIO {
   void BinaryReader::set_sources(FILE *src){
@@ -23,7 +24,14 @@ namespace CCIO {
   int BinaryReader::read(double *buffer, unsigned int size){
     //Read just as it is
     //order is (in, ex, sites)  
+
+
     size_t res = fread(buffer,sizeof(double),size,inputFile);
+
+#ifndef BIG_ENDIAN_TYPE
+    byte_swap(buffer, size);
+#endif
+
     return res;
   }
 

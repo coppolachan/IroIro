@@ -5,6 +5,7 @@
 #include "eigenSorter.hpp"
 #include "Fopr/fopr.h"
 #include "Fields/field_expressions.hpp"
+#include "include/messages_macros.hpp"
 #include <cassert>
 #include <iostream>
 #include <iomanip>
@@ -14,6 +15,8 @@ using namespace std;
 
 void EigenModesSolver_IRL::
 calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{ 
+  _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::calc\n");
+
   using namespace FieldExpression;
   const size_t fsize = opr_->fsize();
 
@@ -118,15 +121,17 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
       CCIO::cout<<"All eigenmodes upper/under the threshold are obtained.\n";
       break;
     }
+
     if(Icert.size()>=Nthrs_){/*!<@brief case2: having more modes than Nthrs */
       Iconv = iter;
       Neigen = Nthrs_; 
       CCIO::cout<<"Desired number of eigenmodes are obtained.\n";
       break;
     }
+
     if(iter==Niter_-1){      /*!<@brief case3: reached to max-iteration */
       Neigen = -Icert.size();
-      CCIO::cout<<"Reached to the max iteration count.\n";
+      CCIO::cout<<"Reached the max iteration count.\n";
       break;
     } 
   }// end of iter loop
@@ -138,6 +143,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
     ta.push_back(eval[Icert[i].first]);
     V.push_back(Vp[Icert[i].second]);
   }
+
   if(Neigen > 0){
     CCIO::cout << "\n Converged\n Summary :\n";
     CCIO::cout << " -- Iterations  = "<< Iconv       <<"\n";
@@ -194,25 +200,6 @@ orthogonalize(Field& f,const vector<Field>& V,int N)const{
     f.add(im, -sr[j]*V[j][im] -si[j]*V[j][re]);
   }
 }
-
-/* // modified Gram-Schmidt orthogonalization
-void EigenModesSolver_IRL::
-orthogonalize(Field& f,const vector<Field>& V,int N)const{
-  size_t size = f.size();
-  assert(size%2 ==0);
-
-  std::slice re(0,size/2,2);
-  std::slice im(1,size/2,2);
-
-  for(int j=0; j<N; ++j){
-    double sr = V[j]*f;
-    double si = V[j].im_prod(f);
-
-    f.add(re, -sr*V[j][re] +si*V[j][im]);
-    f.add(im, -sr*V[j][im] -si*V[j][re]);
-  }
-}
-*/
 
 void EigenModesSolver_IRL::setUnit(vector<double>& Qt)const{
   for(int i=0; i<Nm_*Nm_; ++i) Qt[i] = 0.0;

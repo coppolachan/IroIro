@@ -83,7 +83,7 @@ int Test_Solver_HDCG::run(){
     dwfa.neighbour_plus[mu]  = Communicator::instance()->node_up(mu);
     dwfa.neighbour_minus[mu] = Communicator::instance()->node_dn(mu);
   }
-  dwfa.verbose = 5;
+  dwfa.verbose = 8;
   dwfa.time_report_iter=100;
 
   for(int mu=0;mu<4;mu++){
@@ -110,7 +110,7 @@ int Test_Solver_HDCG::run(){
   BfmHDCGParams HDCGParams;
 
   //  HDCGcontrol Control = HdcgGenerateSubspace;////?
-  HDCGParams.NumberSubspace = 48;
+  HDCGParams.NumberSubspace = 24;
   HDCGParams.Ls = Ls;
   HDCGParams.Block[0] = 4;
   HDCGParams.Block[1] = 4;
@@ -128,10 +128,10 @@ int Test_Solver_HDCG::run(){
   HDCGParams.SubspaceSurfaceDepth = 6;
   HDCGParams.LittleDopSolverResidualInner =   0.04;
   HDCGParams.LittleDopSolverResidualVstart =   0.04;
-  HDCGParams.LittleDopSolverResidualSubspace =   1.0e-7;
+  HDCGParams.LittleDopSolverResidualSubspace =   1.0e-10;
   HDCGParams.LittleDopSubspaceRational = 0;
   HDCGParams.LittleDopSolverIterMax = 10000;
-  HDCGParams.LdopDeflVecs = 48;
+  HDCGParams.LdopDeflVecs = 24;
   HDCGParams.PreconditionerKrylovResidual =   1.0e-5;
   HDCGParams.PreconditionerKrylovIterMax = 7;
   HDCGParams.PreconditionerKrylovShift =   1.0;
@@ -154,7 +154,7 @@ int Test_Solver_HDCG::run(){
   
   //launch the test
   FermionField source(src.mksrc(0,0));
-
+ 
   SiteIndex_EvenOdd* ieo = SiteIndex_EvenOdd::instance();
   vector<int> esec= ieo->esec();
   vector<int> osec= ieo->osec();

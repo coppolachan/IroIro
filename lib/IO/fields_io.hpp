@@ -3,7 +3,7 @@
  *
  * @brief Declarations of MPI safe read/write routines for fields
  *
- * Time-stamp: <2014-07-18 16:52:02 noaki>
+ * Time-stamp: <2014-08-27 10:12:27 cossu>
  */
 #ifndef FIELDS_IO_HPP_
 #define FIELDS_IO_HPP_
@@ -343,12 +343,14 @@ namespace CCIO {
     }// end of node_t
     comm->sync();  
 
+    /*
     if(do_check){
       if(reader->check(f) != CHECK_PASS) 
 	Errors::IOErr(Errors::GenericError, 
 		      "Failed some basic tests on the gauge configuration");
       CCIO::cout << "Tests passed!\n";
     }
+    */
 
     if(comm->primaryNode()){
       fclose(inFile);

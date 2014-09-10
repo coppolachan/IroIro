@@ -4,7 +4,8 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-09-09 13:16:11 noaki>
+# Time-stamp: <2014-09-10 12:01:16 neo>
+
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -14,8 +15,8 @@ AM_LDFLAGS =
 
 if USE_BFM
 BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
-BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
-BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
+BFM_INCLUDE= -I$(BFM_HACK) -I$(BFM_HACK)/spi/include/kernel/cnk/
+BFM_LIBS= 
 BFM_LINKAGE= -lbfm -lbagel
 BFM_TESTPROGS += test_Solver_BFM
 BFM_TESTPROGS += test_BFM_Operator
@@ -132,8 +133,10 @@ test_PROGRAMS = test_HMC 		\
 		test_LapH		\
 		test_HadronSpectrum_HeavyLight\
 		test_ChiralCondensate \
-		test_QnumSuscept
-		test_ChiralCondensate 	
+		test_QnumSuscept	\
+		test_ChiralCondensate 	\
+		test_ReadEigenmodes	\
+		test_Add_Flux
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -263,6 +266,12 @@ test_LapH_SOURCES 		=	test_LapH.cpp	\
 test_HadronSpectrum_HeavyLight_SOURCES = test_HadronSpectrum_HeavyLight.cpp\
 					testerHadronSpectrumHeavyLight.cpp
 
+test_ReadEigenmodes_SOURCES	= 	test_ReadEigenModes.cpp \
+					testerReadEigenModes.cpp
+
+test_Add_Flux_SOURCES		=	test_Add_Flux.cpp	\
+					testerAdd_Flux.cpp
+
 ## Put all BFM related tests here
 if USE_BFM
 test_Solver_BFM_SOURCES =       test_Solver_BFM.cpp             \
@@ -325,6 +334,9 @@ include_HEADERS 	=	tests.hpp			\
                                 test_DiracWilson_Adjoint.hpp	\
 				test_Laplacian.hpp		\
 				test_LapH.hpp                   \
+	       	                test_ChiralCondensate.hpp	\
 	       	                test_ChiralCondensate.hpp       \
 	                        test_QnumSuscept.hpp	        \
-	   	                test_Solver_HDCG.hpp
+	   	                test_Solver_HDCG.hpp		\
+				test_Add_Flux.hpp
+

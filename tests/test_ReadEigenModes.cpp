@@ -5,7 +5,7 @@
  * @author Guido Cossu
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  *
- * Time-stamp: <2014-06-12 14:30:41 neo>
+ * Time-stamp: <2014-09-03 16:36:06 neo>
  */
 
 #include "test_ReadEigenModes.hpp"
@@ -145,12 +145,16 @@ int Test_ReadEigenModes::run(){
 
   std::ofstream plf, plif, topf;
   std::stringstream sspl,sstop; 
-  sspl << Emod_filename << "_PolyakovLoop"; 
-  sstop << Emod_filename << "_TopCharge"; 
+  // Just filename 
+  std::string fname = Emod_filename.substr(Emod_filename.rfind('/')+1);
+  CCIO::cout << "Filename: "<< fname << "\n";
+  
+  sspl << fname << "_PolyakovLoop"; 
+  sstop << fname << "_TopCharge"; 
   plf.open(sspl.str().c_str());
   topf.open(sstop.str().c_str());
   sspl.str("");
-  sspl << Emod_filename << "_PolyakovLoopIm";
+  sspl << fname << "_PolyakovLoopIm";
   plif.open(sspl.str().c_str());
 
  
@@ -200,16 +204,36 @@ int Test_ReadEigenModes::run(){
   EigenModes EigM(ReadEig_node);//must specify threshold
 
   // Read the required eigenvectors and store in fields
-  EigM.initialize< Format::Format_F >(Eval_filename, Emod_filename);
+  //EigM.initialize< Format::Format_F >(Eval_filename, Emod_filename);
 
 
 
 
   // Calculate the local norm of the eigenvector
-  CCIO::cout << "Norm: "<< EigM.evecs_[EigMode].norm() << "\n";
+  //  CCIO::cout << "Norm: "<< EigM.evecs_[EigMode].norm() << "\n";
 
+  // Get number of stored eigenvalues
+  std::ifstream reader(Eval_filename.c_str()); 
+  int idummy, iev=0;
+  double ev=0.0;
+  
+  while(reader>>idummy && reader>>ev){
+    iev++;
+  }
 
-  for (int eval = 0; eval < EigM.evecs_.size(); eval++){
+  CCIO::cout << "Found "<< iev << " eigenvalues in "<< Eval_filename << "\n";
+  
+  Field evec(FF.size());
+  
+  for (int eval = 0; eval < std::min(Nev, iev); eval++){
+
+    double eigenval;
+
+    if (EigM.singlemode< Format::Format_F >(eval, evec, eigenval, Eval_filename, Emod_filename))
+      continue;
+    CCIO::cout << "Eigenvalue: "<< eigenval << "\n";
+    CCIO::cout << "Norm: "<< evec.norm() << "\n";
+
     std::ofstream outf, outc;
     
     double ipr=0.0; //inverse participatio ratio
@@ -223,10 +247,10 @@ int Test_ReadEigenModes::run(){
     
     for (int t = 0 ; t < Nt; t++){
       std::stringstream ss;
-      ss << Emod_filename << "_"<< eval << "_norm_t" << t; 
+      ss << fname << "_"<< eval << "_norm_t" << t; 
       
       std::stringstream sc;
-      sc << Emod_filename << "_"<< eval << "_chirality_t" << t;   
+      sc << fname << "_"<< eval << "_chirality_t" << t;   
       
       if(comm->primaryNode()) {
 	outf.open(ss.str().c_str()); 
@@ -249,7 +273,8 @@ int Test_ReadEigenModes::run(){
 	    double pl_re = SUNmatUtils::ReTr(PL);
 	    double pl_im = SUNmatUtils::ImTr(PL);
 	    
-	    std::valarray<double> site_Array(EigM.evecs_[eval][FF.islice(site)]);
+	    //std::valarray<double> site_Array(EigM.evecs_[eval][FF.islice(site)]);
+	    std::valarray<double> site_Array(evec[FF.islice(site)]);
 	    
 	    //std::cout << "spinor\n";
 	    //print_va(site_Array);
@@ -297,14 +322,14 @@ int Test_ReadEigenModes::run(){
 	    //std::cout << "chi_norm: "<<chi_norm<<"\n";
 	    
 	    site_Array *=site_Array;
-	    site_norm = sqrt(site_Array.sum());
+	    site_norm = site_Array.sum();
 	    
 	    outf << SiteIndex::instance()->global_x(x) << " "
 		 << SiteIndex::instance()->global_y(y) << " "
 		 << SiteIndex::instance()->global_z(z) << " "
 		 << site_norm << " "<< pl_re << " "<< pl_im <<"\n";
 	    
-	    ipr += site_norm*site_norm*site_norm*site_norm;
+	    ipr += site_norm*site_norm;//*site_norm*site_norm;
 	    
 	  
 	    

@@ -52,7 +52,9 @@ void Dirac_staggered_EvenOdd_Adjoint::set_ustag(){
 
 #ifdef IBM_BGQ_WILSON 
 #if __VECTOR4DOUBLE__
-#include "Architecture_Optimized/dirac_staggered_EvenOdd_Adjoint_BGQ.code"
+//#include "Architecture_Optimized/dirac_staggered_EvenOdd_Adjoint_BGQ.code"
+//DEBUGGING
+#include "dirac_staggered_EvenOdd_Adjoint_improved.code" 
 #else
 #include "dirac_staggered_EvenOdd_Adjoint_improved.code"
 #endif 

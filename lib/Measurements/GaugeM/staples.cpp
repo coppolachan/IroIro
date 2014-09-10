@@ -481,6 +481,9 @@ GaugeField1D Staples::upper(const GaugeField& G, int mu, int nu) const{
   for(int site=0; site<Nvol_; ++site)
     c.data[c.format.islice(site)] 
       = (mat(w,site)*mat(VupNu,site)*mat_dag(WupMu,site)).getva();
+
+
+
 #endif
 #endif
   return c;

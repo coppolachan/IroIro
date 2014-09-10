@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-09-06 08:25:52 noaki>
+# Time-stamp: <2014-09-10 11:49:57 cossu>
 
 ###########################################
 AUTOMAKE_OPTIONS = subdir-objects
@@ -106,8 +106,8 @@ endif
 # Optional for Peter's Bagel/BFM libs
 if USE_BFM
 BFM_HACK=/bgsys/drivers/V1R1M2/ppc64/
-BFM_INCLUDE= -I$(BFM_HACK) -I/dirac1/work/x03/SFW/IROIRO/V1.0/install -I$(BFM_HACK)/spi/include/kernel/cnk/
-BFM_LIBS= -L/dirac1/work/x03/SFW/IROIRO/V1.0/install/lib 
+BFM_INCLUDE= -I$(BFM_HACK) -I$(BFM_HACK)/spi/include/kernel/cnk/
+BFM_LIBS= 
 BFM_SRC = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp 
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.cpp 
 BFM_SRC += Tools/Bagel/bfm_storage.cpp 
