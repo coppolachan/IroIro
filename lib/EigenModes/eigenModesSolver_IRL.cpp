@@ -18,7 +18,7 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
   const size_t fsize = opr_->fsize();
 
   CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Nm_-Nk_<<" Nm = "<<Nm_<<"\n";
-  CCIO::cout<<"Ritz pair with res >1000x"<<prec_<<" is ignored\n";
+  CCIO::cout<<"Ritz pair with res > "<< ngPrec_*prec_<<" is ignored\n";
 
   V.assign(Nm_,Field(fsize,1.0));
 
@@ -99,8 +99,8 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 	Icert.push_back(pair<int,int>(i,idx[i]));
         if(esorter_->beyond_thrs(eval[i],opr_)) ++Nover; 
       }else{
-	if(res[idx[i]] >1000*prec_) continue;
-	else                        break;
+	if(res[idx[i]] >ngPrec_*prec_) continue;
+	else                           break;
       }
     }  
     /*

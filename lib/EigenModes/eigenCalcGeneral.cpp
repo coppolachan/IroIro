@@ -53,13 +53,16 @@ EigenSorter* EigenCalcGeneral::eigenSorterFactory(const XML::node& node)const{
 EigenModesSolver* EigenCalcGeneral::eigSlvFactory(const Fopr_Herm* op,
 						  const EigenSorter* esort){
   int Nk,Np,Niter,Nthrs,max_iter;
-  double prec;
+  double prec;  
+  double ngPrec = 1.0e+5;
+
   XML::read(eslvNode_,"Nthreshold",Nthrs,MANDATORY);
   XML::read(eslvNode_,"Nk",Nk,MANDATORY);
   XML::read(eslvNode_,"Np",Np,MANDATORY);
   XML::read(eslvNode_,"precision",prec,MANDATORY);
+  XML::read(eslvNode_,"NGprec_factor",ngPrec);
   XML::read(eslvNode_,"max_iter",Niter,MANDATORY);
-
+  
   if(opAccelFptr_.get()){
     CCIO::cout<<"Acceleration is ON\n";
     double thrs = op->func(esort->thrs());
@@ -74,7 +77,7 @@ EigenModesSolver* EigenCalcGeneral::eigSlvFactory(const Fopr_Herm* op,
   }else{
     CCIO::cout<<"Acceleration is OFF\n";
   }
-  return new EigenModesSolver_IRL(op,esort,Nk,Np,prec,Niter,Nthrs);
+  return new EigenModesSolver_IRL(op,esort,Nk,Np,prec,Niter,ngPrec,Nthrs);
 }
 
 void EigenCalcGeneral::do_calc(InputConfig& input){

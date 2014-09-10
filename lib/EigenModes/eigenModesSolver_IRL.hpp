@@ -21,6 +21,7 @@ private:
   int Nk_;
   int Nm_;
   double prec_;
+  double ngPrec_;
   double scale_;
   int Niter_;
   
@@ -44,7 +45,7 @@ private:
 public:
   EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
 		       XML::node node)
-    :opr_(fopr),esorter_(esorter){
+    :opr_(fopr),esorter_(esorter),ngPrec_(1.0e+5){
 
     XML::read(node,"Nthreshold",Nthrs_,MANDATORY);
     XML::read(node,"Nk",Nk_,MANDATORY);
@@ -52,6 +53,7 @@ public:
     XML::read(node,"Np",Np,MANDATORY);
     Nm_= Nk_+Np;
     XML::read(node,"precision",prec_,MANDATORY);
+    XML::read(node,"NGprec_factor",ngPrec_);
     XML::read(node,"max_iter",Niter_,MANDATORY);
 
     assert(Nk_>Nthrs_);
@@ -59,9 +61,12 @@ public:
   }
 
   EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
-		       int Nk,int Np,double prec,int Niter,int Nthrs=10000)
+		       int Nk,int Np,double prec,int Niter,
+		       double ngPrec=1.0e+5,int Nthrs=10000)
     :opr_(fopr),esorter_(esorter),
-     Nthrs_(Nthrs),Nk_(Nk),Nm_(Nk+Np),Niter_(Niter),prec_(prec){
+     Nthrs_(Nthrs),Nk_(Nk),Nm_(Nk+Np),Niter_(Niter),
+     prec_(prec),
+     ngPrec_(ngPrec){
     ///
     assert(Nm_>Nk_);
     assert(Nk_>Nthrs_);
