@@ -3,7 +3,7 @@
  * @brief Implementation of test_HadronSpectrum_HeavyLight class
  * This class obtains hadron correlators from combinations of 
  * Source-smeared propagators and multi-mass propagators
- * Time-stamp: <2014-07-16 11:45:48 noaki>
+ * Time-stamp: <2014-08-07 13:29:07 noaki>
  */
 #include "include/factories.hpp"
 #include "include/messages_macros.hpp"
@@ -76,14 +76,20 @@ int Test_HadronSpectrum_HeavyLight::run(){
       }      
       CCIO::cout<<" [contraction with (sink, source) = ("<<s1<<", "<< s0<<")]\n";
 
-      writerLL<<":::::: ud-ud mesons (sink, source) = ("<<s1<<","<<s0<<") ::::::\n";
+      if(Communicator::instance()->primaryNode())
+	writerLL<<":::::: ud-ud mesons (sink, source) = ("<<s1<<","<<s0<<") ::::::\n";
       Hadrons::mesonPropGeneral(qpSud,qpSud,writerLL);    
-      writerLL<<":::::: ud-s mesons (sink, source) = ("<<s1<<","<<s0<<") ::::::\n";
+      
+      if(Communicator::instance()->primaryNode())
+	writerLL<<":::::: ud-s mesons (sink, source) = ("<<s1<<","<<s0<<") ::::::\n";
       Hadrons::mesonPropGeneral(qpSud,qpSst,writerLL);
-      writerLL<<":::::: s-s mesons (sink, source) = ("<<s1<<","<<s0<<") ::::::\n";
-      Hadrons::mesonPropGeneral(qpSst,qpSst,writerLL);    
 
-      writerLL<<":::::: baryons (sink, source) = ("<<s1<<","<<s0<<") ::::::\n";
+      if(Communicator::instance()->primaryNode())
+	writerLL<<":::::: s-s mesons (sink, source) = ("<<s1<<","<<s0<<") ::::::\n";
+      Hadrons::mesonPropGeneral(qpSst,qpSst,writerLL);    
+      
+      if(Communicator::instance()->primaryNode())
+	writerLL<<":::::: baryons (sink, source) = ("<<s1<<","<<s0<<") ::::::\n";
       Hadrons::baryonProp(qpSud,qpSst,writerLL);
     }
     qpUpDown.push_back(qpud);  // saving solved propagators
@@ -122,26 +128,43 @@ int Test_HadronSpectrum_HeavyLight::run(){
       for(int s1=0; s1<fs.size(); ++s1){
 	prop_t qpSud, qpSst;                           // sink smearing
 	for(int cs=0; cs<qpUpDown[s0].size(); ++cs){
+	  /*
+	  Field tmp = fs[s1]->mult(qpUpDown[s0][cs]);
+	  tmp /= tmp.norm();
+	  qpSud.push_back(tmp);
+
+	  tmp = fs[s1]->mult(qpStrange[s0][cs]);
+	  tmp /= tmp.norm();
+	  qpSst.push_back(tmp);
+	  */
 	  qpSud.push_back(fs[s1]->mult(qpUpDown[s0][cs]));
 	  qpSst.push_back(fs[s1]->mult(qpStrange[s0][cs]));
 	}
 	CCIO::cout<<" [contraction with (sink, source) = ("<<s1<<", "<< s0<<")]\n";
 
-	writerHL<<":::::: heavy-ud mesons (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
+	if(Communicator::instance()->primaryNode())
+	  writerHL<<":::::: heavy-ud mesons (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
 	Hadrons::mesonPropGeneral(qpSud,qpHeavy,writerHL);    
-	writerHL<<":::::: heavy-s mesons  (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
+
+	if(Communicator::instance()->primaryNode())
+	  writerHL<<":::::: heavy-s mesons  (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
 	Hadrons::mesonPropGeneral(qpSst,qpHeavy,writerHL);    
 
-	writerHL<<":::::: heavy-ud baryons (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
+	if(Communicator::instance()->primaryNode())
+	  writerHL<<":::::: heavy-ud baryons (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
 	Hadrons::baryonProp(qpSud,qpHeavy,writerHL);
-	writerHL<<":::::: heavy-s baryons (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
+
+	if(Communicator::instance()->primaryNode())
+	  writerHL<<":::::: heavy-s baryons (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
 	Hadrons::baryonProp(qpSst,qpHeavy,writerHL);
       }
     }
-    writerHL<<":::::: heaby-heaby mesons ::::::\n";	
+    if(Communicator::instance()->primaryNode())
+      writerHL<<":::::: heaby-heaby mesons ::::::\n";	
     Hadrons::mesonPropGeneral(qpHeavy,qpHeavy,writerHL);    
-
-    writerHL<<":::::: heaby-heaby baryons ::::::\n";	
+    
+    if(Communicator::instance()->primaryNode())
+      writerHL<<":::::: heaby-heaby baryons ::::::\n";	
     Hadrons::baryonProp(qpHeavy,qpHeavy,writerHL);
     outputfile.str("");
   }

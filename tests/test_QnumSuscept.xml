@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- sample input file for configuration generator -->
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>8 8 8 8</Lattice>
+    <Nodes>1 1 1 1</Nodes>
+  </Geometry>
+
+  <!-- Input configuration -->
+  <Configuration Type="TextFile" Input="FileList">
+    <GaugeConfigs>
+      <filename>conf_08080808.txt</filename> 
+    </GaugeConfigs>
+  </Configuration>
+  <RandomNumberGen name="Mersenne Twister">
+    <!--   <seedFile>seed_file</seedFile>-->
+    <init>0x123 0x234 0x345 0x456</init> 
+  </RandomNumberGen>
+  <GaugeFixing name="NoFixing"/>  
+  <Smearing type="Stout">
+    <Nsmear>0</Nsmear>
+    <Base type="APE">
+      <rho>0.1</rho>
+    </Base>
+  </Smearing>
+
+  <Measurement>  
+    <QuarkNumberSusceptibility>
+
+      <DiracWFD name="DiracWilson_FiniteDensity">
+	<mass>-0.5</mass>
+	<mu>0.2</mu>
+      </DiracWFD>
+
+      <Solver type="Solver_CG">
+	<MaxIter>15000</MaxIter>
+	<Precision>1e-20</Precision>
+      </Solver>
+
+      <Nnoise>20</Nnoise>
+      <NoiseSource type="WhiteNoise"/>
+<!--  <NoiseSource type="Z2noise">
+	<NoiseType>ComplexZ2</NoiseType>
+      </NoiseSource>
+-->
+    </QuarkNumberSusceptibility>
+  </Measurement>
+  
+</Parameters>
+

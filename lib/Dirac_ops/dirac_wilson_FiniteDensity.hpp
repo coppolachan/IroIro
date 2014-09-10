@@ -1,14 +1,16 @@
 /*! @file dirac_wilson_FiniteDensity.hpp
  * @brief Dirac_Wilson_FiniteDensity class, which accommodates 
     finite chemical potential (the normal site-indexing version)
- Time-stamp: <2014-05-19 18:30:33 noaki>
+ Time-stamp: <2014-08-27 21:57:44 noaki>
  */
 #ifndef DIRAC_WILSON_FINITEDENSITY_INCLUDED
 #define DIRAC_WILSON_FINITEDENSITY_INCLUDED
 
+#include "dirac_WilsonLikeFiniteDensity.hpp"
 #include "dirac_wilson.hpp"
 
-class Dirac_Wilson_FiniteDensity: public DiracWilsonLike{
+
+class Dirac_Wilson_FiniteDensity: public DiracWilsonLikeFiniteDensity{
 private:
   const Field* const u_;
   Dirac_Wilson Dw_;
@@ -36,6 +38,10 @@ public:
 
   const Field gamma5(const Field& f) const{ return Dw_.gamma5(f);}
   const Field* getGaugeField_ptr()const{ return u_;}  
+
+  const Field mult_Ds(const Field&)const;
+  const Field mult_Dtp(const Field&)const;
+  const Field mult_Dtm(const Field&)const;
 
   size_t fsize() const{ return Dw_.fsize();}
   size_t gsize() const{ return Dw_.gsize();}

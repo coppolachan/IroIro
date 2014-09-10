@@ -1,6 +1,6 @@
 /*! @file dirac_wilson.hpp
  * @brief Dirac_Wilson class 
- Time-stamp: <2014-07-08 16:40:56 noaki>
+ Time-stamp: <2014-08-25 21:16:19 noaki>
  */
 #ifndef DIRAC_WILSON_INCLUDED
 #define DIRAC_WILSON_INCLUDED

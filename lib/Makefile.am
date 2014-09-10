@@ -4,7 +4,8 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-09-03 12:02:08 cossu>
+# Time-stamp: <2014-09-10 11:49:57 cossu>
+
 ###########################################
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -78,7 +79,6 @@ ACTION_SRC += Action/Architecture_Optimized/action_gauge_wilson_force.sr16k.cpp
 SMEAR_SRC += Smearing/stoutSmear_core.cpp
 SMEAR_SRC += Smearing/smartConf_core.cpp
 SMEAR_SRC += Smearing/APEsmear.cpp	
-UTILS_HDR += Tools/Architecture_Optimized/srmwilson_cmpl.hpp
 else
 ACTION_SRC = Action/action_gauge_rect.cpp
 ACTION_SRC += Action/action_gauge_wilson_force.cpp
@@ -114,8 +114,8 @@ BFM_SRC += Tools/Bagel/bfm_storage.cpp
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp
 # Only with BFM 3.30
-BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
-BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
 else
 BFM_SRC = 
 endif
@@ -131,6 +131,7 @@ lib_LIBRARIES = libcommcode.a
 EXTRA_DIST =    HMC/mdExec_leapfrog_eigen.cpp	\
 		Main/documentation_pages.h	\
                 Dirac_ops/dirac_wilson_improved.code    \
+                Dirac_ops/dirac_wilson_standard.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
@@ -178,6 +179,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_wilson_FiniteDensity.cpp	\
+		Dirac_ops/dirac_clover_FiniteDensity.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
 		Dirac_ops/dirac_Mobius.cpp			\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
@@ -195,6 +197,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson_Brillouin_OSS.cpp	\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/wilsonLikeUtils.cpp           	\
+		Dirac_ops/cloverTerm.cpp     	        	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
@@ -418,6 +421,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac.hpp			\
 			Dirac_ops/dirac_WilsonLike.hpp		\
+			Dirac_ops/dirac_WilsonLikeFiniteDensity.hpp	\
 			Dirac_ops/dirac_staggeredLike.hpp	\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_adjoint.hpp	\
@@ -427,6 +431,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_wilson_FiniteDensity.hpp	\
+			Dirac_ops/dirac_clover_FiniteDensity.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_Mobius.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
@@ -442,6 +447,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/domainWallUtils.hpp           \
 			Dirac_ops/wilsonLikeUtils.hpp           \
 			Dirac_ops/eoUtils.hpp            	\
+			Dirac_ops/cloverTerm.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\

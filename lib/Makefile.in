@@ -15,6 +15,14 @@
 
 @SET_MAKE@
 
+#                         -*- Automake -*-
+# Process this file with automake to produce a makefile.
+#
+# Project IROIRO JLQCD package (KEK) 
+# Lattice QCD MonteCarlo simulations
+#
+# Time-stamp: <2014-09-10 11:49:57 cossu>
+
 
 
 VPATH = @srcdir@
@@ -64,8 +72,7 @@ target_triplet = @target@
 @IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@am__append_12 = Smearing/stoutSmear_core.cpp \
 @IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@	Smearing/smartConf_core.cpp \
 @IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@	Smearing/APEsmear.cpp
-@IBM_BGQKERNELS_FALSE@@SR_WILSON_TRUE@am__append_13 = Tools/Architecture_Optimized/srmwilson_cmpl.hpp
-@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@am__append_14 = Smearing/stoutSmear_core.cpp \
+@IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@am__append_13 = Smearing/stoutSmear_core.cpp \
 @IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	Smearing/smartConf_core.cpp \
 @IBM_BGQKERNELS_FALSE@@SR_WILSON_FALSE@	Smearing/APEsmear.cpp
 bin_PROGRAMS = main_hmc$(EXEEXT) main_hadron_spectrum_Nf2p1$(EXEEXT)
@@ -146,6 +153,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd.cpp \
 	Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp \
 	Dirac_ops/dirac_wilson_FiniteDensity.cpp \
+	Dirac_ops/dirac_clover_FiniteDensity.cpp \
 	Dirac_ops/dirac_clover.cpp Dirac_ops/dirac_Mobius.cpp \
 	Dirac_ops/fopr_signH_Zolotarev.cpp \
 	Dirac_ops/dirac_overlap_Zolotarev.cpp \
@@ -162,7 +170,7 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_DomainWall_4D_eoSolv.cpp \
 	Dirac_ops/dirac_wilson_Brillouin.cpp \
 	Dirac_ops/dirac_wilson_Brillouin_OSS.cpp Dirac_ops/eoUtils.cpp \
-	Dirac_ops/wilsonLikeUtils.cpp \
+	Dirac_ops/wilsonLikeUtils.cpp Dirac_ops/cloverTerm.cpp \
 	Dirac_ops/BoundaryConditions/boundaryCond.cpp \
 	Dirac_ops/subSpaceProjector.cpp \
 	Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
@@ -172,8 +180,6 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/Bagel/bfm_storage.cpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp \
-	Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp \
-	Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp \
 	EigenModes/eigenCalcGeneral.cpp \
 	EigenModes/eigenModesSolver_Factory.cpp \
 	EigenModes/eigenModesSolver_IRL.cpp \
@@ -259,9 +265,7 @@ am__objects_6 =
 @USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.$(OBJEXT) \
 @USE_BFM_TRUE@	Tools/Bagel/bfm_storage.$(OBJEXT) \
 @USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.$(OBJEXT) \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.$(OBJEXT) \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.$(OBJEXT) \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/BFM_HDCG.$(OBJEXT)
+@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.$(OBJEXT)
 @IBM_BGQKERNELS_TRUE@am__objects_8 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/smartConf_core_BGQ.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/APEsmear_BGQ.$(OBJEXT)
@@ -305,6 +309,7 @@ am_libcommcode_a_OBJECTS = Main/commonPrms.$(OBJEXT) $(am__objects_1) \
 	Dirac_ops/dirac_staggered_EvenOdd.$(OBJEXT) \
 	Dirac_ops/dirac_staggered_EvenOdd_Adjoint.$(OBJEXT) \
 	Dirac_ops/dirac_wilson_FiniteDensity.$(OBJEXT) \
+	Dirac_ops/dirac_clover_FiniteDensity.$(OBJEXT) \
 	Dirac_ops/dirac_clover.$(OBJEXT) \
 	Dirac_ops/dirac_Mobius.$(OBJEXT) \
 	Dirac_ops/fopr_signH_Zolotarev.$(OBJEXT) \
@@ -320,6 +325,7 @@ am_libcommcode_a_OBJECTS = Main/commonPrms.$(OBJEXT) $(am__objects_1) \
 	Dirac_ops/dirac_wilson_Brillouin_OSS.$(OBJEXT) \
 	Dirac_ops/eoUtils.$(OBJEXT) \
 	Dirac_ops/wilsonLikeUtils.$(OBJEXT) \
+	Dirac_ops/cloverTerm.$(OBJEXT) \
 	Dirac_ops/dirac_Operator_Factory.$(OBJEXT) \
 	Dirac_ops/BoundaryConditions/boundaryCond.$(OBJEXT) \
 	Dirac_ops/subSpaceProjector.$(OBJEXT) \
@@ -457,7 +463,6 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	$(top_srcdir)/include/errors.hpp \
 	$(top_srcdir)/include/inputConfig.hpp \
 	Tools/Architecture_Optimized/utils_BGQ.hpp \
-	Tools/Architecture_Optimized/srmwilson_cmpl.hpp \
 	Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.hpp \
 	PugiXML/pugixml.hpp PugiXML/pugiconfig.hpp \
 	PugiXML/xmlUtilities.hpp Action/action_gauge_wilson.hpp \
@@ -525,6 +530,7 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Dirac_ops/dirac_DWoverlap.hpp \
 	Dirac_ops/dirac_overlap_Zolotarev.hpp Dirac_ops/dirac.hpp \
 	Dirac_ops/dirac_WilsonLike.hpp \
+	Dirac_ops/dirac_WilsonLikeFiniteDensity.hpp \
 	Dirac_ops/dirac_staggeredLike.hpp Dirac_ops/dirac_wilson.hpp \
 	Dirac_ops/dirac_wilson_adjoint.hpp \
 	Dirac_ops/dirac_wilson_EvenOdd.hpp \
@@ -533,6 +539,7 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Dirac_ops/dirac_staggered_EvenOdd.hpp \
 	Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp \
 	Dirac_ops/dirac_wilson_FiniteDensity.hpp \
+	Dirac_ops/dirac_clover_FiniteDensity.hpp \
 	Dirac_ops/dirac_clover.hpp Dirac_ops/dirac_Mobius.hpp \
 	Dirac_ops/dirac_DomainWall.hpp \
 	Dirac_ops/dirac_DomainWall_adjoint.hpp \
@@ -545,6 +552,7 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Dirac_ops/dirac_LowModeDeflation_Approx.hpp \
 	Dirac_ops/domainWallCore.hpp Dirac_ops/domainWallUtils.hpp \
 	Dirac_ops/wilsonLikeUtils.hpp Dirac_ops/eoUtils.hpp \
+	Dirac_ops/cloverTerm.hpp \
 	Dirac_ops/BoundaryConditions/boundaryCond.hpp \
 	Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp \
 	Dirac_ops/subSpaceProjector.hpp \
@@ -738,13 +746,6 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
-#                         -*- Automake -*-
-# Process this file with automake to produce a makefile.
-#
-# Project IROIRO JLQCD package (KEK) 
-# Lattice QCD MonteCarlo simulations
-#
-# Time-stamp: <2014-09-03 12:02:08 cossu>
 ###########################################
 AUTOMAKE_OPTIONS = subdir-objects
 
@@ -757,9 +758,9 @@ OPTLIB = $(am__append_1) $(am__append_2) $(am__append_3) \
 DWF_BGQ_SRC = $(am__append_7)
 DWF_BGQ_HDR = $(am__append_8)
 DWL_BGQ_SRC = 
-SMEAR_SRC = $(am__append_9) $(am__append_12) $(am__append_14)
+SMEAR_SRC = $(am__append_9) $(am__append_12) $(am__append_13)
 UTILS_SRC = $(am__append_10)
-UTILS_HDR = $(am__append_11) $(am__append_13)
+UTILS_HDR = $(am__append_11)
 @IBM_BGQ_FALSE@@USE_MPI_TRUE@COMMUNICATOR_SRC = Communicator/communicator_mpi.cpp
 @IBM_BGQ_TRUE@@USE_MPI_TRUE@COMMUNICATOR_SRC = Communicator/ArchitectureDep/communicator_mpi_bgq.cpp
 
@@ -785,21 +786,22 @@ UTILS_HDR = $(am__append_11) $(am__append_13)
 @USE_BFM_TRUE@BFM_HACK = /bgsys/drivers/V1R1M2/ppc64/
 @USE_BFM_TRUE@BFM_INCLUDE = -I$(BFM_HACK) -I$(BFM_HACK)/spi/include/kernel/cnk/
 @USE_BFM_TRUE@BFM_LIBS = 
-@USE_BFM_FALSE@BFM_SRC = 
 # Only with BFM 3.30
+#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+@USE_BFM_FALSE@BFM_SRC = 
 @USE_BFM_TRUE@BFM_SRC = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp \
 @USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.cpp \
 @USE_BFM_TRUE@	Tools/Bagel/bfm_storage.cpp \
 @USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp
 AM_CPPFLAGS = -I$(top_srcdir) $(BFM_INCLUDE)
 AM_CFLAGS = -I$(top_srcdir) 
 lib_LIBRARIES = libcommcode.a 
 EXTRA_DIST = HMC/mdExec_leapfrog_eigen.cpp	\
 		Main/documentation_pages.h	\
                 Dirac_ops/dirac_wilson_improved.code    \
+                Dirac_ops/dirac_wilson_standard.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_improved.code    \
                 Dirac_ops/dirac_staggered_EvenOdd_Adjoint_improved.code    \
                 Dirac_ops/dirac_wilson_Brillouin_regular.code    	\
@@ -847,6 +849,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_staggered_EvenOdd.cpp	\
 		Dirac_ops/dirac_staggered_EvenOdd_Adjoint.cpp	\
 		Dirac_ops/dirac_wilson_FiniteDensity.cpp	\
+		Dirac_ops/dirac_clover_FiniteDensity.cpp	\
 		Dirac_ops/dirac_clover.cpp			\
 		Dirac_ops/dirac_Mobius.cpp			\
 		Dirac_ops/fopr_signH_Zolotarev.cpp		\
@@ -864,6 +867,7 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/dirac_wilson_Brillouin_OSS.cpp	\
 		Dirac_ops/eoUtils.cpp           		\
 		Dirac_ops/wilsonLikeUtils.cpp           	\
+		Dirac_ops/cloverTerm.cpp     	        	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
 		Dirac_ops/subSpaceProjector.cpp	  	        \
@@ -1084,6 +1088,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_overlap_Zolotarev.hpp	\
 			Dirac_ops/dirac.hpp			\
 			Dirac_ops/dirac_WilsonLike.hpp		\
+			Dirac_ops/dirac_WilsonLikeFiniteDensity.hpp	\
 			Dirac_ops/dirac_staggeredLike.hpp	\
 			Dirac_ops/dirac_wilson.hpp		\
 			Dirac_ops/dirac_wilson_adjoint.hpp	\
@@ -1093,6 +1098,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/dirac_staggered_EvenOdd.hpp	\
 			Dirac_ops/dirac_staggered_EvenOdd_Adjoint.hpp	\
 			Dirac_ops/dirac_wilson_FiniteDensity.hpp	\
+			Dirac_ops/dirac_clover_FiniteDensity.hpp	\
 			Dirac_ops/dirac_clover.hpp		\
 			Dirac_ops/dirac_Mobius.hpp		\
 			Dirac_ops/dirac_DomainWall.hpp   	\
@@ -1108,6 +1114,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/domainWallUtils.hpp           \
 			Dirac_ops/wilsonLikeUtils.hpp           \
 			Dirac_ops/eoUtils.hpp            	\
+			Dirac_ops/cloverTerm.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
 			Dirac_ops/subSpaceProjector.hpp		\
@@ -1405,6 +1412,8 @@ Dirac_ops/dirac_staggered_EvenOdd_Adjoint.$(OBJEXT):  \
 	Dirac_ops/$(am__dirstamp) Dirac_ops/$(DEPDIR)/$(am__dirstamp)
 Dirac_ops/dirac_wilson_FiniteDensity.$(OBJEXT):  \
 	Dirac_ops/$(am__dirstamp) Dirac_ops/$(DEPDIR)/$(am__dirstamp)
+Dirac_ops/dirac_clover_FiniteDensity.$(OBJEXT):  \
+	Dirac_ops/$(am__dirstamp) Dirac_ops/$(DEPDIR)/$(am__dirstamp)
 Dirac_ops/dirac_clover.$(OBJEXT): Dirac_ops/$(am__dirstamp) \
 	Dirac_ops/$(DEPDIR)/$(am__dirstamp)
 Dirac_ops/dirac_Mobius.$(OBJEXT): Dirac_ops/$(am__dirstamp) \
@@ -1462,6 +1471,8 @@ Dirac_ops/eoUtils.$(OBJEXT): Dirac_ops/$(am__dirstamp) \
 	Dirac_ops/$(DEPDIR)/$(am__dirstamp)
 Dirac_ops/wilsonLikeUtils.$(OBJEXT): Dirac_ops/$(am__dirstamp) \
 	Dirac_ops/$(DEPDIR)/$(am__dirstamp)
+Dirac_ops/cloverTerm.$(OBJEXT): Dirac_ops/$(am__dirstamp) \
+	Dirac_ops/$(DEPDIR)/$(am__dirstamp)
 Dirac_ops/BoundaryConditions/$(am__dirstamp):
 	@$(MKDIR_P) Dirac_ops/BoundaryConditions
 	@: > Dirac_ops/BoundaryConditions/$(am__dirstamp)
@@ -1501,12 +1512,6 @@ Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.$(OBJEXT):  \
 	Dirac_ops/BFM_Wrapper/$(am__dirstamp) \
 	Dirac_ops/BFM_Wrapper/$(DEPDIR)/$(am__dirstamp)
 Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.$(OBJEXT):  \
-	Dirac_ops/BFM_Wrapper/$(am__dirstamp) \
-	Dirac_ops/BFM_Wrapper/$(DEPDIR)/$(am__dirstamp)
-Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.$(OBJEXT):  \
-	Dirac_ops/BFM_Wrapper/$(am__dirstamp) \
-	Dirac_ops/BFM_Wrapper/$(DEPDIR)/$(am__dirstamp)
-Dirac_ops/BFM_Wrapper/BFM_HDCG.$(OBJEXT):  \
 	Dirac_ops/BFM_Wrapper/$(am__dirstamp) \
 	Dirac_ops/BFM_Wrapper/$(DEPDIR)/$(am__dirstamp)
 EigenModes/$(am__dirstamp):
@@ -1913,13 +1918,12 @@ mostlyclean-compile:
 	-rm -f Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.$(OBJEXT)
 	-rm -f Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.$(OBJEXT)
 	-rm -f Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.$(OBJEXT)
-	-rm -f Dirac_ops/BFM_Wrapper/BFM_HDCG.$(OBJEXT)
 	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.$(OBJEXT)
-	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.$(OBJEXT)
 	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.$(OBJEXT)
 	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.$(OBJEXT)
 	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.$(OBJEXT)
 	-rm -f Dirac_ops/BoundaryConditions/boundaryCond.$(OBJEXT)
+	-rm -f Dirac_ops/cloverTerm.$(OBJEXT)
 	-rm -f Dirac_ops/dirac.$(OBJEXT)
 	-rm -f Dirac_ops/dirac_DWoverlap.$(OBJEXT)
 	-rm -f Dirac_ops/dirac_DomainWall_4D_eoSolv.$(OBJEXT)
@@ -1932,6 +1936,7 @@ mostlyclean-compile:
 	-rm -f Dirac_ops/dirac_Operator_Factory.$(OBJEXT)
 	-rm -f Dirac_ops/dirac_Operator_FactoryCreator.$(OBJEXT)
 	-rm -f Dirac_ops/dirac_clover.$(OBJEXT)
+	-rm -f Dirac_ops/dirac_clover_FiniteDensity.$(OBJEXT)
 	-rm -f Dirac_ops/dirac_overlap_Zolotarev.$(OBJEXT)
 	-rm -f Dirac_ops/dirac_staggeredLike.$(OBJEXT)
 	-rm -f Dirac_ops/dirac_staggered_EvenOdd.$(OBJEXT)
@@ -2079,6 +2084,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@Communicator/$(DEPDIR)/communicator_mpi.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Communicator/$(DEPDIR)/communicator_single.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Communicator/ArchitectureDep/$(DEPDIR)/communicator_mpi_bgq.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/cloverTerm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac_DWoverlap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac_DomainWall_4D_eoSolv.Po@am__quote@
@@ -2091,6 +2097,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac_Operator_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac_Operator_FactoryCreator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac_clover.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac_clover_FiniteDensity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac_overlap_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac_staggeredLike.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/dirac_staggered_EvenOdd.Po@am__quote@
@@ -2109,9 +2116,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/Architecture_Optimized/$(DEPDIR)/domainWallCore_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/Architecture_Optimized/$(DEPDIR)/domainWallExtra_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/Architecture_Optimized/$(DEPDIR)/domainWallSolver_BGQ.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/BFM_HDCG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_DomainWall_4D_eo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_HDCG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_wrapper_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_wrapper_mixed_prec.Po@am__quote@

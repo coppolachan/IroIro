@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2014-07-04 11:29:56 noaki>
+ * Time-stamp: <2014-08-28 11:03:39 noaki>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "PugiXML/xmlUtilities.hpp"
@@ -119,6 +119,18 @@ namespace Diracs {
     XML::stopMsg(node,"Dirac_name");      
   }
 
+  DiracWilsonLikeFiniteDensityFactory* 
+  createDiracWilsonLikeFiniteDensityFactory(const XML::node& node){
+    XML::nullCheck(node,"Dirac_name");
+    const char* Dirac_name = node.attribute("name").value();
+    
+    if(!strcmp(Dirac_name, "DiracWilson_FiniteDensity"))  
+      return new DiracWilsonFiniteDensityFactory(node);
+    if(!strcmp(Dirac_name, "DiracClover_FiniteDensity"))  
+      return new DiracCloverFiniteDensityFactory(node);
+    XML::stopMsg(node,"Dirac_name");      
+  }
+
   // This is for the Dirac-op creation beyond the WilsonLike framework
   DiracFactory* createGeneralDiracFactory(const XML::node& node){
     // temporal hack
@@ -132,10 +144,12 @@ namespace Diracs {
     
     if(!strcmp(Dirac_name, "DiracWilson"))  
       return new DiracWilsonFactory(node);
-    if(!strcmp(Dirac_name, "DiracWilonFiniteDensity"))  
+    if(!strcmp(Dirac_name, "DiracWilson_FiniteDensity"))  
       return new DiracWilsonFiniteDensityFactory(node);
     if(!strcmp(Dirac_name, "DiracClover"))  
       return new DiracCloverFactory(node);
+    if(!strcmp(Dirac_name, "DiracClover_FiniteDensity"))  
+      return new DiracCloverFiniteDensityFactory(node);
     if(!strcmp(Dirac_name, "DiracMobius"))  
       return new DiracMobiusFactory(node);
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall5d"))  

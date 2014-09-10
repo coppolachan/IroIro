@@ -26,17 +26,17 @@ private:
   
   void setUnit(std::vector<double>& Qt)const;
 
-  void lanczos_init(std::vector<double>& ta,std::vector<double>& tb, 
-		    std::vector<Field>& V)const;
+  //  void lanczos_init(std::vector<double>& ta,std::vector<double>& tb, 
+  //		    std::vector<Field>& V,Field& f)const;
 
   void lanczos_ext(std::vector<double>& ta,std::vector<double>& tb, 
-		   std::vector<Field>& V,Field& f)const;
+		   std::vector<Field>& V,Field& f,int ini,int fin)const;
 
  void QRfact_Givens(std::vector<double>& ta,std::vector<double>& tb,
 		      std::vector<double>& Qt,
 		      int Nk,double sft,int k_min,int k_max)const;
 
-  void diagonalize(std::vector<double>& ta,std::vector<double>& tb, 
+  int diagonalize(std::vector<double>& ta,std::vector<double>& tb, 
 		   std::vector<double>& Qt,int Nk)const;
 
   void orthogonalize(Field& w,const std::vector<Field>& evec,int k)const;

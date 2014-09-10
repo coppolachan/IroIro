@@ -17,13 +17,13 @@ double ChiralCondensate::calc(Source& src, const int stochastic_noise) const{
   double condensate_im = 0.0;
   double gamma5_top = 0.0;
 
-  for (int i = 0; i < stochastic_noise; i++){
+  for (int i = 0; i < stochastic_noise; ++i){
     double condensate = 0.0;
     double gamma5_c = 0.0;
 
     //full color-spin dilution
-    for (int s = 0; s< ND_; s++) { 
-      for (int c = 0; c < NC_; c++) {  		  
+    for (int s = 0; s< ND_; ++s) { 
+      for (int c = 0; c < NC_; ++c) {  		  
 	Field global_source(fsize());
 	src.refresh(); // get a new random source
 	global_source = src.mksrc(s,c);
@@ -87,13 +87,13 @@ double ChiralCondensate::connected_susc(Source& src, const int stochastic_noise)
   double connected_im = 0.0;
   double connected_s = 0.0;
 
-  for (int i = 0; i < stochastic_noise; i++){
+  for (int i = 0; i < stochastic_noise; ++i){
     double conn_ps = 0.0;
     double conn_s  = 0.0;
 
     //full color-spin dilution
-    for (int s = 0; s< ND_; s++) { 
-      for (int c = 0; c < NC_; c++) {  		  
+    for (int s = 0; s< ND_; ++s) { 
+      for (int c = 0; c < NC_; ++c) {  		  
 	Field global_source(fsize());
 	src.refresh(); // get a new random source
 	global_source = src.mksrc(s,c);

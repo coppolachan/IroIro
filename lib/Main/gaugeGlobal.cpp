@@ -2,7 +2,7 @@
  * @file gaugeGlobal.cpp
  * @brief Declaration of the GaugeGlobal class
  *
- * Time-stamp: <2013-10-15 17:27:30 noaki>
+ * Time-stamp: <2014-08-11 16:56:37 noaki>
  */
 
 #include "gaugeGlobal.hpp"
@@ -56,6 +56,10 @@ void GaugeGlobal::initializeILDG(const std::string &Filename) {
   gconf.init_conf(data,do_check_);
 }
 
+void GaugeGlobal::initializeILDG_FORTRAN(const std::string &Filename) {
+  GaugeConf_ILDG_FORTRAN gconf(format,Filename);
+  gconf.init_conf(data,do_check_);
+}
 
 TrajInfo GaugeGlobal::initialize(XML::node node){
   using namespace std;
@@ -155,6 +159,10 @@ int GaugeGlobal::initialize(XML::node node,std::string filename){
     }
     if(!XML::attribute_compare(node,"Type","ILDG")){
       initializeILDG(filename);
+      return 0;
+    }
+    if(!XML::attribute_compare(node,"Type","ILDG_FORTRAN")){
+      initializeILDG_FORTRAN(filename);
       return 0;
     }
     

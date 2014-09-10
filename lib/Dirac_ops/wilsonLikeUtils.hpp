@@ -28,6 +28,22 @@ public:
   void projPcore(double*,const double*)const;
   void projMcore(double*,const double*)const;
   
+  void isigma12core(double*,const double*)const;
+  void isigma13core(double*,const double*)const;
+  void isigma14core(double*,const double*)const;
+
+  void isigma21core(double*,const double*)const;
+  void isigma23core(double*,const double*)const;
+  void isigma24core(double*,const double*)const;
+
+  void isigma31core(double*,const double*)const;
+  void isigma32core(double*,const double*)const;
+  void isigma34core(double*,const double*)const;
+
+  void isigma41core(double*,const double*)const;
+  void isigma42core(double*,const double*)const;
+  void isigma43core(double*,const double*)const;
+
   static void (GammaMatrix::*gamma[])(double*,const double*)const;
 };
 

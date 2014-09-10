@@ -1,14 +1,11 @@
 /*! 
   @file dirac_clover.hpp
   @brief Dirac clover operator class. Class declaration
-  Time-stamp:<>
+  Time-stamp: <2014-08-29 13:32:30 noaki>
 */
-
 #ifndef DIRAC_CLOVER_INCLUDED
 #define DIRAC_CLOVER_INCLUDED
 
-#include "include/format_F.h"
-#include "include/format_G.h"
 #include "include/common_fields.hpp"
 #include "dirac_WilsonLike.hpp"
 /*! 
