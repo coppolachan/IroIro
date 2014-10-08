@@ -14,12 +14,10 @@ class Field;
 
 class Test_GWrelEigen{
   const Measurements::Input input_;
-  std::vector<double> evals_;
-  std::vector<Field> evecs_;
-
  public:
   Test_GWrelEigen(const Measurements::Input& input):input_(input){
-    CCIO::cout<<"Test_GWrelEigen called\n";}
+    CCIO::cout<<"Test_GWrelEigen called\n";    
+  }
   int run();
 };
 

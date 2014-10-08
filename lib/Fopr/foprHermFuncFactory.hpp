@@ -15,7 +15,7 @@
 //// Chebyshev Function
 class FoprNULLfuncFactory: public  FoprHermFactory{
 public:
-  Fopr_Herm* getFoprHerm(InputConfig&){return NULL; }
+  Fopr_Herm* getFoprHerm(const InputConfig&){return NULL; }
 };
 
 class FoprChebyshevFuncFactory: public FoprHermFactory{
@@ -28,7 +28,7 @@ public:
     fhf_.reset(HermiteOp::createFoprHermFactory(node));
   }
 
-  Fopr_Chebyshev* getFoprHerm(InputConfig& input){
+  Fopr_Chebyshev* getFoprHerm(const InputConfig& input){
     hf_.reset(fhf_->getFoprHerm(input));
     return new Fopr_Chebyshev(cbnode_,hf_.get());
   }
@@ -44,7 +44,7 @@ public:
     XML::descend(node,"HermitianOperator", MANDATORY);
     fhf_.reset(HermiteOp::createFoprHermFactory(node));
   }
-  Fopr_Linear* getFoprHerm(InputConfig& input){
+  Fopr_Linear* getFoprHerm(const InputConfig& input){
     hf_.reset(fhf_->getFoprHerm(input));
     return new Fopr_Linear(lnode_,hf_.get()); 
   }
@@ -60,7 +60,7 @@ public:
     XML::descend(node,"HermitianOperator", MANDATORY);
     fhf_.reset(HermiteOp::createFoprHermFactory(node));
   }
-  Fopr_QuadLinear* getFoprHerm(InputConfig& input){
+  Fopr_QuadLinear* getFoprHerm(const InputConfig& input){
     hf_.reset(fhf_->getFoprHerm(input));
     return new Fopr_QuadLinear(lnode_,hf_.get()); 
   }
@@ -76,7 +76,7 @@ public:
     XML::descend(node,"HermitianOperator", MANDATORY);
     fhf_.reset(HermiteOp::createFoprHermFactory(node));
   }
-  Fopr_Exp* getFoprHerm(InputConfig& input){
+  Fopr_Exp* getFoprHerm(const InputConfig& input){
     hf_.reset(fhf_->getFoprHerm(input));
     return new Fopr_Exp(enode_,hf_.get()); 
   }
@@ -92,7 +92,7 @@ public:
     XML::descend(node,"HermitianOperator", MANDATORY);
     fhf_.reset(HermiteOp::createFoprHermFactory(node));
   }
-  Fopr_Lexp* getFoprHerm(InputConfig& input){
+  Fopr_Lexp* getFoprHerm(const InputConfig& input){
     hf_.reset(fhf_->getFoprHerm(input));
     return new Fopr_Lexp(enode_,hf_.get()); 
   }

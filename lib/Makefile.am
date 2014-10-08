@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-09-10 11:49:57 cossu>
+# Time-stamp: <2014-10-05 11:42:47 noaki>
 
 ###########################################
 AUTOMAKE_OPTIONS = subdir-objects
@@ -200,7 +200,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/cloverTerm.cpp     	        	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
-		Dirac_ops/subSpaceProjector.cpp	  	        \
 		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
 		$(BFM_SRC)					\
@@ -212,6 +211,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
 		EigenModes/eigModesNum.cpp			\
+		EigenModes/subSpaceProjector.cpp  	        \
+		EigenModes/eigenModes.cpp        	        \
 		Measurements/measGeneral.cpp			\
 		Measurements/GaugeM/staples.cpp			\
 		Measurements/GaugeM/wilsonFlow.cpp		\
@@ -450,7 +451,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/cloverTerm.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
-			Dirac_ops/subSpaceProjector.hpp		\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.hpp\
@@ -467,6 +467,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenModes.hpp		\
 			EigenModes/findminmax.hpp		\
 			EigenModes/eigModesNum.hpp	        \
+			EigenModes/subSpaceProjector.hpp	\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/TrajectoryInfo.hpp			\

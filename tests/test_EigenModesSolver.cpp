@@ -14,10 +14,8 @@ int Test_EigenModesSolver::run(){
   EigenCalcGeneral eigen(eig_node);
 
   try{
-    InputConfig input = input_.getConfig();
-    eigen.do_calc(input);
-    eigen.output_bin<Format::Format_F>(input_.output);
-  
+    eigen.do_calc(input_.config);
+    eigen.output_bin<Format::Format_F>(input_.output,input_.app_out);
   }
   catch(const char* error){
     CCIO::cout<<error<<"\n";

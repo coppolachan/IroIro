@@ -19,7 +19,7 @@ int Test_WilsonFlow::run(){
 
   XML::node wnode = input_.node;
   XML::descend(wnode,"WilsonFlow");                  // object creation
-  WilsonFlow wflow(wnode,*(input_.gconf));
+  WilsonFlow wflow(wnode,*(input_.config.gconf));
 
   int Mstep = wflow.MonitorStep();
   

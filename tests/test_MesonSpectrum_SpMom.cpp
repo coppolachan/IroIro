@@ -18,8 +18,7 @@ int Test_MesonSpectrum_SpMom::run(){
   XML::descend(node,"QuarkProp");
   
   auto_ptr<QuarkPropagatorFactory> qpfact(QuarkPropagators::createQuarkPropagatorFactory(node));
-  InputConfig config = input_.getConfig();
-  auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(config));
+  auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(input_.config));
   
   //// source creation ////
   XML::next_sibling(node,"Source");

@@ -14,8 +14,7 @@ int Test_EigenModesSolver_Lap::run(){
   EigenCalcGeneral eigen(eig_node);
 
   try{
-    InputConfig input = input_.getConfig();
-    eigen.do_calc(input);
+    eigen.do_calc(input_.config);
     eigen.output_bin3D<Format::Format_S>(input_.output);
   
   }

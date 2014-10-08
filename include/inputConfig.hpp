@@ -7,15 +7,14 @@
 #include "lib/EigenModes/eigenModes.hpp"
 
 struct InputConfig{
-  GaugeField* const gconf;
-  EigenModes* const emode;
-  
-  InputConfig(GaugeField* const conf,EigenModes* ems=NULL)
-    :gconf(conf),emode(ems){}
+  GaugeField* gconf;
+  std::vector<EigenModes*> emodes;
 
-  Field* getGconf(){ return &(gconf->data);}
-  std::vector<Field>* getEvec(){ return &(emode->evecs_);}
-  std::vector<double>* getEval(){ return &(emode->evals_);}
+  InputConfig():gconf(NULL){}
+  InputConfig(GaugeField* gf):gconf(gf){}
+
+  Field* getGconf()const{ return &(gconf->data);}  
+  bool hasEmodes()const{ return emodes.size() > 0;}
 };
 #endif
 

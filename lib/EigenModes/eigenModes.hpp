@@ -10,72 +10,131 @@
 #include <string>
 #include <string.h>
 
+/// eigenmodes data structure ///
 struct EigenModes{
-  double thold_;
-public:
-  std::vector<double> evals_;
-  std::vector<Field> evecs_;
+  std::vector<double> evals;
+  std::vector<Field> evecs;
+  int size()const{ return evals.size();}
+};
 
-  EigenModes(XML::node node):thold_(0){
-    XML::read(node,"threshold",thold_); }
+/// predicates to determine how to read the data ///
+namespace Eigen{
+  class Predic{
+  public:
+    virtual bool operator()(double)const{return true;}
+    virtual ~Predic(){}
+  };
   
-  EigenModes(double threshold = 100.0):thold_(threshold){}
+  class BelowEq :public Predic{
+    double thold_;
+  public:
+    BelowEq(XML::node node){ XML::read(node,"threshold",thold_);}
+    BelowEq(double thold):thold_(thold){}
+    bool operator()(double a)const{return a <= thold_;}
+  };
+
+  class Beyond :public Predic{
+    double thold_;
+  public:
+    Beyond(XML::node node){ XML::read(node,"threshold",thold_);}
+    Beyond(double thold):thold_(thold){}
+    bool operator()(double a)const{return a > thold_;}
+  };
+
+  class SmallerEq :public Predic{
+    double thold_;
+  public:
+    SmallerEq(XML::node node){ XML::read(node,"threshold",thold_);}
+    SmallerEq(double thold):thold_(thold){}
+    bool operator()(double a)const{return fabs(a) <= thold_;}
+  };
+
+  class LargerThan :public Predic{
+    double thold_;
+  public:
+    LargerThan(XML::node node){ XML::read(node,"threshold",thold_);}
+    LargerThan(double thold):thold_(thold){}
+    bool operator()(double a)const{return fabs(a) > thold_;}
+  };
+
+  Predic* predFactory(XML::node node);
+
+
+  /// functions to load eigenmodes from files ///
 
   template<typename FMT>  
-  void initialize(const std::string& evalfile,
-		  const std::string& evecfile){
-    evals_.clear();
-    CCIO::cout<<"Reading eigenvalues from "<< evalfile<<".\n";
-    std::ifstream reader(evalfile.c_str()); 
-    int idummy, i=0;
-    double eval=0.0;
-
-    while(reader>>idummy && reader>>eval && fabs(eval) < thold_){
-      evals_.push_back(eval);
-      i++;
+  void initFromFile(EigenModes& emodes,const Predic* filter,
+		    const std::string& evalfile,
+		    const std::string& evecfile){
+    std::ifstream evf(evalfile.c_str()); 
+    if(evf.good()){
+      CCIO::cout<<"Reading eigenvalues from "<< evalfile<<"\n";
+    }else{
+      CCIO::cout<<"Reading from "<< evalfile<<" failed.\n";
+      abort();
     }
-
-    evecs_.clear();
-    CCIO::cout<<"Reading "<< i << " eigenvectors from "<<evecfile<<"\n";
-    int Neig=i;
-    CCIO::ReadFromDisk<FMT>(evecs_,evecfile.c_str(),Neig);
-    CCIO::cout<< Neig << "eigenmodes are loaded."<<"\n";
+    emodes.evals.clear();
+    int id;
+    double ev;
+    while(!evf.eof()){
+      evf>>id; evf>>ev;
+      if((*filter)(ev)) emodes.evals.push_back(ev);
+    }
+    int Neig = emodes.evals.size();
+    emodes.evecs.clear();
+    CCIO::cout<<"Reading eigenvectors from "<< evecfile<<"\n";
+    CCIO::ReadFromDisk<FMT>(emodes.evecs,evecfile.c_str(),Neig);
+    CCIO::cout<<Neig<<" eigenmodes are loaded.\n";
   }
 
   template<typename FMT>  
-  int singlemode(int n, Field& evec, double& eigenvalue,
-		  const std::string& evalfile,
-		  const std::string& evecfile)
-  {
+  EigenModes* initFromFile(const Predic* filter,
+			   const std::string& evalfile,
+			   const std::string& evecfile){
+    EigenModes* emode = new EigenModes;
+    initFromFile<FMT>(*emode,filter,evalfile,evecfile);
+    return emode;
+  }
+
+  template<typename FMT>  
+  int pickUpFromFile(double& eval,Field& evec,int ireq,
+		     const Predic* filter,
+		     const std::string& evalfile,
+		     const std::string& evecfile){
     FMT fmt(CommonPrms::instance()->Nvol());
-    CCIO::cout<<"Reading eigenvalue n. "<< n << " from "<< evalfile<<".\n";
-    std::ifstream reader(evalfile.c_str()); 
-    int idummy, i;
-    double eval=0.0;
 
-    while(reader>>idummy && reader>>eval && fabs(eval) < thold_){
-      if (idummy == n)
-	eigenvalue = eval;
-      i++;
+    std::ifstream evf(evalfile.c_str()); 
+    if(evf.good()){
+      CCIO::cout<<"Reading eigenvalue"<< ireq <<" from "<< evalfile<<"\n";
+    }else{
+      CCIO::cout<<"Reading from "<< evalfile<<" failed.\n";
+      abort();
     }
-
-    CCIO::cout<<"Eigenvalue: "<< eigenvalue << "\n";
-
-    if (fabs(eigenvalue) < thold_){
-    CCIO::cout<<"Reading eigenvector n. "<< n << " from "<<evecfile<<"\n";
     
-    uint64_t offset = sizeof(double)*n*fmt.size()*CommonPrms::instance()->NP();
-    CCIO::ReadFromDisk<FMT>(evec,evecfile.c_str(),offset);
-    CCIO::cout<< "Eigenmode loaded \n";
-    return 0;
-    } else {
-      CCIO::cout<< "Eigenvalue above threshold, skipping\n";
+    int id;
+    double ev;
+    while(!evf.eof()){
+      evf>>id; evf>>ev;
+      if(id == ireq && (*filter)(ev)){
+	eval = ev;
+	CCIO::cout<<"Eigenvalue: "<<eval<<"\n";
+	break;
+      }
+    }
+    if(evf.eof()){
+      CCIO::cout<<"Required eigenmode was not found.\n";
       return 1;
     }
 
+    uint64_t offset 
+      = sizeof(double)*ireq*fmt.size()*CommonPrms::instance()->NP();
+    
+    CCIO::cout<<"Reading eigenvector"<< ireq <<" from "<<evecfile<<"\n";
+    CCIO::ReadFromDisk<FMT>(evec,evecfile.c_str(),offset);
+    CCIO::cout<<"Associated eigenvector loaded.\n";
+    return 0;
   }
-		  
 
-};
+}
 
 #endif

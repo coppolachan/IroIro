@@ -10,10 +10,8 @@ using namespace SUNmatUtils;
 
 int Test_DiracWilson_Adjoint::run(){
   
-  Field* u = &(input_.gconf->data);
   double m0 = 0.1;
-
-  Dirac_Wilson_Adjoint Dwa(m0,u);
+  Dirac_Wilson_Adjoint Dwa(m0,input_.getGconf());
 
   unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
   int length=4;

@@ -1,6 +1,6 @@
 /*!@file  dirac_LowModeDeflation_ExactEigen.hpp
  * @brief concrete class for low-mode preconditioning with exact low-modes
- *Time-stamp: <2013-07-02 14:37:05 noaki>
+ *Time-stamp: <2014-10-05 10:42:59 noaki>
  */
 #ifndef DIRAC_LOWMODEDEFLATION_EXACTEIGEN_INCLUDED
 #define DIRAC_LOWMODEDEFLATION_EXACTEIGEN_INCLUDED
@@ -22,7 +22,7 @@ class Dirac_LowModeDeflation_ExactEigen : public Dirac_LowModeDeflation{
 public:
   Dirac_LowModeDeflation_ExactEigen(const DiracWilsonLike* Dw,
 				    EigenModes* const ems)
-    :Dw_(Dw),evecs_(&(ems->evecs_)),evals_(&(ems->evals_)){setEigenArrays();}
+    :Dw_(Dw),evecs_(&(ems->evecs)),evals_(&(ems->evals)){setEigenArrays();}
 
   size_t fsize()const {return Dw_->fsize();}
   size_t gsize()const {return Dw_->gsize();}

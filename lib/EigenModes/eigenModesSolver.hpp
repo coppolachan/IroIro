@@ -9,7 +9,8 @@ class Field;
 
 class EigenModesSolver{
 public:
-  virtual void calc(std::vector<double>&,std::vector<Field>&,int&)const = 0;
+  virtual void calc(std::vector<double>& lmd,std::vector<Field>& evec,int& N,
+		    std::vector<Field>* exvec = NULL)const = 0;
 };
 
 #endif

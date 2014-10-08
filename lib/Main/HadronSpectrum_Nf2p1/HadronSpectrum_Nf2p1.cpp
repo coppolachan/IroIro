@@ -2,7 +2,7 @@
  * @file HadronSpectrum_Nf2p1.cpp
  * @brief Implementation of HadronSpectrum_Nf2p1 class
  *
- * Time-stamp: <2014-07-07 14:13:34 noaki>
+ * Time-stamp: <2014-10-05 11:36:16 noaki>
  */
 
 #include "HadronSpectrum_Nf2p1.hpp"
@@ -17,7 +17,7 @@ using namespace std;
 
 int HadronSpectrum_Nf2p1::run(){
   XML::node node = input_.node;
-  InputConfig config = input_.getConfig();
+  InputConfig config = input_.config;
 
   //////////////////// Quark Propagator ////////////////////
   XML::descend(node,"QuarkPropUpDown");
@@ -42,21 +42,21 @@ int HadronSpectrum_Nf2p1::run(){
 
   ////////////////////// Propagator actual calculation ///////////////////////
   prop_t sq_ud, sq_s;  //Defines a vector of fields
-  CCIO::cout << "            _ \n";
-  CCIO::cout << "  _   _  __| |      _ __  _ __ ___  _ __   __ _  __ _  __ _| |_ ___  _ __ \n";
-  CCIO::cout << " | | | |/ _` |_____| '_ \\| '__/ _ \\| '_ \\ / _` |/ _` |/ _` | __/ _ \\| '__|\n";
-  CCIO::cout << " | |_| | (_| |_____| |_) | | | (_) | |_) | (_| | (_| | (_| | || (_) | |   \n";
-  CCIO::cout << "  \\__,_|\\__,_|     | .__/|_|  \\___/| .__/ \\__,_|\\__, |\\__,_|\\__\\___/|_|   \n";
-  CCIO::cout << "                   |_|             |_|          |___/                     \n\n";
+  CCIO::cout<<"            _ \n";
+  CCIO::cout<<"  _   _  __| |      _ __  _ __ ___  _ __   __ _  __ _  __ _| |_ ___  _ __ \n";
+  CCIO::cout<<" | | | |/ _` |_____| '_ \\| '__/ _ \\| '_ \\ / _` |/ _` |/ _` | __/ _ \\| '__|\n";
+  CCIO::cout<<" | |_| | (_| |_____| |_) | | | (_) | |_) | (_| | (_| | (_| | || (_) | |   \n";
+  CCIO::cout<<"  \\__,_|\\__,_|     | .__/|_|  \\___/| .__/ \\__,_|\\__, |\\__,_|\\__\\___/|_|\n";
+  CCIO::cout<<"                   |_|             |_|          |___/                     \n\n";
 
   qprop_ud->calc(sq_ud,*src);
 
-  CCIO::cout << "                                                    _              \n";
-  CCIO::cout << "  ___       _ __  _ __ ___  _ __   __ _  __ _  __ _| |_ ___  _ __  \n";
-  CCIO::cout << " / __|_____| '_ \\| '__/ _ \\| '_ \\ / _` |/ _` |/ _` | __/ _ \\| '__| \n";
-  CCIO::cout << " \\__ \\_____| |_) | | | (_) | |_) | (_| | (_| | (_| | || (_) | |    \n";
-  CCIO::cout << " |___/     | .__/|_|  \\___/| .__/ \\__,_|\\__, |\\__,_|\\__\\___/|_|    \n";
-  CCIO::cout << "           |_|             |_|          |___/                      \n\n";
+  CCIO::cout<<"                                                    _              \n";
+  CCIO::cout<<"  ___       _ __  _ __ ___  _ __   __ _  __ _  __ _| |_ ___  _ __  \n";
+  CCIO::cout<<" / __|_____| '_ \\| '__/ _ \\| '_ \\ / _` |/ _` |/ _` | __/ _ \\| '__|\n";
+  CCIO::cout<<" \\__ \\_____| |_) | | | (_) | |_) | (_| | (_| | (_| | || (_) | |    \n";
+  CCIO::cout<<" |___/     | .__/|_|  \\___/| .__/ \\__,_|\\__, |\\__,_|\\__\\___/|_|\n";
+  CCIO::cout<<"           |_|             |_|          |___/                      \n\n";
 
   qprop_s->calc(sq_s,*src);
 

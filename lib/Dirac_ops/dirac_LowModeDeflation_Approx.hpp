@@ -1,6 +1,6 @@
 /*!@file  dirac_LowModeDeflation_Approx.hpp
  * @brief concrete class for low-mode preconditioning with given subspace
- *Time-stamp: <2013-07-03 10:58:34 noaki>
+ *Time-stamp: <2014-10-05 10:43:27 noaki>
  */
 #ifndef DIRAC_LOWMODEDEFLATION_APPROX_INCLUDED
 #define DIRAC_LOWMODEDEFLATION_APPROX_INCLUDED
@@ -31,7 +31,7 @@ public:
 
   Dirac_LowModeDeflation_Approx(const DiracWilsonLike* Dw,
 				EigenModes* const ems)
-    :Dw_(Dw),subVecs_(&(ems->evecs_)){}
+    :Dw_(Dw),subVecs_(&(ems->evecs)){}
 
   size_t fsize() const {return Dw_->fsize();}
   size_t gsize()const{return Dw_->gsize();}

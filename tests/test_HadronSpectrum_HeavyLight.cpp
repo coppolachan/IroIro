@@ -3,7 +3,7 @@
  * @brief Implementation of test_HadronSpectrum_HeavyLight class
  * This class obtains hadron correlators from combinations of 
  * Source-smeared propagators and multi-mass propagators
- * Time-stamp: <2014-08-07 13:29:07 noaki>
+ * Time-stamp: <2014-10-07 11:04:57 noaki>
  */
 #include "include/factories.hpp"
 #include "include/messages_macros.hpp"
@@ -18,7 +18,7 @@
 using namespace std;
 int Test_HadronSpectrum_HeavyLight::run(){
 
-  InputConfig config = input_.getConfig();
+  InputConfig config = input_.config;
 
   XML::node node = input_.node;
   XML::descend(node,"Source",MANDATORY);             // basic source 

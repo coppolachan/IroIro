@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-09-10 12:01:16 neo>
+# Time-stamp: <2014-09-16 16:10:15 noaki>
 
 
 testdir = $(bindir)/Test
@@ -338,5 +338,6 @@ include_HEADERS 	=	tests.hpp			\
 	       	                test_ChiralCondensate.hpp       \
 	                        test_QnumSuscept.hpp	        \
 	   	                test_Solver_HDCG.hpp		\
-				test_Add_Flux.hpp
+				test_Add_Flux.hpp               \
+                                test_ReadEigenModes.hpp
 

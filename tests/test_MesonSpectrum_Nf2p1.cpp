@@ -14,17 +14,16 @@ using namespace std;
 
 int Test_MesonSpectrum_Nf2p1::run(){
   XML::node node = input_.node;
-  InputConfig config = input_.getConfig();
 
   //// Quark Propagator ////
   XML::descend(node,"QuarkPropUpDown");
   auto_ptr<QuarkPropagatorFactory> qpf_ud(QuarkPropagators::createQuarkPropagatorFactory(node));
-  auto_ptr<QuarkPropagator> qprop_ud(qpf_ud->getQuarkProp(config));
+  auto_ptr<QuarkPropagator> qprop_ud(qpf_ud->getQuarkProp(input_.config));
 
   //// Quark Propagator(strange) ////
   XML::next_sibling(node,"QuarkPropStrange");
   auto_ptr<QuarkPropagatorFactory> qpf_s(QuarkPropagators::createQuarkPropagatorFactory(node));
-  auto_ptr<QuarkPropagator> qprop_s(qpf_s->getQuarkProp(config));
+  auto_ptr<QuarkPropagator> qprop_s(qpf_s->getQuarkProp(input_.config));
   
   //// source creation ////
   XML::next_sibling(node,"Source");

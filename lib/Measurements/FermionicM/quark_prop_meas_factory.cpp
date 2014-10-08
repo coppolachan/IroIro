@@ -32,7 +32,7 @@ QPropFactory::QPropFactory(const XML::node& node,double mass):node_(node){
   slvFactory_.save(Solvers::createSolverFactory(node_));
 }
 
-QuarkPropagator* QPropFactory::createQuarkProp(InputConfig& input){
+QuarkPropagator* QPropFactory::createQuarkProp(const InputConfig& input){
   Kernel_.save(Dfactory_.get()->getDirac(input));
   DdagD_.save(new Fopr_DdagD(Kernel_.get()));
   Solv_.save(slvFactory_.get()->getSolver(DdagD_.get()));
@@ -62,7 +62,7 @@ QPropFactory_EvenOdd::QPropFactory_EvenOdd(const XML::node& node,double mass)
   slvFactory_.save(Solvers::createSolverFactory(node_));
 }
 
-QuarkPropagator* QPropFactory_EvenOdd::createQuarkProp(InputConfig& input){
+QuarkPropagator* QPropFactory_EvenOdd::createQuarkProp(const InputConfig& input){
   Kernel_.save(Dfactory_.get()->getDirac(input));
   DdagD_.save(new Fopr_DdagD(Kernel_.get()));
   Solv_.save(slvFactory_.get()->getSolver(DdagD_.get()));
@@ -92,7 +92,7 @@ QPropDWFFactory::QPropDWFFactory(const XML::node& node,double mass):node_(node){
   CCIO::cout<<"QPropDWFFactory: mass= "<<mq<<"\n";
 }
 
-QpropDWF* QPropDWFFactory::createQuarkProp(InputConfig& input){
+QpropDWF* QPropDWFFactory::createQuarkProp(const InputConfig& input){
   DWF4D_.save(Dfactory_.get()->getDirac(input));
   return new QpropDWF(*DWF4D_.get());
 }

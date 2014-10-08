@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-08-11 16:19:32 noaki>
+ * Time-stamp: <2014-10-08 14:02:34 noaki>
  */
 
 #include "measGeneral.hpp"
@@ -30,6 +30,7 @@ void MeasGeneral::setup(XML::node inode){
   /// Sets output file for the measurements    
   XML::node onode = node_;
   XML::descend(onode,"Output");
+  XML::read(onode,"append_mode",input_.app_out);
 
   if(XML::read(onode,"output_prefix",output_prefix_))
     CCIO::cout<<"[default] output_prefix_= "<<output_prefix_<<"\n";
@@ -76,12 +77,12 @@ void MeasGeneral::input_RegularStep(XML::node inode){
   
   for(int c=0; c<meas_num_; ++c) number_list_.push_back(starting+increment*c);
 
-  XML::node eig_node= inode.child("EigenModes");
-  if(eig_node!= NULL){
-    XML::node option_node = eig_node;
-    XML::descend(option_node,"Options");
-    input_.eigen = new EigenModes(option_node);
-    has_eigen_= true;
+  /// EigenModes section (optional input)
+  for(XML::node eig_node = inode.child("EigenModes");
+      eig_node;
+      eig_node = eig_node.next_sibling("EigenModes")){
+
+    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
 
     XML::read(eig_node,"eval_prefix",input_prefix,MANDATORY);
     eigen_list_.push_back(input_prefix);
@@ -108,13 +109,13 @@ void MeasGeneral::input_NumberList(XML::node inode){
   
   XML::read_array(inode,"numbers",number_list_,MANDATORY);
   meas_num_= number_list_.size();      
-  
-  XML::node eig_node= inode.child("EigenModes");
-  if(eig_node!= NULL){
-    XML::node option_node = eig_node;
-    XML::descend(option_node,"Options");
-    input_.eigen = new EigenModes(option_node);
-    has_eigen_= true;
+
+  /// EigenModes section (optional input)  
+  for(XML::node eig_node = inode.child("EigenModes");
+      eig_node;
+      eig_node = eig_node.next_sibling("EigenModes")){
+
+    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
 
     XML::read(eig_node,"eval_prefix",input_prefix,MANDATORY);
     eigen_list_.push_back(input_prefix);
@@ -131,7 +132,7 @@ void MeasGeneral::input_NumberList(XML::node inode){
 /*--------------------- input with FileList ----------------------*/
 void MeasGeneral::input_FileList(XML::node inode){
   /*!@brief FileList deals with a list of files with any name. 
-    In this case, the number_list_ is only used for output.*/
+    In this case, the number_list_ is used only for output.*/
   int starting=0;
   if(XML::read(inode,"starting_idx",starting))
     CCIO::cout<<"[default] output: starting_num = "<<starting<<"\n";
@@ -149,14 +150,15 @@ void MeasGeneral::input_FileList(XML::node inode){
 
   for(int c=0; c<meas_num_; ++c) 
     number_list_.push_back(starting+increment*c);
-  
-  XML::node eig_node= inode.child("EigenModes");
-  if(eig_node!= NULL){
-    XML::node ev_node = eig_node.child("Options");
-    input_.eigen = new EigenModes(ev_node);
-    has_eigen_= true;
 
-    ev_node = eig_node;
+  /// EigenModes section (optional input)  
+  for(XML::node eig_node = inode.child("EigenModes");
+      eig_node;
+      eig_node = eig_node.next_sibling("EigenModes")){
+
+    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
+
+    XML::node ev_node = eig_node;
     XML::descend(ev_node,"EvalFiles",MANDATORY);
     for(XML::iterator it=ev_node.begin(); it!=ev_node.end();++it)
       eigen_list_.push_back(it->child_value());
@@ -222,7 +224,7 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
   if (AntiPeriodicBC){
     CCIO::cout << "Applying antiperiodic Boundary conditions on direction T\n";
     BoundaryCond_antiPeriodic apbc(TDIR);
-    apbc.apply_bc(*input_.gconf);
+    apbc.apply_bc(*input_.config.gconf);
   }
 }
 
