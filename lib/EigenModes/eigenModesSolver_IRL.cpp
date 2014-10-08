@@ -273,12 +273,3 @@ void EigenModesSolver_IRL::QRfact_Givens(vector<double>& ta,vector<double>& tb,
     tb[k+1]*= c;                                // k+1,k+2
   }
 }
-/*
-void EigenModesSolver_IRL::projectOut(vector<Field>& evec)const{
-  for(int im=0; im<Nm_; ++im){
-    Field fp(opr_->fsize());
-    SubSpace::projectOut(fp,evec[im],*exvec_);
-    evec[im]= fp;
-  }
-}
-*/

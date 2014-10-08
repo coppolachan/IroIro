@@ -10,6 +10,7 @@
 #include <string>
 #include <string.h>
 
+
 /// eigenmodes data structure ///
 struct EigenModes{
   std::vector<double> evals;
@@ -19,6 +20,9 @@ struct EigenModes{
 
 /// predicates to determine how to read the data ///
 namespace Eigen{
+
+  static std::string eval_ext = "_evals.txt";
+
   class Predic{
   public:
     virtual bool operator()(double)const{return true;}
@@ -94,6 +98,12 @@ namespace Eigen{
     EigenModes* emode = new EigenModes;
     initFromFile<FMT>(*emode,filter,evalfile,evecfile);
     return emode;
+  }
+
+  template<typename FMT>  
+  EigenModes* initFromFile(const Predic* filter,const std::string& eigfile){
+    std::string evalfile = eigfile+eval_ext;
+    return initFromFile<FMT>(filter,evalfile,eigfile);
   }
 
   template<typename FMT>  

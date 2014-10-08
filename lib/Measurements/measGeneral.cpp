@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-10-08 14:02:34 noaki>
+ * Time-stamp: <2014-10-09 08:40:43 noaki>
  */
 
 #include "measGeneral.hpp"
@@ -38,17 +38,17 @@ void MeasGeneral::setup(XML::node inode){
   
   // output of the pre-processed gauge config.
   if(XML::read(onode,"gauge_prefix",gauge_prefix_)){
-    CCIO::cout<<"Warning: gauge fixed configuration is NOT saved"<<std::endl;
+    CCIO::cout<<"Warning: gauge fixed configuration is NOT saved\n";
   }else{
     gauge_output_= true;
-    CCIO::cout<<"gauge fixed config is saved in "<<gauge_prefix_<<std::endl;
+    CCIO::cout<<"gauge fixed config is saved in "<<gauge_prefix_<<"\n";
   }
   // output of the rng seed
   if(XML::read(onode,"seed_prefix",seed_prefix_)){
-    CCIO::cout<<"Warning: random number seed is NOT saved"<<std::endl;
+    CCIO::cout<<"Warning: random number seed is NOT saved\n";
   }else{
     seed_output_= true;
-    CCIO::cout<<"random number seed is saved in "<<seed_prefix_<<std::endl;
+    CCIO::cout<<"random number seed is saved in "<<seed_prefix_<<"\n";
   }
 }
 
@@ -84,15 +84,8 @@ void MeasGeneral::input_RegularStep(XML::node inode){
 
     eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
 
-    XML::read(eig_node,"eval_prefix",input_prefix,MANDATORY);
+    XML::read(eig_node,"eigen_prefix",input_prefix,MANDATORY);
     eigen_list_.push_back(input_prefix);
-    XML::read(eig_node,"evec_prefix",input_prefix,MANDATORY);
-    eigen_list_.push_back(input_prefix);
-    
-    XML::read(eig_node,"eval_postfix",input_postfix);
-    eigen_list_.push_back(input_postfix);
-    XML::read(eig_node,"evec_postfix",input_postfix);
-    eigen_list_.push_back(input_postfix);
   }
 }
 
@@ -117,22 +110,15 @@ void MeasGeneral::input_NumberList(XML::node inode){
 
     eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
 
-    XML::read(eig_node,"eval_prefix",input_prefix,MANDATORY);
+    XML::read(eig_node,"eigen_prefix",input_prefix,MANDATORY);
     eigen_list_.push_back(input_prefix);
-    XML::read(eig_node,"evec_prefix",input_prefix,MANDATORY);
-    eigen_list_.push_back(input_prefix);
-    
-    XML::read(eig_node,"eval_postfix",input_postfix);
-    eigen_list_.push_back(input_postfix);
-    XML::read(eig_node,"evec_postfix",input_postfix);
-    eigen_list_.push_back(input_postfix);
   }
 }
 
 /*--------------------- input with FileList ----------------------*/
 void MeasGeneral::input_FileList(XML::node inode){
   /*!@brief FileList deals with a list of files with any name. 
-    In this case, the number_list_ is used only for output.*/
+    In this case, number_list_ is not used.*/
   int starting=0;
   if(XML::read(inode,"starting_idx",starting))
     CCIO::cout<<"[default] output: starting_num = "<<starting<<"\n";
@@ -148,8 +134,6 @@ void MeasGeneral::input_FileList(XML::node inode){
   file_list_= true;
   meas_num_= config_list_.size();
 
-  for(int c=0; c<meas_num_; ++c) 
-    number_list_.push_back(starting+increment*c);
 
   /// EigenModes section (optional input)  
   for(XML::node eig_node = inode.child("EigenModes");
@@ -159,16 +143,11 @@ void MeasGeneral::input_FileList(XML::node inode){
     eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
 
     XML::node ev_node = eig_node;
-    XML::descend(ev_node,"EvalFiles",MANDATORY);
-    for(XML::iterator it=ev_node.begin(); it!=ev_node.end();++it)
-      eigen_list_.push_back(it->child_value());
-
-    ev_node = eig_node;
     XML::descend(ev_node,"EvecFiles",MANDATORY);
     for(XML::iterator it=ev_node.begin(); it!=ev_node.end();++it)
       eigen_list_.push_back(it->child_value());
 
-    assert(eigen_list_.size()/2 == meas_num_);
+    assert(eigen_list_.size() == meas_num_);
   }
 }
 

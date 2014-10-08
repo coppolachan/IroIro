@@ -6,7 +6,6 @@
 #include "chebyshevAccelFuncFactory.hpp"
 #include "Fields/field_expressions.hpp"
 #include "Fopr/foprHermFactoryCreator.hpp"
-#include "inputConfig.hpp"
 #include "field.h"
 #include <cassert>
 

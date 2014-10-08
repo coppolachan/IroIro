@@ -110,24 +110,20 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
 
     /* setting corresponding eigenmodes */
     for(int e=0; e<eig_pred_.size(); ++e){
-
-      std::stringstream evalfile;
-      std::stringstream evecfile;
-      if(file_list_){
-	evalfile<< eigen_list_[(2*e+0)*meas_num_+c];
-	evecfile<< eigen_list_[(2*e+1)*meas_num_+c];
-      }else{
-	evalfile<< eigen_list_[4*e+0]<< number_list_[c]<< eigen_list_[4*e+2];
-	evecfile<< eigen_list_[4*e+1]<< number_list_[c]<< eigen_list_[4*e+3];
-      }      
-      input_.config.emodes.push_back(Eigen::initFromFile<Format::Format_F>(eig_pred_[e],evalfile.str(),evecfile.str()));
+      std::stringstream eigfile;
+      if(file_list_) eigfile<< eigen_list_[e*meas_num_+c];
+      else           eigfile<< eigen_list_[e]<< number_list_[c];
+      
+      input_.config.emodes.push_back(Eigen::initFromFile<Format::Format_F>(eig_pred_[e],eigfile.str()));
     }
     CCIO::cout<<"pre_process begins\n";
     pre_process(Uin_,*(input_.rng),number_list_[c]);// monitoring +smr +gfix
     CCIO::cout<<"pre_process ends\n";
 
     std::stringstream outfile;
-    outfile << output_prefix_<< number_list_[c];
+    if(file_list_) outfile<< output_prefix_<< config_list_[c];
+    else           outfile<< output_prefix_<< number_list_[c];
+
     input_.output = outfile.str();
 
     //------- actual measurement -------    

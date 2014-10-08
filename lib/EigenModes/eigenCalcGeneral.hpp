@@ -59,7 +59,7 @@ public:
 
 template<typename FMT>
 void EigenCalcGeneral::output_bin(const std::string& output,bool append)const{
-  std::string output_evals = output +"_evals.txt";
+  std::string output_evals = output +Eigen::eval_ext;
 
   std::ofstream writer(output_evals.c_str());
   if(append) writer.open(output_evals.c_str(),std::ios_base::app);
@@ -75,7 +75,7 @@ void EigenCalcGeneral::output_bin(const std::string& output,bool append)const{
 
 template<typename FMT>
 void EigenCalcGeneral::output_bin3D(const std::string& output,bool append)const{
-  std::string output_evals = output +"_evals.txt";
+  std::string output_evals = output +Eigen::eval_ext;
 
   std::ofstream writer(output_evals.c_str());
   if(append) writer.open(output_evals.c_str(),std::ios_base::app);
