@@ -1,8 +1,10 @@
 /*! @file eigenModesSolver_IRL.cpp
  *  @brief implementations of EigenModesSolver_IRL class  
+ Time-stamp: <2014-10-09 15:03:53 cossu>
  */
 #include "eigenModesSolver_IRL.hpp"
 #include "eigenSorter.hpp"
+#include "subSpaceProjector.hpp"
 #include "Fopr/fopr.h"
 #include "Fields/field_expressions.hpp"
 #include "include/messages_macros.hpp"
@@ -13,20 +15,22 @@
 
 using namespace std;
 
-void EigenModesSolver_IRL::
-calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{ 
+void EigenModesSolver_IRL::calc(vector<double>& ta,vector<Field>& V,int& Neigen,
+				vector<Field>* exvec)const{ 
+  
   _Message(DEBUG_VERB_LEVEL, "EigenModesSolver_IRL::calc\n");
 
   using namespace FieldExpression;
   const size_t fsize = opr_->fsize();
 
   CCIO::cout <<"Nk = "<< Nk_<<" Np = "<< Nm_-Nk_<<" Nm = "<<Nm_<<"\n";
-  CCIO::cout<<"Ritz pair with res >1000x"<<prec_<<" is ignored\n";
+  CCIO::cout<<"Ritz pair with res > "<< ngPrec_*prec_<<" is ignored\n";
 
   V.assign(Nm_,Field(fsize,1.0));
 
   double nv = V[0].norm();
-  V[0] /= nv;                       /*!< @brief initial vector (uniform)*/
+  V[0] /= nv;                   /*!< @brief initial vector (uniform)*/
+
   Field f = opr_->mult(V[0]);
 
   ta.resize(Nm_); 
@@ -34,13 +38,13 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 
   ta[0] = V[0]*f;
   f -= ta[0]*V[0];
-  lanczos_ext(ta,tb,V,f,1,Nk_);    /*!< @brief initial Lanczos-decomp */
+  lanczos_ext(ta,tb,V,f,1,Nk_); /*!< @brief initial Lanczos-decomp */
 
   vector<double> Qt(Nm_*Nm_);
   vector<double> eval(Nk_);  
   vector<Field> Vp(Nk_,Field(fsize));
 
-  int Iconv = -1;               /*!<@brief Num of iterations until convergence */
+  int Iconv = -1;               /*!<@brief Num of iterations until convergence*/
   vector<pair<int,int> > Icert; /*!<@brief index of the certified eigenmodes */
 
   ///////////////* iteration */////////////////////
@@ -49,9 +53,16 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
     CCIO::cout<<"\n iteration "<< iter << endl;
 
     //// iteration step ////
-    lanczos_ext(ta,tb,V,f,Nk_,Nm_);     /*!<@brief Nm-step Lanczos-decomp */
+    if(exvec){                           /*!<@brief exvec_ is projected out */
+      for(int k=0; k<Nk_; ++k){  
+	SubSpace::projectOut(V[Nk_],V[k],*exvec);
+	V[k] = V[Nk_];                   /*!<@brief V[Nk_] is used as buffer*/
+      }
+    }
+    
+    lanczos_ext(ta,tb,V,f,Nk_,Nm_);      /*!<@brief Nm-step Lanczos-decomp */
 
-    vector<double> tta = ta;            /*!<@brief tta: eigenvals of H(m) */
+    vector<double> tta = ta;             /*!<@brief tta: eigenvals of H(m) */
     vector<double> ttb = tb;
     int Ndiag = diagonalize(tta,ttb,Qt,Nm_);
 
@@ -102,9 +113,8 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 	Icert.push_back(pair<int,int>(i,idx[i]));
         if(esorter_->beyond_thrs(eval[i],opr_)) ++Nover; 
       }else{
-	//	if(res[idx[i]] >100000*prec_) continue;
-	break;
-	//else                        break;
+	if(res[idx[i]] >ngPrec_*prec_) continue;
+	else                           break;
       }
     }  
     /*
@@ -160,7 +170,7 @@ lanczos_ext(vector<double>& ta,vector<double>& tb,
 
   tb[ini-1] = f.norm();
   V[ini] = 1.0/tb[ini-1]*f;
-
+  
   for(int k=ini; k<fin; ++k){
     f = opr_->mult(V[k]);
     f -= tb[k-1]*V[k-1];
@@ -264,4 +274,3 @@ void EigenModesSolver_IRL::QRfact_Givens(vector<double>& ta,vector<double>& tb,
     tb[k+1]*= c;                                // k+1,k+2
   }
 }
-

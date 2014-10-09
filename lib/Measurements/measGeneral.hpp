@@ -20,20 +20,22 @@
 class RandNum;
 
 namespace Measurements{
+
   struct Input{
     XML::node node;
-    GaugeField* gconf;
-    EigenModes* eigen;
+    InputConfig config;
     RandNum* rng;
     std::string output;
-    
-    Input(XML::node inode):node(inode),gconf(NULL),eigen(NULL),rng(NULL){
+    bool app_out;
+
+    Input(XML::node inode):node(inode),rng(NULL),app_out(false){
       XML::descend(node,"Measurement");
       _Message(DEBUG_VERB_LEVEL, "initialising RNG\n");
       RNG_Env::initialize(inode);
       rng = RNG_Env::RandNumG::instance().getRNG();
     }
-    InputConfig getConfig()const{ return InputConfig(gconf,eigen); }
+    Field* getGconf()const{ return config.getGconf();}
+    EigenModes* getEmodes(int e=0)const{return config.emodes[e];}
   };
 }
 
@@ -50,13 +52,14 @@ private:
   std::string seed_prefix_;
 
   bool file_list_;
-  bool has_eigen_;
   bool gauge_output_;
   bool seed_output_;
 
   std::vector<std::string> config_list_;
   std::vector<std::string> eigen_list_;
   std::vector<int> number_list_;
+
+  std::vector<Eigen::Predic*> eig_pred_;
 
   void pre_process(GaugeField&,const RandNum&,int)const;
   void post_process(GaugeField&,const RandNum&,int)const;
@@ -75,22 +78,21 @@ public:
      meas_num_(1),output_prefix_("output_"),
      file_list_(false),
      gauge_output_(false),
-     seed_output_(false),
-     has_eigen_(false){ 
+     seed_output_(false){
 
     _Message(DEBUG_VERB_LEVEL, "Constructing MeasGeneral object\n");
     setup(node);
     _Message(DEBUG_VERB_LEVEL, "MeasGeneral object constructed\n");
   }
-  ~MeasGeneral(){if(input_.eigen) delete input_.eigen;}
+  ~MeasGeneral(){
+    for(int e=0; e<eig_pred_.size(); ++e) delete input_.config.emodes[e];
+  }
 
   template <typename MeasObj> void do_meas();
 };
 
 template<typename MeasObj> void MeasGeneral::do_meas(){
   _Message(DEBUG_VERB_LEVEL, "Starting MeasGeneral::do_meas()\n");
-  
-
   
   for(int c=0; c<meas_num_; ++c){
     
@@ -100,32 +102,28 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     else           infile<< config_list_[0]<< number_list_[c]
 			 << config_list_[1];
     
-      /* Initialize the gauge configuration from the given filename */
+    /* Initialize the gauge configuration from the given filename */
     Uin_.initialize(node_,infile.str());
-    input_.gconf = &Uin_;   
+    input_.config.gconf = &Uin_;   
   
     CCIO::cout<<"Gauge configuration loaded from "<<infile.str()<<std::endl;
 
     /* setting corresponding eigenmodes */
-    if(has_eigen_){ 
-      std::stringstream evalfile;
-      if(file_list_) evalfile<< eigen_list_[c];
-      else           evalfile<< eigen_list_[0]<< number_list_[c]
-			     << eigen_list_[2];
-      std::stringstream evecfile;
-      if(file_list_) evecfile<< eigen_list_[meas_num_+c];
-      else           evecfile<< eigen_list_[1]<< number_list_[c]
-			     << eigen_list_[3];
+    for(int e=0; e<eig_pred_.size(); ++e){
+      std::stringstream eigfile;
+      if(file_list_) eigfile<< eigen_list_[e*meas_num_+c];
+      else           eigfile<< eigen_list_[e]<< number_list_[c];
       
-      input_.eigen->initialize<Format::Format_F>(evalfile.str(),
-						 evecfile.str());
+      input_.config.emodes.push_back(Eigen::initFromFile<Format::Format_F>(eig_pred_[e],eigfile.str()));
     }
     CCIO::cout<<"pre_process begins\n";
-    pre_process(Uin_,*(input_.rng),number_list_[c]);// monitoring + smr + gfix
+    pre_process(Uin_,*(input_.rng),number_list_[c]);// monitoring +smr +gfix
     CCIO::cout<<"pre_process ends\n";
 
     std::stringstream outfile;
-    outfile << output_prefix_<< number_list_[c];
+    if(file_list_) outfile<< output_prefix_<< config_list_[c];
+    else           outfile<< output_prefix_<< number_list_[c];
+
     input_.output = outfile.str();
 
     //------- actual measurement -------    

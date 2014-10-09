@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-10-09 14:26:50 cossu>
+# Time-stamp: <2014-10-09 15:04:47 cossu>
 
 
 
@@ -172,7 +172,6 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Dirac_ops/dirac_wilson_Brillouin_OSS.cpp Dirac_ops/eoUtils.cpp \
 	Dirac_ops/wilsonLikeUtils.cpp Dirac_ops/cloverTerm.cpp \
 	Dirac_ops/BoundaryConditions/boundaryCond.cpp \
-	Dirac_ops/subSpaceProjector.cpp \
 	Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 	Dirac_ops/dirac_LowModeDeflation_Approx.cpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp \
@@ -188,7 +187,8 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	EigenModes/eigenProc_Zolotarev.cpp \
 	EigenModes/chebyshevAccelFuncFactory.cpp \
 	EigenModes/eigenSorter.cpp EigenModes/findminmax.cpp \
-	EigenModes/eigModesNum.cpp Measurements/measGeneral.cpp \
+	EigenModes/eigModesNum.cpp EigenModes/subSpaceProjector.cpp \
+	EigenModes/eigenModes.cpp Measurements/measGeneral.cpp \
 	Measurements/GaugeM/staples.cpp \
 	Measurements/GaugeM/wilsonFlow.cpp \
 	Measurements/GaugeM/polyakovLoop.cpp \
@@ -332,7 +332,6 @@ am_libcommcode_a_OBJECTS = Main/commonPrms.$(OBJEXT) $(am__objects_1) \
 	Dirac_ops/cloverTerm.$(OBJEXT) \
 	Dirac_ops/dirac_Operator_Factory.$(OBJEXT) \
 	Dirac_ops/BoundaryConditions/boundaryCond.$(OBJEXT) \
-	Dirac_ops/subSpaceProjector.$(OBJEXT) \
 	Dirac_ops/dirac_LowModeDeflation_ExactEigen.$(OBJEXT) \
 	Dirac_ops/dirac_LowModeDeflation_Approx.$(OBJEXT) \
 	$(am__objects_7) EigenModes/eigenCalcGeneral.$(OBJEXT) \
@@ -343,6 +342,8 @@ am_libcommcode_a_OBJECTS = Main/commonPrms.$(OBJEXT) $(am__objects_1) \
 	EigenModes/eigenSorter.$(OBJEXT) \
 	EigenModes/findminmax.$(OBJEXT) \
 	EigenModes/eigModesNum.$(OBJEXT) \
+	EigenModes/subSpaceProjector.$(OBJEXT) \
+	EigenModes/eigenModes.$(OBJEXT) \
 	Measurements/measGeneral.$(OBJEXT) \
 	Measurements/GaugeM/staples.$(OBJEXT) \
 	Measurements/GaugeM/wilsonFlow.$(OBJEXT) \
@@ -559,7 +560,6 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Dirac_ops/cloverTerm.hpp \
 	Dirac_ops/BoundaryConditions/boundaryCond.hpp \
 	Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp \
-	Dirac_ops/subSpaceProjector.hpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.hpp \
@@ -573,15 +573,15 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	EigenModes/chebyshevAccelFuncFactory.hpp \
 	EigenModes/eigenProc_Zolotarev.h EigenModes/eigenModes.hpp \
 	EigenModes/findminmax.hpp EigenModes/eigModesNum.hpp \
-	Fields/field_expressions.hpp HMC/hmcGeneral.hpp \
-	HMC/TrajectoryInfo.hpp HMC/mdExec.hpp HMC/mdExec_leapfrog.hpp \
-	HMC/mdExec_2MN.hpp HMC/mdExec_leapfrog_eigen.hpp \
-	HMC/mdExec_factory.hpp HMC/mdExec_factory_abs.hpp \
-	Solver/solver_CG_params.hpp Solver/solver_Factory.hpp \
-	Solver/solver_BiCGStab.hpp Solver/solver.hpp \
-	Solver/solver_CG.hpp Solver/multiShiftSolver_CG.hpp \
-	Solver/multiShiftSolver.hpp Solver/rationalSolver.hpp \
-	Solver/rationalSolver_CG.hpp \
+	EigenModes/subSpaceProjector.hpp Fields/field_expressions.hpp \
+	HMC/hmcGeneral.hpp HMC/TrajectoryInfo.hpp HMC/mdExec.hpp \
+	HMC/mdExec_leapfrog.hpp HMC/mdExec_2MN.hpp \
+	HMC/mdExec_leapfrog_eigen.hpp HMC/mdExec_factory.hpp \
+	HMC/mdExec_factory_abs.hpp Solver/solver_CG_params.hpp \
+	Solver/solver_Factory.hpp Solver/solver_BiCGStab.hpp \
+	Solver/solver.hpp Solver/solver_CG.hpp \
+	Solver/multiShiftSolver_CG.hpp Solver/multiShiftSolver.hpp \
+	Solver/rationalSolver.hpp Solver/rationalSolver_CG.hpp \
 	Solver/Architecture_Optimized/rationalSolver_DWF_BGQ.hpp \
 	Solver/Architecture_Optimized/solver_CG_DWF_BGQ.hpp \
 	Smearing/APEsmear.hpp Smearing/baseSmear.hpp \
@@ -874,7 +874,6 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		Dirac_ops/cloverTerm.cpp     	        	\
 		Dirac_ops/dirac_Operator_Factory.cpp		\
 		Dirac_ops/BoundaryConditions/boundaryCond.cpp	\
-		Dirac_ops/subSpaceProjector.cpp	  	        \
 		Dirac_ops/dirac_LowModeDeflation_ExactEigen.cpp \
 		Dirac_ops/dirac_LowModeDeflation_Approx.cpp     \
 		$(BFM_SRC)					\
@@ -886,6 +885,8 @@ libcommcode_a_SOURCES = Main/commonPrms.cpp		\
 		EigenModes/eigenSorter.cpp			\
 		EigenModes/findminmax.cpp			\
 		EigenModes/eigModesNum.cpp			\
+		EigenModes/subSpaceProjector.cpp  	        \
+		EigenModes/eigenModes.cpp        	        \
 		Measurements/measGeneral.cpp			\
 		Measurements/GaugeM/staples.cpp			\
 		Measurements/GaugeM/wilsonFlow.cpp		\
@@ -1121,7 +1122,6 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/cloverTerm.hpp            	\
 			Dirac_ops/BoundaryConditions/boundaryCond.hpp      	\
 			Dirac_ops/BoundaryConditions/antiPeriodicBC.hpp      	\
-			Dirac_ops/subSpaceProjector.hpp		\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.hpp\
@@ -1138,6 +1138,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			EigenModes/eigenModes.hpp		\
 			EigenModes/findminmax.hpp		\
 			EigenModes/eigModesNum.hpp	        \
+			EigenModes/subSpaceProjector.hpp	\
 			Fields/field_expressions.hpp		\
 			HMC/hmcGeneral.hpp                      \
 			HMC/TrajectoryInfo.hpp			\
@@ -1486,8 +1487,6 @@ Dirac_ops/BoundaryConditions/$(DEPDIR)/$(am__dirstamp):
 Dirac_ops/BoundaryConditions/boundaryCond.$(OBJEXT):  \
 	Dirac_ops/BoundaryConditions/$(am__dirstamp) \
 	Dirac_ops/BoundaryConditions/$(DEPDIR)/$(am__dirstamp)
-Dirac_ops/subSpaceProjector.$(OBJEXT): Dirac_ops/$(am__dirstamp) \
-	Dirac_ops/$(DEPDIR)/$(am__dirstamp)
 Dirac_ops/dirac_LowModeDeflation_ExactEigen.$(OBJEXT):  \
 	Dirac_ops/$(am__dirstamp) Dirac_ops/$(DEPDIR)/$(am__dirstamp)
 Dirac_ops/dirac_LowModeDeflation_Approx.$(OBJEXT):  \
@@ -1547,6 +1546,10 @@ EigenModes/eigenSorter.$(OBJEXT): EigenModes/$(am__dirstamp) \
 EigenModes/findminmax.$(OBJEXT): EigenModes/$(am__dirstamp) \
 	EigenModes/$(DEPDIR)/$(am__dirstamp)
 EigenModes/eigModesNum.$(OBJEXT): EigenModes/$(am__dirstamp) \
+	EigenModes/$(DEPDIR)/$(am__dirstamp)
+EigenModes/subSpaceProjector.$(OBJEXT): EigenModes/$(am__dirstamp) \
+	EigenModes/$(DEPDIR)/$(am__dirstamp)
+EigenModes/eigenModes.$(OBJEXT): EigenModes/$(am__dirstamp) \
 	EigenModes/$(DEPDIR)/$(am__dirstamp)
 Measurements/$(am__dirstamp):
 	@$(MKDIR_P) Measurements
@@ -1962,16 +1965,17 @@ mostlyclean-compile:
 	-rm -f Dirac_ops/domainWallUtils.$(OBJEXT)
 	-rm -f Dirac_ops/eoUtils.$(OBJEXT)
 	-rm -f Dirac_ops/fopr_signH_Zolotarev.$(OBJEXT)
-	-rm -f Dirac_ops/subSpaceProjector.$(OBJEXT)
 	-rm -f Dirac_ops/wilsonLikeUtils.$(OBJEXT)
 	-rm -f EigenModes/chebyshevAccelFuncFactory.$(OBJEXT)
 	-rm -f EigenModes/eigModesNum.$(OBJEXT)
 	-rm -f EigenModes/eigenCalcGeneral.$(OBJEXT)
+	-rm -f EigenModes/eigenModes.$(OBJEXT)
 	-rm -f EigenModes/eigenModesSolver_Factory.$(OBJEXT)
 	-rm -f EigenModes/eigenModesSolver_IRL.$(OBJEXT)
 	-rm -f EigenModes/eigenProc_Zolotarev.$(OBJEXT)
 	-rm -f EigenModes/eigenSorter.$(OBJEXT)
 	-rm -f EigenModes/findminmax.$(OBJEXT)
+	-rm -f EigenModes/subSpaceProjector.$(OBJEXT)
 	-rm -f Fopr/foprHermFactoryCreator.$(OBJEXT)
 	-rm -f Fopr/foprHermFuncFactoryCreator.$(OBJEXT)
 	-rm -f Geometry/autoMap_improved.$(OBJEXT)
@@ -2123,7 +2127,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/domainWallUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/eoUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/fopr_signH_Zolotarev.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/subSpaceProjector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/$(DEPDIR)/wilsonLikeUtils.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/Architecture_Optimized/$(DEPDIR)/domainWallCore_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/Architecture_Optimized/$(DEPDIR)/domainWallExtra_BGQ.Po@am__quote@
@@ -2138,11 +2141,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/chebyshevAccelFuncFactory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/eigModesNum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/eigenCalcGeneral.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/eigenModes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/eigenModesSolver_Factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/eigenModesSolver_IRL.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/eigenProc_Zolotarev.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/eigenSorter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/findminmax.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@EigenModes/$(DEPDIR)/subSpaceProjector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Fopr/$(DEPDIR)/foprHermFactoryCreator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Fopr/$(DEPDIR)/foprHermFuncFactoryCreator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Geometry/$(DEPDIR)/autoMap_improved.Po@am__quote@

@@ -49,6 +49,7 @@
 	<Nk>50</Nk>
 	<Np>20</Np>
 	<precision>1e-7</precision>
+	<NGprec_factor>1e+5</NGprec_factor>	
 	<max_iter>200</max_iter>	
       </EigenModesSolver>
     </EigenModesCalc>

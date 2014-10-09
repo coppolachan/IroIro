@@ -10,7 +10,7 @@
 
 class ScalarOpFactory{
 public:
-  virtual ScalarOp* getSop(InputConfig& )const = 0;
+  virtual ScalarOp* getSop(const InputConfig& )const = 0;
   virtual ~ScalarOpFactory(){}
 };
 
@@ -18,7 +18,7 @@ class LaplacianFactory: public ScalarOpFactory{
   XML::node lnode_;
 public:
   LaplacianFactory(const XML::node& node):lnode_(node){}
-  Laplacian* getSop(InputConfig& input)const{
+  Laplacian* getSop(const InputConfig& input)const{
     return new Laplacian(lnode_,input.getGconf());
   }
 };
@@ -26,7 +26,7 @@ public:
 class Laplacian4DFfactory: public ScalarOpFactory{
 public:
   Laplacian4DFfactory(){}
-  Laplacian4DF* getSop(InputConfig& input)const{
+  Laplacian4DF* getSop(const InputConfig& input)const{
     CCIO::cout<<"Laplacian4DFfactory called\n";
     return new Laplacian4DF(input.getGconf());
   }
@@ -35,7 +35,7 @@ public:
 class Laplacian4DSfactory: public ScalarOpFactory{
 public:
   Laplacian4DSfactory(){}
-  Laplacian4DS* getSop(InputConfig& input)const{
+  Laplacian4DS* getSop(const InputConfig& input)const{
     return new Laplacian4DS(input.getGconf());
   }
 };

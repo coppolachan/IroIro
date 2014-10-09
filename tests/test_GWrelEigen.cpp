@@ -14,33 +14,32 @@ int Test_GWrelEigen::run(){
   XML::descend(gw_node,"GWrelEigen");
 
   try{
-    InputConfig input = input_.getConfig();
-    evecs_= input_.eigen->evecs_;
-    evals_= input_.eigen->evals_;
+    const vector<double>& eval = input_.getEmodes()->evals;
+    const vector<Field>& evec = input_.getEmodes()->evecs;
 
-    int Neig = evecs_.size();
+    int Neig = evec.size();
     CCIO::cout<<"CP:Neig= "<<Neig<<endl;
 
     double mass;
     XML::read(gw_node,"mass", mass,MANDATORY);
-    Dirac_Wilson Dw(mass,&(input_.gconf->data));
+    Dirac_Wilson Dw(mass,input_.getGconf());
     CCIO::cout<<"CP:Pairling:mass="<< mass <<endl;
 
     for(int i=0; i<Neig; ++i){
-      double sign = evals_[i]/sqrt(evals_[i]*evals_[i]);
+      double sign = eval[i]/sqrt(eval[i]*eval[i]);
       double lmd = 0.0;
-      if(abs(evals_[i])<0.001)
-	CCIO::cout<<"CP:lmd=0 beacause of near 0-mode evals["<<i<<"]="
-		  <<evals_[i]<<endl;
+      if(abs(eval[i])<0.001)
+	CCIO::cout<<"CP:lmd=0 beacause of near 0-mode eval["<<i<<"]="
+		  <<eval[i]<<endl;
       else
-	lmd = sign*sqrt(abs((evals_[i]*evals_[i] -mass*mass)/(1.0 -mass*mass)));
+	lmd = sign*sqrt(abs((eval[i]*eval[i] -mass*mass)/(1.0 -mass*mass)));
 
-      Field phi = Dw.gamma5(evecs_[i]);
-      double fmij = phi*evecs_[i];
-      fmij -= evals_[i]/(1.0-mass); 
-      fmij += phi*evecs_[i]*mass/(1.0-mass);
+      Field phi = Dw.gamma5(evec[i]);
+      double fmij = phi*evec[i];
+      fmij -= eval[i]/(1.0-mass); 
+      fmij += phi*evec[i]*mass/(1.0-mass);
 
-      double beta = mass/(evals_[i]+(1.0 -mass)*lmd);
+      double beta = mass/(eval[i]+(1.0 -mass)*lmd);
 
       CCIO::cout<<"CP:Pairling: "<< i <<" sign "<< sign <<endl;
       CCIO::cout<<"CP:Pairling: "<< i <<" beta "<< beta <<endl;
@@ -51,13 +50,13 @@ int Test_GWrelEigen::run(){
               -2.0*beta*beta*lmd*lmd*lmd;
       fii /= 2.0*beta*fmij -1.0 +2.0*beta*lmd -beta*beta*(1.0 -2.0*lmd*lmd);
 
-      double gii = phi*evecs_[i]-(evals_[i]*evals_[i]+mass)
-	/(evals_[i]*(1.0 +mass));
+      double gii = phi*evec[i]-(eval[i]*eval[i]+mass)
+	/(eval[i]*(1.0 +mass));
 
       CCIO::cout<<"CP:massive:Pairling:fmii: "<< i <<" "<< fmij <<endl;
       CCIO::cout<<"CP:massless:Pairling:fii: "<< i <<" "<< fii <<endl;
       CCIO::cout<<"CP:gii: "<< i <<" "<< gii <<endl;
-      CCIO::cout<<"CP:massive_eval: "<< i << " " << evals_[i] <<endl;
+      CCIO::cout<<"CP:massive_eval: "<< i << " " << eval[i] <<endl;
     }
   }catch(const char* error){
     CCIO::cout<<error<<"\n";

@@ -1,12 +1,12 @@
 /*!@file subSpaceProjector.hpp
  * @brief declaration of the utility to do projection of the fermion field 
  *  acorrding to given subspace.
- * Time-stamp: <2013-07-03 10:29:11 noaki>
+ * Time-stamp: <2014-10-05 11:10:46 noaki>
  */
 #ifndef SUBSPACEPROJECTOR_INCLUDED
 #define SUBSPACEPROJECTOR_INCLUDED
 
-#include "EigenModes/eigenModes.hpp"
+#include "eigenModes.hpp"
 
 namespace SubSpace{
   void project_real(Field& w,const Field& f,

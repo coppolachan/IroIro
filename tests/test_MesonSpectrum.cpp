@@ -13,9 +13,6 @@
 
 using namespace std;
 
-
-
-
 int get_Direction(XML::node node) {
   if (!XML::attribute_compare(node, "dir", "X"))
     return XDIR;
@@ -58,8 +55,7 @@ int Test_MesonSpectrum::run(){
   CCIO::cout << "Selected dir="<<dir << "\n";
 
   auto_ptr<QuarkPropagatorFactory> qpfact(QuarkPropagators::createQuarkPropagatorFactory(node));
-  InputConfig config = input_.getConfig();
-  auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(config));
+  auto_ptr<QuarkPropagator> qprop(qpfact->getQuarkProp(input_.config));
   
   //// source creation ////
   XML::next_sibling(node,"Source");
@@ -74,8 +70,6 @@ int Test_MesonSpectrum::run(){
   CCIO::cout << " ---- Making up meson correlators \n";
   MesonCorrelator pp(Pion), v1v1(Vector1), v2v2(Vector2), v3v3(Vector3);
   MesonCorrelator ss(Scalar), Av1Av1(AVector1),Av2Av2(AVector2),Av3Av3(AVector2);
-
-
   
   // assumes that all the spatial sizes are the same
   int space_size = CommonPrms::instance()->global_size(XDIR);

@@ -6,13 +6,21 @@
 #include "chebyshevAccelFuncFactory.hpp"
 #include "Fields/field_expressions.hpp"
 #include "Fopr/foprHermFactoryCreator.hpp"
-#include "inputConfig.hpp"
 #include "field.h"
 #include <cassert>
 
 using namespace std;
 
-EigenCalcGeneral::EigenCalcGeneral(XML::node node):eslvNode_(node){
+EigenCalcGeneral::EigenCalcGeneral(XML::node node)
+  :eslvNode_(node),useExModes_(false),esId_(0),Nex_(0){
+
+  XML::node emNode = node;
+  XML::descend(emNode,"ExModes");
+  if(emNode!=NULL){
+    XML::read(emNode,"usage",useExModes_);
+    XML::read(emNode,"eigset_idx",esId_);
+  }
+  
   XML::node opNode = node;
   XML::descend(opNode,"HermitianOperator", MANDATORY);
   opOrigFptr_.reset(HermiteOp::createFoprHermFactory(opNode));
@@ -53,13 +61,16 @@ EigenSorter* EigenCalcGeneral::eigenSorterFactory(const XML::node& node)const{
 EigenModesSolver* EigenCalcGeneral::eigSlvFactory(const Fopr_Herm* op,
 						  const EigenSorter* esort){
   int Nk,Np,Niter,Nthrs,max_iter;
-  double prec;
+  double prec;  
+  double ngPrec = 1.0e+5;
+
   XML::read(eslvNode_,"Nthreshold",Nthrs,MANDATORY);
   XML::read(eslvNode_,"Nk",Nk,MANDATORY);
   XML::read(eslvNode_,"Np",Np,MANDATORY);
   XML::read(eslvNode_,"precision",prec,MANDATORY);
+  XML::read(eslvNode_,"NGprec_factor",ngPrec);
   XML::read(eslvNode_,"max_iter",Niter,MANDATORY);
-
+  
   if(opAccelFptr_.get()){
     CCIO::cout<<"Acceleration is ON\n";
     double thrs = op->func(esort->thrs());
@@ -74,18 +85,26 @@ EigenModesSolver* EigenCalcGeneral::eigSlvFactory(const Fopr_Herm* op,
   }else{
     CCIO::cout<<"Acceleration is OFF\n";
   }
-  return new EigenModesSolver_IRL(op,esort,Nk,Np,prec,Niter,Nthrs);
+  return new EigenModesSolver_IRL(op,esort,Nk,Np,prec,Niter,ngPrec,Nthrs);
 }
 
-void EigenCalcGeneral::do_calc(InputConfig& input){
+void EigenCalcGeneral::do_calc(const InputConfig& input){
 
   auto_ptr<Fopr_Herm> opPtr(opOrigFptr_->getFoprHerm(input));
   if(opAccelFptr_.get())
     opPtr.reset(opAccelFptr_->getOp(opOrigFptr_->getFoprHerm(input)));
-  auto_ptr<EigenModesSolver> 
-    emslvPtr(eigSlvFactory(opPtr.get(),esortPtr_.get()));
 
-  emslvPtr->calc(evals_,evecs_,Neig_); 
+  auto_ptr<EigenModesSolver> emslvPtr(eigSlvFactory(opPtr.get(),esortPtr_.get()));
+
+  if(useExModes_){
+    CCIO::cout<<"Checking previously determined eigenmodes...\n";
+    test_exModes(opPtr.get(),input.emodes[esId_]);
+    emslvPtr->calc(evals_,evecs_,Neig_,&(input.emodes[esId_]->evecs));
+    Nex_= (input.emodes[esId_]->evecs).size();
+  }else{
+    emslvPtr->calc(evals_,evecs_,Neig_);
+  }
+
   if(Neig_> 0){
     CCIO::cout<<"Calculation successfully finished. Eigenvalues are:\n";
     get_eval(opOrigFptr_->getFoprHerm(input));  // eigenvalues of oopr 
@@ -103,7 +122,7 @@ void EigenCalcGeneral::do_calc(InputConfig& input){
 }
 
 void EigenCalcGeneral::get_eval(const Fopr_Herm* opr){
-  using namespace FieldExpression;
+    using namespace FieldExpression;
   assert(Neig_>= 0);
 
   CCIO::cout<<" index ";
@@ -132,11 +151,33 @@ void EigenCalcGeneral::get_eval(const Fopr_Herm* opr){
   CCIO::cout<<"---------------------------------------------\n";
 }
 
-void EigenCalcGeneral::output_txt(const string& output)const{
+// checking eigenvalues/vectors previously determined.
+void EigenCalcGeneral::test_exModes(const Fopr_Herm* opr,const EigenModes* em){
+  using namespace FieldExpression;  
+  
+  for(int i=0; i<em->size(); ++i){
+    Field Av = opr->mult(em->evecs[i]);
+    //double check_evals = em->evecs[i]*Av; 
+    Av -= em->evals[i]*em->evecs[i];
+
+    double res = Av.norm(); // residual 
+    double vndif = em->evecs[i].norm() -1.0;
+    
+    CCIO::cout<<" ["<<setw( 3)<<setiosflags(ios_base::left)<< i<<"] ";
+    CCIO::cout<<      setw(25)<<setiosflags(ios_base::left)<< em->evals[i];
+    CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::left)<< res;
+    CCIO::cout<<"  "<<setw(25)<<setiosflags(ios_base::left)<< vndif<<"\n";
+  }
+  CCIO::cout<< resetiosflags(ios_base::scientific);
+}
+
+void EigenCalcGeneral::output_txt(const string& output,bool append)const{
   if(Communicator::instance()->primaryNode()){
     ofstream writer(output.c_str()); 
+    if(append) writer.open(output.c_str(),std::ios_base::app);
+
     for(int i=0; i<Neig_; ++i){
-      writer<< setw(2) <<setiosflags(ios_base::right)<< i;
+      writer<< setw(2) <<setiosflags(ios_base::right)<< Nex_+i;
       writer<< setw(25)<<setprecision(16)<<setiosflags(ios_base::left )
 	    << evals_[i]<<endl;
 

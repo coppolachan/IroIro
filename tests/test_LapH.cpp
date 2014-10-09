@@ -28,15 +28,11 @@ using namespace EvenOddUtils;
 
 typedef FermionField1sp ScalarField;
 
-int Test_LapH_Solver::run()
-{
+int Test_LapH_Solver::run(){
   CCIO::cout<<"Test_LapH_Solver::run() called\n";
 
   XML::node LapH_node = input_.node;
-  InputConfig config = input_.getConfig();
-
   XML::descend(LapH_node,"LapH",MANDATORY);
-
   /*
   int Nev = 120; // should read these in from xml ############################################
   int Nevdil = 6; //interlace-6
@@ -59,13 +55,10 @@ int Test_LapH_Solver::run()
     CCIO::cout << "Error: incorrect starting eigenvalue or number of steps in dilution.\n";
     abort();
   }
-     
-
   if (Nspindil > ND_){
     CCIO::cout << "Error: spin dilution too big.\n";
     abort();
   }
- 
 
   // Lattice size parameters
   int Nvol = CommonPrms::instance()->Nvol();
@@ -75,21 +68,19 @@ int Test_LapH_Solver::run()
   int Nz = CommonPrms::instance()->Nz();
   int Nvol3D = Nx*Ny*Nz;
   Field solution;
-  Field* u = &((input_.gconf)->data);
   Ndil = Nt * Nevdil * Nspindil;
   Staples stpl;
-  double plq = stpl.plaquette(*input_.gconf);
+  double plq = stpl.plaquette(*(input_.config.gconf));
   CCIO::cout<<" Plaquette ="<< plq <<std::endl;
   
-  /************************************************************************************/
+  /*************************************************************************/
   //
   // For 5-D Inversion (from test_DWF.cpp)
   //
-
   XML::descend(LapH_node,"KernelDWF_4d");
   auto_ptr<DiracDWF4dFactory> 
     Wilson_Kernel_4d_factory(Diracs::createDiracDWF4dFactory(LapH_node));
-  auto_ptr<Dirac_DomainWall_4D> Wilson_Kernel_4d(Wilson_Kernel_4d_factory->getDirac(config));
+  auto_ptr<Dirac_DomainWall_4D> Wilson_Kernel_4d(Wilson_Kernel_4d_factory->getDirac(input_.config));
 
   /*************************************************************************/
   //
@@ -101,7 +92,6 @@ int Test_LapH_Solver::run()
   
   FermionField Ffield;
   std::vector<FermionField> srcfield(ND_);
-  
   //
   // Eigenvectors are stored as 3-D vectors for each timeslice
   // i.e. "eigen_t0_5830" contains 120, 3D-eigenvectors on timeslice t=0 for config 5830
@@ -115,8 +105,6 @@ int Test_LapH_Solver::run()
   //int num_rand = Nt * Nev * Nspindil;// 64 * 120 * 4 = 30720;// number of random numbers to generate
 
   int num_rand =  Nev * Nspindil;// 64 * 120 * 4 = 7200;// number of random numbers to generate
-
-
   //
   // Example:
   //  Connected diagrams  Tf, Gf, EVi6
@@ -125,16 +113,11 @@ int Test_LapH_Solver::run()
   //  Nev=6  EVi6 interlace-6  (120 eigenvectors of 3-D laplacian)
   //      Need: 120*4 = 480  Z4 random numbers at each t0
   //
-
-
-  
-
   std::valarray<double> white_noise(0.0, num_rand);
   std::valarray<double> rho(0.0, num_rand*2); 
   input_.rng->get(white_noise);    
   // Make Z4 noise from uniform noise
-  for (int idx = 0; idx <white_noise.size(); idx++)
-  {
+  for (int idx = 0; idx <white_noise.size(); idx++){
     if ( white_noise[idx] < 0.25){
       rho[2*idx]   = 1.0;
       rho[2*idx+1] = 0.0;        
@@ -171,92 +154,72 @@ int Test_LapH_Solver::run()
 
   // for(int ev_start=0; ev_start < Nevdil; ++ev_start)
   //  {
-  for(int ev_start=starting_Eval; ev_start < (Eval_steps+starting_Eval); ++ev_start)
-    {
-      FINE_TIMING_START(timer_source);
+  for(int ev_start=starting_Eval; ev_start < (Eval_steps+starting_Eval); ++ev_start){
+    FINE_TIMING_START(timer_source);
+    
+    for(int spin=0; spin < ND_; ++spin) srcfield[spin] = 0;
 
+    for(int eigvec_number=ev_start; eigvec_number < Nev; eigvec_number+=Nevdil){     
+      CCIO::ReadFromDisk3D<Format::Format_S>(Sfield.data,"eigen_t0_5830",eigvec_number,0,"Binary",false);
 
-      for(int spin=0; spin < ND_; ++spin)
-	srcfield[spin] = 0;
-
-      for(int eigvec_number=ev_start; eigvec_number < Nev; eigvec_number+=Nevdil)
-	{     
-	  CCIO::ReadFromDisk3D< Format::Format_S >(Sfield.data, "eigen_t0_5830", eigvec_number, 0, "Binary", false);
-
-	  for(int spin=0; spin < ND_; ++spin)
-	    {
-	    
+      for(int spin=0; spin < ND_; ++spin){
+	rho_idx = (ND_* eigvec_number + spin); // select random number
 	      
-	      rho_idx = (ND_* eigvec_number + spin); // select random number
-	      
-	      ScalarField Sfield_3D( Nvol3D );
-	      //copy the #eigenvec_number vector into Sfield_3D
-	      for (int i = 0; i  < Sfield_3D.size(); i++) 
-		{
-		  // this assumes t0 = 0                              check Nvol
-		  Sfield_3D.data.set(i, Sfield.data[i]);
-		}
-	      // Dilute the spin ND_ = 4  NC_ = 3 Ffield.format.Nin() = 2*NC_*ND_ number of real dof
-	      int offset = time_slice*(Ffield.format.Nin()*Nvol3D)+2*NC_*spin;
-	      for (int i = 0; i  < Sfield_3D.size(); i+=2*NC_) 
-		{
-		  for (int s = 0; s < 2*NC_ ; s++ ) 
-		    Ffield.data.set(offset + i*ND_ + s, Sfield_3D.data[i+s]);
-		}
-	      // Multiply by the random number with index rho_idx
-	      for (int  i=0; i  < Ffield.size(); i+=2) {
-		double real = rho[2*rho_idx]*Ffield[i] - rho[2*rho_idx+1]*Ffield[i+1];
-		double imag = rho[2*rho_idx]*Ffield[i+1] + rho[2*rho_idx+1]*Ffield[i];
-		Ffield.data.set(i, real);
-		Ffield.data.set(i, imag);
-	      }
-	      // add to the source field
-	      srcfield[spin] += Ffield;    
-	    }//spin
-	} // evigvec_number
+	ScalarField Sfield_3D( Nvol3D );
+	// copy the #eigenvec_number vector into Sfield_3D
+	// this assumes t0 = 0 check Nvol
+	for(int i=0; i<Sfield_3D.size(); ++i) Sfield_3D.data.set(i, Sfield.data[i]);  
 
-      FINE_TIMING_END(timer_source);
-      CCIO::cout << "[Timing] Source(s) creation: "<< timer_source << "\n";
-	  /*
-      for (int i = 0; i  < srcfield.size(); i+=2) {
-	CCIO::cout << "["<<i<<"] F = "<< srcfield[i] << " , " << srcfield[i+1] << "\n";
-      }
-      */
+	// Dilute the spin ND_ = 4  NC_ = 3 Ffield.format.Nin() = 2*NC_*ND_ number of real dof
+	int offset = time_slice*(Ffield.format.Nin()*Nvol3D)+2*NC_*spin;
+	for(int i=0; i<Sfield_3D.size(); i+=2*NC_)
+	  for(int s=0; s<2*NC_; ++s) Ffield.data.set(offset +i*ND_+s,Sfield_3D.data[i+s]);
 
-      // Save the 4-D source field for now: rho_{i}_s{spin}_t{t0}_noise_0(x,t) for noise 0
-      char filename[128]; // Need input from xml ##############################################
+	// Multiply by the random number with index rho_idx
+	for(int  i=0; i  < Ffield.size(); i+=2) {
+	  double real = rho[2*rho_idx]*Ffield[i] - rho[2*rho_idx+1]*Ffield[i+1];
+	  double imag = rho[2*rho_idx]*Ffield[i+1] + rho[2*rho_idx+1]*Ffield[i];
+	  Ffield.data.set(i, real);
+	  Ffield.data.set(i, imag);
+	}
+	// add to the source field
+	srcfield[spin] += Ffield;    
+      }//spin
+    } // evigvec_number
       
+    FINE_TIMING_END(timer_source);
+    CCIO::cout << "[Timing] Source(s) creation: "<< timer_source << "\n";
+    /*
+    for (int i = 0; i  < srcfield.size(); i+=2) 
+      CCIO::cout << "["<<i<<"] F = "<< srcfield[i] << " , " << srcfield[i+1] << "\n";
+    */
+    // Save the 4-D source field for now: rho_{i}_s{spin}_t{t0}_noise_0(x,t) for noise 0
+    char filename[128]; // Need input from xml ###########################################
       
-      // Invert to find the solution
-      for (int spin = 0; spin < ND_; spin++){
-	CCIO::cout << " Ev_start: "<< ev_start << "  Spin : "<<spin << "\n";
+    // Invert to find the solution
+    for(int spin=0; spin<ND_; ++spin){
+      CCIO::cout<<" Ev_start: "<< ev_start <<"  Spin : "<<spin<<"\n";
 	
-	sprintf(filename, "smeared_rho_0_NvI6_t0_i%d", ev_start*ND_+spin);
-	FINE_TIMING_START(timer_save);
-	CCIO::SaveOnDisk<FermionField>(srcfield[spin].data, filename);
-	FINE_TIMING_END(timer_save);
-	CCIO::cout << "[Timing] Source(s) save: "<< timer_save << "\n";
-	FINE_TIMING_START(timer_solver);
-	Field solution = Wilson_Kernel_4d->mult_inv(srcfield[spin].data);  
-  	FINE_TIMING_END(timer_solver);
-      	CCIO::cout << "[Timing] Solver: "<< timer_solver << "\n";
+      sprintf(filename, "smeared_rho_0_NvI6_t0_i%d", ev_start*ND_+spin);
+      FINE_TIMING_START(timer_save);
+      CCIO::SaveOnDisk<FermionField>(srcfield[spin].data, filename);
+      FINE_TIMING_END(timer_save);
+      CCIO::cout << "[Timing] Source(s) save: "<< timer_save << "\n";
+      FINE_TIMING_START(timer_solver);
+      Field solution = Wilson_Kernel_4d->mult_inv(srcfield[spin].data);  
+      FINE_TIMING_END(timer_solver);
+      CCIO::cout << "[Timing] Solver: "<< timer_solver << "\n";
 
-	// Save the 4-D fermion solution: phi_{i}_t{t0}_noise_0(x,t) 
-  	sprintf(filename, "phi_0_NvI6_t0_i%d", ev_start*ND_+spin);
-	FINE_TIMING_START(timer_save);
-	CCIO::SaveOnDisk<FermionField>(solution, filename);
-	FINE_TIMING_END(timer_save);
-	CCIO::cout << "[Timing] Solution(s) save: "<< timer_save << "\n";
-	// One can also project the solution onto the eigenvectors at this stage and
-	// save only the coefficients if we know we will be smearing at the sink.   
-
-
-
-      }
-      
-
-    } // ev_start
-
+      // Save the 4-D fermion solution: phi_{i}_t{t0}_noise_0(x,t) 
+      sprintf(filename, "phi_0_NvI6_t0_i%d", ev_start*ND_+spin);
+      FINE_TIMING_START(timer_save);
+      CCIO::SaveOnDisk<FermionField>(solution, filename);
+      FINE_TIMING_END(timer_save);
+      CCIO::cout << "[Timing] Solution(s) save: "<< timer_save << "\n";
+      // One can also project the solution onto the eigenvectors at this stage and
+      // save only the coefficients if we know we will be smearing at the sink.   
+    }
+  } // ev_start
   return 0;
 }
 

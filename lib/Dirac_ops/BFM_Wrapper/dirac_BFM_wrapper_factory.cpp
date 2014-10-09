@@ -1,7 +1,7 @@
 /*! @file dirac_BFM_wrapper_factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
  *
- * Time-stamp: <2014-02-26 13:24:44 noaki>
+ * Time-stamp: <2014-10-09 15:36:48 neo>
  */
 
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
@@ -16,13 +16,13 @@ DiracBFMoperatorFactory::DiracBFMoperatorFactory(const XML::node node)
   Dirac5D_EO_factory_.save(new DiracEvenOdd_DWF5dFactory(current_node));
 }
 
-Dirac_BFM_Wrapper* DiracBFMoperatorFactory::getDirac(InputConfig& input) {
+Dirac_BFM_Wrapper* DiracBFMoperatorFactory::getDirac(const InputConfig& input) {
   return createDirac(input); }
-Dirac_BFM_Wrapper* DiracBFMoperatorFactory::getDiracPV(InputConfig& input) {
+Dirac_BFM_Wrapper* DiracBFMoperatorFactory::getDiracPV(const InputConfig& input) {
   return createDiracPV(input); } 
 
 Dirac_BFM_Wrapper* DiracBFMoperatorFactory::
-createDirac(InputConfig& Gfield){
+createDirac(const InputConfig& Gfield){
   DiracWilsonEO_.save(Dirac5D_EO_factory_.get()->getDirac(Gfield));
   
   return new Dirac_BFM_Wrapper(Dirac_node_, 
@@ -33,7 +33,7 @@ createDirac(InputConfig& Gfield){
 }
 
 Dirac_BFM_Wrapper* DiracBFMoperatorFactory::
-createDiracPV(InputConfig& Gfield){
+createDiracPV(const InputConfig& Gfield){
   DiracWilsonEO_.save(Dirac5D_EO_factory_.get()->getDiracPV(Gfield));
   
   return new Dirac_BFM_Wrapper(Dirac_node_, 
@@ -55,7 +55,7 @@ DiracDWF4dBFMeoFactory::DiracDWF4dBFMeoFactory(XML::node node)
   SolverFactory_.save(new SolverCG_DWF_opt_Factory(Solver_node_));
 }
 
-Dirac_DomainWall_4D* DiracDWF4dBFMeoFactory::createDirac(InputConfig& input){
+Dirac_DomainWall_4D* DiracDWF4dBFMeoFactory::createDirac(const InputConfig& input){
   BFM_Kernel_.save( DiracBFMFactory_.get()->getDirac(input));
   BFM_KernelPV_.save( DiracBFMFactory_.get()->getDiracPV(input));
 

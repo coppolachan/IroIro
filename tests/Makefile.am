@@ -4,8 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-10-09 14:27:06 cossu>
-
+# Time-stamp: <2014-10-09 15:05:02 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -337,5 +336,6 @@ include_HEADERS 	=	tests.hpp			\
 	       	                test_ChiralCondensate.hpp       \
 	                        test_QnumSuscept.hpp	        \
 	   	                test_Solver_HDCG.hpp		\
-				test_Add_Flux.hpp
+				test_Add_Flux.hpp               \
+                                test_ReadEigenModes.hpp
 
