@@ -25,6 +25,7 @@ public:
   double plaquette(const GaugeField&) const;
   double plaq_s   (const GaugeField&) const;
   double plaq_t   (const GaugeField&) const;
+  double plaq_mu_nu(const GaugeField&, int, int) const;
   double plaq_min (const GaugeField&,double threshold=1.0) const;
 
   double plaquette_adj(const GaugeField&) const;

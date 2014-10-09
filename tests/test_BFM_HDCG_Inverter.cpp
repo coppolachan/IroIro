@@ -33,7 +33,7 @@ int Test_Solver_HDCG::run(){
 
   //Parameters
   int Nvol  =  CommonPrms::instance()->Nvol();
-  double mq = 0.0;
+  double mq = 0.01;
   double M5 = 1.6;
   int Ls    = 8;
   double ht_scale = 2.0;
@@ -84,7 +84,7 @@ int Test_Solver_HDCG::run(){
     dwfa.neighbour_minus[mu] = Communicator::instance()->node_dn(mu);
   }
   dwfa.verbose = 8;
-  dwfa.time_report_iter=100;
+  dwfa.time_report_iter = 100;
 
   for(int mu=0;mu<4;mu++){
     if ( (CommonPrms::instance()->NPE(mu))>1 ) {
@@ -101,9 +101,9 @@ int Test_Solver_HDCG::run(){
 
 
   dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
-  dwfa.rb_precondition_cb=Even;
-  dwfa.max_iter=50000;
-  dwfa.residual=1.0e-12;
+  dwfa.rb_precondition_cb = Even;
+  dwfa.max_iter           = 50000;
+  dwfa.residual           = 1.0e-12;
 
 
   // Define the HDCG parameters 
@@ -142,17 +142,20 @@ int Test_Solver_HDCG::run(){
 
 
   //////////////////////////////////////
-  // Create the HDCG class
+  // Create and initializes the HDCG class
   XML::node SolverNode = DWFnode;
   XML::descend (SolverNode, "Solver",MANDATORY);
 
-  Dirac_BFM_HDCG_Wrapper HDCG_Solver(DWFnode,&conf_.data, &DWF_EO);
-  HDCG_Solver.HDCG_init(HDCGParams, dwfa);
+  Dirac_BFM_HDCG_Wrapper HDCG_Solver(DWFnode,       // XML node describing the operator
+				     &conf_.data,   // configuration
+				     &DWF_EO);      // passes the IroIro operator
+  HDCG_Solver.HDCG_init(HDCGParams, dwfa);  // Initialization (in dirac_BFM_HDCG.cpp)
   HDCG_Solver.set_SolverParams(SolverNode);
   HDCG_Solver.initialize(); // needs the operator and solver params to be set
 
-  
+  //////////////////////////////////////////////
   //launch the test
+  // First set the source vectors
   FermionField source(src.mksrc(0,0));
  
   SiteIndex_EvenOdd* ieo = SiteIndex_EvenOdd::instance();
@@ -190,9 +193,10 @@ int Test_Solver_HDCG::run(){
     }
   }
   CCIO::cout << "EO_source filled\n";
+
   ///////////////////////////////////////////////////////////////////////////////////////
   FermionField BFMSolution(Nvol5d);
-  // Test CGNE solver
+  // Test solver
 
   // 1. Init subspace 
   CCIO::cout << "Init subspace\n";

@@ -102,8 +102,9 @@ calc(vector<double>& ta,vector<Field>& V,int& Neigen)const{
 	Icert.push_back(pair<int,int>(i,idx[i]));
         if(esorter_->beyond_thrs(eval[i],opr_)) ++Nover; 
       }else{
-	if(res[idx[i]] >1000*prec_) continue;
-	else                        break;
+	//	if(res[idx[i]] >100000*prec_) continue;
+	break;
+	//else                        break;
       }
     }  
     /*

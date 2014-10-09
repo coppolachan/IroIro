@@ -37,6 +37,88 @@ double Staples::plaquette(const GaugeField& F)const {
   return (plaq_s(F) + plaq_t(F))*0.5;
 }
 
+double Staples::plaq_mu_nu(const GaugeField& F, int mu, int nu)const {
+  _Message(DEBUG_VERB_LEVEL, "Staples::plaq_mu_nu called\n");
+  double plaq = 0.0;
+  GaugeField1D stpl(Nvol_);
+
+#ifdef IBM_BGQ_WILSON
+  GaugeField1D U_mu, U_nu;
+  GaugeField1D UpNu, UpMu;
+  GaugeField1D pl;
+  //pointers
+  double* F_ptr = const_cast<GaugeField&>(F).data.getaddr(0);
+  double* stpl_ptr = stpl.data.getaddr(0);
+  double* U_mu_ptr = U_mu.data.getaddr(0);
+  double* U_nu_ptr = U_nu.data.getaddr(0);
+  double* UpMu_ptr = UpMu.data.getaddr(0);
+  double* UpNu_ptr = UpNu.data.getaddr(0);
+  double* pl_ptr = pl.data.getaddr(0);
+
+  BGQThread_Init();
+
+#pragma omp parallel 
+  {
+    const int ns = Nvol_/omp_get_num_threads();
+    const int CC2 = NC_*NC_*2;
+    const int str2 = CC2*ns*omp_get_thread_num();
+
+    BGWilsonSU3_MatEquate(U_mu_ptr+str2,F_ptr+mu*Nvol_*CC2+str2,ns); //U_mu links
+    BGWilsonSU3_MatEquate(U_nu_ptr+str2,F_ptr+nu*Nvol_*CC2+str2,ns); //U_nu links
+
+    shiftField(UpMu,U_nu_ptr,mu,Forward());
+    shiftField(UpNu,U_mu_ptr,nu,Forward());
+    // upper staple
+    BGWilsonSU3_MatMult_NND(stpl_ptr+str2,U_nu_ptr+str2,UpNu_ptr+str2,UpMu_ptr+str2,ns);
+    // plaquette 
+    BGWilsonSU3_MatMult_ND(pl_ptr+str2,U_mu_ptr+str2,stpl_ptr+str2,ns);
+#pragma omp for reduction(+:plaq)
+    for(int site=0; site<Nvol_; ++site)
+      plaq += pl_ptr[CC2*site]+pl_ptr[8+CC2*site]+pl_ptr[16+CC2*site]; ///ReTr
+    
+  }
+#else  
+#ifdef SR16K_WILSON
+  GaugeField1D U_mu, U_nu;
+  GaugeField1D UpNu, UpMu;
+  GaugeField1D pl;
+  //pointers
+  double* F_ptr = const_cast<GaugeField&>(F).data.getaddr(0);
+  double* stpl_ptr = stpl.data.getaddr(0);
+  double* U_mu_ptr = U_mu.data.getaddr(0);
+  double* U_nu_ptr = U_nu.data.getaddr(0);
+  double* UpMu_ptr = UpMu.data.getaddr(0);
+  double* UpNu_ptr = UpNu.data.getaddr(0);
+  double* pl_ptr = pl.data.getaddr(0);
+
+  const int CC2 = NC_*NC_*2;
+
+  SRWilsonSU3_MatEquate(U_mu_ptr,F_ptr+mu*Nvol_*CC2,Nvol_);//U_mu links
+  SRWilsonSU3_MatEquate(U_nu_ptr,F_ptr+nu*Nvol_*CC2,Nvol_);//U_nu links
+  
+  shiftField(UpMu,U_nu_ptr,mu,Forward());
+  shiftField(UpNu,U_mu_ptr,nu,Forward());
+  // upper staple
+  SRWilsonSU3_MatMult_NND(stpl_ptr,U_nu_ptr,UpNu_ptr,UpMu_ptr,Nvol_);
+  // plaquette 
+  SRWilsonSU3_MatMult_ND(pl_ptr,U_mu_ptr,stpl_ptr,Nvol_);
+  
+  for(int site=0; site<Nvol_; ++site)
+    plaq += pl_ptr[CC2*site]+pl_ptr[8+CC2*site]+pl_ptr[16+CC2*site]; ///ReTr
+  
+#else
+  stpl = lower(F,mu,nu);
+  for(int site=0; site<Nvol_; ++site)
+    plaq += ReTr(mat(F,site,mu)*mat_dag(stpl,site));  // P_ij
+#endif
+#endif
+  plaq = com_->reduce_sum(plaq);
+  return plaq/(Lvol_*NC_);
+
+}
+
+
+
 double Staples::plaq_s(const GaugeField& F)const {
   _Message(DEBUG_VERB_LEVEL, "Staples::plaq_s called\n");
   double plaq = 0.0;

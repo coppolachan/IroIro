@@ -14,7 +14,16 @@ int Test_PolyakovLoop::run(){
   const char* dir_name = pnode.attribute("dir").value();
 
   Staples Staple;
-  CCIO::cout<< "Plaquette : "<< Staple.plaquette(*(input_.gconf))<< std::endl;
+  CCIO::cout<< "Plaquette      : "<<  Staple.plaquette(*(input_.gconf))<< std::endl;
+  CCIO::cout<<" Plaquette (xy) : "<<  Staple.plaq_mu_nu(*(input_.gconf), 0,1) << std::endl;
+  CCIO::cout<<" Plaquette (xz) : "<<  Staple.plaq_mu_nu(*(input_.gconf), 0,2) << std::endl;
+  CCIO::cout<<" Plaquette (xt) : "<<  Staple.plaq_mu_nu(*(input_.gconf), 0,3) << std::endl;
+  CCIO::cout<<" Plaquette (yz) : "<<  Staple.plaq_mu_nu(*(input_.gconf), 1,2) << std::endl;
+  CCIO::cout<<" Plaquette (yt) : "<<  Staple.plaq_mu_nu(*(input_.gconf), 1,3) << std::endl;
+  CCIO::cout<<" Plaquette (zt) : "<<  Staple.plaq_mu_nu(*(input_.gconf), 2,3) << std::endl;
+
+
+
 
 
   site_dir dir;

@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2014-09-03 12:19:21 neo>
+ * Time-stamp: <2014-10-08 11:59:54 neo>
  */
 #include <omp.h>
 #include <math.h>
@@ -35,23 +35,24 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
   bfmarg bfma;
   bfmActionParams *bfmap = (bfmActionParams *) &bfma;
 
-  // Physica params
+  // Physical params
   *bfmap = BAP;
 
   // Algorithm & code control
   bfma.Threads(omp_get_max_threads());
   bfma.Verbose(0);
-  bfma.time_report_iter=-100;
-  bfma.max_iter     = 10000;
-  bfma.residual     = 1.0e-8;
+  bfma.time_report_iter  =-100;
+  bfma.max_iter          = 10000;
+  bfma.residual          = 1.0e-8;
 
-  //Geometry
+  // Local geometry, get from the environment
   bfma.node_latt[0] =  CommonPrms::instance()->Nx();
   bfma.node_latt[1] =  CommonPrms::instance()->Ny();
   bfma.node_latt[2] =  CommonPrms::instance()->Nz();
   bfma.node_latt[3] =  CommonPrms::instance()->Nt();
 
   //  multi1d<int> procs = QDP::Layout::logicalSize();//? number of nodes per dir?
+  // here the IroIro version
   int procs[4];
   for(int mu=0;mu<4;mu++){
     procs[mu] = CommonPrms::instance()->NPE(mu);
@@ -66,7 +67,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
   }
 
 
-
+  // Initialization of internal operators
   linop_single.init(bfma);
   linop_single.BossLog("HDCG inititialised single prec linop\n");
   linop.init(bfma);
