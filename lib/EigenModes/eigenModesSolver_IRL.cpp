@@ -1,5 +1,6 @@
 /*! @file eigenModesSolver_IRL.cpp
  *  @brief implementations of EigenModesSolver_IRL class  
+ Time-stamp: <2014-10-09 15:03:53 cossu>
  */
 #include "eigenModesSolver_IRL.hpp"
 #include "eigenSorter.hpp"

@@ -1,6 +1,6 @@
 /*! @file dirac_Operator_Factory.hpp 
  *  @brief Declaration of Dirac operators factories
- Time-stamp: <2014-10-07 08:41:06 noaki>
+ Time-stamp: <2014-10-09 15:38:55 neo>
  */
 #ifndef DIRAC_FACT_
 #define DIRAC_FACT_
@@ -63,7 +63,7 @@ public:
   virtual ~DiracWilsonLikeEvenOddFactory(){}
 };
 
-/*!@brief this abstruct class is used for HMC, not for measurements */
+/*!@brief this abstract class is used for HMC, not for measurements */
 class DiracDWF5dFactory :virtual public DiracWilsonLikeFactory{
   virtual DiracWilsonLike* createDirac(const InputConfig&) = 0;
   virtual DiracWilsonLike* createDiracPV(const InputConfig&) =0;
@@ -75,7 +75,7 @@ public:
   virtual ~DiracDWF5dFactory(){}
 };
 
-/*!@brief this abstruct class is used only for measurements */
+/*!@brief this abstract class is used only for measurements */
 class DiracDWF4dFactory :public DiracWilsonLikeFactory{
   virtual Dirac_DomainWall_4D* createDirac(const InputConfig&) = 0;
 public:
@@ -84,7 +84,7 @@ public:
   virtual ~DiracDWF4dFactory(){}
 };
 
-/*!@brief this abstruct class is used only for measurements */
+/*!@brief this abstract class is used only for measurements */
 class DiracDeflationFactory :public DiracWilsonLikeFactory{
   virtual Dirac_LowModeDeflation* createDirac(const InputConfig&) = 0;
 public:
