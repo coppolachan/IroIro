@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-10-09 08:40:43 noaki>
+ * Time-stamp: <2014-10-09 10:15:34 noaki>
  */
 
 #include "measGeneral.hpp"
@@ -82,7 +82,7 @@ void MeasGeneral::input_RegularStep(XML::node inode){
       eig_node;
       eig_node = eig_node.next_sibling("EigenModes")){
 
-    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
+    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondition")));
 
     XML::read(eig_node,"eigen_prefix",input_prefix,MANDATORY);
     eigen_list_.push_back(input_prefix);
@@ -108,7 +108,7 @@ void MeasGeneral::input_NumberList(XML::node inode){
       eig_node;
       eig_node = eig_node.next_sibling("EigenModes")){
 
-    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
+    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondition")));
 
     XML::read(eig_node,"eigen_prefix",input_prefix,MANDATORY);
     eigen_list_.push_back(input_prefix);
@@ -140,7 +140,7 @@ void MeasGeneral::input_FileList(XML::node inode){
       eig_node;
       eig_node = eig_node.next_sibling("EigenModes")){
 
-    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
+    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondition")));
 
     XML::node ev_node = eig_node;
     XML::descend(ev_node,"EvecFiles",MANDATORY);

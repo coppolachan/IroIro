@@ -70,6 +70,7 @@ namespace Eigen{
   void initFromFile(EigenModes& emodes,const Predic* filter,
 		    const std::string& evalfile,
 		    const std::string& evecfile){
+
     std::ifstream evf(evalfile.c_str()); 
     if(evf.good()){
       CCIO::cout<<"Reading eigenvalues from "<< evalfile<<"\n";
@@ -80,9 +81,11 @@ namespace Eigen{
     emodes.evals.clear();
     int id;
     double ev;
+
+    evf>>id; evf>>ev;
     while(!evf.eof()){
-      evf>>id; evf>>ev;
       if((*filter)(ev)) emodes.evals.push_back(ev);
+      evf>>id; evf>>ev;
     }
     int Neig = emodes.evals.size();
     emodes.evecs.clear();
