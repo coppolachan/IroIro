@@ -119,25 +119,25 @@ int Test_Solver_HDCG::run(){
   HDCGParams.Block[4] = Ls;
 
   HDCGParams.SubspaceRationalRefine = 0;
-  HDCGParams.SubspaceRationalRefineLo =   0.003;
+  HDCGParams.SubspaceRationalRefineLo =   0.02;
   HDCGParams.SubspaceRationalRefineResidual =   1.0e-3;
-  HDCGParams.SubspaceRationalLs = 6;
-  HDCGParams.SubspaceRationalLo =   0.001;
-  HDCGParams.SubspaceRationalMass =   0.002;
-  HDCGParams.SubspaceRationalResidual =   1.0e-4;
-  HDCGParams.SubspaceSurfaceDepth = 6;
+  HDCGParams.SubspaceRationalLs = 8;
+  HDCGParams.SubspaceRationalLo =   0.02;
+  HDCGParams.SubspaceRationalMass =   0.001;
+  HDCGParams.SubspaceRationalResidual =   1.0e-6;
+  HDCGParams.SubspaceSurfaceDepth = HDCGParams.SubspaceRationalLs;
   HDCGParams.LittleDopSolverResidualInner =   0.04;
   HDCGParams.LittleDopSolverResidualVstart =   0.04;
-  HDCGParams.LittleDopSolverResidualSubspace =   1.0e-10;
+  HDCGParams.LittleDopSolverResidualSubspace =   1.0e-6;
   HDCGParams.LittleDopSubspaceRational = 0;
-  HDCGParams.LittleDopSolverIterMax = 10000;
+  HDCGParams.LittleDopSolverIterMax = 100;
   HDCGParams.LdopDeflVecs = 24;
   HDCGParams.PreconditionerKrylovResidual =   1.0e-5;
   HDCGParams.PreconditionerKrylovIterMax = 7;
   HDCGParams.PreconditionerKrylovShift =   1.0;
   HDCGParams.PcgSingleShift =   0.0;
-  HDCGParams.LittleDopSolver = 0;
-  HDCGParams.Flexible = 1;//?
+  HDCGParams.LittleDopSolver = LittleDopSolverCG;
+  HDCGParams.Flexible = 2;// 2= double inner,  double outer
  
 
 
@@ -151,7 +151,7 @@ int Test_Solver_HDCG::run(){
 				     &DWF_EO);      // passes the IroIro operator
   HDCG_Solver.HDCG_init(HDCGParams, dwfa);  // Initialization (in dirac_BFM_HDCG.cpp)
   HDCG_Solver.set_SolverParams(SolverNode);
-  HDCG_Solver.initialize(); // needs the operator and solver params to be set
+  //HDCG_Solver.initialize(); // needs the operator and solver params to be set
 
   //////////////////////////////////////////////
   //launch the test
@@ -199,14 +199,14 @@ int Test_Solver_HDCG::run(){
   // Test solver
 
   // 1. Init subspace 
-  CCIO::cout << "Init subspace\n";
+  CCIO::cout << ".::::::::::::::  Init subspace\n";
   HDCG_Solver.HDCG_subspace_init();
   // 2. Compute the subspace (coarse space Little Dirac operator construction)
-  CCIO::cout << "Compute subspace\n";
+  CCIO::cout << ".::::::::::::::  Compute subspace\n";
   HDCG_Solver.HDCG_subspace_compute(0);
     
   // 3. Actually solve with CG
-  CCIO::cout << "Solve using CG\n";
+  CCIO::cout << ".::::::::::::::  Solve using CG\n";
   HDCG_Solver.solve_HDCG(BFMSolution,EO_source, 1.0e-12, 50000);
   
   // 4. Free pointers

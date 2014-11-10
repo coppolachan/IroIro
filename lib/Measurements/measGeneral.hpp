@@ -116,13 +116,16 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
       
       input_.config.emodes.push_back(Eigen::initFromFile<Format::Format_F>(eig_pred_[e],eigfile.str()));
     }
+    
     CCIO::cout<<"pre_process begins\n";
     pre_process(Uin_,*(input_.rng),number_list_[c]);// monitoring +smr +gfix
     CCIO::cout<<"pre_process ends\n";
+    
 
     std::stringstream outfile;
     if(file_list_) outfile<< output_prefix_<< config_list_[c];
     else           outfile<< output_prefix_<< number_list_[c];
+    
 
     input_.output = outfile.str();
 
@@ -137,6 +140,9 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     if(c == meas_num_-1)
       post_process_last(Uin_,*(input_.rng)); // seed saving for the last
     CCIO::cout<<"\n";
+
+
+
   }
 }
 #endif

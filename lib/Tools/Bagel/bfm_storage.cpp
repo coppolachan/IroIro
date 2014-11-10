@@ -103,6 +103,9 @@ void BFM_Storage<Float>::GaugeExport_to_BFM(GaugeField& U){
   double* U_Ptr; 
 
   GaugeField1D Umu;
+
+  CCIO::cout << "U (IroIro) norm :" << U.data.norm() << "\n";
+
   for (int mu = 0; mu < NDIM_; mu++) {
     //CCIO::cout << "Dirslice\n";
     Umu = DirSlice(U, mu);
@@ -127,7 +130,19 @@ void BFM_Storage<Float>::GaugeExport_to_BFM(GaugeField& U){
     //CCIO::cout << "ImportGauge BFM function 2...";
     bfm_obj_.importGauge(U_Ptr, dir); //BFM function
     //CCIO::cout << "complete\n";
+    
+
   }
+
+  double matnorm;
+
+#pragma omp parallel for 
+    for (int t=0; t < bfm_obj_.nthread ; t++)
+      matnorm = bfm_obj_.normMat((Matrix_t)bfm_obj_.u);
+
+
+  CCIO::cout << "DEBUG U (BFM) norm : " << matnorm << "\n"; 
+
 };
 
 template <class Float>

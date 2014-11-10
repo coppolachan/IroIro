@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-10-09 08:40:43 noaki>
+ * Time-stamp: <2014-11-10 14:12:13 cossu>
  */
 
 #include "measGeneral.hpp"
@@ -152,10 +152,12 @@ void MeasGeneral::input_FileList(XML::node inode){
 }
 
 void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
+  
   Staples Staple;
   BoundaryCond* BC;
-  CCIO::cout<< "Plaquette (thin)      : "<< Staple.plaquette(U) <<"\n";
 
+  CCIO::cout<< "Plaquette (thin)      : "<< Staple.plaquette(U) <<"\n";
+  
   GaugeField Ubuf = U;
 
   //// gauge fixing ////
@@ -193,6 +195,9 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
     }
     CCIO::cout<<"Plaquette (smeared): "<<Staple.plaquette(U)<<endl;
   }
+
+
+  
 
   /* Check if boundary conditions are requested */
   

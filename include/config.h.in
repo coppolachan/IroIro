@@ -46,6 +46,9 @@
 /* Define to 1 if you have the `m' library (-lm). */
 #undef HAVE_LIBM
 
+/* Define to 1 if you have the `mcheck' library (-lmcheck). */
+#undef HAVE_LIBMCHECK
+
 /* Define to 1 if you have the `mpfr' library (-lmpfr). */
 #undef HAVE_LIBMPFR
 

@@ -66,20 +66,20 @@ int SiteIndex::global_t(int t) const {
   return Communicator::instance()->ipe(TDIR)*Nt_+t;}
 
 //process id from global index
-int SiteIndex::process_id_x(int gsite) const {
-  return floor(g_x(gsite)/Communicator::instance()->ipe(XDIR));
+int SiteIndex::process_id_x(int gx) const {
+  return floor(gx/Nx_);
 }
 
-int SiteIndex::process_id_y(int gsite) const {
-  return floor(g_y(gsite)/Communicator::instance()->ipe(YDIR));
+int SiteIndex::process_id_y(int gy) const {
+  return floor(gy/Ny_);
 }
 
-int SiteIndex::process_id_z(int gsite) const {
-  return floor(g_z(gsite)/Communicator::instance()->ipe(ZDIR));
+int SiteIndex::process_id_z(int gz) const {
+  return floor(gz/Nz_);
 }
 
-int SiteIndex::process_id_t(int gsite) const {
-  return floor(g_t(gsite)/Communicator::instance()->ipe(TDIR));
+int SiteIndex::process_id_t(int gt) const {
+  return floor(gt/Nt_);
 }
 
 

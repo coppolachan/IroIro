@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-08-12 13:42:27 noaki>
+# Time-stamp: <2014-10-17 13:17:35 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.7], [cossu@post.kek.jp])
@@ -64,6 +64,16 @@ then
 esac
 fi
 echo checking architecture result... $arch
+###################################################################
+# Mem check flags
+AC_ARG_ENABLE(memcheck,
+   AC_HELP_STRING([--enable-memcheck],[Enable Mem check support routines.]),
+   [case "${enableval}" in
+     yes) memcheck=true  ;;
+     no)  memcheck=false ;;
+     *) AC_MSG_ERROR([bad value ${enableval} for --enable-memcheck . Mem check not used.]) ;;
+   esac],[memcheck=false])
+
 ###################################################################
 # MPI communicator flags
 AC_ARG_ENABLE(mpi,
@@ -329,6 +339,15 @@ AC_CHECK_LIB([lime],[limeCreateReader],,
 	[AC_MSG_ERROR(C-LIME library was not found in your system.
 Please install or provide the correct path to your installation [default search path ~/lime/]
 Info at: http://usqcd.jlab.org/usqcd-docs/c-lime/)])
+
+if [ $memcheck ] 
+then 
+AC_CHECK_HEADER(mcheck.h,,
+        [AC_MSG_ERROR(Mcheck.h not found)])
+AC_CHECK_LIB([mcheck], [mcheck],,  
+	[AC_MSG_ERROR(Memcheck not present)]) 
+fi
+
 
 if [ ($dcmt_link) ]
 then

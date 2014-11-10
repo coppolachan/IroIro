@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.hpp
  * @brief Declares the wrapper class for P. Boyle HDCG inverter
- * Time-stamp: <2014-10-08 11:50:08 neo>
+ * Time-stamp: <2014-10-10 15:18:11 neo>
  */
 #ifndef DIRAC_BFM_HDCG_WRAPPER_
 #define DIRAC_BFM_HDCG_WRAPPER_
@@ -22,7 +22,9 @@ private:
 
   BfmHDCGParams HDCGParms;
   BFM_HDCG_Extend<double> *ldop_d;  // internal double precision operator
+
   bfm_internal<rFloat> linop_r;     // internal operator
+  BFM_Storage<rFloat>  BFM_interface_r;
 
   //Hide default constructor
   Dirac_BFM_HDCG_Wrapper();
@@ -33,7 +35,7 @@ public:
 			 const Field* F, 
 			 DiracWilsonLike_EvenOdd* DWEO,
 			 const Type_5d_DWF = Regular5D)
-    : Dirac_BFM_Wrapper(node, F, DWEO) {}
+    : Dirac_BFM_Wrapper(node, F, DWEO), BFM_interface_r(linop_r) {}
     
   void open_comms();
   void close_comms();

@@ -1,7 +1,7 @@
 /*!
   @file siteIndexEO.cpp
   @brief Declares the interface for site indexing EVEN-ODD
-  Time-stamp: <2014-05-30 09:54:49 noaki>
+  Time-stamp: <2014-10-16 14:30:13 neo>
 */
 #include "siteIndex.hpp"
 #include "Communicator/communicator.hpp"
@@ -73,20 +73,21 @@ int SiteIndex::global_z(int z) const{
 int SiteIndex::global_t(int t) const{ 
   return Communicator::instance()->ipe(TDIR)*Nt_+t;}
 
-int SiteIndex::process_id_x(int gsite) const {
-  return floor(g_x(gsite)/Communicator::instance()->ipe(XDIR));
+//process id from global index                                                                                                                                                                                                                
+int SiteIndex::process_id_x(int gx) const {
+  return floor(gx/Nx_);
 }
 
-int SiteIndex::process_id_y(int gsite) const {
-  return floor(g_y(gsite)/Communicator::instance()->ipe(YDIR));
+int SiteIndex::process_id_y(int gy) const {
+  return floor(gy/Ny_);
 }
 
-int SiteIndex::process_id_z(int gsite) const {
-  return floor(g_z(gsite)/Communicator::instance()->ipe(ZDIR));
+int SiteIndex::process_id_z(int gz) const {
+  return floor(gz/Nz_);
 }
 
-int SiteIndex::process_id_t(int gsite) const {
-  return floor(g_t(gsite)/Communicator::instance()->ipe(TDIR));
+int SiteIndex::process_id_t(int gt) const {
+  return floor(gt/Nt_);
 }
 
 // indices with a step forward/backward (for bulk sites)

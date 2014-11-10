@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2014-10-08 11:59:54 neo>
+ * Time-stamp: <2014-10-17 17:36:21 neo>
  */
 #include <omp.h>
 #include <math.h>
@@ -13,9 +13,9 @@
 #include "include/errors.hpp"
 
 void Dirac_BFM_HDCG_Wrapper::open_comms(){
-  linop.comm_init();
-  linop_single.comm_init();
   linop_r.comm_init();
+  linop_single.comm_init();
+  linop.comm_init();
 }
 
 
@@ -40,7 +40,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
 
   // Algorithm & code control
   bfma.Threads(omp_get_max_threads());
-  bfma.Verbose(0);
+  bfma.Verbose(BfmMessage|BfmDebug|BfmPerformance|BfmError);
   bfma.time_report_iter  =-100;
   bfma.max_iter          = 10000;
   bfma.residual          = 1.0e-8;
@@ -70,10 +70,13 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
   // Initialization of internal operators
   linop_single.init(bfma);
   linop_single.BossLog("HDCG inititialised single prec linop\n");
+ 
   linop.init(bfma);
   linop.BossLog("HDCG inititialised double prec linop\n");
+  
   bfma.Ls   = HDCGParms.SubspaceRationalLs;
   bfma.mass = HDCGParms.SubspaceRationalMass;
+  
   linop_r.BossLog("HDCG inititialising subspace generation Ls=%d mass %le\n",bfma.Ls,bfma.mass);
   linop_r.init(bfma);
   linop_r.BossLog("HDCG inititialised subspace generation\n");
@@ -84,19 +87,25 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
   int NodeCoord[4];
   
   for (int mu =0; mu< 4; mu++){
-    GlobalSize[mu] = CommonPrms::instance()->global_size(mu);
+    GlobalSize[mu]  = CommonPrms::instance()->global_size(mu);
     SubGridSize[mu] = CommonPrms::instance()->local_size(mu);
-    NodeCoord[mu] = Communicator::instance()->ipe(mu);
+    NodeCoord[mu]   = Communicator::instance()->ipe(mu);
   }
 
   linop.BossLog("HDCG class initialization\n");
   ldop_d = new BFM_HDCG_Extend<double>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
   ldop_d->SetParams(HDCGParms);
 
+
+  //Allocate fields
+  AllocateFields(); // just for the double 
+
   // Close all communications (open when necessary) avoids conflicts with BGNET comms
   //linop and linop_single are closed in the construction of the Dirac_BFM_wrapper class
-  linop_r.comm_end();
-
+  //linop_r.comm_end();
+  //linop_single.comm_end();
+  //linop.comm_end();
+  is_initialized = true;
 }
 
 
@@ -194,25 +203,38 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_set_mass(double mass){
 
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_init(){
-  //    int sloppy_relax=Parms.SubspaceRationalRefine;
-  int sloppy_relax=1;
- 
 
-  uint32_t seed = ldop_d->ncoor[0]*17 + ldop_d->ncoor[1]*251;
-  + ldop_d->ncoor[2]*1023  + ldop_d->ncoor[3]*8191;
+  int sloppy_relax=HDCGParms.SubspaceRationalRefine;
+  
+  uint32_t seed = (ldop_d->ncoor[0]*17    + 
+		   ldop_d->ncoor[1]*251   +
+		   ldop_d->ncoor[2]*1023  + 
+		   ldop_d->ncoor[3]*8191);
+  
   srand48(seed);
   
-  open_comms();
+  if(is_initialized){
+    
+    if ( sloppy_relax ) { 
+      BFM_interface_r.GaugeExport_to_BFM(u_);
+      //linop_r.comm_init();
+      ldop_d->RelaxSubspace<rFloat>(&linop_r);
+      //linop_r.comm_end();
+    } else {
+   
+      BFM_interface.GaugeExport_to_BFM(u_);
+      //linop.comm_init();
+      ldop_d->RelaxSubspace<double>(&linop);
+      //linop.comm_end();
+    }
+    ldop_d->SinglePrecSubspace();
+    
+   
+   
 
-  if ( sloppy_relax ) { 
-    ldop_d->RelaxSubspace<float>(&linop_r);
   } else {
-    ldop_d->RelaxSubspace<double>(&linop);
+    CCIO::cout << "The operator was not initialized yet\n";
   }
-  ldop_d->SinglePrecSubspace();
-
-  //Close all communications
-  close_comms();
 
 }
 
@@ -236,6 +258,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_refine(){
     NodeCoord[mu] = Communicator::instance()->ipe(mu);
   }
   ldop_f = new BFM_HDCG_Extend<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
+  printf("ldop_f node number %d\n",MyNodeNumber());
   ldop_f->CloneSubspace<double>(*ldop_d);
   ldop_f->SetParams(HDCGParms);
 
@@ -289,7 +312,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
   int threads = linop.threads;
   int Nvec = HDCGParms.NumberSubspace;
   
-  open_comms();
+  //open_comms();
 
   if ( sloppy ) { 
     ldop_d->ComputeLittleMatrixColored<float>(&linop_single,ldop_d->subspace_f);
@@ -335,7 +358,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
       
   }
 
-  close_comms();
+  //close_comms();
 
 }
 
@@ -366,7 +389,8 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
   ldop_f = new BFM_HDCG_Extend<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
   ldop_f->CloneSubspace<double>(*ldop_d);
   ldop_f->SetParams(HDCGParms);
-  ldop_f->PcgType=PcgAdef2f;
+  ldop_d->PcgType = PcgAdef2;
+  ldop_f->PcgType = PcgAdef2f;
 
   int threads = linop.threads;
 #pragma omp parallel
@@ -465,7 +489,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
     }
     
     CCIO::cout<< "DEBUG: Load sources\n";
-    LoadFullSource(BFMsource);
+    LoadSource(BFMsource,cb);
     
     
     CCIO::cout<< "DEBUG: Load guess\n";
@@ -477,7 +501,8 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
     // assignments by BGNET library
     // the order of comm_init can broke previous initializations
     // so we are doing right now.
-    linop.comm_init();
+    
+    //linop.comm_init();
     
     //////////////////////////// Execute the solver
     CCIO::cout<< "DEBUG: bfm solve_HDCG\n";
@@ -486,7 +511,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
     
     // close communications to free the buffers
     CCIO::cout<< "DEBUG: bfm comm_end\n";
-    linop.comm_end();
+    //linop.comm_end();
     
     // Get the solution from BFM
     CCIO::cout<< "DEBUG: Get solutions\n";
