@@ -7,7 +7,7 @@
 
 namespace Eigen{
   Predic* predFactory(XML::node node){
-    XML::nullCheck(node,"ReadCondition");
+    XML::nullCheck(node,"eigen-reading condition ");
     const char* condition = node.attribute("name").value();
     if(!strcmp(condition, "BelowEq"))    return new BelowEq(node);
     if(!strcmp(condition, "Beyond"))     return new Beyond(node);

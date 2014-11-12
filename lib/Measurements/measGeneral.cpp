@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-11-12 14:28:30 cossu>
+ * Time-stamp: <2014-11-12 17:50:22 cossu>
  */
 
 #include "measGeneral.hpp"
