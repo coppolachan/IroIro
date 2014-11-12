@@ -36,7 +36,7 @@ int Test_GWrelEigen::run(){
     Dirac_Wilson Dw(mass,input_.getGconf());
     CCIO::cout<<"CP:Pairing:mass="<< mass <<endl;
 
-    for(int i=0; i<Neig; ++i){
+    for(int i=0; i<Neig-1; ++i){
       double sign = eval[i]/sqrt(eval[i]*eval[i]);
       double lmd = 0.0;
       if(abs(eval[i])<0.001)

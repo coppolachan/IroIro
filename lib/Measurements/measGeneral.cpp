@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-10-16 16:18:56 noaki>
+ * Time-stamp: <2014-11-12 14:28:30 cossu>
  */
 
 #include "measGeneral.hpp"
@@ -86,6 +86,12 @@ void MeasGeneral::input_RegularStep(XML::node inode){
 
     XML::read(eig_node,"eigen_prefix",input_prefix,MANDATORY);
     eigen_list_.push_back(input_prefix);
+
+    // Optional - declare explicitly the eigenvalues file list
+    if (!XML::read(eig_node,"eval_prefix",input_prefix))
+      eval_list_.push_back(input_prefix);
+
+
   }
 }
 

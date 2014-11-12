@@ -57,6 +57,7 @@ private:
 
   std::vector<std::string> config_list_;
   std::vector<std::string> eigen_list_;
+  std::vector<std::string> eval_list_;
   std::vector<int> number_list_;
 
   std::vector<Eigen::Predic*> eig_pred_;
@@ -109,19 +110,24 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     CCIO::cout<<"Gauge configuration loaded from "<<infile.str()<<std::endl;
 
     /* setting corresponding eigenmodes */
+    input_.config.emodes.clear();
     for(int e=0; e<eig_pred_.size(); ++e){
-      std::stringstream eigfile;
+      std::stringstream eigfile, evalfile;
       if(file_list_) eigfile<< eigen_list_[e*meas_num_+c];
       else           eigfile<< eigen_list_[e]<< number_list_[c];
-      
-      input_.config.emodes.push_back(Eigen::initFromFile<Format::Format_F>(eig_pred_[e],eigfile.str()));
+
+      if(!eval_list_.empty()){
+	if (!file_list_) evalfile << eval_list_[e] << number_list_[c];
+	input_.config.emodes.push_back(Eigen::initFromFile<Format::Format_F>(eig_pred_[e],evalfile.str(),eigfile.str()));
+      } else {
+	input_.config.emodes.push_back(Eigen::initFromFile<Format::Format_F>(eig_pred_[e],eigfile.str()));
+      }
     }
     
     CCIO::cout<<"pre_process begins\n";
     pre_process(Uin_,*(input_.rng),number_list_[c]);// monitoring +smr +gfix
     CCIO::cout<<"pre_process ends\n";
     
-
     std::stringstream outfile;
     if(file_list_) {
       // Strip the directory name from the config_list_ entry - only when in FileList mode
@@ -135,10 +141,11 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     input_.output = outfile.str();
 
     //------- actual measurement -------    
-    CCIO::cout<<"Creating measurement"<<std::endl;
-    MeasObj meas(input_); 
-    CCIO::cout<<"Starting measurement"<<std::endl;
-    meas.run();
+    CCIO::cout << "Creating measurement" << std::endl;
+    MeasObj* meas = new MeasObj(input_); 
+    CCIO::cout << "Starting measurement" << std::endl;
+    meas->run();
+    delete meas;
     //----------------------------------
 
     post_process(Uin_,*(input_.rng),number_list_[c]); // seed saving
