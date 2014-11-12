@@ -123,7 +123,12 @@ template<typename MeasObj> void MeasGeneral::do_meas(){
     
 
     std::stringstream outfile;
-    if(file_list_) outfile<< output_prefix_<< config_list_[c];
+    if(file_list_) {
+      // Strip the directory name from the config_list_ entry - only when in FileList mode
+      std::string filename = config_list_[c].substr(config_list_[c].find_last_of("/")+1,
+						    config_list_[c].size());
+      outfile<< output_prefix_<< filename;
+    }
     else           outfile<< output_prefix_<< number_list_[c];
     
 

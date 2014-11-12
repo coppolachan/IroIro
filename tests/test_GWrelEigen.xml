@@ -15,7 +15,7 @@
   </Configuration> 
   <RandomNumberGen name="None"/> 
   <Smearing type="Stout">
-    <Nsmear>0</Nsmear>
+    <Nsmear>3</Nsmear>
     <Base type="APE">
       <rho>0.1</rho>
     </Base>
@@ -29,6 +29,23 @@
   <Measurement>
     <GWrelEigen>
       <mass>0.01</mass>
+      <KernelDWF_4d name="DiracOptimalDomainWall4d_BGQeo">
+      <Kernel5d>
+	<N5d>24</N5d>
+	<b>2.0</b>
+	<c>1.0</c>
+	<mass>0.001</mass>
+	<BaseKernel name="DiracWilson">
+	    <mass>-1.0</mass>
+	    </BaseKernel>
+	<approximation name="Tanh"></approximation>
+      </Kernel5d>
+      <SolverDWF type="Solver_CG">
+	<MaxIter>15000</MaxIter>
+	<Precision>1e-20</Precision>
+      </SolverDWF>
+    </KernelDWF_4d>
+
     </GWrelEigen>
   </Measurement>
 </Parameters>

@@ -177,7 +177,7 @@ void GaugeConf_txt::init_conf(Field& u,bool do_check){
     CCIO::cout<< "Reading gauge configuration from " << file_.c_str() << endl;
 
 
-
+	    for(int dir = 0; dir < Ndim_; ++dir){	      
     for(int t = 0; t < Lt; ++t){
       for(int z = 0; z < Lz; ++z){
 	for(int y = 0; y < Ly; ++y){
@@ -185,7 +185,7 @@ void GaugeConf_txt::init_conf(Field& u,bool do_check){
 	    
 	    int id = getid(x,y,z,t);
 	    int site = SiteIndex::instance()->site(x%Nx_,y%Ny_,z%Nz_,t%Nt_);
-	    for(int dir = 0; dir < Ndim_; ++dir){	      
+
               for(int c1 = 0; c1 < Nc_; ++c1){
                 for(int c2 = 0; c2 < Nc_; ++c2){
                   config >> cplx[0]; 

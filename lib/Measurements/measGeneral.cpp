@@ -1,7 +1,7 @@
 /*! @file measGeneral.cpp
  *  @brief implementing member functions of the MeasGeneral class
  *
- * Time-stamp: <2014-11-10 14:12:13 cossu>
+ * Time-stamp: <2014-10-16 16:18:56 noaki>
  */
 
 #include "measGeneral.hpp"
@@ -82,7 +82,7 @@ void MeasGeneral::input_RegularStep(XML::node inode){
       eig_node;
       eig_node = eig_node.next_sibling("EigenModes")){
 
-    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
+    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondition")));
 
     XML::read(eig_node,"eigen_prefix",input_prefix,MANDATORY);
     eigen_list_.push_back(input_prefix);
@@ -108,7 +108,7 @@ void MeasGeneral::input_NumberList(XML::node inode){
       eig_node;
       eig_node = eig_node.next_sibling("EigenModes")){
 
-    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
+    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondition")));
 
     XML::read(eig_node,"eigen_prefix",input_prefix,MANDATORY);
     eigen_list_.push_back(input_prefix);
@@ -118,7 +118,7 @@ void MeasGeneral::input_NumberList(XML::node inode){
 /*--------------------- input with FileList ----------------------*/
 void MeasGeneral::input_FileList(XML::node inode){
   /*!@brief FileList deals with a list of files with any name. 
-    In this case, number_list_ is not used.*/
+    In this case, the content of number_list_ is not used.*/
   int starting=0;
   if(XML::read(inode,"starting_idx",starting))
     CCIO::cout<<"[default] output: starting_num = "<<starting<<"\n";
@@ -134,13 +134,15 @@ void MeasGeneral::input_FileList(XML::node inode){
   file_list_= true;
   meas_num_= config_list_.size();
 
+  for(int c=0; c<meas_num_; ++c)
+    number_list_.push_back(starting+increment*c);
 
   /// EigenModes section (optional input)  
   for(XML::node eig_node = inode.child("EigenModes");
       eig_node;
       eig_node = eig_node.next_sibling("EigenModes")){
 
-    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondtion")));
+    eig_pred_.push_back(Eigen::predFactory(eig_node.child("ReadCondition")));
 
     XML::node ev_node = eig_node;
     XML::descend(ev_node,"EvecFiles",MANDATORY);
@@ -152,12 +154,10 @@ void MeasGeneral::input_FileList(XML::node inode){
 }
 
 void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
-  
   Staples Staple;
   BoundaryCond* BC;
-
   CCIO::cout<< "Plaquette (thin)      : "<< Staple.plaquette(U) <<"\n";
-  
+
   GaugeField Ubuf = U;
 
   //// gauge fixing ////
@@ -195,9 +195,6 @@ void MeasGeneral::pre_process(GaugeField& U,const RandNum& rng,int id)const{
     }
     CCIO::cout<<"Plaquette (smeared): "<<Staple.plaquette(U)<<endl;
   }
-
-
-  
 
   /* Check if boundary conditions are requested */
   
