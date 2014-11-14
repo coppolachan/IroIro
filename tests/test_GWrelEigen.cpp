@@ -36,6 +36,16 @@ int Test_GWrelEigen::run(){
     Dirac_Wilson Dw(mass,input_.getGconf());
     CCIO::cout<<"CP:Pairing:mass="<< mass <<endl;
 
+    // Calculate the matrix elements of gamma_5
+    vector<double> g5(Neig*Neig*2);
+    for (int n=0; n < Neig; n++){
+      for (int m=0; m < Neig; m++){
+	g5[2*m+Neig*n]   = evec[n]*Dw.gamma5(evec[m]);          //real part
+	g5[2*m+Neig*n+1] = evec[n].im_prod(Dw.gamma5(evec[m])); //imag part
+	//CCIO::cout << "g5[ "<<m<<","<<n<<"] = "<< g5[2*m+Neig*n] << "  "<< g5[2*m+Neig*n+1] <<"\n";
+      }
+    }
+
     for(int i=0; i<Neig-1; ++i){
       double sign = eval[i]/sqrt(eval[i]*eval[i]);
       double lmd = 0.0;
@@ -45,9 +55,10 @@ int Test_GWrelEigen::run(){
       else
 	lmd = sign*sqrt(abs((eval[i]*eval[i] -mass*mass)/(1.0 -mass*mass)));
 
+      
       Field phi = Wilson_Kernel_4d->gamma5(evec[i]);
       Field InvDg5 = Wilson_Kernel_4d->mult_inv(evec[i]);
-   
+      
       
       double fmij = phi*evec[i];
       fmij -= eval[i]/(1.0-mass); 
@@ -66,16 +77,28 @@ int Test_GWrelEigen::run(){
 
       double g5fact = (eval[i]*eval[i]+mass)/(eval[i]*(1.0 + mass));
 
-      double gii = phi*evec[i]- g5fact;
+      double gii = g5[2*i+Neig*i]- g5fact;
 
       double hii = phi*InvDg5 - (2*g5fact*g5fact - 1)/eval[i];
-
+      
+      double g5Hinvg5=0.0;
+      for (int m=0; m < Neig; m++)
+	g5Hinvg5 += (g5[2*m+Neig*i]*g5[2*m+Neig*i]+ g5[2*m+Neig*i+1]*g5[2*m+Neig*i+1])/eval[m];
+      
+      /*
+	double hii = g5Hinvg5 - (2*g5fact*g5fact - 1)/eval[i];
+	Note: the estimate using just the matrix elements of
+	gamma5 is not sufficient for the final result due 
+	to subtle cancelations in the highest part of the 
+	spectrum that are not included the sum
+      */ 
 
       CCIO::cout<<"CP:massive:Pairing:fmii: "<< i <<" "<< fmij <<endl;
       CCIO::cout<<"CP:massless:Pairing:fii: "<< i <<" "<< fii <<endl;
       CCIO::cout<<"CP:gii: "<< i <<" "<< gii <<endl;
       CCIO::cout<<"CP:hii: "<< i <<" "<< hii <<endl;
-      CCIO::cout<<"CP:<g5 H-1 g5>: "<< i <<" "<< (phi*InvDg5) <<endl;
+      CCIO::cout<<"CP:<g5 H-1 g5>: "<< i <<" "<< phi*InvDg5 <<endl;
+      CCIO::cout<<"CP:<g5 H-1 g5> from emodes: "<< i <<" "<< g5Hinvg5 <<endl;
       CCIO::cout<<"CP:<g5>: "<< i <<" "<< (phi*evec[i]) <<endl;
       CCIO::cout<<"CP:massive_eval: "<< i << " " << eval[i] <<endl;
     }

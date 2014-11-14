@@ -10,6 +10,7 @@
 #include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "Scalar_ops/scalar_Operator_Factory.hpp"
 #include "Scalar_ops/scalar_Operator_FactoryCreator.hpp"
+
 #include <memory>
 
 class FoprHermFactory{
@@ -31,6 +32,21 @@ public:
     return new Fopr_HD(D_.get()); 
   }
 };
+
+class FoprHermFactory_DdagDee_Stag: public FoprHermFactory{
+  std::auto_ptr<DiracStaggeredEvenOddLikeFactory> Dfact_;
+  std::auto_ptr<DiracStaggeredEvenOddLike> D_;
+public:
+  FoprHermFactory_DdagDee_Stag(XML::node node){
+    XML::descend(node,"Staggered_EO",MANDATORY);
+    Dfact_.reset(Diracs::createDiracStaggeredEvenOddLikeFactory(node));
+  }
+  Fopr_HStag* getFoprHerm(const InputConfig& input){ 
+    D_.reset(Dfact_->getDirac(input));
+    return new Fopr_HStag(D_.get()); 
+  }
+};
+
 
 class FoprHermFactory_H: public FoprHermFactory{
   std::auto_ptr<DiracWilsonLikeFactory> Dfact_;
@@ -102,5 +118,11 @@ public:
     return new Fopr_Scalar(S_.get()); 
   }
 };
+
+
+
+
+
+
 
 #endif
