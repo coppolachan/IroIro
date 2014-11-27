@@ -1,21 +1,19 @@
 /*!
  * @file BFM_HDCG.cpp
  * @brief Declares classes for P. Boyle HDCG inverter
- * Time-stamp: <2014-08-07 16:57:08 neo>
+ * Time-stamp: <2014-10-16 13:44:53 neo>
  */
 
 #include "BFM_HDCG.hpp"
 #include "Communicator/communicator.hpp"
 #include "Geometry/siteIndex.hpp"
 
-template <class Float>
-int BFM_HDCG_Extend<Float>::MyNodeNumber(){
+int MyNodeNumber(void){
   return Communicator::instance()->nodeid();
 }
 
 
-template <class Float>
-int BFM_HDCG_Extend<Float>::NodeFromCoord(int g[4]){
+int NodeFromCoord(int g[4]){
   //Move this into the site index class/////////////////////////
 
   SiteIndex* SIdx = SiteIndex::instance();

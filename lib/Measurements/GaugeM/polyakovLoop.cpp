@@ -10,10 +10,10 @@
 
 using namespace std;
 
-GaugeField1D PolyakovLoop::get_PLField(const GaugeField& G) const {
+GaugeField1D PolyakovLoop::get_PLField(const GaugeField& G, bool getFull) const {
   using namespace FieldUtils;
   GaugeField1D PL_field;
-  calc<SUNmat>(PL_field,G);
+  calc<SUNmat>(PL_field,G, getFull);
   return PL_field;
 }
 

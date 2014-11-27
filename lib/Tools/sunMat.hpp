@@ -285,6 +285,7 @@ bool SUNmatrix<COLORS>::is_unitary(){
   double offdiag_norm_i = 0;
 
   std::valarray<double> tmp(0.0,2*COLORS*COLORS);
+
   for(int a=0; a<COLORS; ++a){
     for(int b=0; b<COLORS; ++b){
       int ab = 2*(COLORS*a+b);
@@ -316,12 +317,12 @@ bool SUNmatrix<COLORS>::is_unitary(){
 
   if (diag_norm_r > CHECK_TOLERANCE || diag_norm_i > CHECK_TOLERANCE ||
       offdiag_norm_i > CHECK_TOLERANCE || offdiag_norm_i > CHECK_TOLERANCE){
-    /*
+    
     std::cout << "diag_norm_r "<< diag_norm_r <<"\n";
     std::cout << "diag_norm_i "<< diag_norm_i <<"\n";
     std::cout << "offdiag_norm_r "<< offdiag_norm_r <<"\n";
     std::cout << "offdiag_norm_i "<< offdiag_norm_i <<"\n";
-    */
+    
     return false;
 
   }

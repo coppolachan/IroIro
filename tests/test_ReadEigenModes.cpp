@@ -5,7 +5,7 @@
  * @author Guido Cossu
  * @author <a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>
  *
- * Time-stamp: <2014-09-03 16:36:06 neo>
+ * Time-stamp: <2014-10-03 16:46:05 neo>
  */
 
 #include "test_ReadEigenModes.hpp"
@@ -236,7 +236,9 @@ int Test_ReadEigenModes::run(){
 
     std::ofstream outf, outc;
     
-    double ipr=0.0; //inverse participatio ratio
+    double ipr=0.0; //inverse participation ratio (2nd moment)
+    double ipr_q4=0.0; //inverse participation ratio (4th moment)
+    double ipr_q6=0.0; //inverse participation ratio (6th moment)
     
     int max_loc[4];
     double max= 0.0;
@@ -280,12 +282,13 @@ int Test_ReadEigenModes::run(){
 	    //print_va(site_Array);
 	    
 	    // DIRAC representation
-	    std::valarray<double> spinor_up(12);
-	    std::valarray<double> spinor_dn(12);
+	    std::valarray<double> spinor_up(24);
+	    std::valarray<double> spinor_dn(24);
 	    
 	    std::valarray<double> chiral(24);
 	    std::valarray<double> chiral_left(24);
 	    std::valarray<double> chiral_right(24);
+	    
 	    
 	    for (int s=0; s< 6; s++){
 	      spinor_up[2*s]   = site_Array[2*s];
@@ -312,6 +315,9 @@ int Test_ReadEigenModes::run(){
 	      
 	    }
 	    
+
+
+
 	    //std::cout << "gamma5 spinor\n";
 	    //print_va(chiral);
 	    
@@ -329,7 +335,10 @@ int Test_ReadEigenModes::run(){
 		 << SiteIndex::instance()->global_z(z) << " "
 		 << site_norm << " "<< pl_re << " "<< pl_im <<"\n";
 	    
+	    double temp_norm = site_norm*site_norm;
 	    ipr += site_norm*site_norm;//*site_norm*site_norm;
+	    ipr_q4 += temp_norm*temp_norm;// quartic moment
+	    ipr_q6 += temp_norm*temp_norm*temp_norm;// 6th moment
 	    
 	  
 	    
@@ -371,7 +380,9 @@ int Test_ReadEigenModes::run(){
     
     
     
-    std::cout << "IPR ["<< eval << "]: "<<ipr*Nvol << "\n";
+    std::cout << "IPR    ["<< eval << "]: "<<ipr*Nvol << "\n";
+    std::cout << "IPR_Q4 ["<< eval << "]: "<<ipr_q4*Nvol << "\n";
+    std::cout << "IPR_Q6 ["<< eval << "]: "<<ipr_q6*Nvol << "\n";
     
     
     
