@@ -316,7 +316,7 @@ bool SUNmatrix<COLORS>::is_unitary(){
 
   if (diag_norm_r > CHECK_TOLERANCE || diag_norm_i > CHECK_TOLERANCE ||
       offdiag_norm_i > CHECK_TOLERANCE || offdiag_norm_i > CHECK_TOLERANCE){
-    /*
+    /*    
     std::cout << "diag_norm_r "<< diag_norm_r <<"\n";
     std::cout << "diag_norm_i "<< diag_norm_i <<"\n";
     std::cout << "offdiag_norm_r "<< offdiag_norm_r <<"\n";

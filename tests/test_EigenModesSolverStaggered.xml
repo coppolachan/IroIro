@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Parameters>
+  <!-- Geometry parameters here -->
+  <Geometry>
+    <Lattice>16 16 16 4</Lattice>
+    <Nodes>4 4 2 2</Nodes>
+  </Geometry>
+  <!-- Input configuration -->
+  <Configuration Type="Binary" Input="FileList">
+    <GaugeConfigs>
+     <filename>conf_2500</filename> 
+    </GaugeConfigs>
+  </Configuration>  
+  <RandomNumberGen name="Mersenne Twister"> 
+    <init>0x123 0x234 0x345 0x456</init>
+  </RandomNumberGen>
+  
+  <Smearing type="Off"></Smearing>  
+  <GaugeFixing name="NoFixing"></GaugeFixing>
+
+  <Output>
+    <output_prefix>Output/eigenHDW_</output_prefix>
+  </Output>
+
+  <Measurement>
+    <!-- Put BC here  true/false -->
+    <AntiPeriodicBC>false</AntiPeriodicBC>
+
+    <EigenModesCalc>
+      <HermitianOperator name="Staggered_DdagD">
+        <Staggered_EO name="DiracStaggeredEvenOdd">
+          <mass>0.10</mass>
+	  <BoundaryCondition name="periodic" dir="T"></BoundaryCondition>
+        </Staggered_EO>
+      </HermitianOperator>
+
+      <Setup sorting="Lowest">
+        <threshold>2.0</threshold>
+        <Acceleration name="None">  
+<!--      <Acceleration name="Chebyshev">
+            <Mapping function="QuadLinear">
+              <ex_lower>4e-4</ex_lower>
+              <ex_upper>1e-2</ex_upper>
+            </Mapping>
+            <ChebyshevFunc>
+              <Npoly>40</Npoly>
+            </ChebyshevFunc> -->
+        </Acceleration>
+      </Setup>
+
+      <EigenModesSolver name="ImplicitRestartedLanczos">
+        <Nthreshold>15</Nthreshold>
+        <Nk>40</Nk>
+        <Np>50</Np>
+        <precision>1e-10</precision>
+        <max_iter>200</max_iter> 
+      </EigenModesSolver>
+
+    </EigenModesCalc>
+  </Measurement>
+</Parameters>
+

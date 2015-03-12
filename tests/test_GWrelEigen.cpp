@@ -77,7 +77,7 @@ int Test_GWrelEigen::run(){
 
       double g5fact = (eval[i]*eval[i]+mass)/(eval[i]*(1.0 + mass));
 
-      double gii = g5[2*i+Neig*i]- g5fact;
+      double gii = (phi*evec[i])- g5fact;
 
       double hii = phi*InvDg5 - (2*g5fact*g5fact - 1)/eval[i];
       

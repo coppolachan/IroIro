@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-11-10 14:06:51 cossu>
+# Time-stamp: <2014-11-14 17:51:48 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -64,6 +64,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_EigenModesSolver.xml\
+		test_EigenModesSolverStaggered.xml\
 		test_EigenModesSolver_lap.xml\
 		test_EigModesNum.xml    \
 		test_GeneralMeas.xml 	\
@@ -89,51 +90,52 @@ EXTRA_DIST = 	testResults.info	\
 		test_QnumSuscept.xml    \
 	        test_EigModesNum.xml    
 
-test_PROGRAMS = test_HMC 		\
-		test_HMC_noFactories 	\
-		test_HMC_smear_noF	\
-		test_HMC_DWall_noF	\
-		test_Gauge		\
-		test_NoMeas		\
-		test_GWrelEigen         \
-		test_PolyakovLoop	\
-		test_WilsonFlow		\
-		test_Wilson 		\
-		test_Clover 		\
-		test_Wilson_FiniteDensity\
-		test_Wilson_EvenOdd 	\
-		test_Wilson_Brillouin 	\
-		test_Wilson_Brillouin_Imp\
-		test_QpropMom		\
-		test_ResMass 		\
-		test_MesonSpectrum	\
-		test_MesonSpectrum_SpMom\
-		test_MesonSpectrum_Nf2p1\
-		test_BaryonSpectrum_Nf2p1\
-		test_EigenModesSolver	\
-		test_EigenModesSolver_Lap\
-		test_EigModesNum	\
-		test_Smearing		\
-		test_LapSource		\
-		test_Overlap		\
-		test_MultiShiftSolver	\
-		test_Solver_Perf	\
-		$(BFM_TESTPROGS)        \
-		test_RNG 		\
-		test_IO			\
-		test_RationalApprox	\
-		test_RHMC_noFactories 	\
-		test_SUNRepresentation	\
-		test_HeatBath           \
-                test_DWF    		\
-                test_DiracWilson_Adjoint\
-		test_Laplacian		\
-		test_LapH		\
-		test_HadronSpectrum_HeavyLight\
-		test_ChiralCondensate \
-		test_QnumSuscept	\
-		test_ChiralCondensate 	\
-		test_ReadEigenmodes	\
+test_PROGRAMS = test_HMC 			\
+		test_HMC_noFactories 		\
+		test_HMC_smear_noF		\
+		test_HMC_DWall_noF		\
+		test_Gauge			\
+		test_NoMeas			\
+		test_GWrelEigen         	\
+		test_PolyakovLoop		\
+		test_WilsonFlow			\
+		test_Wilson 			\
+		test_Clover 			\
+		test_Wilson_FiniteDensity	\
+		test_Wilson_EvenOdd 		\
+		test_Wilson_Brillouin 		\
+		test_Wilson_Brillouin_Imp	\
+		test_QpropMom			\
+		test_ResMass 			\
+		test_MesonSpectrum		\
+		test_MesonSpectrum_SpMom	\
+		test_MesonSpectrum_Nf2p1	\
+		test_BaryonSpectrum_Nf2p1	\
+		test_EigenModesSolver		\
+		test_EigenModesSolverStaggered	\
+		test_EigenModesSolver_Lap	\
+		test_EigModesNum		\
+		test_Smearing			\
+		test_LapSource			\
+		test_Overlap			\
+		test_MultiShiftSolver		\
+		test_Solver_Perf		\
+		$(BFM_TESTPROGS)        	\
+		test_RNG 			\
+		test_IO				\
+		test_RationalApprox		\
+		test_RHMC_noFactories 		\
+		test_SUNRepresentation		\
+		test_HeatBath           	\
+                test_DWF    			\
+                test_DiracWilson_Adjoint	\
+		test_Laplacian			\
+		test_LapH			\
+		test_HadronSpectrum_HeavyLight	\
+		test_ChiralCondensate 		\
+		test_QnumSuscept		\
+		test_ChiralCondensate 		\
+		test_ReadEigenmodes		\
 		test_Add_Flux
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
@@ -203,6 +205,9 @@ test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 
 test_EigenModesSolver_SOURCES =	test_EigenModesSolver.cpp	\
 				testerEigenModesSolver.cpp
+
+test_EigenModesSolverStaggered_SOURCES =	test_EigenModesSolverStaggered.cpp	\
+						testerEigenModesSolver.cpp	
 
 test_EigenModesSolver_Lap_SOURCES = test_EigenModesSolver_Lap.cpp\
 				testerEigenModesSolver_Lap.cpp

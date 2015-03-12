@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-11-10 14:06:51 cossu>
+# Time-stamp: <2014-11-14 17:51:48 cossu>
 
 
 VPATH = @srcdir@
@@ -65,6 +65,7 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_MesonSpectrum_Nf2p1$(EXEEXT) \
 	test_BaryonSpectrum_Nf2p1$(EXEEXT) \
 	test_EigenModesSolver$(EXEEXT) \
+	test_EigenModesSolverStaggered$(EXEEXT) \
 	test_EigenModesSolver_Lap$(EXEEXT) test_EigModesNum$(EXEEXT) \
 	test_Smearing$(EXEEXT) test_LapSource$(EXEEXT) \
 	test_Overlap$(EXEEXT) test_MultiShiftSolver$(EXEEXT) \
@@ -184,6 +185,14 @@ am_test_EigenModesSolver_OBJECTS = test_EigenModesSolver.$(OBJEXT) \
 test_EigenModesSolver_OBJECTS = $(am_test_EigenModesSolver_OBJECTS)
 test_EigenModesSolver_LDADD = $(LDADD)
 test_EigenModesSolver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
+am_test_EigenModesSolverStaggered_OBJECTS =  \
+	test_EigenModesSolverStaggered.$(OBJEXT) \
+	testerEigenModesSolver.$(OBJEXT)
+test_EigenModesSolverStaggered_OBJECTS =  \
+	$(am_test_EigenModesSolverStaggered_OBJECTS)
+test_EigenModesSolverStaggered_LDADD = $(LDADD)
+test_EigenModesSolverStaggered_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
 am_test_EigenModesSolver_Lap_OBJECTS =  \
 	test_EigenModesSolver_Lap.$(OBJEXT) \
@@ -434,6 +443,7 @@ SOURCES = $(test_Add_Flux_SOURCES) $(test_BFM_Inverter_SOURCES) \
 	$(test_ChiralCondensate_SOURCES) $(test_Clover_SOURCES) \
 	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
 	$(test_EigModesNum_SOURCES) $(test_EigenModesSolver_SOURCES) \
+	$(test_EigenModesSolverStaggered_SOURCES) \
 	$(test_EigenModesSolver_Lap_SOURCES) \
 	$(test_GWrelEigen_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
@@ -465,6 +475,7 @@ DIST_SOURCES = $(test_Add_Flux_SOURCES) \
 	$(test_ChiralCondensate_SOURCES) $(test_Clover_SOURCES) \
 	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
 	$(test_EigModesNum_SOURCES) $(test_EigenModesSolver_SOURCES) \
+	$(test_EigenModesSolverStaggered_SOURCES) \
 	$(test_EigenModesSolver_Lap_SOURCES) \
 	$(test_GWrelEigen_SOURCES) $(test_Gauge_SOURCES) \
 	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
@@ -652,6 +663,7 @@ EXTRA_DIST = testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_EigenModesSolver.xml\
+		test_EigenModesSolverStaggered.xml\
 		test_EigenModesSolver_lap.xml\
 		test_EigModesNum.xml    \
 		test_GeneralMeas.xml 	\
@@ -743,6 +755,9 @@ test_ResMass_SOURCES = test_ResidualMass.cpp 		\
 
 test_EigenModesSolver_SOURCES = test_EigenModesSolver.cpp	\
 				testerEigenModesSolver.cpp
+
+test_EigenModesSolverStaggered_SOURCES = test_EigenModesSolverStaggered.cpp	\
+						testerEigenModesSolver.cpp	
 
 test_EigenModesSolver_Lap_SOURCES = test_EigenModesSolver_Lap.cpp\
 				testerEigenModesSolver_Lap.cpp
@@ -981,6 +996,9 @@ test_EigModesNum$(EXEEXT): $(test_EigModesNum_OBJECTS) $(test_EigModesNum_DEPEND
 test_EigenModesSolver$(EXEEXT): $(test_EigenModesSolver_OBJECTS) $(test_EigenModesSolver_DEPENDENCIES) 
 	@rm -f test_EigenModesSolver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModesSolver_OBJECTS) $(test_EigenModesSolver_LDADD) $(LIBS)
+test_EigenModesSolverStaggered$(EXEEXT): $(test_EigenModesSolverStaggered_OBJECTS) $(test_EigenModesSolverStaggered_DEPENDENCIES) 
+	@rm -f test_EigenModesSolverStaggered$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModesSolverStaggered_OBJECTS) $(test_EigenModesSolverStaggered_LDADD) $(LIBS)
 test_EigenModesSolver_Lap$(EXEEXT): $(test_EigenModesSolver_Lap_OBJECTS) $(test_EigenModesSolver_Lap_DEPENDENCIES) 
 	@rm -f test_EigenModesSolver_Lap$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModesSolver_Lap_OBJECTS) $(test_EigenModesSolver_Lap_LDADD) $(LIBS)
@@ -1110,6 +1128,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DiracWilson_Adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigModesNum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolverStaggered.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolver_Lap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_GWrelEigen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
