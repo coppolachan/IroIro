@@ -104,7 +104,7 @@ void BFM_Storage<Float>::GaugeExport_to_BFM(GaugeField& U){
 
   GaugeField1D Umu;
 
-  CCIO::cout << "U (IroIro) norm :" << U.data.norm() << "\n";
+  CCIO::cout << "BFM_Storage U (IroIro) norm :" << U.data.norm() << "\n";
 
   for (int mu = 0; mu < NDIM_; mu++) {
     //CCIO::cout << "Dirslice\n";

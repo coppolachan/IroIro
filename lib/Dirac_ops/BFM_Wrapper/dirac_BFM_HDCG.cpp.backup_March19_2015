@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2015-03-24 15:09:59 cossu>
+ * Time-stamp: <2014-10-17 17:36:21 neo>
  */
 #include <omp.h>
 #include <math.h>
@@ -215,23 +215,20 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_init(){
   
   if(is_initialized){
     
-    if ( sloppy_relax ) {
-      CCIO::cout << "DEBUG: HDCG_subspace_init sloppy relax \n";
+    if ( sloppy_relax ) { 
       BFM_interface_r.GaugeExport_to_BFM(u_);
       //linop_r.comm_init();
       ldop_d->RelaxSubspace<rFloat>(&linop_r);
       //linop_r.comm_end();
     } else {
-      CCIO::cout << "DEBUG: HDCG_subspace_init Relax in double \n";
+   
       BFM_interface.GaugeExport_to_BFM(u_);
       //linop.comm_init();
       ldop_d->RelaxSubspace<double>(&linop);
       //linop.comm_end();
     }
-
-    CCIO::cout << "DEBUG: HDCG_subspace_init SinglePrecSubspace starts \n";
     ldop_d->SinglePrecSubspace();
-    CCIO::cout << "DEBUG: HDCG_subspace_init SinglePrecSubspace ends \n";
+    
    
    
 
@@ -351,7 +348,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
     
     int LdopDeflVecs = HDCGParms.LdopDeflVecs;
     ldop_d->LdopDeflationBasisSize=0;
-    //      ldop_d->LdopDeflationBasisTrivial(); DEBUG
+    //      ldop_d->LdopDeflationBasisTrivial();
     int min =4;
       if ( ldop_d->LdopDeflationBasisSize> min )  min = ldop_d->LdopDeflationBasisSize;
       for (int v = min ; v<=LdopDeflVecs; v+=4){
@@ -365,11 +362,13 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
 
 }
 
-void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[2], double residual, int maxit, int cb){
+void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[2], double residual, int maxit){
+  
   linop.residual = residual;
   linop.max_iter = maxit;
   
-  Fermion_t src = linop.allocFermion();// this may be useless - use psi_h in the parent class
+  Fermion_t src = linop.allocFermion();// also this may be useless - use psi_h in the parent class
+  //Fermion_t tmp = linop.allocFermion(); // already in the definition of the parent class
   Fermion_t Mtmp= linop.allocFermion();
   Fermion_t resid= linop.allocFermion();
 
@@ -380,22 +379,20 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
   int NodeCoord[4];
   
   for (int mu =0; mu< 4; mu++){
-    GlobalSize[mu]  = CommonPrms::instance()->global_size(mu);
+    GlobalSize[mu] = CommonPrms::instance()->global_size(mu);
     SubGridSize[mu] = CommonPrms::instance()->local_size(mu);
-    NodeCoord[mu]   = Communicator::instance()->ipe(mu);
+    NodeCoord[mu] = Communicator::instance()->ipe(mu);
   }
 
-  
+
   BFM_HDCG_Extend<float>  *ldop_f;
   ldop_f = new BFM_HDCG_Extend<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
   ldop_f->CloneSubspace<double>(*ldop_d);
   ldop_f->SetParams(HDCGParms);
-  
-  ldop_d->PcgType = PcgAdef2;// not in the original wrapper
+  ldop_d->PcgType = PcgAdef2;
   ldop_f->PcgType = PcgAdef2f;
 
   int threads = linop.threads;
-  cb=Odd;//??????????????????
 #pragma omp parallel
   {
 #pragma omp for
@@ -403,104 +400,55 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
       int me = linop.thread_barrier();
 
-      // checkboardsource  - which preconditioning??? Using CGDiagonalMee
-      linop.MooeeInv(source[1-cb],tmp,DaggerNo,1-cb);
-      linop.Meo     (tmp,src,cb,DaggerNo);
-      linop.axpy    (src,src,source[cb],-1.0);
-      linop.MooeeInv(src,tmp,DaggerNo,cb);//my add CGdiagonalMee
-      linop.Mprec   (tmp,src,Mtmp,DaggerYes);
+      // checkboardsource
+      linop.MooeeInv(source[Even],tmp,DaggerNo,Even);
+      linop.Meo     (tmp,src,Odd,DaggerNo);
+      linop.axpy    (tmp,src,source[Odd],-1.0);
+      linop.Mprec(tmp,src,Mtmp,DaggerYes);
 
-      linop.ThreadBossLog("Solving for flexible = %d \n",HDCGParms.Flexible);
-      ldop_f->AnalyseSpectrum=0; 
-
+      ldop_f->AnalyseSpectrum=0;
       if ( HDCGParms.Flexible == 1 ) { 
 	linop_single.ThreadBossLog("Solving with single precision Ldop, fPcg\n");
-	ldop_f->fPcg(ldop_d,solution[cb],src,tmp);
+	ldop_f->fPcg(ldop_d,solution[Odd],src,tmp);
       } else if ( HDCGParms.Flexible == 2 ) {  
 	linop.ThreadBossLog("Solving with double precision Ldop, fPcg\n");
-	ldop_d->fPcg(ldop_d,solution[cb],src,tmp);
+	ldop_d->fPcg(ldop_d,solution[Odd],src,tmp);
       } else { 
 	linop_single.ThreadBossLog("Solving with single precision Ldop, Pcg\n");
-	ldop_f->Pcg(ldop_d,solution[cb],src,tmp);
+	ldop_f->Pcg(ldop_d,solution[Odd],src,tmp);
       }
-      linop.thread_barrier();
-
-
-      // DEBUG lines
-      double sol_norm = sqrt(linop.norm(solution[cb]));
-      double src_norm = sqrt(linop.norm(src));
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: sol_norm   %10.8e \t cb = %d\n",sol_norm, cb);
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: src_norm   %10.8e \t cb = %d\n",src_norm, cb);
-
-      linop.Mprec(solution[cb],tmp,Mtmp,0);
-      linop.Mprec(tmp,solution[1-cb],Mtmp,1); 
-      linop.axpy(Mtmp,src,solution[1-cb],-1.0);
-      double check_mprec = sqrt(linop.norm(Mtmp));
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: recheck mprec    %10.8e \t cb = %d\n",check_mprec, cb);
-
-      /*
-      linop.MooeeInv(source[1-cb],tmp,DaggerNo,1-cb);
-      linop.Meo     (tmp,src,cb,DaggerNo);
-      linop.axpy    (src,src,source[cb],-1.0);
-      linop.MooeeInv(src,Mtmp,DaggerNo,cb);
-      */
-
-      linop.Mprec(solution[cb],Mtmp,tmp,DaggerNo);// what is this doing????? no match with std mprecs MprecTilde???
-      // Mprec test (comments assume cb=odd but valid for all cases)
-      linop.Meo(solution[cb],tmp,1-cb, DaggerNo); // tmp   = Moe sol[cb]
-      linop.MooeeInv(tmp,resid,DaggerNo,1-cb);   // resid = Mee-1 Moe sol[cb]
-      linop.Meo(resid,tmp,cb, DaggerNo);          // tmp   = Meo Mee-1 Moe sol[cb]
-      linop.MooeeInv(tmp,resid,DaggerNo,cb);     // resid = Moo-1 Meo Mee-1 Moe sol[cb]
-      linop.axpy(tmp,resid,solution[cb],-1.0);   // tmp   = sol[cb] - Moo-1 Meo Mee-1 Moe sol[cb]
-      
-      linop.axpy(tmp,tmp,Mtmp,-1.0);               // tmp = Mtmp - tmp   should be zero
-
-      double check_mprec1 = sqrt(linop.norm(tmp));
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: mprec check      %10.8e \t cb = %d\n",check_mprec1, cb);
-      //////////////////////////////// end of debug lines
-
-
 
       // sol_e = M_ee^-1 * ( src_e - Meo sol_o )...
-      linop.Meo(solution[cb],tmp,1-cb,DaggerNo);
-      linop.axpy(src,tmp,source[1-cb],-1.0);
-      linop.MooeeInv(src,solution[1-cb],DaggerNo,1-cb);
+      linop.Meo(solution[Odd],tmp,Even,DaggerNo);
+      linop.axpy(src,tmp,source[Even],-1.0);
+      linop.MooeeInv(src,solution[Even],DaggerNo,Even);
 
-      // cb defect
-      linop.Meo(solution[1-cb],tmp,cb,DaggerNo);
-      linop.Mooee(solution[cb],Mtmp,DaggerNo,cb);
+      // Even defect
+      linop.Meo(solution[Odd],tmp,Even,DaggerNo);
+      linop.Mooee(solution[Even],Mtmp,DaggerNo,Even);
       linop.axpy(Mtmp,Mtmp,tmp,1.0);
-      linop.axpy(Mtmp,Mtmp,source[cb],-1.0);
-    
-      double rf1 = linop.norm(Mtmp);
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug cb defect is %le\n",sqrt(rf1)); 
-
-
-      // 1-cb defect
-      linop.Meo(solution[cb],tmp,1-cb,DaggerNo);
-      linop.Mooee(solution[1-cb],Mtmp,DaggerNo,1-cb);
-      linop.axpy(Mtmp,Mtmp,tmp,1.0);
-      linop.axpy(Mtmp,Mtmp,source[1-cb],-1.0);
+      linop.axpy(Mtmp,Mtmp,source[Even],-1.0);
 
       double rf=linop.norm(Mtmp);
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug 1-cb defect is %le\n",sqrt(rf)); // by construction = 0
+      // Odd defect
+      linop.Meo(solution[Even],tmp,Odd,DaggerNo);
+      linop.Mooee(solution[Odd],Mtmp,DaggerNo,Odd);
+      linop.axpy(Mtmp,Mtmp,tmp,1.0);
+      linop.axpy(Mtmp,Mtmp,source[Odd],-1.0);
+      rf+=linop.norm(Mtmp);
 
-
-      rf+= rf1;
-
-      double f = linop.norm(source[cb]);
-      f       += linop.norm(source[1-cb]);
+      double f = linop.norm(source[Odd]);
+      f       += linop.norm(source[Even]);
 
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: unprec sol true residual is %le\n",sqrt(rf/f));
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: source norm is %le\n",sqrt(f));
 
     }
   }
 
   linop.freeFermion(src);
+  //linop.freeFermion(tmp);
   linop.freeFermion(Mtmp);
   linop.freeFermion(resid);
-
 
   ldop_f->end();
   delete ldop_f;
@@ -542,13 +490,13 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
     
     CCIO::cout<< "DEBUG: Load sources\n";
     LoadSource(BFMsource,cb);
-    LoadSource(BFMsource,1-cb);   
+    
     
     CCIO::cout<< "DEBUG: Load guess\n";
     LoadGuess(BFMsol, cb);
     LoadGuess(BFMsol, 1-cb);
     
-    //CCIO::cout<< "DEBUG: bfm comm_init\n";
+    CCIO::cout<< "DEBUG: bfm comm_init\n";
     // need to initialize the comms because of the buffer
     // assignments by BGNET library
     // the order of comm_init can broke previous initializations
@@ -558,7 +506,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
     
     //////////////////////////// Execute the solver
     CCIO::cout<< "DEBUG: bfm solve_HDCG\n";
-    solve_HDCG(chi_h,psi_h, residual, maxit, cb);
+    solve_HDCG(chi_h,psi_h, residual, maxit);
     ///////////////////////////////////////////////
     
     // close communications to free the buffers

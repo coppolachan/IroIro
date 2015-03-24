@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.hpp
  * @brief Declares the wrapper class for P. Boyle HDCG inverter
- * Time-stamp: <2014-10-10 15:18:11 neo>
+ * Time-stamp: <2015-03-23 15:13:25 cossu>
  */
 #ifndef DIRAC_BFM_HDCG_WRAPPER_
 #define DIRAC_BFM_HDCG_WRAPPER_
@@ -52,7 +52,7 @@ public:
   void HDCG_subspace_free();
   void HDCG_subspace_compute(int sloppy);
   
-  void solve_HDCG(Fermion_t solution[2], Fermion_t source[2], double residual, int maxit);
+  void solve_HDCG(Fermion_t solution[2], Fermion_t source[2], double residual, int maxit, int cb);
   void solve_HDCG(FermionField &sol, FermionField &src,double residual, int maxit);
     
 };

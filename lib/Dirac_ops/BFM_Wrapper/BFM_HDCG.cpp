@@ -1,7 +1,7 @@
 /*!
  * @file BFM_HDCG.cpp
  * @brief Declares classes for P. Boyle HDCG inverter
- * Time-stamp: <2014-10-16 14:34:31 cossu>
+ * Time-stamp: <2015-03-23 15:39:16 cossu>
  */
 
 #include "BFM_HDCG.hpp"
@@ -10,7 +10,7 @@
 #include "Communicator/comm_io.hpp"
 
 int MyNodeNumber(void){
-  CCIO::cout << "My node number overloaded\n";
+  //CCIO::cout << "My node number overloaded\n";
   return Communicator::instance()->nodeid();
 }
 

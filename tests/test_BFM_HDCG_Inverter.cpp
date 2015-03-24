@@ -21,6 +21,8 @@
 #include "BfmHDCG.h"
 #include "Tools/Bagel/bfm_storage.hpp"
 #include "Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp"
+#include <omp.h>
+
 
 using namespace std;
 
@@ -94,11 +96,9 @@ int Test_Solver_HDCG::run(){
     }
   }
 
-  int threads = 64;
+  int threads = omp_get_max_threads();
   bfmarg::Threads(threads);
-
   bfmarg::UseCGdiagonalMee(1);
-
 
   dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
   dwfa.rb_precondition_cb = Even;
@@ -118,7 +118,7 @@ int Test_Solver_HDCG::run(){
   HDCGParams.Block[3] = 4;
   HDCGParams.Block[4] = Ls;
 
-  HDCGParams.SubspaceRationalRefine = 0;
+  HDCGParams.SubspaceRationalRefine = 0;// single /double? 
   HDCGParams.SubspaceRationalRefineLo =   0.02;
   HDCGParams.SubspaceRationalRefineResidual =   1.0e-3;
   HDCGParams.SubspaceRationalLs = 8;
@@ -150,7 +150,12 @@ int Test_Solver_HDCG::run(){
 				     &conf_.data,   // configuration
 				     &DWF_EO);      // passes the IroIro operator
   HDCG_Solver.HDCG_init(HDCGParams, dwfa);  // Initialization (in dirac_BFM_HDCG.cpp)
+  CCIO::cout << "HDCG_Solver.HDCG_init completed \n";
+  
+
   HDCG_Solver.set_SolverParams(SolverNode);
+
+
   //HDCG_Solver.initialize(); // needs the operator and solver params to be set
 
   //////////////////////////////////////////////
@@ -192,7 +197,8 @@ int Test_Solver_HDCG::run(){
       EO_source.data.set(i+(2*s+1)*fe.size()/Ls, fo[i+fe.size()/Ls*s]);
     }
   }
-  CCIO::cout << "EO_source filled\n";
+  double EO_source_norm = EO_source.norm();
+  CCIO::cout << "EO_source filled - norm:  "<< EO_source_norm << "\n";
 
   ///////////////////////////////////////////////////////////////////////////////////////
   FermionField BFMSolution(Nvol5d);
@@ -207,7 +213,7 @@ int Test_Solver_HDCG::run(){
     
   // 3. Actually solve with CG
   CCIO::cout << ".::::::::::::::  Solve using CG\n";
-  HDCG_Solver.solve_HDCG(BFMSolution,EO_source, 1.0e-12, 50000);
+  HDCG_Solver.solve_HDCG(BFMSolution,EO_source, dwfa.residual , dwfa.max_iter);
   
   // 4. Free pointers
   CCIO::cout << "Subspace free pointers\n";
@@ -217,41 +223,54 @@ int Test_Solver_HDCG::run(){
   // Solver using internal Dirac_DomainWall_EvenOdd method solve_eo
   SolverOutput SO;
   Field output_f(vphi);
-  DWF_EO.solve_eo(output_f,fe, SO,  10000, dwfa.residual*dwfa.residual);
+  //precondition fe
+  fe = (DWF_EO.mult_dag(fe));
+  DWF_EO.solve_eo(output_f,fe, SO,  dwfa.max_iter, dwfa.residual*dwfa.residual);
   SO.print();
   
-  //Apply operator back on the inverse
-  FermionField IroIroFull(Nvol5d);
 
-  Field IroIroSol_even = DWF_EO.mult_dag(DWF_EO.mult(fe));
-  Field IroIroSol_odd  = DWF_EO.mult_dag(DWF_EO.mult(fo));
-
-  /*
-  for (int i = 0; i < IroIroFull.size() ; i++){
-    double diff = abs(IroIroFull.data[i]-EO_source.data[i]);
-    if (diff>1e-8) CCIO::cout << "*";
-    CCIO::cout << "["<<i<<"] "<<IroIroFull.data[i] << "  "<<EO_source.data[i]
-               << "  "<< diff << "\n";
+  // Copy the even and odd parts of the BFM solutions to different fields
+  int vect4d_hsize=fe.size()/Ls;
+  for (int s =0 ; s< Ls; s++){
+    for (int i = 0; i < vect4d_hsize; i++){
+      fe.set(i+vect4d_hsize*s, BFMSolution.data[i+(s   )*vect4d_hsize]);
+      fo.set(i+vect4d_hsize*s, BFMSolution.data[i+(s+Ls)*vect4d_hsize]);
+    }
   }
-  */
-  
-  FermionField Difference(Nvol5d);
-  Difference = EO_source;
-  Difference -= BFMSolution;
+
+  // Check BFM solution
+  Field IroIroSol_even = (DWF_EO.mult(fe));
+  Field IroIroSol_odd  = (DWF_EO.mult(fo));
+
+
+  Field Difference = output_f;
+  Difference -= fe;
 
   /*
-  Field F_Diff;
-  F_Diff = output_f;
-  F_Diff -= fe;
-  
-  for (int i = 0; i < fe.size() ; i++){
+  for (int i = 0; i < fe.size()/200 ; i++){
     double diff = abs(fe[i]-output_f[i]);
     if (diff>1e-8) CCIO::cout << "*";
     CCIO::cout << "["<<i<<"] "<<fe[i] << "  "<<output_f[i]
                << "  "<< diff << "\n";
   }
   */
-  CCIO::cout << "Operator Difference BFM-IroIro = "<< Difference.norm() << "\n";
+
+  /*
+  for (int i = 0; i < fe.size()/200 ; i++){
+    double diff = abs(EO_source.data[i]-IroIroSol_odd[i]);
+    if (diff>1e-8) CCIO::cout << "*";
+    CCIO::cout << "["<<i<<"] "<<EO_source.data[i] << "  "<<IroIroSol_odd[i]
+               << "  "<< diff << "\n";
+  }
+  */
+
+  CCIO::cout << "Operator Difference BFM-IroIro (Even) = "<< Difference.norm() << "\n";
+
+
+  Difference = output_f;
+  Difference -= fo;
+  CCIO::cout << "Operator Difference BFM-IroIro (Odd)  = "<< Difference.norm() << "\n";
+
   
   return 0;
 }
