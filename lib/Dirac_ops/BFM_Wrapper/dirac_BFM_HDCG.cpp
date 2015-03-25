@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2015-03-24 15:09:59 cossu>
+ * Time-stamp: <2015-03-24 15:59:16 cossu>
  */
 #include <omp.h>
 #include <math.h>
@@ -488,11 +488,22 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
       rf+= rf1;
 
-      double f = linop.norm(source[cb]);
-      f       += linop.norm(source[1-cb]);
+      double f1 = linop.norm(source[cb]);
+      double f2 = linop.norm(source[1-cb]);
+      double f = f1+f2;
 
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: unprec sol true residual is %le\n",sqrt(rf/f));
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: source norm is %le\n",sqrt(f));
+      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug source norm is %le\n",sqrt(f));
+
+      double s1 = linop.norm(solution[cb]);
+      double s2 = linop.norm(solution[1-cb]);
+
+      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug source even norm is %le\n",sqrt(f2)); 
+      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug source odd  norm is %le\n",sqrt(f1));
+      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug sol    even norm is %le\n",sqrt(s2)); 
+      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug sol    odd  norm is %le\n",sqrt(s1));
+
+ 
 
     }
   }
@@ -532,8 +543,8 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
     for (int s =0 ; s< BFMparams.Ls_; s++){
       for (int i = 0; i < half_vec; i++){
 	
-	BFMsource.data.set(i+    2*s*half_vec, source.data[i+half_vec*s]);//just even part is enough
-	BFMsource.data.set(i+(2*s+1)*half_vec, source.data[i+half_vec*(s+BFMparams.Ls_)]);//just even part is enough
+	BFMsource.data.set(i+    2*s*half_vec, source.data[i+half_vec*s]);//even part
+	BFMsource.data.set(i+(2*s+1)*half_vec, source.data[i+half_vec*(s+BFMparams.Ls_)]);//odd part 
 	
 	BFMsol.data.set(i+    2*s*half_vec, solution.data[i+half_vec*s]);//just even part is enough
 	BFMsol.data.set(i+(2*s+1)*half_vec, solution.data[i+half_vec*(s+BFMparams.Ls_)]);//just even part is enough
@@ -571,7 +582,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
     GetSolution(BFMsol,1-cb);
     for (int s =0 ; s< BFMparams.Ls_; s++){
       for (int i = 0; i < half_vec; i++){
-	solution.data.set(i+half_vec*s, BFMsol.data[i+2*s*half_vec]);//copy the even part
+	solution.data.set(i+half_vec*s,                 BFMsol.data[i+2*s*half_vec]);//copy the even part
 	solution.data.set(i+half_vec*(s+BFMparams.Ls_), BFMsol.data[i+(2*s+1)*half_vec]);//copy the odd part
       }
     }

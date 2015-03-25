@@ -152,23 +152,20 @@ int Test_Solver_HDCG::run(){
   HDCG_Solver.HDCG_init(HDCGParams, dwfa);  // Initialization (in dirac_BFM_HDCG.cpp)
   CCIO::cout << "HDCG_Solver.HDCG_init completed \n";
   
-
   HDCG_Solver.set_SolverParams(SolverNode);
-
 
   //HDCG_Solver.initialize(); // needs the operator and solver params to be set
 
   //////////////////////////////////////////////
-  //launch the test
+  // launch the test
   // First set the source vectors
   FermionField source(src.mksrc(0,0));
  
   SiteIndex_EvenOdd* ieo = SiteIndex_EvenOdd::instance();
   vector<int> esec= ieo->esec();
   vector<int> osec= ieo->osec();
-  // source generation (spin, color)
-  // Field fe = src.mksrc(esec,2,0);
-  // Field fo = src.mksrc(osec,2,0);
+  // source generation random 
+
   valarray<double> vphi(DWF_EO.fsize());
   rand.get(vphi);
   Field phi(vphi);    // phi: generated from random numbers
@@ -188,17 +185,19 @@ int Test_Solver_HDCG::run(){
   FermionField EO_source(Ls*Nvol);
   CCIO::cout << "EO_source size: "<< EO_source.size() <<"\n";
   
-  // copy fields in the eo source CB blocked
-  // interleaving the e/o blocks
+  // copy fields in a single eo source
   assert(fe.size() == fo.size());
+  int vect4d_hsize=fe.size()/Ls;
   for (int s =0 ; s< Ls; s++){
     for (int i = 0; i < fe.size()/Ls; i++){
-      EO_source.data.set(i+2*fe.size()/Ls*s, fe[i+fe.size()/Ls*s]);
-      EO_source.data.set(i+(2*s+1)*fe.size()/Ls, fo[i+fe.size()/Ls*s]);
+      EO_source.data.set(i+vect4d_hsize*s,      fe[i+vect4d_hsize*s]);
+      EO_source.data.set(i+vect4d_hsize*(s+Ls), fo[i+vect4d_hsize*s]);
     }
   }
   double EO_source_norm = EO_source.norm();
   CCIO::cout << "EO_source filled - norm:  "<< EO_source_norm << "\n";
+  CCIO::cout << "EO_source filled - Even norm:  "<< fe.norm() << "\n";
+  CCIO::cout << "EO_source filled - Odd  norm:  "<< fo.norm() << "\n";
 
   ///////////////////////////////////////////////////////////////////////////////////////
   FermionField BFMSolution(Nvol5d);
@@ -218,57 +217,69 @@ int Test_Solver_HDCG::run(){
   // 4. Free pointers
   CCIO::cout << "Subspace free pointers\n";
   HDCG_Solver.HDCG_subspace_free();
-
+  ////////////////////////////////////// end of HDCG
 
   // Solver using internal Dirac_DomainWall_EvenOdd method solve_eo
   SolverOutput SO;
   Field output_f(vphi);
-  //precondition fe
-  fe = (DWF_EO.mult_dag(fe));
-  DWF_EO.solve_eo(output_f,fe, SO,  dwfa.max_iter, dwfa.residual*dwfa.residual);
+  // Must precondition the source because the IroIro solver is giving the solution of
+  // MdagM chi = psi
+  //
+  // Preconditioned source in BFM terminology
+  // prec_fe = Mprec^dag (Mee^-1(fe - MoeMoo^-1 fo) 
+
+  Field prec_tmp1 = DWF_EO.mult_ee_inv(fe);
+  prec_tmp1 -= DWF_EO.mult_eo(DWF_EO.mult_oo_inv(fo));
+  Field prec_fe = DWF_EO.mult_dag(prec_tmp1);
+
+  // Solve with IroIro (reference result)
+  DWF_EO.solve_eo(output_f,prec_fe, SO,  dwfa.max_iter, dwfa.residual*dwfa.residual);
   SO.print();
   
+  // Check IroIro preconditioned solution even - MdagM
+  Field IroIroSolveCheck = (DWF_EO.mult(output_f));
+  IroIroSolveCheck -= prec_tmp1;
+  CCIO::cout << "IroIro MdagM check = "<< IroIroSolveCheck.norm() << "\n";
 
-  // Copy the even and odd parts of the BFM solutions to different fields
-  int vect4d_hsize=fe.size()/Ls;
+  // Get the Odd part of the unpreconditioned solution
+  prec_tmp1 = fo;
+  prec_tmp1 -= DWF_EO.mult_oo(DWF_EO.mult_oe(output_f));
+  Field IroIroOdd = DWF_EO.mult_oo_inv(prec_tmp1);
+  
+  //Test1  :  Mee sol_e + Moe sol_o - src_e = 0 
+  Field test1 = DWF_EO.mult_ee(output_f);
+  test1 += DWF_EO.mult_ee(DWF_EO.mult_eo(IroIroOdd));
+  test1 -= fe;
+  CCIO::cout << "IroIro unpreconditioned M check Even  = "<< test1.norm() << "\n";
+
+  //Test2  :  Moo sol_o + Meo sol_e - src_o = 0 
+  test1 = DWF_EO.mult_oo(IroIroOdd);
+  test1 += DWF_EO.mult_oo(DWF_EO.mult_oe(output_f));
+  test1 -= fo;
+  CCIO::cout << "IroIro unpreconditioned M check Odd   = "<< test1.norm() << "\n";
+
+
+  //////////////////////////////////////////////////////////////////////////////////
+  // Separate the even and odd parts of the BFM solutions to different fields
+  Field bfm_se(fe);
+  Field bfm_so(fo);
   for (int s =0 ; s< Ls; s++){
     for (int i = 0; i < vect4d_hsize; i++){
-      fe.set(i+vect4d_hsize*s, BFMSolution.data[i+(s   )*vect4d_hsize]);
-      fo.set(i+vect4d_hsize*s, BFMSolution.data[i+(s+Ls)*vect4d_hsize]);
+      bfm_se.set(i+vect4d_hsize*s, BFMSolution.data[i+(s   )*vect4d_hsize]);
+      bfm_so.set(i+vect4d_hsize*s, BFMSolution.data[i+(s+Ls)*vect4d_hsize]);
     }
   }
 
-  // Check BFM solution
-  Field IroIroSol_even = (DWF_EO.mult(fe));
-  Field IroIroSol_odd  = (DWF_EO.mult(fo));
+  CCIO::cout << "BFM sol even norm = "<< bfm_se.norm() << "\n";
+  CCIO::cout << "BFM sol odd  norm = "<< bfm_so.norm() << "\n";
 
-
+  // Check BFM solution against IroIro (preconditioned)
   Field Difference = output_f;
-  Difference -= fe;
-
-  /*
-  for (int i = 0; i < fe.size()/200 ; i++){
-    double diff = abs(fe[i]-output_f[i]);
-    if (diff>1e-8) CCIO::cout << "*";
-    CCIO::cout << "["<<i<<"] "<<fe[i] << "  "<<output_f[i]
-               << "  "<< diff << "\n";
-  }
-  */
-
-  /*
-  for (int i = 0; i < fe.size()/200 ; i++){
-    double diff = abs(EO_source.data[i]-IroIroSol_odd[i]);
-    if (diff>1e-8) CCIO::cout << "*";
-    CCIO::cout << "["<<i<<"] "<<EO_source.data[i] << "  "<<IroIroSol_odd[i]
-               << "  "<< diff << "\n";
-  }
-  */
-
+  Difference -= bfm_se;
   CCIO::cout << "Operator Difference BFM-IroIro (Even) = "<< Difference.norm() << "\n";
 
-
-  Difference = output_f;
-  Difference -= fo;
+  Difference = IroIroOdd;
+  Difference -= bfm_so;
   CCIO::cout << "Operator Difference BFM-IroIro (Odd)  = "<< Difference.norm() << "\n";
 
   
