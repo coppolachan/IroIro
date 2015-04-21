@@ -2,7 +2,7 @@
  * @file fopr.h 
  * @brief Definition of Fopr classes 
  * @authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>, Jun-Ichi Noaki}
-Time-stamp: <2014-11-14 16:43:44 neo>
+Time-stamp: <2015-04-07 14:19:24 cossu>
  */
 
 #ifndef FOPR_INCLUDED
@@ -92,6 +92,16 @@ public:
   Fopr_HD(const Dirac* D):D_(D){assert(D_);}  
   double func(double x)const{return x;}
   const Field mult(const Field& f)const{ return D_->mult(f);}
+  size_t fsize()const{return D_->fsize();}
+};
+
+/*!@brief use this when D is already hermitian - Special for adjoint Staggered */
+class Fopr_HDStagAdj : public Fopr_Herm{
+  const Dirac* D_;
+public:
+  Fopr_HDStagAdj(const Dirac* D):D_(D){assert(D_);}  
+  double func(double x)const{return x;}
+  const Field mult(const Field& f)const{return D_->mult(f);}
   size_t fsize()const{return D_->fsize();}
 };
 

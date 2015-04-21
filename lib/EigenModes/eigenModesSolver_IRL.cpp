@@ -1,6 +1,6 @@
 /*! @file eigenModesSolver_IRL.cpp
  *  @brief implementations of EigenModesSolver_IRL class  
- Time-stamp: <2014-10-09 15:03:53 cossu>
+ Time-stamp: <2015-04-07 14:35:04 cossu>
  */
 #include "eigenModesSolver_IRL.hpp"
 #include "eigenSorter.hpp"
@@ -179,6 +179,7 @@ lanczos_ext(vector<double>& ta,vector<double>& tb,
     f -= ta[k]*V[k];
     tb[k] = f.norm();
     f /= tb[k];
+    
 
     orthogonalize(f,V,k); /*!<@brief classical Gram-Schmidt orthogonalization*/
     ta[k] += V[k]*f;      /*!<@brief DGKS correlction*/
@@ -211,6 +212,24 @@ orthogonalize(Field& f,const vector<Field>& V,int N)const{
     f.add(im, -sr[j]*V[j][im] -si[j]*V[j][re]);
   }
 }
+
+
+// classical Gram-Schmidt orthogonalization
+void EigenModesSolver_IRL::
+orthogonalize_real(Field& f,const vector<Field>& V,int N)const{
+  size_t size = f.size();
+
+  vector<double> sr(N);
+
+  for(int j=0; j<N; ++j)
+    sr[j] = V[j]*f;
+
+  for(int j=0; j<N; ++j)
+    for (int s=0; s<size; s++)
+      f.add(s, -sr[j]*V[j][s]); // f = f - (f,V[j]) V[j]
+
+}
+
 
 void EigenModesSolver_IRL::setUnit(vector<double>& Qt)const{
   for(int i=0; i<Nm_*Nm_; ++i) Qt[i] = 0.0;

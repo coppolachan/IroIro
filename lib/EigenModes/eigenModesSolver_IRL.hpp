@@ -39,6 +39,7 @@ private:
 		   std::vector<double>& Qt,int Nk)const;
 
   void orthogonalize(Field& w,const std::vector<Field>& evec,int k)const;
+  void orthogonalize_real(Field& w,const std::vector<Field>& evec,int k)const;
   //void projectOut(std::vector<Field>& evec)const;
 public:
   EigenModesSolver_IRL(const Fopr_Herm* fopr,

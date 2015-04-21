@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2015-03-24 15:59:16 cossu>
+ * Time-stamp: <2015-04-18 00:26:50 cossu>
  */
 #include <omp.h>
 #include <math.h>
@@ -26,33 +26,110 @@ void Dirac_BFM_HDCG_Wrapper::close_comms(){
 }
 
 
-void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
-				       bfmActionParams &BAP) {
+void Dirac_BFM_HDCG_Wrapper::HDCG_init(XML::node HDCGnode) {
 
-  HDCGParms = Parms_;
+  //Get the HDCG specific parameters from the XML node
+  XML::node top_HDCG_node = HDCGnode;
+  XML::descend(top_HDCG_node, "HDCG_Solver", MANDATORY);
+  
+  //////////////////////////////////////////////// Set parameters
+  // Basic
+  XML::read(top_HDCG_node, "NumberSubspace", HDCGParams.NumberSubspace, MANDATORY);
+  HDCGParams.Ls = BFMparams.Ls_;
+  std::vector<int> blockdim;
+  XML::read_array(top_HDCG_node, "BlockDim", blockdim, MANDATORY);
+  HDCGParams.Block[0] = blockdim[0];
+  HDCGParams.Block[1] = blockdim[1];
+  HDCGParams.Block[2] = blockdim[2];
+  HDCGParams.Block[3] = blockdim[3];
+  HDCGParams.Block[4] = blockdim[4];
+
+  // First pass subspace controls  - Subspace Rationals
+  XML::read(top_HDCG_node, "SubspaceRationalLs", HDCGParams.SubspaceRationalLs, MANDATORY);
+  XML::read(top_HDCG_node, "SubspaceRationalLo", HDCGParams.SubspaceRationalLo, MANDATORY);
+  XML::read(top_HDCG_node, "SubspaceRationalMass", HDCGParams.SubspaceRationalMass, MANDATORY);
+  XML::read(top_HDCG_node, "SubspaceRationalResidual", HDCGParams.SubspaceRationalResidual, MANDATORY);
+  HDCGParams.SubspaceSurfaceDepth = HDCGParams.SubspaceRationalLs;//default value if not specified
+  XML::read(top_HDCG_node, "SubspaceSurfaceDepth", HDCGParams.SubspaceSurfaceDepth); 
+
+  // Second pass subspace controls
+  XML::read(top_HDCG_node, "SubspaceRationalRefine", HDCGParams.SubspaceRationalRefine, MANDATORY);
+  HDCGParams.SubspaceRationalRefineLo =   0.001;// default value if not specified
+  XML::read(top_HDCG_node, "SubspaceRationalRefineLo", HDCGParams.SubspaceRationalRefineLo);
+  HDCGParams.SubspaceRationalRefineResidual =   1.0e-5;// default value if not specified
+  XML::read(top_HDCG_node, "SubspaceRationalRefineResidual", HDCGParams.SubspaceRationalRefineResidual);
+
+  // Little Dirac operator deflation controls
+  XML::read(top_HDCG_node, "LdopDeflVecs", HDCGParams.LdopDeflVecs, MANDATORY);
+  XML::read(top_HDCG_node, "LittleDopSolverResidualSubspace", HDCGParams.LittleDopSolverResidualSubspace, MANDATORY);
+  XML::read(top_HDCG_node, "LittleDopSolverResidualInner", HDCGParams.LittleDopSolverResidualInner, MANDATORY);
+  XML::read(top_HDCG_node, "LittleDopSubspaceRational", HDCGParams.LittleDopSubspaceRational, MANDATORY);
+  XML::read(top_HDCG_node, "LittleDopSolverResidualVstart", HDCGParams.LittleDopSolverResidualVstart, MANDATORY);
+  XML::read(top_HDCG_node, "LittleDopSolverIterMax", HDCGParams.LittleDopSolverIterMax, MANDATORY);
+  //////////////////////////////////////////////////////////
+
+  // Outer solver parameters
+  XML::read(top_HDCG_node, "PreconditionerKrylovResidual", HDCGParams.PreconditionerKrylovResidual, MANDATORY);
+  XML::read(top_HDCG_node, "PreconditionerKrylovIterMax", HDCGParams.PreconditionerKrylovIterMax, MANDATORY);
+  XML::read(top_HDCG_node, "PreconditionerKrylovShift", HDCGParams.PreconditionerKrylovShift, MANDATORY);
+  HDCGParams.PcgSingleShift = 0.0; // default value if not specified
+  XML::read(top_HDCG_node, "PcgSingleShift", HDCGParams.PcgSingleShift);
+
+  std::string LittleDopSolver_str;
+  XML::read(top_HDCG_node, "LittleDopSolver", LittleDopSolver_str, MANDATORY);
+  if (!LittleDopSolver_str.compare("ADef2")){
+    HDCGParams.LittleDopSolver = LittleDopSolverADef2;
+  }  else if (!LittleDopSolver_str.compare("DeflCG")){
+    HDCGParams.LittleDopSolver = LittleDopSolverDeflCG;
+  } else   if (!LittleDopSolver_str.compare("CG")){
+    HDCGParams.LittleDopSolver = LittleDopSolverCG;
+  } else   if (!LittleDopSolver_str.compare("MCR")){
+    HDCGParams.LittleDopSolver = LittleDopSolverMCR;
+  } else {
+    Errors::ParameterErr("Undefined LittleDopSolver declaration. Check XML\n");
+  }
+
+  std::string LittleDopM1control_str;
+  XML::read(top_HDCG_node, "LittleDopM1control", LittleDopM1control_str, MANDATORY);
+  if (!LittleDopM1control_str.compare("Chebyshev")){
+    HDCGParams.LdopM1control = LdopM1Chebyshev;
+  }  else   if (!LittleDopM1control_str.compare("Mirs")){
+    HDCGParams.LdopM1control = LdopM1Mirs;
+  }  else   if (!LittleDopM1control_str.compare("MirsPoly")){
+    HDCGParams.LdopM1control = LdopM1MirsPoly;
+  }  else   if (!LittleDopM1control_str.compare("MirsPolyRecord")){
+    HDCGParams.LdopM1control = LdopM1MirsPolyRecord;
+  }  else   if (!LittleDopM1control_str.compare("DiagInv")){
+    HDCGParams.LdopM1control = LdopM1DiagInv;
+  }  else {
+    Errors::ParameterErr("Undefined LittleDopM1control declaration. Check XML\n");
+  }
+  XML::read(top_HDCG_node, "LdopM1Lo", HDCGParams.LdopM1Lo, MANDATORY);
+  XML::read(top_HDCG_node, "LdopM1Hi", HDCGParams.LdopM1Hi, MANDATORY);
+  XML::read(top_HDCG_node, "LdopM1iter", HDCGParams.LdopM1iter, MANDATORY);
+  XML::read(top_HDCG_node, "LdopM1resid", HDCGParams.LdopM1resid, MANDATORY);
+
+
+  XML::read(top_HDCG_node, "Flexible", HDCGParams.Flexible, MANDATORY);
 
   // Complicated init sequence
   bfmarg bfma;
   bfmActionParams *bfmap = (bfmActionParams *) &bfma;
 
   // Physical params
-  *bfmap = BAP;
+  *bfmap = parameters; // from the parent class that has been already initialized by XML
 
   // Algorithm & code control
   bfma.Threads(omp_get_max_threads());
   bfma.Verbose(BfmMessage|BfmDebug|BfmPerformance|BfmError);
   bfma.time_report_iter  =-100;
-  bfma.max_iter          = 10000;
-  bfma.residual          = 1.0e-8;
 
-  // Local geometry, get from the environment
+  // Local geometry, get from IroIro environment
   bfma.node_latt[0] =  CommonPrms::instance()->Nx();
   bfma.node_latt[1] =  CommonPrms::instance()->Ny();
   bfma.node_latt[2] =  CommonPrms::instance()->Nz();
   bfma.node_latt[3] =  CommonPrms::instance()->Nt();
 
-  //  multi1d<int> procs = QDP::Layout::logicalSize();//? number of nodes per dir?
-  // here the IroIro version
   int procs[4];
   for(int mu=0;mu<4;mu++){
     procs[mu] = CommonPrms::instance()->NPE(mu);
@@ -65,23 +142,22 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
     bfma.neighbour_plus[mu]  = Communicator::instance()->node_up(mu);
     bfma.neighbour_minus[mu] = Communicator::instance()->node_dn(mu);
   }
-
+  
 
   // Initialization of internal operators
   linop_single.init(bfma);
-  linop_single.BossLog("HDCG inititialised single prec linop\n");
+  linop_single.BossLog("HDCG wrapper inititialised single precision linop, parameters %d %f\n", bfma.Ls, bfma.mass);
  
   linop.init(bfma);
-  linop.BossLog("HDCG inititialised double prec linop\n");
+  linop.BossLog("HDCG wrapper inititialised double precision linop\n");
   
-  bfma.Ls   = HDCGParms.SubspaceRationalLs;
-  bfma.mass = HDCGParms.SubspaceRationalMass;
+  bfma.Ls   = HDCGParams.SubspaceRationalLs;
+  bfma.mass = HDCGParams.SubspaceRationalMass;
   
   linop_r.BossLog("HDCG inititialising subspace generation Ls=%d mass %le\n",bfma.Ls,bfma.mass);
   linop_r.init(bfma);
-  linop_r.BossLog("HDCG inititialised subspace generation\n");
 
-  // Merge the Parms into constructor.
+  // Merge the Params into constructor.
   int GlobalSize[4];
   int SubGridSize[4];
   int NodeCoord[4];
@@ -93,18 +169,11 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(BfmHDCGParams & Parms_,
   }
 
   linop.BossLog("HDCG class initialization\n");
-  ldop_d = new BFM_HDCG_Extend<double>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
-  ldop_d->SetParams(HDCGParms);
-
+  ldop_d = new BFM_HDCG_Extend<double>(HDCGParams.Ls,HDCGParams.NumberSubspace,HDCGParams.Block,HDCGParams.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
+  ldop_d->SetParams(HDCGParams);
 
   //Allocate fields
-  AllocateFields(); // just for the double 
-
-  // Close all communications (open when necessary) avoids conflicts with BGNET comms
-  //linop and linop_single are closed in the construction of the Dirac_BFM_wrapper class
-  //linop_r.comm_end();
-  //linop_single.comm_end();
-  //linop.comm_end();
+  AllocateFields(); // just for the double precision fields
   is_initialized = true;
 }
 
@@ -204,7 +273,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_set_mass(double mass){
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_init(){
 
-  int sloppy_relax=HDCGParms.SubspaceRationalRefine;
+  int sloppy_relax=HDCGParams.SubspaceRationalRefine;
   
   uint32_t seed = (ldop_d->ncoor[0]*17    + 
 		   ldop_d->ncoor[1]*251   +
@@ -216,24 +285,19 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_init(){
   if(is_initialized){
     
     if ( sloppy_relax ) {
-      CCIO::cout << "DEBUG: HDCG_subspace_init sloppy relax \n";
-      BFM_interface_r.GaugeExport_to_BFM(u_);
-      //linop_r.comm_init();
-      ldop_d->RelaxSubspace<rFloat>(&linop_r);
-      //linop_r.comm_end();
-    } else {
-      CCIO::cout << "DEBUG: HDCG_subspace_init Relax in double \n";
+      CCIO::cout << "HDCG_subspace_init sloppy relax \n";
       BFM_interface.GaugeExport_to_BFM(u_);
-      //linop.comm_init();
+      BFM_interface_r.GaugeExport_to_BFM(u_);
+      ldop_d->RelaxSubspace<rFloat>(&linop_r);
+    } else {
+      CCIO::cout << "HDCG_subspace_init Relax in double \n";
+      BFM_interface.GaugeExport_to_BFM(u_);
+      BFM_interface_r.GaugeExport_to_BFM(u_);
       ldop_d->RelaxSubspace<double>(&linop);
-      //linop.comm_end();
     }
 
-    CCIO::cout << "DEBUG: HDCG_subspace_init SinglePrecSubspace starts \n";
+    CCIO::cout << "HDCG_subspace_init SinglePrecSubspace \n";
     ldop_d->SinglePrecSubspace();
-    CCIO::cout << "DEBUG: HDCG_subspace_init SinglePrecSubspace ends \n";
-   
-   
 
   } else {
     CCIO::cout << "The operator was not initialized yet\n";
@@ -243,7 +307,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_init(){
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_refine(){
   
-  int Nvec = HDCGParms.NumberSubspace;
+  int Nvec = HDCGParams.NumberSubspace;
   
   Fermion_t src = linop.allocFermion();
   Fermion_t sol = linop.allocFermion();
@@ -260,13 +324,13 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_refine(){
     SubGridSize[mu] = CommonPrms::instance()->local_size(mu);
     NodeCoord[mu] = Communicator::instance()->ipe(mu);
   }
-  ldop_f = new BFM_HDCG_Extend<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
+  ldop_f = new BFM_HDCG_Extend<float>(HDCGParams.Ls,HDCGParams.NumberSubspace,HDCGParams.Block,HDCGParams.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
   printf("ldop_f node number %d\n",MyNodeNumber());
   ldop_f->CloneSubspace<double>(*ldop_d);
-  ldop_f->SetParams(HDCGParms);
+  ldop_f->SetParams(HDCGParams);
 
-  ldop_f->PcgSingleShift = HDCGParms.SubspaceRationalRefineLo;
-  linop.residual = HDCGParms.SubspaceRationalRefineResidual;
+  ldop_f->PcgSingleShift = HDCGParams.SubspaceRationalRefineLo;
+  linop.residual = HDCGParams.SubspaceRationalRefineResidual;
   ldop_f->PcgType        = PcgAdef2fSingleShift;
   
 #pragma omp parallel 
@@ -313,7 +377,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_free(void){
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
   
   int threads = linop.threads;
-  int Nvec = HDCGParms.NumberSubspace;
+  int Nvec = HDCGParams.NumberSubspace;
   
   //open_comms();
 
@@ -321,20 +385,19 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
     ldop_d->ComputeLittleMatrixColored<float>(&linop_single,ldop_d->subspace_f);
     ldop_d->LdopDeflationBasisSize=0;
   } else { 
-    //ldop_d->ComputeLittleMatrixColored<float>(&dop_f,ldop_d->subspace_f);
     ldop_d->ComputeLittleMatrixColored<double>(&linop,ldop_d->subspace_d);
     // NB due to BG/Q QPX have hard coded DeflationBasisSize must be multiple of 4.
     // This may become even more on future machines.
 #if 1
-    if( HDCGParms.SubspaceSurfaceDepth < HDCGParms.Ls/2) {
-      linop.BossMessage("Zeroing s=[%d,%d]\n",HDCGParms.SubspaceSurfaceDepth,HDCGParms.Ls-HDCGParms.SubspaceSurfaceDepth-1);
+    if( HDCGParams.SubspaceSurfaceDepth < HDCGParams.Ls/2) {
+      linop.BossMessage("Zeroing s=[%d,%d]\n",HDCGParams.SubspaceSurfaceDepth,HDCGParams.Ls-HDCGParams.SubspaceSurfaceDepth-1);
 #pragma omp parallel 
       {
 #pragma omp for 
 	for(int i=0;i<threads;i++) {
 	  for(int v=0;v<Nvec;v++){
 	    double nno = linop.norm(ldop_d->subspace_d[v]);
-	    for(int s=HDCGParms.SubspaceSurfaceDepth; s<HDCGParms.Ls-HDCGParms.SubspaceSurfaceDepth;s++){
+	    for(int s=HDCGParams.SubspaceSurfaceDepth; s<HDCGParams.Ls-HDCGParams.SubspaceSurfaceDepth;s++){
 	      linop.axpby_ssp(ldop_d->subspace_d[v],0.0,ldop_d->subspace_d[v],0.0,ldop_d->subspace_d[v],s,s);
 	    }
 	    double nnr = linop.norm(ldop_d->subspace_d[v]);
@@ -349,7 +412,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
       + ldop_d->ncoor[2]*357 + ldop_d->ncoor[3]*1203;
     srand48(seed);
     
-    int LdopDeflVecs = HDCGParms.LdopDeflVecs;
+    int LdopDeflVecs = HDCGParams.LdopDeflVecs;
     ldop_d->LdopDeflationBasisSize=0;
     //      ldop_d->LdopDeflationBasisTrivial(); DEBUG
     int min =4;
@@ -371,9 +434,9 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
   
   Fermion_t src = linop.allocFermion();// this may be useless - use psi_h in the parent class
   Fermion_t Mtmp= linop.allocFermion();
-  Fermion_t resid= linop.allocFermion();
+  //Fermion_t resid= linop.allocFermion();
 
-  // Even/Odd eventually must be changed... Peter has a different convention
+  
 
   int GlobalSize[4];
   int SubGridSize[4];
@@ -387,15 +450,20 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
   
   BFM_HDCG_Extend<float>  *ldop_f;
-  ldop_f = new BFM_HDCG_Extend<float>(HDCGParms.Ls,HDCGParms.NumberSubspace,HDCGParms.Block,HDCGParms.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
+  ldop_f = new BFM_HDCG_Extend<float>(HDCGParams.Ls,HDCGParams.NumberSubspace,HDCGParams.Block,HDCGParams.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
   ldop_f->CloneSubspace<double>(*ldop_d);
-  ldop_f->SetParams(HDCGParms);
+  ldop_f->SetParams(HDCGParams);
   
   ldop_d->PcgType = PcgAdef2;// not in the original wrapper
   ldop_f->PcgType = PcgAdef2f;
 
   int threads = linop.threads;
-  cb=Odd;//??????????????????
+
+  // hack
+  cb=Odd;//?????????????????? why have to force this? (works)
+
+
+
 #pragma omp parallel
   {
 #pragma omp for
@@ -403,21 +471,23 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
       int me = linop.thread_barrier();
 
-      // checkboardsource  - which preconditioning??? Using CGDiagonalMee
+      // checkboardsource  - Using CGDiagonalMee preconditioning 
       linop.MooeeInv(source[1-cb],tmp,DaggerNo,1-cb);
       linop.Meo     (tmp,src,cb,DaggerNo);
       linop.axpy    (src,src,source[cb],-1.0);
       linop.MooeeInv(src,tmp,DaggerNo,cb);//my add CGdiagonalMee
       linop.Mprec   (tmp,src,Mtmp,DaggerYes);
 
-      linop.ThreadBossLog("Solving for flexible = %d \n",HDCGParms.Flexible);
+      linop.ThreadBossLog("Solving for flexible = %d \n",HDCGParams.Flexible);
       ldop_f->AnalyseSpectrum=0; 
 
-      if ( HDCGParms.Flexible == 1 ) { 
+      if ( HDCGParams.Flexible == 1 ) { 
 	linop_single.ThreadBossLog("Solving with single precision Ldop, fPcg\n");
+	ldop_d->SloppyComms = 1; // DEBUG
 	ldop_f->fPcg(ldop_d,solution[cb],src,tmp);
-      } else if ( HDCGParms.Flexible == 2 ) {  
+      } else if ( HDCGParams.Flexible == 2 ) {  
 	linop.ThreadBossLog("Solving with double precision Ldop, fPcg\n");
+	ldop_d->SloppyComms = 0;
 	ldop_d->fPcg(ldop_d,solution[cb],src,tmp);
       } else { 
 	linop_single.ThreadBossLog("Solving with single precision Ldop, Pcg\n");
@@ -427,6 +497,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
 
       // DEBUG lines
+      /*
       double sol_norm = sqrt(linop.norm(solution[cb]));
       double src_norm = sqrt(linop.norm(src));
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: sol_norm   %10.8e \t cb = %d\n",sol_norm, cb);
@@ -437,13 +508,6 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
       linop.axpy(Mtmp,src,solution[1-cb],-1.0);
       double check_mprec = sqrt(linop.norm(Mtmp));
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: recheck mprec    %10.8e \t cb = %d\n",check_mprec, cb);
-
-      /*
-      linop.MooeeInv(source[1-cb],tmp,DaggerNo,1-cb);
-      linop.Meo     (tmp,src,cb,DaggerNo);
-      linop.axpy    (src,src,source[cb],-1.0);
-      linop.MooeeInv(src,Mtmp,DaggerNo,cb);
-      */
 
       linop.Mprec(solution[cb],Mtmp,tmp,DaggerNo);// what is this doing????? no match with std mprecs MprecTilde???
       // Mprec test (comments assume cb=odd but valid for all cases)
@@ -457,6 +521,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
       double check_mprec1 = sqrt(linop.norm(tmp));
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: mprec check      %10.8e \t cb = %d\n",check_mprec1, cb);
+      */
       //////////////////////////////// end of debug lines
 
 
@@ -473,7 +538,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
       linop.axpy(Mtmp,Mtmp,source[cb],-1.0);
     
       double rf1 = linop.norm(Mtmp);
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug cb defect is %le\n",sqrt(rf1)); 
+      //if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug cb defect is %le\n",sqrt(rf1)); 
 
 
       // 1-cb defect
@@ -483,9 +548,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
       linop.axpy(Mtmp,Mtmp,source[1-cb],-1.0);
 
       double rf=linop.norm(Mtmp);
-      if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug 1-cb defect is %le\n",sqrt(rf)); // by construction = 0
-
-
+      //if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug 1-cb defect is %le\n",sqrt(rf)); // by construction = 0
       rf+= rf1;
 
       double f1 = linop.norm(source[cb]);
@@ -493,6 +556,9 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
       double f = f1+f2;
 
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: unprec sol true residual is %le\n",sqrt(rf/f));
+
+      /*
+      //DEBUG lines
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug source norm is %le\n",sqrt(f));
 
       double s1 = linop.norm(solution[cb]);
@@ -502,7 +568,7 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug source odd  norm is %le\n",sqrt(f1));
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug sol    even norm is %le\n",sqrt(s2)); 
       if (linop.isBoss() && !me ) printf("bfm_hdcg_wrapper: debug sol    odd  norm is %le\n",sqrt(s1));
-
+      */
  
 
     }
@@ -510,16 +576,13 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
 
   linop.freeFermion(src);
   linop.freeFermion(Mtmp);
-  linop.freeFermion(resid);
-
-
   ldop_f->end();
   delete ldop_f;
 
 }    
 
 
-void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &source, double residual, int maxit){
+void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &source){
   if (is_initialized) {
     // Wrapper of the previous basic method for the inverter
     int Nvol5d = Nvol_*BFMparams.Ls_;
@@ -531,6 +594,19 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
     _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_BFM_Wrapper::solve_CGNE"
 	     << " - Gauge Export to BFM timing = "
 	     << export_timing << std::endl);
+
+    // Initialize single precision gauge field if necessary
+    if (HDCGParams.Flexible == 1 ){
+      FINE_TIMING_START(export_timing);
+      BFM_interface_single.GaugeExport_to_BFM(u_);
+      FINE_TIMING_END(export_timing);
+      _Message(TIMING_VERB_LEVEL, "[Timing] - Dirac_BFM_Wrapper::solve_CGNE"
+	       << " - Gauge Export Single to BFM timing = "
+	       << export_timing << std::endl);
+      
+      
+    }
+
     int cb = Even;// by default
     
     // Load the fermion field to BFM
@@ -538,7 +614,6 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
     FermionField BFMsource(Nvol5d);
     FermionField BFMsol(Nvol5d);
     
-    CCIO::cout<< "DEBUG: Filling source and solution vectors in BFM format Ls="<<BFMparams.Ls_<< "\n";
     int half_vec = source.size()/(2*BFMparams.Ls_);
     for (int s =0 ; s< BFMparams.Ls_; s++){
       for (int i = 0; i < half_vec; i++){
@@ -551,33 +626,16 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
       }
     }
     
-    CCIO::cout<< "DEBUG: Load sources\n";
     LoadSource(BFMsource,cb);
     LoadSource(BFMsource,1-cb);   
-    
-    CCIO::cout<< "DEBUG: Load guess\n";
     LoadGuess(BFMsol, cb);
     LoadGuess(BFMsol, 1-cb);
     
-    //CCIO::cout<< "DEBUG: bfm comm_init\n";
-    // need to initialize the comms because of the buffer
-    // assignments by BGNET library
-    // the order of comm_init can broke previous initializations
-    // so we are doing right now.
-    
-    //linop.comm_init();
-    
     //////////////////////////// Execute the solver
-    CCIO::cout<< "DEBUG: bfm solve_HDCG\n";
-    solve_HDCG(chi_h,psi_h, residual, maxit, cb);
+    solve_HDCG(chi_h,psi_h, parameters.residual, parameters.max_iter, cb);
     ///////////////////////////////////////////////
     
-    // close communications to free the buffers
-    CCIO::cout<< "DEBUG: bfm comm_end\n";
-    //linop.comm_end();
-    
     // Get the solution from BFM
-    CCIO::cout<< "DEBUG: Get solutions\n";
     GetSolution(BFMsol,cb);
     GetSolution(BFMsol,1-cb);
     for (int s =0 ; s< BFMparams.Ls_; s++){

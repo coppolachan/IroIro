@@ -5,8 +5,7 @@
 #include "test_Solver_HDCG.hpp"
 #include "Dirac_ops/dirac_wilson_EvenOdd.hpp"
 #include "Geometry/siteIndex_EvenOdd.hpp"
-#include "Measurements/FermionicM/quark_prop_meas_factory.hpp"
-#include "Measurements/FermionicM/qprop_DomainWall.hpp"
+#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
 
 //wrap
@@ -30,12 +29,12 @@ int Test_Solver_HDCG::run(){
   CCIO::cout << ".::: Test Solver HDCG BFM Moebius" 
 	     <<std::endl;
 
- 
+  InputConfig Iconf(&conf_); 
   Mapping::init_shiftField();
 
   //Parameters
   int Nvol  =  CommonPrms::instance()->Nvol();
-  double mq = 0.01;
+  double mq = 0.001;
   double M5 = 1.6;
   int Ls    = 8;
   double ht_scale = 2.0;
@@ -43,6 +42,10 @@ int Test_Solver_HDCG::run(){
   double c   = 1.0;
   double b   = 2.0;
   vector<double> omega(Ls,1.0);
+
+  double DWFresidual = 1e-24; //square of bfm residual
+  double DWFmax_iter = 2000;
+
 
   // Random number generator initialization
   unsigned long init[4]={0x123, 0x234, 0x345, 0x456};
@@ -59,103 +62,55 @@ int Test_Solver_HDCG::run(){
   Source_local<Format::Format_F> src(spos,Nvol5d);
   // Source_Gauss<Format::Format_F> src(spos,alpha, Nvol5d);
 
-  // Testing the correctness of the operator
-
   // creation of Dirac_Wilson kernel operators 
   Dirac_Wilson Dw_eo(-M5,&(conf_.data),Dop::EOtag());
   Dirac_Wilson Dw_oe(-M5,&(conf_.data),Dop::OEtag());
-
-
   Dirac_DomainWall_EvenOdd DWF_EO(b,c, -M5, mq, omega, &Dw_eo, &Dw_oe);
   
   /********************************************************
 
-   * Setup DWF operator
+   * Setup HDCG operator
 
    ********************************************************
    */
 
-  bfmarg  dwfa;
-  dwfa.node_latt[0]  = CommonPrms::instance()->Nx();
-  dwfa.node_latt[1]  = CommonPrms::instance()->Ny();
-  dwfa.node_latt[2]  = CommonPrms::instance()->Nz();
-  dwfa.node_latt[3]  = CommonPrms::instance()->Nt();
-
-  for(int mu=0;mu<4;mu++){
-    dwfa.neighbour_plus[mu]  = Communicator::instance()->node_up(mu);
-    dwfa.neighbour_minus[mu] = Communicator::instance()->node_dn(mu);
-  }
-  dwfa.verbose = 8;
-  dwfa.time_report_iter = 100;
-
-  for(int mu=0;mu<4;mu++){
-    if ( (CommonPrms::instance()->NPE(mu))>1 ) {
-      dwfa.local_comm[mu] = 0;
-    } else {
-      dwfa.local_comm[mu] = 1;
-    }
-  }
-
-  int threads = omp_get_max_threads();
-  bfmarg::Threads(threads);
-  bfmarg::UseCGdiagonalMee(1);
-
-  dwfa.ScaledShamirCayleyTanh(mq,M5,Ls,ht_scale);
-  dwfa.rb_precondition_cb = Even;
-  dwfa.max_iter           = 50000;
-  dwfa.residual           = 1.0e-12;
-
-
-  // Define the HDCG parameters 
-  BfmHDCGParams HDCGParams;
-
-  //  HDCGcontrol Control = HdcgGenerateSubspace;////?
-  HDCGParams.NumberSubspace = 24;
-  HDCGParams.Ls = Ls;
-  HDCGParams.Block[0] = 4;
-  HDCGParams.Block[1] = 4;
-  HDCGParams.Block[2] = 4;
-  HDCGParams.Block[3] = 4;
-  HDCGParams.Block[4] = Ls;
-
-  HDCGParams.SubspaceRationalRefine = 0;// single /double? 
-  HDCGParams.SubspaceRationalRefineLo =   0.02;
-  HDCGParams.SubspaceRationalRefineResidual =   1.0e-3;
-  HDCGParams.SubspaceRationalLs = 8;
-  HDCGParams.SubspaceRationalLo =   0.02;
-  HDCGParams.SubspaceRationalMass =   0.001;
-  HDCGParams.SubspaceRationalResidual =   1.0e-6;
-  HDCGParams.SubspaceSurfaceDepth = HDCGParams.SubspaceRationalLs;
-  HDCGParams.LittleDopSolverResidualInner =   0.04;
-  HDCGParams.LittleDopSolverResidualVstart =   0.04;
-  HDCGParams.LittleDopSolverResidualSubspace =   1.0e-6;
-  HDCGParams.LittleDopSubspaceRational = 0;
-  HDCGParams.LittleDopSolverIterMax = 100;
-  HDCGParams.LdopDeflVecs = 24;
-  HDCGParams.PreconditionerKrylovResidual =   1.0e-5;
-  HDCGParams.PreconditionerKrylovIterMax = 7;
-  HDCGParams.PreconditionerKrylovShift =   1.0;
-  HDCGParams.PcgSingleShift =   0.0;
-  HDCGParams.LittleDopSolver = LittleDopSolverCG;
-  HDCGParams.Flexible = 2;// 2= double inner,  double outer
- 
-
-
+  // Smoother control?
+    
   //////////////////////////////////////
   // Create and initializes the HDCG class
   XML::node SolverNode = DWFnode;
   XML::descend (SolverNode, "Solver",MANDATORY);
 
+  /*
+  //Standard creation
   Dirac_BFM_HDCG_Wrapper HDCG_Solver(DWFnode,       // XML node describing the operator
 				     &conf_.data,   // configuration
 				     &DWF_EO);      // passes the IroIro operator
-  HDCG_Solver.HDCG_init(HDCGParams, dwfa);  // Initialization (in dirac_BFM_HDCG.cpp)
-  CCIO::cout << "HDCG_Solver.HDCG_init completed \n";
+  */
+
+  CCIO::cout << "Creating BFM factory\n";
+  DiracBFMoperatorFactory BFMfactory(DWFnode);
+  CCIO::cout << "Creating BFM object\n";
+
+  Dirac_BFM_Wrapper* BFMop_with_fact = BFMfactory.getDirac(Iconf);
+  BFMop_with_fact->set_SolverParams(SolverNode);
+  BFMop_with_fact->initialize();
+
+
+  // Test factory creation
+  CCIO::cout << "Creating HDCG factory\n";
+  DiracBFM_HDCGoperatorFactory BFM_HDCGfactory(DWFnode);
+  CCIO::cout << "Creating HDCG object\n";
+
+  Dirac_BFM_HDCG_Wrapper* HDCG_Solver_with_fact = BFM_HDCGfactory.getDirac(Iconf);
+  CCIO::cout << "Created HDCG object\n";
+
+  HDCG_Solver_with_fact->HDCG_init(DWFnode);  // Initialization (in dirac_BFM_HDCG.cpp)
+  CCIO::cout << "Tester Msg: HDCG_Solver.HDCG_init completed \n";
+
+  HDCG_Solver_with_fact->set_SolverParams(SolverNode);
+  CCIO::cout << "Tester Msg: HDCG_Solver.set_SolverParams completed \n";
   
-  HDCG_Solver.set_SolverParams(SolverNode);
-
-  //HDCG_Solver.initialize(); // needs the operator and solver params to be set
-
   //////////////////////////////////////////////
   // launch the test
   // First set the source vectors
@@ -198,25 +153,37 @@ int Test_Solver_HDCG::run(){
   CCIO::cout << "EO_source filled - norm:  "<< EO_source_norm << "\n";
   CCIO::cout << "EO_source filled - Even norm:  "<< fe.norm() << "\n";
   CCIO::cout << "EO_source filled - Odd  norm:  "<< fo.norm() << "\n";
+  FermionField fe_FF(fe);
 
   ///////////////////////////////////////////////////////////////////////////////////////
   FermionField BFMSolution(Nvol5d);
-  // Test solver
+  FermionField BFMSolutionMixed(Nvol5d);
 
-  // 1. Init subspace 
+  // Test solver
+  BFMop_with_fact->solve_CGNE_mixed_prec(BFMSolutionMixed,fe_FF);
+
+
+  // 1. Init subspace (computes the vectors)
   CCIO::cout << ".::::::::::::::  Init subspace\n";
-  HDCG_Solver.HDCG_subspace_init();
+  HDCG_Solver_with_fact->HDCG_subspace_init();
   // 2. Compute the subspace (coarse space Little Dirac operator construction)
   CCIO::cout << ".::::::::::::::  Compute subspace\n";
-  HDCG_Solver.HDCG_subspace_compute(0);
-    
-  // 3. Actually solve with CG
+  HDCG_Solver_with_fact->HDCG_subspace_compute(0);  // 0 = double, 1 = single
+
+  // 3. Refine the subspace (optional)
+  if (HDCG_Solver_with_fact->do_refine()){
+    CCIO::cout << ".::::::::::::::  Refine subspace\n";
+    HDCG_Solver_with_fact->HDCG_subspace_refine(); 
+    HDCG_Solver_with_fact->HDCG_subspace_compute(0);  // 0 = double, 1 = single
+  }
+
+  // 4. Actually solve with CG (solves M x = b , not MdagM x = b)
   CCIO::cout << ".::::::::::::::  Solve using CG\n";
-  HDCG_Solver.solve_HDCG(BFMSolution,EO_source, dwfa.residual , dwfa.max_iter);
+  HDCG_Solver_with_fact->solve_HDCG(BFMSolution,EO_source);
   
-  // 4. Free pointers
+  // 5. Free pointers
   CCIO::cout << "Subspace free pointers\n";
-  HDCG_Solver.HDCG_subspace_free();
+  HDCG_Solver_with_fact->HDCG_subspace_free();
   ////////////////////////////////////// end of HDCG
 
   // Solver using internal Dirac_DomainWall_EvenOdd method solve_eo
@@ -232,8 +199,8 @@ int Test_Solver_HDCG::run(){
   prec_tmp1 -= DWF_EO.mult_eo(DWF_EO.mult_oo_inv(fo));
   Field prec_fe = DWF_EO.mult_dag(prec_tmp1);
 
-  // Solve with IroIro (reference result)
-  DWF_EO.solve_eo(output_f,prec_fe, SO,  dwfa.max_iter, dwfa.residual*dwfa.residual);
+  // Solve with IroIro (reference result) - Solving MdagM x = b 
+  DWF_EO.solve_eo(output_f,prec_fe, SO,  DWFmax_iter, DWFresidual);
   SO.print();
   
   // Check IroIro preconditioned solution even - MdagM
@@ -281,6 +248,9 @@ int Test_Solver_HDCG::run(){
   Difference = IroIroOdd;
   Difference -= bfm_so;
   CCIO::cout << "Operator Difference BFM-IroIro (Odd)  = "<< Difference.norm() << "\n";
+
+
+  
 
   
   return 0;

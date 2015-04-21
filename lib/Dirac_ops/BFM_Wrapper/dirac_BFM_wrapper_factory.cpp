@@ -1,7 +1,7 @@
 /*! @file dirac_BFM_wrapper_factory.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
  *
- * Time-stamp: <2014-10-09 15:36:48 neo>
+ * Time-stamp: <2015-04-17 20:21:47 cossu>
  */
 
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
@@ -28,8 +28,7 @@ createDirac(const InputConfig& Gfield){
   return new Dirac_BFM_Wrapper(Dirac_node_, 
 			       &Gfield.gconf->data, 
 			       DiracWilsonEO_.get(), Regular5D);
-  //if (XML::descend(Dirac_node_, "Solver"))
-  //  BFMop_.get()->set_SolverParams(Dirac_node_));
+
 }
 
 Dirac_BFM_Wrapper* DiracBFMoperatorFactory::
@@ -39,10 +38,39 @@ createDiracPV(const InputConfig& Gfield){
   return new Dirac_BFM_Wrapper(Dirac_node_, 
 			       &Gfield.gconf->data, 
 			       DiracWilsonEO_.get(), PauliVillars5D);
-  //if (XML::descend(Dirac_node_, "Solver"))
-  //  BFMop_.get()->set_SolverParams(Dirac_node_));
+}
+///////////////////////// HDCG support
+/// DiracBFM_HDCGoperator
+DiracBFM_HDCGoperatorFactory::DiracBFM_HDCGoperatorFactory(const XML::node node)
+ :Dirac_node_(node){
+  XML::node current_node = Dirac_node_; 
+  XML::descend(current_node, "Operator", MANDATORY);
+  /// forces EO
+  Dirac5D_EO_factory_.save(new DiracEvenOdd_DWF5dFactory(current_node));
 }
 
+Dirac_BFM_HDCG_Wrapper* DiracBFM_HDCGoperatorFactory::getDirac(const InputConfig& input) {
+  return createDirac(input); }
+Dirac_BFM_HDCG_Wrapper* DiracBFM_HDCGoperatorFactory::getDiracPV(const InputConfig& input) {
+  return createDiracPV(input); } 
+
+Dirac_BFM_HDCG_Wrapper* DiracBFM_HDCGoperatorFactory::
+createDirac(const InputConfig& Gfield){
+  DiracWilsonEO_.save(Dirac5D_EO_factory_.get()->getDirac(Gfield));
+  
+  return new Dirac_BFM_HDCG_Wrapper(Dirac_node_, 
+				    &Gfield.gconf->data, 
+				    DiracWilsonEO_.get(), Regular5D);
+}
+
+Dirac_BFM_HDCG_Wrapper* DiracBFM_HDCGoperatorFactory::
+createDiracPV(const InputConfig& Gfield){
+  DiracWilsonEO_.save(Dirac5D_EO_factory_.get()->getDiracPV(Gfield));
+  
+  return new Dirac_BFM_HDCG_Wrapper(Dirac_node_, 
+				    &Gfield.gconf->data, 
+				    DiracWilsonEO_.get(), PauliVillars5D);
+}
 ///////////////////// 4D Operator
 DiracDWF4dBFMeoFactory::DiracDWF4dBFMeoFactory(XML::node node)
 :Dirac_node_(node){

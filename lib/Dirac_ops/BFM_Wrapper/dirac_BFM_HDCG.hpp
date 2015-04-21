@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.hpp
  * @brief Declares the wrapper class for P. Boyle HDCG inverter
- * Time-stamp: <2015-03-23 15:13:25 cossu>
+ * Time-stamp: <2015-04-17 23:13:03 cossu>
  */
 #ifndef DIRAC_BFM_HDCG_WRAPPER_
 #define DIRAC_BFM_HDCG_WRAPPER_
@@ -20,7 +20,7 @@ class Dirac_BFM_HDCG_Wrapper: public Dirac_BFM_Wrapper {
 private:
   typedef float rFloat;
 
-  BfmHDCGParams HDCGParms;
+  BfmHDCGParams HDCGParams;
   BFM_HDCG_Extend<double> *ldop_d;  // internal double precision operator
 
   bfm_internal<rFloat> linop_r;     // internal operator
@@ -41,7 +41,7 @@ public:
   void close_comms();
 
 
-  void HDCG_init(BfmHDCGParams & Parms_, bfmActionParams &BAP);
+  void HDCG_init(XML::node);// keep separated from the constructor
   
   void HDCG_subspace_rotate(double *phases_by_pi,double *phases_dir, int sgn);
   void HDCG_set_mass(double mass);
@@ -52,8 +52,11 @@ public:
   void HDCG_subspace_free();
   void HDCG_subspace_compute(int sloppy);
   
+  // Actual solve (one the subspace is ready)
   void solve_HDCG(Fermion_t solution[2], Fermion_t source[2], double residual, int maxit, int cb);
-  void solve_HDCG(FermionField &sol, FermionField &src,double residual, int maxit);
+  void solve_HDCG(FermionField &sol, FermionField &src);
+
+  bool do_refine(){return bool(HDCGParams.SubspaceRationalRefine);};
     
 };
 

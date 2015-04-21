@@ -47,6 +47,20 @@ public:
   }
 };
 
+class FoprHermFactory_HDStagAdj: public FoprHermFactory{
+  std::auto_ptr<DiracStaggeredEvenOddLikeFactory> Dfact_;
+  std::auto_ptr<DiracStaggeredEvenOddLike> D_;
+public:
+  FoprHermFactory_HDStagAdj(XML::node node){
+    XML::descend(node,"StaggeredAdj_EO",MANDATORY);
+    Dfact_.reset(Diracs::createDiracStaggeredEvenOddLikeFactory(node));
+  }
+  Fopr_HDStagAdj* getFoprHerm(const InputConfig& input){ 
+    D_.reset(Dfact_->getDirac(input));
+    return new Fopr_HDStagAdj(D_.get()); 
+  }
+};
+
 
 class FoprHermFactory_H: public FoprHermFactory{
   std::auto_ptr<DiracWilsonLikeFactory> Dfact_;

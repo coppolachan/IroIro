@@ -104,22 +104,15 @@ void BFM_Storage<Float>::GaugeExport_to_BFM(GaugeField& U){
 
   GaugeField1D Umu;
 
-  CCIO::cout << "BFM_Storage U (IroIro) norm :" << U.data.norm() << "\n";
-
   for (int mu = 0; mu < NDIM_; mu++) {
-    //CCIO::cout << "Dirslice\n";
     Umu = DirSlice(U, mu);
-    //CCIO::cout << "ShiftField \n";
     U_dag = shiftField(Umu, mu, Backward()); // U(x-mu)
 
     int dir = 2*mu+1;
-    //CCIO::cout << "Direction : "<<dir<<"\n";
     U_Ptr = Umu.data.getaddr(0);
-    //CCIO::cout << "ImportGauge BFM function...";
     bfm_obj_.importGauge(U_Ptr, dir); //BFM function
-    //CCIO::cout << "complete\n";
     dir = 2*mu;
-    //CCIO::cout << "Direction2 : "<<dir<<"\n";
+
     
     for(int site = 0; site<U.format.Nvol(); ++site)
       U_dag.data[U_dag.format.cslice(0,site)] =
@@ -127,21 +120,18 @@ void BFM_Storage<Float>::GaugeExport_to_BFM(GaugeField& U){
 
     U_Ptr = U_dag.data.getaddr(0);
 
-    //CCIO::cout << "ImportGauge BFM function 2...";
     bfm_obj_.importGauge(U_Ptr, dir); //BFM function
-    //CCIO::cout << "complete\n";
-    
 
   }
 
+  /*
   double matnorm;
 
 #pragma omp parallel for 
     for (int t=0; t < bfm_obj_.nthread ; t++)
       matnorm = bfm_obj_.normMat((Matrix_t)bfm_obj_.u);
 
-
-  CCIO::cout << "DEBUG U (BFM) norm : " << matnorm << "\n"; 
+  */
 
 };
 
@@ -178,8 +168,10 @@ void BFM_Storage<Float>::GaugeImport_from_BFM(Field* U, Matrix_t handle, int dir
 	    double* bagel = (double *)handle;
 	    int idx = GaugeFormat.index(2*coco+reim, siteIdxEO,dir);
 	    int bidx = bfm_obj_.bagel_idx(x,reim,coco+bbase,Ndircoco,1);
-	    // CCIO::cout << "idx = "<<idx<< " bidx = "<<bidx << "\n";
+	    // DEBUG lines
+	    //CCIO::cout << "idx = "<<idx<< " bidx = "<<bidx << "\n";
 	    //CCIO::cout << "bagel: "<<bagel[bidx] <<"\n";
+	    ///////////////////
 	    U_ptr[idx] = bagel[bidx];
 	    
 	  }
@@ -246,9 +238,6 @@ void BFM_Storage<Float>::FermionImport_from_BFM_5D(FermionField&F, Fermion_t han
 
   //Convert Dirac basis: Chiral -> Dirac 
   BasisConversion(F, F_temp, CHIRAL_TO_DIRAC,cb,s);
-
-  
-
 };
 
 				
