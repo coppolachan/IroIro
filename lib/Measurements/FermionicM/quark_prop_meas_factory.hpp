@@ -65,10 +65,13 @@ class QPropDWFFactory : public QuarkPropagatorFactory {
   XML::node node_;
 public:
   QPropDWFFactory(const XML::node&);
-  QPropDWFFactory(const XML::node&,double mass);
+  QPropDWFFactory(const XML::node&,double mass, bool is_BFM=false);
+
 
   QpropDWF* getQuarkPropDW(const InputConfig& input){createQuarkProp(input);}
 };
+
+
 
 namespace QuarkPropagators{
   QuarkPropagatorFactory* createQuarkPropagatorFactory(const XML::node&);

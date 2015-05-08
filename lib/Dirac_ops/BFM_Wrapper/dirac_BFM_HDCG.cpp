@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2015-04-18 00:26:50 cossu>
+ * Time-stamp: <2015-04-22 12:14:03 cossu>
  */
 #include <omp.h>
 #include <math.h>
@@ -177,7 +177,65 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(XML::node HDCGnode) {
   is_initialized = true;
 }
 
+void Dirac_BFM_HDCG_Wrapper::HDCG_reinit(){
+  is_initialized = false;
+  delete(ldop_d);
 
+  bfmarg bfma;
+  bfmActionParams *bfmap = (bfmActionParams *) &bfma;
+
+  // Physical params
+  *bfmap = parameters; // from the parent class that has been already initialized by XML
+
+  // Algorithm & code control
+  bfma.Threads(omp_get_max_threads());
+  bfma.Verbose(BfmMessage|BfmDebug|BfmPerformance|BfmError);
+  bfma.time_report_iter  =-100;
+
+  // Local geometry, get from IroIro environment
+  bfma.node_latt[0] =  CommonPrms::instance()->Nx();
+  bfma.node_latt[1] =  CommonPrms::instance()->Ny();
+  bfma.node_latt[2] =  CommonPrms::instance()->Nz();
+  bfma.node_latt[3] =  CommonPrms::instance()->Nt();
+
+  int procs[4];
+  for(int mu=0;mu<4;mu++){
+    procs[mu] = CommonPrms::instance()->NPE(mu);
+    if (procs[mu]>1) bfma.local_comm[mu] = 0;
+    else             bfma.local_comm[mu] = 1;
+  }
+
+  // Node topology
+  for(int mu=0;mu<4;mu++){
+    bfma.neighbour_plus[mu]  = Communicator::instance()->node_up(mu);
+    bfma.neighbour_minus[mu] = Communicator::instance()->node_dn(mu);
+  }
+
+  bfma.Ls   = HDCGParams.SubspaceRationalLs;
+  bfma.mass = HDCGParams.SubspaceRationalMass;
+  
+  int GlobalSize[4];
+  int SubGridSize[4];
+  int NodeCoord[4];
+  
+  for (int mu =0; mu< 4; mu++){
+    GlobalSize[mu]  = CommonPrms::instance()->global_size(mu);
+    SubGridSize[mu] = CommonPrms::instance()->local_size(mu);
+    NodeCoord[mu]   = Communicator::instance()->ipe(mu);
+  }
+
+
+
+  linop_r.BossLog("HDCG inititialising subspace generation Ls=%d mass %le\n",bfma.Ls,bfma.mass);
+  linop_r.init(bfma);
+ 
+  linop.BossLog("HDCG class initialization\n");
+  ldop_d = new BFM_HDCG_Extend<double>(HDCGParams.Ls,HDCGParams.NumberSubspace,HDCGParams.Block,HDCGParams.Block,GlobalSize, SubGridSize, NodeCoord, &linop,&linop_single);
+  ldop_d->SetParams(HDCGParams); 
+
+  is_initialized = true;
+
+}
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_rotate(double *phases_by_pi,double *phases_dir, int sgn){
   
@@ -263,11 +321,6 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_set_mass(double mass){
     linop_single.GeneralisedFiveDimEnd();
     linop_single.mass = mass;
     linop_single.GeneralisedFiveDimInit();
-
-    linop_r.GeneralisedFiveDimEnd();
-    linop_r.mass = mass;
-    linop_r.GeneralisedFiveDimInit();
-
 }
 
 
@@ -379,6 +432,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
   int threads = linop.threads;
   int Nvec = HDCGParams.NumberSubspace;
   
+  linop.BossMessage("Computing subspace of %d vectors\n",HDCGParams.NumberSubspace);
   //open_comms();
 
   if ( sloppy ) { 
@@ -417,6 +471,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_compute(int sloppy){
     //      ldop_d->LdopDeflationBasisTrivial(); DEBUG
     int min =4;
       if ( ldop_d->LdopDeflationBasisSize> min )  min = ldop_d->LdopDeflationBasisSize;
+      ldop_d->LdopDeflationIsDiagonal = 0; // force reinitialization      
       for (int v = min ; v<=LdopDeflVecs; v+=4){
 	ldop_d->LdopDeflationBasisInit(v);
       }
@@ -434,9 +489,6 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(Fermion_t solution[2], Fermion_t source[
   
   Fermion_t src = linop.allocFermion();// this may be useless - use psi_h in the parent class
   Fermion_t Mtmp= linop.allocFermion();
-  //Fermion_t resid= linop.allocFermion();
-
-  
 
   int GlobalSize[4];
   int SubGridSize[4];

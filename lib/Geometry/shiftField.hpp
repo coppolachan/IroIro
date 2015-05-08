@@ -20,9 +20,12 @@ namespace Mapping{
     void operator()(DATA& Fo,const DATA& Fi,int dir,FB fb)const{ 
       maps_[dir](Fo,Fi,fb);}
 
-    template <typename FB>
-    void operator()(GaugeField1D& Fout,const double* Fin,int dir,FB fb)const{
+    template <class CommonField1D, typename FB>
+    void operator()(CommonField1D& Fout,const double* Fin,int dir,FB fb)const{
       maps_[dir](Fout,Fin,fb); }
+
+  
+
 
     void init_maps();
 
@@ -45,6 +48,8 @@ namespace Mapping{
     void operator()(GaugeField1D& Fout,const double* Fin,int dir,FB fb)const{
       maps_[dir](Fout,Fin,fb); }
 
+   
+
     void init_maps();
   };
 
@@ -57,6 +62,10 @@ namespace Mapping{
     template <typename FB>
     void operator()(GaugeField1D& Fout,const double* Fin,int dir,FB fb)const{
       maps_[dir](Fout,Fin,fb); }
+
+   
+
+
 
     void init_maps();
   };

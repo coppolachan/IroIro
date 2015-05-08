@@ -75,21 +75,37 @@ QPropDWFFactory::QPropDWFFactory(const XML::node& node):node_(node){
   Dfactory_.save(Diracs::createDiracDWF4dFactory(node_));
 }
 
-QPropDWFFactory::QPropDWFFactory(const XML::node& node,double mass):node_(node){
+QPropDWFFactory::QPropDWFFactory(const XML::node& node,double mass, bool is_BFM):node_(node){
   XML::descend(node_,"Kernel4d");
 
   stringstream mass_val;
   mass_val << mass;
-  if(! (node_.child("Kernel5d").child("mass").first_child().set_value(mass_val.str().c_str()))){ 
-    CCIO::cout<<"QPropDWFFactory: set_value failed\n";
-    abort();
-  }
-  Dfactory_.save(Diracs::createDiracDWF4dFactory(node_));
-
   double mq;
-  XML::descend(node_,"Kernel5d");
-  XML::read(node_,"mass",mq,MANDATORY);
+
+  if (is_BFM){
+    if(! (node_.child("Kernel5d").child("Operator").child("mass").first_child().set_value(mass_val.str().c_str()))){ 
+      CCIO::cout<<"QPropDWFFactory: set_value failed\n";
+      abort();
+    }
+    node_.child("Kernel5d").child("BFMKernel").child("mass").first_child().set_value(mass_val.str().c_str());
+    Dfactory_.save(Diracs::createDiracDWF4dFactory(node_));
+    
+    XML::descend(node_,"Kernel5d");
+    XML::descend(node_,"Operator");
+    XML::read(node_,"mass",mq,MANDATORY);
+  }else {
+    if(! (node_.child("Kernel5d").child("mass").first_child().set_value(mass_val.str().c_str()))){ 
+      CCIO::cout<<"QPropDWFFactory: set_value failed\n";
+      abort();
+    }
+    Dfactory_.save(Diracs::createDiracDWF4dFactory(node_));
+    
+
+    XML::descend(node_,"Kernel5d");
+    XML::read(node_,"mass",mq,MANDATORY);
+  }
   CCIO::cout<<"QPropDWFFactory: mass= "<<mq<<"\n";
+  
 }
 
 QpropDWF* QPropDWFFactory::createQuarkProp(const InputConfig& input){
@@ -119,7 +135,8 @@ namespace QuarkPropagators {
     
     if(!strcmp(qpname,"Qprop"))        return new QPropFactory(node,mass);
     if(!strcmp(qpname,"Qprop_EvenOdd"))return new QPropFactory_EvenOdd(node,mass);
-    if(!strcmp(qpname,"QpropDWF"))     return new QPropDWFFactory(node,mass);
+    if(!strcmp(qpname,"QpropDWF"))     return new QPropDWFFactory(node,mass, false);
+    if(!strcmp(qpname,"QpropDWF_BFM")) return new QPropDWFFactory(node,mass, true);
 
     XML::stopMsg(node,"QuarkPropagator");
   }  

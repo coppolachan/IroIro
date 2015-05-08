@@ -3,7 +3,7 @@
  * @brief Implementation of test_HadronSpectrum_HeavyLight class
  * This class obtains hadron correlators from combinations of 
  * Source-smeared propagators and multi-mass propagators
- * Time-stamp: <2014-10-07 11:04:57 noaki>
+ * Time-stamp: <2015-05-08 12:05:54 cossu>
  */
 #include "include/factories.hpp"
 #include "include/messages_macros.hpp"
@@ -13,6 +13,7 @@
 #include "Measurements/FermionicM/meson_correlator.hpp"
 #include "Measurements/FermionicM/baryonCorrelator.hpp"
 #include "Measurements/FermionicM/outputUtils.hpp"
+#include "include/timings.hpp"
 #include <typeinfo>
 
 using namespace std;
@@ -57,23 +58,42 @@ int Test_HadronSpectrum_HeavyLight::run(){
 
   CCIO::cout<<":::::: light-light meson correlators ::::::\n";
   
-  vector<prop_t> qpUpDown;                                  // smeared u/d props
-  vector<prop_t> qpStrange;                                 // smeared strange props
+  vector< vector< prop_t > > qpUpDown(fs.size());                  // smeared u/d props
+  vector< vector< prop_t > > qpStrange(fs.size());                 // smeared strange props
+  long double propagator_timer, source_timer, save_timer, smearing_timer;
+
   for(int s0=0; s0<fs.size(); ++s0){
+    FINE_TIMING_START(source_timer);
     Source_wrapper<Format::Format_F> sw(src.get(),fs[s0]);  // source smearing
-                                                           
+    FINE_TIMING_END(source_timer);
+    CCIO::cout << " Timing - Source         :  "<< source_timer << " seconds\n";
+
+         
+    FINE_TIMING_START(propagator_timer);                                       
     CCIO::cout<<" [up/down-propagator, smearing "<<s0<<" ]\n";
     prop_t qpud;  qprop_ud->calc(qpud,sw);                  // actual calc (u/d)
+    FINE_TIMING_END(propagator_timer);
+    CCIO::cout << " Timing - Propagator ud  :  "<< propagator_timer << " seconds\n";
+
+    FINE_TIMING_START(propagator_timer);                
     CCIO::cout<<" [strange-propagator, smearing "<<s0<<" ]\n";
     prop_t qps;   qprop_s ->calc(qps,sw);                   // actual calc (strange)
+    FINE_TIMING_END(propagator_timer);
+    CCIO::cout << " Timing - Propagator s   :  "<< propagator_timer << " seconds\n";
+
 
     CCIO::cout<<"\n ::::::::::: Output saving in "<< outputfile.str().c_str()<<"\n";
     for(int s1=0; s1<fs.size(); ++s1){
       prop_t qpSud, qpSst;                                 // sink smearing
+      CCIO::cout<<"\n ::::::::::: Smearing sink... "; 
+      FINE_TIMING_START(smearing_timer);
       for(int cs=0; cs<qpud.size(); ++cs){
 	qpSud.push_back(fs[s1]->mult(qpud[cs]));
 	qpSst.push_back(fs[s1]->mult(qps[cs]));
-      }      
+      }    
+      FINE_TIMING_END(smearing_timer);
+      CCIO::cout << " done in "<< smearing_timer << " seconds\n";
+  
       CCIO::cout<<" [contraction with (sink, source) = ("<<s1<<", "<< s0<<")]\n";
 
       if(Communicator::instance()->primaryNode())
@@ -91,9 +111,15 @@ int Test_HadronSpectrum_HeavyLight::run(){
       if(Communicator::instance()->primaryNode())
 	writerLL<<":::::: baryons (sink, source) = ("<<s1<<","<<s0<<") ::::::\n";
       Hadrons::baryonProp(qpSud,qpSst,writerLL);
+    
+    
+    FINE_TIMING_START(save_timer);  
+    CCIO::cout<<"\n ::::::::::: Saving smeared propagators... "; 
+    qpUpDown[s0].push_back(qpSud);
+    qpStrange[s0].push_back(qpSst);     
+    FINE_TIMING_END(save_timer);
+    CCIO::cout << " done in "<< save_timer << " seconds\n";
     }
-    qpUpDown.push_back(qpud);  // saving solved propagators
-    qpStrange.push_back(qps);  
   }
   outputfile.str("");
 
@@ -126,50 +152,37 @@ int Test_HadronSpectrum_HeavyLight::run(){
 
     for(int s0=0; s0<fs.size(); ++s0){                 // smeared-unsmeared
       for(int s1=0; s1<fs.size(); ++s1){
-	prop_t qpSud, qpSst;                           // sink smearing
-	for(int cs=0; cs<qpUpDown[s0].size(); ++cs){
-	  /*
-	  Field tmp = fs[s1]->mult(qpUpDown[s0][cs]);
-	  tmp /= tmp.norm();
-	  qpSud.push_back(tmp);
-
-	  tmp = fs[s1]->mult(qpStrange[s0][cs]);
-	  tmp /= tmp.norm();
-	  qpSst.push_back(tmp);
-	  */
-	  qpSud.push_back(fs[s1]->mult(qpUpDown[s0][cs]));
-	  qpSst.push_back(fs[s1]->mult(qpStrange[s0][cs]));
-	}
+	
 	CCIO::cout<<" [contraction with (sink, source) = ("<<s1<<", "<< s0<<")]\n";
 
 	if(Communicator::instance()->primaryNode())
 	  writerHL<<":::::: heavy-ud mesons (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
-	Hadrons::mesonPropGeneral(qpSud,qpHeavy,writerHL);    
+	Hadrons::mesonPropGeneral(qpUpDown[s0][s1],qpHeavy,writerHL);    
 
 	if(Communicator::instance()->primaryNode())
 	  writerHL<<":::::: heavy-s mesons  (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
-	Hadrons::mesonPropGeneral(qpSst,qpHeavy,writerHL);    
+	Hadrons::mesonPropGeneral(qpStrange[s0][s1],qpHeavy,writerHL);    
 
 	if(Communicator::instance()->primaryNode())
 	  writerHL<<":::::: heavy-ud baryons (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
-	Hadrons::baryonProp(qpSud,qpHeavy,writerHL);
+	Hadrons::baryonProp(qpUpDown[s0][s1],qpHeavy,writerHL);
 
 	if(Communicator::instance()->primaryNode())
 	  writerHL<<":::::: heavy-s baryons (sink,source) = ("<<s1<<","<<s0<<") ::::::\n";
-	Hadrons::baryonProp(qpSst,qpHeavy,writerHL);
+	Hadrons::baryonProp(qpStrange[s0][s1],qpHeavy,writerHL);
       }
     }
     if(Communicator::instance()->primaryNode())
-      writerHL<<":::::: heaby-heaby mesons ::::::\n";	
+      writerHL<<":::::: heavy-heavy mesons ::::::\n";	
     Hadrons::mesonPropGeneral(qpHeavy,qpHeavy,writerHL);    
     
     if(Communicator::instance()->primaryNode())
-      writerHL<<":::::: heaby-heaby baryons ::::::\n";	
+      writerHL<<":::::: heavy-heavy baryons ::::::\n";	
     Hadrons::baryonProp(qpHeavy,qpHeavy,writerHL);
     outputfile.str("");
   }
 
-  /// gavage collection ///
+  /// garbage collection ///
   for(int sr=0; sr<fs.size(); ++sr){ delete fs[sr]; delete sff[sr]; }
   return 0;
 }

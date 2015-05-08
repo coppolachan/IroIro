@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2015-03-19 10:50:37 cossu>
+# Time-stamp: <2015-05-08 12:01:16 cossu>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -22,7 +22,7 @@ BFM_TESTPROGS += test_BFM_Operator
 BFM_TESTPROGS += test_BFM_Moebius
 BFM_TESTPROGS += test_BFM_Inverter
 BFM_TESTPROGS += test_BFM_Inverter_wrapper
-BFM_TESTPROGS += test_HDCG
+#BFM_TESTPROGS += test_HDCG
 endif
 
 if IBM_BGQ
@@ -292,8 +292,8 @@ test_BFM_Inverter_SOURCES =     test_BFM_Inverter.cpp 		\
 test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
                                 testerSolver_BFM.cpp       
 
-test_HDCG_SOURCES = 		test_BFM_HDCG_Inverter.cpp	\
-				testerSolver_HDCG.cpp           
+#test_HDCG_SOURCES = 		test_BFM_HDCG_Inverter.cpp	\
+#				testerSolver_HDCG.cpp           
 endif
 
 

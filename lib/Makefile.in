@@ -21,7 +21,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2015-03-19 10:41:52 cossu>
+# Time-stamp: <2015-05-08 12:01:00 cossu>
 
 
 
@@ -179,8 +179,6 @@ am__libcommcode_a_SOURCES_DIST = Main/commonPrms.cpp \
 	Tools/Bagel/bfm_storage.cpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp \
-	Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp \
-	Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp \
 	EigenModes/eigenCalcGeneral.cpp \
 	EigenModes/eigenModesSolver_Factory.cpp \
 	EigenModes/eigenModesSolver_IRL.cpp \
@@ -267,9 +265,7 @@ am__objects_6 =
 @USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.$(OBJEXT) \
 @USE_BFM_TRUE@	Tools/Bagel/bfm_storage.$(OBJEXT) \
 @USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.$(OBJEXT) \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.$(OBJEXT) \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.$(OBJEXT) \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/BFM_HDCG.$(OBJEXT)
+@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.$(OBJEXT)
 @IBM_BGQKERNELS_TRUE@am__objects_8 = Smearing/Architecture_Optimized/stoutSmear_core_BGQ.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/smartConf_core_BGQ.$(OBJEXT) \
 @IBM_BGQKERNELS_TRUE@	Smearing/Architecture_Optimized/APEsmear_BGQ.$(OBJEXT)
@@ -563,8 +559,6 @@ am__include_HEADERS_DIST = $(top_srcdir)/include/iroiro_config.h \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp \
 	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.hpp \
-	Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp \
-	Dirac_ops/BFM_Wrapper/BFM_HDCG.hpp \
 	EigenModes/eigenCalcGeneral.hpp \
 	EigenModes/eigenModesSolver_Factory.hpp \
 	EigenModes/eigenModesSolver.hpp \
@@ -790,15 +784,21 @@ UTILS_HDR = $(am__append_11)
 @USE_BFM_TRUE@BFM_HACK = /bgsys/drivers/V1R1M2/ppc64/
 @USE_BFM_TRUE@BFM_INCLUDE = -I$(BFM_HACK) -I$(BFM_HACK)/spi/include/kernel/cnk/
 @USE_BFM_TRUE@BFM_LIBS = 
-@USE_BFM_FALSE@BFM_SRC = 
 # Only with BFM 3.30
+#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.cpp
+
+#BFM_HDR = Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp
+#BFM_HDR += Dirac_ops/BFM_Wrapper/BFM_HDCG.hpp	
+#BFM_HDR += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.hpp
+@USE_BFM_FALSE@BFM_SRC = 
 @USE_BFM_TRUE@BFM_SRC = Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.cpp \
 @USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.cpp \
 @USE_BFM_TRUE@	Tools/Bagel/bfm_storage.cpp \
 @USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp \
-@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+@USE_BFM_TRUE@	Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp
+@USE_BFM_FALSE@BFM_HDR = 
 AM_CPPFLAGS = -I$(top_srcdir) $(BFM_INCLUDE)
 AM_CFLAGS = -I$(top_srcdir) 
 lib_LIBRARIES = libcommcode.a 
@@ -996,6 +996,7 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/inputConfig.hpp		\
 			$(UTILS_HDR)    		        	\
 			$(DWF_BGQ_HDR)                                  \
+			$(BFM_HDR)					\
                         PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			PugiXML/xmlUtilities.hpp			\
@@ -1125,8 +1126,6 @@ include_HEADERS = $(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.hpp\
-			Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp\
-			Dirac_ops/BFM_Wrapper/BFM_HDCG.hpp	\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\
@@ -1515,12 +1514,6 @@ Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.$(OBJEXT):  \
 	Dirac_ops/BFM_Wrapper/$(am__dirstamp) \
 	Dirac_ops/BFM_Wrapper/$(DEPDIR)/$(am__dirstamp)
 Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.$(OBJEXT):  \
-	Dirac_ops/BFM_Wrapper/$(am__dirstamp) \
-	Dirac_ops/BFM_Wrapper/$(DEPDIR)/$(am__dirstamp)
-Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.$(OBJEXT):  \
-	Dirac_ops/BFM_Wrapper/$(am__dirstamp) \
-	Dirac_ops/BFM_Wrapper/$(DEPDIR)/$(am__dirstamp)
-Dirac_ops/BFM_Wrapper/BFM_HDCG.$(OBJEXT):  \
 	Dirac_ops/BFM_Wrapper/$(am__dirstamp) \
 	Dirac_ops/BFM_Wrapper/$(DEPDIR)/$(am__dirstamp)
 EigenModes/$(am__dirstamp):
@@ -1931,9 +1924,7 @@ mostlyclean-compile:
 	-rm -f Dirac_ops/Architecture_Optimized/domainWallCore_BGQ.$(OBJEXT)
 	-rm -f Dirac_ops/Architecture_Optimized/domainWallExtra_BGQ.$(OBJEXT)
 	-rm -f Dirac_ops/Architecture_Optimized/domainWallSolver_BGQ.$(OBJEXT)
-	-rm -f Dirac_ops/BFM_Wrapper/BFM_HDCG.$(OBJEXT)
 	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.$(OBJEXT)
-	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.$(OBJEXT)
 	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.$(OBJEXT)
 	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.$(OBJEXT)
 	-rm -f Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_mixed_prec.$(OBJEXT)
@@ -2131,9 +2122,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/Architecture_Optimized/$(DEPDIR)/domainWallCore_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/Architecture_Optimized/$(DEPDIR)/domainWallExtra_BGQ.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/Architecture_Optimized/$(DEPDIR)/domainWallSolver_BGQ.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/BFM_HDCG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_DomainWall_4D_eo.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_HDCG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_wrapper_factory.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@Dirac_ops/BFM_Wrapper/$(DEPDIR)/dirac_BFM_wrapper_mixed_prec.Po@am__quote@

@@ -11,6 +11,8 @@
 #include "commonPrms.hpp"
 #include "format_G.h"
 #include "Geometry/shiftField.hpp"
+#include "include/timings.hpp"
+#include <omp.h>
 #include <cassert>
 
 template <typename FMT>
@@ -33,7 +35,10 @@ public:
 
   const Field mult(const Field&)const;
   double func(double x)const{ return x;}
-  size_t fsize()const {return ff_.size();}
+  size_t fsize()const {return ff_
+
+
+.size();}
 };
 
 template <typename FMT>
@@ -45,47 +50,73 @@ void Laplacian4Ds<FMT>::setup(){
 template <typename FMT>
 const Field Laplacian4Ds<FMT>::mult(const Field& f)const{
   using namespace Mapping;
-
   GeneralField<Field,FMT,OneDimTag> F(f); 
   GeneralField<Field,FMT,OneDimTag> chi1,chi2;
  
   for(int i=0; i<NDIM_-1; ++i){ 
-    GeneralField<Field,FMT,OneDimTag> psi(shiftField(F,i,Forward()));
     GeneralField<Field,FMT,OneDimTag> tmp;
-
-    for(int t=0; t<CommonPrms::Nt(); ++t){
-      for(int n=0; n<tsl_size_[t]; ++n){
-	int site = SiteIndex::instance()->slice_t(t,n);
-
-	double *fp = const_cast<Field&>(f).getaddr(ff_.index(0,site));
-	double *up = const_cast<Field*>(u_)->getaddr(gf_.index(0,site,i));
-	double *pp = psi.data.getaddr(ff_.index(0,site));
-
-	double *c1p = chi1.data.getaddr(ff_.index(0,site));
-	double *ttp = tmp.data.getaddr(ff_.index(0,site));
-
-	int Nd = ff_.Nin()/NC_/2;
-
-	for(int s=0; s<Nd; ++s){
-	  for(int c=0; c<NC_; ++c){
-	    for(int c1=0; c1<NC_; ++c1){
-	      c1p[sr(s,c)] += up[re(c,c1)]*pp[sr(s,c1)] -up[im(c,c1)]*pp[si(s,c1)];
-	      c1p[si(s,c)] += up[re(c,c1)]*pp[si(s,c1)] +up[im(c,c1)]*pp[sr(s,c1)];
-
-	      ttp[sr(s,c)] += up[re(c1,c)]*fp[sr(s,c1)] +up[im(c1,c)]*fp[si(s,c1)];
-	      ttp[si(s,c)] += up[re(c1,c)]*fp[si(s,c1)] -up[im(c1,c)]*fp[sr(s,c1)];
-	    }
-	  }
-	}   
-      }
+#ifdef IBM_BGQ_WILSON
+    GeneralField<Field,FMT,OneDimTag> psi(F);
+    GeneralField<Field,FMT,OneDimTag> tmp2(F);
+#pragma omp parallel
+    {
+      shiftField(psi,F.data.getaddr(0),i, Forward());
     }
+#else
+    GeneralField<Field,FMT,OneDimTag> psi(shiftField(F,i,Forward()));
+#endif
+    
+    
+    for(int t=0; t<CommonPrms::Nt(); ++t){
+#pragma omp parallel if(tsl_size_[t]%omp_get_num_threads() == 0)
+      {
+	int ns = tsl_size_[t]/omp_get_num_threads();
+	int is = omp_get_thread_num()*ns;
+	
+	for(int n=is; n<is+ns; ++n){
+	  int site = SiteIndex::instance()->slice_t(t,n);
+	  
+	  double *fp = const_cast<Field&>(f).getaddr(ff_.index(0,site));
+	  double *up = const_cast<Field*>(u_)->getaddr(gf_.index(0,site,i));
+	  double *pp = psi.data.getaddr(ff_.index(0,site));
+	  
+	  double *c1p = chi1.data.getaddr(ff_.index(0,site));
+	  double *ttp = tmp.data.getaddr(ff_.index(0,site));
+	  
+	  int Nd = ff_.Nin()/NC_/2;
+	  
+	  for(int s=0; s<Nd; ++s){
+	    for(int c=0; c<NC_; ++c){
+	      for(int c1=0; c1<NC_; ++c1){
+		c1p[sr(s,c)] += up[re(c,c1)]*pp[sr(s,c1)] -up[im(c,c1)]*pp[si(s,c1)];
+		c1p[si(s,c)] += up[re(c,c1)]*pp[si(s,c1)] +up[im(c,c1)]*pp[sr(s,c1)];
+		
+		ttp[sr(s,c)] += up[re(c1,c)]*fp[sr(s,c1)] +up[im(c1,c)]*fp[si(s,c1)];
+		ttp[si(s,c)] += up[re(c1,c)]*fp[si(s,c1)] -up[im(c1,c)]*fp[sr(s,c1)];
+	      }
+	    }
+	  }  
+	}
+      } // parallel section
+
+    }// t loop 
+  
+#ifdef IBM_BGQ_WILSON
+#pragma omp parallel
+    {
+      shiftField(tmp2,tmp.data.getaddr(0),i, Backward());
+    }
+    chi2 +=tmp2;
+#else
     chi2 += shiftField(tmp,i,Backward());
+#endif
+
   }
 
   F *= -6.0;
   F += chi1;
   F += chi2;
-
+  
   return F.data;    
 }
 

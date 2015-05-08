@@ -2,7 +2,7 @@
   @file field.h
   @brief Definition of a general class storing a field
 
-  Time-stamp: <2014-07-15 10:36:31 neo>
+  Time-stamp: <2015-04-22 10:49:28 cossu>
 */
 #ifndef FIELD_INCLUDED
 #define FIELD_INCLUDED
@@ -25,6 +25,11 @@ public:
 
   std::size_t size() const {return field.size();}
   void resize(std::size_t size, double val=0.0){field.resize(size,val);}
+
+  void zero(){
+    field = 0.0;
+  }
+
 
   double operator[](size_t i) const { return field[i]; }
   const double& operator[](size_t i) { return field[i]; }

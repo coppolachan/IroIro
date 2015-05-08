@@ -6,9 +6,15 @@
 #include "Dirac_ops/dirac_wilson_EvenOdd.hpp"
 #include "Geometry/siteIndex_EvenOdd.hpp"
 #include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
+#include "Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.hpp"
 #include "Measurements/FermionicM/source_types.hpp"
+#include "include/factories.hpp"
+#include "include/timings.hpp"
+#include "Measurements/GaugeM/staples.hpp"
+
 
 //wrap
+/*
 #undef PACKAGE
 #undef PACKAGE_BUGREPORT
 #undef PACKAGE_NAME
@@ -17,6 +23,7 @@
 #undef PACKAGE_VERSION
 #undef VERSION
 #include "bfm.h"
+*/
 #include "BfmHDCG.h"
 #include "Tools/Bagel/bfm_storage.hpp"
 #include "Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp"
@@ -25,17 +32,96 @@
 
 using namespace std;
 
+int Test_Solver_HDCG::launch_test(FermionField &out, FermionField &in, Dirac_BFM_HDCG_Wrapper* HDCG_Solver) {
+
+  long double subspace_timer, compute_timer;
+  FINE_TIMING_START(subspace_timer);
+
+  // 1. Init subspace (computes the vectors)
+  CCIO::cout << ".::::::::::::::  Init subspace\n";
+  HDCG_Solver->HDCG_subspace_init();
+
+  FINE_TIMING_END(subspace_timer);
+  CCIO::cout << "Timer subspace: " << subspace_timer << " second \n";
+
+  FINE_TIMING_START(compute_timer);
+  // 2. Compute the subspace (coarse space Little Dirac operator construction)
+  CCIO::cout << ".::::::::::::::  Compute subspace\n";
+  HDCG_Solver->HDCG_subspace_compute(0);  // 0 = double, 1 = single
+  
+  FINE_TIMING_END(compute_timer);
+  CCIO::cout << "Timer Little Dirac compute: " << compute_timer << " second \n";
+
+  // 3. Refine the subspace (optional)
+  if (HDCG_Solver->do_refine()){
+    CCIO::cout << ".::::::::::::::  Refine subspace\n";
+    HDCG_Solver->HDCG_subspace_refine(); 
+    HDCG_Solver->HDCG_subspace_compute(0);  // 0 = double, 1 = single
+  }
+
+
+  // 4. Actually solve with CG (solves M x = b , not MdagM x = b)
+  CCIO::cout << ".::::::::::::::  Solve using CG\n";
+  HDCG_Solver->solve_HDCG(out,in);
+
+  
+
+}
+
+
+
+int Free_subspace_pointers(Dirac_BFM_HDCG_Wrapper* HDCG_Solver){
+  CCIO::cout << "Subspace free pointers\n";
+  HDCG_Solver->HDCG_subspace_free();
+}
+
+
 int Test_Solver_HDCG::run(){
   CCIO::cout << ".::: Test Solver HDCG BFM Moebius" 
 	     <<std::endl;
 
-  InputConfig Iconf(&conf_); 
+ 
   Mapping::init_shiftField();
+
+  ///////////////////////////////////////////////////////////////////////////////
+  // Smearing objects
+  
+  Staples Staple;
+  CCIO::cout << "Plaquette (thin): " << Staple.plaquette(conf_) << std::endl;
+  Smear* SmearingObj;         // Empty pointer
+  int Nsmear;                 // Number of smearing steps
+  XML::node SmearObjNode = top_node;// Copy the node ("descend" function updates it)
+                                 // and we want to use again for QuarkPropagator
+  XML::descend(SmearObjNode, "Smearing");//SmearObjNode now points to <Smearing> node
+  XML::read(SmearObjNode, "Nsmear", Nsmear, MANDATORY);  // Reads in <Nsmear>
+
+  // Create smearing factory from node information
+  SmearingFactory* Sm_Factory = 
+    Smearings::createSmearingFactory(SmearObjNode);
+  // Create smearing objects from the factory
+  SmearingObj = Sm_Factory->getSmearing();
+
+  // Copy original configuration to smeared_u_ 
+  // smeared_u_ will be passed to the operators
+  GaugeField smeared_u_ = conf_;
+
+  // Do the actual smearing 
+  for(int i=0; i<Nsmear; i++) {
+    GaugeField previous_u_= smeared_u_;
+    SmearingObj->smear(smeared_u_,previous_u_);
+  }
+  CCIO::cout<<"Plaquette (smeared): "<< Staple.plaquette(smeared_u_)<<std::endl;
+  
+  InputConfig Iconf(&smeared_u_); 
+
+
+
+
 
   //Parameters
   int Nvol  =  CommonPrms::instance()->Nvol();
-  double mq = 0.001;
-  double M5 = 1.6;
+  double mq = 0.0042;
+  double M5 = 1.0;
   int Ls    = 8;
   double ht_scale = 2.0;
   int Nvol5d = Nvol*Ls;
@@ -44,7 +130,7 @@ int Test_Solver_HDCG::run(){
   vector<double> omega(Ls,1.0);
 
   double DWFresidual = 1e-24; //square of bfm residual
-  double DWFmax_iter = 2000;
+  double DWFmax_iter = 20000;
 
 
   // Random number generator initialization
@@ -63,8 +149,8 @@ int Test_Solver_HDCG::run(){
   // Source_Gauss<Format::Format_F> src(spos,alpha, Nvol5d);
 
   // creation of Dirac_Wilson kernel operators 
-  Dirac_Wilson Dw_eo(-M5,&(conf_.data),Dop::EOtag());
-  Dirac_Wilson Dw_oe(-M5,&(conf_.data),Dop::OEtag());
+  Dirac_Wilson Dw_eo(-M5,&(smeared_u_.data),Dop::EOtag());
+  Dirac_Wilson Dw_oe(-M5,&(smeared_u_.data),Dop::OEtag());
   Dirac_DomainWall_EvenOdd DWF_EO(b,c, -M5, mq, omega, &Dw_eo, &Dw_oe);
   
   /********************************************************
@@ -105,8 +191,14 @@ int Test_Solver_HDCG::run(){
   Dirac_BFM_HDCG_Wrapper* HDCG_Solver_with_fact = BFM_HDCGfactory.getDirac(Iconf);
   CCIO::cout << "Created HDCG object\n";
 
+  long double init_timer;
+  FINE_TIMING_START(init_timer);
+
   HDCG_Solver_with_fact->HDCG_init(DWFnode);  // Initialization (in dirac_BFM_HDCG.cpp)
   CCIO::cout << "Tester Msg: HDCG_Solver.HDCG_init completed \n";
+
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "Timing HDCG_init :  " << init_timer << "\n";
 
   HDCG_Solver_with_fact->set_SolverParams(SolverNode);
   CCIO::cout << "Tester Msg: HDCG_Solver.set_SolverParams completed \n";
@@ -163,28 +255,10 @@ int Test_Solver_HDCG::run(){
   BFMop_with_fact->solve_CGNE_mixed_prec(BFMSolutionMixed,fe_FF);
 
 
-  // 1. Init subspace (computes the vectors)
-  CCIO::cout << ".::::::::::::::  Init subspace\n";
-  HDCG_Solver_with_fact->HDCG_subspace_init();
-  // 2. Compute the subspace (coarse space Little Dirac operator construction)
-  CCIO::cout << ".::::::::::::::  Compute subspace\n";
-  HDCG_Solver_with_fact->HDCG_subspace_compute(0);  // 0 = double, 1 = single
-
-  // 3. Refine the subspace (optional)
-  if (HDCG_Solver_with_fact->do_refine()){
-    CCIO::cout << ".::::::::::::::  Refine subspace\n";
-    HDCG_Solver_with_fact->HDCG_subspace_refine(); 
-    HDCG_Solver_with_fact->HDCG_subspace_compute(0);  // 0 = double, 1 = single
-  }
-
-  // 4. Actually solve with CG (solves M x = b , not MdagM x = b)
-  CCIO::cout << ".::::::::::::::  Solve using CG\n";
-  HDCG_Solver_with_fact->solve_HDCG(BFMSolution,EO_source);
-  
-  // 5. Free pointers
-  CCIO::cout << "Subspace free pointers\n";
-  HDCG_Solver_with_fact->HDCG_subspace_free();
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
   ////////////////////////////////////// end of HDCG
+
+  
 
   // Solver using internal Dirac_DomainWall_EvenOdd method solve_eo
   SolverOutput SO;
@@ -249,9 +323,112 @@ int Test_Solver_HDCG::run(){
   Difference -= bfm_so;
   CCIO::cout << "Operator Difference BFM-IroIro (Odd)  = "<< Difference.norm() << "\n";
 
+  
+  
 
   
 
+  BFMSolution.data.zero();  
+  ////////////////// Change parameters
+  
+  // NumberSubspace
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 40;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 160;
+  HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.05;
+  FINE_TIMING_START(init_timer);
+  HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "HDCGParams.NumberSubspace = " << HDCG_Solver_with_fact->HDCGParams.NumberSubspace << "\n";
+  CCIO::cout << "HDCGParams.LdopDeflVecs = " << HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs << "\n";
+  CCIO::cout << "HDCGParams.PreconditionerKrylovShift = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift << "\n"; 
+  CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
+  CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+  BFMSolution.data.zero();  
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 40;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 120;
+  HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.05;
+  FINE_TIMING_START(init_timer);
+  HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "HDCGParams.NumberSubspace = " << HDCG_Solver_with_fact->HDCGParams.NumberSubspace << "\n";
+  CCIO::cout << "HDCGParams.LdopDeflVecs = " << HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs << "\n";
+  CCIO::cout << "HDCGParams.PreconditionerKrylovShift = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift << "\n"; 
+  CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
+  CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+  BFMSolution.data.zero();  
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 48;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 160;
+  HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.05;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.05;
+  FINE_TIMING_START(init_timer);
+  HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "HDCGParams.NumberSubspace = " << HDCG_Solver_with_fact->HDCGParams.NumberSubspace << "\n";
+  CCIO::cout << "HDCGParams.LdopDeflVecs = " << HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs << "\n";
+  CCIO::cout << "HDCGParams.PreconditionerKrylovShift = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift << "\n"; 
+  CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
+  CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+  BFMSolution.data.zero();  
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 48;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 160;
+  HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.08;
+  FINE_TIMING_START(init_timer);
+  HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "HDCGParams.NumberSubspace = " << HDCG_Solver_with_fact->HDCGParams.NumberSubspace << "\n";
+  CCIO::cout << "HDCGParams.LdopDeflVecs = " << HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs << "\n";
+  CCIO::cout << "HDCGParams.PreconditionerKrylovShift = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift << "\n"; 
+  CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
+  CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+
+
+
+
+  /*
+  HDCG_Solver_with_fact->HDCG_subspace_compute(0);// <- Sloppy Comms
+  CCIO::cout << ".::::::::::::::  Solve using CG\n";
+  HDCG_Solver_with_fact->solve_HDCG(BFMSolution,EO_source);
+  */
+
+  /*
+  // Mass
+  //HDCG_Solver_with_fact->HDCG_set_mass(0.01);
+  CCIO::cout << ".::::::::::::::  Compute subspace\n";
+  HDCG_Solver_with_fact->HDCG_subspace_compute(0);// <- Sloppy Comms
+  CCIO::cout << ".::::::::::::::  Solve using CG\n";
+  HDCG_Solver_with_fact->solve_HDCG(BFMSolution,EO_source);
+  */
+
+
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  
   
   return 0;
 }

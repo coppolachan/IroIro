@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2015-03-19 10:41:52 cossu>
+# Time-stamp: <2015-05-08 12:01:00 cossu>
 
 ###########################################
 AUTOMAKE_OPTIONS = subdir-objects
@@ -114,10 +114,17 @@ BFM_SRC += Tools/Bagel/bfm_storage.cpp
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp
 # Only with BFM 3.30
-BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
-BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.cpp
+
+#BFM_HDR = Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp
+#BFM_HDR += Dirac_ops/BFM_Wrapper/BFM_HDCG.hpp	
+#BFM_HDR += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.hpp
+
 else
 BFM_SRC = 
+BFM_HDR = 
 endif
 
 AM_CPPFLAGS =-I$(top_srcdir)
@@ -325,6 +332,7 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			$(top_srcdir)/include/inputConfig.hpp		\
 			$(UTILS_HDR)    		        	\
 			$(DWF_BGQ_HDR)                                  \
+			$(BFM_HDR)					\
                         PugiXML/pugixml.hpp				\
 			PugiXML/pugiconfig.hpp				\
 			PugiXML/xmlUtilities.hpp			\
@@ -454,8 +462,6 @@ include_HEADERS = 	$(top_srcdir)/include/iroiro_config.h		\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.hpp\
 			Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.hpp\
-			Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp\
-			Dirac_ops/BFM_Wrapper/BFM_HDCG.hpp	\
                         EigenModes/eigenCalcGeneral.hpp  	\
 			EigenModes/eigenModesSolver_Factory.hpp	\
 			EigenModes/eigenModesSolver.hpp  	\
