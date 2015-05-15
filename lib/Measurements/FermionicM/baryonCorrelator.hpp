@@ -31,17 +31,30 @@ private:
   const int Nt_;
 
   Format::Format_F fmt_;
-  ColorUtils::ColorEpsilon epsilon_;
+  ColorUtils::ColorEpsilon epsilon_;//useless
+  std::vector<int> eps_;
   Communicator* comm_;
 
   const prop_t& Sl_;
   const prop_t& Sh_;
  
+
   std::complex<double> spTrTr(const prop_t& S1,const prop_t& S2,const prop_t& S3,
 			      const GammaMatrices::Gamma& G,int site,UpDn)const;
 
+  std::complex<double> spTrTrOpt(const prop_t& S1,const prop_t& S2,const prop_t& S3,
+				 const GammaMatrices::Gamma& G,
+				 std::complex<double> &r1,std::complex<double> &r2,
+				 int site,UpDn)const;
+
   std::complex<double> spTr(const prop_t& S1,const prop_t& S2,const prop_t& S3,
 			    const GammaMatrices::Gamma& G,int site,UpDn)const;
+
+  std::complex<double> spTrOpt(const prop_t& S1,const prop_t& S2,const prop_t& S3,
+			       const GammaMatrices::Gamma& G,
+			       std::complex<double> &r1,std::complex<double> &r2,
+			       std::vector< std::complex<double > > &fac_matrix,
+			       int site,UpDn)const;
   
   correl_t global_correl(const std::vector<std::complex<double> >& local);
 
@@ -57,7 +70,18 @@ public:
      Nt_(CommonPrms::instance()->Nt()),
      fmt_(Nvol_),
      comm_(Communicator::instance()),
-     Sl_(S_light),Sh_(S_heavy){}
+     Sl_(S_light),Sh_(S_heavy){
+
+
+    int idx[] = {0,1,2,
+		 2,0,1,
+		 1,2,0,
+		 1,0,2,
+		 2,1,0,
+		 0,2,1};
+    for(int i=0;i<6*3; ++i) eps_.push_back(idx[i]);
+
+}
 
   // octet
   const correl_t nucleon(UpDn);

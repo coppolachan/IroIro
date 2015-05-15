@@ -2,7 +2,7 @@
   @file field.h
   @brief Definition of a general class storing a field
 
-  Time-stamp: <2015-04-22 10:49:28 cossu>
+  Time-stamp: <2015-05-14 16:09:12 cossu>
 */
 #ifndef FIELD_INCLUDED
 #define FIELD_INCLUDED
@@ -15,7 +15,7 @@
 
 class Field{
 private:
-  std::valarray<double> field __attribute__ ((aligned(16)));
+  std::valarray<double> field __attribute__ ((aligned(32)));
 public:
 
   Field(){}

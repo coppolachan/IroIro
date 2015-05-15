@@ -1,7 +1,7 @@
 /*! @file dirac_BFM_wrapper_factory.hpp 
  *  @brief Declaration of BFM Dirac operators factories
  *
- * Time-stamp: <2015-04-30 16:57:29 cossu>
+ * Time-stamp: <2015-05-15 15:02:35 cossu>
  */
 #ifndef DIRAC_BFM_HDCG_FACT_
 #define DIRAC_BFM_HDCG_FACT_

@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2015-05-08 12:01:00 cossu>
+# Time-stamp: <2015-05-15 14:58:05 cossu>
 
 ###########################################
 AUTOMAKE_OPTIONS = subdir-objects
@@ -114,14 +114,15 @@ BFM_SRC += Tools/Bagel/bfm_storage.cpp
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory.cpp
 BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_DomainWall_4D_eo.cpp
 # Only with BFM 3.30
-#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
-#BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
-#BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.cpp
+if USE_HDCG
+BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.cpp
+BFM_SRC += Dirac_ops/BFM_Wrapper/BFM_HDCG.cpp
+BFM_SRC += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.cpp
 
-#BFM_HDR = Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp
-#BFM_HDR += Dirac_ops/BFM_Wrapper/BFM_HDCG.hpp	
-#BFM_HDR += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.hpp
-
+BFM_HDR = Dirac_ops/BFM_Wrapper/dirac_BFM_HDCG.hpp
+BFM_HDR += Dirac_ops/BFM_Wrapper/BFM_HDCG.hpp	
+BFM_HDR += Dirac_ops/BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.hpp
+endif
 else
 BFM_SRC = 
 BFM_HDR = 

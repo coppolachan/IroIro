@@ -4,10 +4,10 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2014-10-17 13:17:35 cossu>
+# Time-stamp: <2015-05-15 15:01:04 cossu>
 
 AC_PREREQ([2.59])
-AC_INIT([IroIro], [1.0.7], [cossu@post.kek.jp])
+AC_INIT([IroIro], [1.0.9], [cossu@post.kek.jp])
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.10 foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])]) ##backward compatibility
@@ -173,6 +173,16 @@ AC_ARG_WITH(bfm,
 	  bfm_lib=${with_bfm}/lib	
 	],[bfm_link=false])
 
+###################################################################
+# Enabling HDCG solver for BFM 3.30
+AC_ARG_ENABLE(hdcg,
+        AC_HELP_STRING([--enable-hdcg], [Enable Peter Boyle's Hierarchically Deflated CG solver when using BFM 3.30.]),
+        [case "${enableval}" in
+        yes) use_hdcg_solver=true ;;
+	no)  use_hdcg_solver=false ;;
+        *) AC_MSG_ERROR([bad value ${enableval} for --enable-hdcg. HDCG not enabled.]) ;;
+   	esac],[use_hdcg_solver=false])
+
 
 ######################################################################
 # many HPC systems are configured so that running parallel programs
@@ -257,7 +267,8 @@ AM_CONDITIONAL([IBM_BGQWILSON_SMP], [(test x$bgq_kernels_smp = xtrue)])
 AM_CONDITIONAL([SR_WILSON], [(test x$sr16k_kernels = xtrue)])
 AM_CONDITIONAL([IBM_BGQKERNELS], [[ ($bgq_kernels_nosmp == true) || ($bgq_kernels_smp == true)]])
 AM_CONDITIONAL([USE_EVENODD], [(test x$even_odd_idx = xtrue)])	 
-AM_CONDITIONAL([USE_BFM], [(test x$bfm_link = xtrue)&&(test x$bluegeneq = xtrue)])	 
+AM_CONDITIONAL([USE_BFM], [(test x$bfm_link = xtrue)&&(test x$bluegeneq = xtrue)])
+AM_CONDITIONAL([USE_HDCG], [(test x$use_hdcg_solver = xtrue)])	 
 AM_CONDITIONAL([USE_DCMT], [(test x$dcmt_link = xtrue)])	 
 
 ###################################################################
@@ -416,10 +427,22 @@ AC_CHECK_LIB([bfm],[vmx_vaxpy],,
 	Please install or provide the correct path to your installation
 	or switch off BFM support.)])
 echo enabled BFM Bagel Fermion Matrix support on BGQ...
+# check for HDCG if requested
+if [ $use_hdcg_solver ]
+then
+AC_CHECK_LIB([bfm],[qpx_norm],,
+	[AC_MSG_ERROR(Version of BFM library >=3.30 not found in your system.
+	Please install or provide the correct path to your installation
+	or switch off HDCG support.)])
+echo "enabled HDCG support for BFM >=3.30 on BGQ..."
+else
+echo WARN: HDCG support enabled only for BFM >=3.30, switching off...
+use_hdcg_solver=false
+fi 
 else
 echo WARN: BFM support enabled only on BGQ, switching off...
 bfm_link=false
-fi
+fi 
 fi	
 ###################################################################
 # Checks for header files.
@@ -566,6 +589,7 @@ fi
 echo "- build DOXYGEN documentation   : `if test "x$enable_doc" = xyes; then echo yes; else echo no; fi`
 - graphs and diagrams           : `if test "x$enable_dot" = xyes; then echo yes; else echo no; fi`
 - optional BFM library linking  : `if test "x$bfm_link" = xtrue; then echo yes; else echo no; fi`
+- optional HDCG solver support  : `if test "x$use_hdcg_solver" = xtrue; then echo yes; else echo no; fi`
 - optional DCMT Random numbers  : `if test "x$dcmt_link" = xtrue; then echo yes; else echo no; fi`
 
 Directories:

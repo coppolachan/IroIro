@@ -23,10 +23,10 @@ class Laplacian4Ds:public ScalarOp {
   FMT ff_;
   void setup();
 
-  int sr(int s,int c)const{return 2*(s*NC_+c);}
-  int si(int s,int c)const{return 2*(s*NC_+c)+1;}
-  int re(int c1,int c2)const{return 2*(c1*NC_+c2);}
-  int im(int c1,int c2)const{return 2*(c1*NC_+c2)+1;}
+  inline int sr(int s,int c)const{return 2*(s*NC_+c);}
+  inline int si(int s,int c)const{return 2*(s*NC_+c)+1;}
+  inline int re(int c1,int c2)const{return 2*(c1*NC_+c2);}
+  inline int im(int c1,int c2)const{return 2*(c1*NC_+c2)+1;}
 
 public:
   Laplacian4Ds(Field* u)
@@ -66,6 +66,7 @@ const Field Laplacian4Ds<FMT>::mult(const Field& f)const{
     GeneralField<Field,FMT,OneDimTag> psi(shiftField(F,i,Forward()));
 #endif
     
+
     
     for(int t=0; t<CommonPrms::Nt(); ++t){
 #pragma omp parallel if(tsl_size_[t]%omp_get_num_threads() == 0)
@@ -73,11 +74,17 @@ const Field Laplacian4Ds<FMT>::mult(const Field& f)const{
 	int ns = tsl_size_[t]/omp_get_num_threads();
 	int is = omp_get_thread_num()*ns;
 	
+
 	for(int n=is; n<is+ns; ++n){
 	  int site = SiteIndex::instance()->slice_t(t,n);
-	  
-	  double *fp = const_cast<Field&>(f).getaddr(ff_.index(0,site));
+
+	  //Gauge field (su3 18 doubles)
 	  double *up = const_cast<Field*>(u_)->getaddr(gf_.index(0,site,i));
+	  
+	  // Fermion/Scalar field
+	  double *fp = const_cast<Field&>(f).getaddr(ff_.index(0,site));
+
+	  // Fermion/Scalar field
 	  double *pp = psi.data.getaddr(ff_.index(0,site));
 	  
 	  double *c1p = chi1.data.getaddr(ff_.index(0,site));
@@ -85,15 +92,24 @@ const Field Laplacian4Ds<FMT>::mult(const Field& f)const{
 	  
 	  int Nd = ff_.Nin()/NC_/2;
 	  
+	  // Matrix vector product
+#pragma disjoint(*up,*fp, *pp, *c1p, *ttp)
+
 	  for(int s=0; s<Nd; ++s){
+#pragma unrollandfuse(NC_)
 	    for(int c=0; c<NC_; ++c){
+	      int sc = sr(s,c);
 	      for(int c1=0; c1<NC_; ++c1){
-		c1p[sr(s,c)] += up[re(c,c1)]*pp[sr(s,c1)] -up[im(c,c1)]*pp[si(s,c1)];
-		c1p[si(s,c)] += up[re(c,c1)]*pp[si(s,c1)] +up[im(c,c1)]*pp[sr(s,c1)];
+		int sri= sr(s,c1);
 		
-		ttp[sr(s,c)] += up[re(c1,c)]*fp[sr(s,c1)] +up[im(c1,c)]*fp[si(s,c1)];
-		ttp[si(s,c)] += up[re(c1,c)]*fp[si(s,c1)] -up[im(c1,c)]*fp[sr(s,c1)];
+		c1p[sc]   += up[re(c,c1)]*pp[sri]   -up[im(c,c1)]*pp[sri+1];
+		c1p[sc+1] += up[re(c,c1)]*pp[sri+1] +up[im(c,c1)]*pp[sri];
+		
+		ttp[sc]   += up[re(c1,c)]*fp[sri]   +up[im(c1,c)]*fp[sri+1];
+		ttp[sc+1] += up[re(c1,c)]*fp[sri+1] -up[im(c1,c)]*fp[sri];
 	      }
+	 
+
 	    }
 	  }  
 	}
