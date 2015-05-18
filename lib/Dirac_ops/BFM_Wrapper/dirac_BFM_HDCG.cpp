@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2015-04-22 12:14:03 cossu>
+ * Time-stamp: <2015-05-18 15:06:27 cossu>
  */
 #include <omp.h>
 #include <math.h>
@@ -25,6 +25,41 @@ void Dirac_BFM_HDCG_Wrapper::close_comms(){
   linop_r.comm_end();
 }
 
+
+void Dirac_BFM_HDCG_Wrapper::initialize(XML::node node){
+  HDCG_init(node);
+  
+  long double subspace_timer, compute_timer, refine_timer;
+  FINE_TIMING_START(subspace_timer);
+  
+  // 1. Init subspace (computes the vectors)
+  CCIO::cout << ".::::::::::::::  Init subspace\n";
+  HDCG_subspace_init();
+
+  FINE_TIMING_END(subspace_timer);
+  _Message(TIMING_VERB_LEVEL,"Timer subspace: " << subspace_timer << " seconds \n");
+
+  FINE_TIMING_START(compute_timer);
+  // 2. Compute the subspace (coarse space Little Dirac operator construction)
+  CCIO::cout << ".::::::::::::::  Compute subspace\n";
+  HDCG_subspace_compute(0);  // 0 = double, 1 = single
+  
+  FINE_TIMING_END(compute_timer);
+  _Message(TIMING_VERB_LEVEL,"Timer Little Dirac compute: " << compute_timer << " seconds \n");
+
+  // 3. Refine the subspace (optional)
+  if (do_refine()){
+
+    CCIO::cout << ".::::::::::::::  Refine subspace\n";
+    FINE_TIMING_START(refine_timer);
+    HDCG_subspace_refine(); 
+    HDCG_subspace_compute(0);  // 0 = double, 1 = single
+    FINE_TIMING_END(refine_timer);
+    _Message(TIMING_VERB_LEVEL,"Timer Little Dirac refine: " << refine_timer << " seconds \n");
+  }
+
+ 
+}
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_init(XML::node HDCGnode) {
 
@@ -111,6 +146,8 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(XML::node HDCGnode) {
 
 
   XML::read(top_HDCG_node, "Flexible", HDCGParams.Flexible, MANDATORY);
+  if (HDCGParams.Flexible)
+    BFMparams.is_mixed_precision = true; // forces the initialization of single precision gauge field in solvers
 
   // Complicated init sequence
   bfmarg bfma;
@@ -149,7 +186,7 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_init(XML::node HDCGnode) {
   linop_single.BossLog("HDCG wrapper inititialised single precision linop, parameters %d %f\n", bfma.Ls, bfma.mass);
  
   linop.init(bfma);
-  linop.BossLog("HDCG wrapper inititialised double precision linop\n");
+  linop.BossLog("HDCG wrapper inititialised double precision linop, parameters %d %f\n", bfma.Ls, bfma.mass);
   
   bfma.Ls   = HDCGParams.SubspaceRationalLs;
   bfma.mass = HDCGParams.SubspaceRationalMass;
@@ -705,3 +742,27 @@ void Dirac_BFM_HDCG_Wrapper::solve_HDCG(FermionField &solution, FermionField &so
 
 
 }
+
+Fermion_t* Dirac_BFM_HDCG_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
+  // override the base class method with the same name
+  if(is_initialized){
+    BFM_interface.GaugeExport_to_BFM(u_);
+    if (HDCGParams.Flexible == 1)
+      BFM_interface_single.GaugeExport_to_BFM(u_);
+    
+    int cb = Even;
+
+#pragma omp parallel for
+    for (int t=0;t<threads;t++){
+      linop.copy(psi_h[0], psi_in[0]);
+      linop.copy(psi_h[1], psi_in[1]);
+    }
+    
+    solve_HDCG(chi_h, psi_h, BFMparams.target_, BFMparams.max_iter_, cb);// cb is even 
+    
+  } else {
+    CCIO::cout << "The operator was not initialized yet\n";
+  }
+
+}
+

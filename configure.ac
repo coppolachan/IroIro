@@ -4,7 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations
 #
-# Time-stamp: <2015-05-15 15:01:04 cossu>
+# Time-stamp: <2015-05-15 15:13:35 cossu>
 
 AC_PREREQ([2.59])
 AC_INIT([IroIro], [1.0.9], [cossu@post.kek.jp])
@@ -534,6 +534,16 @@ if [ $bgq_kernels_nosmp || $bgq_kernels_smp ]
 then 
 AC_DEFINE([IBM_BGQ_WILSON],[], [Enable BlueGene/Q optimized Wilson kernel])
 fi
+
+
+# HDCG support on BFM
+if [ $user_hdcg_solver ]
+then
+AC_DEFINE([BFM_HDCG],[], [Enable HDCG solver support for BFM>=3.30])
+fi
+
+
+
 ###################################################################
 # Checks for doxygen support
 # if present enables the "make doxyfile" command

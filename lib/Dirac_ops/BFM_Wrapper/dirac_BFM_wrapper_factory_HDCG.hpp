@@ -1,16 +1,16 @@
-/*! @file dirac_BFM_wrapper_factory.hpp 
+/*! @file dirac_BFM_wrapper_factory_HDCG.hpp 
  *  @brief Declaration of BFM Dirac operators factories
  *
- * Time-stamp: <2015-05-15 15:02:35 cossu>
+ * Time-stamp: <2015-05-15 17:09:40 cossu>
  */
 #ifndef DIRAC_BFM_HDCG_FACT_
 #define DIRAC_BFM_HDCG_FACT_
 
 #include "Dirac_ops/dirac_Operator_Factory.hpp"
 #include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
-#include "Solver/solver_Factory.hpp"
-#include "dirac_BFM_wrapper.hpp"
+//#include "dirac_BFM_wrapper.hpp"
 #include "dirac_BFM_HDCG.hpp"
+#include "dirac_BFM_wrapper_factory.hpp"
 
 /*! @brief Concrete class for creating Dirac DWF-5d operator with BFM with HDCG support */
 class DiracBFM_HDCGoperatorFactory : public DiracDWF5dFactory {

@@ -1,11 +1,12 @@
 /*! @file dirac_Operator_FactoryCreator.cpp
  *  @brief Implementation of the FactoryCreator for Dirac operators
- * Time-stamp: <2014-08-28 11:03:39 noaki>
+ * Time-stamp: <2015-05-15 16:53:36 cossu>
  */
 #include "dirac_Operator_FactoryCreator.hpp"
 #include "PugiXML/xmlUtilities.hpp"
 #ifdef HAVE_LIBBFM
 #include "./BFM_Wrapper/dirac_BFM_wrapper_factory.hpp"
+#include "./BFM_Wrapper/dirac_BFM_wrapper_factory_HDCG.hpp"
 #endif
 
 namespace Diracs {
@@ -56,7 +57,9 @@ namespace Diracs {
       return new DiracDWF4dBGQeoFactory(node);
 #ifdef HAVE_LIBBFM
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BFMeo"))  
-      return new DiracDWF4dBFMeoFactory(node);
+      return new DiracDWF4dBFMeoFactory<DiracBFMoperatorFactory>(node);
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_HDCG"))  
+      return new DiracDWF4dBFMeoFactory<DiracBFM_HDCGoperatorFactory>(node);
 #endif
 #endif
     if(!strcmp(Dirac_name, "DiracDWoverlap"))  
@@ -96,7 +99,9 @@ namespace Diracs {
       return new DiracDWF4dBGQeoFactory(node);
 #ifdef HAVE_LIBBFM
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BFMeo"))  
-      return new DiracDWF4dBFMeoFactory(node);
+      return new DiracDWF4dBFMeoFactory<DiracBFMoperatorFactory>(node);
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_HDCG"))  
+      return new DiracDWF4dBFMeoFactory<DiracBFM_HDCGoperatorFactory>(node);
 #endif
 #endif
     XML::stopMsg(node,"Dirac_name");
@@ -161,7 +166,9 @@ namespace Diracs {
       return new DiracDWF4dBGQeoFactory(node);
 #ifdef HAVE_LIBBFM
     if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_BFMeo"))  
-      return new DiracDWF4dBFMeoFactory(node);
+      return new DiracDWF4dBFMeoFactory<DiracBFMoperatorFactory>(node);
+    if(!strcmp(Dirac_name, "DiracOptimalDomainWall4d_HDCG"))  
+      return new DiracDWF4dBFMeoFactory<DiracBFM_HDCGoperatorFactory>(node);
 #endif
 #endif
     XML::stopMsg(node,"Dirac_name");      

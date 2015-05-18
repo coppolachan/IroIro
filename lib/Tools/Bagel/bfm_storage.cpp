@@ -124,6 +124,10 @@ void BFM_Storage<Float>::GaugeExport_to_BFM(GaugeField& U){
 
   }
 
+  // DEBUG lines
+  //CCIO::cout << "DEBUG: Important check!  --- GaugeExport_to_BFM  - u[0] "<< bfm_obj_.u[0] << "\n";
+  //CCIO::cout << "DEBUG: Important check!  --- GaugeExport_to_BFM  - u[0] "<< U.data[0] << "\n";
+
   /*
   double matnorm;
 

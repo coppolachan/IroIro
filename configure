@@ -7718,6 +7718,20 @@ cat >>confdefs.h <<\_ACEOF
 _ACEOF
 
 fi
+
+
+# HDCG support on BFM
+if  $user_hdcg_solver
+then
+
+cat >>confdefs.h <<\_ACEOF
+#define BFM_HDCG /**/
+_ACEOF
+
+fi
+
+
+
 ###################################################################
 # Checks for doxygen support
 # if present enables the "make doxyfile" command

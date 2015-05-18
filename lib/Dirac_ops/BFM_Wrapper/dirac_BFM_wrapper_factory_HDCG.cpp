@@ -1,7 +1,7 @@
 /*! @file dirac_BFM_wrapper_factory_HDCG.cpp
  *  @brief Implementation of the FactoryCreator for HDCG operators
  *
- * Time-stamp: <2015-04-30 16:58:51 cossu>
+ * Time-stamp: <2015-05-15 17:34:23 cossu>
  */
 
 #include "dirac_BFM_DomainWall_4D_eo.hpp"
