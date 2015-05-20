@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_HDCG_wrapper.cpp
  * @brief Defines the wrapper class methods for P. Boyle HDCG inverter
- * Time-stamp: <2015-05-18 15:06:27 cossu>
+ * Time-stamp: <2015-05-20 13:57:48 cossu>
  */
 #include <omp.h>
 #include <math.h>
@@ -363,8 +363,9 @@ void Dirac_BFM_HDCG_Wrapper::HDCG_set_mass(double mass){
 
 void Dirac_BFM_HDCG_Wrapper::HDCG_subspace_init(){
 
-  int sloppy_relax=HDCGParams.SubspaceRationalRefine;
-  
+  //int sloppy_relax=HDCGParams.SubspaceRationalRefine;
+  int sloppy_relax=1;
+
   uint32_t seed = (ldop_d->ncoor[0]*17    + 
 		   ldop_d->ncoor[1]*251   +
 		   ldop_d->ncoor[2]*1023  + 

@@ -334,10 +334,11 @@ int Test_Solver_HDCG::run(){
   // NumberSubspace
   Free_subspace_pointers(HDCG_Solver_with_fact);
   HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 40;
-  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 160;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 120;
   HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
   HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
-  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.05;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.08;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace = 1e-5;
   FINE_TIMING_START(init_timer);
   HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
   FINE_TIMING_END(init_timer);
@@ -347,8 +348,50 @@ int Test_Solver_HDCG::run(){
   CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
   CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
   CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualSubspace = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace << "\n";
   CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
   launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 40;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 160;
+  HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.08;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace = 1e-4;
+  FINE_TIMING_START(init_timer);
+  HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "HDCGParams.NumberSubspace = " << HDCG_Solver_with_fact->HDCGParams.NumberSubspace << "\n";
+  CCIO::cout << "HDCGParams.LdopDeflVecs = " << HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs << "\n";
+  CCIO::cout << "HDCGParams.PreconditionerKrylovShift = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift << "\n"; 
+  CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
+  CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualSubspace = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace << "\n";
+  CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 40;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 120;
+  HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.08;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace = 1e-4;
+  FINE_TIMING_START(init_timer);
+  HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "HDCGParams.NumberSubspace = " << HDCG_Solver_with_fact->HDCGParams.NumberSubspace << "\n";
+  CCIO::cout << "HDCGParams.LdopDeflVecs = " << HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs << "\n";
+  CCIO::cout << "HDCGParams.PreconditionerKrylovShift = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift << "\n"; 
+  CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
+  CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualSubspace = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace << "\n";
+  CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
 
   BFMSolution.data.zero();  
   Free_subspace_pointers(HDCG_Solver_with_fact);
@@ -356,7 +399,8 @@ int Test_Solver_HDCG::run(){
   HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 120;
   HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
   HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
-  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.05;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace = 1e-5;
   FINE_TIMING_START(init_timer);
   HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
   FINE_TIMING_END(init_timer);
@@ -366,16 +410,18 @@ int Test_Solver_HDCG::run(){
   CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
   CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
   CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualSubspace = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace << "\n";
   CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
   launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
 
   BFMSolution.data.zero();  
   Free_subspace_pointers(HDCG_Solver_with_fact);
-  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 48;
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 40;
   HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 160;
   HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
-  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.05;
-  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.05;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace = 1e-5;
   FINE_TIMING_START(init_timer);
   HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
   FINE_TIMING_END(init_timer);
@@ -385,16 +431,18 @@ int Test_Solver_HDCG::run(){
   CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
   CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
   CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualSubspace = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace << "\n";
   CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
   launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
 
   BFMSolution.data.zero();  
   Free_subspace_pointers(HDCG_Solver_with_fact);
-  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 48;
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 36;
   HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 160;
   HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
   HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
   HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.08;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace = 1e-5;
   FINE_TIMING_START(init_timer);
   HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
   FINE_TIMING_END(init_timer);
@@ -404,8 +452,76 @@ int Test_Solver_HDCG::run(){
   CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
   CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
   CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualSubspace = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace << "\n";
   CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
   launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+  BFMSolution.data.zero();  
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 36;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 160;
+  HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.08;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace = 1e-4;
+  FINE_TIMING_START(init_timer);
+  HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "HDCGParams.NumberSubspace = " << HDCG_Solver_with_fact->HDCGParams.NumberSubspace << "\n";
+  CCIO::cout << "HDCGParams.LdopDeflVecs = " << HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs << "\n";
+  CCIO::cout << "HDCGParams.PreconditionerKrylovShift = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift << "\n"; 
+  CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
+  CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualSubspace = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace << "\n";
+  CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+
+  BFMSolution.data.zero();  
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 36;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 120;
+  HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.08;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace = 1e-5;
+  FINE_TIMING_START(init_timer);
+  HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "HDCGParams.NumberSubspace = " << HDCG_Solver_with_fact->HDCGParams.NumberSubspace << "\n";
+  CCIO::cout << "HDCGParams.LdopDeflVecs = " << HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs << "\n";
+  CCIO::cout << "HDCGParams.PreconditionerKrylovShift = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift << "\n"; 
+  CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
+  CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualSubspace = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace << "\n";
+  CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+
+  BFMSolution.data.zero();  
+  Free_subspace_pointers(HDCG_Solver_with_fact);
+  HDCG_Solver_with_fact->HDCGParams.NumberSubspace = 36;
+  HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs = 200;
+  HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo = 0.0001;
+  HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift = 0.1;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner = 0.08;
+  HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace = 1e-5;
+  FINE_TIMING_START(init_timer);
+  HDCG_Solver_with_fact->HDCG_reinit();// needed for a change in the NumberSubspace
+  FINE_TIMING_END(init_timer);
+  CCIO::cout << "HDCGParams.NumberSubspace = " << HDCG_Solver_with_fact->HDCGParams.NumberSubspace << "\n";
+  CCIO::cout << "HDCGParams.LdopDeflVecs = " << HDCG_Solver_with_fact->HDCGParams.LdopDeflVecs << "\n";
+  CCIO::cout << "HDCGParams.PreconditionerKrylovShift = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovShift << "\n"; 
+  CCIO::cout << "HDCGParams.PreconditionerKrylovResidual = " << HDCG_Solver_with_fact->HDCGParams.PreconditionerKrylovResidual << "\n";
+  CCIO::cout << "HDCGParams.SubspaceRationalLo = " << HDCG_Solver_with_fact->HDCGParams.SubspaceRationalLo << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualInner = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualInner << "\n";
+  CCIO::cout << "HDCGParams.LittleDopSolverResidualSubspace = " << HDCG_Solver_with_fact->HDCGParams.LittleDopSolverResidualSubspace << "\n";
+  CCIO::cout << "Timer reinit : "<< init_timer << " seconds \n";
+  launch_test(BFMSolution, EO_source, HDCG_Solver_with_fact);
+
+
 
 
 
