@@ -62,9 +62,7 @@ namespace XML
 		  const char* name, 
 		  std::vector<double>& array, bool type = false);
 
-
-
-
+  std::vector<int> child_array(pugi::xml_node node);
 };
 
 
