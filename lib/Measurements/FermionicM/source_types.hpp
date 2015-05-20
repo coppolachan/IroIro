@@ -23,16 +23,13 @@
 template<typename FMT> class Source_local :public Source{
 private:
   std::vector<int> sp_;
-  FMT* ff_;
+  FMT ff_;
   bool has_source_;
   int loc_;
   void set_src();
 public:
-  Source_local(std::vector<int> sp, int Nvol)
-    :sp_(sp),ff_(new FMT(Nvol)),has_source_(false),loc_(0){
-    set_src();
-  }
-  ~Source_local(){ delete ff_;}
+  Source_local(std::vector<int> sp, int Nvol=CommonPrms::Nvol())
+    :sp_(sp),ff_(Nvol),has_source_(false),loc_(0){ set_src();}
   const Field mksrc(int s, int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
   
@@ -42,11 +39,11 @@ public:
 template<typename FMT> 
 void Source_local<FMT>::set_src(){
 
-  int Nx = CommonPrms::instance()->Nx();
-  int Ny = CommonPrms::instance()->Ny();
-  int Nz = CommonPrms::instance()->Nz();
-  int Nt = CommonPrms::instance()->Nt();
-  int Ndim = CommonPrms::instance()->Ndim();
+  int Nx = CommonPrms::Nx();
+  int Ny = CommonPrms::Ny();
+  int Nz = CommonPrms::Nz();
+  int Nt = CommonPrms::Nt();
+  int Ndim = CommonPrms::Ndim();
 
   int nid = Communicator::instance()->nodeid(sp_[XDIR]/Nx,sp_[YDIR]/Ny,
 					     sp_[ZDIR]/Nz,sp_[TDIR]/Nt);
@@ -59,31 +56,30 @@ void Source_local<FMT>::set_src(){
 
 template<typename FMT> const Field Source_local<FMT>::
 mksrc(int s,int c)const{
-  Field src(ff_->size());
-  if(has_source_) src.set(ff_->index_r(c,s,loc_),1.0);
+  Field src(ff_.size());
+  if(has_source_) src.set(ff_.index_r(c,s,loc_),1.0);
   return src;
 }
 
 template<typename FMT> const Field Source_local<FMT>::
 mksrc(const std::vector<int>& lv,int s,int c)const{
-  return Field(mksrc(s,c)[ff_->get_sub(lv)]);
+  return Field(mksrc(s,c)[ff_.get_sub(lv)]);
 }
 
 ////// Source_exp   -----------------------------------------------------
 template<typename FMT> class Source_exp :public Source{
 private:
   std::vector<int> sp_;
-  FMT* ff_;
+  FMT ff_;
   std::valarray<double> smr_;
   double alpha_;
   void set_src();
 public:
   Source_exp(std::vector<int> sp,double al,int Nvol)
-    :sp_(sp),ff_(new FMT(Nvol)),
-     alpha_(al),smr_(0.0,ff_->Nvol()){
+    :sp_(sp),ff_(Nvol),
+     alpha_(al),smr_(0.0,ff_.Nvol()){
     set_src();
   }
-  ~Source_exp(){ delete ff_;}
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 
@@ -127,32 +123,30 @@ template<typename FMT> void Source_exp<FMT>::set_src(){
 
 template<typename FMT> const Field Source_exp<FMT>::
 mksrc(int s,int c)const{
-  Field src(ff_->size());
-  for(int site=0; site<ff_->Nvol(); ++site)
-    src.set(ff_->index_r(c,s,site),smr_[site]);
+  Field src(ff_.size());
+  for(int site=0; site<ff_.Nvol(); ++site)
+    src.set(ff_.index_r(c,s,site),smr_[site]);
   return src;
 }
 
 template<typename FMT> const Field Source_exp<FMT>::
 mksrc(const std::vector<int>& lv,int s,int c)const{
-  return Field(mksrc(s,c)[ff_->get_sub(lv)]);
+  return Field(mksrc(s,c)[ff_.get_sub(lv)]);
 }
 
 ////// Source_Gauss ----------------------------------------------------
 template<typename FMT> class Source_Gauss :public Source{
 private:
   std::vector<int> sp_;
-  FMT* ff_;
+  FMT ff_;
   std::valarray<double> smr_;
   double alpha_;
   void set_src();
 public:
   Source_Gauss(std::vector<int> source_position, double al, int Nvol)
-    :sp_(source_position),ff_(new FMT(Nvol)),
-     alpha_(al),smr_(0.0,ff_->Nvol()){
+    :sp_(source_position),ff_(Nvol),alpha_(al),smr_(0.0,ff_.Nvol()){
     set_src();
   }
-  ~Source_Gauss(){ delete ff_;}
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 
@@ -197,28 +191,27 @@ template<typename FMT> void Source_Gauss<FMT>::set_src(){
 
 template<typename FMT> const Field Source_Gauss<FMT>::
 mksrc(int s,int c)const{
-  Field src(ff_->size());
-  for(int site=0; site<ff_->Nvol(); ++site)
-      src.set(ff_->index_r(c,s,site),smr_[site]);
+  Field src(ff_.size());
+  for(int site=0; site<ff_.Nvol(); ++site)
+      src.set(ff_.index_r(c,s,site),smr_[site]);
   return src;
 }
 
 template<typename FMT> const Field Source_Gauss<FMT>::
 mksrc(const std::vector<int>& lv,int s,int c)const{
-  return Field(mksrc(s,c)[ff_->get_sub(lv)]);
+  return Field(mksrc(s,c)[ff_.get_sub(lv)]);
 }
 
 ////// Source_wall ----------------------------------------------------
 template<typename FMT> class Source_wall :public Source{
 private:
   int spt_;
-  FMT* ff_;
+  FMT ff_;
   std::valarray<double> smr_;
   void set_src();
 public:
   Source_wall(int spt, int Nvol)
-    :spt_(spt),ff_(new FMT(Nvol)),smr_(0.0,ff_->Nvol()){ set_src(); }
-  ~Source_wall(){ delete ff_;}
+    :spt_(spt),ff_(Nvol),smr_(0.0,ff_.Nvol()){ set_src(); }
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 
@@ -226,7 +219,7 @@ public:
 };
 
 template<typename FMT> void Source_wall<FMT>::set_src(){
-  for(int site=0; site<ff_->Nvol(); ++site){
+  for(int site=0; site<ff_.Nvol(); ++site){
     int gsite = SiteIndex::instance()->get_gsite(site);
     int t = SiteIndex::instance()->g_t(gsite);
     if(t == spt_) smr_[site] = 1.0;
@@ -237,53 +230,50 @@ template<typename FMT> void Source_wall<FMT>::set_src(){
 
 template<typename FMT> const Field Source_wall<FMT>::
 mksrc(int s,int c)const{
-  Field src(ff_->size());
-  for(int site=0; site<ff_->Nvol(); ++site)
-    src.set(ff_->index_r(c,s,site),smr_[site]);
+  Field src(ff_.size());
+  for(int site=0; site<ff_.Nvol(); ++site)
+    src.set(ff_.index_r(c,s,site),smr_[site]);
   return Field(src);
 }
 
 template<typename FMT> const Field Source_wall<FMT>::
 mksrc(const std::vector<int>& lv,int s,int c)const{
-  return Field(mksrc(s,c)[ff_->get_sub(lv)]);
+  return Field(mksrc(s,c)[ff_.get_sub(lv)]);
 }
 
 ////// Source_wnoise----------------------------------------------------
 template<typename FMT> class Source_wnoise :public Source{
 private:
   const RandNum& rand_;
-  FMT* ff_;
+  FMT ff_;
   std::valarray<double> src_;
 public:
   Source_wnoise(const RandNum& rand, int Nvol)
-    :rand_(rand),ff_(new FMT(Nvol)),
-     src_(0.0,ff_->size()){
+    :rand_(rand),ff_(Nvol),src_(0.0,ff_.size()){
     //
     std::vector<int> gsite = SiteIndex::instance()->get_gsite();
-    MPrand::mp_get(src_,rand_,gsite,*ff_);
+    MPrand::mp_get(src_,rand_,gsite,ff_);
   }
-
-  ~Source_wnoise(){ delete ff_;}
   const Field mksrc(int s,int c)const;
   const Field mksrc(const std::vector<int>& lv,int s,int c)const;
 
   void refresh(){
     std::vector<int> gsite = SiteIndex::instance()->get_gsite();
-    MPrand::mp_get(src_,rand_,gsite,*ff_);   
+    MPrand::mp_get(src_,rand_,gsite,ff_);   
   }
 };
 
 template<typename FMT> 
 const Field Source_wnoise<FMT>::mksrc(int s,int c)const{
-  Field wns(ff_->size());
-  wns.set(ff_->cs_slice(c,s),src_[ff_->cs_slice(c,s)]);
+  Field wns(ff_.size());
+  wns.set(ff_.cs_slice(c,s),src_[ff_.cs_slice(c,s)]);
   return wns;
 }
 
 template<typename FMT> 
 const Field Source_wnoise<FMT>::
 mksrc(const std::vector<int>& lv,int s,int c)const{
-  return Field(mksrc(s,c)[ff_->get_sub(lv)]);
+  return Field(mksrc(s,c)[ff_.get_sub(lv)]);
 }
 
 ////// Source_Z2----------------------------------------------------
@@ -301,24 +291,20 @@ template<typename FMT> class Source_Z2noise :public Source{
 private:
   const RandNum& rand_generator_;/*!< @brief Random number generator (to be provided)*/
   Z2Type Type_;
-  FMT* ff_;/*!< @brief %Field %Format specifier */
+  FMT ff_;                   /*!< @brief %Field %Format specifier */
   std::valarray<double> src_;/*!< @brief %Source field result */
 public:
   /*!  @brief Constructor */
   Source_Z2noise(const RandNum& rand,int Nvol,Z2Type Type)
     :rand_generator_(rand),
-     ff_(new FMT(Nvol)),
-     Type_(Type),src_(0.0,ff_->size()){ setup_source();}
-
-  /*! @brief Destructor */
-  ~Source_Z2noise(){ delete ff_;}
+     ff_(Nvol),Type_(Type),src_(0.0,ff_.size()){ setup_source();}
 
   void setup_source(){
-    std::valarray<double> white_noise(0.0,ff_->size());
+    std::valarray<double> white_noise(0.0,ff_.size());
     double cosine;
     
     std::vector<int> gsite = SiteIndex::instance()->get_gsite();
-    MPrand::mp_get(white_noise,rand_generator_,gsite,*ff_);
+    MPrand::mp_get(white_noise,rand_generator_,gsite,ff_);
 
 
     for (int idx = 0; idx <white_noise.size()/2; ++idx){
@@ -340,15 +326,15 @@ public:
 
 template<typename FMT>
 const Field Source_Z2noise<FMT>::mksrc(int s,int c)const{
-  Field wns(ff_->size());
-  wns.set(ff_->cs_slice(c,s), src_[ff_->cs_slice(c,s)]);
+  Field wns(ff_.size());
+  wns.set(ff_.cs_slice(c,s), src_[ff_.cs_slice(c,s)]);
   return wns;
 }
 
 template<typename FMT> 
 const Field Source_Z2noise<FMT>::
 mksrc(const std::vector<int>& lv,int s,int c)const{
-  return Field(mksrc(s,c)[ff_->get_sub(lv)]);
+  return Field(mksrc(s,c)[ff_.get_sub(lv)]);
 }
 
 ////// Source_wrapper----------------------------------------------------
@@ -358,14 +344,13 @@ mksrc(const std::vector<int>& lv,int s,int c)const{
 
 template<typename FMT> class Source_wrapper: public Source{
   Source* orgSrc_;
-  FMT* ff_;
+  FMT ff_;
   Fopr_Herm* op_;
 public:
-  Source_wrapper(Source* Src,Fopr_Herm* op,
-		 int Nvol = CommonPrms::Nvol())
-    :orgSrc_(Src),op_(op),ff_(new FMT(Nvol)){
+  Source_wrapper(Source* Src,Fopr_Herm* op,int Nvol = CommonPrms::Nvol())
+    :orgSrc_(Src),op_(op),ff_(Nvol){
     assert(orgSrc_);
-    assert(op_->fsize() == ff_->size());
+    assert(op_->fsize() == ff_.size());
   }
 
   const Field mksrc(int s, int c)const{
@@ -373,7 +358,7 @@ public:
   }
 
   const Field mksrc(const std::vector<int>& lv,int s,int c)const{
-    return Field(mksrc(s,c)[ff_->get_sub(lv)]);
+    return Field(mksrc(s,c)[ff_.get_sub(lv)]);
   }
 
   void refresh(){orgSrc_->refresh();}
