@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.cpp
  * @brief Defines the wrapper classs for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-09-10 11:49:34 cossu>
+ * Time-stamp: <2015-05-15 17:48:26 cossu>
  */
 
 #include "dirac_BFM_wrapper.hpp"
@@ -175,6 +175,8 @@ Field Dirac_BFM_Wrapper::mult_unprec(const Field& Fin){
 Field Dirac_BFM_Wrapper::mult_inv_4d(const Field& Fin){
   double fact = -1.0;
 
+
+
   if(is_initialized){
     BFM_interface.GaugeExport_to_BFM(u_);
     int donrm = 0;
@@ -254,6 +256,9 @@ Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
     int donrm = 0;
     int cb = Even;
     int dag = 0;
+
+
+
     linop.comm_init();
 #pragma omp parallel for
     for (int t=0;t<threads;t++){
@@ -281,6 +286,7 @@ Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
 	linop.CGNE_prec(chi_h[cb],psi_h[cb]);// chi[even] = Mtilde^-1 psi[even]
       }
 
+
       linop.Meo(chi_h[cb],tmp,1-cb,dag);// tmp = Meo chi[even]    (even->odd) 
       linop.axpy_norm(psi_h[1-cb], tmp, psi_h[1-cb], fact);// psi[odd] = -1*tmp + psi[odd]
       // = psi[odd] - Meo chi[even]
@@ -288,6 +294,7 @@ Fermion_t* Dirac_BFM_Wrapper::mult_inv_4d_base(Fermion_t psi_in[2]){
       
     }
     linop.comm_end();
+
     return chi_h;
   } else {
     CCIO::cout << "The operator was not initialized yet\n";
@@ -546,6 +553,10 @@ void Dirac_BFM_Wrapper::set_ScaledShamirCayleyTanh(double mq,
   // Note M5 has different sign from our convention
   parameters.ScaledShamirCayleyTanh(mq,-M5,Ls,scale);
   has_operator = true;
+}
+
+void Dirac_BFM_Wrapper::initialize(XML::node node){ //function to be overridden
+  initialize();
 }
 
 void Dirac_BFM_Wrapper::initialize(){

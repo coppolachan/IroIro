@@ -22,6 +22,7 @@ public:
     :N_(N),Op_(Op),p_(Op_->fsize()),q_(Op_->fsize()),r_(Op_->fsize()),
      c_(N+1,0.0){
     c_[N] = 1.0; 
+    CCIO::cout << "Chebyshev field size: "<< Op_->fsize() << "\n";
   }
   /// to obtain sum_i c_i T_i(x)
   Fopr_Chebyshev(const Fopr_Herm* Op,const std::vector<double>& c)
@@ -35,6 +36,7 @@ public:
     XML::read(cbnode, "Npoly",N_,MANDATORY);
     c_.resize(N_+1,0.0);
     c_[N_] = 1.0;
+    CCIO::cout << "Chebyshev field size: "<< Op_->fsize() << "\n";
   }
   
   const Field mult(const Field& f) const{

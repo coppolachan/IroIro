@@ -13,17 +13,17 @@
 
 class EigenSolverFactory{
 public:
-  virtual EigenModesSolver* getEigenSolver(Fopr_Herm*,EigenSorter*)const =0;
+  virtual EigenModesSolver* getEigenSolver(Fopr_Herm*,EigenSorter*)const = 0;
   virtual ~EigenSolverFactory(){}
 };
 
 class EigenSolverFactory_IRL: public EigenSolverFactory{
-  const XML::node eigslv_node_;
+  const XML::node eslvNode_;
 public:
-  EigenSolverFactory_IRL(XML::node node):eigslv_node_(node){}
+  EigenSolverFactory_IRL(XML::node node):eslvNode_(node){}
   
   EigenModesSolver* getEigenSolver(Fopr_Herm* opr,EigenSorter* str)const{
-    return new EigenModesSolver_IRL(opr,str,eigslv_node_);
+    return new EigenModesSolver_IRL(opr,str,eslvNode_);
   }
 };
 

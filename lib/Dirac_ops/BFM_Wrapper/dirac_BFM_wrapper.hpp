@@ -1,7 +1,7 @@
 /*!
  * @file dirac_BFM_wrapper.hpp
  * @brief Declares the wrapper class for P. Boyle Bagel/BFM libs
- * Time-stamp: <2014-08-06 17:16:57 neo>
+ * Time-stamp: <2015-05-15 17:49:32 cossu>
  */
 #ifndef DIRAC_BFM_WRAPPER_
 #define DIRAC_BFM_WRAPPER_
@@ -67,6 +67,8 @@ protected:
   bool has_operator;
   bool has_solver_params;
 
+
+
   // Fields
   const Field* const u_;
   Fermion_t psi_h[2];//for sources e/o
@@ -94,6 +96,7 @@ public:
   size_t fsize() const;
   size_t gsize() const;
 
+  virtual void initialize(XML::node);
   void initialize();
 
   const DiracWilsonLike_EvenOdd* getInternalEO() {return Internal_EO;}// For the 4d Operators
@@ -107,7 +110,7 @@ public:
   Field mult_unprec(const Field&);
   Field mult_inv_4d(const Field&);
   Fermion_t* mult_unprec_base(Fermion_t*);
-  Fermion_t* mult_inv_4d_base(Fermion_t*);
+  virtual Fermion_t* mult_inv_4d_base(Fermion_t*);
   Fermion_t* LoadFullSource(FermionField&); 
   void GetFullSolution(FermionField&);
   void GaugeExportBFM();

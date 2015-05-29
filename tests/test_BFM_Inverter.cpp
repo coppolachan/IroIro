@@ -19,12 +19,15 @@
 #undef VERSION
 #include "bfm.h"
 #include "Tools/Bagel/bfm_storage.hpp"
-
+#include "timings.hpp"
 
 using namespace std;
 
 int Test_Solver_BFM::run(){
-  CCIO::cout << ".::: Test Solver BFM Moebius" 
+  // For timers
+  long double timing;
+
+  CCIO::cout << ".::: Test Solver BFM Moebius, direct calls" 
 	     <<std::endl;
 
 
@@ -192,7 +195,10 @@ int Test_Solver_BFM::run(){
   //linop.MooeeInv(psi_h[cb],chi_h[cb],dag);
   //linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);
   SolverOutput SO;
-  // Test CGNE solver
+
+  ///////////////////////////////////////////////////////////////////
+  // Test BFM CGNE solver
+  CCIO::cout << "---- Testing BFM CGNE solver \n";
 #pragma omp parallel
   {
     linop.fill(chi_h[Even],0.0);// zeroes the output vector
@@ -201,8 +207,9 @@ int Test_Solver_BFM::run(){
       linop.CGNE_prec(chi_h[Even],psi_h[Even]);
     }
   }
-  
-  // Test CGNE Multishift solver
+  ////////////////////////////////////////////////////////////////////
+  // Test BFM CGNE Multishift solver
+  CCIO::cout << "---- Testing BFM CGNE Multishift solver \n";
   // Allocate fields
   Fermion_t m_chi[3];
   double masses[3];
@@ -222,6 +229,9 @@ int Test_Solver_BFM::run(){
     m_chi[i] = linop.allocFermion();
   }
   CCIO::cout << "Allocated fermions for Multishift \n";
+
+  CCIO::cout << "Solving with BFM Multishift  \n";
+  FINE_TIMING_START(timing);
 #pragma omp parallel
   {
 #pragma omp for 
@@ -229,13 +239,22 @@ int Test_Solver_BFM::run(){
       linop.CGNE_prec_MdagM_multi_shift(m_chi,psi_h[Even],masses, m_alpha, 3, mresid, 0 );
     }
   }
-  
+  FINE_TIMING_END(timing);
+  CCIO::cout << "[Timing] - linop.CGNE_prec_MdagM_multi_shift - Total timing = "  << timing << std::endl;
+
+
+  ////////////////////////////////////////////////////////////////////////////////
   // Solver using internal Dirac_DomainWall_EvenOdd method solve_eo
+  CCIO::cout << "Solving with Internal Dirac_DomainWall_EvenOdd method solve_eo - BGQ library \n";
   Field output_f(vphi);
   DWF_EO.solve_eo(output_f,fe, SO,  10000, dwfa.residual*dwfa.residual);
   SO.print();
-  
+
+
+
+  ////////////////////////////////////////////////////////////////////////////////
   // Solver using internal Dirac_DomainWall_EvenOdd method solve_ms_eo_5d 
+  CCIO::cout << "Solving with Internal Dirac_DomainWall_EvenOdd method solve_ms_eo_5d - Multishift BGQ library \n";
   std::vector<Field> xq(3); 
    for (int i=0; i< xq.size(); ++i) {
     xq[i].resize(fe.size());
@@ -247,6 +266,10 @@ int Test_Solver_BFM::run(){
   DWF_EO.solve_ms_eo(xq, fe, SO, sigma, 10000, 1e-24);
   SO.print();
 
+
+
+
+  ////////////////////////////////////////////////////////////////////////////////
   FermionField BFMsolution(Nvol5d);
   int vect4d_hsize = fe.size()/Ls;   
   for(int cb=0;cb<2;cb++){

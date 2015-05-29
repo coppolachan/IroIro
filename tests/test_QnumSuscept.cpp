@@ -21,8 +21,7 @@ int Test_QnumSuscept::run(){
   auto_ptr<DiracWilsonLikeFiniteDensityFactory> 
     Dfact(Diracs::createDiracWilsonLikeFiniteDensityFactory(dirac_node));
   
-  InputConfig input = input_.getConfig();
-  auto_ptr<DiracWilsonLikeFiniteDensity> D(Dfact->getDirac(input));
+  auto_ptr<DiracWilsonLikeFiniteDensity> D(Dfact->getDirac(input_.config));
 
   CCIO::cout<<"Dirac operator created\n";
 

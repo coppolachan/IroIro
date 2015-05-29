@@ -1,9 +1,9 @@
 /*!@file  dirac_LowModeDeflation_ExactEigen.cpp
  * @brief methods for low-mode preconditioning with exact low-modes
- *Time-stamp: <2013-07-03 10:27:38 noaki>
+ *Time-stamp: <2014-10-05 11:14:14 noaki>
  */
 #include "dirac_LowModeDeflation_ExactEigen.hpp"
-#include "subSpaceProjector.hpp"
+#include "EigenModes/subSpaceProjector.hpp"
 
 const Field Dirac_LowModeDeflation_ExactEigen::mult(const Field& f)const{
   return Dw_->mult(mult_left(f));

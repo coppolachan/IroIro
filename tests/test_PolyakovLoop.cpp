@@ -14,8 +14,13 @@ int Test_PolyakovLoop::run(){
   const char* dir_name = pnode.attribute("dir").value();
 
   Staples Staple;
-  CCIO::cout<< "Plaquette : "<< Staple.plaquette(*(input_.gconf))<< std::endl;
-
+  CCIO::cout<< "Plaquette      : "<<  Staple.plaquette(*(input_.config.gconf))<< std::endl;
+  CCIO::cout<<" Plaquette (xy) : "<<  Staple.plaq_mu_nu(*(input_.config.gconf), 0,1) << std::endl;
+  CCIO::cout<<" Plaquette (xz) : "<<  Staple.plaq_mu_nu(*(input_.config.gconf), 0,2) << std::endl;
+  CCIO::cout<<" Plaquette (xt) : "<<  Staple.plaq_mu_nu(*(input_.config.gconf), 0,3) << std::endl;
+  CCIO::cout<<" Plaquette (yz) : "<<  Staple.plaq_mu_nu(*(input_.config.gconf), 1,2) << std::endl;
+  CCIO::cout<<" Plaquette (yt) : "<<  Staple.plaq_mu_nu(*(input_.config.gconf), 1,3) << std::endl;
+  CCIO::cout<<" Plaquette (zt) : "<<  Staple.plaq_mu_nu(*(input_.config.gconf), 2,3) << std::endl;
 
   site_dir dir;
   if(     !strcmp(dir_name,"X")) dir = XDIR;
@@ -28,8 +33,8 @@ int Test_PolyakovLoop::run(){
   }
   PolyakovLoop plp(dir);
 
-  std::complex<double> pf = plp.calc_SUN(*(input_.gconf));
-  double          pa = plp.calc_SUNadj(*(input_.gconf));
+  std::complex<double> pf = plp.calc_SUN(*(input_.config.gconf));
+  double            pa = plp.calc_SUNadj(*(input_.config.gconf));
   
   CCIO::cout<<"Polyakov Loop ("<<dir << ") [fundamental representation]: ";
   CCIO::cout<< std::setw(20)<<pf.real()<<" "<< std::setw(20)<<pf.imag()<<"\n";

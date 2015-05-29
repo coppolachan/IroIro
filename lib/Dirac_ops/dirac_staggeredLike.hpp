@@ -1,6 +1,6 @@
 /*! @file dirac_staggeredLike.hpp
  *  @brief defines the abstract base classes for DiracStaggerdLike 
- * Time-stamp: <2013-04-20 07:23:02 noaki>
+ * Time-stamp: <2014-11-14 16:40:45 cossu>
  */
 #ifndef DIRAC_STAGGEREDLIKE_INCLUDED
 #define DIRAC_STAGGEREDLIKE_INCLUDED
@@ -42,6 +42,9 @@ public:
   virtual const Field mult_oo(const Field&) const =0;
   virtual const Field mult_ee_inv(const Field&) const =0;
   virtual const Field mult_oo_inv(const Field&) const =0;
+
+  virtual void mult_DdagDee(Field&, const Field&) const =0;
+
   virtual double getMass() const =0;
 };
 #endif

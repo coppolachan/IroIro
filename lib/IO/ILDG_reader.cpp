@@ -3,7 +3,7 @@
  *
  * @brief Definition of the ILDGReader class methods
  *
- * Time-stamp: <2013-10-15 15:47:54 noaki>
+ * Time-stamp: <2015-05-29 15:15:15 neo>
  */
 
 #include "ILDG_reader.hpp"
@@ -23,20 +23,21 @@ namespace CCIO {
     _Message(DEBUG_VERB_LEVEL, "ILDG Reader...\n");
     //Read just as it is
     //order is (in, ex, sites)  
-    n_uint64_t bytes_to_read = sizeof(float)*size;
+    n_uint64_t bytes_to_read = sizeof(double)*size;
     n_uint64_t read =  bytes_to_read;
-    float uin[100000];
-    limeReaderReadData(uin, &read, LimeR);
+    limeReaderReadData(buffer, &read, LimeR);
 
 #ifndef BIG_ENDIAN_TYPE
-    byte_swap(uin, size);
+    byte_swap(buffer, size);
 #endif
 
+    /* 
 #ifdef DEBUG_VERB_LEVEL
     for (int i = 0; i < bytes_to_read; i++){
       std::cout << "buffer["<<i<<"] = "<< buffer[i] << "\n";
     }
-#endif 
+#endif
+    */  
   }
 
   int ILDGReader::header(){

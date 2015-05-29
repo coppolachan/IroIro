@@ -11,8 +11,7 @@ int Test_EigModesNum::run(){
   std::auto_ptr<DiracFactory> dfact(Diracs::createGeneralDiracFactory(enode));
   
   XML::next_sibling(enode,"EigModesNum",MANDATORY);
-  InputConfig iconf = input_.getConfig();
-  std::auto_ptr<Dirac> dirac(dfact.get()->getDirac(iconf));
+  std::auto_ptr<Dirac> dirac(dfact.get()->getDirac(input_.config));
   EigModesNum nu(enode,dirac.get(),input_.rng);
   nu.do_count();
 }

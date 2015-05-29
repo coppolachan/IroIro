@@ -2,7 +2,7 @@
  * @file fopr.h 
  * @brief Definition of Fopr classes 
  * @authors {<a href="http://suchix.kek.jp/guido_cossu/">Guido Cossu</a>, Jun-Ichi Noaki}
-Time-stamp: <2014-07-21 18:15:19 noaki>
+Time-stamp: <2015-04-07 14:19:24 cossu>
  */
 
 #ifndef FOPR_INCLUDED
@@ -95,6 +95,16 @@ public:
   size_t fsize()const{return D_->fsize();}
 };
 
+/*!@brief use this when D is already hermitian - Special for adjoint Staggered */
+class Fopr_HDStagAdj : public Fopr_Herm{
+  const Dirac* D_;
+public:
+  Fopr_HDStagAdj(const Dirac* D):D_(D){assert(D_);}  
+  double func(double x)const{return x;}
+  const Field mult(const Field& f)const{return D_->mult(f);}
+  size_t fsize()const{return D_->fsize();}
+};
+
 class Fopr_H : public Fopr_Herm{
   const DiracWilsonLike* D_;
 public:
@@ -106,6 +116,22 @@ public:
 
   size_t fsize()const{ return D_->fsize();}
 };
+
+class Fopr_HStag : public Fopr_Herm{
+  const DiracStaggeredEvenOddLike* D_;
+public:
+  Fopr_HStag(const DiracStaggeredEvenOddLike* D):D_(D){assert(D_);}
+  double func(double x)const{return x;}
+
+  const Field mult(const Field& f)const{ 
+    Field res(fsize());
+    D_->mult_DdagDee(res,f);
+    return res;
+  }
+  size_t fsize()const{ return D_->fsize();}
+};
+
+
 
 class Fopr_H5d : public Fopr_Herm{
   const Dirac_DomainWall* D_;

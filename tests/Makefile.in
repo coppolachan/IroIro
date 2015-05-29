@@ -20,7 +20,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-11-25 16:33:33 neo>
+# Time-stamp: <2015-05-29 15:13:41 neo>
 
 
 VPATH = @srcdir@
@@ -91,13 +91,11 @@ target_triplet = @target@
 @USE_BFM_TRUE@am__append_1 = test_Solver_BFM test_BFM_Operator \
 @USE_BFM_TRUE@	test_BFM_Moebius test_BFM_Inverter \
 @USE_BFM_TRUE@	test_BFM_Inverter_wrapper
-#BFM_TESTPROGS += test_HDCG
-
-#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
-@IBM_BGQ_TRUE@am__append_2 = -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_3 = -qsmp=omp:auto
-@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_4 = -lbgqwilson3x4smp -lbgqthread
-@IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@am__append_5 = -lbgqwilson3x4
+@USE_BFM_TRUE@@USE_HDCG_TRUE@am__append_2 = test_HDCG
+@IBM_BGQ_TRUE@am__append_3 = -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_4 = -qsmp=omp:auto
+@IBM_BGQWILSON_SMP_TRUE@@IBM_BGQ_TRUE@am__append_5 = -lbgqwilson3x4smp -lbgqthread
+@IBM_BGQWILSON_SMP_FALSE@@IBM_BGQ_TRUE@am__append_6 = -lbgqwilson3x4
 test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_HMC_smear_noF$(EXEEXT) test_HMC_DWall_noF$(EXEEXT) \
 	test_Gauge$(EXEEXT) test_NoMeas$(EXEEXT) \
@@ -111,10 +109,11 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_MesonSpectrum_Nf2p1$(EXEEXT) \
 	test_BaryonSpectrum_Nf2p1$(EXEEXT) \
 	test_EigenModesSolver$(EXEEXT) \
+	test_EigenModesSolverStaggered$(EXEEXT) \
 	test_EigenModesSolver_Lap$(EXEEXT) test_EigModesNum$(EXEEXT) \
 	test_Smearing$(EXEEXT) test_LapSource$(EXEEXT) \
 	test_Overlap$(EXEEXT) test_MultiShiftSolver$(EXEEXT) \
-	test_Solver_Perf$(EXEEXT) $(am__EXEEXT_2) test_RNG$(EXEEXT) \
+	test_Solver_Perf$(EXEEXT) $(am__EXEEXT_3) test_RNG$(EXEEXT) \
 	test_IO$(EXEEXT) test_RationalApprox$(EXEEXT) \
 	test_RHMC_noFactories$(EXEEXT) test_SUNRepresentation$(EXEEXT) \
 	test_HeatBath$(EXEEXT) test_DWF$(EXEEXT) \
@@ -122,7 +121,7 @@ test_PROGRAMS = test_HMC$(EXEEXT) test_HMC_noFactories$(EXEEXT) \
 	test_LapH$(EXEEXT) test_HadronSpectrum_HeavyLight$(EXEEXT) \
 	test_ChiralCondensate$(EXEEXT) test_QnumSuscept$(EXEEXT) \
 	test_ChiralCondensate$(EXEEXT) test_ReadEigenmodes$(EXEEXT) \
-	test_Add_Flux$(EXEEXT) test_Smearing_Polyakov$(EXEEXT)
+	test_Add_Flux$(EXEEXT)
 subdir = tests
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/depcomp $(include_HEADERS)
@@ -140,7 +139,8 @@ CONFIG_CLEAN_VPATH_FILES =
 @USE_BFM_TRUE@	test_BFM_Moebius$(EXEEXT) \
 @USE_BFM_TRUE@	test_BFM_Inverter$(EXEEXT) \
 @USE_BFM_TRUE@	test_BFM_Inverter_wrapper$(EXEEXT)
-am__EXEEXT_2 = $(am__EXEEXT_1)
+@USE_BFM_TRUE@@USE_HDCG_TRUE@am__EXEEXT_2 = test_HDCG$(EXEEXT)
+am__EXEEXT_3 = $(am__EXEEXT_1) $(am__EXEEXT_2)
 am__installdirs = "$(DESTDIR)$(testdir)" "$(DESTDIR)$(includedir)"
 PROGRAMS = $(test_PROGRAMS)
 am_test_Add_Flux_OBJECTS = test_Add_Flux.$(OBJEXT) \
@@ -231,6 +231,14 @@ test_EigenModesSolver_OBJECTS = $(am_test_EigenModesSolver_OBJECTS)
 test_EigenModesSolver_LDADD = $(LDADD)
 test_EigenModesSolver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
+am_test_EigenModesSolverStaggered_OBJECTS =  \
+	test_EigenModesSolverStaggered.$(OBJEXT) \
+	testerEigenModesSolver.$(OBJEXT)
+test_EigenModesSolverStaggered_OBJECTS =  \
+	$(am_test_EigenModesSolverStaggered_OBJECTS)
+test_EigenModesSolverStaggered_LDADD = $(LDADD)
+test_EigenModesSolverStaggered_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2)
 am_test_EigenModesSolver_Lap_OBJECTS =  \
 	test_EigenModesSolver_Lap.$(OBJEXT) \
 	testerEigenModesSolver_Lap.$(OBJEXT)
@@ -249,6 +257,14 @@ am_test_Gauge_OBJECTS = test_Gauge.$(OBJEXT) testerGauge.$(OBJEXT)
 test_Gauge_OBJECTS = $(am_test_Gauge_OBJECTS)
 test_Gauge_LDADD = $(LDADD)
 test_Gauge_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
+am__test_HDCG_SOURCES_DIST = test_BFM_HDCG_Inverter.cpp \
+	testerSolver_HDCG.cpp
+@USE_BFM_TRUE@@USE_HDCG_TRUE@am_test_HDCG_OBJECTS =  \
+@USE_BFM_TRUE@@USE_HDCG_TRUE@	test_BFM_HDCG_Inverter.$(OBJEXT) \
+@USE_BFM_TRUE@@USE_HDCG_TRUE@	testerSolver_HDCG.$(OBJEXT)
+test_HDCG_OBJECTS = $(am_test_HDCG_OBJECTS)
+test_HDCG_LDADD = $(LDADD)
+test_HDCG_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_2)
 am_test_HMC_OBJECTS = test_HMC.$(OBJEXT) testerHMC.$(OBJEXT)
 test_HMC_OBJECTS = $(am_test_HMC_OBJECTS)
 test_HMC_LDADD = $(LDADD)
@@ -400,12 +416,6 @@ test_Smearing_OBJECTS = $(am_test_Smearing_OBJECTS)
 test_Smearing_LDADD = $(LDADD)
 test_Smearing_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_2)
-am_test_Smearing_Polyakov_OBJECTS = test_smeared_polyakov.$(OBJEXT) \
-	get_eval.$(OBJEXT) testerSmear.$(OBJEXT)
-test_Smearing_Polyakov_OBJECTS = $(am_test_Smearing_Polyakov_OBJECTS)
-test_Smearing_Polyakov_LDADD = $(LDADD)
-test_Smearing_Polyakov_DEPENDENCIES = $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_2)
 am__test_Solver_BFM_SOURCES_DIST = test_Solver_BFM.cpp \
 	testerSolver_BFM.cpp
 @USE_BFM_TRUE@am_test_Solver_BFM_OBJECTS = test_Solver_BFM.$(OBJEXT) \
@@ -494,10 +504,12 @@ SOURCES = $(test_Add_Flux_SOURCES) $(test_BFM_Inverter_SOURCES) \
 	$(test_ChiralCondensate_SOURCES) $(test_Clover_SOURCES) \
 	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
 	$(test_EigModesNum_SOURCES) $(test_EigenModesSolver_SOURCES) \
+	$(test_EigenModesSolverStaggered_SOURCES) \
 	$(test_EigenModesSolver_Lap_SOURCES) \
 	$(test_GWrelEigen_SOURCES) $(test_Gauge_SOURCES) \
-	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
-	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
+	$(test_HDCG_SOURCES) $(test_HMC_SOURCES) \
+	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_noFactories_SOURCES) \
+	$(test_HMC_smear_noF_SOURCES) \
 	$(test_HadronSpectrum_HeavyLight_SOURCES) \
 	$(test_HeatBath_SOURCES) $(test_IO_SOURCES) \
 	$(test_LapH_SOURCES) $(test_LapSource_SOURCES) \
@@ -510,10 +522,9 @@ SOURCES = $(test_Add_Flux_SOURCES) $(test_BFM_Inverter_SOURCES) \
 	$(test_RHMC_noFactories_SOURCES) $(test_RNG_SOURCES) \
 	$(test_RationalApprox_SOURCES) $(test_ReadEigenmodes_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_SUNRepresentation_SOURCES) \
-	$(test_Smearing_SOURCES) $(test_Smearing_Polyakov_SOURCES) \
-	$(test_Solver_BFM_SOURCES) $(test_Solver_Perf_SOURCES) \
-	$(test_Wilson_SOURCES) $(test_WilsonFlow_SOURCES) \
-	$(test_Wilson_Brillouin_SOURCES) \
+	$(test_Smearing_SOURCES) $(test_Solver_BFM_SOURCES) \
+	$(test_Solver_Perf_SOURCES) $(test_Wilson_SOURCES) \
+	$(test_WilsonFlow_SOURCES) $(test_Wilson_Brillouin_SOURCES) \
 	$(test_Wilson_Brillouin_Imp_SOURCES) \
 	$(test_Wilson_EvenOdd_SOURCES) \
 	$(test_Wilson_FiniteDensity_SOURCES)
@@ -526,10 +537,12 @@ DIST_SOURCES = $(test_Add_Flux_SOURCES) \
 	$(test_ChiralCondensate_SOURCES) $(test_Clover_SOURCES) \
 	$(test_DWF_SOURCES) $(test_DiracWilson_Adjoint_SOURCES) \
 	$(test_EigModesNum_SOURCES) $(test_EigenModesSolver_SOURCES) \
+	$(test_EigenModesSolverStaggered_SOURCES) \
 	$(test_EigenModesSolver_Lap_SOURCES) \
 	$(test_GWrelEigen_SOURCES) $(test_Gauge_SOURCES) \
-	$(test_HMC_SOURCES) $(test_HMC_DWall_noF_SOURCES) \
-	$(test_HMC_noFactories_SOURCES) $(test_HMC_smear_noF_SOURCES) \
+	$(am__test_HDCG_SOURCES_DIST) $(test_HMC_SOURCES) \
+	$(test_HMC_DWall_noF_SOURCES) $(test_HMC_noFactories_SOURCES) \
+	$(test_HMC_smear_noF_SOURCES) \
 	$(test_HadronSpectrum_HeavyLight_SOURCES) \
 	$(test_HeatBath_SOURCES) $(test_IO_SOURCES) \
 	$(test_LapH_SOURCES) $(test_LapSource_SOURCES) \
@@ -542,8 +555,7 @@ DIST_SOURCES = $(test_Add_Flux_SOURCES) \
 	$(test_RHMC_noFactories_SOURCES) $(test_RNG_SOURCES) \
 	$(test_RationalApprox_SOURCES) $(test_ReadEigenmodes_SOURCES) \
 	$(test_ResMass_SOURCES) $(test_SUNRepresentation_SOURCES) \
-	$(test_Smearing_SOURCES) $(test_Smearing_Polyakov_SOURCES) \
-	$(am__test_Solver_BFM_SOURCES_DIST) \
+	$(test_Smearing_SOURCES) $(am__test_Solver_BFM_SOURCES_DIST) \
 	$(test_Solver_Perf_SOURCES) $(test_Wilson_SOURCES) \
 	$(test_WilsonFlow_SOURCES) $(test_Wilson_Brillouin_SOURCES) \
 	$(test_Wilson_Brillouin_Imp_SOURCES) \
@@ -711,9 +723,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 testdir = $(bindir)/Test
-OPTLIB = $(am__append_2) $(am__append_4) $(am__append_5)
-BFM_TESTPROGS = $(am__append_1)
-AM_CXXFLAGS = $(am__append_3) $(BFM_INCLUDE)
+OPTLIB = $(am__append_3) $(am__append_5) $(am__append_6)
+BFM_TESTPROGS = $(am__append_1) $(am__append_2)
+AM_CXXFLAGS = $(am__append_4) $(BFM_INCLUDE)
 AM_LDFLAGS = $(BFM_LIBS)
 @USE_BFM_TRUE@BFM_HACK = /bgsys/drivers/V1R1M2/ppc64/
 @USE_BFM_TRUE@BFM_INCLUDE = -I$(BFM_HACK) -I$(BFM_HACK)/spi/include/kernel/cnk/
@@ -742,6 +754,7 @@ EXTRA_DIST = testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_EigenModesSolver.xml\
+		test_EigenModesSolverStaggered.xml\
 		test_EigenModesSolver_lap.xml\
 		test_EigModesNum.xml    \
 		test_GeneralMeas.xml 	\
@@ -834,6 +847,9 @@ test_ResMass_SOURCES = test_ResidualMass.cpp 		\
 test_EigenModesSolver_SOURCES = test_EigenModesSolver.cpp	\
 				testerEigenModesSolver.cpp
 
+test_EigenModesSolverStaggered_SOURCES = test_EigenModesSolverStaggered.cpp	\
+						testerEigenModesSolver.cpp	
+
 test_EigenModesSolver_Lap_SOURCES = test_EigenModesSolver_Lap.cpp\
 				testerEigenModesSolver_Lap.cpp
 
@@ -849,10 +865,10 @@ test_MultiShiftSolver_SOURCES = test_MultiShiftSolver.cpp	\
 test_Smearing_SOURCES = test_smear.cpp                  \
                                 testerSmear.cpp
 
-test_Smearing_Polyakov_SOURCES = test_smeared_polyakov.cpp        \
-				get_eval.cpp			\
-                                testerSmear.cpp
 
+#test_Smearing_Polyakov_SOURCES   =  test_smeared_polyakov.cpp        \
+#				get_eval.cpp			\
+#                               testerSmear.cpp
 test_RNG_SOURCES = test_RNG.cpp
 test_IO_SOURCES = test_IO.cpp 			\
 				testerIO.cpp
@@ -914,9 +930,9 @@ test_Add_Flux_SOURCES = test_Add_Flux.cpp	\
 @USE_BFM_TRUE@test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
 @USE_BFM_TRUE@                                testerSolver_BFM.cpp       
 
+@USE_BFM_TRUE@@USE_HDCG_TRUE@test_HDCG_SOURCES = test_BFM_HDCG_Inverter.cpp	\
+@USE_BFM_TRUE@@USE_HDCG_TRUE@				testerSolver_HDCG.cpp           
 
-#test_HDCG_SOURCES = 		test_BFM_HDCG_Inverter.cpp	\
-#				testerSolver_HDCG.cpp           
 include_HEADERS = tests.hpp			\
 				tests_all.hpp			\
 				test_HMC.hpp 			\
@@ -961,7 +977,8 @@ include_HEADERS = tests.hpp			\
 	       	                test_ChiralCondensate.hpp       \
 	                        test_QnumSuscept.hpp	        \
 	   	                test_Solver_HDCG.hpp		\
-				test_Add_Flux.hpp
+				test_Add_Flux.hpp               \
+                                test_ReadEigenModes.hpp
 
 all: all-am
 
@@ -1088,6 +1105,10 @@ test_EigenModesSolver$(EXEEXT): $(test_EigenModesSolver_OBJECTS) $(test_EigenMod
 	@rm -f test_EigenModesSolver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModesSolver_OBJECTS) $(test_EigenModesSolver_LDADD) $(LIBS)
 
+test_EigenModesSolverStaggered$(EXEEXT): $(test_EigenModesSolverStaggered_OBJECTS) $(test_EigenModesSolverStaggered_DEPENDENCIES) $(EXTRA_test_EigenModesSolverStaggered_DEPENDENCIES) 
+	@rm -f test_EigenModesSolverStaggered$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModesSolverStaggered_OBJECTS) $(test_EigenModesSolverStaggered_LDADD) $(LIBS)
+
 test_EigenModesSolver_Lap$(EXEEXT): $(test_EigenModesSolver_Lap_OBJECTS) $(test_EigenModesSolver_Lap_DEPENDENCIES) $(EXTRA_test_EigenModesSolver_Lap_DEPENDENCIES) 
 	@rm -f test_EigenModesSolver_Lap$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_EigenModesSolver_Lap_OBJECTS) $(test_EigenModesSolver_Lap_LDADD) $(LIBS)
@@ -1099,6 +1120,10 @@ test_GWrelEigen$(EXEEXT): $(test_GWrelEigen_OBJECTS) $(test_GWrelEigen_DEPENDENC
 test_Gauge$(EXEEXT): $(test_Gauge_OBJECTS) $(test_Gauge_DEPENDENCIES) $(EXTRA_test_Gauge_DEPENDENCIES) 
 	@rm -f test_Gauge$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Gauge_OBJECTS) $(test_Gauge_LDADD) $(LIBS)
+
+test_HDCG$(EXEEXT): $(test_HDCG_OBJECTS) $(test_HDCG_DEPENDENCIES) $(EXTRA_test_HDCG_DEPENDENCIES) 
+	@rm -f test_HDCG$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(test_HDCG_OBJECTS) $(test_HDCG_LDADD) $(LIBS)
 
 test_HMC$(EXEEXT): $(test_HMC_OBJECTS) $(test_HMC_DEPENDENCIES) $(EXTRA_test_HMC_DEPENDENCIES) 
 	@rm -f test_HMC$(EXEEXT)
@@ -1204,10 +1229,6 @@ test_Smearing$(EXEEXT): $(test_Smearing_OBJECTS) $(test_Smearing_DEPENDENCIES) $
 	@rm -f test_Smearing$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Smearing_OBJECTS) $(test_Smearing_LDADD) $(LIBS)
 
-test_Smearing_Polyakov$(EXEEXT): $(test_Smearing_Polyakov_OBJECTS) $(test_Smearing_Polyakov_DEPENDENCIES) $(EXTRA_test_Smearing_Polyakov_DEPENDENCIES) 
-	@rm -f test_Smearing_Polyakov$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(test_Smearing_Polyakov_OBJECTS) $(test_Smearing_Polyakov_LDADD) $(LIBS)
-
 test_Solver_BFM$(EXEEXT): $(test_Solver_BFM_OBJECTS) $(test_Solver_BFM_DEPENDENCIES) $(EXTRA_test_Solver_BFM_DEPENDENCIES) 
 	@rm -f test_Solver_BFM$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(test_Solver_BFM_OBJECTS) $(test_Solver_BFM_LDADD) $(LIBS)
@@ -1246,8 +1267,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/get_eval.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Add_Flux.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_HDCG_Inverter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Inverter_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_BFM_Moebius.Po@am__quote@
@@ -1258,6 +1279,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_DiracWilson_Adjoint.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigModesNum.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolverStaggered.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_EigenModesSolver_Lap.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_GWrelEigen.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Gauge.Po@am__quote@
@@ -1290,7 +1312,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_Wilson_FiniteDensity.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_clover.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smear.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_smeared_polyakov.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_sunRepres.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_wilson_Brillouin.Po@am__quote@
@@ -1329,6 +1350,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerResMass.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSmear.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSolver_BFM.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSolver_HDCG.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSolver_Perf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerSunRep.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/testerWilson.Po@am__quote@

@@ -10,11 +10,12 @@
 #include "Dirac_ops/dirac_Operator_FactoryCreator.hpp"
 #include "Scalar_ops/scalar_Operator_Factory.hpp"
 #include "Scalar_ops/scalar_Operator_FactoryCreator.hpp"
+
 #include <memory>
 
 class FoprHermFactory{
 public:
-  virtual Fopr_Herm* getFoprHerm(InputConfig&) = 0;
+  virtual Fopr_Herm* getFoprHerm(const InputConfig&) = 0;
   virtual ~FoprHermFactory(){}
 };
 
@@ -26,11 +27,40 @@ public:
     XML::descend(node,"WilsonLikeDirac",MANDATORY);
     Dfact_.reset(Diracs::createDiracWilsonLikeFactory(node));
   }
-  Fopr_HD* getFoprHerm(InputConfig& input){ 
+  Fopr_HD* getFoprHerm(const InputConfig& input){ 
     D_.reset(Dfact_->getDirac(input));
     return new Fopr_HD(D_.get()); 
   }
 };
+
+class FoprHermFactory_DdagDee_Stag: public FoprHermFactory{
+  std::auto_ptr<DiracStaggeredEvenOddLikeFactory> Dfact_;
+  std::auto_ptr<DiracStaggeredEvenOddLike> D_;
+public:
+  FoprHermFactory_DdagDee_Stag(XML::node node){
+    XML::descend(node,"Staggered_EO",MANDATORY);
+    Dfact_.reset(Diracs::createDiracStaggeredEvenOddLikeFactory(node));
+  }
+  Fopr_HStag* getFoprHerm(const InputConfig& input){ 
+    D_.reset(Dfact_->getDirac(input));
+    return new Fopr_HStag(D_.get()); 
+  }
+};
+
+class FoprHermFactory_HDStagAdj: public FoprHermFactory{
+  std::auto_ptr<DiracStaggeredEvenOddLikeFactory> Dfact_;
+  std::auto_ptr<DiracStaggeredEvenOddLike> D_;
+public:
+  FoprHermFactory_HDStagAdj(XML::node node){
+    XML::descend(node,"StaggeredAdj_EO",MANDATORY);
+    Dfact_.reset(Diracs::createDiracStaggeredEvenOddLikeFactory(node));
+  }
+  Fopr_HDStagAdj* getFoprHerm(const InputConfig& input){ 
+    D_.reset(Dfact_->getDirac(input));
+    return new Fopr_HDStagAdj(D_.get()); 
+  }
+};
+
 
 class FoprHermFactory_H: public FoprHermFactory{
   std::auto_ptr<DiracWilsonLikeFactory> Dfact_;
@@ -40,7 +70,7 @@ public:
     XML::descend(node,"WilsonLikeDirac",MANDATORY);
     Dfact_.reset(Diracs::createDiracWilsonLikeFactory(node));
   }
-  Fopr_H* getFoprHerm(InputConfig& input){ 
+  Fopr_H* getFoprHerm(const InputConfig& input){ 
     D_.reset(Dfact_->getDirac(input));
     return new Fopr_H(D_.get()); 
   }
@@ -54,7 +84,7 @@ public:
     XML::descend(node,"WilsonLikeDirac",MANDATORY);
     Dfact_.reset(new DiracDomainWall5dFactory(node));
   }
-  Fopr_H5d* getFoprHerm(InputConfig& input){ 
+  Fopr_H5d* getFoprHerm(const InputConfig& input){ 
     D_.reset(Dfact_->getDirac(input));
     return new Fopr_H5d(D_.get()); 
   }
@@ -68,7 +98,7 @@ public:
     XML::descend(node,"WilsonLikeDirac",MANDATORY);
     Dfact_.reset(Diracs::createDiracWilsonLikeFactory(node));
   }
-  Fopr_DdagD* getFoprHerm(InputConfig& input){ 
+  Fopr_DdagD* getFoprHerm(const InputConfig& input){ 
     D_.reset(Dfact_->getDirac(input));
     return new Fopr_DdagD(D_.get()); 
   }
@@ -82,7 +112,7 @@ public:
     XML::descend(node,"WilsonLikeDirac",MANDATORY);
     Dfact_.reset(Diracs::createDiracWilsonLikeFactory(node));
   }
-  Fopr_DDdag* getFoprHerm(InputConfig& input){ 
+  Fopr_DDdag* getFoprHerm(const InputConfig& input){ 
     D_.reset(Dfact_->getDirac(input));
     return new Fopr_DDdag(D_.get()); 
   }
@@ -97,10 +127,16 @@ public:
     assert(ScOps::createScalarOpFactory(node));
     Sfact_.reset(ScOps::createScalarOpFactory(node));
   }
-  Fopr_Scalar* getFoprHerm(InputConfig& input){ 
+  Fopr_Scalar* getFoprHerm(const InputConfig& input){ 
     S_.reset(Sfact_->getSop(input));
     return new Fopr_Scalar(S_.get()); 
   }
 };
+
+
+
+
+
+
 
 #endif

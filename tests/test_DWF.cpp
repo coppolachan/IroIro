@@ -27,7 +27,7 @@ int Test_DWF::run(){
   CCIO::cout<<"Test_DWF::run() called\n";
 
   Staples stpl;
-  double plq = stpl.plaquette(*(input_.gconf));
+  double plq = stpl.plaquette(*(input_.config.gconf));
   CCIO::cout<<" plaq="<<plq<<std::endl;
 
   ///// Generating source vector 
@@ -41,7 +41,7 @@ int Test_DWF::run(){
   Field ff= src.mksrc(1,1);
 
   /***************************************************************/
-  Field* u = &(input_.gconf->data);
+  Field* u = input_.getGconf();
   double M0 = -1.6;
 
   // creation of Dirac_Wilson operators 

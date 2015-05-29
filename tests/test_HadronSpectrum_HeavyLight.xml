@@ -22,10 +22,10 @@
     <output_prefix>hadronCorrel_</output_prefix>
   </Output>
   <Measurement>
-    <Source type="Local">
+    <LocalSource>
       <position>0 0 0 0</position>
-    </Source>
-
+      <position>8 8 8 16</position>
+    </LocalSource>
     <!--//// quark propagator to make up smearing matrix ////-->    
     <SmearedPropagator>
 

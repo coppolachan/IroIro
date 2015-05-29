@@ -1,6 +1,6 @@
 /*! @file dirac_DWoverlap.hpp
  *  @brief A wrapper of Dirac_DomainWall_4D which acts as the overlap Dirac op.
- * Time-stamp: <2013-12-05 10:00:32 noaki>
+ * Time-stamp: <2014-10-05 10:42:15 noaki>
  */
 #ifndef DIRAC_DWOVERLAP_INCLUDED
 #define DIRAC_DWOVERLAP_INCLUDED
@@ -19,9 +19,9 @@ public:
 		  EigenModes* const ems)
     :Ddw4d_(Ddw4d),ems_(ems),mq_(Ddw4d->getMass()){
 
-    int esize = ems->evals_.size();
+    int esize = ems->evals.size();
     for(int e=0; e<esize; ++e)
-      sgnEv_.push_back(ems->evals_[e]/fabs(ems->evals_[e]));
+      sgnEv_.push_back(ems->evals[e]/fabs(ems->evals[e]));
   }
 
   size_t fsize()const{return Ddw4d_->fsize();}

@@ -251,5 +251,19 @@ namespace XML{
     } 
     return 0;
   }
+
+  std::vector<int> child_array(pugi::xml_node node){
+    using namespace std;
+    istringstream iss(node.child_value()); 
+    vector<string> tokens;
+
+    copy(istream_iterator<string>(iss),
+	 istream_iterator<string>(),
+	 back_inserter<vector<string> >(tokens));
+    vector<int> array;
+    for(int it=0; it<tokens.size(); ++it) 
+      array.push_back(atoi(tokens[it].c_str()));
+    return array;
+  }
 }
 

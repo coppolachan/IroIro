@@ -9,6 +9,7 @@
 #include "include/pugi_interface.h"
 #include "Communicator/comm_io.hpp"
 #include "eigenModesSolver.hpp"
+#include "eigenModes.hpp"
 #include "eigenSorter.hpp"
 
 class EigenSorter;
@@ -27,23 +28,22 @@ private:
   
   void setUnit(std::vector<double>& Qt)const;
 
-  //  void lanczos_init(std::vector<double>& ta,std::vector<double>& tb, 
-  //		    std::vector<Field>& V,Field& f)const;
-
   void lanczos_ext(std::vector<double>& ta,std::vector<double>& tb, 
 		   std::vector<Field>& V,Field& f,int ini,int fin)const;
 
  void QRfact_Givens(std::vector<double>& ta,std::vector<double>& tb,
-		      std::vector<double>& Qt,
-		      int Nk,double sft,int k_min,int k_max)const;
+		    std::vector<double>& Qt,
+		    int Nk,double sft,int k_min,int k_max)const;
 
   int diagonalize(std::vector<double>& ta,std::vector<double>& tb, 
 		   std::vector<double>& Qt,int Nk)const;
 
   void orthogonalize(Field& w,const std::vector<Field>& evec,int k)const;
-  
+  void orthogonalize_real(Field& w,const std::vector<Field>& evec,int k)const;
+  //void projectOut(std::vector<Field>& evec)const;
 public:
-  EigenModesSolver_IRL(const Fopr_Herm* fopr,const EigenSorter* esorter,
+  EigenModesSolver_IRL(const Fopr_Herm* fopr,
+		       const EigenSorter* esorter,
 		       XML::node node)
     :opr_(fopr),esorter_(esorter),ngPrec_(1.0e+5){
 
@@ -73,7 +73,8 @@ public:
     CCIO::cout<<"EigenModesSolver_IRL constructed\n";
   }
   
-  void calc(std::vector<double>& lmd,std::vector<Field>& evec,int& Nsbt)const;
+  void calc(std::vector<double>& lmd,std::vector<Field>& evec,int& Neigen,
+	    std::vector<Field>* exvec=NULL)const;
 };
 
 #endif

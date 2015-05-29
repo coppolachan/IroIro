@@ -11,8 +11,7 @@ using namespace std;
 
 int Test_LapSource::run(){
 
-  InputConfig config = input_.getConfig();
-  Laplacian4Ds<Format::Format_F> Lap(config.getGconf());
+  Laplacian4Ds<Format::Format_F> Lap(input_.getGconf());
   Fopr_Scalar Flap(&Lap);
 
   vector<int> sp;

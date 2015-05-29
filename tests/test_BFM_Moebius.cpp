@@ -200,16 +200,18 @@ int Test_Solver_BFM::run(){
   {
 #pragma omp for
     for (int t=0;t<threads;t++){
-  linop.Meo(psi_h[1-cb],chi_h[cb],cb,dag);
-  linop.Meo(psi_h[cb],chi_h[1-cb],1-cb,dag);
+      linop.Meo(psi_h[1-cb],chi_h[cb],cb,dag);
+      linop.Meo(psi_h[cb],chi_h[1-cb],1-cb,dag);
+      
+      //linop.Mooee(psi_h[cb],chi_h[cb],dag);
+      //linop.Mooee(psi_h[1-cb],chi_h[1-cb],dag);
+
+      //linop.MooeeInv(psi_h[cb],chi_h[cb],dag);
+      //linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);
     }
   }
 
-  //linop.Mooee(psi_h[cb],chi_h[cb],dag);
-  //linop.Mooee(psi_h[1-cb],chi_h[1-cb],dag);
 
-  //linop.MooeeInv(psi_h[cb],chi_h[cb],dag);
-  //linop.MooeeInv(psi_h[1-cb],chi_h[1-cb],dag);
 
   linop.comm_end();
   
@@ -221,14 +223,15 @@ int Test_Solver_BFM::run(){
   
   FermionField IroIroFull(Nvol5d);
   // Working off diagonal part
-  Field IroIroSol_odd  = DWF_EO.mult_ee(DWF_EO.mult_oe(fe));
-  Field IroIroSol_even = DWF_EO.mult_oo(DWF_EO.mult_eo(fo));
+  Field IroIroSol_odd  = DWF_EO.mult_oo(DWF_EO.mult_oe(fe));
+  Field IroIroSol_even = DWF_EO.mult_ee(DWF_EO.mult_eo(fo));
   
   //Field IroIroSol_even = DWF_EO.mult_ee_inv(fe);
   //Field IroIroSol_odd  = DWF_EO.mult_oo_inv(fo);
   
   //Field IroIroSol_even = DWF_EO.mult_ee(fe);
   //Field IroIroSol_odd  = DWF_EO.mult_oo(fo);
+
   
   CCIO::cout << "IroIroSol_even.size()/Ls : "<< IroIroSol_even.size()/Ls << "\n";
   int vect4d_hsize = IroIroSol_even.size()/Ls;

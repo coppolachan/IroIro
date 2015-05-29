@@ -5,6 +5,8 @@
 #include "fopr_Linear.h"
 #include "Fields/field_expressions.hpp"
 #include "pugi_interface.h"
+#include "include/timings.hpp"
+#include <omp.h>
 #include <math.h>
 
 class Fopr_Exp: public Fopr_Herm{
@@ -38,12 +40,13 @@ public:
 
 class Fopr_Lexp: public Fopr_Herm{
   const Fopr_Linear* Op_;
+  const Fopr_Herm* OpH_;
   int N_;
 public:
   Fopr_Lexp(int N,double a,const Fopr_Herm* Op)
-    :N_(N),Op_(new Fopr_Linear(a/N,1.0,Op)){}
+    :N_(N),Op_(new Fopr_Linear(a/N,1.0,Op)),OpH_(Op){}
 
-  Fopr_Lexp(XML::node node,const Fopr_Herm* Op){
+ Fopr_Lexp(XML::node node,const Fopr_Herm* Op):OpH_(Op){
     XML::read(node,"exp_approx",N_,MANDATORY);
     double a;
     XML::read(node,"coefficient",a,MANDATORY);
@@ -53,7 +56,42 @@ public:
   
   const Field mult(const Field& f)const{
     Field tmp =f;
-    for(int i=0;i<N_;++i) tmp = Op_->mult(tmp);
+    Field tmp2=f;
+    for(int i=0;i<N_;i++) tmp = Op_->mult(tmp);
+
+
+    /*
+    // Optimizations
+    double fake_a = 1.0/N_;
+    double *tadd = tmp.getaddr(0);
+    double *t2add = tmp2.getaddr(0);
+    int Nvol = CommonPrms::instance()->Nvol();
+    long double lexp_timer, tmp_timer, inner_timer = 0;
+    FINE_TIMING_START(lexp_timer);
+    for(int i=0;i<N_;i++) {
+      FINE_TIMING_START(tmp_timer);
+      tmp2 = OpH_->mult(tmp);
+      FINE_TIMING_END(tmp_timer);
+      inner_timer += tmp_timer;
+      
+      
+#pragma omp parallel 
+      {
+	int nid = omp_get_num_threads();
+	int is = omp_get_thread_num()*Nvol/nid;
+	int ns = Nvol/nid;
+	
+	BGWilsonLA_MultAddScalar(tadd,t2add,fake_a,ns);
+      }
+     
+ 	
+    }
+    FINE_TIMING_END(lexp_timer);
+    CCIO::cout << " Timing - Lexp     :  "<< lexp_timer << " seconds\n";
+    CCIO::cout << " Timing - Lexp In  :  "<< inner_timer << " seconds\n";
+    */
+
+
     return tmp;
   }
 

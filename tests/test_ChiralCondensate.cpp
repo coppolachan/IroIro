@@ -17,27 +17,22 @@ using namespace std;
 int Test_ChiralCondensate::run(){
   XML::node ch_node = input_.node;
   XML::descend(ch_node,"ChiralCondensate",MANDATORY);
-  InputConfig config = input_.getConfig();
-
 
   /************************************************************************************/
   //
   // For 5-D Inversion
   //
-  
   XML::node Kernel_node = ch_node;
   XML::descend(Kernel_node,"KernelDWF_4d");
   auto_ptr<DiracDWF4dFactory> 
     Wilson_Kernel_4d_factory(Diracs::createDiracDWF4dFactory(Kernel_node));
-  auto_ptr<Dirac_DomainWall_4D> Wilson_Kernel_4d(Wilson_Kernel_4d_factory->getDirac(config));
+  auto_ptr<Dirac_DomainWall_4D> Wilson_Kernel_4d(Wilson_Kernel_4d_factory->getDirac(input_.config));
 
   /************************************************************************************/
   //
   // Constructs the Chiral condensate for DWF
   //
-
   ChiralCondDWF ChiralCond(*Wilson_Kernel_4d);
-
 
   /************************************************************************************/
   //

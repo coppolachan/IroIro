@@ -1,8 +1,9 @@
 /*!
  * @file BFM_HDCG.hpp
  * @brief Declares classes for P. Boyle HDCG inverter
- * Time-stamp: <2014-10-16 14:05:49 neo>
+ * Time-stamp: <2015-05-29 15:11:13 neo>
  */
+
 #ifndef _BFM_HDCG_EXT_H_
 #define _BFM_HDCG_EXT_H_
 
@@ -34,11 +35,10 @@ public:
 
 
 
-  //virtual int MyNodeNumber();
-  //virtual int NodeFromCoord(int g[4]);
 };
 
-int MyNodeNumber();
+
+int MyNodeNumber(void);
 int NodeFromCoord(int g[4]);
 
 #endif

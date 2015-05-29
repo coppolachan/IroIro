@@ -1,9 +1,9 @@
 /*!@file  dirac_LowModeDeflation_Approx.cpp
  * @brief methods for low-mode preconditioning with given subspace
- *Time-stamp: <2013-07-03 11:06:44 noaki>
+ *Time-stamp: <2014-10-05 11:14:46 noaki>
  */
 #include "dirac_LowModeDeflation_Approx.hpp"
-#include "subSpaceProjector.hpp"
+#include "EigenModes/subSpaceProjector.hpp"
 #include "Tools/complexMatrix.hpp"
 //#include "Fields/field_expressions.hpp"
 //using namespace FieldExpression;

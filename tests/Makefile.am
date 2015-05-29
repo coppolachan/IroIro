@@ -4,8 +4,7 @@
 # Project IROIRO JLQCD package (KEK) 
 # Lattice QCD MonteCarlo simulations Test files
 #
-# Time-stamp: <2014-11-25 16:33:33 neo>
-
+# Time-stamp: <2015-05-29 15:13:41 neo>
 
 testdir = $(bindir)/Test
 OPTLIB =
@@ -23,11 +22,12 @@ BFM_TESTPROGS += test_BFM_Operator
 BFM_TESTPROGS += test_BFM_Moebius
 BFM_TESTPROGS += test_BFM_Inverter
 BFM_TESTPROGS += test_BFM_Inverter_wrapper
-#BFM_TESTPROGS += test_HDCG
+if USE_HDCG
+BFM_TESTPROGS += test_HDCG
+endif
 endif
 
 if IBM_BGQ
-#OPTLIB += -lkek -lbgnet -lpthread -lmpich -lopa -lmpl -lpami -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++
 OPTLIB += -lkek -lbgnet -lpthread -lmpich-xl -lopa-xl -lmpl-xl -lpami-gcc -lSPI_cnk -lSPI -lSPI_l1p -lrt -lbgpm -lstdc++ 
 
 if IBM_BGQWILSON_SMP
@@ -66,6 +66,7 @@ EXTRA_DIST = 	testResults.info	\
 		test_DomainWall.xml 	\
 		test_QpropMom.xml 	\
 		test_EigenModesSolver.xml\
+		test_EigenModesSolverStaggered.xml\
 		test_EigenModesSolver_lap.xml\
 		test_EigModesNum.xml    \
 		test_GeneralMeas.xml 	\
@@ -91,53 +92,53 @@ EXTRA_DIST = 	testResults.info	\
 		test_QnumSuscept.xml    \
 	        test_EigModesNum.xml    
 
-test_PROGRAMS = test_HMC 		\
-		test_HMC_noFactories 	\
-		test_HMC_smear_noF	\
-		test_HMC_DWall_noF	\
-		test_Gauge		\
-		test_NoMeas		\
-		test_GWrelEigen         \
-		test_PolyakovLoop	\
-		test_WilsonFlow		\
-		test_Wilson 		\
-		test_Clover 		\
-		test_Wilson_FiniteDensity\
-		test_Wilson_EvenOdd 	\
-		test_Wilson_Brillouin 	\
-		test_Wilson_Brillouin_Imp\
-		test_QpropMom		\
-		test_ResMass 		\
-		test_MesonSpectrum	\
-		test_MesonSpectrum_SpMom\
-		test_MesonSpectrum_Nf2p1\
-		test_BaryonSpectrum_Nf2p1\
-		test_EigenModesSolver	\
-		test_EigenModesSolver_Lap\
-		test_EigModesNum	\
-		test_Smearing		\
-		test_LapSource		\
-		test_Overlap		\
-		test_MultiShiftSolver	\
-		test_Solver_Perf	\
-		$(BFM_TESTPROGS)        \
-		test_RNG 		\
-		test_IO			\
-		test_RationalApprox	\
-		test_RHMC_noFactories 	\
-		test_SUNRepresentation	\
-		test_HeatBath           \
-                test_DWF    		\
-                test_DiracWilson_Adjoint\
-		test_Laplacian		\
-		test_LapH		\
-		test_HadronSpectrum_HeavyLight\
-		test_ChiralCondensate \
-		test_QnumSuscept	\
-		test_ChiralCondensate 	\
-		test_ReadEigenmodes	\
-		test_Add_Flux		\
-		test_Smearing_Polyakov
+test_PROGRAMS = test_HMC 			\
+		test_HMC_noFactories 		\
+		test_HMC_smear_noF		\
+		test_HMC_DWall_noF		\
+		test_Gauge			\
+		test_NoMeas			\
+		test_GWrelEigen         	\
+		test_PolyakovLoop		\
+		test_WilsonFlow			\
+		test_Wilson 			\
+		test_Clover 			\
+		test_Wilson_FiniteDensity	\
+		test_Wilson_EvenOdd 		\
+		test_Wilson_Brillouin 		\
+		test_Wilson_Brillouin_Imp	\
+		test_QpropMom			\
+		test_ResMass 			\
+		test_MesonSpectrum		\
+		test_MesonSpectrum_SpMom	\
+		test_MesonSpectrum_Nf2p1	\
+		test_BaryonSpectrum_Nf2p1	\
+		test_EigenModesSolver		\
+		test_EigenModesSolverStaggered	\
+		test_EigenModesSolver_Lap	\
+		test_EigModesNum		\
+		test_Smearing			\
+		test_LapSource			\
+		test_Overlap			\
+		test_MultiShiftSolver		\
+		test_Solver_Perf		\
+		$(BFM_TESTPROGS)        	\
+		test_RNG 			\
+		test_IO				\
+		test_RationalApprox		\
+		test_RHMC_noFactories 		\
+		test_SUNRepresentation		\
+		test_HeatBath           	\
+                test_DWF    			\
+                test_DiracWilson_Adjoint	\
+		test_Laplacian			\
+		test_LapH			\
+		test_HadronSpectrum_HeavyLight	\
+		test_ChiralCondensate 		\
+		test_QnumSuscept		\
+		test_ChiralCondensate 		\
+		test_ReadEigenmodes		\
+		test_Add_Flux
 
 test_HMC_SOURCES 	= 	test_HMC.cpp 			\
 		  		testerHMC.cpp
@@ -207,6 +208,9 @@ test_ResMass_SOURCES 	= 	test_ResidualMass.cpp 		\
 test_EigenModesSolver_SOURCES =	test_EigenModesSolver.cpp	\
 				testerEigenModesSolver.cpp
 
+test_EigenModesSolverStaggered_SOURCES =	test_EigenModesSolverStaggered.cpp	\
+						testerEigenModesSolver.cpp	
+
 test_EigenModesSolver_Lap_SOURCES = test_EigenModesSolver_Lap.cpp\
 				testerEigenModesSolver_Lap.cpp
 
@@ -222,9 +226,9 @@ test_MultiShiftSolver_SOURCES =	test_MultiShiftSolver.cpp	\
 test_Smearing_SOURCES   =       test_smear.cpp                  \
                                 testerSmear.cpp
 
-test_Smearing_Polyakov_SOURCES   =  test_smeared_polyakov.cpp        \
-				get_eval.cpp			\
-                                testerSmear.cpp
+#test_Smearing_Polyakov_SOURCES   =  test_smeared_polyakov.cpp        \
+#				get_eval.cpp			\
+#                               testerSmear.cpp
 
 test_RNG_SOURCES 	= 	test_RNG.cpp
 
@@ -289,9 +293,10 @@ test_BFM_Inverter_SOURCES =     test_BFM_Inverter.cpp 		\
 
 test_BFM_Inverter_wrapper_SOURCES = test_BFM_Inverter_wrapper.cpp	\
                                 testerSolver_BFM.cpp       
-
-#test_HDCG_SOURCES = 		test_BFM_HDCG_Inverter.cpp	\
-#				testerSolver_HDCG.cpp           
+if USE_HDCG
+test_HDCG_SOURCES = 		test_BFM_HDCG_Inverter.cpp	\
+				testerSolver_HDCG.cpp           
+endif
 endif
 
 
@@ -339,5 +344,6 @@ include_HEADERS 	=	tests.hpp			\
 	       	                test_ChiralCondensate.hpp       \
 	                        test_QnumSuscept.hpp	        \
 	   	                test_Solver_HDCG.hpp		\
-				test_Add_Flux.hpp
+				test_Add_Flux.hpp               \
+                                test_ReadEigenModes.hpp
 

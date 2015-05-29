@@ -12,6 +12,10 @@ namespace HermiteOp{
     //// Hermitian Op. from scalar Op.
     if(!strcmp(hf_name,"Scalar")) return new FoprHermFactory_Scalar(node);
 
+    //// Hermitian Op. from Staggered Op.
+    if(!strcmp(hf_name,"Staggered_DdagD")) return new FoprHermFactory_DdagDee_Stag(node);
+    if(!strcmp(hf_name,"StaggeredAdj")) return new FoprHermFactory_HDStagAdj(node);
+
     //// Hermitian Op. as a functional of a Hermitian Op.
     if(!strcmp(hf_name,"Functional")) 
       return FuncHermite::createHermOpFuncFactory(node);
